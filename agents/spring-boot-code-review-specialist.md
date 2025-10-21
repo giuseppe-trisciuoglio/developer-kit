@@ -118,17 +118,7 @@ When reviewing, leverage your knowledge of:
 ## Examples of Good Patterns
 
 **Constructor Injection (Java):**
-```java
-@RestController
-@RequiredArgsConstructor
-public class UserController {
-    private final UserService userService;
 
-    // Lombok @RequiredArgsConstructor generates the constructor
-}
-```
-
-(Or with Lombok)
 ```java
 @RestController
 @RequiredArgsConstructor
