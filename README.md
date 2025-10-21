@@ -1,23 +1,36 @@
 # Developer Kit for Claude Code
 
-This repository is a starter kit for building "skills" and "agents" for Claude Code. The current content focuses on patterns, conventions, and agents for Java projects (Spring Boot, JUnit), but the kit is designed to be extensible and multi-language (PHP, TypeScript, Python, etc.).
+This repository is a starter kit for building "skills" and "agents" for Claude Code. The current content focuses on patterns, conventions, and agents for Java projects (Spring Boot, JUnit, LangChain4J), but the kit is designed to be extensible and multi-language (PHP, TypeScript, Python, etc.).
 
 Goal
 - Provide reusable examples of skills and agents that automate development tasks: code review, REST API guidance, testing patterns, snippet generation, and more.
 - Offer a modular kit that other developers can quickly extend for new languages and frameworks.
 
 Repository contents
-- agents/: ready-to-use agents — currently contains specialist agents for Spring Boot.
+- agents/: ready-to-use agents — currently contains specialist agents for Spring Boot and LangChain4J.
   - `agents/spring-boot-code-review-specialist.md` — definition of an agent for reviewing Spring Boot projects.
+  - `agents/spring-boot-backend-development-expert.md` — comprehensive backend development specialist for Spring Boot.
+  - `agents/langchain4j-ai-development-expert.md` — AI development expert specializing in LangChain4J integration.
 
 - skills/: a collection of skills organized by topic and language.
+
+### Spring Boot Skills
   - `skills/spring-boot-patterns/SKILL.md` — patterns and best practices for Spring Boot.
-  - `skills/spring-boot-rest-api-standards/SKILL.md` — REST API guidelines for Spring Boot.
+  - `skills/spring-boot-rest-api-standards/SKILL.md` — REST API guidelines for Spring Boot (606 lines).
   - `skills/spring-boot-test-patterns/SKILL.md` — testing patterns for Spring applications.
   - `skills/junit-test-patterns/SKILL.md` — examples and conventions for JUnit.
 
+### LangChain4J Skills
+  - `skills/langchain4j-spring-boot-integration/SKILL.md` — Spring Boot integration patterns for LangChain4J.
+  - `skills/langchain4j-rag-implementation-patterns/SKILL.md` — Retrieval-Augmented Generation implementation patterns.
+  - `skills/langchain4j-ai-services-patterns/SKILL.md` — AI service patterns and best practices.
+  - `skills/langchain4j-mcp-server-patterns/SKILL.md` — MCP (Model Context Protocol) server development patterns.
+  - `skills/langchain4j-tool-function-calling-patterns/SKILL.md` — Tool and function calling patterns for AI agents.
+
 Current status and language roadmap
-- Current status: most skills and agents contain Java examples and conventions (Spring Boot, JUnit).
+- Current status: most skills and agents contain Java examples and conventions (Spring Boot, JUnit, LangChain4J).
+  - **Spring Boot**: Complete testing patterns, REST API standards, and code review agents
+  - **LangChain4J**: Comprehensive AI development patterns including RAG, AI services, MCP servers, and tool integration
 - Roadmap: we plan to add dedicated skills and agents for:
   - PHP (e.g., Laravel, Symfony)
   - TypeScript (Node.js, NestJS, Express)
@@ -57,8 +70,4 @@ Contact
 - For questions or integration proposals, open an issue in this repository or create a PR describing the change.
 
 ---
-Version: 1.0 — Initial Java support, designed to be extended to other languages
-
-
-6. langchain4j-vector-stores-configuration
-9. langchain4j-testing-strategies
+Version: 1.0 — Initial Java support with Spring Boot and LangChain4J integration, designed to be extended to other languages

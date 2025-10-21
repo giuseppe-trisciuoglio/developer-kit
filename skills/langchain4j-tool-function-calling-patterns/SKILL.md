@@ -1303,5 +1303,3 @@ This LangChain4j Tool & Function Calling skill covers:
 8. **Integration Patterns**: Spring Boot, REST APIs, database integration
 9. **Security**: Permission checks, audit trails, data access controls
 10. **Best Practices**: Performance monitoring, testing, optimization
-
-The patterns and examples are based on official LangChain4j documentation (Trust Score: 7.8) and represent production-ready tool integration practices that enable AI applications to interact safely and efficiently with external systems and APIs.
