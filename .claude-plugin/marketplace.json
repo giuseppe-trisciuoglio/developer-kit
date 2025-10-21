@@ -1,5 +1,5 @@
 {
-  "name": "developer-kit-claude-code",
+  "name": "giuseppe.trisciuoglio",
   "owner": {
     "name": "Giuseppe Trisciuoglio",
     "email": "giuseppe.trisciuoglio@gmail.com"
@@ -10,7 +10,7 @@
   },
   "plugins": [
     {
-      "name": "Developer-kit-claude-code",
+      "name": "developer-kit-claude-code",
       "description": "Comprehensive toolkit for developing with Claude Code.",
       "source": "./",
       "strict": false,

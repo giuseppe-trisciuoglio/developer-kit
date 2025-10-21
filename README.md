@@ -53,7 +53,12 @@ Quick example: adding TypeScript support
   - scaffolding examples and code-review snippets
 - Add `agents/typescript-code-review-specialist.md` if you want an agent that performs automated reviews tailored to TypeScript code.
 
-Installation and usage (brief)
+
+## Install this skill in Claude Code by running:
+
+/plugin marketplace add giuseppe-trisciuoglio/developer-kit-claude-code
+/plugin install developer-kit-claude-code@giuseppe-trisciuoglio
+
 - This repository contains definitions and documentation usable in Claude Code; actual installation of skills depends on your Claude Code workflow.
 - To test skills locally, copy the contents of the `skills/` and `agents/` folders into your Claude Code environment or follow your deployment instructions to upload new skills.
 
