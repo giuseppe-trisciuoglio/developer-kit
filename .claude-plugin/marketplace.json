@@ -15,7 +15,17 @@
       "source": "./",
       "strict": false,
       "skills": [
-        "./developer-kit-claude-code"
+        "./skills/junit-test-patterns",
+        "./skills/langchain4j-ai-services-patterns",
+        "./skills/langchain4j-mcp-server-patterns",
+        "./skills/langchain4j-rag-implementation-patterns",
+        "./skills/langchain4j-spring-boot-integration",
+        "./skills/langchain4j-testing-strategies",
+        "./skills/langchain4j-tool-function-calling-patterns",
+        "./skills/langchain4j-vector-stores-configuration",
+        "./skills/spring-boot-patterns",
+        "./skills/spring-boot-rest-api-standards",
+        "./skills/spring-boot-test-patterns"
       ]
     }
   ]
