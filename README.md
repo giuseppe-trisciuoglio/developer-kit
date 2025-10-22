@@ -81,5 +81,5 @@ This repository is a starter kit for building "skills" and "agents" for Claude C
 - For questions or integration proposals, open an issue in this repository or create a PR describing the change.
 
 ---
-Version: 1.0.0 — Initial Java support with Spring Boot and LangChain4J integration, designed to be extended to other languages
-Version: 1.1.0 - Added new commands for Github Spec Kit: check integration, verify spec implementation.
+- Version: 1.0.0 — Initial Java support with Spring Boot and LangChain4J integration, designed to be extended to other languages
+- Version: 1.1.0 - Added new commands for Github Spec Kit: check integration, verify spec implementation.
