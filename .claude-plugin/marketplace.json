@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Developer Kit for building applications with Claude Code - a powerful library for data transformation and flow management.",
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "plugins": [
     {
