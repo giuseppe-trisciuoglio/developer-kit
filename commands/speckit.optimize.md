@@ -329,95 +329,57 @@ Priority 4: Error Recovery
    - Retry policy: 2 attempts per task before manual escalation
 ```
 
-### 11. Execution Timeline Table
+### 11. Execution Phase Table
 
-Generate optimized timeline visualization:
+Generate an aggregated phase view (no time column) that groups tasks by phase, highlights the responsible subagent, and captures the validation check for each phase:
 
 ```
-PHASE 1 EXECUTION TIMELINE
-═════════════════════════════════════════════════════════════════════
+PHASE EXECUTION MATRIX
+══════════════════════════════════════════════════════════════════════════════
 
- Time  │ Batch  │ Agent Group A              │ Agent Group B              │ Checkpoint
-───────┼────────┼────────────────────────────┼────────────────────────────┼──────────────
- 0-2m  │ 1.1    │ [T001] DDD Structure       │ [T004] Testcontainers      │ Structure created
-       │        │ Backend Expert             │ Test Expert                │
-───────┼────────┼────────────────────────────┼────────────────────────────┼──────────────
- 2-5m  │ Compile│ mvn clean compile (1 min)                              │ ✓ Compiles OK
-───────┼────────┼────────────────────────────┼────────────────────────────┼──────────────
- 5-20m │ 1.2A   │ [T002] Dependencies        │ [T156] Batch Config        │ Dependencies added
-       │        │ [T003] app.yml             │ [T157] Batch Sizing        │ Configuration ready
-       │        │ [T126] Properties          │                            │
-       │        │ Backend Expert             │ Backend Expert             │
-───────┼────────┼────────────────────────────┼────────────────────────────┼──────────────
- 20-23m│ Compile│ mvn clean compile (3 min)                              │ ✓ Config validated
-───────┼────────┼────────────────────────────┼────────────────────────────┼──────────────
- 23-35m│ 1.2B   │ [T127] ThreadPool Config   │ [T158] Batch Monitoring    │ Threading config ready
-       │        │ [T128] Async Execution     │ [T159] Optimization Tests  │ Monitoring setup
-       │        │ Backend Expert             │ Backend Expert             │
-───────┼────────┼────────────────────────────┼────────────────────────────┼──────────────
- 35-38m│ Compile│ mvn clean test-compile (3 min)                         │ ✓ Tests compile
-───────┼────────┼────────────────────────────┼────────────────────────────┼──────────────
- 38-50m│ Test   │ mvn test (12 min)                                      │ ✓ All tests pass
-       │        │ Parallel test execution (reuse containers)             │
-───────┼────────┼────────────────────────────┼────────────────────────────┼──────────────
- 50m   │ PHASE 1 COMPLETE               │ Foundation ready for Phase 2  │ ✅ READY
-       │        │ Ready for user story work  │                            │
+ Phase │ Execution Mode │ Subagent            │ Tasks (Grouped)                     │ Check Action
+───────┼────────────────┼─────────────────────┼──────────────────────────────────────┼──────────────────────────────
+ 1.1   │ Parallel       │ Backend Expert      │ [T001] DDD Structure                │ mvn clean compile
+       │                │                     │ [T004] Testcontainers Setup         │
+───────┼────────────────┼─────────────────────┼──────────────────────────────────────┼──────────────────────────────
+ 1.2A  │ Parallel       │ Backend Expert      │ [T002] Dependencies                 │ mvn clean compile
+       │                │                     │ [T003] app.yml                      │
+       │                │                     │ [T126] Properties                   │
+───────┼────────────────┼─────────────────────┼──────────────────────────────────────┼──────────────────────────────
+ 1.2B  │ Parallel       │ Backend Expert      │ [T127] ThreadPool Config            │ mvn clean test-compile
+       │                │                     │ [T128] Async Execution              │
+       │                │                     │ [T158] Batch Monitoring             │
+       │                │                     │ [T159] Optimization Tests           │
+───────┼────────────────┼─────────────────────┼──────────────────────────────────────┼──────────────────────────────
+ 1.3   │ Sequential     │ Test Expert         │ [T160] Contract Validation          │ mvn test
+       │                │                     │ [T161] Performance Smoke            │
+───────┼────────────────┼─────────────────────┼──────────────────────────────────────┼──────────────────────────────
+ Done  │ —              │ Lead Agent          │ Phase 1 sign-off                    │ ✅ READY
 
 LEGEND:
 [Tnnn] = Task ID
-✓ = Success checkpoint
-✗ = Would indicate failure/halt
-m = minutes
+Parallel = may run alongside other phases; Sequential = must run one after another
+Every phase includes an explicit validation command
+Check Action uses mvn/gradle/cli commands or equivalent verification step
 ```
 
 ---
 
 ### 12. Output to User
 
-**Generate comprehensive optimization report** with following sections:
+**Produce a concise optimization report** that leads with the phase table:
 
-**Section A: Executive Summary**
-```
-OPTIMIZATION SUMMARY
+1. **Minimal Summary**: One sentence (max two) highlighting the primary optimization gain or risk reminder.
+2. **Phase Execution Matrix**: Present the table from Step 11 exactly once; this is the focal artifact.
+3. **Supporting Sections** (only if needed): Keep Dependency Analysis, Parallelization Opportunities, Subagent Strategy, Resource Estimation, Risk Assessment, Recommendations, and Next Steps succinct—use bullets and avoid repetition. Skip sections that add no new signal.
 
-Current Approach (Sequential):
-- Estimated duration: [X] minutes
-- Subagent count: [N]
-- Parallelization: Minimal
-
-Optimized Approach (Recommended):
-- Estimated duration: [Y] minutes (Z% faster)
-- Subagent allocation: [N1] backend-experts, [N2] test-experts
-- Parallelization: [N] concurrent batches
-- Checkpoint strategy: [M] validation points
-
-Key Improvements:
-1. [Improvement]: [Benefit]
-2. [Improvement]: [Benefit]
-3. [Improvement]: [Benefit]
-```
-
-**Section B: Dependency Analysis (as above)**
-
-**Section C: Parallelization Opportunities (as above)**
-
-**Section D: Subagent Assignment Strategy (as above)**
-
-**Section E: Execution Phases & Timeline (as above - include timeline table)**
-
-**Section F: Resource Estimation (as above)**
-
-**Section G: Risk Assessment (as above)**
-
-**Section H: Optimization Recommendations (as above)**
-
-**Section I: Next Steps**
+Ensure the report keeps the table front-and-center and avoids reintroducing time-based columns.
 
 ```
 RECOMMENDED NEXT STEPS
 
 1. ✅ VALIDATE THIS PLAN
-   - Review the timeline above for feasibility
+   - Review the phase matrix above for feasibility
    - Confirm subagent availability: [N] concurrent agents
    - Confirm resource availability: [MB] peak memory
    - Estimate actual duration: [minutes] (add 20% buffer)
@@ -434,7 +396,7 @@ RECOMMENDED NEXT STEPS
    - Validate tests pass at end of Phase 1
 
 4. 📊 TRACK PROGRESS
-   - Record actual vs estimated times for each batch
+   - Record actual vs estimated effort for each phase
    - Document any blockers or task failures
    - Use data for refining future optimizations
 
@@ -454,7 +416,7 @@ RECOMMENDED NEXT STEPS
 - Analyze task.md for dependencies and parallelization
 - Calculate resource requirements
 - Identify optimal subagent allocation strategy
-- Generate realistic execution timeline with batching
+- Build a phase-oriented execution plan with batching guidance
 - Provide checkpoint/validation strategy
 - Quantify optimization benefits (time savings, resource efficiency)
 - Recommend risk mitigation approaches

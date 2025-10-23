@@ -84,3 +84,4 @@ This repository is a starter kit for building "skills" and "agents" for Claude C
 - Version: 1.0.0 — Initial Java support with Spring Boot and LangChain4J integration, designed to be extended to other languages
 - Version: 1.1.0 - Added new commands for Github Spec Kit: check integration, verify spec implementation.
 - Version: 1.2.0 — Added new optimization command: speckit.optimize for task workflow parallelization and subagent delegation strategy
+- Version: 1.2.1 — Added new optimization command: speckit.optimize for task workflow parallelization and subagent delegation strategy
