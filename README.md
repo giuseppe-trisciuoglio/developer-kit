@@ -85,3 +85,4 @@ This repository is a starter kit for building "skills" and "agents" for Claude C
 - Version: 1.1.0 - Added new commands for Github Spec Kit: check integration, verify spec implementation.
 - Version: 1.2.0 — Added new optimization command: speckit.optimize for task workflow parallelization and subagent delegation strategy
 - Version: 1.2.1 — Edited speckit.optimize command: fixed report and summary.
+- Version: 1.3.0 — Added new agent: spring-boot-unit-testing-expert.md for unit testing best practices and patterns.

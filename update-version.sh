@@ -33,7 +33,7 @@ echo "✅ Updated marketplace.json version to $NEW_VERSION"
 
 # Add version entry to README.md at the end (before last line if it's blank)
 TIMESTAMP=$(date -u +'%Y-%m-%d')
-VERSION_ENTRY="- Version: $NEW_VERSION — $(date +'Added new optimization command: speckit.optimize for task workflow parallelization and subagent delegation strategy')"
+VERSION_ENTRY="- Version: $NEW_VERSION — $(date +'TODO: Write a brief description of the changes made in this version.') (Released on $TIMESTAMP)"
 
 # Remove last line if empty, add new version line, then re-add separator
 if [ "$(tail -c 1 "$README_FILE" | wc -l)" -eq 0 ]; then
