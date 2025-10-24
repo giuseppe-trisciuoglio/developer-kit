@@ -24,7 +24,8 @@ This repository is a starter kit for building "skills" and "agents" for Claude C
 ## Available Skills
 
 ### Spring Boot Skills
-  - `skills/spring-boot-patterns/SKILL.md` — patterns and best practices for Spring Boot.
+  - `skills/spring-boot-crud-patterns/SKILL.md` — REST CRUD APIs with DDD architecture, feature-based structure, and Lombok integration.
+  - `skills/spring-boot-event-driven-patterns/SKILL.md` — Event-Driven Architecture with domain events, Kafka messaging, and Spring Cloud Stream.
   - `skills/spring-boot-rest-api-standards/SKILL.md` — REST API guidelines for Spring Boot (606 lines).
   - `skills/spring-boot-test-patterns/SKILL.md` — testing patterns for Spring applications.
   - `skills/junit-test-patterns/SKILL.md` — examples and conventions for JUnit.
@@ -37,8 +38,10 @@ This repository is a starter kit for building "skills" and "agents" for Claude C
   - `skills/langchain4j-tool-function-calling-patterns/SKILL.md` — Tool and function calling patterns for AI agents.
 
 ## Current status and language roadmap
-- Current status: most skills and agents contain Java examples and conventions (Spring Boot, JUnit, LangChain4J).
-  - **Spring Boot**: Complete testing patterns, REST API standards, and code review agents
+- Current status: comprehensive Java/Spring Boot patterns with specialized skills.
+  - **Spring Boot CRUD**: Complete REST API patterns, DDD architecture, feature-based structure, and Lombok integration
+  - **Spring Boot Event-Driven**: Event-Driven Architecture with domain events, Kafka messaging, and transactional patterns
+  - **Spring Boot Testing**: Integration testing patterns, JUnit best practices, and Testcontainers
   - **LangChain4J**: Comprehensive AI development patterns including RAG, AI services, MCP servers, and tool integration
 - Roadmap: we plan to add dedicated skills and agents for:
   - PHP (e.g., Laravel, Symfony)
@@ -85,3 +88,4 @@ This repository is a starter kit for building "skills" and "agents" for Claude C
 - Version: 1.1.0 - Added new commands for Github Spec Kit: check integration, verify spec implementation.
 - Version: 1.2.0 — Added new optimization command: speckit.optimize for task workflow parallelization and subagent delegation strategy
 - Version: 1.2.1 — Edited speckit.optimize command: fixed report and summary.
+- Version: 1.3.0 — Split spring-boot-patterns into two specialized skills: spring-boot-crud-patterns and spring-boot-event-driven-patterns for focused learning and implementation.
