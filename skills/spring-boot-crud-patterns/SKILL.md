@@ -1014,15 +1014,23 @@ logging.level.org.springframework.web=DEBUG
 logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
 ```
 
+## Related Skills and References
+
+- **spring-boot-dependency-injection/SKILL.md** — comprehensive DI patterns, constructor injection best practices, and testing strategies
+- **spring-boot-rest-api-standards/SKILL.md** — REST API design principles and endpoint patterns
+- **junit-test-patterns/SKILL.md** — unit and integration testing patterns for all layers
+- **agents/spring-boot-code-review-specialist.md** — code review guidelines emphasizing DDD and constructor injection
+
 ## Summary
 
 This Spring Boot CRUD Patterns skill provides:
 
 1. **Feature-based DDD Architecture** with clean separation between domain, application, and infrastructure layers
-2. **Lombok Integration** for reducing boilerplate code while maintaining readability
-3. **Spring-free Domain Layer** with pure business logic and domain entities
-4. **Complete REST CRUD API** following hexagonal architecture principles
-5. **Comprehensive Testing** strategies for all layers including domain, application, and integration tests
-6. **Production-ready Configurations** with proper database setup and monitoring
+2. **Constructor Injection Patterns** using Lombok's `@RequiredArgsConstructor` for all Spring beans
+3. **Lombok Integration** for reducing boilerplate code while maintaining readability
+4. **Spring-free Domain Layer** with pure business logic and domain entities
+5. **Complete REST CRUD API** following hexagonal architecture principles
+6. **Comprehensive Testing** strategies for all layers including domain, application, and integration tests
+7. **Production-ready Configurations** with proper database setup and monitoring
 
-These patterns enable you to build scalable, maintainable, and testable Spring Boot applications following modern enterprise development practices with Domain-Driven Design principles.
+These patterns enable you to build scalable, maintainable, and testable Spring Boot applications following modern enterprise development practices with Domain-Driven Design principles and constructor-based dependency injection.

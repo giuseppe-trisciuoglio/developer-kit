@@ -908,6 +908,11 @@ Gradle
 
 This skill covers comprehensive integration testing patterns for Spring Boot applications using Java, enabling you to write reliable, performant tests across the entire application stack.
 
+**Related Skills:**
+- **spring-boot-dependency-injection/SKILL.md** — Unit testing patterns with constructor injection and manual mocking
+- **spring-boot-rest-api-standards/SKILL.md** — REST API patterns to test
+- **spring-boot-crud-patterns/SKILL.md** — CRUD patterns to test
+
 **Key Concepts Covered:**
 
 1. **Test Architecture**: Understanding test slices (@DataJpaTest, @WebMvcTest, @WebFluxTest), Spring context caching, and when to use full @SpringBootTest

@@ -861,24 +861,46 @@ public class GlobalExceptionHandler {
 ## Best Practices
 
 ### 1. Always Use Constructor Injection
-Prefer constructor injection over field injection for better testability and explicit dependencies.
+Prefer constructor injection over field injection for better testability and explicit dependencies. This is the recommended pattern for mandatory dependencies.
 
 ```java
-// Good
+// Good - Constructor injection with Lombok
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final EmailService emailService;
+    
+    public User registerUser(CreateUserRequest request) {
+        User user = User.create(request.getName(), request.getEmail());
+        return userRepository.save(user);
+    }
 }
 
-// Bad - avoid
+// Good - Constructor injection explicit
+@Service
+public class UserService {
+    private final UserRepository userRepository;
+    private final EmailService emailService;
+    
+    public UserService(UserRepository userRepository, EmailService emailService) {
+        this.userRepository = userRepository;
+        this.emailService = emailService;
+    }
+}
+
+// Bad - Field injection (avoid)
 @Service
 public class UserService {
     @Autowired
-    private UserRepository userRepository;
+    private UserRepository userRepository;  // Hidden dependency, hard to test
+    
+    @Autowired
+    private EmailService emailService;      // Mutable state
 }
 ```
+
+**See:** `spring-boot-dependency-injection/SKILL.md` for comprehensive DI patterns and testing strategies.
 
 ### 2. Use DTOs for API Boundaries
 Never expose entities directly in API responses. Use DTOs to separate API contracts from domain models.
@@ -970,6 +992,7 @@ Use clear method names, Javadoc comments, and consistent response formats.
 ## References
 
 - `agents/spring-boot-code-review-specialist.md` — follow these review rules when authoring code.
+- `spring-boot-dependency-injection/SKILL.md` — comprehensive DI patterns, constructor injection, and testing.
 - `spring-boot-patterns/SKILL.md` — common patterns for the project.
 - `junit-test-patterns/SKILL.md` — testing patterns and best practices.
 

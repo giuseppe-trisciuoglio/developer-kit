@@ -24,6 +24,7 @@ This repository is a starter kit for building "skills" and "agents" for Claude C
 ## Available Skills
 
 ### Spring Boot Skills
+  - `skills/spring-boot-dependency-injection/SKILL.md` — DI best practices, constructor injection, and testing patterns.
   - `skills/spring-boot-crud-patterns/SKILL.md` — REST CRUD APIs with DDD architecture, feature-based structure, and Lombok integration.
   - `skills/spring-boot-event-driven-patterns/SKILL.md` — Event-Driven Architecture with domain events, Kafka messaging, and Spring Cloud Stream.
   - `skills/spring-boot-rest-api-standards/SKILL.md` — REST API guidelines for Spring Boot (606 lines).
@@ -39,6 +40,7 @@ This repository is a starter kit for building "skills" and "agents" for Claude C
 
 ## Current status and language roadmap
 - Current status: comprehensive Java/Spring Boot patterns with specialized skills.
+  - **Spring Boot Dependency Injection**: Constructor injection best practices, testing strategies, and anti-patterns
   - **Spring Boot CRUD**: Complete REST API patterns, DDD architecture, feature-based structure, and Lombok integration
   - **Spring Boot Event-Driven**: Event-Driven Architecture with domain events, Kafka messaging, and transactional patterns
   - **Spring Boot Testing**: Integration testing patterns, JUnit best practices, and Testcontainers

@@ -111,6 +111,7 @@ When reviewing, provide feedback in this format:
 ## Skills to Reference
 
 When reviewing, leverage your knowledge of:
+- `spring-boot-dependency-injection/SKILL.md` (for injection patterns and testing)
 - `spring-boot-patterns/SKILL.md`
 - `spring-boot-rest-api-standards/SKILL.md`
 - `junit-test-patterns/SKILL.md` (for testing-related code)
