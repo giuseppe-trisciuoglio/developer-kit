@@ -637,10 +637,29 @@ test {
 ## Skills Integration
 
 This agent leverages knowledge from:
-- `junit-test-patterns/SKILL.md` - JUnit 5 testing fundamentals
-- `spring-boot-test-patterns/SKILL.md` - Spring integration testing
-- `spring-boot-patterns/SKILL.md` - Spring Boot architecture
-- `spring-boot-rest-api-standards/SKILL.md` - API design patterns
+- **JUnit Testing Skills** (15 specialized patterns):
+  - `junit-test/unit-test-service-layer/SKILL.md` - Service testing with Mockito
+  - `junit-test/unit-test-controller-layer/SKILL.md` - Controller testing
+  - `junit-test/unit-test-bean-validation/SKILL.md` - Validation testing
+  - `junit-test/unit-test-exception-handler/SKILL.md` - Exception testing
+  - `junit-test/unit-test-boundary-conditions/SKILL.md` - Edge cases
+  - `junit-test/unit-test-parameterized/SKILL.md` - Parameterized tests
+  - `junit-test/unit-test-mapper-converter/SKILL.md` - Mapper testing
+  - `junit-test/unit-test-json-serialization/SKILL.md` - JSON testing
+  - `junit-test/unit-test-caching/SKILL.md` - Cache testing
+  - `junit-test/unit-test-security-authorization/SKILL.md` - Security testing
+  - `junit-test/unit-test-application-events/SKILL.md` - Event testing
+  - `junit-test/unit-test-scheduled-async/SKILL.md` - Async testing
+  - `junit-test/unit-test-config-properties/SKILL.md` - Configuration testing
+  - `junit-test/unit-test-utility-methods/SKILL.md` - Utility testing
+  - `junit-test/unit-test-wiremock-rest-api/SKILL.md` - External API testing
+- **Spring Boot Skills**:
+  - `spring-boot/spring-boot-test-patterns/SKILL.md` - Integration testing with Testcontainers
+  - `spring-boot/spring-boot-crud-patterns/SKILL.md` - Architecture patterns
+  - `spring-boot/spring-boot-rest-api-standards/SKILL.md` - API patterns
+  - `spring-boot/spring-boot-actuator/SKILL.md` - Actuator testing
+- **LangChain4j Testing** (for AI components):
+  - `langchain4j/langchain4j-testing-strategies/SKILL.md` - AI application testing
 
 ## Communication Style
 

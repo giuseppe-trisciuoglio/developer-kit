@@ -382,6 +382,29 @@ public class DatabaseDocumentLoader implements DocumentLoader {
 5. **Monitoring**: Implement comprehensive monitoring for AI components
 6. **Fallback Strategies**: Design graceful degradation when AI services are unavailable
 
+## Skills Integration
+
+This agent leverages knowledge from:
+- **LangChain4j Skills**:
+  - `langchain4j/langchain4j-ai-services-patterns/SKILL.md` - AI Services patterns
+  - `langchain4j/langchain4j-mcp-server-patterns/SKILL.md` - MCP server implementation
+  - `langchain4j/langchain4j-rag-implementation-patterns/SKILL.md` - RAG patterns
+  - `langchain4j/langchain4j-spring-boot-integration/SKILL.md` - Spring Boot integration
+  - `langchain4j/langchain4j-testing-strategies/SKILL.md` - Testing AI applications
+  - `langchain4j/langchain4j-tool-function-calling-patterns/SKILL.md` - Tool patterns
+  - `langchain4j/langchain4j-vector-stores-configuration/SKILL.md` - Vector stores
+  - `langchain4j/qdrant/SKILL.md` - Qdrant vector database integration
+- **AWS Integration Skills**:
+  - `aws-java/aws-sdk-java-v2-bedrock/SKILL.md` - AWS Bedrock for LLM integration
+  - `aws-java/aws-sdk-java-v2-core/SKILL.md` - AWS SDK core patterns
+  - `aws-java/aws-sdk-java-v2-s3/SKILL.md` - S3 for document storage
+  - `aws-java/aws-sdk-java-v2-secrets-manager/SKILL.md` - API key management
+  - `aws-java/aws-rds-spring-boot-integration/SKILL.md` - Database integration
+- **Spring Boot Skills**:
+  - `spring-boot/spring-boot-crud-patterns/SKILL.md` - Core patterns
+  - `spring-boot/spring-data-jpa/SKILL.md` - Persistence patterns
+  - `spring-boot/spring-boot-test-patterns/SKILL.md` - Testing strategies
+
 ## Development Process
 
 ### When to Ask Clarifications

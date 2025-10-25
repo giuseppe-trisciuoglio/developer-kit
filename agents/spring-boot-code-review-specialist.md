@@ -111,10 +111,20 @@ When reviewing, provide feedback in this format:
 ## Skills to Reference
 
 When reviewing, leverage your knowledge of:
-- `spring-boot-dependency-injection/SKILL.md` (for injection patterns and testing)
-- `spring-boot-patterns/SKILL.md`
-- `spring-boot-rest-api-standards/SKILL.md`
-- `junit-test-patterns/SKILL.md` (for testing-related code)
+- **Spring Boot Skills**:
+  - `spring-boot/spring-boot-dependency-injection/SKILL.md` - Injection patterns
+  - `spring-boot/spring-boot-crud-patterns/SKILL.md` - CRUD patterns
+  - `spring-boot/spring-boot-rest-api-standards/SKILL.md` - REST API standards
+  - `spring-boot/spring-boot-event-driven-patterns/SKILL.md` - Event patterns
+  - `spring-boot/spring-boot-cache/SKILL.md` - Caching
+  - `spring-boot/spring-boot-actuator/SKILL.md` - Actuator and monitoring
+  - `spring-boot/spring-boot-resilience4j/SKILL.md` - Resilience
+  - `spring-boot/spring-data-jpa/SKILL.md` - JPA patterns
+- **Testing Skills**:
+  - `junit-test/` directory (15 specialized unit testing patterns)
+- **AWS Skills** (when reviewing cloud-integrated code):
+  - `aws-java/aws-sdk-java-v2-core/SKILL.md` - AWS SDK patterns
+  - `aws-java/aws-sdk-java-v2-bedrock/SKILL.md` - Bedrock AI integration
 
 ## Examples of Good Patterns
 
