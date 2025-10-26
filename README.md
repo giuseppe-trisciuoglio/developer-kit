@@ -260,9 +260,11 @@ encryption
 3. Deploy via `/plugin install /path/to/developer-kit-claude-code`
 4. Share the plugin marketplace link with your team
 
-## 🔧 GitHub Spec Kit Custom Commands
+## 🔧 Custom Commands
 
-This kit includes specialized commands for workflow orchestration and verification:
+This kit includes specialized commands for workflow orchestration, verification, and skill validation:
+
+### GitHub Spec Kit Commands
 
 | Command                          | Purpose                                        | Use Case                                                                             |
 |----------------------------------|------------------------------------------------|--------------------------------------------------------------------------------------|
@@ -270,7 +272,13 @@ This kit includes specialized commands for workflow orchestration and verificati
 | **`/speckit.optimize`**          | Optimize execution plan for parallelization    | Run AFTER check-integration to plan subagent delegation and resource allocation      |
 | **`/speckit.verify`**            | Comprehensive implementation verification      | Run AFTER `/speckit.implement` to validate all requirements, tests, and code quality |
 
-### Workflow
+### Developer Kit Commands
+
+| Command                          | Purpose                                        | Use Case                                                                             |
+|----------------------------------|------------------------------------------------|--------------------------------------------------------------------------------------|
+| **`/devkit.verify-skill`**       | Validate skill against DevKit standards        | Verify a skill's compliance with requirements, format, and best practices             |
+
+### GitHub Spec Kit Workflow
 
 ```
 /speckit.tasks
@@ -284,7 +292,7 @@ This kit includes specialized commands for workflow orchestration and verificati
 /speckit.verify               ← Verify completeness & quality
 ```
 
-### Command Details
+### Spec Kit Command Details
 
 **`/speckit.check-integration`**
 
@@ -311,6 +319,19 @@ This kit includes specialized commands for workflow orchestration and verificati
 - Generates verification-report.md
 - **Output**: verification-report.md (PASS/FAIL)
 - **Timing**: After implementation execution
+
+### Developer Kit Command Details
+
+**`/devkit.verify-skill`**
+
+- Validates skill compliance with DevKit standards and official Skills documentation
+- Checks SKILL.md frontmatter (name, description, allowed-tools, etc.)
+- Verifies file structure and syntax (no YAML errors, valid paths)
+- Validates content quality (clear triggers, instructions, examples)
+- Confirms all referenced files exist in skill directory
+- **Usage**: `/devkit.verify-skill skill-name`
+- **Output**: Comprehensive validation report with PASS/FAIL status
+- **Best for**: Skill authors before submitting PRs or publishing
 
 ## 🌍 Language Roadmap
 
@@ -385,14 +406,15 @@ This project is licensed under the [LICENSE](LICENSE) file in the repository roo
 
 ## 📅 Changelog
 
-| Version   | Changes                                                                                                                                                                                                               |
-|-----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **1.4.0** | Refactor structure skills. Added 10 AWS Java SDK v2 skills (RDS Aurora, S3, DynamoDB, Lambda, Secrets Manager, etc.).<br/>ù Added Spring Data Neo4j skill with graph database patterns, Cypher queries, reactive mode |
-| **1.3.0** | Added spring-boot-unit-testing-expert agent                                                                                                                                                                           |
-| **1.2.1** | Fixed speckit.optimize report and summary                                                                                                                                                                             |
-| **1.2.0** | Added speckit.optimize command for workflow parallelization                                                                                                                                                           |
-| **1.1.0** | Added Github Spec Kit commands: check-integration, verify-spec-implementation                                                                                                                                         |
-| **1.0.0** | Initial release: Java support with Spring Boot and LangChain4J integration                                                                                                                                            |
+| Version   | Changes                                                                                                                                                                                                             |
+|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **1.5.0** | Refactor frontmatter skills. Added new command for review a skill.                                                                                                                                                  |
+| **1.4.0** | Refactor structure skills. Added 10 AWS Java SDK v2 skills (RDS Aurora, S3, DynamoDB, Lambda, Secrets Manager, etc.).<br/> Added Spring Data Neo4j skill with graph database patterns, Cypher queries, reactive mode |
+| **1.3.0** | Added spring-boot-unit-testing-expert agent                                                                                                                                                                         |
+| **1.2.1** | Fixed speckit.optimize report and summary                                                                                                                                                                           |
+| **1.2.0** | Added speckit.optimize command for workflow parallelization                                                                                                                                                         |
+| **1.1.0** | Added Github Spec Kit commands: check-integration, verify-spec-implementation                                                                                                                                       |
+| **1.0.0** | Initial release: Java support with Spring Boot and LangChain4J integration                                                                                                                                          |
 
 ---
 
