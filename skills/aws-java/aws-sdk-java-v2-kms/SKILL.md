@@ -1,6 +1,10 @@
 ---
 name: aws-sdk-java-v2-kms
 description: AWS Key Management Service (KMS) patterns using AWS SDK for Java 2.x. Use when creating/managing encryption keys, encrypting/decrypting data, generating data keys, digital signing, key rotation, or integrating encryption into Spring Boot applications.
+category: aws
+tags: [aws, kms, java, sdk, encryption, security]
+version: 1.0.1
+allowed-tools: Read, Write, Bash
 ---
 
 # AWS SDK for Java 2.x - AWS KMS (Key Management Service)

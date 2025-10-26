@@ -1,13 +1,12 @@
 ---
 name: langchain4j-ai-services-patterns
-description: Comprehensive guide for building declarative AI Services with LangChain4j using interface-based patterns, annotations, memory management, tools integration, and advanced AI application patterns
+description: Comprehensive guide for building declarative AI Services with LangChain4j using interface-based patterns, annotations, memory management, tools integration, and advanced AI application patterns. Use when implementing AI-powered features with LangChain4j in Java applications.
 category: ai-development
 tags: [langchain4j, ai-services, annotations, declarative, tools, memory, function-calling, llm, java]
-version: 1.0.0
+version: 1.0.1
 context7_library: /langchain4j/langchain4j
 context7_trust_score: 7.8
-language: en
-license: See LICENSE
+allowed-tools: Read, Write, Bash
 ---
 
 # LangChain4j AI Services Patterns

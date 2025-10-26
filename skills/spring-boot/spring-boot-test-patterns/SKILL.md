@@ -1,13 +1,12 @@
 ---
 name: spring-boot-integration-test-patterns
-description: Comprehensive integration testing for Spring Boot applications using Java, Testcontainers, Spring Boot test annotations, and best practices for slice tests, full-stack tests, and performance optimization
+description: Integration testing patterns with Testcontainers for Spring Boot applications. Database, cache, and external service testing. Use when writing integration tests that require real service dependencies.
 category: testing
 tags: [spring-boot, java, integration-testing, testcontainers, junit5, spring-test, testing-best-practices, mocking, test-slices]
-version: 1.0.0
-language: en
-license: See LICENSE
+version: 1.0.1
 context7_library: /spring-projects/spring-boot
 context7_trust_score: 7.5
+allowed-tools: Read, Write, Bash
 ---
 
 # Spring Boot Integration Test Patterns (Java)

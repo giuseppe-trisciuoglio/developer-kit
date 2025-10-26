@@ -1,11 +1,9 @@
 ---
 name: unit-test-scheduled-async
-description: Write unit tests for @Scheduled methods and @Async asynchronous operations. Test execution timing, threading behavior, CompletableFuture results without starting the scheduler or async executor.
+description: Unit tests for scheduled and async tasks using @Scheduled and @Async. Mock task execution and timing. Use when validating asynchronous operations and scheduling behavior.
 category: testing
 tags: [junit-5, scheduled, async, concurrency, completablefuture]
-version: 1.0.0
-language: en
-license: See LICENSE
+version: 1.0.1
 ---
 
 # Unit Testing @Scheduled and @Async Methods

@@ -1,13 +1,12 @@
 ---
 name: langchain4j-rag-implementation-patterns
-description: Comprehensive guide for implementing Retrieval-Augmented Generation (RAG) systems with LangChain4j including document ingestion, embedding stores, vector search, content retrieval, and advanced RAG patterns
+description: Retrieval-Augmented Generation (RAG) implementation patterns with LangChain4j. Retrieve documents, embed them, and augment LLM prompts with context. Use when building knowledge-powered AI applications.
 category: ai-development
 tags: [langchain4j, rag, retrieval-augmented-generation, embedding, vector-search, document-ingestion, content-retrieval, java]
 version: 1.0.0
 context7_library: /langchain4j/langchain4j
 context7_trust_score: 7.8
-language: en
-license: See LICENSE
+allowed-tools: Read, Write, Bash
 ---
 
 # LangChain4j RAG Implementation Patterns

@@ -1,13 +1,12 @@
 ---
 name: spring-boot-dependency-injection
-description: Best practices for Dependency Injection in Spring Boot. Covers constructor injection, setter injection, field injection anti-patterns, autowiring strategies, and testability patterns.
+description: Dependency Injection best practices in Spring Boot with constructor injection, setter injection, and field injection patterns. Use when configuring loose coupling and improving testability in your Spring beans.
 category: backend
 tags: [ spring-boot, dependency-injection, constructor-injection, autowiring, best-practices, testing, java ]
-version: 1.0.0
+version: 1.0.1
 context7_library: /spring-projects/spring-framework
 context7_trust_score: 9.0
-language: en
-license: See LICENSE
+allowed-tools: Read, Write, Bash
 ---
 
 # Spring Boot Dependency Injection Best Practices

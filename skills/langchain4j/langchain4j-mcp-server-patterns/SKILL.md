@@ -1,11 +1,12 @@
 ---
 name: langchain4j-mcp-server-patterns
-description: Comprehensive LangChain4j patterns for integrating with Model Context Protocol (MCP) servers, including tool providers, client configuration, resource handling, and AI service integration
+description: Model Context Protocol (MCP) server implementation patterns with LangChain4j. Use when building MCP servers to extend AI capabilities with custom tools and resources.
 category: ai-integration
 tags: [langchain4j, mcp, model-context-protocol, tools, ai-services, java, spring-boot]
-version: 1.0.0
+version: 1.0.1
 context7_library: /langchain4j/langchain4j
 context7_trust_score: 7.8
+allowed-tools: Read, Write, Bash
 ---
 
 # LangChain4j MCP Server Integration Patterns

@@ -1,11 +1,9 @@
 ---
 name: unit-test-json-serialization
-description: Write unit tests for JSON serialization/deserialization using JsonTest. Test ObjectMapper configuration, custom serializers, JSON property mapping without full Spring context.
+description: Unit tests for JSON serialization/deserialization with Jackson and @JsonTest. Use when validating JSON mapping, custom serializers, and date format handling.
 category: testing
 tags: [junit-5, json-test, jackson, serialization, deserialization]
-version: 1.0.0
-language: en
-license: See LICENSE
+version: 1.0.1
 ---
 
 # Unit Testing JSON Serialization with @JsonTest

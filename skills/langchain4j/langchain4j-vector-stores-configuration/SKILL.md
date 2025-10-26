@@ -1,9 +1,10 @@
 ---
 name: langchain4j-vector-stores-configuration
-description: Comprehensive LangChain4J vector stores configuration skill covering embedding storage, retrieval, indexing, and integration with popular vector databases for RAG and semantic search applications
+description: Configure LangChain4J vector stores for RAG applications. Use when building semantic search, integrating vector databases (PostgreSQL/pgvector, Pinecone, MongoDB, Milvus, Neo4j), implementing embedding storage/retrieval, setting up hybrid search, or optimizing vector database performance for production AI applications.
+allowed-tools: Read, Write, Bash, Edit
 category: backend
 tags: [langchain4j, vector-stores, embeddings, rag, semantic-search, ai, llm, java, databases]
-version: 1.0.0
+version: 1.1.0
 context7_library: /websites/langchain4j_dev
 context7_trust_score: 7.5
 ---
@@ -783,9 +784,84 @@ public class ScalableVectorStoreConfig {
 }
 ```
 
+## Examples
+
+### Basic RAG Application Setup
+```java
+@Configuration
+public class SimpleRagConfig {
+    
+    @Bean
+    public EmbeddingStore<TextSegment> embeddingStore() {
+        return PgVectorEmbeddingStore.builder()
+            .host("localhost")
+            .database("rag_db")
+            .table("documents")
+            .dimension(1536)
+            .build();
+    }
+    
+    @Bean
+    public ChatLanguageModel chatModel() {
+        return OpenAiChatModel.withApiKey(System.getenv("OPENAI_API_KEY"));
+    }
+    
+    @Bean
+    public EmbeddingModel embeddingModel() {
+        return OpenAiEmbeddingModel.withApiKey(System.getenv("OPENAI_API_KEY"));
+    }
+}
+```
+
+### Semantic Search Service
+```java
+@Service
+public class SemanticSearchService {
+    
+    private final EmbeddingStore<TextSegment> store;
+    private final EmbeddingModel embeddingModel;
+    
+    public List<String> search(String query, int maxResults) {
+        Embedding queryEmbedding = embeddingModel.embed(query).content();
+        
+        EmbeddingSearchRequest request = EmbeddingSearchRequest.builder()
+            .queryEmbedding(queryEmbedding)
+            .maxResults(maxResults)
+            .minScore(0.75)
+            .build();
+        
+        return store.search(request).matches().stream()
+            .map(match -> match.embedded().text())
+            .toList();
+    }
+}
+```
+
+### Production Setup with Monitoring
+```java
+@Configuration
+public class ProductionVectorStoreConfig {
+    
+    @Bean
+    public EmbeddingStore<TextSegment> vectorStore(
+            @Value("${vector.store.host}") String host,
+            MeterRegistry meterRegistry) {
+        
+        EmbeddingStore<TextSegment> store = PgVectorEmbeddingStore.builder()
+            .host(host)
+            .database("production_vectors")
+            .useIndex(true)
+            .indexListSize(200)
+            .build();
+        
+        return new MonitoredEmbeddingStore<>(store, meterRegistry);
+    }
+}
+```
+
 ## Summary
 
-This LangChain4J vector stores configuration skill covers:
+This skill provides comprehensive LangChain4J vector store configuration covering:
 
 1. **EmbeddingStore Interface**: Unified API for vector operations across different providers
 2. **Supported Stores**: Configuration for PostgreSQL, Pinecone, MongoDB, Neo4j, Milvus, and more

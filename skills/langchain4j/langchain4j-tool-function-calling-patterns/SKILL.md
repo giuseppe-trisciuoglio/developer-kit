@@ -1,13 +1,12 @@
 ---
 name: langchain4j-tool-function-calling-patterns
-description: Comprehensive guide for implementing tool and function calling patterns with LangChain4j including @Tool annotations, dynamic tools, parameter handling, error management, and advanced integration patterns
+description: Tool and function calling patterns with LangChain4j. Define tools, handle function calls, and integrate with LLM agents. Use when building agentic applications that interact with tools.
 category: ai-development
-tags: [langchain4j, tools, function-calling, @Tool, ToolProvider, ToolExecutor, dynamic-tools, parameter-descriptions, java]
-version: 1.0.0
+tags: [langchain4j, tools, function-calling, "@Tool", ToolProvider, ToolExecutor, dynamic-tools, parameter-descriptions, java]
+version: 1.0.1
 context7_library: /langchain4j/langchain4j
 context7_trust_score: 7.8
-language: en
-license: See LICENSE
+allowed-tools: Read, Write, Bash
 ---
 
 # LangChain4j Tool & Function Calling Patterns

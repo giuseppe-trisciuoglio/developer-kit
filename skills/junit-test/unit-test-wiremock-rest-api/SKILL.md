@@ -1,11 +1,9 @@
 ---
 name: unit-test-wiremock-rest-api
-description: Write unit tests for third-party REST APIs using WireMock. Stub HTTP responses, verify requests, test error scenarios without making real network calls. No Spring context required - pure unit tests with WireMock.
+description: Unit tests for external REST APIs using WireMock to mock HTTP endpoints. Use when testing service integrations with external APIs.
 category: testing
 tags: [junit-5, wiremock, unit-testing, rest-api, mocking, http-stubbing]
-version: 1.0.0
-language: en
-license: See LICENSE
+version: 1.0.1
 ---
 
 # Unit Testing REST APIs with WireMock

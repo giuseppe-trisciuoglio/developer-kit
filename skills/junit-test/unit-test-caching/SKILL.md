@@ -1,11 +1,9 @@
 ---
 name: unit-test-caching
-description: Write unit tests for Spring caching with @Cacheable, @CacheEvict, @CachePut annotations. Test cache behavior, cache hits/misses, invalidation strategies using JUnit 5 and Mockito.
+description: Unit tests for caching behavior using Spring Cache annotations (@Cacheable, @CachePut, @CacheEvict). Use when validating cache configuration and cache hit/miss scenarios.
 category: testing
 tags: [junit-5, caching, cacheable, cache-evict, cache-put]
-version: 1.0.0
-language: en
-license: See LICENSE
+version: 1.0.1
 ---
 
 # Unit Testing Spring Caching

@@ -1,11 +1,10 @@
 ---
 name: spring-boot-crud-patterns
-description: REST CRUD APIs with Domain-Driven Design, feature-based architecture, Lombok integration and constructor injection patterns
+description: CRUD operation patterns with Spring Data JPA repositories. Standard patterns for Create, Read, Update, Delete operations. Use when implementing standard data persistence workflows in Spring Boot applications.
 category: backend
 tags: [spring-boot, java, ddd, lombok, rest-api, crud, jpa, feature-architecture]
 version: 1.0.0
-license: MIT
-author: Claude Code Development Kit
+allowed-tools: Read, Write, Bash
 ---
 
 # Spring Boot CRUD Patterns Skill

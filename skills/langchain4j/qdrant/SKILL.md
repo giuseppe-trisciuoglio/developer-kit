@@ -1,9 +1,10 @@
 ---
 name: qdrant-java-development
-description: A comprehensive guide for Java developers on using Qdrant with Spring Boot and Langchain4j. It covers setup, core operations, and best practices for building modern AI applications.
+description: Qdrant vector database integration patterns with LangChain4j. Store embeddings, similarity search, and vector management. Use when implementing vector-based retrieval for RAG systems.
 category: backend
 tags: [qdrant, java, spring-boot, langchain4j, vector-search, ai, machine-learning]
-version: 1.1.0
+version: 1.1.1
+allowed-tools: Read, Write, Bash
 ---
 
 # Qdrant for Java and Spring Boot Developers
@@ -227,7 +228,7 @@ Add the `langchain4j-qdrant` dependency to your project.
 <dependency>
     <groupId>dev.langchain4j</groupId>
     <artifactId>langchain4j-qdrant</artifactId>
-    <version>0.34.0</version> <!-- Check for the latest version -->
+    <version>1.7.0</version> <!-- Check for the latest version -->
 </dependency>
 ```
 

@@ -1,11 +1,12 @@
 ---
 name: langchain4j-testing-strategies
-description: Comprehensive testing strategies for LangChain4J applications including unit tests, integration tests, mocking, and Testcontainers setup
+description: Testing strategies for LangChain4j-powered applications. Mock LLM responses, test retrieval chains, and validate AI workflows. Use when testing AI-powered features reliably.
 category: backend
 tags: [langchain4j, testing, unit-tests, integration-tests, testcontainers, java, ai, llm, mock]
-version: 1.0.0
+version: 1.0.1
 context7_library: /langchain4j/langchain4j
 context7_trust_score: 7.8
+allowed-tools: Read, Write, Bash
 ---
 
 # LangChain4J Testing Strategies Skill
@@ -36,7 +37,6 @@ Use this skill when:
     <dependency>
         <groupId>dev.langchain4j</groupId>
         <artifactId>langchain4j</artifactId>
-        <version>${langchain4j.version}</version>
     </dependency>
 
     <!-- Testing utilities -->

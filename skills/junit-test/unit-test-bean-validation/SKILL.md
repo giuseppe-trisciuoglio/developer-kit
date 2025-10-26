@@ -1,11 +1,9 @@
 ---
 name: unit-test-bean-validation
-description: Write unit tests for input validation using Jakarta Bean Validation (@NotNull, @NotBlank, etc.) and custom validators. Test validation constraints, error messages, and cross-field validation without Spring context.
+description: Unit testing Jakarta Bean Validation (@Valid, @NotNull, @Min, @Max, etc.) with custom validators and constraint violations. Test validation logic without Spring context. Use when ensuring data integrity and validation rules are correct.
 category: testing
 tags: [junit-5, validation, bean-validation, jakarta-validation, constraints]
-version: 1.0.0
-language: en
-license: See LICENSE
+version: 1.0.1
 ---
 
 # Unit Testing Bean Validation and Custom Validators

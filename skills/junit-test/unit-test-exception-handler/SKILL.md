@@ -1,11 +1,9 @@
 ---
 name: unit-test-exception-handler
-description: Write unit tests for @ControllerAdvice and @ExceptionHandler methods. Mock MockMvc to test exception handling, error response formatting, and HTTP status code selection without Spring context.
+description: Unit tests for @ExceptionHandler and @ControllerAdvice for global exception handling. Use when validating error response formatting and HTTP status codes.
 category: testing
 tags: [junit-5, exception-handler, controller-advice, error-handling, mockmvc]
-version: 1.0.0
-language: en
-license: See LICENSE
+version: 1.0.1
 ---
 
 # Unit Testing ExceptionHandler and ControllerAdvice

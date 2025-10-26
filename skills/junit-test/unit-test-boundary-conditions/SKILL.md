@@ -1,11 +1,9 @@
 ---
 name: unit-test-boundary-conditions
-description: Write unit tests for boundary conditions, edge cases, and limit values. Test null, empty, whitespace, min/max values, and overflow scenarios systematically using JUnit 5.
+description: Edge case and boundary testing patterns for unit tests. Testing minimum/maximum values, null cases, empty collections, and numeric precision. Pure JUnit 5 unit tests. Use when ensuring code handles limits and special cases correctly.
 category: testing
 tags: [junit-5, boundary-testing, edge-cases, parameterized-test]
-version: 1.0.0
-language: en
-license: See LICENSE
+version: 1.0.1
 ---
 
 # Unit Testing Boundary Conditions and Edge Cases

@@ -1,6 +1,10 @@
 ---
 name: aws-sdk-java-v2-messaging
 description: AWS messaging patterns using AWS SDK for Java 2.x for SQS and SNS. Use when working with SQS queues (send/receive messages, FIFO queues, DLQ), SNS topics (publish messages, subscriptions), or implementing pub/sub patterns.
+category: aws
+tags: [aws, sqs, sns, java, sdk, messaging, pub-sub]
+version: 1.0.1
+allowed-tools: Read, Write, Bash
 ---
 
 # AWS SDK for Java 2.x - Messaging (SQS & SNS)

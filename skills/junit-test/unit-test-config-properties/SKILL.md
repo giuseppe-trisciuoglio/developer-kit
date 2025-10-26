@@ -1,11 +1,9 @@
 ---
 name: unit-test-config-properties
-description: Write unit tests for @ConfigurationProperties and Spring profiles. Test property binding, validation, environment-specific configurations without loading full Spring context.
+description: Unit tests for @ConfigurationProperties classes with @ConfigurationPropertiesTest. Use when validating application configuration binding and validation.
 category: testing
 tags: [junit-5, configuration-properties, spring-profiles, property-binding]
-version: 1.0.0
-language: en
-license: See LICENSE
+version: 1.0.1
 ---
 
 # Unit Testing Configuration Properties and Profiles

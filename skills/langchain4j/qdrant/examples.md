@@ -34,7 +34,7 @@ This example demonstrates how to set up a `QdrantClient`, create a collection, u
     <dependency>
         <groupId>dev.langchain4j</groupId>
         <artifactId>langchain4j-all-minilm-l6-v2</artifactId>
-        <version>0.34.0</version>
+        <version>1.7.0</version>
     </dependency>
 </dependencies>
 ```
@@ -200,22 +200,22 @@ This example shows a complete setup for a Retrieval-Augmented Generation (RAG) s
     <dependency>
         <groupId>dev.langchain4j</groupId>
         <artifactId>langchain4j</artifactId>
-        <version>0.34.0</version>
+        <version>1.7.0</version>
     </dependency>
     <dependency>
         <groupId>dev.langchain4j</groupId>
         <artifactId>langchain4j-qdrant</artifactId>
-        <version>0.34.0</version>
+        <version>1.7.0</version>
     </dependency>
     <dependency>
         <groupId>dev.langchain4j</groupId>
         <artifactId>langchain4j-all-minilm-l6-v2</artifactId>
-        <version>0.34.0</version>
+        <version>1.7.0</version>
     </dependency>
     <dependency>
         <groupId>dev.langchain4j</groupId>
         <artifactId>langchain4j-open-ai</artifactId>
-        <version>0.34.0</version>
+        <version>1.7.0</version>
     </dependency>
 </dependencies>
 ```

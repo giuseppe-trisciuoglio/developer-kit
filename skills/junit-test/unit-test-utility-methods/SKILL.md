@@ -1,11 +1,9 @@
 ---
 name: unit-test-utility-methods
-description: Write unit tests for utility classes with static helper methods using JUnit 5. Test pure functions, string manipulation, calculations, conversions. No Spring required - simple, fast unit tests.
+description: Unit tests for utility/helper classes and static methods. Test pure functions and helper logic. Use when validating utility code correctness.
 category: testing
 tags: [junit-5, unit-testing, utility, static-methods, pure-functions]
-version: 1.0.0
-language: en
-license: See LICENSE
+version: 1.0.1
 ---
 
 # Unit Testing Utility Classes and Static Methods

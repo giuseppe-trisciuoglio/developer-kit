@@ -1,11 +1,9 @@
 ---
 name: unit-test-parameterized
-description: Write parameterized unit tests using @ParameterizedTest with various sources (@ValueSource, @MethodSource, @CsvSource, @EnumSource). Test multiple scenarios efficiently with JUnit 5 parameterized tests.
+description: Parameterized testing patterns with @ParameterizedTest, @ValueSource, @CsvSource. Run single test method with multiple input combinations. Use when testing multiple scenarios with similar logic.
 category: testing
 tags: [junit-5, parameterized-test, value-source, csv-source, method-source]
-version: 1.0.0
-language: en
-license: See LICENSE
+version: 1.0.1
 ---
 
 # Parameterized Unit Tests with JUnit 5

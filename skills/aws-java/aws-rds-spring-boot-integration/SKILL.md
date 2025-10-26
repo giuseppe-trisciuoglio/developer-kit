@@ -3,7 +3,7 @@ name: aws-rds-aurora-spring-data-jpa-configuration
 description: Focused guide for configuring AWS RDS Aurora (MySQL/PostgreSQL) with Spring Data JPA. Use when setting up Aurora database connections, configuring datasources, connection pooling, and production-ready settings.
 category: aws
 tags: [aws, rds, aurora, spring-boot, spring-data-jpa, datasource, configuration, hikari]
-version: 2.0.0
+version: 1.0.0
 allowed-tools: Read, Write, Bash
 ---
 

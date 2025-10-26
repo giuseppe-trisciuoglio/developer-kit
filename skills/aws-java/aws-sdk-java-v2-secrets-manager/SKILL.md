@@ -1,6 +1,10 @@
 ---
 name: aws-sdk-java-v2-secrets-manager
 description: AWS Secrets Manager patterns using AWS SDK for Java 2.x. Use when storing/retrieving secrets (passwords, API keys, tokens), rotating secrets automatically, managing database credentials, or integrating secret management into Spring Boot applications.
+category: aws
+tags: [aws, secrets-manager, java, sdk, security, credentials]
+version: 1.0.1
+allowed-tools: Read, Write, Glob, Bash
 ---
 
 # AWS SDK for Java 2.x - AWS Secrets Manager

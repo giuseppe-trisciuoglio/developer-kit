@@ -1,11 +1,10 @@
 ---
 name: spring-boot-event-driven-patterns
-description: Event-Driven Architecture implementation with Spring Boot, domain events, event publishing, and distributed messaging with Kafka and Spring Cloud Stream
+description: Event-driven architecture patterns in Spring Boot using ApplicationEvent, ApplicationEventPublisher, and @EventListener. Use when building loosely-coupled microservices with event-based communication.
 category: backend
 tags: [spring-boot, java, event-driven, eda, kafka, messaging, domain-events, microservices, spring-cloud-stream]
-version: 1.0.0
-license: MIT
-author: Claude Code Development Kit
+version: 1.0.1
+allowed-tools: Read, Write, Bash
 ---
 
 # Spring Boot Event-Driven Patterns Skill

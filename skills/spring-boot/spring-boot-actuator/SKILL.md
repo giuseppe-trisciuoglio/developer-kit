@@ -2,6 +2,9 @@
 name: spring-boot-actuator
 description: Expert knowledge on Spring Boot Actuator for production-ready monitoring, health checks, metrics, and management endpoints. Use when implementing or troubleshooting Actuator endpoints, custom health indicators, metrics collection, or production monitoring features.
 allowed-tools: Read, Write, Bash
+category: backend
+tags: [spring-boot, actuator, monitoring, health-checks, metrics, production]
+version: 1.0.1
 ---
 
 # Spring Boot Actuator Patterns

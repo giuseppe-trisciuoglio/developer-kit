@@ -2,6 +2,9 @@
 name: spring-boot-resilience4j
 description: Implement fault tolerance and resilience patterns in Spring Boot applications using Resilience4j library. Use for circuit breaker, retry, rate limiter, bulkhead, time limiter, and fallback patterns. Apply when building resilient microservices that need to handle failures gracefully, prevent cascading failures, and manage external service dependencies.
 allowed-tools: Read, Write, Edit, Bash
+category: backend
+tags: [spring-boot, resilience4j, circuit-breaker, fault-tolerance, retry]
+version: 1.0.1
 ---
 
 # Spring Boot Resilience4j Patterns

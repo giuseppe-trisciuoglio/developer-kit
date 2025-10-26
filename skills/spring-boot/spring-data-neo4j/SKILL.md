@@ -1,9 +1,10 @@
 ---
 name: spring-data-neo4j
 description: Expert in Spring Data Neo4j integration patterns for graph database development. Use when working with Neo4j graph databases, node entities, relationships, Cypher queries, reactive Neo4j operations, or Spring Data Neo4j repositories. Essential for graph data modeling, relationship mapping, custom queries, and Neo4j testing strategies.
-language: Java
-version: 1.0.0
-license: MIT
+version: 1.0.1
+allowed-tools: Read, Write, Bash
+category: backend
+tags: [spring-data, neo4j, graph-database, database]
 ---
 
 # Spring Data Neo4j Integration Patterns

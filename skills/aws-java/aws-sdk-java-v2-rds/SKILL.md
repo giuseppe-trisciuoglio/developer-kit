@@ -3,7 +3,7 @@ name: aws-rds
 description: AWS RDS (Relational Database Service) management using AWS SDK for Java 2.x. Use when working with RDS instances, creating databases, managing snapshots, parameter groups, or querying RDS metadata and configurations.
 category: aws
 tags: [aws, rds, database, java, sdk, postgresql, mysql, aurora]
-version: 1.0.0
+version: 1.0.1
 allowed-tools: Read, Write, Bash
 ---
 

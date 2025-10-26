@@ -1,11 +1,9 @@
 ---
 name: unit-test-mapper-converter
-description: Write unit tests for Mapper classes (MapStruct) and custom converters between DTOs and entities. Test field mapping, transformations, nested objects, and type conversions using JUnit 5.
+description: Unit tests for mappers and converters (MapStruct, custom mappers). Test object transformation logic in isolation. Use when ensuring correct data transformation between DTOs and domain objects.
 category: testing
 tags: [junit-5, mapstruct, mapper, dto, entity, converter]
-version: 1.0.0
-language: en
-license: See LICENSE
+version: 1.0.1
 ---
 
 # Unit Testing Mappers and Converters

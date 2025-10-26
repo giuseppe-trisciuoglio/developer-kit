@@ -1,11 +1,9 @@
 ---
 name: unit-test-service-layer
-description: Write unit tests for Service layer (@Service) using Mockito to mock injected dependencies (repositories, clients). Test business logic in isolation without Spring context. No containers - pure JUnit 5 + Mockito unit tests.
+description: Unit tests for service layer with Mockito. Test business logic in isolation by mocking dependencies. Use when validating service behaviors and business logic without database or external services.
 category: testing
 tags: [junit-5, mockito, unit-testing, service-layer, business-logic]
-version: 1.0.0
-language: en
-license: See LICENSE
+version: 1.0.1
 ---
 
 # Unit Testing Service Layer with Mockito

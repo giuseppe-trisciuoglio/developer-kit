@@ -1,14 +1,10 @@
 ---
-name: Spring Boot Cache Abstraction
-description: Master Spring's caching abstraction with annotations, configuration, and best practices for improving application performance
-language: Java
-license: MIT
-keywords:
-  - caching
-  - performance
-  - annotations
-  - spring-boot
-  - cache-management
+name: spring-boot-cache
+description: Caching strategies with Spring Cache abstraction using @Cacheable, @CachePut, @CacheEvict and custom cache managers. Use when implementing application-level caching for improved performance.
+allowed-tools: Read, Write, Bash
+category: backend
+tags: [spring-boot, caching, performance, cacheable, cache-managers]
+version: 1.0.1
 ---
 
 # Spring Boot Cache Abstraction
