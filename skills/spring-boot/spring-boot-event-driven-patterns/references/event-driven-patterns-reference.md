@@ -467,10 +467,10 @@ public class EventMetrics {
 
 ## Related Skills
 
-- **spring-boot-crud-patterns/SKILL.md** - Domain events in CRUD operations
-- **spring-boot-rest-api-standards/SKILL.md** - Event notifications via webhooks
-- **spring-boot-test-patterns/SKILL.md** - Testing event-driven systems
-- **spring-boot-dependency-injection/SKILL.md** - Dependency injection in event handlers
+- **spring-boot-crud-patterns** - Domain events in CRUD operations
+- **spring-boot-rest-api-standards** - Event notifications via webhooks
+- **spring-boot-test-patterns** - Testing event-driven systems
+- **spring-boot-dependency-injection** - Dependency injection in event handlers
 
 ## External Resources
 
@@ -483,8 +483,3 @@ public class EventMetrics {
 - [Event Sourcing Pattern](https://martinfowler.com/eaaDev/EventSourcing.html)
 - [Saga Pattern](https://microservices.io/patterns/data/saga.html)
 - [Transactional Outbox](https://microservices.io/patterns/data/transactional-outbox.html)
-
-### Books and Articles
-- "Enterprise Integration Patterns" by Gregor Hohpe
-- "Building Microservices" by Sam Newman
-- [Kafka Best Practices](https://kafka.apache.org/documentation/#bestpractices)
