@@ -3,24 +3,30 @@ name: aws-sdk-java-v2-core
 description: Core patterns and best practices for AWS SDK for Java 2.x. Use when configuring AWS service clients, setting up authentication, managing credentials, configuring timeouts, HTTP clients, or following AWS SDK best practices.
 category: aws
 tags: [aws, java, sdk, core, authentication, configuration]
-version: 1.0.1
+version: 1.1.0
 allowed-tools: Read, Write, Bash
 ---
 
 # AWS SDK for Java 2.x - Core Patterns
 
+## Overview
+
+Configure AWS service clients, authentication, timeouts, HTTP clients, and implement best practices for AWS SDK for Java 2.x applications. This skill provides essential patterns for building robust, performant, and secure integrations with AWS services.
+
 ## When to Use
 
 Use this skill when:
-- Setting up AWS SDK for Java 2.x service clients
-- Configuring authentication and credentials
-- Implementing AWS SDK best practices
-- Configuring timeouts, HTTP clients, and connection pooling
-- Managing service client lifecycle
-- Optimizing performance with AWS SDK
-- Setting up monitoring and metrics
+- Setting up AWS SDK for Java 2.x service clients with proper configuration
+- Configuring authentication and credential management strategies
+- Implementing client lifecycle management and resource cleanup
+- Optimizing performance with HTTP client configuration and connection pooling
+- Setting up proper timeout configurations for API calls
+- Implementing error handling and retry policies
+- Enabling monitoring and metrics collection
+- Integrating AWS SDK with Spring Boot applications
+- Testing AWS integrations with LocalStack and Testcontainers
 
-## Client Configuration Patterns
+## Quick Start
 
 ### Basic Service Client Setup
 
@@ -39,7 +45,18 @@ try (S3Client s3 = S3Client.builder().region(Region.US_EAST_1).build()) {
 } // Auto-closed
 ```
 
-### Advanced Client Configuration
+### Basic Authentication
+
+```java
+// Uses default credential provider chain
+S3Client s3Client = S3Client.builder()
+    .region(Region.US_EAST_1)
+    .build(); // Automatically detects credentials
+```
+
+## Client Configuration
+
+### Service Client Builder Pattern
 
 ```java
 import software.amazon.awssdk.core.client.config.ClientOverrideConfiguration;
@@ -50,7 +67,7 @@ import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsPro
 import java.time.Duration;
 import java.net.URI;
 
-// Using lambda expressions for inline configuration
+// Advanced client configuration
 S3Client s3Client = S3Client.builder()
     .region(Region.EU_SOUTH_2)
     .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
@@ -115,9 +132,6 @@ import software.amazon.awssdk.auth.credentials.*;
 // Environment variables
 CredentialsProvider envCredentials = EnvironmentVariableCredentialsProvider.create();
 
-// System properties
-CredentialsProvider sysPropsCredentials = SystemPropertyCredentialsProvider.create();
-
 // Profile from ~/.aws/credentials
 CredentialsProvider profileCredentials = ProfileCredentialsProvider.create("myprofile");
 
@@ -128,9 +142,6 @@ CredentialsProvider staticCredentials = StaticCredentialsProvider.create(
 
 // Instance profile (for EC2)
 CredentialsProvider instanceProfileCredentials = InstanceProfileCredentialsProvider.create();
-
-// Container credentials (for ECS)
-CredentialsProvider containerCredentials = ContainerCredentialsProvider.builder().build();
 
 // Use with client
 S3Client s3Client = S3Client.builder()
@@ -164,30 +175,9 @@ aws sso login
 aws sts get-caller-identity
 ```
 
-## Timeout Configuration
-
-### Service Client Level Timeouts
-
-```java
-S3Client s3Client = S3Client.builder()
-    .overrideConfiguration(b -> b
-        .apiCallTimeout(Duration.ofSeconds(30))        // Total time for all retries
-        .apiCallAttemptTimeout(Duration.ofSeconds(10))) // Per-attempt timeout
-    .build();
-```
-
-### Request Level Timeouts
-
-```java
-s3Client.listBuckets(request -> request
-    .overrideConfiguration(b -> b
-        .apiCallTimeout(Duration.ofSeconds(15))
-        .apiCallAttemptTimeout(Duration.ofSeconds(5))));
-```
-
 ## HTTP Client Configuration
 
-### Apache HTTP Client (Synchronous)
+### Apache HTTP Client (Recommended for Sync)
 
 ```java
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
@@ -205,7 +195,7 @@ S3Client s3Client = S3Client.builder()
     .build();
 ```
 
-### Netty HTTP Client (Asynchronous)
+### Netty HTTP Client (For Async Operations)
 
 ```java
 import software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient;
@@ -224,7 +214,7 @@ S3AsyncClient s3AsyncClient = S3AsyncClient.builder()
     .build();
 ```
 
-### URL Connection HTTP Client
+### URL Connection HTTP Client (Lightweight)
 
 ```java
 import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
@@ -243,13 +233,13 @@ UrlConnectionHttpClient httpClient = UrlConnectionHttpClient.builder()
 @Service
 public class S3Service {
     private final S3Client s3Client;
-    
+
     public S3Service() {
         this.s3Client = S3Client.builder()
             .region(Region.US_EAST_1)
             .build();
     }
-    
+
     // Reuse s3Client for all operations
 }
 ```
@@ -294,38 +284,21 @@ try {
 ### 4. Close Streaming Responses
 
 ```java
-try (ResponseInputStream<GetObjectResponse> s3Object = 
+try (ResponseInputStream<GetObjectResponse> s3Object =
         s3Client.getObject(GetObjectRequest.builder()
             .bucket(bucket)
             .key(key)
             .build())) {
-    
+
     // Read and process stream immediately
     byte[] data = s3Object.readAllBytes();
-    
+
 } // Stream auto-closed, connection returned to pool
 ```
 
-### 5. Use Smart Configuration Defaults
+### 5. Optimize SSL for Async Clients
 
-```java
-import software.amazon.awssdk.http.SdkHttpConfigurationOption;
-import software.amazon.awssdk.utils.AttributeMap;
-
-// For latency-sensitive applications
-AttributeMap lowLatencyConfig = AttributeMap.builder()
-    .put(SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES, false)
-    .build();
-
-// For throughput-optimized applications  
-AttributeMap highThroughputConfig = AttributeMap.builder()
-    .put(SdkHttpConfigurationOption.MAX_CONNECTIONS, 200)
-    .build();
-```
-
-### 6. Optimize SSL with OpenSSL for Async Clients
-
-**Maven:**
+**Add dependency:**
 ```xml
 <dependency>
     <groupId>io.netty</groupId>
@@ -335,7 +308,7 @@ AttributeMap highThroughputConfig = AttributeMap.builder()
 </dependency>
 ```
 
-**Code:**
+**Configure SSL:**
 ```java
 NettyNioAsyncHttpClient httpClient = NettyNioAsyncHttpClient.builder()
     .sslProvider(SslProvider.OPENSSL)
@@ -343,19 +316,6 @@ NettyNioAsyncHttpClient httpClient = NettyNioAsyncHttpClient.builder()
 
 S3AsyncClient s3AsyncClient = S3AsyncClient.builder()
     .httpClient(httpClient)
-    .build();
-```
-
-### 7. Enable SDK Metrics
-
-```java
-import software.amazon.awssdk.metrics.publishers.cloudwatch.CloudWatchMetricPublisher;
-
-CloudWatchMetricPublisher metricPublisher = CloudWatchMetricPublisher.create();
-
-S3Client s3Client = S3Client.builder()
-    .overrideConfiguration(b -> b
-        .addMetricPublisher(metricPublisher))
     .build();
 ```
 
@@ -377,7 +337,7 @@ public record AwsProperties(
         Integer connectionTimeoutSeconds,
         Integer apiCallTimeoutSeconds
     ) {}
-    
+
     public record DynamoDbProperties(
         Integer maxConnections,
         Integer readTimeoutSeconds
@@ -391,13 +351,13 @@ public record AwsProperties(
 @Configuration
 @EnableConfigurationProperties(AwsProperties.class)
 public class AwsClientConfiguration {
-    
+
     private final AwsProperties awsProperties;
-    
+
     public AwsClientConfiguration(AwsProperties awsProperties) {
         this.awsProperties = awsProperties;
     }
-    
+
     @Bean
     public S3Client s3Client() {
         return S3Client.builder()
@@ -410,20 +370,9 @@ public class AwsClientConfiguration {
                 awsProperties.s3().connectionTimeoutSeconds()))
             .build();
     }
-    
-    @Bean
-    public DynamoDbClient dynamoDbClient() {
-        return DynamoDbClient.builder()
-            .region(Region.of(awsProperties.region()))
-            .credentialsProvider(credentialsProvider())
-            .httpClient(apacheHttpClient(
-                awsProperties.dynamoDb().maxConnections(),
-                null))
-            .build();
-    }
-    
+
     private CredentialsProvider credentialsProvider() {
-        if (awsProperties.accessKeyId() != null && 
+        if (awsProperties.accessKeyId() != null &&
             awsProperties.secretAccessKey() != null) {
             return StaticCredentialsProvider.create(
                 AwsBasicCredentials.create(
@@ -432,7 +381,7 @@ public class AwsClientConfiguration {
         }
         return DefaultCredentialsProvider.create();
     }
-    
+
     private ClientOverrideConfiguration clientOverrideConfiguration(
             Integer apiCallTimeoutSeconds) {
         return ClientOverrideConfiguration.builder()
@@ -441,9 +390,9 @@ public class AwsClientConfiguration {
             .apiCallAttemptTimeout(Duration.ofSeconds(10))
             .build();
     }
-    
+
     private ApacheHttpClient apacheHttpClient(
-            Integer maxConnections, 
+            Integer maxConnections,
             Integer connectionTimeoutSeconds) {
         return ApacheHttpClient.builder()
             .maxConnections(maxConnections != null ? maxConnections : 50)
@@ -469,77 +418,6 @@ aws:
     read-timeout-seconds: 30
 ```
 
-## Maven Dependencies
-
-```xml
-<dependencyManagement>
-    <dependencies>
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>bom</artifactId>
-            <version>2.25.0</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
-    </dependencies>
-</dependencyManagement>
-
-<dependencies>
-    <!-- Core SDK -->
-    <dependency>
-        <groupId>software.amazon.awssdk</groupId>
-        <artifactId>sdk-core</artifactId>
-    </dependency>
-    
-    <!-- Apache HTTP Client (recommended for sync) -->
-    <dependency>
-        <groupId>software.amazon.awssdk</groupId>
-        <artifactId>apache-client</artifactId>
-    </dependency>
-    
-    <!-- Netty HTTP Client (for async) -->
-    <dependency>
-        <groupId>software.amazon.awssdk</groupId>
-        <artifactId>netty-nio-client</artifactId>
-    </dependency>
-    
-    <!-- URL Connection HTTP Client (lightweight) -->
-    <dependency>
-        <groupId>software.amazon.awssdk</groupId>
-        <artifactId>url-connection-client</artifactId>
-    </dependency>
-    
-    <!-- CloudWatch Metrics -->
-    <dependency>
-        <groupId>software.amazon.awssdk</groupId>
-        <artifactId>cloudwatch-metric-publisher</artifactId>
-    </dependency>
-    
-    <!-- OpenSSL for better performance -->
-    <dependency>
-        <groupId>io.netty</groupId>
-        <artifactId>netty-tcnative-boringssl-static</artifactId>
-        <version>2.0.61.Final</version>
-        <scope>runtime</scope>
-    </dependency>
-</dependencies>
-```
-
-## Gradle Dependencies
-
-```gradle
-dependencies {
-    implementation platform('software.amazon.awssdk:bom:2.25.0')
-    
-    implementation 'software.amazon.awssdk:sdk-core'
-    implementation 'software.amazon.awssdk:apache-client'
-    implementation 'software.amazon.awssdk:netty-nio-client'
-    implementation 'software.amazon.awssdk:cloudwatch-metric-publisher'
-    
-    runtimeOnly 'io.netty:netty-tcnative-boringssl-static:2.0.61.Final'
-}
-```
-
 ## Error Handling
 
 ```java
@@ -549,18 +427,18 @@ import software.amazon.awssdk.core.exception.SdkServiceException;
 
 try {
     s3Client.getObject(request);
-    
+
 } catch (S3Exception e) {
     // Service-specific exception
     System.err.println("S3 Error: " + e.awsErrorDetails().errorMessage());
     System.err.println("Error Code: " + e.awsErrorDetails().errorCode());
     System.err.println("Status Code: " + e.statusCode());
     System.err.println("Request ID: " + e.requestId());
-    
+
 } catch (SdkServiceException e) {
     // Generic service exception
     System.err.println("AWS Service Error: " + e.getMessage());
-    
+
 } catch (SdkClientException e) {
     // Client-side error (network, timeout, etc.)
     System.err.println("Client Error: " + e.getMessage());
@@ -574,7 +452,7 @@ try {
 ```java
 @TestConfiguration
 public class LocalStackAwsConfig {
-    
+
     @Bean
     public S3Client s3Client() {
         return S3Client.builder()
@@ -593,21 +471,152 @@ public class LocalStackAwsConfig {
 @Testcontainers
 @SpringBootTest
 class S3IntegrationTest {
-    
+
     @Container
     static LocalStackContainer localstack = new LocalStackContainer(
         DockerImageName.parse("localstack/localstack:3.0"))
         .withServices(LocalStackContainer.Service.S3);
-    
+
     @DynamicPropertySource
     static void overrideProperties(DynamicPropertyRegistry registry) {
-        registry.add("aws.s3.endpoint", 
+        registry.add("aws.s3.endpoint",
             () -> localstack.getEndpointOverride(LocalStackContainer.Service.S3));
         registry.add("aws.region", () -> localstack.getRegion());
         registry.add("aws.access-key-id", localstack::getAccessKey);
         registry.add("aws.secret-access-key", localstack::getSecretKey);
     }
 }
+```
+
+## Maven Dependencies
+
+```xml
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>bom</artifactId>
+            <version>2.25.0</version> // Use latest stable version
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+
+<dependencies>
+    <!-- Core SDK -->
+    <dependency>
+        <groupId>software.amazon.awssdk</groupId>
+        <artifactId>sdk-core</artifactId>
+    </dependency>
+
+    <!-- Apache HTTP Client (recommended for sync) -->
+    <dependency>
+        <groupId>software.amazon.awssdk</groupId>
+        <artifactId>apache-client</artifactId>
+    </dependency>
+
+    <!-- Netty HTTP Client (for async) -->
+    <dependency>
+        <groupId>software.amazon.awssdk</groupId>
+        <artifactId>netty-nio-client</artifactId>
+    </dependency>
+
+    <!-- URL Connection HTTP Client (lightweight) -->
+    <dependency>
+        <groupId>software.amazon.awssdk</groupId>
+        <artifactId>url-connection-client</artifactId>
+    </dependency>
+
+    <!-- CloudWatch Metrics -->
+    <dependency>
+        <groupId>software.amazon.awssdk</groupId>
+        <artifactId>cloudwatch-metric-publisher</artifactId>
+    </dependency>
+
+    <!-- OpenSSL for better performance -->
+    <dependency>
+        <groupId>io.netty</groupId>
+        <artifactId>netty-tcnative-boringssl-static</artifactId>
+        <version>2.0.61.Final</version>
+        <scope>runtime</scope>
+    </dependency>
+</dependencies>
+```
+
+## Gradle Dependencies
+
+```gradle
+dependencies {
+    implementation platform('software.amazon.awssdk:bom:2.25.0')
+
+    implementation 'software.amazon.awssdk:sdk-core'
+    implementation 'software.amazon.awssdk:apache-client'
+    implementation 'software.amazon.awssdk:netty-nio-client'
+    implementation 'software.amazon.awssdk:cloudwatch-metric-publisher'
+
+    runtimeOnly 'io.netty:netty-tcnative-boringssl-static:2.0.61.Final'
+}
+```
+
+## Examples
+
+### Basic S3 Upload
+
+```java
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+
+try (S3Client s3 = S3Client.builder().region(Region.US_EAST_1).build()) {
+    PutObjectRequest request = PutObjectRequest.builder()
+        .bucket("my-bucket")
+        .key("uploads/file.txt")
+        .build();
+
+    s3.putObject(request, RequestBody.fromString("Hello, World!"));
+}
+```
+
+### S3 List Objects with Pagination
+
+```java
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
+
+try (S3Client s3 = S3Client.builder().region(Region.US_EAST_1).build()) {
+    ListObjectsV2Request request = ListObjectsV2Request.builder()
+        .bucket("my-bucket")
+        .build();
+
+    ListObjectsV2Response response = s3.listObjectsV2(request);
+    response.contents().forEach(object -> {
+        System.out.println("Object key: " + object.key());
+    });
+}
+```
+
+### Async S3 Upload
+
+```java
+import software.amazon.awssdk.core.async.AsyncRequestBody;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+
+S3AsyncClient s3AsyncClient = S3AsyncClient.builder().build();
+
+PutObjectRequest request = PutObjectRequest.builder()
+    .bucket("my-bucket")
+    .key("async-upload.txt")
+    .build();
+
+CompletableFuture<PutObjectResponse> future = s3AsyncClient.putObject(
+    request, Async.fromString("Hello, Async World!"));
+
+future.thenAccept(response -> {
+    System.out.println("Upload completed: " + response.eTag());
+}).exceptionally(error -> {
+    System.err.println("Upload failed: " + error.getMessage());
+    return null;
+});
 ```
 
 ## Performance Considerations
@@ -631,11 +640,19 @@ class S3IntegrationTest {
 
 ## Related Skills
 
-- @aws-sdk-java-v2-s3 - S3-specific patterns and examples
-- @aws-sdk-java-v2-dynamodb - DynamoDB patterns and examples
-- @aws-sdk-java-v2-lambda - Lambda patterns and examples
+- `aws-sdk-java-v2-s3` - S3-specific patterns and examples
+- `aws-sdk-java-v2-dynamodb` - DynamoDB patterns and examples
+- `aws-sdk-java-v2-lambda` - Lambda patterns and examples
 
 ## References
+
+See [references/](references/) for detailed documentation:
+
+- [Developer Guide](references/developer-guide.md) - Comprehensive guide and architecture overview
+- [API Reference](references/api-reference.md) - Complete API documentation for core classes
+- [Best Practices](references/best-practices.md) - In-depth best practices and configuration examples
+
+## Additional Resources
 
 - [AWS SDK for Java 2.x Developer Guide](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/home.html)
 - [AWS SDK for Java 2.x API Reference](https://sdk.amazonaws.com/java/api/latest/)

@@ -3,25 +3,30 @@ name: aws-sdk-java-v2-kms
 description: AWS Key Management Service (KMS) patterns using AWS SDK for Java 2.x. Use when creating/managing encryption keys, encrypting/decrypting data, generating data keys, digital signing, key rotation, or integrating encryption into Spring Boot applications.
 category: aws
 tags: [aws, kms, java, sdk, encryption, security]
-version: 1.0.1
-allowed-tools: Read, Write, Bash
+version: 1.1.0
+allowed-tools: Read, Write, Bash, WebFetch
 ---
 
 # AWS SDK for Java 2.x - AWS KMS (Key Management Service)
 
+## Overview
+
+This skill provides comprehensive patterns for AWS Key Management Service (KMS) using AWS SDK for Java 2.x. Focus on implementing secure encryption solutions with proper key management, envelope encryption, and Spring Boot integration patterns.
+
 ## When to Use
 
 Use this skill when:
-- Creating and managing encryption keys
-- Encrypting and decrypting data
-- Generating data keys for client-side encryption
-- Digital signing and verification
-- Managing key rotation and lifecycle
-- Implementing envelope encryption
-- Tagging and organizing keys
-- Integrating encryption into Spring Boot applications
+- Creating and managing symmetric encryption keys for data protection
+- Implementing client-side encryption and envelope encryption patterns
+- Generating data keys for local data encryption with KMS-managed keys
+- Setting up digital signatures and verification with asymmetric keys
+- Integrating encryption capabilities into Spring Boot applications
+- Implementing secure key lifecycle management
+- Setting up key rotation policies and access controls
 
 ## Dependencies
+
+### Maven
 
 ```xml
 <dependency>
@@ -30,9 +35,15 @@ Use this skill when:
 </dependency>
 ```
 
+### Gradle
+
+```groovy
+implementation 'software.amazon.awssdk:kms:2.x.x'
+```
+
 ## Client Setup
 
-### Synchronous Client
+### Basic Synchronous Client
 
 ```java
 import software.amazon.awssdk.regions.Region;
@@ -43,7 +54,7 @@ KmsClient kmsClient = KmsClient.builder()
     .build();
 ```
 
-### Asynchronous Client
+### Basic Asynchronous Client
 
 ```java
 import software.amazon.awssdk.services.kms.KmsAsyncClient;
@@ -53,497 +64,206 @@ KmsAsyncClient kmsAsyncClient = KmsAsyncClient.builder()
     .build();
 ```
 
-## Key Management
-
-### Create KMS Key
+### Advanced Client Configuration
 
 ```java
-import software.amazon.awssdk.services.kms.model.*;
-
-public String createKey(KmsClient kmsClient, String description) {
-    try {
-        CreateKeyRequest request = CreateKeyRequest.builder()
-            .description(description)
-            .keyUsage(KeyUsageType.ENCRYPT_DECRYPT)
-            .origin(OriginType.AWS_KMS)
-            .build();
-        
-        CreateKeyResponse response = kmsClient.createKey(request);
-        
-        String keyId = response.keyMetadata().keyId();
-        System.out.println("Created key: " + keyId);
-        
-        return keyId;
-        
-    } catch (KmsException e) {
-        System.err.println("Error creating key: " + e.awsErrorDetails().errorMessage());
-        throw e;
-    }
-}
+KmsClient kmsClient = KmsClient.builder()
+    .region(Region.of(System.getenv("AWS_REGION")))
+    .credentialsProvider(DefaultCredentialsProvider.create())
+    .overrideConfiguration(c -> c.retryPolicy(RetryPolicy.builder()
+        .numRetries(3)
+        .build()))
+    .build();
 ```
 
-### Create Key with Custom Key Store
+## Basic Key Management
+
+### Create Encryption Key
 
 ```java
-public String createKeyWithCustomStore(KmsClient kmsClient, 
-                                       String description,
-                                       String customKeyStoreId) {
+public String createEncryptionKey(KmsClient kmsClient, String description) {
     CreateKeyRequest request = CreateKeyRequest.builder()
         .description(description)
         .keyUsage(KeyUsageType.ENCRYPT_DECRYPT)
-        .origin(OriginType.AWS_CLOUDHSM)
-        .customKeyStoreId(customKeyStoreId)
         .build();
-    
+
     CreateKeyResponse response = kmsClient.createKey(request);
-    
     return response.keyMetadata().keyId();
-}
-```
-
-### List Keys
-
-```java
-import java.util.List;
-
-public List<KeyListEntry> listKeys(KmsClient kmsClient) {
-    try {
-        ListKeysRequest request = ListKeysRequest.builder()
-            .limit(100)
-            .build();
-        
-        ListKeysResponse response = kmsClient.listKeys(request);
-        
-        response.keys().forEach(key -> {
-            System.out.println("Key ARN: " + key.keyArn());
-            System.out.println("Key ID: " + key.keyId());
-            System.out.println();
-        });
-        
-        return response.keys();
-        
-    } catch (KmsException e) {
-        System.err.println("Error listing keys: " + e.awsErrorDetails().errorMessage());
-        throw e;
-    }
-}
-```
-
-### List Keys with Pagination (Async)
-
-```java
-import software.amazon.awssdk.services.kms.paginators.ListKeysPublisher;
-import java.util.concurrent.CompletableFuture;
-
-public CompletableFuture<Void> listAllKeysAsync(KmsAsyncClient kmsAsyncClient) {
-    ListKeysRequest request = ListKeysRequest.builder()
-        .limit(15)
-        .build();
-    
-    ListKeysPublisher keysPublisher = kmsAsyncClient.listKeysPaginator(request);
-    
-    return keysPublisher
-        .subscribe(r -> r.keys().forEach(key ->
-            System.out.println("Key ARN: " + key.keyArn())))
-        .whenComplete((result, exception) -> {
-            if (exception != null) {
-                System.err.println("Error: " + exception.getMessage());
-            } else {
-                System.out.println("Successfully listed all keys");
-            }
-        });
 }
 ```
 
 ### Describe Key
 
 ```java
-public KeyMetadata describeKey(KmsClient kmsClient, String keyId) {
-    try {
-        DescribeKeyRequest request = DescribeKeyRequest.builder()
-            .keyId(keyId)
-            .build();
-        
-        DescribeKeyResponse response = kmsClient.describeKey(request);
-        KeyMetadata metadata = response.keyMetadata();
-        
-        System.out.println("Key ID: " + metadata.keyId());
-        System.out.println("Key ARN: " + metadata.arn());
-        System.out.println("Key State: " + metadata.keyState());
-        System.out.println("Creation Date: " + metadata.creationDate());
-        System.out.println("Enabled: " + metadata.enabled());
-        
-        return metadata;
-        
-    } catch (KmsException e) {
-        System.err.println("Error describing key: " + e.awsErrorDetails().errorMessage());
-        throw e;
-    }
+public KeyMetadata getKeyMetadata(KmsClient kmsClient, String keyId) {
+    DescribeKeyRequest request = DescribeKeyRequest.builder()
+        .keyId(keyId)
+        .build();
+
+    return kmsClient.describeKey(request).keyMetadata();
 }
 ```
 
 ### Enable/Disable Key
 
 ```java
-public void enableKey(KmsClient kmsClient, String keyId) {
-    try {
-        EnableKeyRequest request = EnableKeyRequest.builder()
-            .keyId(keyId)
-            .build();
-        
-        kmsClient.enableKey(request);
-        System.out.println("Key enabled: " + keyId);
-        
-    } catch (KmsException e) {
-        System.err.println("Error enabling key: " + e.awsErrorDetails().errorMessage());
-        throw e;
-    }
-}
-
-public void disableKey(KmsClient kmsClient, String keyId) {
-    try {
-        DisableKeyRequest request = DisableKeyRequest.builder()
-            .keyId(keyId)
-            .build();
-        
-        kmsClient.disableKey(request);
-        System.out.println("Key disabled: " + keyId);
-        
-    } catch (KmsException e) {
-        System.err.println("Error disabling key: " + e.awsErrorDetails().errorMessage());
-        throw e;
+public void toggleKeyState(KmsClient kmsClient, String keyId, boolean enable) {
+    if (enable) {
+        kmsClient.enableKey(EnableKeyRequest.builder().keyId(keyId).build());
+    } else {
+        kmsClient.disableKey(DisableKeyRequest.builder().keyId(keyId).build());
     }
 }
 ```
 
-## Encryption and Decryption
+## Basic Encryption and Decryption
 
 ### Encrypt Data
 
 ```java
-import software.amazon.awssdk.core.SdkBytes;
-import java.nio.charset.StandardCharsets;
+public String encryptData(KmsClient kmsClient, String keyId, String plaintext) {
+    SdkBytes plaintextBytes = SdkBytes.fromString(plaintext, StandardCharsets.UTF_8);
 
-public byte[] encryptData(KmsClient kmsClient, String keyId, String plaintext) {
-    try {
-        SdkBytes plaintextBytes = SdkBytes.fromString(plaintext, StandardCharsets.UTF_8);
-        
-        EncryptRequest request = EncryptRequest.builder()
-            .keyId(keyId)
-            .plaintext(plaintextBytes)
-            .build();
-        
-        EncryptResponse response = kmsClient.encrypt(request);
-        
-        byte[] encryptedData = response.ciphertextBlob().asByteArray();
-        System.out.println("Data encrypted successfully");
-        
-        return encryptedData;
-        
-    } catch (KmsException e) {
-        System.err.println("Error encrypting data: " + e.awsErrorDetails().errorMessage());
-        throw e;
-    }
+    EncryptRequest request = EncryptRequest.builder()
+        .keyId(keyId)
+        .plaintext(plaintextBytes)
+        .build();
+
+    EncryptResponse response = kmsClient.encrypt(request);
+    return Base64.getEncoder().encodeToString(
+        response.ciphertextBlob().asByteArray());
 }
 ```
 
 ### Decrypt Data
 
 ```java
-public String decryptData(KmsClient kmsClient, byte[] ciphertext) {
-    try {
-        SdkBytes ciphertextBytes = SdkBytes.fromByteArray(ciphertext);
-        
-        DecryptRequest request = DecryptRequest.builder()
-            .ciphertextBlob(ciphertextBytes)
-            .build();
-        
-        DecryptResponse response = kmsClient.decrypt(request);
-        
-        String decryptedText = response.plaintext().asString(StandardCharsets.UTF_8);
-        System.out.println("Data decrypted successfully");
-        
-        return decryptedText;
-        
-    } catch (KmsException e) {
-        System.err.println("Error decrypting data: " + e.awsErrorDetails().errorMessage());
-        throw e;
-    }
+public String decryptData(KmsClient kmsClient, String ciphertextBase64) {
+    byte[] ciphertext = Base64.getDecoder().decode(ciphertextBase64);
+    SdkBytes ciphertextBytes = SdkBytes.fromByteArray(ciphertext);
+
+    DecryptRequest request = DecryptRequest.builder()
+        .ciphertextBlob(ciphertextBytes)
+        .build();
+
+    DecryptResponse response = kmsClient.decrypt(request);
+    return response.plaintext().asString(StandardCharsets.UTF_8);
 }
 ```
 
-### Encrypt with Encryption Context
+## Envelope Encryption Pattern
+
+### Generate and Use Data Key
 
 ```java
-import java.util.Map;
+public DataKeyResult encryptWithEnvelope(KmsClient kmsClient, String masterKeyId, byte[] data) {
+    // Generate data key
+    GenerateDataKeyRequest keyRequest = GenerateDataKeyRequest.builder()
+        .keyId(masterKeyId)
+        .keySpec(DataKeySpec.AES_256)
+        .build();
 
-public byte[] encryptWithContext(KmsClient kmsClient, 
-                                 String keyId, 
-                                 String plaintext,
-                                 Map<String, String> encryptionContext) {
-    try {
-        EncryptRequest request = EncryptRequest.builder()
-            .keyId(keyId)
-            .plaintext(SdkBytes.fromString(plaintext, StandardCharsets.UTF_8))
-            .encryptionContext(encryptionContext)
-            .build();
-        
-        EncryptResponse response = kmsClient.encrypt(request);
-        
-        return response.ciphertextBlob().asByteArray();
-        
-    } catch (KmsException e) {
-        System.err.println("Error encrypting with context: " + e.awsErrorDetails().errorMessage());
-        throw e;
-    }
+    GenerateDataKeyResponse keyResponse = kmsClient.generateDataKey(keyRequest);
+
+    // Encrypt data with data key
+    byte[] encryptedData = encryptWithAES(data,
+        keyResponse.plaintext().asByteArray());
+
+    // Clear plaintext key from memory
+    Arrays.fill(keyResponse.plaintext().asByteArray(), (byte) 0);
+
+    return new DataKeyResult(
+        encryptedData,
+        keyResponse.ciphertextBlob().asByteArray());
+}
+
+public byte[] decryptWithEnvelope(KmsClient kmsClient,
+                                  DataKeyResult encryptedEnvelope) {
+    // Decrypt data key
+    DecryptRequest keyDecryptRequest = DecryptRequest.builder()
+        .ciphertextBlob(SdkBytes.fromByteArray(
+            encryptedEnvelope.encryptedKey()))
+        .build();
+
+    DecryptResponse keyDecryptResponse = kmsClient.decrypt(keyDecryptRequest);
+
+    // Decrypt data with decrypted key
+    byte[] decryptedData = decryptWithAES(
+        encryptedEnvelope.encryptedData(),
+        keyDecryptResponse.plaintext().asByteArray());
+
+    // Clear plaintext key from memory
+    Arrays.fill(keyDecryptResponse.plaintext().asByteArray(), (byte) 0);
+
+    return decryptedData;
 }
 ```
 
-## Data Key Generation (Envelope Encryption)
+## Digital Signatures
 
-### Generate Data Key
-
-```java
-public record DataKeyPair(byte[] plaintext, byte[] encrypted) {}
-
-public DataKeyPair generateDataKey(KmsClient kmsClient, String keyId) {
-    try {
-        GenerateDataKeyRequest request = GenerateDataKeyRequest.builder()
-            .keyId(keyId)
-            .keySpec(DataKeySpec.AES_256)
-            .build();
-        
-        GenerateDataKeyResponse response = kmsClient.generateDataKey(request);
-        
-        byte[] plaintextKey = response.plaintext().asByteArray();
-        byte[] encryptedKey = response.ciphertextBlob().asByteArray();
-        
-        System.out.println("Data key generated");
-        
-        return new DataKeyPair(plaintextKey, encryptedKey);
-        
-    } catch (KmsException e) {
-        System.err.println("Error generating data key: " + e.awsErrorDetails().errorMessage());
-        throw e;
-    }
-}
-```
-
-### Generate Data Key Without Plaintext
+### Create Signing Key and Sign Data
 
 ```java
-public byte[] generateDataKeyWithoutPlaintext(KmsClient kmsClient, String keyId) {
-    try {
-        GenerateDataKeyWithoutPlaintextRequest request = 
-            GenerateDataKeyWithoutPlaintextRequest.builder()
-                .keyId(keyId)
-                .keySpec(DataKeySpec.AES_256)
-                .build();
-        
-        GenerateDataKeyWithoutPlaintextResponse response = 
-            kmsClient.generateDataKeyWithoutPlaintext(request);
-        
-        return response.ciphertextBlob().asByteArray();
-        
-    } catch (KmsException e) {
-        System.err.println("Error generating data key: " + e.awsErrorDetails().errorMessage());
-        throw e;
-    }
-}
-```
+public String createAndSignData(KmsClient kmsClient, String description, String message) {
+    // Create signing key
+    CreateKeyRequest keyRequest = CreateKeyRequest.builder()
+        .description(description)
+        .keySpec(KeySpec.RSA_2048)
+        .keyUsage(KeyUsageType.SIGN_VERIFY)
+        .build();
 
-## Digital Signing
+    CreateKeyResponse keyResponse = kmsClient.createKey(keyRequest);
+    String keyId = keyResponse.keyMetadata().keyId();
 
-### Create Signing Key
+    // Sign data
+    SignRequest signRequest = SignRequest.builder()
+        .keyId(keyId)
+        .message(SdkBytes.fromString(message, StandardCharsets.UTF_8))
+        .signingAlgorithm(SigningAlgorithmSpec.RSASSA_PSS_SHA_256)
+        .build();
 
-```java
-public String createSigningKey(KmsClient kmsClient, String description) {
-    try {
-        CreateKeyRequest request = CreateKeyRequest.builder()
-            .description(description)
-            .keySpec(KeySpec.RSA_2048)
-            .keyUsage(KeyUsageType.SIGN_VERIFY)
-            .origin(OriginType.AWS_KMS)
-            .build();
-        
-        CreateKeyResponse response = kmsClient.createKey(request);
-        
-        return response.keyMetadata().keyId();
-        
-    } catch (KmsException e) {
-        System.err.println("Error creating signing key: " + e.awsErrorDetails().errorMessage());
-        throw e;
-    }
-}
-```
-
-### Sign Data
-
-```java
-public byte[] signData(KmsClient kmsClient, String keyId, String message) {
-    try {
-        SdkBytes messageBytes = SdkBytes.fromString(message, StandardCharsets.UTF_8);
-        
-        SignRequest request = SignRequest.builder()
-            .keyId(keyId)
-            .message(messageBytes)
-            .signingAlgorithm(SigningAlgorithmSpec.RSASSA_PSS_SHA_256)
-            .build();
-        
-        SignResponse response = kmsClient.sign(request);
-        
-        byte[] signature = response.signature().asByteArray();
-        System.out.println("Data signed successfully");
-        
-        return signature;
-        
-    } catch (KmsException e) {
-        System.err.println("Error signing data: " + e.awsErrorDetails().errorMessage());
-        throw e;
-    }
+    SignResponse signResponse = kmsClient.sign(signRequest);
+    return Base64.getEncoder().encodeToString(
+        signResponse.signature().asByteArray());
 }
 ```
 
 ### Verify Signature
 
 ```java
-public boolean verifySignature(KmsClient kmsClient, 
-                                String keyId, 
-                                String message, 
-                                byte[] signature) {
-    try {
-        VerifyRequest request = VerifyRequest.builder()
-            .keyId(keyId)
-            .message(SdkBytes.fromString(message, StandardCharsets.UTF_8))
-            .signature(SdkBytes.fromByteArray(signature))
-            .signingAlgorithm(SigningAlgorithmSpec.RSASSA_PSS_SHA_256)
-            .build();
-        
-        VerifyResponse response = kmsClient.verify(request);
-        
-        boolean isValid = response.signatureValid();
-        System.out.println("Signature valid: " + isValid);
-        
-        return isValid;
-        
-    } catch (KmsException e) {
-        System.err.println("Error verifying signature: " + e.awsErrorDetails().errorMessage());
-        throw e;
-    }
-}
-```
+public boolean verifySignature(KmsClient kmsClient,
+                             String keyId,
+                             String message,
+                             String signatureBase64) {
+    byte[] signature = Base64.getDecoder().decode(signatureBase64);
 
-### Sign and Verify (Async)
-
-```java
-public CompletableFuture<Boolean> signAndVerifyAsync(KmsAsyncClient kmsAsyncClient,
-                                                      String message) {
-    String signMessage = message;
-    
-    // Create signing key
-    CreateKeyRequest createKeyRequest = CreateKeyRequest.builder()
-        .keySpec(KeySpec.RSA_2048)
-        .keyUsage(KeyUsageType.SIGN_VERIFY)
-        .origin(OriginType.AWS_KMS)
+    VerifyRequest verifyRequest = VerifyRequest.builder()
+        .keyId(keyId)
+        .message(SdkBytes.fromString(message, StandardCharsets.UTF_8))
+        .signature(SdkBytes.fromByteArray(signature))
+        .signingAlgorithm(SigningAlgorithmSpec.RSASSA_PSS_SHA_256)
         .build();
-    
-    return kmsAsyncClient.createKey(createKeyRequest)
-        .thenCompose(createKeyResponse -> {
-            String keyId = createKeyResponse.keyMetadata().keyId();
-            
-            SdkBytes messageBytes = SdkBytes.fromString(signMessage, StandardCharsets.UTF_8);
-            SignRequest signRequest = SignRequest.builder()
-                .keyId(keyId)
-                .message(messageBytes)
-                .signingAlgorithm(SigningAlgorithmSpec.RSASSA_PSS_SHA_256)
-                .build();
-            
-            return kmsAsyncClient.sign(signRequest)
-                .thenCompose(signResponse -> {
-                    byte[] signedBytes = signResponse.signature().asByteArray();
-                    
-                    VerifyRequest verifyRequest = VerifyRequest.builder()
-                        .keyId(keyId)
-                        .message(messageBytes)
-                        .signature(SdkBytes.fromByteArray(signedBytes))
-                        .signingAlgorithm(SigningAlgorithmSpec.RSASSA_PSS_SHA_256)
-                        .build();
-                    
-                    return kmsAsyncClient.verify(verifyRequest)
-                        .thenApply(VerifyResponse::signatureValid);
-                });
-        })
-        .exceptionally(throwable -> {
-            throw new RuntimeException("Failed to sign or verify", throwable);
-        });
-}
-```
 
-## Key Tagging
-
-### Tag Key
-
-```java
-public void tagKey(KmsClient kmsClient, String keyId, Map<String, String> tags) {
-    try {
-        List<Tag> tagList = tags.entrySet().stream()
-            .map(entry -> Tag.builder()
-                .tagKey(entry.getKey())
-                .tagValue(entry.getValue())
-                .build())
-            .collect(Collectors.toList());
-        
-        TagResourceRequest request = TagResourceRequest.builder()
-            .keyId(keyId)
-            .tags(tagList)
-            .build();
-        
-        kmsClient.tagResource(request);
-        System.out.println("Key tagged successfully");
-        
-    } catch (KmsException e) {
-        System.err.println("Error tagging key: " + e.awsErrorDetails().errorMessage());
-        throw e;
-    }
-}
-```
-
-### List Tags
-
-```java
-public Map<String, String> listTags(KmsClient kmsClient, String keyId) {
-    try {
-        ListResourceTagsRequest request = ListResourceTagsRequest.builder()
-            .keyId(keyId)
-            .build();
-        
-        ListResourceTagsResponse response = kmsClient.listResourceTags(request);
-        
-        return response.tags().stream()
-            .collect(Collectors.toMap(Tag::tagKey, Tag::tagValue));
-        
-    } catch (KmsException e) {
-        System.err.println("Error listing tags: " + e.awsErrorDetails().errorMessage());
-        throw e;
-    }
+    VerifyResponse verifyResponse = kmsClient.verify(verifyRequest);
+    return verifyResponse.signatureValid();
 }
 ```
 
 ## Spring Boot Integration
 
-### Configuration
+### Configuration Class
 
 ```java
 @Configuration
 public class KmsConfiguration {
-    
+
     @Bean
     public KmsClient kmsClient() {
         return KmsClient.builder()
             .region(Region.US_EAST_1)
             .build();
     }
-    
+
     @Bean
     public KmsAsyncClient kmsAsyncClient() {
         return KmsAsyncClient.builder()
@@ -557,47 +277,41 @@ public class KmsConfiguration {
 
 ```java
 @Service
+@RequiredArgsConstructor
 public class KmsEncryptionService {
-    
+
     private final KmsClient kmsClient;
-    
-    @Value("${kms.key-id}")
+
+    @Value("${kms.encryption-key-id}")
     private String keyId;
-    
-    public KmsEncryptionService(KmsClient kmsClient) {
-        this.kmsClient = kmsClient;
-    }
-    
+
     public String encrypt(String plaintext) {
         try {
             EncryptRequest request = EncryptRequest.builder()
                 .keyId(keyId)
                 .plaintext(SdkBytes.fromString(plaintext, StandardCharsets.UTF_8))
                 .build();
-            
+
             EncryptResponse response = kmsClient.encrypt(request);
-            
-            // Return Base64-encoded ciphertext
-            return Base64.getEncoder()
-                .encodeToString(response.ciphertextBlob().asByteArray());
-            
+            return Base64.getEncoder().encodeToString(
+                response.ciphertextBlob().asByteArray());
+
         } catch (KmsException e) {
             throw new RuntimeException("Encryption failed", e);
         }
     }
-    
+
     public String decrypt(String ciphertextBase64) {
         try {
             byte[] ciphertext = Base64.getDecoder().decode(ciphertextBase64);
-            
+
             DecryptRequest request = DecryptRequest.builder()
                 .ciphertextBlob(SdkBytes.fromByteArray(ciphertext))
                 .build();
-            
+
             DecryptResponse response = kmsClient.decrypt(request);
-            
             return response.plaintext().asString(StandardCharsets.UTF_8);
-            
+
         } catch (KmsException e) {
             throw new RuntimeException("Decryption failed", e);
         }
@@ -605,193 +319,98 @@ public class KmsEncryptionService {
 }
 ```
 
-### Sensitive Data Repository
+## Examples
+
+### Basic Encryption Example
 
 ```java
-@Repository
-public class SecureDataRepository {
-    
-    private final KmsEncryptionService encryptionService;
-    private final JdbcTemplate jdbcTemplate;
-    
-    public SecureDataRepository(KmsEncryptionService encryptionService,
-                                JdbcTemplate jdbcTemplate) {
-        this.encryptionService = encryptionService;
-        this.jdbcTemplate = jdbcTemplate;
-    }
-    
-    public void saveSecureData(String id, String sensitiveData) {
-        String encryptedData = encryptionService.encrypt(sensitiveData);
-        
-        jdbcTemplate.update(
-            "INSERT INTO secure_data (id, encrypted_value) VALUES (?, ?)",
-            id, encryptedData);
-    }
-    
-    public String getSecureData(String id) {
-        String encryptedData = jdbcTemplate.queryForObject(
-            "SELECT encrypted_value FROM secure_data WHERE id = ?",
-            String.class, id);
-        
-        return encryptionService.decrypt(encryptedData);
+public class BasicEncryptionExample {
+    public static void main(String[] args) {
+        KmsClient kmsClient = KmsClient.builder()
+            .region(Region.US_EAST_1)
+            .build();
+
+        // Create key
+        String keyId = createEncryptionKey(kmsClient, "Example encryption key");
+        System.out.println("Created key: " + keyId);
+
+        // Encrypt and decrypt
+        String plaintext = "Hello, World!";
+        String encrypted = encryptData(kmsClient, keyId, plaintext);
+        String decrypted = decryptData(kmsClient, encrypted);
+
+        System.out.println("Original: " + plaintext);
+        System.out.println("Decrypted: " + decrypted);
     }
 }
 ```
 
-### Envelope Encryption Service
+### Envelope Encryption Example
 
 ```java
-@Service
-public class EnvelopeEncryptionService {
-    
-    private final KmsClient kmsClient;
-    
-    @Value("${kms.master-key-id}")
-    private String masterKeyId;
-    
-    public EnvelopeEncryptionService(KmsClient kmsClient) {
-        this.kmsClient = kmsClient;
+public class EnvelopeEncryptionExample {
+    public static void main(String[] args) {
+        KmsClient kmsClient = KmsClient.builder()
+            .region(Region.US_EAST_1)
+            .build();
+
+        String masterKeyId = "alias/your-master-key";
+        String largeData = "This is a large amount of data that needs encryption...";
+        byte[] data = largeData.getBytes(StandardCharsets.UTF_8);
+
+        // Encrypt using envelope pattern
+        DataKeyResult encryptedEnvelope = encryptWithEnvelope(
+            kmsClient, masterKeyId, data);
+
+        // Decrypt
+        byte[] decryptedData = decryptWithEnvelope(
+            kmsClient, encryptedEnvelope);
+
+        String result = new String(decryptedData, StandardCharsets.UTF_8);
+        System.out.println("Decrypted: " + result);
     }
-    
-    public EncryptedEnvelope encryptLargeData(byte[] data) {
-        // Generate data key
-        GenerateDataKeyResponse dataKeyResponse = kmsClient.generateDataKey(
-            GenerateDataKeyRequest.builder()
-                .keyId(masterKeyId)
-                .keySpec(DataKeySpec.AES_256)
-                .build());
-        
-        byte[] plaintextKey = dataKeyResponse.plaintext().asByteArray();
-        byte[] encryptedKey = dataKeyResponse.ciphertextBlob().asByteArray();
-        
-        try {
-            // Encrypt data with plaintext data key
-            byte[] encryptedData = encryptWithAES(data, plaintextKey);
-            
-            // Clear plaintext key from memory
-            Arrays.fill(plaintextKey, (byte) 0);
-            
-            return new EncryptedEnvelope(encryptedData, encryptedKey);
-            
-        } catch (Exception e) {
-            throw new RuntimeException("Envelope encryption failed", e);
-        }
-    }
-    
-    public byte[] decryptLargeData(EncryptedEnvelope envelope) {
-        // Decrypt data key
-        DecryptResponse decryptResponse = kmsClient.decrypt(
-            DecryptRequest.builder()
-                .ciphertextBlob(SdkBytes.fromByteArray(envelope.encryptedKey()))
-                .build());
-        
-        byte[] plaintextKey = decryptResponse.plaintext().asByteArray();
-        
-        try {
-            // Decrypt data with plaintext data key
-            byte[] decryptedData = decryptWithAES(envelope.encryptedData(), plaintextKey);
-            
-            // Clear plaintext key from memory
-            Arrays.fill(plaintextKey, (byte) 0);
-            
-            return decryptedData;
-            
-        } catch (Exception e) {
-            throw new RuntimeException("Envelope decryption failed", e);
-        }
-    }
-    
-    private byte[] encryptWithAES(byte[] data, byte[] key) throws Exception {
-        SecretKeySpec keySpec = new SecretKeySpec(key, "AES");
-        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-        cipher.init(Cipher.ENCRYPT_MODE, keySpec);
-        return cipher.doFinal(data);
-    }
-    
-    private byte[] decryptWithAES(byte[] data, byte[] key) throws Exception {
-        SecretKeySpec keySpec = new SecretKeySpec(key, "AES");
-        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-        cipher.init(Cipher.DECRYPT_MODE, keySpec);
-        return cipher.doFinal(data);
-    }
-    
-    public record EncryptedEnvelope(byte[] encryptedData, byte[] encryptedKey) {}
 }
 ```
 
 ## Best Practices
 
-1. **Key Management**:
-   - Use separate keys for different purposes
-   - Enable automatic key rotation
-   - Implement key lifecycle policies
-   - Use aliases for key references
+### Security
+- **Always use envelope encryption for large data** - Encrypt data locally and only encrypt the data key with KMS
+- **Use encryption context** - Add contextual information to track and audit usage
+- **Never log sensitive data** - Avoid logging plaintext or encryption keys
+- **Implement proper key lifecycle** - Enable automatic rotation and set deletion policies
+- **Use separate keys for different purposes** - Don't reuse keys across multiple applications
 
-2. **Security**:
-   - Never log plaintext or encryption keys
-   - Use encryption context for additional security
-   - Implement least privilege IAM policies
-   - Clear sensitive data from memory after use
+### Performance
+- **Cache encrypted data keys** - Reduce KMS API calls by caching data keys
+- **Use async operations** - Leverage async clients for non-blocking I/O
+- **Reuse client instances** - Don't create new clients for each operation
+- **Implement connection pooling** - Configure proper connection pooling settings
 
-3. **Performance**:
-   - Cache data keys for envelope encryption
-   - Use async operations for non-blocking I/O
-   - Implement connection pooling
-   - Reuse KMS client instances
-
-4. **Cost Optimization**:
-   - Use envelope encryption for large data
-   - Cache encrypted data keys
-   - Monitor API usage
-   - Use data key caching libraries
-
-5. **Error Handling**:
-   - Implement retry logic for throttling
-   - Handle key state errors gracefully
-   - Log KMS-specific error codes
-   - Implement circuit breakers
-
-## Testing
-
-### Unit Test with Mocked Client
-
-```java
-@ExtendWith(MockitoExtension.class)
-class KmsEncryptionServiceTest {
-    
-    @Mock
-    private KmsClient kmsClient;
-    
-    @InjectMocks
-    private KmsEncryptionService encryptionService;
-    
-    @Test
-    void shouldEncryptData() {
-        String plaintext = "sensitive data";
-        byte[] ciphertext = "encrypted".getBytes();
-        
-        when(kmsClient.encrypt(any(EncryptRequest.class)))
-            .thenReturn(EncryptResponse.builder()
-                .ciphertextBlob(SdkBytes.fromByteArray(ciphertext))
-                .build());
-        
-        String result = encryptionService.encrypt(plaintext);
-        
-        assertThat(result).isNotEmpty();
-        verify(kmsClient).encrypt(any(EncryptRequest.class));
-    }
-}
-```
-
-## Related Skills
-
-- @aws-sdk-java-v2-core - Core AWS SDK patterns
-- @aws-sdk-java-v2-secrets-manager - Secrets management
-- @spring-boot-dependency-injection - Spring DI patterns
+### Error Handling
+- **Implement retry logic** - Handle throttling exceptions with exponential backoff
+- **Check key states** - Verify key is enabled before performing operations
+- **Use circuit breakers** - Prevent cascading failures during KMS outages
+- **Log errors comprehensively** - Include KMS error codes and context
 
 ## References
 
-- [KMS Examples](https://github.com/awsdocs/aws-doc-sdk-examples/tree/main/javav2/example_code/kms)
-- [KMS Developer Guide](https://docs.aws.amazon.com/kms/latest/developerguide/)
+For detailed implementation patterns, advanced techniques, and comprehensive examples:
+
+- @references/technical-guide.md - Complete technical implementation patterns
+- @references/spring-boot-integration.md - Spring Boot integration patterns
+- @references/testing.md - Testing strategies and examples
+- @references/best-practices.md - Security and operational best practices
+
+## Related Skills
+
+- @aws-sdk-java-v2-core - Core AWS SDK patterns and configuration
+- @aws-sdk-java-v2-dynamodb - DynamoDB integration patterns
+- @aws-sdk-java-v2-secrets-manager - Secrets management patterns
+- @spring-boot-dependency-injection - Spring dependency injection patterns
+
+## External References
+
+- [AWS KMS Developer Guide](https://docs.aws.amazon.com/kms/latest/developerguide/)
+- [AWS SDK for Java 2.x Documentation](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/home.html)
 - [KMS Best Practices](https://docs.aws.amazon.com/kms/latest/developerguide/best-practices.html)
-- [KMS API Reference](https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/kms/package-summary.html)

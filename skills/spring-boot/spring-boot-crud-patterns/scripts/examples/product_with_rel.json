@@ -1,0 +1,14 @@
+{
+  "entity": "Product",
+  "id": { "name": "id", "type": "Long", "generated": true },
+  "fields": [
+    { "name": "name", "type": "String" },
+    { "name": "price", "type": "BigDecimal" },
+    { "name": "inStock", "type": "Boolean" }
+  ],
+  "relationships": [
+    { "name": "category", "type": "ONE_TO_ONE", "target": "Category", "joinColumn": "category_id", "optional": true },
+    { "name": "reviews", "type": "ONE_TO_MANY", "target": "Review", "mappedBy": "product" },
+    { "name": "tags", "type": "MANY_TO_MANY", "target": "Tag", "joinTable": { "name": "product_tag", "joinColumn": "product_id", "inverseJoinColumn": "tag_id" } }
+  ]
+}

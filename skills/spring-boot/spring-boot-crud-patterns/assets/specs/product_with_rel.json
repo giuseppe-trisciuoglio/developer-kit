@@ -1,0 +1,11 @@
+{
+  "entity": "Order",
+  "id": { "name": "id", "type": "Long", "generated": true },
+  "fields": [
+    { "name": "orderNumber", "type": "String" },
+    { "name": "total", "type": "BigDecimal" }
+  ],
+  "relationships": [
+    { "type": "ONE_TO_MANY", "name": "items", "target": "OrderItem", "mappedBy": "order" }
+  ]
+}

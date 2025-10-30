@@ -2,8 +2,8 @@
 name: aws-sdk-java-v2-secrets-manager
 description: AWS Secrets Manager patterns using AWS SDK for Java 2.x. Use when storing/retrieving secrets (passwords, API keys, tokens), rotating secrets automatically, managing database credentials, or integrating secret management into Spring Boot applications.
 category: aws
-tags: [aws, secrets-manager, java, sdk, security, credentials]
-version: 1.0.1
+tags: [aws, secrets-manager, java, sdk, security, credentials, spring-boot]
+version: 1.1.0
 allowed-tools: Read, Write, Glob, Bash
 ---
 
@@ -12,33 +12,41 @@ allowed-tools: Read, Write, Glob, Bash
 ## When to Use
 
 Use this skill when:
-- Storing and retrieving application secrets
-- Managing database credentials securely
-- Rotating secrets automatically
-- Storing API keys and tokens
-- Implementing secure configuration management
-- Managing multi-region secrets
-- Integrating with Spring Boot configuration
-- Implementing secret caching for performance
+- Storing and retrieving application secrets programmatically
+- Managing database credentials securely without hardcoding
+- Implementing automatic secret rotation with Lambda functions
+- Integrating AWS Secrets Manager with Spring Boot applications
+- Setting up secret caching for improved performance
+- Creating secure configuration management systems
+- Working with multi-region secret deployments
+- Implementing audit logging for secret access
 
 ## Dependencies
 
+### Maven
 ```xml
 <dependency>
     <groupId>software.amazon.awssdk</groupId>
     <artifactId>secretsmanager</artifactId>
 </dependency>
 
-<!-- For secret caching (recommended) -->
+<!-- For secret caching (recommended for production) -->
 <dependency>
     <groupId>com.amazonaws.secretsmanager</groupId>
     <artifactId>aws-secretsmanager-caching-java</artifactId>
-    <version>2.0.2</version>
+    <version>2.0.0</version> // Use the sdk v2 compatible version
 </dependency>
 ```
 
-## Client Setup
+### Gradle
+```gradle
+implementation 'software.amazon.awssdk:secretsmanager'
+implementation 'com.amazonaws.secretsmanager:aws-secretsmanager-caching-java:2.0.0
+```
 
+## Quick Start
+
+### Basic Client Setup
 ```java
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
@@ -48,570 +56,144 @@ SecretsManagerClient secretsClient = SecretsManagerClient.builder()
     .build();
 ```
 
-## Secret Operations
-
-### Create Secret
-
+### Store a Secret
 ```java
 import software.amazon.awssdk.services.secretsmanager.model.*;
 
-public String createSecret(SecretsManagerClient secretsClient, 
-                           String secretName, 
-                           String secretValue) {
-    try {
-        CreateSecretRequest request = CreateSecretRequest.builder()
-            .name(secretName)
-            .secretString(secretValue)
-            .description("Application secret")
-            .build();
-        
-        CreateSecretResponse response = secretsClient.createSecret(request);
-        
-        System.out.println("Secret created: " + response.arn());
-        return response.arn();
-        
-    } catch (SecretsManagerException e) {
-        System.err.println("Error creating secret: " + e.awsErrorDetails().errorMessage());
-        throw e;
-    }
-}
-```
-
-### Create Secret with JSON
-
-```java
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Map;
-
-public String createJsonSecret(SecretsManagerClient secretsClient, 
-                               String secretName,
-                               Map<String, String> secretData) {
-    try {
-        ObjectMapper objectMapper = new ObjectMapper();
-        String secretJson = objectMapper.writeValueAsString(secretData);
-        
-        CreateSecretRequest request = CreateSecretRequest.builder()
-            .name(secretName)
-            .secretString(secretJson)
-            .build();
-        
-        CreateSecretResponse response = secretsClient.createSecret(request);
-        
-        return response.arn();
-        
-    } catch (Exception e) {
-        System.err.println("Error creating JSON secret: " + e.getMessage());
-        throw new RuntimeException(e);
-    }
-}
-```
-
-### Create Secret with KMS Encryption
-
-```java
-public String createEncryptedSecret(SecretsManagerClient secretsClient, 
-                                    String secretName, 
-                                    String secretValue,
-                                    String kmsKeyId) {
+public String createSecret(String secretName, String secretValue) {
     CreateSecretRequest request = CreateSecretRequest.builder()
         .name(secretName)
         .secretString(secretValue)
-        .kmsKeyId(kmsKeyId)
         .build();
-    
+
     CreateSecretResponse response = secretsClient.createSecret(request);
-    
     return response.arn();
 }
 ```
 
-### Get Secret Value
-
+### Retrieve a Secret
 ```java
-public String getSecretValue(SecretsManagerClient secretsClient, String secretName) {
-    try {
-        GetSecretValueRequest request = GetSecretValueRequest.builder()
-            .secretId(secretName)
-            .build();
-        
-        GetSecretValueResponse response = secretsClient.getSecretValue(request);
-        
-        return response.secretString();
-        
-    } catch (SecretsManagerException e) {
-        System.err.println("Error getting secret: " + e.awsErrorDetails().errorMessage());
-        throw e;
-    }
-}
-```
-
-### Get Secret with Specific Version
-
-```java
-public String getSecretVersion(SecretsManagerClient secretsClient, 
-                               String secretName, 
-                               String versionId) {
+public String getSecretValue(String secretName) {
     GetSecretValueRequest request = GetSecretValueRequest.builder()
         .secretId(secretName)
-        .versionId(versionId)
         .build();
-    
+
     GetSecretValueResponse response = secretsClient.getSecretValue(request);
-    
     return response.secretString();
 }
 ```
 
-### Get Secret with Version Stage
+## Core Operations
 
-```java
-public String getSecretByStage(SecretsManagerClient secretsClient, 
-                               String secretName, 
-                               String versionStage) {
-    GetSecretValueRequest request = GetSecretValueRequest.builder()
-        .secretId(secretName)
-        .versionStage(versionStage)
-        .build();
-    
-    GetSecretValueResponse response = secretsClient.getSecretValue(request);
-    
-    return response.secretString();
-}
-```
+### Secret Management
+- Create secrets with `createSecret()`
+- Retrieve secrets with `getSecretValue()`
+- Update secrets with `updateSecret()`
+- Delete secrets with `deleteSecret()`
+- List secrets with `listSecrets()`
+- Restore deleted secrets with `restoreSecret()`
 
-### Parse JSON Secret
+### Secret Versioning
+- Access specific versions by `versionId`
+- Access versions by stage (e.g., "AWSCURRENT", "AWSPENDING")
+- Automatically manage version history
 
-```java
-public Map<String, String> getJsonSecret(SecretsManagerClient secretsClient, 
-                                         String secretName) {
-    try {
-        String secretJson = getSecretValue(secretsClient, secretName);
-        
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(secretJson, 
-            new TypeReference<Map<String, String>>() {});
-        
-    } catch (Exception e) {
-        System.err.println("Error parsing JSON secret: " + e.getMessage());
-        throw new RuntimeException(e);
-    }
-}
-```
+### Secret Rotation
+- Configure automatic rotation schedules
+- Lambda-based rotation functions
+- Immediate rotation with `rotateSecret()`
 
-### Update Secret
-
-```java
-public void updateSecret(SecretsManagerClient secretsClient, 
-                         String secretName, 
-                         String newSecretValue) {
-    try {
-        UpdateSecretRequest request = UpdateSecretRequest.builder()
-            .secretId(secretName)
-            .secretString(newSecretValue)
-            .build();
-        
-        UpdateSecretResponse response = secretsClient.updateSecret(request);
-        
-        System.out.println("Secret updated: " + response.arn());
-        System.out.println("Version ID: " + response.versionId());
-        
-    } catch (SecretsManagerException e) {
-        System.err.println("Error updating secret: " + e.awsErrorDetails().errorMessage());
-        throw e;
-    }
-}
-```
-
-### Delete Secret
-
-```java
-public void deleteSecret(SecretsManagerClient secretsClient, 
-                         String secretName, 
-                         int recoveryWindowDays) {
-    try {
-        DeleteSecretRequest request = DeleteSecretRequest.builder()
-            .secretId(secretName)
-            .recoveryWindowInDays((long) recoveryWindowDays)
-            .build();
-        
-        DeleteSecretResponse response = secretsClient.deleteSecret(request);
-        
-        System.out.println("Secret scheduled for deletion");
-        System.out.println("Deletion date: " + response.deletionDate());
-        
-    } catch (SecretsManagerException e) {
-        System.err.println("Error deleting secret: " + e.awsErrorDetails().errorMessage());
-        throw e;
-    }
-}
-```
-
-### Delete Secret Immediately
-
-```java
-public void deleteSecretImmediately(SecretsManagerClient secretsClient, String secretName) {
-    DeleteSecretRequest request = DeleteSecretRequest.builder()
-        .secretId(secretName)
-        .forceDeleteWithoutRecovery(true)
-        .build();
-    
-    secretsClient.deleteSecret(request);
-    
-    System.out.println("Secret deleted immediately");
-}
-```
-
-### Restore Secret
-
-```java
-public void restoreSecret(SecretsManagerClient secretsClient, String secretName) {
-    try {
-        RestoreSecretRequest request = RestoreSecretRequest.builder()
-            .secretId(secretName)
-            .build();
-        
-        RestoreSecretResponse response = secretsClient.restoreSecret(request);
-        
-        System.out.println("Secret restored: " + response.arn());
-        
-    } catch (SecretsManagerException e) {
-        System.err.println("Error restoring secret: " + e.awsErrorDetails().errorMessage());
-        throw e;
-    }
-}
-```
-
-## Secret Rotation
-
-### Configure Rotation
-
-```java
-public void enableRotation(SecretsManagerClient secretsClient, 
-                           String secretName,
-                           String lambdaArn,
-                           int rotationDays) {
-    try {
-        RotateSecretRequest request = RotateSecretRequest.builder()
-            .secretId(secretName)
-            .rotationLambdaArn(lambdaArn)
-            .rotationRules(RotationRulesType.builder()
-                .automaticallyAfterDays((long) rotationDays)
-                .build())
-            .build();
-        
-        RotateSecretResponse response = secretsClient.rotateSecret(request);
-        
-        System.out.println("Rotation configured");
-        System.out.println("Version ID: " + response.versionId());
-        
-    } catch (SecretsManagerException e) {
-        System.err.println("Error configuring rotation: " + e.awsErrorDetails().errorMessage());
-        throw e;
-    }
-}
-```
-
-### Rotate Secret Immediately
-
-```java
-public void rotateSecretNow(SecretsManagerClient secretsClient, String secretName) {
-    RotateSecretRequest request = RotateSecretRequest.builder()
-        .secretId(secretName)
-        .build();
-    
-    RotateSecretResponse response = secretsClient.rotateSecret(request);
-    
-    System.out.println("Secret rotation initiated");
-    System.out.println("New version ID: " + response.versionId());
-}
-```
-
-## List and Describe Secrets
-
-### List Secrets
-
-```java
-import java.util.List;
-
-public List<SecretListEntry> listSecrets(SecretsManagerClient secretsClient) {
-    try {
-        ListSecretsRequest request = ListSecretsRequest.builder()
-            .maxResults(100)
-            .build();
-        
-        ListSecretsResponse response = secretsClient.listSecrets(request);
-        
-        response.secretList().forEach(secret -> {
-            System.out.println("Name: " + secret.name());
-            System.out.println("ARN: " + secret.arn());
-            System.out.println("Last Changed: " + secret.lastChangedDate());
-            System.out.println();
-        });
-        
-        return response.secretList();
-        
-    } catch (SecretsManagerException e) {
-        System.err.println("Error listing secrets: " + e.awsErrorDetails().errorMessage());
-        throw e;
-    }
-}
-```
-
-### Describe Secret
-
-```java
-public DescribeSecretResponse describeSecret(SecretsManagerClient secretsClient, 
-                                              String secretName) {
-    try {
-        DescribeSecretRequest request = DescribeSecretRequest.builder()
-            .secretId(secretName)
-            .build();
-        
-        DescribeSecretResponse response = secretsClient.describeSecret(request);
-        
-        System.out.println("Name: " + response.name());
-        System.out.println("ARN: " + response.arn());
-        System.out.println("Description: " + response.description());
-        System.out.println("Rotation enabled: " + response.rotationEnabled());
-        System.out.println("Last rotated: " + response.lastRotatedDate());
-        
-        return response;
-        
-    } catch (SecretsManagerException e) {
-        System.err.println("Error describing secret: " + e.awsErrorDetails().errorMessage());
-        throw e;
-    }
-}
-```
-
-## Secret Caching
+## Caching for Performance
 
 ### Setup Cache
-
 ```java
 import com.amazonaws.secretsmanager.caching.SecretCache;
 
-public class SecretCacheManager {
-    
-    private final SecretCache secretCache;
-    
-    public SecretCacheManager(SecretsManagerClient secretsClient) {
-        this.secretCache = new SecretCache(secretsClient);
+public class CachedSecrets {
+    private final SecretCache cache;
+
+    public CachedSecrets(SecretsManagerClient secretsClient) {
+        this.cache = new SecretCache(secretsClient);
     }
-    
+
     public String getCachedSecret(String secretName) {
-        try {
-            return secretCache.getSecretString(secretName);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to get cached secret", e);
-        }
+        return cache.getSecretString(secretName);
     }
 }
 ```
 
-### Custom Cache Configuration
-
+### Cache Configuration
 ```java
 import com.amazonaws.secretsmanager.caching.SecretCacheConfiguration;
 
-public SecretCache createConfiguredCache(SecretsManagerClient secretsClient) {
-    SecretCacheConfiguration config = new SecretCacheConfiguration()
-        .withMaxCacheSize(1000)
-        .withCacheItemTTL(3600000); // 1 hour in milliseconds
-    
-    return new SecretCache(secretsClient, config);
-}
+SecretCacheConfiguration config = SecretCacheConfiguration.builder()
+    .maxCacheSize(1000)
+    .cacheItemTTL(3600000) // 1 hour
+    .build();
 ```
 
 ## Spring Boot Integration
 
 ### Configuration
-
 ```java
 @Configuration
 public class SecretsManagerConfiguration {
-    
+
     @Bean
     public SecretsManagerClient secretsManagerClient() {
         return SecretsManagerClient.builder()
-            .region(Region.US_EAST_1)
+            .region(Region.of(region))
             .build();
     }
-    
+
     @Bean
     public SecretCache secretCache(SecretsManagerClient secretsClient) {
-        SecretCacheConfiguration config = new SecretCacheConfiguration()
-            .withMaxCacheSize(100)
-            .withCacheItemTTL(3600000);
-        
-        return new SecretCache(secretsClient, config);
+        return new SecretCache(secretsClient);
     }
 }
 ```
 
-### Secrets Service
-
+### Service Layer
 ```java
 @Service
 public class SecretsService {
-    
-    private final SecretCache secretCache;
-    private final ObjectMapper objectMapper;
-    
-    public SecretsService(SecretCache secretCache, ObjectMapper objectMapper) {
-        this.secretCache = secretCache;
-        this.objectMapper = objectMapper;
+
+    private final SecretCache cache;
+
+    public SecretsService(SecretCache cache) {
+        this.cache = cache;
     }
-    
-    public String getSecret(String secretName) {
-        try {
-            return secretCache.getSecretString(secretName);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to retrieve secret: " + secretName, e);
-        }
-    }
-    
+
     public <T> T getSecretAsObject(String secretName, Class<T> type) {
-        try {
-            String secretJson = secretCache.getSecretString(secretName);
-            return objectMapper.readValue(secretJson, type);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to parse secret: " + secretName, e);
-        }
-    }
-    
-    public Map<String, String> getSecretAsMap(String secretName) {
-        try {
-            String secretJson = secretCache.getSecretString(secretName);
-            return objectMapper.readValue(secretJson, 
-                new TypeReference<Map<String, String>>() {});
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to parse secret map: " + secretName, e);
-        }
+        String secretJson = cache.getSecretString(secretName);
+        return objectMapper.readValue(secretJson, type);
     }
 }
 ```
 
-### Database Configuration from Secrets
-
+### Database Configuration
 ```java
 @Configuration
 public class DatabaseConfiguration {
-    
-    private final SecretsService secretsService;
-    
-    @Value("${aws.secrets.database-credentials}")
-    private String secretName;
-    
-    public DatabaseConfiguration(SecretsService secretsService) {
-        this.secretsService = secretsService;
-    }
-    
+
     @Bean
-    public DataSource dataSource() {
-        Map<String, String> credentials = secretsService.getSecretAsMap(secretName);
-        
+    public DataSource dataSource(SecretsService secretsService) {
+        Map<String, String> credentials = secretsService.getSecretAsMap(
+            "prod/database/credentials");
+
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(credentials.get("url"));
         config.setUsername(credentials.get("username"));
         config.setPassword(credentials.get("password"));
-        config.setMaximumPoolSize(10);
-        
+
         return new HikariDataSource(config);
     }
 }
 ```
 
-### Property Source Integration
+## Examples
 
-```java
-@Component
-public class SecretsManagerPropertySource extends PropertySource<SecretsService> {
-    
-    public static final String SECRETS_MANAGER_PROPERTY_SOURCE_NAME = 
-        "secretsManagerPropertySource";
-    
-    public SecretsManagerPropertySource(SecretsService secretsService) {
-        super(SECRETS_MANAGER_PROPERTY_SOURCE_NAME, secretsService);
-    }
-    
-    @Override
-    public Object getProperty(String name) {
-        if (name.startsWith("aws.secret.")) {
-            String secretName = name.substring("aws.secret.".length());
-            try {
-                return source.getSecret(secretName);
-            } catch (Exception e) {
-                return null;
-            }
-        }
-        return null;
-    }
-}
-```
-
-### Configuration Properties with Secrets
-
-```java
-@ConfigurationProperties(prefix = "app")
-public class AppProperties {
-    
-    private final SecretsService secretsService;
-    
-    @Value("${app.api-key-secret-name}")
-    private String apiKeySecretName;
-    
-    public AppProperties(SecretsService secretsService) {
-        this.secretsService = secretsService;
-    }
-    
-    public String getApiKey() {
-        return secretsService.getSecret(apiKeySecretName);
-    }
-}
-```
-
-### API Client with Secrets
-
-```java
-@Service
-public class ExternalApiClient {
-    
-    private final SecretsService secretsService;
-    private final RestTemplate restTemplate;
-    
-    @Value("${external-api.secret-name}")
-    private String apiSecretName;
-    
-    public ExternalApiClient(SecretsService secretsService, RestTemplate restTemplate) {
-        this.secretsService = secretsService;
-        this.restTemplate = restTemplate;
-    }
-    
-    public String callExternalApi(String endpoint) {
-        Map<String, String> apiCredentials = secretsService.getSecretAsMap(apiSecretName);
-        
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + apiCredentials.get("api_token"));
-        headers.set("X-API-Key", apiCredentials.get("api_key"));
-        
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        
-        ResponseEntity<String> response = restTemplate.exchange(
-            endpoint, 
-            HttpMethod.GET, 
-            entity, 
-            String.class);
-        
-        return response.getBody();
-    }
-}
-```
-
-## Common Secret Structures
-
-### Database Credentials
-
+### Database Credentials Structure
 ```json
 {
   "engine": "postgres",
@@ -624,8 +206,7 @@ public class ExternalApiClient {
 }
 ```
 
-### API Keys
-
+### API Keys Structure
 ```json
 {
   "api_key": "abcd1234-5678-90ef-ghij-klmnopqrstuv",
@@ -634,122 +215,128 @@ public class ExternalApiClient {
 }
 ```
 
-### OAuth Credentials
+## Common Patterns
 
-```json
-{
-  "client_id": "my-client-id",
-  "client_secret": "my-client-secret",
-  "redirect_uri": "https://myapp.com/callback",
-  "scopes": "read write"
+### Error Handling
+```java
+try {
+    String secret = secretsClient.getSecretValue(request).secretString();
+} catch (SecretsManagerException e) {
+    if (e.awsErrorDetails().errorCode().equals("ResourceNotFoundException")) {
+        // Handle missing secret
+    }
+    throw e;
 }
+```
+
+### Batch Operations
+```java
+List<String> secretNames = List.of("secret1", "secret2", "secret3");
+Map<String, String> secrets = secretNames.stream()
+    .collect(Collectors.toMap(
+        Function.identity(),
+        name -> cache.getSecretString(name)
+    ));
 ```
 
 ## Best Practices
 
 1. **Secret Management**:
-   - Use descriptive secret names
-   - Add tags for organization
-   - Use secret versioning
-   - Implement automatic rotation
+   - Use descriptive secret names with hierarchical structure
+   - Implement versioning and rotation
+   - Add tags for organization and billing
 
 2. **Caching**:
-   - Always use caching in production
-   - Configure appropriate TTL
-   - Handle cache misses gracefully
+   - Always use caching in production environments
+   - Configure appropriate TTL values based on secret sensitivity
    - Monitor cache hit rates
 
 3. **Security**:
    - Never log secret values
-   - Use KMS encryption
+   - Use KMS encryption for sensitive secrets
    - Implement least privilege IAM policies
    - Enable CloudTrail logging
 
 4. **Performance**:
-   - Cache secrets client-side
-   - Reuse client instances
-   - Batch secret retrievals when possible
-   - Monitor API throttling
+   - Reuse SecretsManagerClient instances
+   - Use async operations when appropriate
+   - Monitor API throttling limits
 
-5. **Error Handling**:
-   - Implement retry logic
-   - Handle deleted secrets
-   - Provide fallback mechanisms
-   - Log errors without exposing secrets
+5. **Spring Boot Integration**:
+   - Use `@Value` annotations for secret names
+   - Implement proper exception handling
+   - Use configuration properties for secret names
 
-## Testing
+## Testing Strategies
 
-### Unit Test with Mocked Client
-
+### Unit Testing
 ```java
 @ExtendWith(MockitoExtension.class)
 class SecretsServiceTest {
-    
+
     @Mock
-    private SecretCache secretCache;
-    
-    @Mock
-    private ObjectMapper objectMapper;
-    
+    private SecretCache cache;
+
     @InjectMocks
     private SecretsService secretsService;
-    
+
     @Test
     void shouldGetSecret() {
-        String secretName = "test-secret";
-        String expectedValue = "secret-value";
-        
-        when(secretCache.getSecretString(secretName))
-            .thenReturn(expectedValue);
-        
-        String result = secretsService.getSecret(secretName);
-        
-        assertThat(result).isEqualTo(expectedValue);
-        verify(secretCache).getSecretString(secretName);
-    }
-    
-    @Test
-    void shouldGetSecretAsMap() throws Exception {
-        String secretName = "test-secret";
-        String secretJson = "{\"key\":\"value\"}";
-        Map<String, String> expectedMap = Map.of("key", "value");
-        
-        when(secretCache.getSecretString(secretName))
-            .thenReturn(secretJson);
-        when(objectMapper.readValue(eq(secretJson), any(TypeReference.class)))
-            .thenReturn(expectedMap);
-        
-        Map<String, String> result = secretsService.getSecretAsMap(secretName);
-        
-        assertThat(result).isEqualTo(expectedMap);
+        when(cache.getSecretString("test-secret")).thenReturn("secret-value");
+
+        String result = secretsService.getSecret("test-secret");
+
+        assertEquals("secret-value", result);
     }
 }
 ```
 
-## Application Properties
+### Integration Testing
+```java
+@SpringBootTest(classes = TestSecretsConfiguration.class)
+class SecretsManagerIntegrationTest {
 
-```yaml
-aws:
-  secrets:
-    database-credentials: prod/database/credentials
-    api-keys: prod/external-api/keys
-    
-app:
-  api-key-secret-name: prod/app/api-key
-  
-external-api:
-  secret-name: prod/external/credentials
+    @Autowired
+    private SecretsService secretsService;
+
+    @Test
+    void shouldRetrieveSecret() {
+        String secret = secretsService.getSecret("test-secret");
+        assertNotNull(secret);
+    }
+}
 ```
 
-## Related Skills
+## Troubleshooting
 
-- @aws-sdk-java-v2-core - Core AWS SDK patterns
-- @aws-sdk-java-v2-kms - Key management and encryption
-- @spring-boot-dependency-injection - Spring DI patterns
+### Common Issues
+- **Access Denied**: Check IAM permissions
+- **Resource Not Found**: Verify secret name and region
+- **Decryption Failure**: Ensure KMS key permissions
+- **Throttling**: Implement retry logic and backoff
+
+### Debug Commands
+```bash
+# Check secret exists
+aws secretsmanager describe-secret --secret-id my-secret
+
+# List all secrets
+aws secretsmanager list-secrets
+
+# Get secret value (CLI)
+aws secretsmanager get-secret-value --secret-id my-secret
+```
 
 ## References
 
-- [Secrets Manager Examples](https://github.com/awsdocs/aws-doc-sdk-examples/tree/main/javav2/example_code/secrets-manager)
-- [Secrets Manager User Guide](https://docs.aws.amazon.com/secretsmanager/latest/userguide/)
-- [Secret Caching Library](https://github.com/aws/aws-secretsmanager-caching-java)
-- [Secrets Manager API Reference](https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/secretsmanager/package-summary.html)
+For detailed information and advanced patterns, see:
+
+- [API Reference](./references/api-reference.md) - Complete API documentation
+- [Caching Guide](./references/caching-guide.md) - Performance optimization strategies
+- [Spring Boot Integration](./references/spring-boot-integration.md) - Complete Spring integration patterns
+
+## Related Skills
+
+- `aws-sdk-java-v2-core` - Core AWS SDK patterns and best practices
+- `aws-sdk-java-v2-kms` - KMS encryption and key management
+- `spring-boot-dependency-injection` - Spring dependency injection patterns

@@ -1,30 +1,32 @@
 ---
-name: qdrant-java-development
-description: Qdrant vector database integration patterns with LangChain4j. Store embeddings, similarity search, and vector management. Use when implementing vector-based retrieval for RAG systems.
+name: qdrant-vector-database-integration
+description: Qdrant vector database integration patterns with LangChain4j. Store embeddings, similarity search, and vector management for Java applications. Use when implementing vector-based retrieval for RAG systems, semantic search, or recommendation engines.
 category: backend
 tags: [qdrant, java, spring-boot, langchain4j, vector-search, ai, machine-learning]
-version: 1.1.1
+version: 1.2.0
 allowed-tools: Read, Write, Bash
 ---
 
-# Qdrant for Java and Spring Boot Developers
+# Qdrant Vector Database Integration
 
-This skill provides a comprehensive guide for Java developers on integrating Qdrant, the vector search engine, into Spring Boot applications, with a special focus on the Langchain4j framework.
+## Overview
 
-## When to Use This Skill
+Qdrant is an AI-native vector database for semantic search and similarity retrieval. This skill provides patterns for integrating Qdrant with Java applications, focusing on Spring Boot integration and LangChain4j framework support. Enable efficient vector search capabilities for RAG systems, recommendation engines, and semantic search applications.
 
-This skill is essential for Java developers who are:
-- Building semantic search or recommendation systems in a Spring Boot environment.
-- Implementing Retrieval-Augmented Generation (RAG) pipelines with Java.
-- Integrating a powerful vector database into their Java-based AI and machine learning applications.
-- Looking for best practices on using Qdrant with Langchain4j and Spring Boot.
+## When to Use
 
-## 1. Getting Started: Qdrant Setup
+Use this skill when implementing:
+- Semantic search or recommendation systems in Spring Boot applications
+- Retrieval-Augmented Generation (RAG) pipelines with Java and LangChain4j
+- Vector database integration for AI and machine learning applications
+- High-performance similarity search with filtered queries
+- Embedding storage and retrieval for context-aware applications
 
-Before integrating with a Java application, you need a running Qdrant instance.
+## Getting Started: Qdrant Setup
 
-### Run Qdrant with Docker
-Ensure Docker is installed, then run the following commands:
+To begin integration, first deploy a Qdrant instance.
+
+### Local Development with Docker
 
 ```bash
 # Pull the latest Qdrant image
@@ -35,17 +37,16 @@ docker run -p 6333:6333 -p 6334:6334 \
     -v "$(pwd)/qdrant_storage:/qdrant/storage:z" \
     qdrant/qdrant
 ```
-Qdrant will be accessible via:
+
+Access Qdrant via:
 - **REST API**: `http://localhost:6333`
-- **gRPC API**: `http://localhost:6334` (used by the Java client)
+- **gRPC API**: `http://localhost:6334` (used by Java client)
 
-## 2. Using the Qdrant Java Client
+## Core Java Client Integration
 
-Qdrant provides an official Java client for interacting with the database via gRPC.
+Add dependencies to your build configuration and initialize the client for programmatic access.
 
-### Dependency Setup
-
-Add the Qdrant Java client to your `pom.xml` or `build.gradle`:
+### Dependency Configuration
 
 **Maven:**
 ```xml
@@ -61,49 +62,62 @@ Add the Qdrant Java client to your `pom.xml` or `build.gradle`:
 implementation 'io.qdrant:client:1.15.0'
 ```
 
-### Initializing the Client
+### Client Initialization
 
-Create an instance of `QdrantClient`. It's `AutoCloseable`, but you'll typically manage it as a singleton bean in a Spring application.
+Create and configure the Qdrant client for application use:
 
 ```java
 import io.qdrant.client.QdrantClient;
 import io.qdrant.client.QdrantGrpcClient;
 
-// Connect to a local, unsecured Qdrant instance
+// Basic local connection
 QdrantClient client = new QdrantClient(
-    QdrantGrpcClient.newBuilder("localhost", 6334, false).build());
+    QdrantGrpcClient.newBuilder("localhost").build());
 
-// To connect to a secured instance with an API key:
-// ManagedChannel channel = Grpc.newChannelBuilder(...)
-// QdrantClient secureClient = new QdrantClient(
-//     QdrantGrpcClient.newBuilder(channel)
-//         .withApiKey("YOUR_API_KEY")
-//         .build());
+// Secure connection with API key
+QdrantClient secureClient = new QdrantClient(
+    QdrantGrpcClient.newBuilder("localhost", 6334, false)
+        .withApiKey("YOUR_API_KEY")
+        .build());
+
+// Managed connection with TLS
+QdrantClient tlsClient = new QdrantClient(
+    QdrantGrpcClient.newBuilder(channel)
+        .withApiKey("YOUR_API_KEY")
+        .build());
 ```
 
-## 3. Core Operations with the Java Client
+## Collection Management
 
-Here’s how to perform basic operations. All client methods return a `ListenableFuture`.
+Create and configure vector collections with appropriate distance metrics and dimensions.
 
-### Create a Collection
+### Create Collections
 
 ```java
 import io.qdrant.client.grpc.Collections.Distance;
 import io.qdrant.client.grpc.Collections.VectorParams;
 import java.util.concurrent.ExecutionException;
 
-try {
-    client.createCollectionAsync("my-java-collection",
-        VectorParams.newBuilder().setDistance(Distance.Cosine).setSize(384).build()
-    ).get();
-} catch (InterruptedException | ExecutionException e) {
-    // Handle exception
-}
+// Create a collection with cosine distance
+client.createCollectionAsync("search-collection",
+    VectorParams.newBuilder()
+        .setDistance(Distance.Cosine)
+        .setSize(384)
+        .build()).get();
+
+// Create collection with configuration
+client.createCollectionAsync("recommendation-engine",
+    VectorParams.newBuilder()
+        .setDistance(Distance.Euclidean)
+        .setSize(512)
+        .build()).get();
 ```
 
-### Upsert Points (Vectors)
+## Vector Operations
 
-Use the provided factory classes to easily construct points.
+Perform common vector operations including upsert, search, and filtering.
+
+### Upsert Points
 
 ```java
 import io.qdrant.client.grpc.Points.PointStruct;
@@ -113,23 +127,30 @@ import static io.qdrant.client.PointIdFactory.id;
 import static io.qdrant.client.ValueFactory.value;
 import static io.qdrant.client.VectorsFactory.vectors;
 
+// Batch upsert vector points
 List<PointStruct> points = List.of(
     PointStruct.newBuilder()
         .setId(id(1))
         .setVectors(vectors(0.05f, 0.61f, 0.76f, 0.74f))
-        .putAllPayload(Map.of("city", value("Berlin")))
+        .putAllPayload(Map.of(
+            "title", value("Spring Boot Documentation"),
+            "content", value("Spring Boot framework documentation")
+        ))
         .build(),
     PointStruct.newBuilder()
         .setId(id(2))
         .setVectors(vectors(0.19f, 0.81f, 0.75f, 0.11f))
-        .putAllPayload(Map.of("city", value("London")))
+        .putAllPayload(Map.of(
+            "title", value("Qdrant Vector Database"),
+            "content", value("Vector database for AI applications")
+        ))
         .build()
 );
 
-client.upsertAsync("my-java-collection", points).get();
+client.upsertAsync("search-collection", points).get();
 ```
 
-### Search for Similar Points
+### Vector Search
 
 ```java
 import io.qdrant.client.grpc.Points.QueryPoints;
@@ -137,24 +158,33 @@ import io.qdrant.client.grpc.Points.ScoredPoint;
 import static io.qdrant.client.QueryFactory.nearest;
 import java.util.List;
 
-List<ScoredPoint> searchResult = client.queryAsync(
+// Basic similarity search
+List<ScoredPoint> results = client.queryAsync(
     QueryPoints.newBuilder()
-        .setCollectionName("my-java-collection")
-        .setLimit(3)
+        .setCollectionName("search-collection")
+        .setLimit(5)
         .setQuery(nearest(0.2f, 0.1f, 0.9f, 0.7f))
         .build()
 ).get();
 
-System.out.println(searchResult);
+// Search with filters
+List<ScoredPoint> filteredResults = client.searchAsync(
+    SearchPoints.newBuilder()
+        .setCollectionName("search-collection")
+        .addAllVector(List.of(0.6235f, 0.123f, 0.532f, 0.123f))
+        .setFilter(Filter.newBuilder()
+            .addMust(range("rand_number",
+                Range.newBuilder().setGte(3).build()))
+            .build())
+        .setLimit(5)
+        .build()).get();
 ```
 
-## 4. Spring Boot Integration
+## Spring Boot Integration
 
-Properly integrate the `QdrantClient` into your Spring Boot application by defining it as a bean.
+Integrate Qdrant with Spring Boot using dependency injection and proper configuration.
 
-### Configuration Bean
-
-Create a configuration class to manage the `QdrantClient` lifecycle.
+### Configuration Class
 
 ```java
 import io.qdrant.client.QdrantClient;
@@ -172,18 +202,21 @@ public class QdrantConfig {
     @Value("${qdrant.port:6334}")
     private int port;
 
+    @Value("${qdrant.api-key:}")
+    private String apiKey;
+
     @Bean
     public QdrantClient qdrantClient() {
-        // In a real application, you would handle TLS and API keys here
-        return new QdrantClient(
-            QdrantGrpcClient.newBuilder(host, port, false).build());
+        QdrantGrpcClient grpcClient = QdrantGrpcClient.newBuilder(host, port, false)
+            .withApiKey(apiKey)
+            .build();
+
+        return new QdrantClient(grpcClient);
     }
 }
 ```
 
-### Service Layer
-
-Inject the `QdrantClient` bean into your services to abstract away the data access logic.
+### Service Layer Implementation
 
 ```java
 import org.springframework.stereotype.Service;
@@ -191,11 +224,11 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Service
-public class SearchService {
+public class VectorSearchService {
 
     private final QdrantClient qdrantClient;
 
-    public SearchService(QdrantClient qdrantClient) {
+    public VectorSearchService(QdrantClient qdrantClient) {
         this.qdrantClient = qdrantClient;
     }
 
@@ -212,29 +245,33 @@ public class SearchService {
             throw new RuntimeException("Qdrant search failed", e);
         }
     }
+
+    public void upsertPoints(String collectionName, List<PointStruct> points) {
+        try {
+            qdrantClient.upsertAsync(collectionName, points).get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Qdrant upsert failed", e);
+        }
+    }
 }
 ```
 
-## 5. Langchain4j Integration
+## LangChain4j Integration
 
-Langchain4j provides a high-level abstraction over Qdrant with its `QdrantEmbeddingStore`.
+Leverage LangChain4j for high-level vector store abstractions and RAG implementations.
 
 ### Dependency Setup
-
-Add the `langchain4j-qdrant` dependency to your project.
 
 **Maven:**
 ```xml
 <dependency>
     <groupId>dev.langchain4j</groupId>
     <artifactId>langchain4j-qdrant</artifactId>
-    <version>1.7.0</version> <!-- Check for the latest version -->
+    <version>1.7.0</version>
 </dependency>
 ```
 
-### `QdrantEmbeddingStore` Bean
-
-Configure `QdrantEmbeddingStore` as a Spring bean. It simplifies embedding management by handling both the embedding model and the vector store.
+### QdrantEmbeddingStore Configuration
 
 ```java
 import dev.langchain4j.data.segment.TextSegment;
@@ -252,10 +289,10 @@ public class Langchain4jConfig {
     @Bean
     public EmbeddingStore<TextSegment> embeddingStore() {
         return QdrantEmbeddingStore.builder()
-            .collectionName("langchain4j-collection")
+            .collectionName("rag-collection")
             .host("localhost")
             .port(6334)
-            // .apiKey("YOUR_API_KEY") // Uncomment if auth is enabled
+            .apiKey("YOUR_API_KEY")
             .build();
     }
 
@@ -276,52 +313,134 @@ public class Langchain4jConfig {
 }
 ```
 
-### Usage in a Service
-
-Inject the `EmbeddingStore` and `EmbeddingModel` to build a simple RAG-style search.
+### RAG Service Implementation
 
 ```java
-import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.embedding.EmbeddingModel;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
-import dev.langchain4j.store.embedding.RelevanceScore;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
 public class RagService {
 
-    private final EmbeddingStore<TextSegment> embeddingStore;
-    private final EmbeddingModel embeddingModel;
     private final EmbeddingStoreIngestor ingestor;
 
-    public RagService(EmbeddingStore<TextSegment> embeddingStore,
-                      EmbeddingModel embeddingModel,
-                      EmbeddingStoreIngestor ingestor) {
-        this.embeddingStore = embeddingStore;
-        this.embeddingModel = embeddingModel;
+    public RagService(EmbeddingStoreIngestor ingestor) {
         this.ingestor = ingestor;
     }
 
-    public void addDocument(String text) {
+    public void ingestDocument(String text) {
         TextSegment segment = TextSegment.from(text);
         ingestor.ingest(segment);
     }
 
-    public List<TextSegment> findMostRelevant(String query) {
-        Embedding queryEmbedding = embeddingModel.embed(query).content();
-        List<EmbeddingMatch<TextSegment>> relevant = embeddingStore.findRelevant(queryEmbedding, 5, 0.7);
-        
-        return relevant.stream()
-            .map(EmbeddingMatch::embedded)
+    public List<TextSegment> findRelevant(String query) {
+        EmbeddingStore<TextSegment> embeddingStore = ingestor.getEmbeddingStore();
+        return embeddingStore.findRelevant(
+            ingestor.getEmbeddingModel().embed(query).content(),
+            5,
+            0.7
+        ).stream()
+            .map(match -> match.embedded())
             .toList();
     }
 }
 ```
 
-## Examples and References
+## Examples
 
-- For detailed, runnable code snippets, see the **[Code Examples](examples.md)** file.
-- For a curated list of official documentation and other useful resources, see the **[References](references.md)** file.
+### Basic Search Implementation
+
+```java
+// Create simple search endpoint
+@RestController
+@RequestMapping("/api/search")
+public class SearchController {
+
+    private final VectorSearchService searchService;
+
+    public SearchController(VectorSearchService searchService) {
+        this.searchService = searchService;
+    }
+
+    @GetMapping
+    public List<ScoredPoint> search(@RequestParam String query) {
+        // Convert query to embedding (requires embedding model)
+        List<Float> queryVector = embeddingModel.embed(query).content().vectorAsList();
+        return searchService.search("documents", queryVector);
+    }
+}
+```
+
+## Best Practices
+
+### Vector Database Configuration
+- Use appropriate distance metrics: Cosine for text, Euclidean for numerical data
+- Optimize vector dimensions based on embedding model specifications
+- Configure proper collection naming conventions
+- Monitor performance and optimize search parameters
+
+### Spring Boot Integration
+- Always use constructor injection for dependency injection
+- Handle async operations with proper exception handling
+- Configure connection timeouts and retry policies
+- Use proper bean configuration for production environments
+
+### Security Considerations
+- Never hardcode API keys in code
+- Use environment variables or Spring configuration properties
+- Implement proper authentication and authorization
+- Use TLS for production connections
+
+### Performance Optimization
+- Batch operations for bulk upserts
+- Use appropriate limits and filters
+- Monitor memory usage and connection pooling
+- Consider sharding for large datasets
+
+## Advanced Patterns
+
+### Multi-tenant Vector Storage
+```java
+// Implement collection-based multi-tenancy
+public class MultiTenantVectorService {
+    private final QdrantClient client;
+
+    public void upsertForTenant(String tenantId, List<PointStruct> points) {
+        String collectionName = "tenant_" + tenantId + "_documents";
+        client.upsertAsync(collectionName, points).get();
+    }
+}
+```
+
+### Hybrid Search with Filters
+```java
+// Combine vector similarity with metadata filtering
+public List<ScoredPoint> hybridSearch(String collectionName, List<Float> queryVector,
+                                     String category, Date dateRange) {
+    Filter filter = Filter.newBuilder()
+        .addMust(range("created_at",
+            Range.newBuilder().setGte(dateRange.getTime()).build()))
+        .addMust(exactMatch("category", category))
+        .build();
+
+    return client.searchAsync(
+        SearchPoints.newBuilder()
+            .setCollectionName(collectionName)
+            .addAllVector(queryVector)
+            .setFilter(filter)
+            .build()
+    ).get();
+}
+```
+
+## References
+
+For comprehensive technical details and advanced patterns, see:
+- [Qdrant API Reference](references/references.md) - Complete client API documentation
+- [Complete Spring Boot Examples](references/examples.md) - Full application implementations
+- [Official Qdrant Documentation](https://qdrant.tech/documentation/) - Core documentation
+- [LangChain4j Documentation](https://langchain4j.dev/) - Framework-specific patterns
