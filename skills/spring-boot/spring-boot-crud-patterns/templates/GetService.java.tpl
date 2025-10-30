@@ -6,8 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import $package.domain.repository.${entity}Repository;
 import $package.presentation.dto.$dto_response;
 
-@Service
-$service_annotations
+@Service$service_annotations_block
 @Transactional(readOnly = true)
 public class Get${entity}Service {
 

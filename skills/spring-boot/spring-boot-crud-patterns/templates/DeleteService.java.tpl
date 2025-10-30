@@ -5,8 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import $package.domain.repository.${entity}Repository;
 
-@Service
-$service_annotations
+@Service$service_annotations_block
 @Transactional
 public class Delete${entity}Service {
 

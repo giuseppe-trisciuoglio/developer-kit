@@ -3,7 +3,7 @@ package $package.domain.model;
 $lombok_model_imports
 $extra_imports
 
-$model_annotations
+$model_annotations_block
 public class $entity {
 $domain_fields_decls
 

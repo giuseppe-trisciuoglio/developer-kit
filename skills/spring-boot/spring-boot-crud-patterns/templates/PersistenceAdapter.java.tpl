@@ -10,8 +10,7 @@ import $package.domain.model.$entity;
 import $package.domain.repository.${entity}Repository;
 import org.springframework.stereotype.Component;
 
-@Component
-$adapter_annotations
+@Component$adapter_annotations_block
 public class ${entity}RepositoryAdapter implements ${entity}Repository {
 
     private final ${entity}JpaRepository jpa;

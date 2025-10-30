@@ -8,8 +8,7 @@ import $package.domain.repository.${entity}Repository;
 import $package.presentation.dto.$dto_request;
 import $package.presentation.dto.$dto_response;
 
-@Service
-$service_annotations
+@Service$service_annotations_block
 @Transactional
 public class Create${entity}Service {
 

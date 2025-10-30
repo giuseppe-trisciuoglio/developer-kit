@@ -13,8 +13,7 @@ import $package.application.service.List${entity}Service;
 import $package.presentation.dto.$dto_request;
 import $package.presentation.dto.$dto_response;
 
-@RestController
-$controller_annotations
+@RestController$controller_annotations_block
 @RequestMapping("$base_path")
 public class ${entity}Controller {
 

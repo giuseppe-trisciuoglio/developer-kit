@@ -699,6 +699,11 @@ def main():
     service_annotations = "@RequiredArgsConstructor\n@Slf4j" if args.lombok else ""
     controller_annotations = "@RequiredArgsConstructor\n@Slf4j" if args.lombok else ""
     adapter_annotations = "@RequiredArgsConstructor\n@Slf4j" if args.lombok else ""
+    # annotation blocks that include a leading newline when present to avoid empty lines
+    service_annotations_block = ("\n" + service_annotations) if service_annotations else ""
+    controller_annotations_block = ("\n" + controller_annotations) if controller_annotations else ""
+    adapter_annotations_block = ("\n" + adapter_annotations) if adapter_annotations else ""
+    model_annotations_block = ("\n" + model_annotations) if model_annotations else ""
 
     placeholders = {
         "package": base_pkg,
@@ -737,6 +742,10 @@ def main():
         "service_annotations": service_annotations,
         "controller_annotations": controller_annotations,
         "adapter_annotations": adapter_annotations,
+        "service_annotations_block": service_annotations_block,
+        "controller_annotations_block": controller_annotations_block,
+        "adapter_annotations_block": adapter_annotations_block,
+        "model_annotations_block": model_annotations_block,
     }
 
     # Write files (templates only, fail on error)
