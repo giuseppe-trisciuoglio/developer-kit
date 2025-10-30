@@ -98,6 +98,11 @@ Consult `references/examples-product-feature.md` for complete code listings that
 
 ## References
 
-- [`references/crud-reference.md`](references/crud-reference.md): HTTP method matrix, annotation catalog, DTO patterns.
-- [`references/examples-product-feature.md`](references/examples-product-feature.md): Progressive examples from starter to advanced feature implementation.
-- [`references/spring-official-docs.md`](references/spring-official-docs.md): Excerpts from official Spring guides and Spring Boot reference documentation.
+- [HTTP method matrix, annotation catalog, DTO patterns.](references/crud-reference.md)
+- [Progressive examples from starter to advanced feature implementation.](references/examples-product-feature.md)
+- [Excerpts from official Spring guides and Spring Boot reference documentation.](references/spring-official-docs.md)
+- [Python generator to scaffold CRUD boilerplate from entity spec.](scripts/generate_crud_boilerplate.py) Usage: `python skills/spring-boot/spring-boot-crud-patterns/scripts/generate_crud_boilerplate.py --spec entity.json --package com.example.product --output ./generated`
+- Templates required: place .tpl files in `skills/spring-boot/spring-boot-crud-patterns/templates/` or pass `--templates-dir <path>`; no fallback to built-ins. See `templates/README.md`.
+- Usage guide: [references/generator-usage.md](references/generator-usage.md)
+- Example spec: `skills/spring-boot/spring-boot-crud-patterns/assets/specs/product.json`
+- Example with relationships: `skills/spring-boot/spring-boot-crud-patterns/assets/specs/product_with_rel.json`

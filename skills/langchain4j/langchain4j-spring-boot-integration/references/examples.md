@@ -1,39 +1,98 @@
-# LangChain4j Spring Boot Integration - Practical Examples
+# LangChain4j Spring Boot Integration - Examples
 
-Production-ready examples for integrating LangChain4j with Spring Boot applications.
+Comprehensive implementation examples for Spring Boot integration with LangChain4j.
 
-## 1. Auto-Configuration with Spring Boot
+## Basic Setup Example
 
-**Scenario**: Minimal setup using Spring Boot auto-configuration.
+### Complete Spring Boot Application
 
 ```java
-// Add dependency: org.springframework.ai:spring-ai-openai-spring-boot-starter
-
 @SpringBootApplication
-public class AiApplication {
+public class Langchain4jApplication {
+
     public static void main(String[] args) {
-        SpringApplication.run(AiApplication.class, args);
+        SpringApplication.run(Langchain4jApplication.class, args);
     }
 }
 
-// Properties file (application.yml)
-spring:
-  ai:
-    openai:
-      api-key: ${OPENAI_API_KEY}
-      model: gpt-4o-mini
-      temperature: 0.7
+@Configuration
+public class AiConfiguration {
 
-// Auto-wired beans are available
-@Service
-public class ChatService {
-    @Autowired
-    private ChatModel chatModel;
-    
-    public String chat(String message) {
-        return chatModel.chat(message);
+    @Bean
+    @Profile("openai")
+    public ChatModel openAiChatModel(@Value("${langchain4j.open-ai.chat-model.api-key}") String apiKey) {
+        return OpenAiChatModel.builder()
+                .apiKey(apiKey)
+                .modelName("gpt-4o-mini")
+                .temperature(0.7)
+                .maxTokens(1000)
+                .logRequests(true)
+                .logResponses(true)
+                .build();
+    }
+
+    @Bean
+    public EmbeddingModel openAiEmbeddingModel(@Value("${langchain4j.open-ai.embedding-model.api-key}") String apiKey) {
+        return OpenAiEmbeddingModel.builder()
+                .apiKey(apiKey)
+                .modelName("text-embedding-3-small")
+                .dimensions(1536)
+                .build();
     }
 }
+
+@AiService
+interface CustomerSupportAssistant {
+
+    @SystemMessage("You are a helpful customer support agent for TechCorp. " +
+                  "Be polite, professional, and try to resolve customer issues efficiently. " +
+                  "If you cannot resolve an issue, escalate to a human agent.")
+    String handleInquiry(String customerMessage);
+
+    @UserMessage("Analyze this customer feedback and extract sentiment: {{feedback}}")
+    @SystemMessage("Return only: POSITIVE, NEGATIVE, or NEUTRAL")
+    String analyzeSentiment(String feedback);
+
+    @UserMessage("Extract key entities from this text: {{text}}")
+    @SystemMessage("Return a JSON object with entities as keys and their types as values")
+    String extractEntities(String text);
+}
+
+@RestController
+@RequestMapping("/api/support")
+@RequiredArgsConstructor
+public class CustomerSupportController {
+
+    private final CustomerSupportAssistant assistant;
+
+    @PostMapping("/inquiry")
+    public ResponseEntity<SupportResponse> handleInquiry(@RequestBody @Valid SupportRequest request) {
+        String response = assistant.handleInquiry(request.getMessage());
+        return ResponseEntity.ok(new SupportResponse(response, Instant.now()));
+    }
+
+    @PostMapping("/sentiment")
+    public ResponseEntity<SentimentResponse> analyzeSentiment(@RequestBody @Valid SentimentRequest request) {
+        String sentiment = assistant.analyzeSentiment(request.getFeedback());
+        return ResponseEntity.ok(new SentimentResponse(sentiment, Instant.now()));
+    }
+
+    @PostMapping("/entities")
+    public ResponseEntity<EntitiesResponse> extractEntities(@RequestBody @Valid EntitiesRequest request) {
+        String entities = assistant.extractEntities(request.getText());
+        return ResponseEntity.ok(new EntitiesResponse(entities, Instant.now()));
+    }
+}
+
+// DTO Classes
+record SupportRequest(String message) {}
+record SupportResponse(String response, Instant timestamp) {}
+
+record SentimentRequest(String feedback) {}
+record SentimentResponse(String sentiment, Instant timestamp) {}
+
+record EntitiesRequest(String text) {}
+record EntitiesResponse(String entities, Instant timestamp) {}
 ```
 
 ## 2. Custom AI Service Bean Configuration
