@@ -117,6 +117,11 @@ def write_file(path: str, content: str) -> None:
     with open(path, "w", encoding="utf-8") as f:
         f.write(content.rstrip() + "\n")
 
+def write_file_if_absent(path: str, content: str) -> None:
+    if os.path.exists(path):
+        return
+    write_file(path, content)
+
 
 def qualify_imports(types: list[str]) -> str:
     imports = []
@@ -600,6 +605,7 @@ def main():
     paths = {
         "domain_model": os.path.join(java_root, "domain/model", f"{entity}.java"),
         "domain_repo": os.path.join(java_root, "domain/repository", f"{entity}Repository.java"),
+        "domain_service": os.path.join(java_root, "domain/service", f"{entity}Service.java"),
         "jpa_entity": os.path.join(java_root, "infrastructure/persistence", f"{entity}Entity.java"),
         "spring_data_repo": os.path.join(java_root, "infrastructure/persistence", f"{entity}JpaRepository.java"),
         "persistence_adapter": os.path.join(java_root, "infrastructure/persistence", f"{entity}RepositoryAdapter.java"),
@@ -611,6 +617,9 @@ def main():
         "dto_req": os.path.join(java_root, "presentation/dto", f"{entity}Request.java"),
         "dto_res": os.path.join(java_root, "presentation/dto", f"{entity}Response.java"),
         "controller": os.path.join(java_root, "presentation/rest", f"{entity}Controller.java"),
+        "ex_not_found": os.path.join(java_root, "application/exception", f"{entity}NotFoundException.java"),
+        "ex_exist": os.path.join(java_root, "application/exception", f"{entity}ExistException.java"),
+        "entity_exception_handler": os.path.join(java_root, "presentation/rest", f"{entity}ExceptionHandler.java"),
     }
 
     # Resolve templates directory (required; no fallback to built-ins)
@@ -623,6 +632,7 @@ def main():
     required_templates = [
         "DomainModel.java.tpl",
         "DomainRepository.java.tpl",
+        "DomainService.java.tpl",
         "JpaEntity.java.tpl",
         "SpringDataRepository.java.tpl",
         "PersistenceAdapter.java.tpl",
@@ -634,6 +644,9 @@ def main():
         "DtoRequest.java.tpl",
         "DtoResponse.java.tpl",
         "Controller.java.tpl",
+        "NotFoundException.java.tpl",
+        "ExistException.java.tpl",
+        "EntityExceptionHandler.java.tpl",
     ]
     missing = [name for name in required_templates if load_template_text(templates_dir, name) is None]
     if missing:
@@ -688,6 +701,8 @@ def main():
     response_from_agg_args = ", ".join([f"agg.get{cap(f['name'])}()" for f in all_fields])
     list_map_response_args = ", ".join([f"a.get{cap(f['name'])}()" for f in all_fields])
     update_create_args = ", ".join([id_spec["name"], *[f"request.{f['name']}()" for f in fields]])
+    mapper_create_args = ", ".join(["id", *[f"request.{f['name']}()" for f in fields]])
+    create_id_arg = ("null" if id_generated else f"request.{id_spec['name']}()")
 
     table_name = camel_to_snake(entity)
 
@@ -705,114 +720,73 @@ def main():
     adapter_annotations_block = ("\n" + adapter_annotations) if adapter_annotations else ""
     model_annotations_block = ("\n" + model_annotations) if model_annotations else ""
 
-    placeholders = {
-        "package": base_pkg,
-        "entity": entity,
-        "entity_lower": lower_first(entity),
-        "id_type": id_spec["type"],
-        "id_name": id_spec["name"],
-        "id_name_lower": lower_first(id_spec["name"]),
-        "id_name_cap": cap(id_spec["name"]),
-        "base_path": f"/api/{camel_to_snake(entity)}s",
-        "dto_request": f"{entity}Request",
-        "dto_response": f"{entity}Response",
-        "extra_imports": extra_imports,
-        "domain_fields_decls": domain_fields_decls,
-        "domain_ctor_params": domain_ctor_params,
-        "domain_assigns": domain_assigns,
-        "domain_getters": domain_getters,
-        "all_names_csv": all_names_csv,
-        "jpa_fields_decls": jpa_fields_decls,
-        "jpa_ctor_params": jpa_ctor_params,
-        "jpa_assigns": jpa_assigns,
-        "jpa_getters_setters": jpa_getters_setters,
-        "model_constructor_block": model_constructor_block,
-        "dto_request_components": dto_request_components,
-        "dto_response_components": dto_response_components,
-        "adapter_to_entity_args": adapter_to_entity_args,
-        "adapter_to_domain_args": adapter_to_domain_args,
-        "request_all_args": request_all_args,
-        "response_from_agg_args": response_from_agg_args,
-        "list_map_response_args": list_map_response_args,
-        "update_create_args": update_create_args,
-        "table_name": table_name,
-        "lombok_model_imports": lombok_model_imports,
-        "lombok_common_imports": lombok_common_imports,
-        "model_annotations": model_annotations,
-        "service_annotations": service_annotations,
-        "controller_annotations": controller_annotations,
-        "adapter_annotations": adapter_annotations,
-        "service_annotations_block": service_annotations_block,
-        "controller_annotations_block": controller_annotations_block,
-        "adapter_annotations_block": adapter_annotations_block,
-        "model_annotations_block": model_annotations_block,
-    }
+    
+
+    def _render(name):
+        c = render_template_file(templates_dir, name, placeholders)
+        if c is None: raise SystemExit(f"Template render failed: {name}")
+        c = (c.replace("$controller_constructor", controller_constructor)
+               .replace("$adapter_constructor", adapter_constructor)
+               .replace("$create_constructor", create_constructor)
+               .replace("$update_constructor", update_constructor)
+               .replace("$get_constructor", get_constructor)
+               .replace("$list_constructor", list_constructor)
+               .replace("$delete_constructor", delete_constructor)
+               .replace("$domain_service_constructor", domain_service_constructor))
+        return c
 
     # Write files (templates only, fail on error)
-    content = render_template_file(templates_dir, "DomainModel.java.tpl", placeholders)
-    if content is None:
-        raise SystemExit("Template render failed: DomainModel.java.tpl")
+    content = _render("DomainModel.java.tpl")
     write_file(paths["domain_model"], content)
 
-    content = render_template_file(templates_dir, "DomainRepository.java.tpl", placeholders)
-    if content is None:
-        raise SystemExit("Template render failed: DomainRepository.java.tpl")
+    content = _render("DomainRepository.java.tpl")
     write_file(paths["domain_repo"], content)
 
-    content = render_template_file(templates_dir, "JpaEntity.java.tpl", placeholders)
-    if content is None:
-        raise SystemExit("Template render failed: JpaEntity.java.tpl")
+    content = _render("DomainService.java.tpl")
+    write_file(paths["domain_service"], content)
+
+    content = _render("JpaEntity.java.tpl")
     write_file(paths["jpa_entity"], content)
 
-    content = render_template_file(templates_dir, "SpringDataRepository.java.tpl", placeholders)
-    if content is None:
-        raise SystemExit("Template render failed: SpringDataRepository.java.tpl")
+    content = _render("SpringDataRepository.java.tpl")
     write_file(paths["spring_data_repo"], content)
 
-    content = render_template_file(templates_dir, "PersistenceAdapter.java.tpl", placeholders)
-    if content is None:
-        raise SystemExit("Template render failed: PersistenceAdapter.java.tpl")
+    content = _render("PersistenceAdapter.java.tpl")
     write_file(paths["persistence_adapter"], content)
 
-    content = render_template_file(templates_dir, "CreateService.java.tpl", placeholders)
-    if content is None:
-        raise SystemExit("Template render failed: CreateService.java.tpl")
+    content = _render("CreateService.java.tpl")
     write_file(paths["app_service_create"], content)
 
-    content = render_template_file(templates_dir, "GetService.java.tpl", placeholders)
-    if content is None:
-        raise SystemExit("Template render failed: GetService.java.tpl")
+    content = _render("GetService.java.tpl")
     write_file(paths["app_service_get"], content)
 
-    content = render_template_file(templates_dir, "UpdateService.java.tpl", placeholders)
-    if content is None:
-        raise SystemExit("Template render failed: UpdateService.java.tpl")
+    content = _render("UpdateService.java.tpl")
     write_file(paths["app_service_update"], content)
 
-    content = render_template_file(templates_dir, "DeleteService.java.tpl", placeholders)
-    if content is None:
-        raise SystemExit("Template render failed: DeleteService.java.tpl")
+    content = _render("DeleteService.java.tpl")
     write_file(paths["app_service_delete"], content)
 
-    content = render_template_file(templates_dir, "ListService.java.tpl", placeholders)
-    if content is None:
-        raise SystemExit("Template render failed: ListService.java.tpl")
+    content = _render("ListService.java.tpl")
     write_file(paths["app_service_list"], content)
 
-    content = render_template_file(templates_dir, "DtoRequest.java.tpl", placeholders)
-    if content is None:
-        raise SystemExit("Template render failed: DtoRequest.java.tpl")
+    content = _render("DtoRequest.java.tpl")
     write_file(paths["dto_req"], content)
 
-    content = render_template_file(templates_dir, "DtoResponse.java.tpl", placeholders)
-    if content is None:
-        raise SystemExit("Template render failed: DtoResponse.java.tpl")
+    content = _render("DtoResponse.java.tpl")
     write_file(paths["dto_res"], content)
 
-    content = render_template_file(templates_dir, "Controller.java.tpl", placeholders)
-    if content is None:
-        raise SystemExit("Template render failed: Controller.java.tpl")
+    content = _render("Controller.java.tpl")
     write_file(paths["controller"], content)
+
+    # Exceptions
+    content = _render("NotFoundException.java.tpl")
+    write_file(paths["ex_not_found"], content)
+
+    content = _render("ExistException.java.tpl")
+    write_file(paths["ex_exist"], content)
+
+    content = _render("EntityExceptionHandler.java.tpl")
+    write_file(paths["entity_exception_handler"], content)
 
     # Helpful README
     readme = dedent(f"""

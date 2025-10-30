@@ -2,6 +2,7 @@ package $package.presentation.rest;
 
 $lombok_common_imports
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
@@ -12,6 +13,8 @@ import $package.application.service.Delete${entity}Service;
 import $package.application.service.List${entity}Service;
 import $package.presentation.dto.$dto_request;
 import $package.presentation.dto.$dto_response;
+import $package.presentation.dto.PageResponse;
+import org.springframework.data.domain.Pageable;
 
 @RestController$controller_annotations_block
 @RequestMapping("$base_path")
@@ -23,21 +26,14 @@ public class ${entity}Controller {
     private final Delete${entity}Service deleteService;
     private final List${entity}Service listService;
 
-    public ${entity}Controller(Create${entity}Service createService,
-                               Get${entity}Service getService,
-                               Update${entity}Service updateService,
-                               Delete${entity}Service deleteService,
-                               List${entity}Service listService) {
-        this.createService = createService;
-        this.getService = getService;
-        this.updateService = updateService;
-        this.deleteService = deleteService;
-        this.listService = listService;
-    }
+    $controller_constructor
 
     @PostMapping
     public ResponseEntity<$dto_response> create(@RequestBody @Valid $dto_request request) {
-        return ResponseEntity.status(201).body(createService.create(request));
+        $dto_response created = createService.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .header("Location", "$base_path/" + created.$id_name_lower())
+                .body(created);
     }
 
     @GetMapping("/{${id_name_lower}}")
@@ -58,8 +54,7 @@ public class ${entity}Controller {
     }
 
     @GetMapping
-    public ResponseEntity<java.util.List<$dto_response>> list(@RequestParam(defaultValue = "0") int page,
-                                                               @RequestParam(defaultValue = "20") int size) {
-        return ResponseEntity.ok(listService.list(page, size));
+    public ResponseEntity<PageResponse<$dto_response>> list(Pageable pageable) {
+        return ResponseEntity.ok(listService.list(pageable.getPageNumber(), pageable.getPageSize()));
     }
 }

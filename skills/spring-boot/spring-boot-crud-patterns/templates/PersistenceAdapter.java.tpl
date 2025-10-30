@@ -15,9 +15,7 @@ public class ${entity}RepositoryAdapter implements ${entity}Repository {
 
     private final ${entity}JpaRepository jpa;
 
-    public ${entity}RepositoryAdapter(${entity}JpaRepository jpa) {
-        this.jpa = jpa;
-    }
+    $adapter_constructor
 
     @Override
     public $entity save($entity a) {

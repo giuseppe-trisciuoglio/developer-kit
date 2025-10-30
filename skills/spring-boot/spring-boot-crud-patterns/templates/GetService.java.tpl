@@ -3,22 +3,23 @@ package $package.application.service;
 $lombok_common_imports
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import $package.domain.repository.${entity}Repository;
+import $package.domain.service.${entity}Service;
+import $package.application.mapper.${entity}Mapper;
+import $package.application.exception.${entity}NotFoundException;
 import $package.presentation.dto.$dto_response;
 
 @Service$service_annotations_block
 @Transactional(readOnly = true)
 public class Get${entity}Service {
 
-    private final ${entity}Repository repository;
+    private final ${entity}Service ${entity_lower}Service;
+    private final ${entity}Mapper mapper;
 
-    public Get${entity}Service(${entity}Repository repository) {
-        this.repository = repository;
-    }
+    $get_constructor
 
     public $dto_response get($id_type $id_name) {
-        return repository.findById($id_name)
-            .map(a -> new $dto_response($list_map_response_args))
-            .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND));
+        return ${entity_lower}Service.findById($id_name)
+            .map(mapper::toResponse)
+            .orElseThrow(() -> new ${entity}NotFoundException($id_name));
     }
 }

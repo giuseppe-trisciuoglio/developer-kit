@@ -4,7 +4,10 @@ $lombok_common_imports
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import $package.domain.model.$entity;
-import $package.domain.repository.${entity}Repository;
+import $package.domain.service.${entity}Service;
+import $package.application.mapper.${entity}Mapper;
+import $package.application.exception.${entity}ExistException;
+import org.springframework.dao.DataIntegrityViolationException;
 import $package.presentation.dto.$dto_request;
 import $package.presentation.dto.$dto_response;
 
@@ -12,15 +15,18 @@ import $package.presentation.dto.$dto_response;
 @Transactional
 public class Create${entity}Service {
 
-    private final ${entity}Repository repository;
+    private final ${entity}Service ${entity_lower}Service;
+    private final ${entity}Mapper mapper;
 
-    public Create${entity}Service(${entity}Repository repository) {
-        this.repository = repository;
-    }
+    $create_constructor
 
     public $dto_response create($dto_request request) {
-        $entity agg = $entity.create($request_all_args);
-        agg = repository.save(agg);
-        return new $dto_response($response_from_agg_args);
+        try {
+            $entity agg = mapper.toAggregate($create_id_arg, request);
+            agg = ${entity_lower}Service.save(agg);
+            return mapper.toResponse(agg);
+        } catch (DataIntegrityViolationException ex) {
+            throw new ${entity}ExistException("Duplicate $entity");
+        }
     }
 }

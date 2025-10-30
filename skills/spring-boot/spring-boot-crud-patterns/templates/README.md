@@ -18,8 +18,22 @@ Required template filenames:
 - UpdateService.java.tpl
 - DeleteService.java.tpl
 - ListService.java.tpl
+- Mapper.java.tpl
 - DtoRequest.java.tpl
 - DtoResponse.java.tpl
+- PageResponse.java.tpl
+- ErrorResponse.java.tpl
 - Controller.java.tpl
+- GlobalExceptionHandler.java.tpl
+- EntityExceptionHandler.java.tpl
+- NotFoundException.java.tpl
+- ExistException.java.tpl
 
 Tip: Start simple and expand over time; these files are your team’s baseline.
+
+Conventions:
+- Base path is versioned: /v1/{resources}
+- POST returns 201 Created and sets Location: /v1/{resources}/{id}
+- GET collection supports pagination via Pageable in controller and returns PageResponse<T>
+- Application layer uses ${Entity}Mapper for DTO↔Domain and throws ${Entity}ExistException on duplicates
+- Exceptions are mapped by GlobalExceptionHandler and ${Entity}ExceptionHandler
