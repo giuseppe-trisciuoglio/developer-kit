@@ -705,9 +705,15 @@ def main():
     create_id_arg = ("null" if id_generated else f"request.{id_spec['name']}()")
 
     table_name = camel_to_snake(entity)
+    base_path = f"/api/{table_name}"
 
     # Common placeholders for external templates
     # Lombok-related placeholders
+    # Domain model should only have @Getter for DDD immutability
+    lombok_domain_imports = "import lombok.Getter;" if args.lombok else ""
+    lombok_domain_annotations = "@Getter" if args.lombok else ""
+    lombok_domain_annotations_block = ("\n" + lombok_domain_annotations) if lombok_domain_annotations else ""
+
     lombok_model_imports = "import lombok.Getter;\nimport lombok.Setter;\nimport lombok.AllArgsConstructor;" if args.lombok else ""
     lombok_common_imports = "import lombok.RequiredArgsConstructor;\nimport lombok.extern.slf4j.Slf4j;" if args.lombok else ""
     model_annotations = "@Getter\n@Setter\n@AllArgsConstructor" if args.lombok else ""
@@ -720,72 +726,136 @@ def main():
     adapter_annotations_block = ("\n" + adapter_annotations) if adapter_annotations else ""
     model_annotations_block = ("\n" + model_annotations) if model_annotations else ""
 
-    
+    
 
-    def _render(name):
-        c = render_template_file(templates_dir, name, placeholders)
+    # Common placeholders for external templates
+    placeholders = {
+        "entity": entity,
+        "Entity": entity,
+        "EntityRequest": f"{entity}Request",
+        "EntityResponse": f"{entity}Response",
+        "entity_lower": lower_first(entity),
+        "package": base_pkg,
+        "Package": base_pkg.replace(".", "/"),
+        "table_name": table_name,
+        "base_path": base_path,
+        "id_type": id_spec["type"],
+        "id_name": id_spec["name"],
+        "id_name_lower": lower_first(id_spec["name"]),
+        "id_generated": str(id_generated).lower(),
+        "fields": fields,
+        "all_fields": all_fields,
+        "extra_imports": extra_imports,
+        "final_kw": final_kw,
+        "domain_fields_decls": domain_fields_decls,
+        "domain_ctor_params": domain_ctor_params,
+        "domain_assigns": domain_assigns,
+        "domain_getters": domain_getters,
+        "model_constructor_block": model_constructor_block,
+        "all_names_csv": all_names_csv,
+        "jpa_fields_decls": jpa_fields_decls,
+        "jpa_ctor_params": jpa_ctor_params,
+        "jpa_assigns": jpa_assigns,
+        "jpa_getters_setters": jpa_getters_setters,
+        "dto_response_components": dto_response_components,
+        "dto_request_components": dto_request_components,
+        "adapter_to_entity_args": adapter_to_entity_args,
+        "adapter_to_domain_args": adapter_to_domain_args,
+        "request_all_args": request_all_args,
+        "response_from_agg_args": response_from_agg_args,
+        "list_map_response_args": list_map_response_args,
+        "update_create_args": update_create_args,
+        "mapper_create_args": mapper_create_args,
+        "create_id_arg": create_id_arg,
+        # Domain-specific Lombok placeholders (DDD-compliant)
+        "lombok_domain_imports": lombok_domain_imports,
+        "lombok_domain_annotations_block": lombok_domain_annotations_block,
+        # Infrastructure/infrastructure Lombok placeholders
+        "lombok_model_imports": lombok_model_imports,
+        "lombok_common_imports": lombok_common_imports,
+        "model_annotations": model_annotations,
+        "service_annotations": service_annotations,
+        "controller_annotations": controller_annotations,
+        "adapter_annotations": adapter_annotations,
+        "service_annotations_block": service_annotations_block,
+        "controller_annotations_block": controller_annotations_block,
+        "adapter_annotations_block": adapter_annotations_block,
+        "model_annotations_block": model_annotations_block,
+        # Constructor placeholders
+        "controller_constructor": "",
+        "adapter_constructor": "",
+        "create_constructor": "",
+        "update_constructor": "",
+        "get_constructor": "",
+        "list_constructor": "",
+        "delete_constructor": "",
+        "domain_service_constructor": "",
+    }
+
+    def _render(name, placeholders_dict):
+        c = render_template_file(templates_dir, name, placeholders_dict)
         if c is None: raise SystemExit(f"Template render failed: {name}")
-        c = (c.replace("$controller_constructor", controller_constructor)
-               .replace("$adapter_constructor", adapter_constructor)
-               .replace("$create_constructor", create_constructor)
-               .replace("$update_constructor", update_constructor)
-               .replace("$get_constructor", get_constructor)
-               .replace("$list_constructor", list_constructor)
-               .replace("$delete_constructor", delete_constructor)
-               .replace("$domain_service_constructor", domain_service_constructor))
+        c = (c.replace("$controller_constructor", placeholders_dict.get("controller_constructor", ""))
+               .replace("$adapter_constructor", placeholders_dict.get("adapter_constructor", ""))
+               .replace("$create_constructor", placeholders_dict.get("create_constructor", ""))
+               .replace("$update_constructor", placeholders_dict.get("update_constructor", ""))
+               .replace("$get_constructor", placeholders_dict.get("get_constructor", ""))
+               .replace("$list_constructor", placeholders_dict.get("list_constructor", ""))
+               .replace("$delete_constructor", placeholders_dict.get("delete_constructor", ""))
+               .replace("$domain_service_constructor", placeholders_dict.get("domain_service_constructor", "")))
         return c
 
     # Write files (templates only, fail on error)
-    content = _render("DomainModel.java.tpl")
+    content = _render("DomainModel.java.tpl", placeholders)
     write_file(paths["domain_model"], content)
 
-    content = _render("DomainRepository.java.tpl")
+    content = _render("DomainRepository.java.tpl", placeholders)
     write_file(paths["domain_repo"], content)
 
-    content = _render("DomainService.java.tpl")
+    content = _render("DomainService.java.tpl", placeholders)
     write_file(paths["domain_service"], content)
 
-    content = _render("JpaEntity.java.tpl")
+    content = _render("JpaEntity.java.tpl", placeholders)
     write_file(paths["jpa_entity"], content)
 
-    content = _render("SpringDataRepository.java.tpl")
+    content = _render("SpringDataRepository.java.tpl", placeholders)
     write_file(paths["spring_data_repo"], content)
 
-    content = _render("PersistenceAdapter.java.tpl")
+    content = _render("PersistenceAdapter.java.tpl", placeholders)
     write_file(paths["persistence_adapter"], content)
 
-    content = _render("CreateService.java.tpl")
+    content = _render("CreateService.java.tpl", placeholders)
     write_file(paths["app_service_create"], content)
 
-    content = _render("GetService.java.tpl")
+    content = _render("GetService.java.tpl", placeholders)
     write_file(paths["app_service_get"], content)
 
-    content = _render("UpdateService.java.tpl")
+    content = _render("UpdateService.java.tpl", placeholders)
     write_file(paths["app_service_update"], content)
 
-    content = _render("DeleteService.java.tpl")
+    content = _render("DeleteService.java.tpl", placeholders)
     write_file(paths["app_service_delete"], content)
 
-    content = _render("ListService.java.tpl")
+    content = _render("ListService.java.tpl", placeholders)
     write_file(paths["app_service_list"], content)
 
-    content = _render("DtoRequest.java.tpl")
+    content = _render("DtoRequest.java.tpl", placeholders)
     write_file(paths["dto_req"], content)
 
-    content = _render("DtoResponse.java.tpl")
+    content = _render("DtoResponse.java.tpl", placeholders)
     write_file(paths["dto_res"], content)
 
-    content = _render("Controller.java.tpl")
+    content = _render("Controller.java.tpl", placeholders)
     write_file(paths["controller"], content)
 
     # Exceptions
-    content = _render("NotFoundException.java.tpl")
+    content = _render("NotFoundException.java.tpl", placeholders)
     write_file(paths["ex_not_found"], content)
 
-    content = _render("ExistException.java.tpl")
+    content = _render("ExistException.java.tpl", placeholders)
     write_file(paths["ex_exist"], content)
 
-    content = _render("EntityExceptionHandler.java.tpl")
+    content = _render("EntityExceptionHandler.java.tpl", placeholders)
     write_file(paths["entity_exception_handler"], content)
 
     # Helpful README
@@ -817,6 +887,7 @@ def main():
     write_file(os.path.join(out_root, "README-GENERATED.md"), readme)
 
     print(f"CRUD boilerplate generated under: {out_root}")
+
 
 
 if __name__ == "__main__":

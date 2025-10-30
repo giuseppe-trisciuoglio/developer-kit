@@ -8,8 +8,8 @@ import $package.domain.service.${entity}Service;
 import $package.application.mapper.${entity}Mapper;
 import $package.application.exception.${entity}ExistException;
 import org.springframework.dao.DataIntegrityViolationException;
-import $package.presentation.dto.$dto_request;
-import $package.presentation.dto.$dto_response;
+import $package.presentation.dto.$EntityRequest;
+import $package.presentation.dto.$EntityResponse;
 
 @Service$service_annotations_block
 @Transactional
@@ -20,7 +20,7 @@ public class Create${entity}Service {
 
     $create_constructor
 
-    public $dto_response create($dto_request request) {
+    public $EntityResponse create($EntityRequest request) {
         try {
             $entity agg = mapper.toAggregate($create_id_arg, request);
             agg = ${entity_lower}Service.save(agg);

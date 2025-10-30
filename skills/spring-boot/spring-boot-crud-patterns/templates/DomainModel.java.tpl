@@ -1,9 +1,9 @@
 package $package.domain.model;
 
-$lombok_model_imports
+$lombok_domain_imports
 $extra_imports
 
-$model_annotations_block
+$lombok_domain_annotations_block
 public class $entity {
 $domain_fields_decls
 

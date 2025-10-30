@@ -11,8 +11,8 @@ import $package.application.service.Get${entity}Service;
 import $package.application.service.Update${entity}Service;
 import $package.application.service.Delete${entity}Service;
 import $package.application.service.List${entity}Service;
-import $package.presentation.dto.$dto_request;
-import $package.presentation.dto.$dto_response;
+import $package.presentation.dto.$EntityRequest;
+import $package.presentation.dto.$EntityResponse;
 import $package.presentation.dto.PageResponse;
 import org.springframework.data.domain.Pageable;
 
@@ -29,21 +29,21 @@ public class ${entity}Controller {
     $controller_constructor
 
     @PostMapping
-    public ResponseEntity<$dto_response> create(@RequestBody @Valid $dto_request request) {
-        $dto_response created = createService.create(request);
+    public ResponseEntity<$EntityResponse> create(@RequestBody @Valid $EntityRequest request) {
+        $EntityResponse created = createService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .header("Location", "$base_path/" + created.$id_name_lower())
+                .header("Location", "$base_path/" + created.$id_name())
                 .body(created);
     }
 
     @GetMapping("/{${id_name_lower}}")
-    public ResponseEntity<$dto_response> get(@PathVariable $id_type ${id_name_lower}) {
+    public ResponseEntity<$EntityResponse> get(@PathVariable $id_type ${id_name_lower}) {
         return ResponseEntity.ok(getService.get(${id_name_lower}));
     }
 
     @PutMapping("/{${id_name_lower}}")
-    public ResponseEntity<$dto_response> update(@PathVariable $id_type ${id_name_lower},
-                                                @RequestBody @Valid $dto_request request) {
+    public ResponseEntity<$EntityResponse> update(@PathVariable $id_type ${id_name_lower},
+                                                @RequestBody @Valid $EntityRequest request) {
         return ResponseEntity.ok(updateService.update(${id_name_lower}, request));
     }
 
@@ -54,7 +54,7 @@ public class ${entity}Controller {
     }
 
     @GetMapping
-    public ResponseEntity<PageResponse<$dto_response>> list(Pageable pageable) {
+    public ResponseEntity<PageResponse<$EntityResponse>> list(Pageable pageable) {
         return ResponseEntity.ok(listService.list(pageable.getPageNumber(), pageable.getPageSize()));
     }
 }

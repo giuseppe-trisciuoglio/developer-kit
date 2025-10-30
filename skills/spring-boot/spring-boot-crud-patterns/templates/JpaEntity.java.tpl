@@ -2,19 +2,24 @@ package $package.infrastructure.persistence;
 
 import jakarta.persistence.*;
 $extra_imports
-$entity_lombok_imports
+$lombok_model_imports
+import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "$table_name")$entity_lombok_annotations_block
+@Table(name = "$table_name")
+@Getter
+@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ${entity}Entity {
 
 $jpa_fields_decls
 
     protected ${entity}Entity() { /* for JPA */ }
 
+    // Full constructor (optional, can be removed if not needed)
     public ${entity}Entity($jpa_ctor_params) {
 $jpa_assigns
     }
 
-$jpa_getters_setters
+    // Lombok generates getters and setters automatically
 }
