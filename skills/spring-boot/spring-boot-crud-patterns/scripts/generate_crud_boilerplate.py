@@ -817,7 +817,11 @@ def main():
     - infrastructure/persistence/{entity}Entity.java
     - infrastructure/persistence/{entity}JpaRepository.java
     - infrastructure/persistence/{entity}RepositoryAdapter.java
-    - application/service/{entity}Service.java
+    - application/service/Create{entity}Service.java
+    - application/service/Get{entity}Service.java
+    - application/service/Update{entity}Service.java
+    - application/service/Delete{entity}Service.java
+    - application/service/List{entity}Service.java
     - presentation/dto/{entity}Request.java
     - presentation/dto/{entity}Response.java
     - presentation/rest/{entity}Controller.java

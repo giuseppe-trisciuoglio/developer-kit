@@ -20,8 +20,8 @@ public class Update${entity}Service {
     }
 
     public $dto_response update($id_type $id_name, $dto_request request) {
-        $entity updated = $entity.create($update_create_args);
-        updated = repository.save(updated);
+        $entity agg = $entity.create($update_create_args);
+        agg = repository.save(agg);
         return new $dto_response($response_from_agg_args);
     }
 }
