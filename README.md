@@ -7,6 +7,8 @@
 multiple languages and frameworks. It includes specialized agents for code review, testing patterns, REST API design,
 and AI integration.
 
+**45 Total Skills** — Comprehensive coverage of Spring Boot, testing, AI integration, and cloud development patterns
+
 ## 🚀 Quick Start
 
 ### Claude Code CLI
@@ -46,12 +48,13 @@ and AI integration.
 |--------------------------------------------------------------------------------------------------------|--------------------------------------|-------------------------------------------------------------------|
 | **[spring-boot-actuator](skills/spring-boot/spring-boot-actuator/SKILL.md)**                           | Production monitoring and metrics    | Health checks, custom endpoints, metrics, startup tracking        |
 | **[spring-boot-dependency-injection](skills/spring-boot/spring-boot-dependency-injection/SKILL.md)**   | Constructor injection best practices | DI patterns, testing strategies, anti-patterns                    |
-| **[spring-boot-crud-patterns](skills/spring-boot/spring-boot-crud-patterns/SKILL.md)**                 | REST CRUD API design with DDD        | Feature-based architecture, Lombok, Spring Data                   |
+| **[spring-boot-crud-patterns](skills/spring-boot/spring-boot-crud-patterns/SKILL.md)**                 | REST CRUD API design with DDD        | Feature-based architecture, CRUD generator, Lombok, Spring Data    |
 | **[spring-boot-event-driven-patterns](skills/spring-boot/spring-boot-event-driven-patterns/SKILL.md)** | Event-driven architecture            | Domain events, Kafka, Spring Cloud Stream, transactional patterns |
 | **[spring-boot-rest-api-standards](skills/spring-boot/spring-boot-rest-api-standards/SKILL.md)**       | REST API design standards            | HTTP semantics, error handling, pagination, security headers      |
 | **[spring-boot-test-patterns](skills/spring-boot/spring-boot-test-patterns/SKILL.md)**                 | Integration testing patterns         | Testcontainers, Spring slice tests, database strategies           |
 | **[spring-boot-cache](skills/spring-boot/spring-boot-cache/SKILL.md)**                                 | Spring Boot caching patterns         | Cache configuration, eviction strategies, distributed caching     |
 | **[spring-boot-saga-pattern](skills/spring-boot/spring-boot-saga-pattern/SKILL.md)**                               | Distributed transaction management   | Saga pattern, choreography, orchestration, compensating transactions |
+| **[spring-boot-resilience4j](skills/spring-boot/spring-boot-resilience4j/SKILL.md)**                               | Fault tolerance patterns             | Circuit breaker, retry, rate limiting, bulkhead patterns        |
 | **[spring-data-jpa](skills/spring-boot/spring-data-jpa/SKILL.md)**                                     | Spring Data JPA best practices       | Query methods, custom repositories, performance optimization      |
 | **[spring-data-neo4j](skills/spring-boot/spring-data-neo4j/SKILL.md)**                                 | Neo4j graph database integration     | Graph modeling, Cypher queries, relationships, reactive mode      |
 | **[spring-boot-openapi-documentation](skills/spring-boot/spring-boot-openapi-documentation/SKILL.md)** | OpenAPI/Swagger documentation        | API documentation, schema generation, SpringDoc                   |
@@ -123,7 +126,7 @@ developer-kit-claude-code/
 │   ├── langchain4j-ai-development-expert.md
 │   └── spring-boot-unit-testing-expert.md
 ├── skills/                              # Reusable skills organized by domain
-│   ├── spring-boot/                     # Spring Boot framework skills (11)
+│   ├── spring-boot/                     # Spring Boot framework skills (12)
 │   │   ├── spring-boot-actuator/
 │   │   ├── spring-boot-cache/
 │   │   ├── spring-boot-crud-patterns/
@@ -131,6 +134,7 @@ developer-kit-claude-code/
 │   │   ├── spring-boot-event-driven-patterns/
 │   │   ├── spring-boot-openapi-documentation/
 │   │   ├── spring-boot-rest-api-standards/
+│   │   ├── spring-boot-resilience4j/
 │   │   ├── spring-boot-saga-pattern/
 │   │   ├── spring-boot-test-patterns/
 │   │   ├── spring-data-jpa/
@@ -197,10 +201,10 @@ feature/
 │   ├── repository/      # Domain ports (interfaces)
 │   └── service/         # Domain services
 ├── application/         # Use cases & business logic
-│   ├── service/         # Application services (@Service)
-│   └── dto/             # Immutable DTOs/records
+│   └── service/         # Application services (@Service)
 ├── presentation/        # HTTP layer
-│   └── rest/            # REST controllers & mappers
+│   ├─ rest/            # REST controllers & mappers
+│   └── dto/             # Immutable DTOs/records
 └── infrastructure/      # Technical adapters
     └── persistence/     # JPA repositories & adapters
 ```
@@ -408,6 +412,7 @@ This project is licensed under the [LICENSE](LICENSE) file in the repository roo
 
 | Version   | Changes                                                                                                                                                                                                             |
 |-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **1.6.0** | Added Spring Boot Resilience4j fault tolerance skills and CRUD generator templates. Updated total skills to 45.                                                                                                      |
 | **1.5.0** | Refactor frontmatter skills. Added new command for review a skill.                                                                                                                                                  |
 | **1.4.0** | Refactor structure skills. Added 10 AWS Java SDK v2 skills (RDS Aurora, S3, DynamoDB, Lambda, Secrets Manager, etc.).<br/> Added Spring Data Neo4j skill with graph database patterns, Cypher queries, reactive mode |
 | **1.3.0** | Added spring-boot-unit-testing-expert agent                                                                                                                                                                         |
