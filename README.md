@@ -44,20 +44,20 @@ and AI integration.
 
 ### Spring Boot Skills
 
-| Skill                                                                                                  | Purpose                              | Key Topics                                                        |
-|--------------------------------------------------------------------------------------------------------|--------------------------------------|-------------------------------------------------------------------|
-| **[spring-boot-actuator](skills/spring-boot/spring-boot-actuator/SKILL.md)**                           | Production monitoring and metrics    | Health checks, custom endpoints, metrics, startup tracking        |
-| **[spring-boot-dependency-injection](skills/spring-boot/spring-boot-dependency-injection/SKILL.md)**   | Constructor injection best practices | DI patterns, testing strategies, anti-patterns                    |
-| **[spring-boot-crud-patterns](skills/spring-boot/spring-boot-crud-patterns/SKILL.md)**                 | REST CRUD API design with DDD        | Feature-based architecture, CRUD generator, Lombok, Spring Data    |
-| **[spring-boot-event-driven-patterns](skills/spring-boot/spring-boot-event-driven-patterns/SKILL.md)** | Event-driven architecture            | Domain events, Kafka, Spring Cloud Stream, transactional patterns |
-| **[spring-boot-rest-api-standards](skills/spring-boot/spring-boot-rest-api-standards/SKILL.md)**       | REST API design standards            | HTTP semantics, error handling, pagination, security headers      |
-| **[spring-boot-test-patterns](skills/spring-boot/spring-boot-test-patterns/SKILL.md)**                 | Integration testing patterns         | Testcontainers, Spring slice tests, database strategies           |
-| **[spring-boot-cache](skills/spring-boot/spring-boot-cache/SKILL.md)**                                 | Spring Boot caching patterns         | Cache configuration, eviction strategies, distributed caching     |
-| **[spring-boot-saga-pattern](skills/spring-boot/spring-boot-saga-pattern/SKILL.md)**                               | Distributed transaction management   | Saga pattern, choreography, orchestration, compensating transactions |
-| **[spring-boot-resilience4j](skills/spring-boot/spring-boot-resilience4j/SKILL.md)**                               | Fault tolerance patterns             | Circuit breaker, retry, rate limiting, bulkhead patterns        |
-| **[spring-data-jpa](skills/spring-boot/spring-data-jpa/SKILL.md)**                                     | Spring Data JPA best practices       | Query methods, custom repositories, performance optimization      |
-| **[spring-data-neo4j](skills/spring-boot/spring-data-neo4j/SKILL.md)**                                 | Neo4j graph database integration     | Graph modeling, Cypher queries, relationships, reactive mode      |
-| **[spring-boot-openapi-documentation](skills/spring-boot/spring-boot-openapi-documentation/SKILL.md)** | OpenAPI/Swagger documentation        | API documentation, schema generation, SpringDoc                   |
+| Skill                                                                                                  | Purpose                              | Key Topics                                                           |
+|--------------------------------------------------------------------------------------------------------|--------------------------------------|----------------------------------------------------------------------|
+| **[spring-boot-actuator](skills/spring-boot/spring-boot-actuator/SKILL.md)**                           | Production monitoring and metrics    | Health checks, custom endpoints, metrics, startup tracking           |
+| **[spring-boot-dependency-injection](skills/spring-boot/spring-boot-dependency-injection/SKILL.md)**   | Constructor injection best practices | DI patterns, testing strategies, anti-patterns                       |
+| **[spring-boot-crud-patterns](skills/spring-boot/spring-boot-crud-patterns/SKILL.md)**                 | REST CRUD API design with DDD        | Feature-based architecture, CRUD generator, Lombok, Spring Data      |
+| **[spring-boot-event-driven-patterns](skills/spring-boot/spring-boot-event-driven-patterns/SKILL.md)** | Event-driven architecture            | Domain events, Kafka, Spring Cloud Stream, transactional patterns    |
+| **[spring-boot-rest-api-standards](skills/spring-boot/spring-boot-rest-api-standards/SKILL.md)**       | REST API design standards            | HTTP semantics, error handling, pagination, security headers         |
+| **[spring-boot-test-patterns](skills/spring-boot/spring-boot-test-patterns/SKILL.md)**                 | Integration testing patterns         | Testcontainers, Spring slice tests, database strategies              |
+| **[spring-boot-cache](skills/spring-boot/spring-boot-cache/SKILL.md)**                                 | Spring Boot caching patterns         | Cache configuration, eviction strategies, distributed caching        |
+| **[spring-boot-saga-pattern](skills/spring-boot/spring-boot-saga-pattern/SKILL.md)**                   | Distributed transaction management   | Saga pattern, choreography, orchestration, compensating transactions |
+| **[spring-boot-resilience4j](skills/spring-boot/spring-boot-resilience4j/SKILL.md)**                   | Fault tolerance patterns             | Circuit breaker, retry, rate limiting, bulkhead patterns             |
+| **[spring-data-jpa](skills/spring-boot/spring-data-jpa/SKILL.md)**                                     | Spring Data JPA best practices       | Query methods, custom repositories, performance optimization         |
+| **[spring-data-neo4j](skills/spring-boot/spring-data-neo4j/SKILL.md)**                                 | Neo4j graph database integration     | Graph modeling, Cypher queries, relationships, reactive mode         |
+| **[spring-boot-openapi-documentation](skills/spring-boot/spring-boot-openapi-documentation/SKILL.md)** | OpenAPI/Swagger documentation        | API documentation, schema generation, SpringDoc                      |
 
 ### JUnit Testing Skills
 
@@ -81,16 +81,16 @@ and AI integration.
 
 ### LangChain4J Skills
 
-| Skill                                                                                                                    | Purpose                          | Key Topics                                              |
-|--------------------------------------------------------------------------------------------------------------------------|----------------------------------|---------------------------------------------------------|
-| **[langchain4j-spring-boot-integration](skills/langchain4j/langchain4j-spring-boot-integration/SKILL.md)**               | LangChain4J with Spring Boot     | Configuration, bean management, integration patterns    |
-| **[langchain4j-rag-implementation-patterns](skills/langchain4j/langchain4j-rag-implementation-patterns/SKILL.md)**       | Retrieval-Augmented Generation   | Vector stores, retrievers, prompt chaining              |
-| **[langchain4j-ai-services-patterns](skills/langchain4j/langchain4j-ai-services-patterns/SKILL.md)**                     | AI service design                | Service patterns, model configuration, error handling   |
-| **[langchain4j-mcp-server-patterns](skills/langchain4j/langchain4j-mcp-server-patterns/SKILL.md)**                       | Model Context Protocol servers   | MCP integration, tool exposure, data access             |
-| **[langchain4j-tool-function-calling-patterns](skills/langchain4j/langchain4j-tool-function-calling-patterns/SKILL.md)** | Tool and function calling        | Agent patterns, tool definition, function orchestration |
-| **[langchain4j-testing-strategies](skills/langchain4j/langchain4j-testing-strategies/SKILL.md)**                         | Testing LangChain4J applications | Mock models, test containers, integration tests         |
-| **[langchain4j-vector-stores-configuration](skills/langchain4j/langchain4j-vector-stores-configuration/SKILL.md)**       | Vector store configuration       | Embeddings, similarity search, provider setup           |
-| **[qdrant-java-development](skills/langchain4j/qdrant/SKILL.md)** | Qdrant vector database integration | Java, Spring Boot, Langchain4j, RAG, vector search |
+| Skill                                                                                                                    | Purpose                            | Key Topics                                              |
+|--------------------------------------------------------------------------------------------------------------------------|------------------------------------|---------------------------------------------------------|
+| **[langchain4j-spring-boot-integration](skills/langchain4j/langchain4j-spring-boot-integration/SKILL.md)**               | LangChain4J with Spring Boot       | Configuration, bean management, integration patterns    |
+| **[langchain4j-rag-implementation-patterns](skills/langchain4j/langchain4j-rag-implementation-patterns/SKILL.md)**       | Retrieval-Augmented Generation     | Vector stores, retrievers, prompt chaining              |
+| **[langchain4j-ai-services-patterns](skills/langchain4j/langchain4j-ai-services-patterns/SKILL.md)**                     | AI service design                  | Service patterns, model configuration, error handling   |
+| **[langchain4j-mcp-server-patterns](skills/langchain4j/langchain4j-mcp-server-patterns/SKILL.md)**                       | Model Context Protocol servers     | MCP integration, tool exposure, data access             |
+| **[langchain4j-tool-function-calling-patterns](skills/langchain4j/langchain4j-tool-function-calling-patterns/SKILL.md)** | Tool and function calling          | Agent patterns, tool definition, function orchestration |
+| **[langchain4j-testing-strategies](skills/langchain4j/langchain4j-testing-strategies/SKILL.md)**                         | Testing LangChain4J applications   | Mock models, test containers, integration tests         |
+| **[langchain4j-vector-stores-configuration](skills/langchain4j/langchain4j-vector-stores-configuration/SKILL.md)**       | Vector store configuration         | Embeddings, similarity search, provider setup           |
+| **[qdrant-java-development](skills/langchain4j/qdrant/SKILL.md)**                                                        | Qdrant vector database integration | Java, Spring Boot, Langchain4j, RAG, vector search      |
 
 ### AWS Java Skills
 
@@ -278,9 +278,12 @@ This kit includes specialized commands for workflow orchestration, verification,
 
 ### Developer Kit Commands
 
-| Command                          | Purpose                                        | Use Case                                                                             |
-|----------------------------------|------------------------------------------------|--------------------------------------------------------------------------------------|
-| **`/devkit.verify-skill`**       | Validate skill against DevKit standards        | Verify a skill's compliance with requirements, format, and best practices             |
+| Command                                    | Purpose                                       | Use Case                                                                                  |
+|--------------------------------------------|-----------------------------------------------|-------------------------------------------------------------------------------------------|
+| **`/devkit.verify-skill`**                 | Validate skill against DevKit standards       | Verify a skill's compliance with requirements, format, and best practices                 |
+| **`/devkit.java.generate-crud`**           | Generate CRUD implementation for domain class | Create complete REST API with controllers, services, DTOs using spring-boot-crud-patterns |
+| **`/devkit.java.write-unit-tests`**        | Generate comprehensive JUnit 5 unit tests     | Create unit tests with Mockito, AssertJ for Java classes                                  |
+| **`/devkit.java.write-integration-tests`** | Generate Spring Boot integration tests        | Create Testcontainers-based tests for complete workflow testing                           |
 
 ### GitHub Spec Kit Workflow
 
@@ -410,16 +413,17 @@ This project is licensed under the [LICENSE](LICENSE) file in the repository roo
 
 ## 📅 Changelog
 
-| Version   | Changes                                                                                                                                                                                                             |
-|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **1.6.0** | Added Spring Boot Resilience4j fault tolerance skills and CRUD generator templates. Updated total skills to 45.                                                                                                      |
-| **1.5.0** | Refactor frontmatter skills. Added new command for review a skill.                                                                                                                                                  |
+| Version   | Changes                                                                                                                                                                                                              |
+|-----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **1.7.0** | New Java commands for development workflow automation:<br/> CRUD generation for domain classes<br/>Comprehensive unit test generation<br/>Integration test generation with Testcontainers                            |
+| **1.6.0** | Added Spring Boot Resilience4j fault tolerance skills and CRUD generator templates. Added Java CRUD generation and testing commands. Updated total skills to 45.                                                     |
+| **1.5.0** | Refactor frontmatter skills. Added new command for review a skill.                                                                                                                                                   |
 | **1.4.0** | Refactor structure skills. Added 10 AWS Java SDK v2 skills (RDS Aurora, S3, DynamoDB, Lambda, Secrets Manager, etc.).<br/> Added Spring Data Neo4j skill with graph database patterns, Cypher queries, reactive mode |
-| **1.3.0** | Added spring-boot-unit-testing-expert agent                                                                                                                                                                         |
-| **1.2.1** | Fixed speckit.optimize report and summary                                                                                                                                                                           |
-| **1.2.0** | Added speckit.optimize command for workflow parallelization                                                                                                                                                         |
-| **1.1.0** | Added Github Spec Kit commands: check-integration, verify-spec-implementation                                                                                                                                       |
-| **1.0.0** | Initial release: Java support with Spring Boot and LangChain4J integration                                                                                                                                          |
+| **1.3.0** | Added spring-boot-unit-testing-expert agent                                                                                                                                                                          |
+| **1.2.1** | Fixed speckit.optimize report and summary                                                                                                                                                                            |
+| **1.2.0** | Added speckit.optimize command for workflow parallelization                                                                                                                                                          |
+| **1.1.0** | Added Github Spec Kit commands: check-integration, verify-spec-implementation                                                                                                                                        |
+| **1.0.0** | Initial release: Java support with Spring Boot and LangChain4J integration                                                                                                                                           |
 
 ---
 
