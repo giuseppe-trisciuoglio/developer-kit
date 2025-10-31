@@ -1,7 +1,7 @@
 ---
 allowed-tools: Read, Write, Bash, Grep, Glob
 argument-hint: [class-path]
-description: Generate comprehensive integration tests for Spring Boot classes using Testcontainers (PostgreSQL, Redis, MongoDB) with @ServiceConnection pattern
+description: Generate comprehensive integration tests for Spring Boot classes using Testcontainers (PostgreSQL, Redis, MongoDB) with `@ServiceConnection` pattern
 model: inherit
 ---
 
@@ -60,18 +60,18 @@ class <ClassName>IntegrationTest {
 ```
 
 #### Key Requirements
-1. **Use @ServiceConnection** for Spring Boot 3.5+ automatic wiring
+1. **Use `@ServiceConnection`** for Spring Boot 3.5+ automatic wiring
 2. **Static containers** for reuse across test methods
 3. **Minimal context loading** - only load what's needed
 4. **Real dependencies** via Testcontainers
 5. **Complete scenarios** - test full workflows
 6. **Proper assertions** - use AssertJ for fluent assertions
-7. **Use @MockitoBean** (not deprecated @MockBean) from `org.springframework.test.context.bean.override.mockito`
+7. **Use `@MockitoBean`** (not deprecated `@MockBean`) from `org.springframework.test.context.bean.override.mockito`
 
 #### Container Selection Guidelines
-- **@Repository/@DataJpaTest**: PostgreSQL/MySQL container
-- **@Service with caching**: Redis container
-- **@RestController**: MockMvc + required backend containers
+- **`@Repository`/`@DataJpaTest`**: PostgreSQL/MySQL container
+- **`@Service` with caching**: Redis container
+- **`@RestController`**: MockMvc + required backend containers
 - **Message consumers/producers**: RabbitMQ/Kafka container
 - **MongoDB repositories**: MongoDB container
 
@@ -88,13 +88,13 @@ Verify and add required dependencies:
 <dependency>
     <groupId>org.testcontainers</groupId>
     <artifactId>junit-jupiter</artifactId>
-    <version>1.19.0</version>
+    <version>1.19.0</version> // Use latest stable version
     <scope>test</scope>
 </dependency>
 <dependency>
     <groupId>org.testcontainers</groupId>
     <artifactId>postgresql</artifactId>
-    <version>1.19.0</version>
+    <version>1.19.0</version> // Use latest stable version
     <scope>test</scope>
 </dependency>
 ```
@@ -116,7 +116,7 @@ Generate tests covering:
 
 ### 6. Performance Optimization
 - Use static containers for JVM-level reuse
-- Avoid @DirtiesContext unless absolutely necessary
+- Avoid `@DirtiesContext` unless absolutely necessary
 - Group tests with similar configuration
 - Target: < 500ms per integration test
 
@@ -318,7 +318,7 @@ When analyzing the target class, Claude will automatically reference these skill
 - Use `@MockitoBean` for mocking dependencies (replaces deprecated `@MockBean`)
 
 ### Important Notes
-- **@MockitoBean vs @MockBean**: Spring Framework 6.2+ introduces `@MockitoBean` from `org.springframework.test.context.bean.override.mockito` package. The old `@MockBean` from `org.springframework.boot.test.mock.mockito` is deprecated.
+- **`@MockitoBean` vs `@MockBean`**: Spring Framework 6.2+ introduces `@MockitoBean` from `org.springframework.test.context.bean.override.mockito` package. The old `@MockBean` from `org.springframework.boot.test.mock.mockito` is deprecated.
 - **Package import**: Always use `import org.springframework.test.context.bean.override.mockito.MockitoBean;`
 - **Reference**: [Spring Framework MockitoBean Documentation](https://docs.spring.io/spring-framework/reference/6.2/testing/annotations/integration-spring/annotation-mockitobean.html)
 
