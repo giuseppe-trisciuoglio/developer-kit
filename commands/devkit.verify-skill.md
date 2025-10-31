@@ -137,16 +137,16 @@ Required actions:
 ## Examples of Specific Feedback
 
 **Good specific feedback:**
-- ❌ **Requisiti:** Il campo `name` contiene caratteri maiuscoli. Deve usare solo lowercase, numeri e hyphens.
-- ❌ **Template:** Manca la sezione "When to Use This Skill" richiesta dal template.
-- ❌ **File:** Il file `reference.md` è referenziato in SKILL.md ma non esiste nella directory della skill.
-- ❌ **Dipendenze:** La libreria 'spring-boot' usa versione 2.7.x. Versione raccomandata: 3.2.x (Context7 Trust Score: 9.2).
-- ❌ **Contenuto:** La description non specifica QUANDO usare la skill, include solo cosa fa.
+- ❌ **Requirements:** The `name` field contains uppercase characters. It must use only lowercase letters, numbers, and hyphens.
+- ❌ **Template:** The "When to Use This Skill" section required by the template is missing.
+- ❌ **File:** The `reference.md` file is referenced in SKILL.md but does not exist in the skill directory.
+- ❌ **Dependencies:** The 'spring-boot' library uses version 2.7.x. Recommended version: 3.2.x (Context7 Trust Score: 9.2).
+- ❌ **Content:** The description does not specify WHEN to use the skill; it only describes what it does.
 
 **Bad vague feedback (avoid):**
-- ❌ Il file non è valido
-- ❌ Ci sono problemi con il template
-- ❌ Le dipendenze potrebbero essere vecchie
+- ❌ The file is not valid
+- ❌ There are issues with the template
+- ❌ The dependencies might be outdated
 
 ## Validation Rules
 
