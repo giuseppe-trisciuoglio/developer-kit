@@ -1,0 +1,127 @@
+# Vector Store Configuration Templates
+# This file contains configuration templates for different vector databases
+
+# Chroma (Local/Development)
+chroma:
+  type: chroma
+  settings:
+    persist_directory: "./chroma_db"
+    collection_name: "rag_documents"
+    host: "localhost"
+    port: 8000
+
+  # Recommended for: Development, small-scale applications
+  # Pros: Easy setup, local deployment, free
+  # Cons: Limited scalability, single-node only
+
+# Pinecone (Cloud/Production)
+pinecone:
+  type: pinecone
+  settings:
+    api_key: "${PINECONE_API_KEY}"
+    environment: "us-west1-gcp"
+    index_name: "rag-documents"
+    dimension: 1536
+    metric: "cosine"
+    pods: 1
+    pod_type: "p1.x1"
+
+  # Recommended for: Production applications, large-scale
+  # Pros: Managed service, scalable, fast
+  # Cons: Cost, requires internet connection
+
+# Weaviate (Open-source/Cloud)
+weaviate:
+  type: weaviate
+  settings:
+    url: "http://localhost:8080"
+    api_key: "${WEAVIATE_API_KEY}"
+    class_name: "Document"
+    text_key: "content"
+    vectorizer: "text2vec-openai"
+    module_config:
+      text2vec-openai:
+        model: "ada"
+        modelVersion: "002"
+        type: "text"
+        baseUrl: "https://api.openai.com/v1"
+
+  # Recommended for: Hybrid search, GraphQL API
+  # Pros: Open-source, hybrid search, flexible
+  # Cons: More complex setup
+
+# Qdrant (Performance-focused)
+qdrant:
+  type: qdrant
+  settings:
+    host: "localhost"
+    port: 6333
+    collection_name: "rag_documents"
+    vector_size: 1536
+    distance: "Cosine"
+    api_key: "${QDRANT_API_KEY}"
+
+  # Recommended for: Performance, advanced filtering
+  # Pros: Fast, good filtering, open-source
+  # Cons: Newer project, smaller community
+
+# Milvus (Enterprise/Scale)
+milvus:
+  type: milvus
+  settings:
+    host: "localhost"
+    port: 19530
+    collection_name: "rag_documents"
+    dimension: 1536
+    index_type: "IVF_FLAT"
+    metric_type: "COSINE"
+    nlist: 1024
+
+  # Recommended for: Enterprise, large-scale deployments
+  # Pros: High performance, distributed
+  # Cons: Complex setup, resource intensive
+
+# FAISS (Local/Research)
+faiss:
+  type: faiss
+  settings:
+    index_type: "IndexFlatL2"
+    dimension: 1536
+    save_path: "./faiss_index"
+
+  # Recommended for: Research, local processing
+  # Pros: Fast, local, no dependencies
+  # Cons: No persistence, limited features
+
+# Common Configuration Parameters
+common:
+  chunking:
+    chunk_size: 1000
+    chunk_overlap: 200
+    separators: ["\n\n", "\n", " ", ""]
+
+  embedding:
+    model: "text-embedding-ada-002"
+    batch_size: 100
+    max_retries: 3
+    timeout: 30
+
+  retrieval:
+    default_k: 5
+    similarity_threshold: 0.7
+    max_results: 20
+
+  performance:
+    cache_embeddings: true
+    cache_size: 1000
+    parallel_processing: true
+    batch_size: 50
+
+# Environment Variables Template
+# Copy this to .env file and fill in your values
+environment:
+  OPENAI_API_KEY: "your-openai-api-key-here"
+  PINECONE_API_KEY: "your-pinecone-api-key-here"
+  PINECONE_ENVIRONMENT: "us-west1-gcp"
+  WEAVIATE_API_KEY: "your-weaviate-api-key-here"
+  QDRANT_API_KEY: "your-qdrant-api-key-here"
