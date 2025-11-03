@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Developer Kit for building applications with Claude Code using best practices and patterns.",
-    "version": "1.7.0"
+    "version": "1.8.0"
   },
   "plugins": [
     {
@@ -15,6 +15,9 @@
       "source": "./",
       "strict": false,
       "skills": [
+        "./skills/ai/chunking-strategy",
+        "./skills/ai/prompt-engineering",
+        "./skills/ai/rag",
         "./skills/spring-boot/spring-boot-actuator",
         "./skills/spring-boot/spring-boot-cache",
         "./skills/spring-boot/spring-boot-crud-patterns",
@@ -51,15 +54,15 @@
         "./skills/langchain4j/langchain4j-vector-stores-configuration",
         "./skills/langchain4j/qdrant",
         "./skills/aws-java/aws-rds-spring-boot-integration",
+        "./skills/aws-java/aws-sdk-java-v2-bedrock",
         "./skills/aws-java/aws-sdk-java-v2-core",
-        "./skills/aws-java/aws-sdk-java-v2-s3",
         "./skills/aws-java/aws-sdk-java-v2-dynamodb",
-        "./skills/aws-java/aws-sdk-java-v2-lambda",
-        "./skills/aws-java/aws-sdk-java-v2-secrets-manager",
         "./skills/aws-java/aws-sdk-java-v2-kms",
+        "./skills/aws-java/aws-sdk-java-v2-lambda",
         "./skills/aws-java/aws-sdk-java-v2-messaging",
         "./skills/aws-java/aws-sdk-java-v2-rds",
-        "./skills/aws-java/aws-sdk-java-v2-bedrock"
+        "./skills/aws-java/aws-sdk-java-v2-s3",
+        "./skills/aws-java/aws-sdk-java-v2-secrets-manager"
       ]
     }
   ]
