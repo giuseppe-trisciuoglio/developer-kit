@@ -332,14 +332,13 @@ automation:
 | Command                       | Purpose                                    | Use Case                                                                    |
 |-------------------------------|--------------------------------------------|-----------------------------------------------------------------------------|
 | **`/devkit.verify-skill`**    | Validate skill against DevKit standards    | Verify a skill's compliance with requirements, format, and best practices   |
-| **`/devkit.optimize-skill`**  | Optimize skill structure and content       | Refactor skills for better performance, clarity, and maintainability        |
-| **`/devkit.prompt-optimize`** | Optimize prompts for better AI performance | Enhance prompt engineering for improved Claude responses and task execution |
 
 ### Utility Commands
 
 | Command                                   | Purpose                                   | Use Case                                                                                 |
 |-------------------------------------------|-------------------------------------------|------------------------------------------------------------------------------------------|
 | **`/devkit.write-a-minute-of-a-meeting`** | Generate meeting minutes from transcripts | Create professional meeting summaries and action items from meeting transcripts or notes |
+| **`/devkit.prompt-optimize`** | Optimize prompts for better AI performance | Enhance prompt engineering for improved Claude responses and task execution |
 
 ### GitHub Spec Kit Workflow
 
