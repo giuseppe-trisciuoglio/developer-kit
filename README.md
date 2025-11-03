@@ -7,7 +7,8 @@
 multiple languages and frameworks. It includes specialized agents for code review, testing patterns, REST API design,
 and AI integration.
 
-**45 Total Skills** — Comprehensive coverage of Spring Boot, testing, AI integration, and cloud development patterns
+**48 Total Skills** — Comprehensive coverage of Spring Boot, testing, AI integration, cloud development, and AI
+engineering patterns
 
 ## 🚀 Quick Start
 
@@ -107,26 +108,46 @@ and AI integration.
 | **[aws-sdk-java-v2-rds](skills/aws-java/aws-sdk-java-v2-rds/SKILL.md)**                         | RDS management operations                | Instance management, snapshots, parameter groups              |
 | **[aws-sdk-java-v2-bedrock](skills/aws-java/aws-sdk-java-v2-bedrock/SKILL.md)**                 | AWS Bedrock AI integration               | Model invocation, streaming, guardrails                       |
 
+### AI Engineering Skills
+
+| Skill                                                           | Purpose                                 | Key Topics                                               |
+|-----------------------------------------------------------------|-----------------------------------------|----------------------------------------------------------|
+| **[chunking-strategy](skills/ai/chunking-strategy/SKILL.md)**   | Document chunking for AI systems        | Text splitting strategies, semantic chunking, RAG prep   |
+| **[prompt-engineering](skills/ai/prompt-engineering/SKILL.md)** | Advanced prompt design patterns         | CoT, few-shot, system prompts, optimization frameworks   |
+| **[rag](skills/ai/rag/SKILL.md)**                               | Retrieval-Augmented Generation patterns | Vector search, document processing, embedding strategies |
+
 ## 🤖 Available Agents
 
-| Agent                                                                                          | Specialization          | Best For                                  |
-|------------------------------------------------------------------------------------------------|-------------------------|-------------------------------------------|
-| **[spring-boot-code-review-specialist](agents/spring-boot-code-review-specialist.md)**         | Spring Boot code review | Architecture, patterns, security review   |
-| **[spring-boot-backend-development-expert](agents/spring-boot-backend-development-expert.md)** | Backend development     | Implementation, testing, optimization     |
-| **[langchain4j-ai-development-expert](agents/langchain4j-ai-development-expert.md)**           | AI integration          | LangChain4J implementation, RAG, agents   |
-| **[spring-boot-unit-testing-expert](agents/spring-boot-unit-testing-expert.md)**               | Unit testing            | Test patterns, Mockito, test organization |
+| Agent                                                                                          | Specialization                 | Best For                                                 |
+|------------------------------------------------------------------------------------------------|--------------------------------|----------------------------------------------------------|
+| **[spring-boot-code-review-specialist](agents/spring-boot-code-review-specialist.md)**         | Spring Boot code review        | Architecture, patterns, security review                  |
+| **[spring-boot-code-review-expert](agents/spring-boot-code-review-expert.md)**                 | Expert Spring Boot code review | Advanced code analysis, security, performance review     |
+| **[spring-boot-backend-development-expert](agents/spring-boot-backend-development-expert.md)** | Backend development            | Implementation, testing, optimization                    |
+| **[langchain4j-ai-development-expert](agents/langchain4j-ai-development-expert.md)**           | AI integration                 | LangChain4J implementation, RAG, agents                  |
+| **[spring-boot-unit-testing-expert](agents/spring-boot-unit-testing-expert.md)**               | Unit testing                   | Test patterns, Mockito, test organization                |
+| **[java-software-architect-review](agents/java-software-architect-review.md)**                 | Software architecture review   | High-level architecture, design patterns, scalability    |
+| **[java-security-expert](agents/java-security-expert.md)**                                     | Java security analysis         | Security vulnerabilities, OWASP, secure coding practices |
+| **[prompt-engineering-expert](agents/prompt-engineering-expert.md)**                           | Prompt engineering             | LLM prompt optimization, CoT, few-shot patterns          |
 
 ## 🗂️ Repository Structure
 
 ```
 developer-kit-claude-code/
 ├── agents/                              # Ready-to-use specialized agents
-│   ├── spring-boot-code-review-specialist.md
-│   ├── spring-boot-backend-development-expert.md
+│   ├── java-security-expert.md
+│   ├── java-software-architect-review.md
 │   ├── langchain4j-ai-development-expert.md
+│   ├── prompt-engineering-expert.md
+│   ├── spring-boot-backend-development-expert.md
+│   ├── spring-boot-code-review-expert.md
+│   ├── spring-boot-code-review-specialist.md
 │   └── spring-boot-unit-testing-expert.md
 ├── skills/                              # Reusable skills organized by domain
-│   ├── spring-boot/                     # Spring Boot framework skills (12)
+│   ├── ai/                              # AI engineering skills (3)
+│   │   ├── chunking-strategy/
+│   │   ├── prompt-engineering/
+│   │   └── rag/
+│   ├── spring-boot/                     # Spring Boot framework skills (13)
 │   │   ├── spring-boot-actuator/
 │   │   ├── spring-boot-cache/
 │   │   ├── spring-boot-crud-patterns/
@@ -140,42 +161,60 @@ developer-kit-claude-code/
 │   │   ├── spring-data-jpa/
 │   │   └── spring-data-neo4j/
 │   ├── junit-test/                      # JUnit 5 unit testing skills (15)
-│   │   ├── unit-test-service-layer/
-│   │   ├── unit-test-controller-layer/
-│   │   ├── unit-test-parameterized/
-│   │   ├── unit-test-exception-handler/
-│   │   ├── unit-test-bean-validation/
-│   │   ├── unit-test-security-authorization/
 │   │   ├── unit-test-application-events/
-│   │   ├── unit-test-scheduled-async/
-│   │   ├── unit-test-json-serialization/
-│   │   ├── unit-test-config-properties/
-│   │   ├── unit-test-mapper-converter/
-│   │   ├── unit-test-caching/
+│   │   ├── unit-test-bean-validation/
 │   │   ├── unit-test-boundary-conditions/
+│   │   ├── unit-test-caching/
+│   │   ├── unit-test-config-properties/
+│   │   ├── unit-test-controller-layer/
+│   │   ├── unit-test-exception-handler/
+│   │   ├── unit-test-json-serialization/
+│   │   ├── unit-test-mapper-converter/
+│   │   ├── unit-test-parameterized/
+│   │   ├── unit-test-scheduled-async/
+│   │   ├── unit-test-security-authorization/
+│   │   ├── unit-test-service-layer/
 │   │   ├── unit-test-utility-methods/
 │   │   └── unit-test-wiremock-rest-api/
-│   ├── langchain4j/                     # LangChain4J AI integration skills (7)
-│   │   ├── langchain4j-spring-boot-integration/
-│   │   ├── langchain4j-rag-implementation-patterns/
+│   ├── langchain4j/                     # LangChain4J AI integration skills (8)
 │   │   ├── langchain4j-ai-services-patterns/
 │   │   ├── langchain4j-mcp-server-patterns/
-│   │   ├── langchain4j-tool-function-calling-patterns/
+│   │   ├── langchain4j-rag-implementation-patterns/
+│   │   ├── langchain4j-spring-boot-integration/
 │   │   ├── langchain4j-testing-strategies/
-│   │   └── langchain4j-vector-stores-configuration/
-│   └── aws-java/                        # AWS SDK for Java v2 skills (10)
+│   │   ├── langchain4j-tool-function-calling-patterns/
+│   │   ├── langchain4j-vector-stores-configuration/
+│   │   └── qdrant/
+│   └── aws-java/                        # AWS SDK for Java v2 skills (9)
 │       ├── aws-rds-spring-boot-integration/
+│       ├── aws-sdk-java-v2-bedrock/
 │       ├── aws-sdk-java-v2-core/
-│       ├── aws-sdk-java-v2-s3/
 │       ├── aws-sdk-java-v2-dynamodb/
-│       ├── aws-sdk-java-v2-lambda/
-│       ├── aws-sdk-java-v2-secrets-manager/
 │       ├── aws-sdk-java-v2-kms/
+│       ├── aws-sdk-java-v2-lambda/
 │       ├── aws-sdk-java-v2-messaging/
 │       ├── aws-sdk-java-v2-rds/
-│       └── aws-sdk-java-v2-bedrock/
-├── commands/                            # Sample invocation commands
+│       ├── aws-sdk-java-v2-s3/
+│       └── aws-sdk-java-v2-secrets-manager/
+├── commands/                            # Development workflow commands
+│   ├── devkit.java.architect-review.md
+│   ├── devkit.java.code-review.md
+│   ├── devkit.java.generate-crud.md
+│   ├── devkit.java.security-review.md
+│   ├── devkit.java.write-integration-tests.md
+│   ├── devkit.java.write-unit-tests.md
+│   ├── devkit.optimize-skill.md
+│   ├── devkit.prompt-optimize.md
+│   ├── devkit.verify-skill.md
+│   ├── devkit.write-a-minute-of-a-meeting.md
+│   ├── speckit.check-integration.md
+│   ├── speckit.optimize.md
+│   └── speckit.verify.md
+├── .claude/commands/                    # Claude Code custom commands
+│   ├── devkit.optimize-skill.md
+│   └── devkit.verify-skill.md
 ├── .claude-plugin/                      # Plugin configuration
+│   └── marketplace.json
 └── README.md                            # This file
 ```
 
@@ -266,7 +305,8 @@ encryption
 
 ## 🔧 Custom Commands
 
-This kit includes specialized commands for workflow orchestration, verification, and skill validation:
+This kit includes specialized commands for workflow orchestration, verification, skill validation, and Java development
+automation:
 
 ### GitHub Spec Kit Commands
 
@@ -276,14 +316,30 @@ This kit includes specialized commands for workflow orchestration, verification,
 | **`/speckit.optimize`**          | Optimize execution plan for parallelization    | Run AFTER check-integration to plan subagent delegation and resource allocation      |
 | **`/speckit.verify`**            | Comprehensive implementation verification      | Run AFTER `/speckit.implement` to validate all requirements, tests, and code quality |
 
-### Developer Kit Commands
+### Java Development Commands
 
 | Command                                    | Purpose                                       | Use Case                                                                                  |
 |--------------------------------------------|-----------------------------------------------|-------------------------------------------------------------------------------------------|
-| **`/devkit.verify-skill`**                 | Validate skill against DevKit standards       | Verify a skill's compliance with requirements, format, and best practices                 |
 | **`/devkit.java.generate-crud`**           | Generate CRUD implementation for domain class | Create complete REST API with controllers, services, DTOs using spring-boot-crud-patterns |
 | **`/devkit.java.write-unit-tests`**        | Generate comprehensive JUnit 5 unit tests     | Create unit tests with Mockito, AssertJ for Java classes                                  |
 | **`/devkit.java.write-integration-tests`** | Generate Spring Boot integration tests        | Create Testcontainers-based tests for complete workflow testing                           |
+| **`/devkit.java.code-review`**             | Perform comprehensive Java code review        | Review code quality, architecture, security, and performance                              |
+| **`/devkit.java.security-review`**         | Security-focused code review                  | Identify vulnerabilities, OWASP compliance, secure coding practices                       |
+| **`/devkit.java.architect-review`**        | High-level architecture review                | Validate design patterns, scalability, and architectural decisions                        |
+
+### Skill Development Commands
+
+| Command                       | Purpose                                    | Use Case                                                                    |
+|-------------------------------|--------------------------------------------|-----------------------------------------------------------------------------|
+| **`/devkit.verify-skill`**    | Validate skill against DevKit standards    | Verify a skill's compliance with requirements, format, and best practices   |
+| **`/devkit.optimize-skill`**  | Optimize skill structure and content       | Refactor skills for better performance, clarity, and maintainability        |
+| **`/devkit.prompt-optimize`** | Optimize prompts for better AI performance | Enhance prompt engineering for improved Claude responses and task execution |
+
+### Utility Commands
+
+| Command                                   | Purpose                                   | Use Case                                                                                 |
+|-------------------------------------------|-------------------------------------------|------------------------------------------------------------------------------------------|
+| **`/devkit.write-a-minute-of-a-meeting`** | Generate meeting minutes from transcripts | Create professional meeting summaries and action items from meeting transcripts or notes |
 
 ### GitHub Spec Kit Workflow
 
@@ -413,17 +469,18 @@ This project is licensed under the [LICENSE](LICENSE) file in the repository roo
 
 ## 📅 Changelog
 
-| Version   | Changes                                                                                                                                                                                                              |
-|-----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **1.7.0** | New Java commands for development workflow automation:<br/> CRUD generation for domain classes<br/>Comprehensive unit test generation<br/>Integration test generation with Testcontainers                            |
-| **1.6.0** | Added Spring Boot Resilience4j fault tolerance skills and CRUD generator templates. Added Java CRUD generation and testing commands. Updated total skills to 45.                                                     |
-| **1.5.0** | Refactor frontmatter skills. Added new command for review a skill.                                                                                                                                                   |
-| **1.4.0** | Refactor structure skills. Added 10 AWS Java SDK v2 skills (RDS Aurora, S3, DynamoDB, Lambda, Secrets Manager, etc.).<br/> Added Spring Data Neo4j skill with graph database patterns, Cypher queries, reactive mode |
-| **1.3.0** | Added spring-boot-unit-testing-expert agent                                                                                                                                                                          |
-| **1.2.1** | Fixed speckit.optimize report and summary                                                                                                                                                                            |
-| **1.2.0** | Added speckit.optimize command for workflow parallelization                                                                                                                                                          |
-| **1.1.0** | Added Github Spec Kit commands: check-integration, verify-spec-implementation                                                                                                                                        |
-| **1.0.0** | Initial release: Java support with Spring Boot and LangChain4J integration                                                                                                                                           |
+| Version   | Changes                                                                                                                                                                                                                                                                                                                          |
+|-----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **1.8.0** | Major expansion with AI engineering capabilities and expert agents:<br/> Added 3 AI engineering skills (chunking, prompt engineering, RAG)<br/> Added 5 new expert agents (security, architecture, prompt engineering)<br/> Added 13 specialized Java development commands<br/> Enhanced skill validation and optimization tools |
+| **1.7.0** | New Java commands for development workflow automation:<br/> CRUD generation for domain classes<br/>Comprehensive unit test generation<br/>Integration test generation with Testcontainers                                                                                                                                        |
+| **1.6.0** | Added Spring Boot Resilience4j fault tolerance skills and CRUD generator templates. Added Java CRUD generation and testing commands. Updated total skills to 45.                                                                                                                                                                 |
+| **1.5.0** | Refactor frontmatter skills. Added new command for review a skill.                                                                                                                                                                                                                                                               |
+| **1.4.0** | Refactor structure skills. Added 10 AWS Java SDK v2 skills (RDS Aurora, S3, DynamoDB, Lambda, Secrets Manager, etc.).<br/> Added Spring Data Neo4j skill with graph database patterns, Cypher queries, reactive mode                                                                                                             |
+| **1.3.0** | Added spring-boot-unit-testing-expert agent                                                                                                                                                                                                                                                                                      |
+| **1.2.1** | Fixed speckit.optimize report and summary                                                                                                                                                                                                                                                                                        |
+| **1.2.0** | Added speckit.optimize command for workflow parallelization                                                                                                                                                                                                                                                                      |
+| **1.1.0** | Added Github Spec Kit commands: check-integration, verify-spec-implementation                                                                                                                                                                                                                                                    |
+| **1.0.0** | Initial release: Java support with Spring Boot and LangChain4J integration                                                                                                                                                                                                                                                       |
 
 ---
 
