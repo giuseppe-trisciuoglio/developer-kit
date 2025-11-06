@@ -7,8 +7,8 @@
 multiple languages and frameworks. It includes specialized agents for code review, testing patterns, REST API design,
 and AI integration.
 
-**48 Total Skills** — Comprehensive coverage of Spring Boot, testing, AI integration, cloud development, and AI
-engineering patterns
+**52 Total Skills** — Comprehensive coverage of Spring Boot, testing, AI integration, cloud development, AI
+engineering patterns, and documentation generation
 
 ## 🚀 Quick Start
 
@@ -118,24 +118,28 @@ engineering patterns
 
 ## 🤖 Available Agents
 
-| Agent                                                                                          | Specialization                 | Best For                                                 |
-|------------------------------------------------------------------------------------------------|--------------------------------|----------------------------------------------------------|
-| **[spring-boot-code-review-specialist](agents/spring-boot-code-review-specialist.md)**         | Spring Boot code review        | Architecture, patterns, security review                  |
-| **[spring-boot-code-review-expert](agents/spring-boot-code-review-expert.md)**                 | Expert Spring Boot code review | Advanced code analysis, security, performance review     |
-| **[spring-boot-backend-development-expert](agents/spring-boot-backend-development-expert.md)** | Backend development            | Implementation, testing, optimization                    |
-| **[langchain4j-ai-development-expert](agents/langchain4j-ai-development-expert.md)**           | AI integration                 | LangChain4J implementation, RAG, agents                  |
-| **[spring-boot-unit-testing-expert](agents/spring-boot-unit-testing-expert.md)**               | Unit testing                   | Test patterns, Mockito, test organization                |
-| **[java-software-architect-review](agents/java-software-architect-review.md)**                 | Software architecture review   | High-level architecture, design patterns, scalability    |
-| **[java-security-expert](agents/java-security-expert.md)**                                     | Java security analysis         | Security vulnerabilities, OWASP, secure coding practices |
-| **[prompt-engineering-expert](agents/prompt-engineering-expert.md)**                           | Prompt engineering             | LLM prompt optimization, CoT, few-shot patterns          |
+| Agent                                                                                              | Specialization                         | Best For                                                               |
+|----------------------------------------------------------------------------------------------------|----------------------------------------|-------------------------------------------------------------------------|
+| **[spring-boot-code-review-specialist](agents/spring-boot-code-review-specialist.md)**             | Spring Boot code review                | Architecture, patterns, security review                                  |
+| **[spring-boot-code-review-expert](agents/spring-boot-code-review-expert.md)**                     | Expert Spring Boot code review         | Advanced code analysis, security, performance review                    |
+| **[spring-boot-backend-development-expert](agents/spring-boot-backend-development-expert.md)**     | Backend development                    | Implementation, testing, optimization                                   |
+| **[langchain4j-ai-development-expert](agents/langchain4j-ai-development-expert.md)**               | AI integration                         | LangChain4J implementation, RAG, agents                                 |
+| **[spring-boot-unit-testing-expert](agents/spring-boot-unit-testing-expert.md)**                   | Unit testing                           | Test patterns, Mockito, test organization                              |
+| **[java-software-architect-review](agents/java-software-architect-review.md)**                     | Software architecture review           | High-level architecture, design patterns, scalability                   |
+| **[java-security-expert](agents/java-security-expert.md)**                                         | Java security analysis                 | Security vulnerabilities, OWASP, secure coding practices                |
+| **[java-documentation-specialist](agents/java-documentation-specialist.md)**                       | Java project documentation              | API docs, architecture guides, technical documentation generation       |
+| **[java-tutorial-engineer](agents/java-tutorial-engineer.md)**                                     | Java/Spring Boot tutorials             | Educational content, hands-on learning, step-by-step guides            |
+| **[prompt-engineering-expert](agents/prompt-engineering-expert.md)**                               | Prompt engineering                     | LLM prompt optimization, CoT, few-shot patterns                        |
 
 ## 🗂️ Repository Structure
 
 ```
 developer-kit-claude-code/
 ├── agents/                              # Ready-to-use specialized agents
+│   ├── java-documentation-specialist.md
 │   ├── java-security-expert.md
 │   ├── java-software-architect-review.md
+│   ├── java-tutorial-engineer.md
 │   ├── langchain4j-ai-development-expert.md
 │   ├── prompt-engineering-expert.md
 │   ├── spring-boot-backend-development-expert.md
@@ -200,6 +204,7 @@ developer-kit-claude-code/
 │   ├── devkit.java.architect-review.md
 │   ├── devkit.java.code-review.md
 │   ├── devkit.java.generate-crud.md
+│   ├── devkit.java.generate-docs.md
 │   ├── devkit.java.security-review.md
 │   ├── devkit.java.write-integration-tests.md
 │   ├── devkit.java.write-unit-tests.md
@@ -321,6 +326,7 @@ automation:
 | Command                                    | Purpose                                       | Use Case                                                                                  |
 |--------------------------------------------|-----------------------------------------------|-------------------------------------------------------------------------------------------|
 | **`/devkit.java.generate-crud`**           | Generate CRUD implementation for domain class | Create complete REST API with controllers, services, DTOs using spring-boot-crud-patterns |
+| **`/devkit.java.generate-docs`**           | Generate Java project documentation           | Create comprehensive API docs, architecture guides, Javadoc, and technical documentation  |
 | **`/devkit.java.write-unit-tests`**        | Generate comprehensive JUnit 5 unit tests     | Create unit tests with Mockito, AssertJ for Java classes                                  |
 | **`/devkit.java.write-integration-tests`** | Generate Spring Boot integration tests        | Create Testcontainers-based tests for complete workflow testing                           |
 | **`/devkit.java.code-review`**             | Perform comprehensive Java code review        | Review code quality, architecture, security, and performance                              |
@@ -468,8 +474,9 @@ This project is licensed under the [LICENSE](LICENSE) file in the repository roo
 
 ## 📅 Changelog
 
-| Version   | Changes                                                                                                                                                                                                                                                                                                                          |
-|-----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Version   | Changes                                                                                                                                                                                                                                                                                                                                              |
+|-----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **1.9.0** | Documentation and educational expansion:<br/>Added Java documentation generation command with OpenAPI, architecture diagrams, and Javadoc<br/>Added 2 new specialized agents (documentation specialist, tutorial engineer)<br/>Enhanced LangChain4j integration patterns and educational content<br/>Updated total skills to 52 with comprehensive coverage |
 | **1.8.0** | Major expansion with AI engineering capabilities and expert agents:<br/> Added 3 AI engineering skills (chunking, prompt engineering, RAG)<br/> Added 5 new expert agents (security, architecture, prompt engineering)<br/> Added 5 specialized Java development commands<br/> Enhanced skill validation and optimization tools |
 | **1.7.0** | New Java commands for development workflow automation:<br/> CRUD generation for domain classes<br/>Comprehensive unit test generation<br/>Integration test generation with Testcontainers                                                                                                                                        |
 | **1.6.0** | Added Spring Boot Resilience4j fault tolerance skills and CRUD generator templates. Added Java CRUD generation and testing commands. Updated total skills to 45.                                                                                                                                                                 |
