@@ -1,19 +1,19 @@
 ---
 allowed-tools: Bash, Read, Write, Edit, Grep
 argument-hint: [action] [version] [format]
-description: Generate and maintain Java project changelog following Keep a Changelog standard with Git integration and Conventional Commits support
+description: Generate and maintain project changelog following Keep a Changelog standard with Git integration and Conventional Commits support for any project type
 ---
 
-# Java Changelog Generator and Maintainer
+# Project Changelog Generator and Maintainer
 
-Generate and maintain project changelog following Keep a Changelog standard, extracting changes from Git history with support for Conventional Commits, Maven/Gradle version detection, and automated changelog updates.
+Generate and maintain project changelog following Keep a Changelog standard, extracting changes from Git history with support for Conventional Commits, version detection from multiple build systems (Maven, Gradle, npm, pip, Cargo), and automated changelog updates.
 
 ## Context
 
 - **Project Root**: !`pwd`
 - **Current Branch**: !`git branch --show-current 2>/dev/null || echo "Not a git repository"`
 - **Latest Tag**: !`git describe --tags --abbrev=0 2>/dev/null || echo "No tags found"`
-- **Build System**: !`if [ -f pom.xml ]; then echo "Maven"; elif [ -f build.gradle ]; then echo "Gradle"; else echo "Unknown"; fi`
+- **Build System**: !`if [ -f pom.xml ]; then echo "Maven"; elif [ -f build.gradle ]; then echo "Gradle"; elif [ -f package.json ]; then echo "npm"; elif [ -f setup.py ]; then echo "Python"; elif [ -f Cargo.toml ]; then echo "Rust"; else echo "Generic"; fi`
 - **Existing Changelog**: !`if [ -f CHANGELOG.md ]; then echo "Found"; else echo "Not found"; fi`
 
 ## Arguments
@@ -27,15 +27,15 @@ $1 specifies the action (optional - defaults to `update`):
 
 $2 specifies the version (optional - auto-detected from build file):
 - Version number (e.g., `1.2.3`, `2.0.0`)
-- `auto` - Auto-detect from pom.xml or build.gradle (default)
+- `auto` - Auto-detect from build files: pom.xml, build.gradle, package.json, setup.py, Cargo.toml (default)
 - `latest-tag` - Use latest Git tag
-- `snapshot` - Mark as SNAPSHOT/unreleased
+- `snapshot` - Mark as unreleased/snapshot
 
 $3 specifies the format (optional - defaults to `keepachangelog`):
 - `keepachangelog` - Keep a Changelog format (default)
 - `conventional` - Conventional Changelog format
 - `github` - GitHub Release Notes format
-- `maven` - Maven Changes Plugin XML format
+- `json` - Structured JSON format
 
 ## Changelog Standards
 
@@ -75,24 +75,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - User authentication with JWT tokens
-- Spring Boot Actuator health checks
-- Redis caching for user sessions
-- Comprehensive integration tests with Testcontainers
+- Health check endpoints
+- Redis caching for sessions
+- Comprehensive integration tests
 
 ### Changed
-- Upgraded Spring Boot from 3.1.5 to 3.2.1
-- Migrated from Log4j to Logback
-- Improved error handling in REST controllers
+- Upgraded dependencies to latest stable versions
+- Improved error handling
+- Enhanced logging configuration
 
 ### Fixed
 - Memory leak in background task executor
-- SQL injection vulnerability in search endpoint
+- Security vulnerability in authentication
 - Timezone handling in date conversions
 
 ### Security
-- Updated jackson-databind to 2.15.3 (CVE-2023-XXXXX)
+- Updated dependencies with known vulnerabilities
 - Implemented CSRF protection
-- Added rate limiting for authentication endpoints
+- Added rate limiting for sensitive endpoints
 
 ## [1.1.0] - 2023-12-10
 
@@ -102,17 +102,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Docker Compose setup for local development
 
 ### Fixed
-- NullPointerException in user service
+- Null pointer exception in core service
 - Transaction rollback issues
 
 ## [1.0.0] - 2023-11-01
 
 ### Added
 - Initial release
-- Basic CRUD operations for users
-- REST API with Spring Boot
-- PostgreSQL database integration
-- JWT authentication
+- Basic CRUD operations
+- REST API implementation
+- Database integration
+- Authentication system
 
 [Unreleased]: https://github.com/username/project/compare/v1.2.0...HEAD
 [1.2.0]: https://github.com/username/project/compare/v1.1.0...v1.2.0
@@ -188,13 +188,42 @@ detect_gradle_version() {
     fi
 }
 
-# Detect version
+detect_npm_version() {
+    if [ -f "package.json" ]; then
+        grep -oP '"version":\s*"\K[^"]+' package.json | head -1
+    fi
+}
+
+detect_python_version() {
+    if [ -f "setup.py" ]; then
+        grep -oP 'version\s*=\s*["\047]\K[^"\047]+' setup.py | head -1
+    elif [ -f "pyproject.toml" ]; then
+        grep -oP 'version\s*=\s*"\K[^"]+' pyproject.toml | head -1
+    fi
+}
+
+detect_rust_version() {
+    if [ -f "Cargo.toml" ]; then
+        grep -oP 'version\s*=\s*"\K[^"]+' Cargo.toml | head -1
+    fi
+}
+
+# Detect version based on build system
 if [ -f "pom.xml" ]; then
     VERSION=$(detect_maven_version)
     echo "Maven version: $VERSION"
 elif [ -f "build.gradle" ] || [ -f "build.gradle.kts" ]; then
     VERSION=$(detect_gradle_version)
     echo "Gradle version: $VERSION"
+elif [ -f "package.json" ]; then
+    VERSION=$(detect_npm_version)
+    echo "npm version: $VERSION"
+elif [ -f "setup.py" ] || [ -f "pyproject.toml" ]; then
+    VERSION=$(detect_python_version)
+    echo "Python version: $VERSION"
+elif [ -f "Cargo.toml" ]; then
+    VERSION=$(detect_rust_version)
+    echo "Rust version: $VERSION"
 else
     VERSION=$(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//')
     echo "Git tag version: $VERSION"
@@ -307,7 +336,51 @@ fi
 rm breaking.tmp
 ```
 
-### 4. Update Changelog File
+### 4. Version Detection for Multiple Build Systems
+
+Support for various project types:
+
+**JavaScript/TypeScript (package.json)**
+```json
+{
+  "name": "my-project",
+  "version": "1.2.0",
+  "description": "Project description"
+}
+```
+
+**Python (setup.py or pyproject.toml)**
+```python
+# setup.py
+setup(
+    name="my-project",
+    version="1.2.0",
+    description="Project description"
+)
+```
+
+```toml
+# pyproject.toml
+[project]
+version = "1.2.0"
+```
+
+**Rust (Cargo.toml)**
+```toml
+[package]
+name = "my-project"
+version = "1.2.0"
+```
+
+**PHP (composer.json)**
+```json
+{
+  "name": "vendor/package",
+  "version": "1.2.0"
+}
+```
+
+### 5. Update Changelog File
 
 Insert new version entry into CHANGELOG.md:
 
@@ -354,9 +427,9 @@ rm CHANGELOG.md.bak
 echo "✅ CHANGELOG.md updated with version $VERSION"
 ```
 
-### 5. Maven/Gradle Integration
+### 6. Build System Integration
 
-**Maven Changes Plugin**
+**Maven Changes Plugin (Java)**
 ```xml
 <!-- pom.xml -->
 <plugin>
@@ -379,7 +452,7 @@ echo "✅ CHANGELOG.md updated with version $VERSION"
 </plugin>
 ```
 
-**Gradle Release Plugin**
+**Gradle Release Plugin (Java)**
 ```groovy
 // build.gradle
 plugins {
@@ -406,7 +479,29 @@ task updateChangelog(type: Exec) {
 beforeReleaseBuild.dependsOn updateChangelog
 ```
 
-### 6. GitHub Integration
+**npm version (JavaScript/TypeScript)**
+```json
+// package.json - scripts section
+{
+  "scripts": {
+    "version": "node scripts/update-changelog.js && git add CHANGELOG.md",
+    "postversion": "git push && git push --tags"
+  }
+}
+```
+
+**Python setuptools**
+```python
+# setup.py or release script
+import subprocess
+
+def update_changelog(version):
+    subprocess.run(['./scripts/update-changelog.sh', version])
+
+# Integrate with version bumping
+```
+
+### 7. GitHub Integration
 
 **GitHub Releases from Changelog**
 ```bash
@@ -500,7 +595,7 @@ jobs:
         asset_content_type: application/java-archive
 ```
 
-### 7. Validation and Quality Checks
+### 8. Validation and Quality Checks
 
 **Validate Changelog Format**
 ```bash
@@ -547,7 +642,7 @@ fi
 echo "✅ Changelog validation complete"
 ```
 
-### 8. Release Automation Script
+### 9. Release Automation Script
 
 **Complete Release Script**
 ```bash
@@ -587,6 +682,17 @@ elif [ -f "build.gradle" ]; then
     echo "📝 Updating version in build.gradle..."
     sed -i.bak "s/version = .*/version = '$VERSION'/" build.gradle
     rm build.gradle.bak
+elif [ -f "package.json" ]; then
+    echo "📝 Updating version in package.json..."
+    npm version $VERSION --no-git-tag-version
+elif [ -f "setup.py" ]; then
+    echo "📝 Updating version in setup.py..."
+    sed -i.bak "s/version=['\"].*['\"]/version='$VERSION'/" setup.py
+    rm setup.py.bak
+elif [ -f "Cargo.toml" ]; then
+    echo "📝 Updating version in Cargo.toml..."
+    sed -i.bak "s/^version = .*/version = \"$VERSION\"/" Cargo.toml
+    rm Cargo.toml.bak
 fi
 
 # 4. Extract changes from Git
@@ -604,6 +710,12 @@ if [ -f "pom.xml" ]; then
     mvn clean verify
 elif [ -f "build.gradle" ]; then
     ./gradlew clean build
+elif [ -f "package.json" ]; then
+    npm test
+elif [ -f "setup.py" ]; then
+    python -m pytest
+elif [ -f "Cargo.toml" ]; then
+    cargo test
 fi
 
 if [ "$DRY_RUN" = "true" ]; then
@@ -644,22 +756,25 @@ echo "3. Verify release at: https://github.com/<username>/<repo>/releases/tag/v$
 
 ```bash
 # Initialize new changelog
-/devkit.java.generate-changelog init
+/devkit.generate-changelog init
 
 # Update changelog with recent changes (auto-detect version)
-/devkit.java.generate-changelog update auto
+/devkit.generate-changelog update auto
 
 # Preview changes without writing to file
-/devkit.java.generate-changelog preview
+/devkit.generate-changelog preview
 
 # Create release entry for specific version
-/devkit.java.generate-changelog release 1.2.0
+/devkit.generate-changelog release 1.2.0
 
 # Validate existing changelog
-/devkit.java.generate-changelog validate
+/devkit.generate-changelog validate
 
 # Generate changelog in GitHub format
-/devkit.java.generate-changelog update 1.2.0 github
+/devkit.generate-changelog update 1.2.0 github
+
+# Generate changelog in JSON format
+/devkit.generate-changelog update 1.2.0 json
 
 # Full release process (dry-run)
 ./scripts/release.sh 1.2.0 true
@@ -677,13 +792,13 @@ Follow Conventional Commits for automatic categorization:
 ```
 feat(auth): add JWT token refresh endpoint
 fix(users): resolve null pointer in user lookup
-docs(api): update OpenAPI specifications
-style: format code with Spotless
-refactor(service): simplify user validation logic
+docs(api): update API documentation
+style: format code with prettier/eslint
+refactor(service): simplify validation logic
 perf(db): optimize query performance with indexes
-test(integration): add Testcontainers for database tests
-chore(deps): upgrade Spring Boot to 3.2.1
-security(auth): fix SQL injection in login endpoint
+test(integration): add integration tests
+chore(deps): upgrade dependencies to latest versions
+security(auth): fix SQL injection vulnerability
 ```
 
 ### Release Workflow
@@ -699,9 +814,10 @@ security(auth): fix SQL injection in login endpoint
 
 - **CI/CD**: Automated changelog validation in pipeline
 - **GitHub Releases**: Auto-generate release notes from changelog
-- **Maven Site**: Include changelog in generated documentation
+- **Package Registries**: npm, PyPI, crates.io, Maven Central
 - **Docker Tags**: Use changelog versions for container tags
 - **Kubernetes**: Reference changelog in deployment annotations
+- **Documentation Sites**: Include changelog in generated docs
 
 ## Your Task
 
@@ -713,4 +829,4 @@ Based on the specified action, perform:
 4. **Preview**: Show changes that would be added
 5. **Validate**: Check changelog format compliance
 
-Focus on **maintaining a clear, user-friendly changelog** that follows industry standards and integrates seamlessly with Java/Maven/Gradle build processes and Git workflows.
+Focus on **maintaining a clear, user-friendly changelog** that follows industry standards and integrates seamlessly with any build system (Maven, Gradle, npm, pip, Cargo, etc.) and Git workflows.

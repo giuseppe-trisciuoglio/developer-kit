@@ -201,14 +201,17 @@ developer-kit-claude-code/
 │       ├── aws-sdk-java-v2-s3/
 │       └── aws-sdk-java-v2-secrets-manager/
 ├── commands/                            # Development workflow commands
+│   ├── devkit.generate-changelog.md
 │   ├── devkit.github.create-pr.md
 │   ├── devkit.github.review-pr.md
 │   ├── devkit.java.architect-review.md
 │   ├── devkit.java.code-review.md
+│   ├── devkit.java.dependency-audit.md
 │   ├── devkit.java.generate-crud.md
 │   ├── devkit.java.generate-docs.md
 │   ├── devkit.java.refactor-class.md
 │   ├── devkit.java.security-review.md
+│   ├── devkit.java.upgrade-dependencies.md
 │   ├── devkit.java.write-integration-tests.md
 │   ├── devkit.java.write-unit-tests.md
 │   ├── devkit.optimize-skill.md
@@ -316,6 +319,14 @@ encryption
 This kit includes specialized commands for workflow orchestration, verification, skill validation, and Java development
 automation:
 
+### Project Workflow Commands
+
+| Command                             | Purpose                                    | Use Case                                                                               |
+|-------------------------------------|--------------------------------------------|----------------------------------------------------------------------------------------|
+| **`/devkit.generate-changelog`**    | Generate project changelog                 | Create and maintain CHANGELOG.md for any project type with Git integration            |
+| **`/devkit.write-a-minute-of-a-meeting`** | Generate meeting minutes from transcripts | Create professional meeting summaries and action items from meeting transcripts or notes |
+| **`/devkit.prompt-optimize`**       | Optimize prompts for better AI performance | Enhance prompt engineering for improved Claude responses and task execution            |
+
 ### GitHub Commands
 
 | Command                           | Purpose                                        | Use Case                                                                                    |
@@ -343,19 +354,22 @@ automation:
 | **`/devkit.java.security-review`**         | Security-focused code review                  | Identify vulnerabilities, OWASP compliance, secure coding practices                       |
 | **`/devkit.java.architect-review`**        | High-level architecture review                | Validate design patterns, scalability, and architectural decisions                        |
 | **`/devkit.java.refactor-class`**          | Intelligent refactoring assistant             | Refactor complex Java classes with Clean Architecture, DDD patterns, and Spring Boot best practices |
+| **`/devkit.java.dependency-audit`**        | Comprehensive dependency audit                | Scan vulnerabilities, verify licenses, and get update recommendations                     |
+| **`/devkit.java.upgrade-dependencies`**    | Safe dependency upgrade strategies            | Upgrade dependencies with compatibility testing and rollback procedures                   |
 
-### Skill Development Commands
-
-| Command                       | Purpose                                    | Use Case                                                                    |
-|-------------------------------|--------------------------------------------|-----------------------------------------------------------------------------|
-| **`/devkit.verify-skill`**    | Validate skill against DevKit standards    | Verify a skill's compliance with requirements, format, and best practices   |
-
-### Utility Commands
+### Project Workflow Commands
 
 | Command                                   | Purpose                                   | Use Case                                                                                 |
 |-------------------------------------------|-------------------------------------------|------------------------------------------------------------------------------------------|
+| **`/devkit.generate-changelog`**          | Generate project changelog                | Create and maintain CHANGELOG.md for any project type with multi-language support       |
 | **`/devkit.write-a-minute-of-a-meeting`** | Generate meeting minutes from transcripts | Create professional meeting summaries and action items from meeting transcripts or notes |
-| **`/devkit.prompt-optimize`** | Optimize prompts for better AI performance | Enhance prompt engineering for improved Claude responses and task execution |
+| **`/devkit.prompt-optimize`**             | Optimize prompts for AI performance       | Enhance prompt engineering for improved Claude responses and task execution              |
+
+### Skill Development Commands
+
+| Command                    | Purpose                                 | Use Case                                                                  |
+|----------------------------|-----------------------------------------|---------------------------------------------------------------------------|
+| **`/devkit.verify-skill`** | Validate skill against DevKit standards | Verify a skill's compliance with requirements, format, and best practices |
 
 ### GitHub Spec Kit Workflow
 
