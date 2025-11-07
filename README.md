@@ -201,10 +201,13 @@ developer-kit-claude-code/
 │       ├── aws-sdk-java-v2-s3/
 │       └── aws-sdk-java-v2-secrets-manager/
 ├── commands/                            # Development workflow commands
+│   ├── devkit.github.create-pr.md
+│   ├── devkit.github.review-pr.md
 │   ├── devkit.java.architect-review.md
 │   ├── devkit.java.code-review.md
 │   ├── devkit.java.generate-crud.md
 │   ├── devkit.java.generate-docs.md
+│   ├── devkit.java.refactor-class.md
 │   ├── devkit.java.security-review.md
 │   ├── devkit.java.write-integration-tests.md
 │   ├── devkit.java.write-unit-tests.md
@@ -313,6 +316,13 @@ encryption
 This kit includes specialized commands for workflow orchestration, verification, skill validation, and Java development
 automation:
 
+### GitHub Commands
+
+| Command                           | Purpose                                        | Use Case                                                                                    |
+|-----------------------------------|------------------------------------------------|---------------------------------------------------------------------------------------------|
+| **`/devkit.github.create-pr`**    | Create GitHub pull request                     | Create branch, commit changes, and submit PR with automated description and commit messages |
+| **`/devkit.github.review-pr`**    | Comprehensive GitHub PR review                 | Perform code quality, security, performance, architecture, and testing review of a PR        |
+
 ### GitHub Spec Kit Commands
 
 | Command                          | Purpose                                        | Use Case                                                                             |
@@ -332,6 +342,7 @@ automation:
 | **`/devkit.java.code-review`**             | Perform comprehensive Java code review        | Review code quality, architecture, security, and performance                              |
 | **`/devkit.java.security-review`**         | Security-focused code review                  | Identify vulnerabilities, OWASP compliance, secure coding practices                       |
 | **`/devkit.java.architect-review`**        | High-level architecture review                | Validate design patterns, scalability, and architectural decisions                        |
+| **`/devkit.java.refactor-class`**          | Intelligent refactoring assistant             | Refactor complex Java classes with Clean Architecture, DDD patterns, and Spring Boot best practices |
 
 ### Skill Development Commands
 
@@ -400,6 +411,18 @@ automation:
 - **Usage**: `/devkit.verify-skill skill-name`
 - **Output**: Comprehensive validation report with PASS/FAIL status
 - **Best for**: Skill authors before submitting PRs or publishing
+
+**`/devkit.java.refactor-class`**
+
+- Intelligent refactoring assistant for complex Java classes
+- Applies Clean Architecture, DDD patterns, and Spring Boot best practices
+- Supports multiple refactoring scopes: cleanup, architecture, performance, security, testing, comprehensive
+- Includes safety checks, backup strategies, and incremental refactoring process
+- **Usage**: `/devkit.java.refactor-class [class-file-path] [refactoring-scope] [options]`
+- **Scopes**: `cleanup`, `architecture`, `performance`, `security`, `testing`, `comprehensive`
+- **Options**: `dry-run`, `backup`, `validate-only`
+- **Output**: Refactored code with detailed summary of changes and quality metrics
+- **Best for**: Improving code quality, maintainability, and architectural alignment
 
 ## 🌍 Language Roadmap
 
@@ -474,9 +497,10 @@ This project is licensed under the [LICENSE](LICENSE) file in the repository roo
 
 ## 📅 Changelog
 
-| Version   | Changes                                                                                                                                                                                                                                                                                                                                              |
-|-----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **1.9.0** | Documentation and educational expansion:<br/>Added Java documentation generation command with OpenAPI, architecture diagrams, and Javadoc<br/>Added 2 new specialized agents (documentation specialist, tutorial engineer)<br/>Enhanced LangChain4j integration patterns and educational content<br/>Updated total skills to 52 with comprehensive coverage |
+| Version    | Changes                                                                                                                                                                                                                                                                                                                                              |
+|------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **1.10.0** | GitHub integration and workflow automation:<br/>Added `/devkit.github.create-pr` command for automated PR creation with branch, commits, and descriptions<br/>Added `/devkit.github.review-pr` command for comprehensive PR reviews<br/>Support for multi-language PR descriptions (en, it, es, fr, de)<br/>Enhanced GitHub CLI integration for workflow automation |
+| **1.9.0**  | Documentation and educational expansion:<br/>Added Java documentation generation command with OpenAPI, architecture diagrams, and Javadoc<br/>Added 2 new specialized agents (documentation specialist, tutorial engineer)<br/>Enhanced LangChain4j integration patterns and educational content<br/>Updated total skills to 52 with comprehensive coverage |
 | **1.8.0** | Major expansion with AI engineering capabilities and expert agents:<br/> Added 3 AI engineering skills (chunking, prompt engineering, RAG)<br/> Added 5 new expert agents (security, architecture, prompt engineering)<br/> Added 5 specialized Java development commands<br/> Enhanced skill validation and optimization tools |
 | **1.7.0** | New Java commands for development workflow automation:<br/> CRUD generation for domain classes<br/>Comprehensive unit test generation<br/>Integration test generation with Testcontainers                                                                                                                                        |
 | **1.6.0** | Added Spring Boot Resilience4j fault tolerance skills and CRUD generator templates. Added Java CRUD generation and testing commands. Updated total skills to 45.                                                                                                                                                                 |
