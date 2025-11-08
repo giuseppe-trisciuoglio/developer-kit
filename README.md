@@ -484,6 +484,20 @@ See [CONTRIBUTING guidelines](CONTRIBUTING.md) for detailed instructions.
 - Audit regularly for updates and changes
 - Test in non-production environments first
 
+## 📘 Complete Guides
+
+Comprehensive documentation for all Developer Kit components:
+
+### Skills Guides
+- **[Spring Boot Skills Guide](docs/guide-skills-spring-boot.md)** - Complete guide to Spring Boot patterns including dependency injection, actuator, caching, data persistence, REST APIs, resilience patterns, and testing strategies
+- **[JUnit Testing Skills Guide](docs/guide-skills-junit-test.md)** - Comprehensive testing patterns for controller, service, data, external integrations, infrastructure, and advanced testing scenarios
+- **[LangChain4j Skills Guide](docs/guide-skills-langchain4j.md)** - Building AI-powered applications with core integration, AI services, RAG implementation, vector stores, and MCP server patterns
+- **[AWS Java SDK Skills Guide](docs/guide-skills-aws-java.md)** - Cloud development with AWS services including core SDK setup, storage (S3), databases (DynamoDB, RDS), compute (Lambda), messaging (SQS/SNS), and security services
+
+### Component Guides
+- **[Agents Guide](docs/guide-agents.md)** - Complete documentation for specialized agents including Java development, testing & quality, AI & LangChain4j, documentation, and engineering agents
+- **[Commands Guide](docs/guide-commands.md)** - Comprehensive command reference for Java/Spring Boot development, testing, DevKit management, and utility commands with practical workflows
+
 ## 📚 Resources
 
 ### Official Documentation
@@ -511,20 +525,14 @@ This project is licensed under the [LICENSE](LICENSE) file in the repository roo
 
 ## 📅 Changelog
 
-| Version    | Changes                                                                                                                                                                                                                                                                                                                                              |
-|------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **1.10.0** | GitHub integration and workflow automation:<br/>Added `/devkit.github.create-pr` command for automated PR creation with branch, commits, and descriptions<br/>Added `/devkit.github.review-pr` command for comprehensive PR reviews<br/>Support for multi-language PR descriptions (en, it, es, fr, de)<br/>Enhanced GitHub CLI integration for workflow automation |
-| **1.9.0**  | Documentation and educational expansion:<br/>Added Java documentation generation command with OpenAPI, architecture diagrams, and Javadoc<br/>Added 2 new specialized agents (documentation specialist, tutorial engineer)<br/>Enhanced LangChain4j integration patterns and educational content<br/>Updated total skills to 52 with comprehensive coverage |
-| **1.8.0** | Major expansion with AI engineering capabilities and expert agents:<br/> Added 3 AI engineering skills (chunking, prompt engineering, RAG)<br/> Added 5 new expert agents (security, architecture, prompt engineering)<br/> Added 5 specialized Java development commands<br/> Enhanced skill validation and optimization tools |
-| **1.7.0** | New Java commands for development workflow automation:<br/> CRUD generation for domain classes<br/>Comprehensive unit test generation<br/>Integration test generation with Testcontainers                                                                                                                                        |
-| **1.6.0** | Added Spring Boot Resilience4j fault tolerance skills and CRUD generator templates. Added Java CRUD generation and testing commands. Updated total skills to 45.                                                                                                                                                                 |
-| **1.5.0** | Refactor frontmatter skills. Added new command for review a skill.                                                                                                                                                                                                                                                               |
-| **1.4.0** | Refactor structure skills. Added 10 AWS Java SDK v2 skills (RDS Aurora, S3, DynamoDB, Lambda, Secrets Manager, etc.).<br/> Added Spring Data Neo4j skill with graph database patterns, Cypher queries, reactive mode                                                                                                             |
-| **1.3.0** | Added spring-boot-unit-testing-expert agent                                                                                                                                                                                                                                                                                      |
-| **1.2.1** | Fixed speckit.optimize report and summary                                                                                                                                                                                                                                                                                        |
-| **1.2.0** | Added speckit.optimize command for workflow parallelization                                                                                                                                                                                                                                                                      |
-| **1.1.0** | Added Github Spec Kit commands: check-integration, verify-spec-implementation                                                                                                                                                                                                                                                    |
-| **1.0.0** | Initial release: Java support with Spring Boot and LangChain4J integration                                                                                                                                                                                                                                                       |
+For a complete history of changes, please see the dedicated [CHANGELOG.md](CHANGELOG.md) file.
+
+Recent highlights:
+- **v1.10.0**: GitHub integration and workflow automation with PR creation and review commands
+- **v1.9.0**: Documentation generation commands and educational content expansion
+- **v1.8.0**: AI engineering capabilities with chunking, prompt engineering, and RAG skills
+- **v1.7.0**: Java development workflow automation with CRUD and testing commands
+- **v1.6.0**: Spring Boot Resilience4j fault tolerance and enhanced testing patterns
 
 ---
 
