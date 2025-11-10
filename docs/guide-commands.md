@@ -950,13 +950,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
    - Searches in `.claude/skills/`, `~/.claude/skills/`, and `./skills/` directories
    - Verifies SKILL.md file exists
 
-2. **Requirements Conformance** (from @.docs/skills.md)
+2. **Requirements Conformance**
    - YAML frontmatter validation
    - Required fields: name, description, allowed-tools, category, tags, version
    - Field format validation (name: lowercase-hyphen, version: semver)
    - Description quality (includes WHAT and WHEN)
 
-3. **Template Adherence** (from @.docs/skill_template.md)
+3. **Template Adherence**
    - Required sections present
    - Metadata alignment
    - Content organization
