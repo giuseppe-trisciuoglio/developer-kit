@@ -219,11 +219,7 @@ developer-kit-claude-code/
 │   ├── devkit.verify-skill.md
 │   ├── devkit.write-a-minute-of-a-meeting.md
 │   ├── speckit.check-integration.md
-│   ├── speckit.optimize.md
 │   └── speckit.verify.md
-├── .claude/commands/                    # Claude Code custom commands
-│   ├── devkit.optimize-skill.md
-│   └── devkit.verify-skill.md
 ├── .claude-plugin/                      # Plugin configuration
 │   └── marketplace.json
 └── README.md                            # This file
