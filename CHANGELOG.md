@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Minor fixes and improvements to command structure
 
-## [1.10.0] - 2024-10-24
+## [1.10.0] - 2025-11-12
 
 ### Added
 - GitHub workflow automation commands
@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Improved command compatibility across different platforms
 
-## [1.9.0] - 2024-10-17
+## [1.9.0] - 2025-11-10
 
 ### Added
 - New Java agents for specialized development tasks
@@ -43,7 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated marketplace configuration for new agents
 - Enhanced README with new features documentation
 
-## [1.8.0] - 2024-10-15
+## [1.8.0] - 2025-11-08
 
 ### Added
 - Project documentation generation commands
@@ -54,7 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Documentation formatting improvements
 - Updated version management scripts
 
-## [1.7.0] - 2024-10-10
+## [1.7.0] - 2025-11-06
 
 ### Added
 - New Java commands for unit and integration testing
@@ -65,7 +65,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved command structure and organization
 - Updated dependencies and build configuration
 
-## [1.6.0] - 2024-10-08
+## [1.6.0] - 2025-11-05
 
 ### Added
 - New agents for specialized development tasks
@@ -77,7 +77,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated marketplace configuration
 - Enhanced README structure
 
-## [1.5.0] - 2024-10-05
+## [1.5.0] - 2025-11-05
 
 ### Added
 - Python script templates for CRUD patterns
@@ -89,7 +89,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated documentation and guides
 - Enhanced command-line interface
 
-## [1.4.0] - 2024-10-03
+## [1.4.0] - 2025-11-10
 
 ### Added
 - Initial Java development agents
@@ -101,7 +101,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated dependencies
 - Enhanced documentation
 
-## [1.3.0] - 2024-10-01
+## [1.3.0] - 2024-11-08
 
 ### Added
 - Comprehensive skill collection
@@ -113,7 +113,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated marketplace configuration
 - Enhanced user experience
 
-## [1.2.0] - 2024-09-28
+## [1.2.0] - 2025-11-06
 
 ### Added
 - Initial release of Developer Kit
@@ -126,7 +126,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Created initial structure
 - Set up development workflow
 
-## [1.1.0] - 2024-09-25
+## [1.1.0] - 2025-11-05
 
 ### Added
 - Plugin configuration
@@ -137,7 +137,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Setup and configuration issues
 - Documentation improvements
 
-## [1.0.0] - 2024-09-20
+## [1.0.0] - 2025-11-02
 
 ### Added
 - Initial project setup
