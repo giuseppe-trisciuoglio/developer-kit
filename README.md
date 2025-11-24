@@ -536,11 +536,11 @@ This project is licensed under the [LICENSE](LICENSE) file in the repository roo
 For a complete history of changes, please see the dedicated [CHANGELOG.md](CHANGELOG.md) file.
 
 Recent highlights:
+- **v1.11.0**: Enhanced development workflow with new commands, agents, and comprehensive documentation updates
 - **v1.10.0**: GitHub integration and workflow automation with PR creation and review commands
 - **v1.9.0**: Documentation generation commands and educational content expansion
 - **v1.8.0**: AI engineering capabilities with chunking, prompt engineering, and RAG skills
 - **v1.7.0**: Java development workflow automation with CRUD and testing commands
-- **v1.6.0**: Spring Boot Resilience4j fault tolerance and enhanced testing patterns
 
 ---
 

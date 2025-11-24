@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Developer Kit for building applications with Claude Code using best practices and patterns.",
-    "version": "1.10.0"
+    "version": "1.11.0"
   },
   "plugins": [
     {
