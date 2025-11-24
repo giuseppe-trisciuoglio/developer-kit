@@ -47,6 +47,7 @@ The `prompt-engineering-expert` agent MUST provide:
 - Full text ready for immediate implementation
 - Proper structure and formatting
 - Model-specific optimizations
+- **IMPORTANT: Save the optimized prompt to a file named `optimized-prompt.md`**
 
 **Optimization Report:**
 - Original prompt assessment (strengths/weaknesses)
