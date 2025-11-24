@@ -125,6 +125,7 @@ engineering patterns, and documentation generation
 | **[spring-boot-backend-development-expert](agents/spring-boot-backend-development-expert.md)**     | Backend development                    | Implementation, testing, optimization                                   |
 | **[langchain4j-ai-development-expert](agents/langchain4j-ai-development-expert.md)**               | AI integration                         | LangChain4J implementation, RAG, agents                                 |
 | **[spring-boot-unit-testing-expert](agents/spring-boot-unit-testing-expert.md)**                   | Unit testing                           | Test patterns, Mockito, test organization                              |
+| **[java-refactor-expert](agents/java-refactor-expert.md)**                                         | Java Refactoring                       | Complex class refactoring, DDD alignment, legacy code modernization     |
 | **[java-software-architect-review](agents/java-software-architect-review.md)**                     | Software architecture review           | High-level architecture, design patterns, scalability                   |
 | **[java-security-expert](agents/java-security-expert.md)**                                         | Java security analysis                 | Security vulnerabilities, OWASP, secure coding practices                |
 | **[java-documentation-specialist](agents/java-documentation-specialist.md)**                       | Java project documentation              | API docs, architecture guides, technical documentation generation       |
@@ -202,6 +203,7 @@ developer-kit-claude-code/
 │       └── aws-sdk-java-v2-secrets-manager/
 ├── commands/                            # Development workflow commands
 │   ├── devkit.generate-changelog.md
+│   ├── devkit.generate-security-assessment.md
 │   ├── devkit.github.create-pr.md
 │   ├── devkit.github.review-pr.md
 │   ├── devkit.java.architect-review.md
@@ -216,6 +218,7 @@ developer-kit-claude-code/
 │   ├── devkit.java.write-unit-tests.md
 │   ├── devkit.optimize-skill.md
 │   ├── devkit.prompt-optimize.md
+│   ├── devkit.ts.security-review.md
 │   ├── devkit.verify-skill.md
 │   ├── devkit.write-a-minute-of-a-meeting.md
 │   ├── speckit.check-integration.md
@@ -330,6 +333,14 @@ automation:
 | **`/devkit.github.create-pr`**    | Create GitHub pull request                     | Create branch, commit changes, and submit PR with automated description and commit messages |
 | **`/devkit.github.review-pr`**    | Comprehensive GitHub PR review                 | Perform code quality, security, performance, architecture, and testing review of a PR        |
 
+### Security Commands
+
+| Command                                        | Purpose                                        | Use Case                                                                                      |
+|------------------------------------------------|-----------------------------------------------|-----------------------------------------------------------------------------------------------|
+| **`/devkit.java.security-review`**              | Java enterprise security audit                | Comprehensive security review for Spring Boot and Jakarta EE applications (OWASP, CVEs, configs) |
+| **`/devkit.ts.security-review`**                | TypeScript/Node.js security audit             | Security review for TypeScript applications (Next.js, NestJS, Express) with OWASP Top 10 analysis |
+| **`/devkit.generate-security-assessment`**      | Generate security assessment document        | Create comprehensive security assessment documentation after security audits (English by default) |
+
 ### GitHub Spec Kit Commands
 
 | Command                          | Purpose                                        | Use Case                                                                             |
@@ -350,6 +361,7 @@ automation:
 | **`/devkit.java.security-review`**         | Security-focused code review                  | Identify vulnerabilities, OWASP compliance, secure coding practices                       |
 | **`/devkit.java.architect-review`**        | High-level architecture review                | Validate design patterns, scalability, and architectural decisions                        |
 | **`/devkit.java.refactor-class`**          | Intelligent refactoring assistant             | Refactor complex Java classes with Clean Architecture, DDD patterns, and Spring Boot best practices |
+| **`/devkit.generate-refactoring-tasks`**   | Generate step-by-step refactoring plan        | Create detailed, actionable refactoring tasks for complex Java classes                               |
 | **`/devkit.java.dependency-audit`**        | Comprehensive dependency audit                | Scan vulnerabilities, verify licenses, and get update recommendations                     |
 | **`/devkit.java.upgrade-dependencies`**    | Safe dependency upgrade strategies            | Upgrade dependencies with compatibility testing and rollback procedures                   |
 
@@ -359,7 +371,7 @@ automation:
 |-------------------------------------------|-------------------------------------------|------------------------------------------------------------------------------------------|
 | **`/devkit.generate-changelog`**          | Generate project changelog                | Create and maintain CHANGELOG.md for any project type with multi-language support       |
 | **`/devkit.write-a-minute-of-a-meeting`** | Generate meeting minutes from transcripts | Create professional meeting summaries and action items from meeting transcripts or notes |
-| **`/devkit.prompt-optimize`**             | Optimize prompts for AI performance       | Enhance prompt engineering for improved Claude responses and task execution              |
+| **`/devkit.prompt-optimize`**             | Optimize prompts for AI performance       | Enhance prompt engineering and save optimized prompt to `optimized-prompt.md`            |
 
 ### Skill Development Commands
 
