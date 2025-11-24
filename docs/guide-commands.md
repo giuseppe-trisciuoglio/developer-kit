@@ -7,11 +7,12 @@ This guide provides comprehensive documentation for all commands developed for C
 ## Table of Contents
 
 1. [Java/Spring Boot Commands](#javaspring-boot-commands)
-2. [Testing Commands](#testing-commands)
-3. [DevKit Management Commands](#devkit-management-commands)
-4. [Utility Commands](#utility-commands)
-5. [Best Practices](#best-practices)
-6. [Complete Workflow Example](#complete-workflow-example)
+2. [Security Commands](#security-commands)
+3. [Testing Commands](#testing-commands)
+4. [DevKit Management Commands](#devkit-management-commands)
+5. [Utility Commands](#utility-commands)
+6. [Best Practices](#best-practices)
+7. [Complete Workflow Example](#complete-workflow-example)
 
 ---
 
@@ -472,6 +473,38 @@ docs/
 - Test coverage increase
 - Dependency coupling reduction
 
+### `/devkit.generate-refactoring-tasks`
+
+**Description**: Generate a step-by-step refactoring plan for complex Java classes using the java-refactor-expert agent.
+
+**When to use:**
+- Planning a complex refactoring
+- Breaking down large classes into manageable tasks
+- Ensuring DDD compliance before coding
+- Creating a roadmap for legacy code modernization
+
+**Arguments:**
+```bash
+/devkit.generate-refactoring-tasks [class-file-path]
+```
+
+**Practical examples:**
+
+```bash
+# Generate refactoring tasks for a legacy service
+/devkit.generate-refactoring-tasks src/main/java/com/example/legacy/MonolithicService.java
+
+# Plan refactoring for a complex controller
+/devkit.generate-refactoring-tasks src/main/java/com/example/controller/ComplexController.java
+```
+
+**Output:**
+- A markdown file `docs/refactoring/[ClassName]-refactoring-tasks.md` containing:
+    - Analysis of the current class
+    - Step-by-step refactoring tasks
+    - Verification steps for each task
+    - DDD alignment checks
+
 ---
 
 ### `/devkit.java.security-review`
@@ -550,6 +583,187 @@ docs/
 - **High (P1)**: Outdated CVEs, insecure configurations, missing security headers
 - **Medium (P2)**: Logging gaps, insufficient validation, access control improvements
 - **Low (P3)**: Documentation, code style security, additional testing
+
+---
+
+### `/devkit.ts.security-review`
+
+**Description**: Comprehensive security review for TypeScript/Node.js applications (Next.js, NestJS, Express, etc.).
+
+**When to use:**
+- Security audit of TypeScript applications
+- Framework-specific security validation
+- Pre-production security checks
+- OWASP compliance verification
+- npm/dependency vulnerability assessment
+
+**Arguments:**
+```bash
+/devkit.ts.security-review [scope] [options]
+```
+
+**Scopes:**
+- `code` - TypeScript code security analysis (default)
+- `dependencies` - npm/yarn package vulnerability scan
+- `config` - Framework configuration security
+- `infrastructure` - Docker/K8s security
+- `full` - Complete security audit
+
+**Analysis areas:**
+
+1. **OWASP Top 10 for TypeScript:**
+   - A01: Broken Access Control (Express middleware, NestJS guards)
+   - A02: Cryptographic Failures (Node.js crypto, bcryptjs)
+   - A03: Injection (SQL in TypeORM/Prisma, Command injection)
+   - A04: Insecure Design (missing security middleware)
+   - A05: Security Misconfiguration (CORS, exposed endpoints)
+   - A06: Vulnerable Components (npm audit, CVE detection)
+   - A07: Authentication Failures (JWT, session management)
+   - A08: Data Integrity (package-lock verification)
+   - A09: Logging/Monitoring (Winston, security events)
+   - A10: SSRF (axios, node-fetch URL validation)
+
+2. **Framework-Specific Analysis:**
+   - **Next.js**: API routes, SSR security, middleware
+   - **NestJS**: Guards, interceptors, Passport strategies
+   - **Express.js**: Middleware security, route protection
+   - **Frontend**: React/Vue XSS prevention, CSP implementation
+
+3. **Dependency Security:**
+   - npm/yarn vulnerability scanning
+   - Package integrity verification
+   - Outdated package detection
+   - Malicious package analysis
+
+**Practical examples:**
+
+```bash
+# Complete TypeScript security audit
+/devkit.ts.security-review full
+
+# Code security analysis only
+/devkit.ts.security-review code
+
+# Dependency vulnerability scan
+/devkit.ts.security-review dependencies
+
+# Next.js specific security
+/devkit.ts.security-review code --framework=nextjs
+```
+
+**Output includes:**
+- Vulnerability severity classification (Critical/High/Medium/Low)
+- Framework-specific security recommendations
+- Automated fix suggestions for dependencies
+- Configuration security improvements
+
+---
+
+### `/devkit.generate-security-assessment`
+
+**Description**: Generate comprehensive security assessment document after security audit completion.
+
+**When to use:**
+- After running `/devkit.java.security-review` or `/devkit.ts.security-review`
+- Creating security documentation for stakeholders
+- Compliance reporting (GDPR, ISO 27001, PCI-DSS)
+- Security architecture documentation
+- Incident response planning
+
+**Arguments:**
+```bash
+/devkit.generate-security-assessment [language] [output-format]
+```
+
+**Languages:**
+- `en-US` - English documentation (default)
+- `it-IT` - Italian documentation
+- `es-ES` - Spanish documentation
+- `fr-FR` - French documentation
+
+**Output formats:**
+- `markdown` - Structured Markdown document (default)
+- `pdf` - Professional PDF document
+- `docx` - Microsoft Word format
+- `html` - Interactive HTML report
+
+**Generated document structure:**
+
+1. **Project Overview & Security Scope**
+   - Application description and objectives
+   - Security boundaries and scope definition
+   - Technology stack identification
+
+2. **Identity & Access Management**
+   - Authentication mechanisms analysis
+   - Authorization patterns (RBAC)
+   - Session management security
+
+3. **Data Protection**
+   - Encryption analysis (in transit, at rest)
+   - Data masking and PII protection
+   - Backup and recovery strategies
+
+4. **Threat Protection**
+   - Firewall and WAF configuration
+   - DDoS protection measures
+   - Vulnerability monitoring procedures
+
+5. **Code Security**
+   - Secure coding practices
+   - Code review processes
+   - Security testing strategies
+
+6. **Incident Management**
+   - Response procedures and timelines
+   - Reporting and documentation
+   - Communication protocols
+
+7. **Training & Awareness**
+   - Security training programs
+   - Attack simulations and drills
+
+8. **Compliance & Regulations**
+   - Regulatory framework compliance
+   - Security audit procedures
+
+9. **Maintenance & Updates**
+   - Patch management processes
+   - Continuous monitoring strategies
+
+10. **Appendices**
+    - Security glossary
+    - Useful resources and references
+
+**Practical examples:**
+
+```bash
+# Generate English security assessment in Markdown (default)
+/devkit.generate-security-assessment en-US markdown
+
+# Generate English assessment in PDF format
+/devkit.generate-security-assessment en-US pdf
+
+# Generate Italian assessment for stakeholders
+/devkit.generate-security-assessment it-IT docx
+
+# Generate Spanish assessment for stakeholders
+/devkit.generate-security-assessment es-ES docx
+```
+
+**Key features:**
+- Multi-language support for international teams
+- Professional formatting for executive review
+- Comprehensive security coverage based on audit findings
+- Actionable recommendations with priority levels
+- Compliance framework mapping
+- Integration with previous security audit results
+
+**Usage workflow:**
+1. Run security audit: `/devkit.java.security-review` or `/devkit.ts.security-review`
+2. Review findings and implement critical fixes
+3. Generate assessment document: `/devkit.generate-security-assessment`
+4. Share with stakeholders and track remediation progress
 
 ---
 
@@ -1055,7 +1269,7 @@ Required actions:
 - **Meta-Prompting**: Dynamic prompt generation
 
 **Output includes:**
-- Complete optimized prompt
+- Complete optimized prompt (saved to `optimized-prompt.md`)
 - Optimization report (before/after analysis)
 - Applied techniques with impact metrics
 - Performance projections
@@ -1183,13 +1397,16 @@ The team reviewed sprint progress, identified blockers, and planned next sprint 
 
 **Before Pull Request:**
 1. `/devkit.java.code-review full` - Complete review
-2. `/devkit.java.security-review` - Security check
-3. `/devkit.java.write-integration-tests` - Add integration tests
+2. `/devkit.java.security-review` - Security check (Java)
+3. `/devkit.ts.security-review` - Security check (TypeScript)
+4. `/devkit.java.write-integration-tests` - Add integration tests
 
 **Pre-Production:**
-1. `/devkit.java.security-review full` - Complete security audit
-2. `/devkit.java.dependency-audit` - Vulnerability check
-3. `/devkit.generate-changelog` - Generate release notes
+1. `/devkit.java.security-review full` - Complete Java security audit
+2. `/devkit.ts.security-review full` - Complete TypeScript security audit
+3. `/devkit.generate-security-assessment` - Generate security documentation
+4. `/devkit.java.dependency-audit` - Vulnerability check
+5. `/devkit.generate-changelog` - Generate release notes
 
 **Maintenance:**
 1. `/devkit.java.dependency-audit` - Weekly/monthly dependency checks
@@ -1218,20 +1435,26 @@ Real-world scenario: Implementing a complete user management feature
 # 5. Code quality review
 /devkit.java.code-review full src/main/java/com/example/user
 
-# 6. Security review
+# 6. Security review (Java)
 /devkit.java.security-review code src/main/java/com/example/user
 
-# 7. Generate API documentation
+# 6b. Security review (TypeScript, if applicable)
+/devkit.ts.security-review code
+
+# 7. Generate security assessment documentation
+/devkit.generate-security-assessment en-US markdown
+
+# 8. Generate API documentation
 /devkit.java.generate-docs . api html
 
-# 8. Update changelog
+# 9. Update changelog
 /devkit.generate-changelog update
 
-# 9. Validate and commit
+# 10. Validate and commit
 git add .
 git commit -m "feat: implement user management feature"
 
-# 10. Create pull request (documented separately)
+# 11. Create pull request (documented separately)
 # Use GitHub Spec Kit commands for PR creation and review
 ```
 
