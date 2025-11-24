@@ -8,13 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- New commands and agents for enhanced development workflow
+- Comprehensive tutorial for agents, commands and skills
 - Documentation updates for commands and project structure
 - Enhanced README with new sections and improved organization
 
 ### Changed
+- Removed optimize documentation references for cleaner structure
 - Made changelog command language-agnostic for better cross-platform compatibility
 
 ### Fixed
+- Fixed formatting of requirements section in guide
+- Changed release dates in CHANGELOG.md for accuracy
 - Minor fixes and improvements to command structure
 
 ## [1.10.0] - 2025-11-12
