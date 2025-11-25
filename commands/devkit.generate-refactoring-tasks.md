@@ -6,12 +6,12 @@ description: Generate a comprehensive refactoring task list for a specific Bound
 
 # Refactoring Task List Generator for Bounded Context
 
-Analyze the bounded context **$1** in the Memory-MCP project to create a complete refactoring task list and save it to a file.
+Analyze the bounded context **$1** in the project to create a complete refactoring task list and save it to a file.
 
 Perform the following steps:
 
 1. **Bounded Context Analysis**:
-   - Search for all Java files in the package `io.colens.memory.mcp.$1`
+   - Search for all Java files in the package `org.example.$1`
    - Identify all TODO, FIXME comments, and technical debt indicators
    - Analyze DDD architecture and compliance with SOLID principles
    - Identify incomplete implementations and placeholder code
