@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.12.0] - 2025-11-27
+
+### Added
+- Long-Running Agent (LRA) workflow commands and guide (12f495c)
+
+### Changed
+- Updated package path in refactoring task generator (a9a098f)
+
+### Fixed
+- Removed ignored files from project (cd75bd4)
+
 ## [1.11.0] - 2025-11-24
 
 ### Added
@@ -152,7 +163,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.11.0...HEAD
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.12.0...HEAD
+[1.12.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.11.0...v1.12.0
 [1.11.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.10.0...v1.11.0
 [1.10.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.9.0...v1.10.0
 [1.9.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.8.0...v1.9.0
