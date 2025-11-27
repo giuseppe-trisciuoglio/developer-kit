@@ -118,19 +118,19 @@ engineering patterns, and documentation generation
 
 ## 🤖 Available Agents
 
-| Agent                                                                                              | Specialization                         | Best For                                                               |
-|----------------------------------------------------------------------------------------------------|----------------------------------------|-------------------------------------------------------------------------|
-| **[spring-boot-code-review-specialist](agents/spring-boot-code-review-specialist.md)**             | Spring Boot code review                | Architecture, patterns, security review                                  |
-| **[spring-boot-code-review-expert](agents/spring-boot-code-review-expert.md)**                     | Expert Spring Boot code review         | Advanced code analysis, security, performance review                    |
-| **[spring-boot-backend-development-expert](agents/spring-boot-backend-development-expert.md)**     | Backend development                    | Implementation, testing, optimization                                   |
-| **[langchain4j-ai-development-expert](agents/langchain4j-ai-development-expert.md)**               | AI integration                         | LangChain4J implementation, RAG, agents                                 |
-| **[spring-boot-unit-testing-expert](agents/spring-boot-unit-testing-expert.md)**                   | Unit testing                           | Test patterns, Mockito, test organization                              |
-| **[java-refactor-expert](agents/java-refactor-expert.md)**                                         | Java Refactoring                       | Complex class refactoring, DDD alignment, legacy code modernization     |
-| **[java-software-architect-review](agents/java-software-architect-review.md)**                     | Software architecture review           | High-level architecture, design patterns, scalability                   |
-| **[java-security-expert](agents/java-security-expert.md)**                                         | Java security analysis                 | Security vulnerabilities, OWASP, secure coding practices                |
-| **[java-documentation-specialist](agents/java-documentation-specialist.md)**                       | Java project documentation              | API docs, architecture guides, technical documentation generation       |
-| **[java-tutorial-engineer](agents/java-tutorial-engineer.md)**                                     | Java/Spring Boot tutorials             | Educational content, hands-on learning, step-by-step guides            |
-| **[prompt-engineering-expert](agents/prompt-engineering-expert.md)**                               | Prompt engineering                     | LLM prompt optimization, CoT, few-shot patterns                        |
+| Agent                                                                                          | Specialization                 | Best For                                                            |
+|------------------------------------------------------------------------------------------------|--------------------------------|---------------------------------------------------------------------|
+| **[spring-boot-code-review-specialist](agents/spring-boot-code-review-specialist.md)**         | Spring Boot code review        | Architecture, patterns, security review                             |
+| **[spring-boot-code-review-expert](agents/spring-boot-code-review-expert.md)**                 | Expert Spring Boot code review | Advanced code analysis, security, performance review                |
+| **[spring-boot-backend-development-expert](agents/spring-boot-backend-development-expert.md)** | Backend development            | Implementation, testing, optimization                               |
+| **[langchain4j-ai-development-expert](agents/langchain4j-ai-development-expert.md)**           | AI integration                 | LangChain4J implementation, RAG, agents                             |
+| **[spring-boot-unit-testing-expert](agents/spring-boot-unit-testing-expert.md)**               | Unit testing                   | Test patterns, Mockito, test organization                           |
+| **[java-refactor-expert](agents/java-refactor-expert.md)**                                     | Java Refactoring               | Complex class refactoring, DDD alignment, legacy code modernization |
+| **[java-software-architect-review](agents/java-software-architect-review.md)**                 | Software architecture review   | High-level architecture, design patterns, scalability               |
+| **[java-security-expert](agents/java-security-expert.md)**                                     | Java security analysis         | Security vulnerabilities, OWASP, secure coding practices            |
+| **[java-documentation-specialist](agents/java-documentation-specialist.md)**                   | Java project documentation     | API docs, architecture guides, technical documentation generation   |
+| **[java-tutorial-engineer](agents/java-tutorial-engineer.md)**                                 | Java/Spring Boot tutorials     | Educational content, hands-on learning, step-by-step guides         |
+| **[prompt-engineering-expert](agents/prompt-engineering-expert.md)**                           | Prompt engineering             | LLM prompt optimization, CoT, few-shot patterns                     |
 
 ## 🗂️ Repository Structure
 
@@ -216,7 +216,6 @@ developer-kit-claude-code/
 │   ├── devkit.java.upgrade-dependencies.md
 │   ├── devkit.java.write-integration-tests.md
 │   ├── devkit.java.write-unit-tests.md
-│   ├── devkit.optimize-skill.md
 │   ├── devkit.prompt-optimize.md
 │   ├── devkit.ts.security-review.md
 │   ├── devkit.verify-skill.md
@@ -320,26 +319,26 @@ automation:
 
 ### Project Workflow Commands
 
-| Command                             | Purpose                                    | Use Case                                                                               |
-|-------------------------------------|--------------------------------------------|----------------------------------------------------------------------------------------|
-| **`/devkit.generate-changelog`**    | Generate project changelog                 | Create and maintain CHANGELOG.md for any project type with Git integration            |
-| **`/devkit.write-a-minute-of-a-meeting`** | Generate meeting minutes from transcripts | Create professional meeting summaries and action items from meeting transcripts or notes |
-| **`/devkit.prompt-optimize`**       | Optimize prompts for better AI performance | Enhance prompt engineering for improved Claude responses and task execution            |
+| Command                                   | Purpose                                    | Use Case                                                                                 |
+|-------------------------------------------|--------------------------------------------|------------------------------------------------------------------------------------------|
+| **`/devkit.generate-changelog`**          | Generate project changelog                 | Create and maintain CHANGELOG.md for any project type with Git integration               |
+| **`/devkit.write-a-minute-of-a-meeting`** | Generate meeting minutes from transcripts  | Create professional meeting summaries and action items from meeting transcripts or notes |
+| **`/devkit.prompt-optimize`**             | Optimize prompts for better AI performance | Enhance prompt engineering for improved Claude responses and task execution              |
 
 ### GitHub Commands
 
-| Command                           | Purpose                                        | Use Case                                                                                    |
-|-----------------------------------|------------------------------------------------|---------------------------------------------------------------------------------------------|
-| **`/devkit.github.create-pr`**    | Create GitHub pull request                     | Create branch, commit changes, and submit PR with automated description and commit messages |
-| **`/devkit.github.review-pr`**    | Comprehensive GitHub PR review                 | Perform code quality, security, performance, architecture, and testing review of a PR        |
+| Command                        | Purpose                        | Use Case                                                                                    |
+|--------------------------------|--------------------------------|---------------------------------------------------------------------------------------------|
+| **`/devkit.github.create-pr`** | Create GitHub pull request     | Create branch, commit changes, and submit PR with automated description and commit messages |
+| **`/devkit.github.review-pr`** | Comprehensive GitHub PR review | Perform code quality, security, performance, architecture, and testing review of a PR       |
 
 ### Security Commands
 
-| Command                                        | Purpose                                        | Use Case                                                                                      |
-|------------------------------------------------|-----------------------------------------------|-----------------------------------------------------------------------------------------------|
-| **`/devkit.java.security-review`**              | Java enterprise security audit                | Comprehensive security review for Spring Boot and Jakarta EE applications (OWASP, CVEs, configs) |
-| **`/devkit.ts.security-review`**                | TypeScript/Node.js security audit             | Security review for TypeScript applications (Next.js, NestJS, Express) with OWASP Top 10 analysis |
-| **`/devkit.generate-security-assessment`**      | Generate security assessment document        | Create comprehensive security assessment documentation after security audits (English by default) |
+| Command                                    | Purpose                               | Use Case                                                                                          |
+|--------------------------------------------|---------------------------------------|---------------------------------------------------------------------------------------------------|
+| **`/devkit.java.security-review`**         | Java enterprise security audit        | Comprehensive security review for Spring Boot and Jakarta EE applications (OWASP, CVEs, configs)  |
+| **`/devkit.ts.security-review`**           | TypeScript/Node.js security audit     | Security review for TypeScript applications (Next.js, NestJS, Express) with OWASP Top 10 analysis |
+| **`/devkit.generate-security-assessment`** | Generate security assessment document | Create comprehensive security assessment documentation after security audits (English by default) |
 
 ### GitHub Spec Kit Commands
 
@@ -351,25 +350,25 @@ automation:
 
 ### Java Development Commands
 
-| Command                                    | Purpose                                       | Use Case                                                                                  |
-|--------------------------------------------|-----------------------------------------------|-------------------------------------------------------------------------------------------|
-| **`/devkit.java.generate-crud`**           | Generate CRUD implementation for domain class | Create complete REST API with controllers, services, DTOs using spring-boot-crud-patterns |
-| **`/devkit.java.generate-docs`**           | Generate Java project documentation           | Create comprehensive API docs, architecture guides, Javadoc, and technical documentation  |
-| **`/devkit.java.write-unit-tests`**        | Generate comprehensive JUnit 5 unit tests     | Create unit tests with Mockito, AssertJ for Java classes                                  |
-| **`/devkit.java.write-integration-tests`** | Generate Spring Boot integration tests        | Create Testcontainers-based tests for complete workflow testing                           |
-| **`/devkit.java.code-review`**             | Perform comprehensive Java code review        | Review code quality, architecture, security, and performance                              |
-| **`/devkit.java.security-review`**         | Security-focused code review                  | Identify vulnerabilities, OWASP compliance, secure coding practices                       |
-| **`/devkit.java.architect-review`**        | High-level architecture review                | Validate design patterns, scalability, and architectural decisions                        |
+| Command                                    | Purpose                                       | Use Case                                                                                            |
+|--------------------------------------------|-----------------------------------------------|-----------------------------------------------------------------------------------------------------|
+| **`/devkit.java.generate-crud`**           | Generate CRUD implementation for domain class | Create complete REST API with controllers, services, DTOs using spring-boot-crud-patterns           |
+| **`/devkit.java.generate-docs`**           | Generate Java project documentation           | Create comprehensive API docs, architecture guides, Javadoc, and technical documentation            |
+| **`/devkit.java.write-unit-tests`**        | Generate comprehensive JUnit 5 unit tests     | Create unit tests with Mockito, AssertJ for Java classes                                            |
+| **`/devkit.java.write-integration-tests`** | Generate Spring Boot integration tests        | Create Testcontainers-based tests for complete workflow testing                                     |
+| **`/devkit.java.code-review`**             | Perform comprehensive Java code review        | Review code quality, architecture, security, and performance                                        |
+| **`/devkit.java.security-review`**         | Security-focused code review                  | Identify vulnerabilities, OWASP compliance, secure coding practices                                 |
+| **`/devkit.java.architect-review`**        | High-level architecture review                | Validate design patterns, scalability, and architectural decisions                                  |
 | **`/devkit.java.refactor-class`**          | Intelligent refactoring assistant             | Refactor complex Java classes with Clean Architecture, DDD patterns, and Spring Boot best practices |
-| **`/devkit.generate-refactoring-tasks`**   | Generate step-by-step refactoring plan        | Create detailed, actionable refactoring tasks for complex Java classes                               |
-| **`/devkit.java.dependency-audit`**        | Comprehensive dependency audit                | Scan vulnerabilities, verify licenses, and get update recommendations                     |
-| **`/devkit.java.upgrade-dependencies`**    | Safe dependency upgrade strategies            | Upgrade dependencies with compatibility testing and rollback procedures                   |
+| **`/devkit.generate-refactoring-tasks`**   | Generate step-by-step refactoring plan        | Create detailed, actionable refactoring tasks for complex Java classes                              |
+| **`/devkit.java.dependency-audit`**        | Comprehensive dependency audit                | Scan vulnerabilities, verify licenses, and get update recommendations                               |
+| **`/devkit.java.upgrade-dependencies`**    | Safe dependency upgrade strategies            | Upgrade dependencies with compatibility testing and rollback procedures                             |
 
 ### Project Workflow Commands
 
 | Command                                   | Purpose                                   | Use Case                                                                                 |
 |-------------------------------------------|-------------------------------------------|------------------------------------------------------------------------------------------|
-| **`/devkit.generate-changelog`**          | Generate project changelog                | Create and maintain CHANGELOG.md for any project type with multi-language support       |
+| **`/devkit.generate-changelog`**          | Generate project changelog                | Create and maintain CHANGELOG.md for any project type with multi-language support        |
 | **`/devkit.write-a-minute-of-a-meeting`** | Generate meeting minutes from transcripts | Create professional meeting summaries and action items from meeting transcripts or notes |
 | **`/devkit.prompt-optimize`**             | Optimize prompts for AI performance       | Enhance prompt engineering and save optimized prompt to `optimized-prompt.md`            |
 
@@ -378,6 +377,38 @@ automation:
 | Command                    | Purpose                                 | Use Case                                                                  |
 |----------------------------|-----------------------------------------|---------------------------------------------------------------------------|
 | **`/devkit.verify-skill`** | Validate skill against DevKit standards | Verify a skill's compliance with requirements, format, and best practices |
+
+### Long-Running Agent (LRA) Commands
+
+Commands for managing complex projects that span multiple context windows, based
+on [Anthropic's research on long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents).
+
+| Command                         | Purpose                       | Use Case                                                                           |
+|---------------------------------|-------------------------------|------------------------------------------------------------------------------------|
+| **`/devkit.lra.init`**          | Initialize LRA environment    | Set up feature list, progress tracking, and init script for multi-session projects |
+| **`/devkit.lra.start-session`** | Start a new coding session    | Read progress, check health, select next feature at the beginning of each session  |
+| **`/devkit.lra.add-feature`**   | Add feature to the list       | Add new requirements discovered during development                                 |
+| **`/devkit.lra.mark-feature`**  | Mark feature as passed/failed | Update feature status after implementation and testing                             |
+| **`/devkit.lra.checkpoint`**    | Create session checkpoint     | Commit changes, update progress log, ensure clean state at session end             |
+| **`/devkit.lra.status`**        | View project status           | Display progress metrics, priorities, and recent activity                          |
+| **`/devkit.lra.recover`**       | Recover from broken state     | Diagnose issues, revert if needed, restore working state                           |
+
+**LRA Workflow:**
+
+```
+/devkit.lra.init [project-description]     ← First time setup
+    ↓
+/devkit.lra.start-session                  ← Start of every session
+    ↓
+... implement ONE feature ...
+    ↓
+/devkit.lra.mark-feature [id] passed       ← After testing
+    ↓
+/devkit.lra.checkpoint [summary]           ← End of every session
+```
+
+📖 **[Complete LRA Workflow Guide](docs/guide-lra-workflow.md)** — Detailed documentation with examples and best
+practices.
 
 ### GitHub Spec Kit Workflow
 
@@ -497,14 +528,24 @@ See [CONTRIBUTING guidelines](CONTRIBUTING.md) for detailed instructions.
 Comprehensive documentation for all Developer Kit components:
 
 ### Skills Guides
-- **[Spring Boot Skills Guide](docs/guide-skills-spring-boot.md)** - Complete guide to Spring Boot patterns including dependency injection, actuator, caching, data persistence, REST APIs, resilience patterns, and testing strategies
-- **[JUnit Testing Skills Guide](docs/guide-skills-junit-test.md)** - Comprehensive testing patterns for controller, service, data, external integrations, infrastructure, and advanced testing scenarios
-- **[LangChain4j Skills Guide](docs/guide-skills-langchain4j.md)** - Building AI-powered applications with core integration, AI services, RAG implementation, vector stores, and MCP server patterns
-- **[AWS Java SDK Skills Guide](docs/guide-skills-aws-java.md)** - Cloud development with AWS services including core SDK setup, storage (S3), databases (DynamoDB, RDS), compute (Lambda), messaging (SQS/SNS), and security services
+
+- **[Spring Boot Skills Guide](docs/guide-skills-spring-boot.md)** - Complete guide to Spring Boot patterns including
+  dependency injection, actuator, caching, data persistence, REST APIs, resilience patterns, and testing strategies
+- **[JUnit Testing Skills Guide](docs/guide-skills-junit-test.md)** - Comprehensive testing patterns for controller,
+  service, data, external integrations, infrastructure, and advanced testing scenarios
+- **[LangChain4j Skills Guide](docs/guide-skills-langchain4j.md)** - Building AI-powered applications with core
+  integration, AI services, RAG implementation, vector stores, and MCP server patterns
+- **[AWS Java SDK Skills Guide](docs/guide-skills-aws-java.md)** - Cloud development with AWS services including core
+  SDK setup, storage (S3), databases (DynamoDB, RDS), compute (Lambda), messaging (SQS/SNS), and security services
 
 ### Component Guides
-- **[Agents Guide](docs/guide-agents.md)** - Complete documentation for specialized agents including Java development, testing & quality, AI & LangChain4j, documentation, and engineering agents
-- **[Commands Guide](docs/guide-commands.md)** - Comprehensive command reference for Java/Spring Boot development, testing, DevKit management, and utility commands with practical workflows
+
+- **[Agents Guide](docs/guide-agents.md)** - Complete documentation for specialized agents including Java development,
+  testing & quality, AI & LangChain4j, documentation, and engineering agents
+- **[Commands Guide](docs/guide-commands.md)** - Comprehensive command reference for Java/Spring Boot development,
+  testing, DevKit management, and utility commands with practical workflows
+- **[LRA Workflow Guide](docs/guide-lra-workflow.md)** - Long-Running Agent workflow for multi-session projects based on
+  Anthropic's research on effective agent harnesses
 
 ## 📚 Resources
 
@@ -536,6 +577,7 @@ This project is licensed under the [LICENSE](LICENSE) file in the repository roo
 For a complete history of changes, please see the dedicated [CHANGELOG.md](CHANGELOG.md) file.
 
 Recent highlights:
+
 - **v1.11.0**: Enhanced development workflow with new commands, agents, and comprehensive documentation updates
 - **v1.10.0**: GitHub integration and workflow automation with PR creation and review commands
 - **v1.9.0**: Documentation generation commands and educational content expansion
