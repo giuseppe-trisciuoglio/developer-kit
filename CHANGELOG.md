@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.12.1] - 2025-11-30
+
+### Fixed
+- Updated commands for selecting correct agent on execution command (0028135)
+
 ## [1.12.0] - 2025-11-27
 
 ### Added
@@ -163,7 +168,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.12.0...HEAD
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.12.1...HEAD
+[1.12.1]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.12.0...v1.12.1
 [1.12.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.11.0...v1.12.0
 [1.11.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.10.0...v1.11.0
 [1.10.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.9.0...v1.10.0

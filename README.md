@@ -483,11 +483,11 @@ For a complete history of changes, please see the dedicated [CHANGELOG.md](CHANG
 
 Recent highlights:
 
+- **v1.12.1**: Fixed commands for correct agent selection on execution
 - **v1.12.0**: Long-Running Agent (LRA) workflow commands and guide for multi-session project management
 - **v1.11.0**: Enhanced development workflow with new commands, agents, and comprehensive documentation updates
 - **v1.10.0**: GitHub integration and workflow automation with PR creation and review commands
 - **v1.9.0**: Documentation generation commands and educational content expansion
-- **v1.8.0**: AI engineering capabilities with chunking, prompt engineering, and RAG skills
 
 ---
 
