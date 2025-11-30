@@ -118,3 +118,9 @@ After completing all tasks, provide a summary:
 2. Feature breakdown by category
 3. Feature breakdown by priority
 4. Next steps for the first coding session
+
+## Execution Instructions
+
+**Agent Selection**: To execute this LRA task, use the following approach:
+- Primary: Use `general-purpose` agent with task management and state persistence capabilities
+- Or use `plan` agent for complex multi-step workflows

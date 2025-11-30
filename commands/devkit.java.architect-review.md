@@ -33,7 +33,7 @@ $2 specifies the focus area (optional):
 ## Architectural Review Checklist
 
 ### Clean Architecture Assessment
-- **Layer Separation**: Verify proper dependency direction (domain ’ application ’ infrastructure ’ presentation)
+- **Layer Separation**: Verify proper dependency direction (domain ï¿½ application ï¿½ infrastructure ï¿½ presentation)
 - **Package Structure**: Feature-based organization with clear boundaries
 - **Dependency Rules**: Check for violations of dependency inversion principle
 - **Domain Purity**: Ensure domain layer has no framework dependencies
@@ -98,3 +98,10 @@ Based on the context and focus area, provide a comprehensive architectural revie
 - Long-term architectural enhancements (suggestions)
 
 Focus on practical, actionable advice that improves the application's architecture while considering the team's current context and constraints.
+
+## Execution Instructions
+
+**Agent Selection**: To execute this architectural review, use the following agent with fallback:
+- Primary: `java-software-architect-review`
+- If not available: Use `developer-kit:java-software-architect-review` or fallback to `general-purpose` agent with `spring-boot-crud-patterns` skill
+

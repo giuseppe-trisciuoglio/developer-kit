@@ -97,3 +97,9 @@ Perform the following steps:
    - Confirm the file creation to the user
 
 Do not include abstract sections like QA, theoretical metrics, or generic risk assessments. Focus only on practical tasks to implement.
+
+## Execution Instructions
+
+**Agent Selection**: To execute this generation task, use the following approach:
+- Primary: Use `general-purpose` agent with specialized knowledge of the task domain
+- Or use appropriate specialized agent if available for the specific generation task

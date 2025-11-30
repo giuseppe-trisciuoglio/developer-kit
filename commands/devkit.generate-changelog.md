@@ -830,3 +830,9 @@ Based on the specified action, perform:
 5. **Validate**: Check changelog format compliance
 
 Focus on **maintaining a clear, user-friendly changelog** that follows industry standards and integrates seamlessly with any build system (Maven, Gradle, npm, pip, Cargo, etc.) and Git workflows.
+
+## Execution Instructions
+
+**Agent Selection**: To execute this generation task, use the following approach:
+- Primary: Use `general-purpose` agent with specialized knowledge of the task domain
+- Or use appropriate specialized agent if available for the specific generation task

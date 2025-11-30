@@ -86,3 +86,9 @@ Notes: API rate limiting not yet implemented - needs Redis setup first
 
 This feature remains in the backlog for future implementation.
 ```
+
+## Execution Instructions
+
+**Agent Selection**: To execute this LRA task, use the following approach:
+- Primary: Use `general-purpose` agent with task management and state persistence capabilities
+- Or use `plan` agent for complex multi-step workflows

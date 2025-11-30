@@ -165,3 +165,9 @@ Required actions:
 - For multi-file skills, validate that supporting files add value
 
 Begin validation now for skill: $1
+
+## Execution Instructions
+
+**Agent Selection**: To execute this task, use the following approach:
+- Primary: Use `general-purpose` agent with appropriate domain expertise
+- Or use specialized agent if available for the specific task type
