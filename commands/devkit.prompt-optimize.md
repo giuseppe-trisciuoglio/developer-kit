@@ -88,4 +88,8 @@ The optimized prompt must:
 
 ---
 
-*This command uses the `prompt-engineering-expert` agent for comprehensive prompt optimization and enhancement.*
+## Execution Instructions
+
+**Agent Selection**: To execute this prompt optimization task, use the following agent with fallback:
+- Primary: `prompt-engineering-expert`
+- If not available: Use `developer-kit:prompt-engineering-expert` or fallback to `general-purpose` agent with prompt engineering expertise

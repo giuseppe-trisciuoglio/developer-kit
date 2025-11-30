@@ -109,3 +109,9 @@ Remind the user of available commands:
 - `/lra:add-feature [cat] [pri] [desc]` - Add a new feature
 - `/lra:mark-feature [id] [passed|failed]` - Update feature status
 - `/lra:checkpoint [summary]` - Save session progress
+
+## Execution Instructions
+
+**Agent Selection**: To execute this LRA task, use the following approach:
+- Primary: Use `general-purpose` agent with task management and state persistence capabilities
+- Or use `plan` agent for complex multi-step workflows

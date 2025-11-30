@@ -586,3 +586,8 @@ Based on the provided PR number and review focus:
 10. Post review comments to GitHub
 
 **Remember**: Be thorough, constructive, and professional. Focus on helping the author improve their code while maintaining high quality standards.
+
+## Execution Instructions
+
+**Agent Selection**: To execute this GitHub task, use the following approach:
+- Primary: Use `general-purpose` agent with GitHub CLI expertise and code analysis capabilities
