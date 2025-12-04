@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.14.0] - 2025-12-04
+
+### Added
+- New spring-boot-security-jwt skill with JWT authentication and authorization patterns:
+  - JWT token generation and validation with JJWT
+  - Bearer token and cookie-based authentication
+  - OAuth2/OIDC provider integration
+  - Database-backed authentication integration
+  - Role-based (RBAC) and permission-based access control
+  - Method-level security with annotations
+  - Security headers and CSRF protection
+- New spring-ai-mcp-server-patterns skill for Model Context Protocol:
+  - MCP server implementation patterns for Spring AI
+  - AI tool integration and context management
+  - Function calling patterns
+- Enhanced security documentation and best practices
+- Integration patterns for AI-powered Spring Boot applications
+
+### Changed
+- Enhanced `/devkit.feature-development` command with improved user interaction:
+  - Added `AskUserQuestion` tool for structured user prompts
+  - Improved phase 3 clarifying questions with structured interaction
+  - Enhanced phase 4 architecture design with user choice presentation
+  - Fixed agent fallback order (developer-kit agents first, then general agents)
+  - Better documentation and usage examples
+
 ## [1.13.0] - 2025-12-04
 
 ### Added
@@ -179,7 +205,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.13.0...HEAD
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.14.0...HEAD
+[1.14.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.13.0...v1.14.0
 [1.13.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.12.1...v1.13.0
 [1.12.1]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.12.0...v1.12.1
 [1.12.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.11.0...v1.12.0
