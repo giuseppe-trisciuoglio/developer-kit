@@ -1424,6 +1424,175 @@ class ProductControllerTest {
 
 ---
 
+### spring-boot-security-jwt
+
+**Purpose**: Implement JWT-based authentication and authorization with Spring Security 6.x, including Bearer token handling, OAuth2/OIDC integration, and permission-based access control.
+
+**When to use:**
+- Building REST APIs that need stateless authentication
+- Implementing single sign-on (SSO) with OAuth2/OIDC
+- Securing microservices with JWT tokens
+- Building applications with role-based access control (RBAC)
+- Creating APIs with permission-based authorization
+
+**Key Features:**
+- JWT token generation and validation with JJWT
+- Bearer token authentication with Authorization header
+- OAuth2/OIDC integration for external providers
+- Role-based access control (RBAC)
+- Permission-based fine-grained authorization
+- Token refresh mechanisms
+- Secure password storage with BCrypt
+- CORS configuration for SPA integration
+- Security headers (CSP, X-Frame-Options, etc.)
+
+**Common Implementation Patterns:**
+
+1. **JWT Token Service**:
+```java
+@Service
+@RequiredArgsConstructor
+public class JwtTokenService {
+
+    private final JwtProperties jwtProperties;
+    private final long accessTokenExpiration = 3600000; // 1 hour
+
+    public String generateAccessToken(UserDetails user) {
+        Date expiryDate = new Date(System.currentTimeMillis() + accessTokenExpiration);
+
+        return Jwts.builder()
+            .setSubject(user.getUsername())
+            .setIssuedAt(new Date())
+            .setExpiration(expiryDate)
+            .signWith(jwtProperties.getSecretKey())
+            .compact();
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder()
+                .setSigningKey(jwtProperties.getSecretKey())
+                .build()
+                .parseClaimsJws(token);
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
+    }
+}
+```
+
+2. **Security Configuration**:
+```java
+@Configuration
+@EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
+@RequiredArgsConstructor
+public class SecurityConfig {
+
+    private final JwtAuthenticationFilter jwtAuthFilter;
+    private final AuthenticationProvider authenticationProvider;
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/v1/auth/**").permitAll()
+                .requestMatchers("/api/v1/public/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/products/**").hasAnyRole("USER", "ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/v1/products/**").hasRole("ADMIN")
+                .anyRequest().authenticated()
+            )
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            .authenticationProvider(authenticationProvider)
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+}
+```
+
+3. **Permission-Based Authorization**:
+```java
+@Component("permissionEvaluator")
+public class CustomPermissionEvaluator implements PermissionEvaluator {
+
+    private final UserService userService;
+
+    @Override
+    public boolean hasPermission(Authentication authentication,
+                               Object targetDomainObject, Object permission) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return false;
+        }
+
+        String username = authentication.getName();
+        String permissionName = permission.toString();
+        String resourceName = targetDomainObject.toString();
+
+        return userService.hasPermission(username, permissionName, resourceName);
+    }
+
+    @Override
+    public boolean hasPermission(Authentication authentication,
+                               Serializable targetId, String targetType, Object permission) {
+        // Implementation for object-level permissions
+        return false;
+    }
+}
+```
+
+4. **OAuth2/OIDC Integration**:
+```java
+@Configuration
+@EnableWebSecurity
+public class OAuth2SecurityConfig {
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .oauth2Login(oauth2 -> oauth2
+                .loginPage("/oauth2/authorization/google")
+                .defaultSuccessUrl("/dashboard")
+                .failureUrl("/login?error=true")
+            )
+            .oauth2Client(Customizer.withDefaults())
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/", "/login", "/error").permitAll()
+                .anyRequest().authenticated()
+            );
+
+        return http.build();
+    }
+}
+```
+
+**Integration Patterns:**
+
+- **Authentication Controller**: Handle login, registration, token refresh
+- **User Details Service**: Implement custom user authentication
+- **Permission System**: Domain-specific permission checking
+- **Token Validation**: Centralized token validation and refresh
+- **Error Handling**: Security-specific error responses
+
+**Best Practices:**
+- Use short-lived access tokens (15-60 minutes)
+- Implement secure refresh token storage
+- Use HTTPS for all authenticated endpoints
+- Validate JWT tokens on every request
+- Implement proper logout mechanisms
+- Use role hierarchy for complex permissions
+- Log security events for auditing
+- Secure CORS configuration for SPA integration
+
+**References:**
+- `skills/spring-boot/spring-boot-security-jwt/SKILL.md`
+
+---
+
 ## Common Workflows
 
 ### Building a Complete Feature
@@ -1506,6 +1675,104 @@ class ProductControllerTest {
    - Write clear README files
    - Include architecture diagrams
    - Document configuration options
+
+---
+
+## Spring AI Integration
+
+Spring AI extends Spring Boot with artificial intelligence capabilities, providing seamless integration with various AI models and services. While not strictly a Spring Boot subcategory, Spring AI is closely related and often used together with Spring Boot applications.
+
+### spring-ai-mcp-server-patterns
+
+**Purpose**: Implement Model Context Protocol (MCP) servers with Spring AI to extend AI capabilities with custom tools, resources, and prompt templates.
+
+**When to use:**
+- Building custom AI tooling and integrations
+- Creating domain-specific AI assistants
+- Implementing AI-powered automation workflows
+- Extending Claude Code or other AI platforms
+- Building knowledge management systems
+
+**Key Features:**
+- MCP server implementation patterns
+- Tool definition and exposure
+- Resource management for AI context
+- Prompt template engineering
+- Spring AI integration patterns
+- Domain-specific AI tool creation
+
+**Common Implementation Patterns:**
+
+1. **MCP Server Configuration**:
+```java
+@Configuration
+@EnableMcpServer
+public class McpServerConfig {
+
+    @Bean
+    public McpServerProperties mcpServerProperties() {
+        McpServerProperties props = new McpServerProperties();
+        props.setServerName("spring-boot-assistant");
+        props.setVersion("1.0.0");
+        return props;
+    }
+}
+```
+
+2. **Tool Implementation**:
+```java
+@Component
+@McpTool(name = "database_query", description = "Execute database queries safely")
+public class DatabaseQueryTool {
+
+    private final JdbcTemplate jdbcTemplate;
+
+    public DatabaseQueryTool(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    @McpToolParameter
+    public String execute(@RequestParam String query,
+                         @RequestParam(defaultValue = "100") int limit) {
+        // Safe query execution with validation
+        return jdbcTemplate.queryForList(query, Map.class).stream()
+            .limit(limit)
+            .toString();
+    }
+}
+```
+
+3. **Resource Management**:
+```java
+@Component
+@McpResource(name = "application_config", description = "Application configuration data")
+public class ConfigResource {
+
+    private final Environment environment;
+
+    public ConfigResource(Environment environment) {
+        this.environment = environment;
+    }
+
+    public Map<String, Object> getConfig() {
+        return Map.of(
+            "activeProfiles", environment.getActiveProfiles(),
+            "properties", extractRelevantProperties()
+        );
+    }
+}
+```
+
+**Integration with Spring Boot:**
+- Auto-configuration for MCP servers
+- Integration with Spring Security
+- Configuration management
+- Actuator endpoints for monitoring
+- Error handling and logging
+
+**References:**
+- `skills/spring-ai/spring-ai-mcp-server-patterns/SKILL.md`
+- [Spring AI Official Documentation](https://spring.io/projects/spring-ai)
 
 ---
 

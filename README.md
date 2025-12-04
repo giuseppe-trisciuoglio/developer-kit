@@ -7,7 +7,7 @@
 multiple languages and frameworks. It includes specialized agents for code review, testing patterns, REST API design,
 and AI integration.
 
-**54 Total Skills** — Comprehensive coverage of Spring Boot, testing, AI integration, cloud development, AI
+**50 Total Skills** — Comprehensive coverage of Spring Boot, testing, AI integration, cloud development, AI
 engineering patterns, and documentation generation
 
 ## 🚀 Quick Start
@@ -40,6 +40,243 @@ engineering patterns, and documentation generation
 2. Enable Skills toggle
 3. Browse available skills or upload custom skills
 4. Start using in conversations
+
+## 🔌 Multi-CLI Support: Install in Other IDEs & Tools
+
+The Developer Kit now supports installation across multiple AI-powered development environments through a unified Makefile interface.
+
+### Quick Start with Makefile
+
+```bash
+# Clone the repository
+git clone https://github.com/giuseppe-trisciuoglio/developer-kit.git
+cd developer-kit-claude-code
+
+# See all available options
+make help
+
+# Install for your specific CLI tool
+make install-copilot      # For GitHub Copilot CLI
+make install-opencode     # For OpenCode CLI
+make install-codex        # For Codex CLI
+make install              # Auto-install for all detected CLIs
+```
+
+### Supported CLI Tools
+
+#### GitHub Copilot CLI
+
+```bash
+# Install agents for Copilot CLI
+make install-copilot
+
+# Installation creates:
+# ~/.copilot/agents/          # Specialized agents for code review, testing, etc.
+```
+
+**Features:**
+- **13 Specialized Agents**: Code review, architecture, security, testing experts
+- **Usage**: `/agent` to select agents or mention in prompts
+- **Integration**: Works with Copilot's native agent system
+
+#### OpenCode CLI
+
+```bash
+# Install both agents and commands for OpenCode CLI
+make install-opencode
+
+# Installation creates:
+# ~/.config/opencode/agent/     # Development agents
+# ~/.config/opencode/command/  # Custom slash commands
+```
+
+**Features:**
+- **13 Development Agents**: Full suite of specialized agents
+- **31 Custom Commands**: From code generation to security reviews
+- **Usage**: `@agent-name` for agents, `/command-name` for commands
+- **Discovery**: Tab completion and command discovery
+
+#### Codex CLI
+
+```bash
+# Install for Codex CLI
+make install-codex
+
+# Installation creates:
+# ~/.codex/instructions.md    # Agent context and usage guide
+# ~/.codex/prompts/           # Custom prompt commands
+```
+
+**Features:**
+- **31 Custom Prompts**: Specialized commands for development workflows
+- **30 Agents Documentation**: Complete agent descriptions and usage
+- **Usage**: `/prompts:<name>` to invoke custom commands
+
+### Management Commands
+
+```bash
+# Check installation status
+make status
+
+# Create backup before installing
+make backup
+
+# Remove all Developer Kit installations
+make uninstall
+
+# List available components
+make list-agents      # Show all 13 agents
+make list-commands    # Show all 31 commands
+make list-skills      # Show all 50 skills by category
+```
+
+### Installation Safety
+
+- **Automatic Backups**: Creates timestamped backups before installation
+- **Conflict Resolution**: Preserves existing configurations
+- **Rollback Support**: Easy uninstall to restore previous state
+- **Version Tracking**: Tracks what's installed from this kit
+
+## 🎯 Local Project Installation
+
+Install skills, agents, and commands directly into your local project for team-based development:
+
+### Interactive Claude Code Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/giuseppe-trisciuoglio/developer-kit.git
+cd developer-kit-claude-code
+
+# Run interactive installer for Claude Code
+make install-claude
+```
+
+**Interactive Features:**
+- ✅ **Environment Validation**: Confirms Claude Code usage
+- 🎯 **Category Selection**: Choose specific skill categories
+- 🔧 **Custom Selection**: Pick specific agents and commands
+- 🛡️ **Conflict Handling**: Decide how to handle existing files
+- 📊 **Progress Tracking**: Real-time installation progress
+- 📋 **Summary Report**: Complete installation summary
+
+#### Example Installation Flow
+
+```bash
+$ make install-claude
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      Claude Code Interactive Developer Kit Installer
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚠ This installer is designed for Claude Code only.
+
+Are you installing for Claude Code? (y/N): y
+
+Step 1: Target Project
+Enter the project path (absolute or relative): ~/my-spring-project
+
+Step 2: Select Skill Categories
+Available skill categories:
+  1) AWS Java Skills (10 skills)
+  2) AI Skills (3 skills)
+  3) JUnit Test Skills (15 skills)
+  4) LangChain4j Skills (8 skills)
+  5) Spring Boot Skills (13 skills)
+  6) Spring AI Skills (1 skill)
+  7) All Skills
+  8) None (skip skills)
+
+Select categories (comma-separated, e.g., 1,4,5): 4,5
+
+Step 3: Select Agents
+  1) All Agents (13 available)
+  2) Select specific agents
+  3) None (skip agents)
+Choose option [1-3]: 2
+
+Available agents:
+   1) java-documentation-specialist
+   2) java-refactor-expert
+   3) java-security-expert
+   ...
+Select agents (comma-separated numbers, or type 'all'): 1,3
+
+Step 4: Select Commands
+  1) All Commands (31 available)
+  2) Select specific commands
+  3) None (skip commands)
+Choose option [1-3]: 1
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Starting Installation...
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Installing Skills...
+  Category: LangChain4j Skills
+    ✓ Installed: langchain4j-ai-services-patterns
+    ✓ Installed: langchain4j-mcp-server-patterns
+  Category: Spring Boot Skills
+    ✓ Installed: spring-boot-actuator
+    ✓ Installed: spring-boot-cache
+    ...
+
+Installing Selected Agents...
+  ✓ Installed: java-documentation-specialist.md
+  ✓ Installed: java-security-expert.md
+
+Installing All Commands...
+  ✓ Installed: devkit.java.code-review.md
+  ✓ Installed: devkit.java.write-unit-tests.md
+  ...
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✓ Installation Complete!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Target directory: /Users/you/my-spring-project/.claude/
+Files installed:  52
+Files skipped:    0
+
+Next Steps:
+  1. Navigate to your project: cd /Users/you/my-spring-project
+  2. Start Claude Code in the project directory
+  3. Your skills, agents, and commands are now available!
+```
+
+### What Gets Installed
+
+```
+my-project/
+├── .claude/
+│   ├── skills/                      # Auto-discovered skills
+│   │   ├── langchain4j-ai-services-patterns/
+│   │   ├── spring-boot-actuator/
+│   │   └── ... (selected skills)
+│   ├── agents/                      # @agent-name access
+│   │   ├── java-documentation-specialist.md
+│   │   ├── java-security-expert.md
+│   │   └── ... (selected agents)
+│   └── commands/                    # /command-name access
+│       ├── devkit.java.code-review.md
+│       ├── devkit.java.write-unit-tests.md
+│       └── ... (selected commands)
+```
+
+### Team-Based Development
+
+**For Teams Sharing Projects:**
+
+1. **Install Once**: Use `make install-claude` in the project root
+2. **Git Integration**: All `.claude/` files are version-controlled
+3. **Team Consistency**: Everyone gets the same tools and patterns
+4. **Custom Skills**: Create project-specific skills shared with team
+
+**Benefits:**
+- 🔄 **Consistent Tooling**: Team uses same agents, skills, commands
+- 📚 **Project Context**: Skills understand your specific project structure
+- 🎯 **Domain-Specific**: Tailored to your business domain and patterns
+- 🚀 **Quick Onboarding**: New team members get all tools immediately
 
 ## 📚 Available Skills
 
@@ -93,6 +330,12 @@ engineering patterns, and documentation generation
 | **[langchain4j-testing-strategies](skills/langchain4j/langchain4j-testing-strategies/SKILL.md)**                         | Testing LangChain4J applications   | Mock models, test containers, integration tests         |
 | **[langchain4j-vector-stores-configuration](skills/langchain4j/langchain4j-vector-stores-configuration/SKILL.md)**       | Vector store configuration         | Embeddings, similarity search, provider setup           |
 | **[qdrant-java-development](skills/langchain4j/qdrant/SKILL.md)**                                                        | Qdrant vector database integration | Java, Spring Boot, Langchain4j, RAG, vector search      |
+
+### Spring AI Skills
+
+| Skill                                                                                  | Purpose                        | Key Topics                                    |
+|----------------------------------------------------------------------------------------|--------------------------------|-----------------------------------------------|
+| **[spring-ai-mcp-server-patterns](skills/spring-ai/spring-ai-mcp-server-patterns/SKILL.md)** | Model Context Protocol servers | MCP integration, Spring AI, tool exposure     |
 
 ### AWS Java Skills
 
@@ -474,8 +717,8 @@ This project is licensed under the [LICENSE](LICENSE) file in the repository roo
 
 ## 📞 Support
 
-- **Questions?** Open an [issue](https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/issues)
-- **Contributions?** Submit a [pull request](https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/pulls)
+- **Questions?** Open an [issue](https://github.com/giuseppe-trisciuoglio/developer-kit/issues)
+- **Contributions?** Submit a [pull request](https://github.com/giuseppe-trisciuoglio/developer-kit/pulls)
 - **Integration proposals?** Create a discussion or reach out
 
 ## 📅 Changelog
@@ -484,6 +727,11 @@ For a complete history of changes, please see the dedicated [CHANGELOG.md](CHANG
 
 Recent highlights:
 
+- **v1.15.0**:
+  - **New comprehensive Makefile with multi-CLI support** for GitHub Copilot CLI, OpenCode CLI, and Codex CLI
+  - **Interactive Claude Code installer** (`make install-claude`) with category-based skill selection, conflict handling, and project-specific installation
+  - Support for team-based development with version-controlled `.claude/` configurations
+  - Enhanced installation management with backup, status, and uninstall capabilities
 - **v1.14.0**:
   - New spring-boot-security-jwt skill with JWT authentication patterns, OAuth2/OIDC integration, and permission-based access control
   - New spring-ai-mcp-server-patterns for Model Context Protocol integration
