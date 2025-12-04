@@ -879,3 +879,9 @@ docs/
 ```
 
 This command provides comprehensive Java project documentation that follows industry best practices and includes API docs, architecture diagrams, Javadoc, and setup guides.
+
+## Execution Instructions
+
+**Agent Selection**: To execute this task, use the following agent with fallback:
+- Primary: `java-documentation-specialist`
+- If not available: Use `developer-kit:java-documentation-specialist` or fallback to `general-purpose` agent

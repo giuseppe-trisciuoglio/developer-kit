@@ -695,3 +695,9 @@ $ARGUMENTS
 - Can be run multiple times safely
 - Integrates with CI/CD pipelines
 - Provides audit trail of verification
+
+## Execution Instructions
+
+**Agent Selection**: To execute this task, use the following approach:
+- Primary: Use `general-purpose` agent with appropriate domain expertise
+- Or use specialized agent if available for the specific task type

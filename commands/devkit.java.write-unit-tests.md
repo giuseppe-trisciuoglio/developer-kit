@@ -226,3 +226,9 @@ Leverage these skills for specific scenarios:
 ```
 
 This will analyze UserService.java, identify it as a @Service class, apply the service-layer testing strategy, and generate a comprehensive UserServiceTest.java with all necessary test cases.
+
+## Execution Instructions
+
+**Agent Selection**: To execute this task, use the following agent with fallback:
+- Primary: `spring-boot-unit-testing-expert`
+- If not available: Use `developer-kit:spring-boot-unit-testing-expert` or fallback to `general-purpose` agent with `spring-boot-test-patterns` skill

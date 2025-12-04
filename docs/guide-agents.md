@@ -6,12 +6,13 @@ This guide provides comprehensive documentation for all specialized agents (suba
 
 ## Table of Contents
 
-1. [Java Development Agents](#java-development-agents)
-2. [Testing & Quality Agents](#testing--quality-agents)
-3. [AI & LangChain4j Agents](#ai--langchain4j-agents)
-4. [Documentation & Engineering Agents](#documentation--engineering-agents)
-5. [Agent Usage Guidelines](#agent-usage-guidelines)
-6. [Complete Workflow Examples](#complete-workflow-examples)
+1. [General Purpose Agents](#general-purpose-agents)
+2. [Java Development Agents](#java-development-agents)
+3. [Testing & Quality Agents](#testing--quality-agents)
+4. [AI & LangChain4j Agents](#ai--langchain4j-agents)
+5. [Documentation & Engineering Agents](#documentation--engineering-agents)
+6. [Agent Usage Guidelines](#agent-usage-guidelines)
+7. [Complete Workflow Examples](#complete-workflow-examples)
 
 ---
 
@@ -32,6 +33,144 @@ Agents are specialized AI assistants with dedicated context windows, custom prom
 - **Project agents**: `.claude/agents/` (team-shared via git, highest priority)
 - **User agents**: `~/.claude/agents/` (personal, available across projects)
 - **Plugin agents**: Bundled with installed plugins
+
+---
+
+## General Purpose Agents
+
+### `general-code-explorer`
+
+**Description**: Expert code analyst specializing in tracing and understanding feature implementations across codebases, mapping execution paths, architecture layers, and documenting dependencies.
+
+**When to use:**
+- Understanding existing features before modification
+- Mapping codebase architecture and patterns
+- Tracing data flow through complex systems
+- Documenting implementation details for team members
+- Onboarding new developers to a project
+- Reverse engineering legacy code
+
+**Model**: Inherit (uses same model as main conversation)
+
+**Key Capabilities:**
+- Feature discovery and entry point identification
+- Complete execution flow tracing
+- Architecture layer mapping (presentation → business → data)
+- Pattern and abstraction identification
+- Dependency analysis (internal and external)
+- Cross-cutting concerns documentation (auth, logging, caching)
+
+**Tools Available**: Read, Write, Edit, Glob, Grep, Bash
+
+**Example Usage:**
+```javascript
+Task(
+  description: "Analyze user authentication feature",
+  prompt: "Trace through the user authentication feature comprehensively. Map all components, data flow, and integration points.",
+  subagent_type: "general-code-explorer"
+)
+```
+
+**Output Provides:**
+- Entry points with file:line references
+- Step-by-step execution flow with data transformations
+- Key components and their responsibilities
+- Architecture insights and patterns
+- Dependencies and integration points
+- Critical files list for understanding
+
+---
+
+### `general-software-architect`
+
+**Description**: Senior software architect who delivers comprehensive, actionable architecture blueprints by deeply understanding codebases and making confident architectural decisions.
+
+**When to use:**
+- Designing new features from scratch
+- Major refactoring initiatives
+- System integration planning
+- Performance optimization strategies
+- Technology stack decisions
+- Architectural debt assessment
+
+**Model**: Sonnet (recommended for architectural reasoning)
+
+**Key Capabilities:**
+- Codebase pattern analysis and convention extraction
+- Complete architecture design with specific implementations
+- Component design with interfaces and dependencies
+- Data flow mapping from entry points to outputs
+- Build sequence planning with phased implementation
+- Trade-off analysis and decision rationale
+
+**Tools Available**: Read, Write, Edit, Glob, Grep, Bash
+
+**Example Usage:**
+```javascript
+Task(
+  description: "Design real-time notifications architecture",
+  prompt: "Design complete architecture for real-time notifications. Consider scalability, reliability, and integration with existing systems.",
+  subagent_type: "general-software-architect"
+)
+```
+
+**Output Provides:**
+- Patterns & conventions found with file references
+- Architecture decision with clear rationale
+- Component design with file paths and responsibilities
+- Implementation map with specific files to create/modify
+- Data flow documentation
+- Build sequence with prioritized checklist
+
+---
+
+### `general-code-reviewer`
+
+**Description**: Expert code reviewer specializing in modern software development with high precision to minimize false positives, focusing only on issues that truly matter.
+
+**When to use:**
+- Code quality assurance before commits
+- Pull request reviews
+- Identifying critical bugs and security issues
+- Performance bottleneck detection
+- Architectural anti-pattern identification
+- Best practices compliance verification
+
+**Model**: Inherit (uses same model as main conversation)
+
+**Key Capabilities:**
+- Bug detection (logic errors, null handling, race conditions)
+- Security vulnerability assessment (OWASP Top 10)
+- Performance and scalability analysis
+- Code quality evaluation (DRY, SOLID, complexity)
+- Project guidelines compliance
+- Confidence-based issue filtering (≥80% confidence)
+
+**Tools Available**: Read, Write, Edit, Glob, Grep, Bash
+
+**Confidence Scoring:**
+- **100%**: Absolutely certain, will happen frequently
+- **75%**: Highly confident, very likely real issue
+- **50%**: Moderately confident, real but might be nitpicky
+- **25%**: Somewhat confident, might be false positive
+- **0%**: Not confident, false positive or pre-existing
+- **Only reports ≥80% confidence issues**
+
+**Example Usage:**
+```javascript
+Task(
+  description: "Review payment processing code",
+  prompt: "Review the payment processing implementation for bugs, security vulnerabilities, and performance issues.",
+  subagent_type: "general-code-reviewer"
+)
+```
+
+**Output Provides:**
+- Issues grouped by severity (Critical, High, Medium)
+- Confidence scores for each issue
+- Specific file paths and line numbers
+- Concrete fix suggestions
+- Project guideline references
 
 ---
 

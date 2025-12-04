@@ -196,3 +196,9 @@ Provide a recovery report:
 - **ALWAYS test** after recovery
 - **DOCUMENT** what went wrong for future agents
 - **UPDATE** feature status if a "passed" feature was actually broken
+
+## Execution Instructions
+
+**Agent Selection**: To execute this LRA task, use the following approach:
+- Primary: Use `general-purpose` agent with task management and state persistence capabilities
+- Or use `plan` agent for complex multi-step workflows

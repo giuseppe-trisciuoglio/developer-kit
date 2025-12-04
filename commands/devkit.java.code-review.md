@@ -365,4 +365,9 @@ class UserRepositoryIntegrationTest {
 - **Testcontainers**: Real integration testing
 
 ---
-*This review follows Spring Boot 3.5.x, Java 21+ LTS guidelines and modern enterprise best practices.*
+
+## Execution Instructions
+
+**Agent Selection**: To execute this code review, use the following agent with fallback:
+- Primary: `spring-boot-code-review-expert`
+- If not available: Use `developer-kit:spring-boot-code-review-expert` or fallback to `general-purpose` agent with `spring-boot-crud-patterns` skill

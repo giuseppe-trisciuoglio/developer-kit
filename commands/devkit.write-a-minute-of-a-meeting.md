@@ -57,3 +57,9 @@ Include date and time of the next meeting if established.
 - Use bullet points to improve readability
 - Maintain a neutral and factual tone
 - Format using proper Markdown syntax
+
+## Execution Instructions
+
+**Agent Selection**: To execute this task, use the following approach:
+- Primary: Use `general-purpose` agent with appropriate domain expertise
+- Or use specialized agent if available for the specific task type

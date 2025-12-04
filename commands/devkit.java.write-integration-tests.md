@@ -327,3 +327,9 @@ When analyzing the target class, Claude will automatically reference these skill
 **Target class:** `$ARGUMENTS`
 
 Analyze the class and generate a comprehensive integration test following the patterns above.
+
+## Execution Instructions
+
+**Agent Selection**: To execute this task, use the following agent with fallback:
+- Primary: `spring-boot-unit-testing-expert`
+- If not available: Use `developer-kit:spring-boot-unit-testing-expert` or fallback to `general-purpose` agent with `spring-boot-test-patterns` skill

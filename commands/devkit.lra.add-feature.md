@@ -72,3 +72,9 @@ Acceptance Criteria:
 
 Total features: 43 (38 pending, 5 completed)
 ```
+
+## Execution Instructions
+
+**Agent Selection**: To execute this LRA task, use the following approach:
+- Primary: Use `general-purpose` agent with task management and state persistence capabilities
+- Or use `plan` agent for complex multi-step workflows

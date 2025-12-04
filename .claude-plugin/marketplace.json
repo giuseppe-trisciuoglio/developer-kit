@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Developer Kit for building applications with Claude Code using best practices and patterns.",
-    "version": "1.12.0"
+    "version": "1.14.0"
   },
   "plugins": [
     {
@@ -26,10 +26,12 @@
         "./skills/spring-boot/spring-boot-openapi-documentation",
         "./skills/spring-boot/spring-boot-rest-api-standards",
         "./skills/spring-boot/spring-boot-saga-pattern",
+        "./skills/spring-boot/spring-boot-security-jwt",
         "./skills/spring-boot/spring-boot-test-patterns",
         "./skills/spring-boot/spring-boot-resilience4j",
         "./skills/spring-boot/spring-data-jpa",
         "./skills/spring-boot/spring-data-neo4j",
+        "./skills/spring-ai/spring-ai-mcp-server-patterns",
         "./skills/junit-test/unit-test-application-events",
         "./skills/junit-test/unit-test-bean-validation",
         "./skills/junit-test/unit-test-boundary-conditions",

@@ -102,3 +102,9 @@ Once you've completed the startup protocol and planning, you may begin implement
 2. Commit frequently with descriptive messages
 3. If you encounter blockers, document them
 4. Before ending the session, use `/lra:checkpoint` to save your progress
+
+## Execution Instructions
+
+**Agent Selection**: To execute this LRA task, use the following approach:
+- Primary: Use `general-purpose` agent with task management and state persistence capabilities
+- Or use `plan` agent for complex multi-step workflows

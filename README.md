@@ -7,7 +7,7 @@
 multiple languages and frameworks. It includes specialized agents for code review, testing patterns, REST API design,
 and AI integration.
 
-**52 Total Skills** — Comprehensive coverage of Spring Boot, testing, AI integration, cloud development, AI
+**54 Total Skills** — Comprehensive coverage of Spring Boot, testing, AI integration, cloud development, AI
 engineering patterns, and documentation generation
 
 ## 🚀 Quick Start
@@ -56,6 +56,7 @@ engineering patterns, and documentation generation
 | **[spring-boot-cache](skills/spring-boot/spring-boot-cache/SKILL.md)**                                 | Spring Boot caching patterns         | Cache configuration, eviction strategies, distributed caching        |
 | **[spring-boot-saga-pattern](skills/spring-boot/spring-boot-saga-pattern/SKILL.md)**                   | Distributed transaction management   | Saga pattern, choreography, orchestration, compensating transactions |
 | **[spring-boot-resilience4j](skills/spring-boot/spring-boot-resilience4j/SKILL.md)**                   | Fault tolerance patterns             | Circuit breaker, retry, rate limiting, bulkhead patterns             |
+| **[spring-boot-security-jwt](skills/spring-boot/spring-boot-security-jwt/SKILL.md)**                   | JWT authentication & authorization   | Bearer tokens, OAuth2/OIDC, RBAC, permission-based access control    |
 | **[spring-data-jpa](skills/spring-boot/spring-data-jpa/SKILL.md)**                                     | Spring Data JPA best practices       | Query methods, custom repositories, performance optimization         |
 | **[spring-data-neo4j](skills/spring-boot/spring-data-neo4j/SKILL.md)**                                 | Neo4j graph database integration     | Graph modeling, Cypher queries, relationships, reactive mode         |
 | **[spring-boot-openapi-documentation](skills/spring-boot/spring-boot-openapi-documentation/SKILL.md)** | OpenAPI/Swagger documentation        | API documentation, schema generation, SpringDoc                      |
@@ -483,11 +484,16 @@ For a complete history of changes, please see the dedicated [CHANGELOG.md](CHANG
 
 Recent highlights:
 
+- **v1.14.0**:
+  - New spring-boot-security-jwt skill with JWT authentication patterns, OAuth2/OIDC integration, and permission-based access control
+  - New spring-ai-mcp-server-patterns for Model Context Protocol integration
+  - Enhanced `/devkit.feature-development` command with AskUserQuestion tool and improved agent fallback order
+- **v1.13.0**: New `/devkit.feature-development` command with systematic 7-phase approach for guided feature development, including three new general-purpose agents (explorer, architect, reviewer) with Task tool integration and fallback mechanism
+- **v1.12.1**: Fixed commands for correct agent selection on execution
 - **v1.12.0**: Long-Running Agent (LRA) workflow commands and guide for multi-session project management
 - **v1.11.0**: Enhanced development workflow with new commands, agents, and comprehensive documentation updates
 - **v1.10.0**: GitHub integration and workflow automation with PR creation and review commands
 - **v1.9.0**: Documentation generation commands and educational content expansion
-- **v1.8.0**: AI engineering capabilities with chunking, prompt engineering, and RAG skills
 
 ---
 

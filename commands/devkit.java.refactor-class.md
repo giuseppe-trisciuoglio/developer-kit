@@ -278,5 +278,8 @@ This command works best with these skills:
 - **Use feature flags** for large, risky refactoring
 - **Monitor production metrics** after deployment
 
----
-*This refactoring assistant follows Spring Boot 3.5.x, Java 21+ guidelines and Clean Architecture principles.*
+## Execution Instructions
+
+**Agent Selection**: To execute this task, use the following agent with fallback:
+- Primary: `java-refactor-expert`
+- If not available: Use `developer-kit:java-refactor-expert` or fallback to `general-purpose` agent with `spring-boot-crud-patterns` skill
