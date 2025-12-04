@@ -277,6 +277,3 @@ This command works best with these skills:
 - **Create comprehensive tests** before refactoring critical paths
 - **Use feature flags** for large, risky refactoring
 - **Monitor production metrics** after deployment
-
----
-*This refactoring assistant follows Spring Boot 3.5.x, Java 21+ guidelines and Clean Architecture principles.*

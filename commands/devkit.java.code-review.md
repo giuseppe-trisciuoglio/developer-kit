@@ -363,6 +363,3 @@ class UserRepositoryIntegrationTest {
 - **JaCoCo**: Code coverage reporting
 - **Spring Boot Actuator**: Production monitoring
 - **Testcontainers**: Real integration testing
-
----
-*This review follows Spring Boot 3.5.x, Java 21+ LTS guidelines and modern enterprise best practices.*
