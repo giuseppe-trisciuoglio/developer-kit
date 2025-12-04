@@ -483,6 +483,7 @@ For a complete history of changes, please see the dedicated [CHANGELOG.md](CHANG
 
 Recent highlights:
 
+- **v1.13.0**: New `/devkit.feature-development` command with systematic 7-phase approach for guided feature development, including three new general-purpose agents (explorer, architect, reviewer) with Task tool integration and fallback mechanism
 - **v1.12.1**: Fixed commands for correct agent selection on execution
 - **v1.12.0**: Long-Running Agent (LRA) workflow commands and guide for multi-session project management
 - **v1.11.0**: Enhanced development workflow with new commands, agents, and comprehensive documentation updates
