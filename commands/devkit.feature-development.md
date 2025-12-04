@@ -1,7 +1,7 @@
 ---
 description: Guided feature development with codebase understanding and architecture focus
 argument-hint: [feature-description]
-allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, TodoWrite
+allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, TodoWrite, AskUserQuestion
 model: inherit
 ---
 
@@ -18,6 +18,7 @@ You are helping a developer implement a new feature. Follow a systematic approac
 ## Core Principles
 
 - **Ask clarifying questions**: Identify all ambiguities, edge cases, and underspecified behaviors. Ask specific, concrete questions rather than making assumptions. Wait for user answers before proceeding with implementation. Ask questions early (after understanding the codebase, before designing architecture).
+- **Structured user interaction**: Use the AskUserQuestion tool in all phases where you need to ask structured questions to the user (Phase 3: Clarifying Questions, Phase 4: Architecture Design, and whenever multiple choice questions are presented).
 - **Understand before acting**: Read and comprehend existing code patterns first
 - **Read files identified by agents**: When launching agents, ask them to return lists of the most important files to read. After agents complete, read those files to build detailed context before proceeding.
 - **Simple and elegant**: Prioritize readable, maintainable, architecturally sound code
@@ -80,7 +81,7 @@ Task(
 **Actions**:
 1. Review the codebase findings and original feature request
 2. Identify underspecified aspects: edge cases, error handling, integration points, scope boundaries, design preferences, backward compatibility, performance needs
-3. **Present all questions to the user in a clear, organized list**
+3. **Use the AskUserQuestion tool to present all questions to the user in a clear, organized format**
 4. **Wait for answers before proceeding to architecture design**
 
 If the user says "whatever you think is best", provide your recommendation and get explicit confirmation.
@@ -98,7 +99,7 @@ If the user says "whatever you think is best", provide your recommendation and g
    - pragmatic balance (speed + quality)
 2. Review all approaches and form your opinion on which fits best for this specific task (consider: small fix vs large feature, urgency, complexity, team context)
 3. Present to user: brief summary of each approach, trade-offs comparison, **your recommendation with reasoning**, concrete implementation differences
-4. **Ask user which approach they prefer**
+4. **Use the AskUserQuestion tool to ask user which approach they prefer**
 
 ---
 
@@ -170,9 +171,9 @@ This command leverages three specialized sub-agents using the Task tool.
 ## Execution Instructions
 
 **Agent Selection**: To execute this task, use the following agents with fallback:
-- **Code Explorer**: Primary: `general-code-explorer` - If not available: Use `developer-kit:general-code-explorer` or fallback to `general-purpose` agent
-- **Software Architect**: Primary: `general-software-architect` - If not available: Use `developer-kit:general-software-architect` or fallback to `general-purpose` agent
-- **Code Reviewer**: Primary: `general-code-reviewer` - If not available: Use `developer-kit:general-code-reviewer` or fallback to `general-purpose` agent
+- **Code Explorer**: Primary: `developer-kit:general-code-explorer` - If not available: Use `general-code-explorer` or fallback to `general-purpose` agent
+- **Software Architect**: Primary: `developer-kit:general-software-architect` - If not available: Use `general-software-architect` or fallback to `general-purpose` agent
+- **Code Reviewer**: Primary: `developer-kit:general-code-reviewer` - If not available: Use `general-code-reviewer` or fallback to `general-purpose` agent
 
 1. **general-code-explorer** - Analyzes existing codebase to understand patterns
 2. **general-software-architect** - Designs implementation approaches
@@ -180,11 +181,18 @@ This command leverages three specialized sub-agents using the Task tool.
 
 ### Usage Pattern
 ```javascript
-// Launch a sub-agent
+// Launch a sub-agent with proper fallback order
 Task(
   description: "Brief task description",
   prompt: "Detailed prompt for the sub-agent",
-  subagent_type: "subagent-name"
+  subagent_type: "developer-kit:subagent-name"  // Try developer-kit agents first
+)
+
+// Fallback to general agents if developer-kit agents not available
+Task(
+  description: "Brief task description",
+  prompt: "Detailed prompt for the sub-agent",
+  subagent_type: "general-agent-name"
 )
 ```
 
