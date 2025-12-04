@@ -11,8 +11,9 @@ This guide provides comprehensive documentation for all commands developed for C
 3. [Testing Commands](#testing-commands)
 4. [DevKit Management Commands](#devkit-management-commands)
 5. [Utility Commands](#utility-commands)
-6. [Best Practices](#best-practices)
-7. [Complete Workflow Example](#complete-workflow-example)
+6. [Feature Development Command](#feature-development-command)
+7. [Best Practices](#best-practices)
+8. [Complete Workflow Example](#complete-workflow-example)
 
 ---
 
@@ -1361,6 +1362,70 @@ The team reviewed sprint progress, identified blockers, and planned next sprint 
 **Date**: 2024-01-22 at 10:00 AM  
 **Agenda**: Deployment strategy review and Q1 planning
 ```
+
+---
+
+## Feature Development Command
+
+### `/devkit.feature-development`
+
+**Description**: Guided feature development with systematic 7-phase approach using specialized agents for comprehensive codebase analysis, architecture design, and quality review.
+
+**When to use:**
+- Building new features from scratch
+- Complex feature requiring deep understanding of existing codebase
+- When you need architectural guidance before implementation
+- For systematic, well-documented feature development
+- When working with unfamiliar codebases
+
+**Arguments:**
+```bash
+/devkit.feature-development [feature-description]
+```
+
+**The 7 Phases:**
+
+1. **Discovery** - Understand what needs to be built
+2. **Codebase Exploration** - Analyze existing patterns and similar features
+3. **Clarifying Questions** - Resolve all ambiguities before designing
+4. **Architecture Design** - Design multiple approaches with trade-offs
+5. **Implementation** - Build the feature following chosen architecture
+6. **Quality Review** - Comprehensive code review with specialized agents
+7. **Summary** - Document what was accomplished
+
+**Specialized Agents Used:**
+- **general-code-explorer** - Traces execution paths and maps architecture
+- **general-software-architect** - Designs complete implementation blueprints
+- **general-code-reviewer** - Reviews code with confidence-based filtering
+
+**Practical examples:**
+
+```bash
+# Simple feature
+/devkit.feature-development Add user authentication
+
+# Complex feature with description
+/devkit.feature-development Implement real-time notifications using WebSockets
+
+# Integration feature
+/devkit.feature-development Add payment processing with Stripe integration
+
+# UI feature
+/devkit.feature-development Create dashboard with charts and filters
+```
+
+**Key Benefits:**
+- **Systematic Approach**: 7-phase methodology ensures comprehensive development
+- **Codebase Understanding**: Deep analysis before making changes
+- **Architecture Guidance**: Multiple design approaches with trade-off analysis
+- **Quality Assurance**: Multi-perspective code review with specialized agents
+- **Documentation**: Complete summary of decisions and implementation
+
+**Execution Instructions with Fallback:**
+The command uses agents with automatic fallback:
+- Primary: `general-*` agents
+- If not available: `developer-kit:general-*` agents
+- Final fallback: `general-purpose` agent
 
 ---
 

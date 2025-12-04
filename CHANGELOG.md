@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.13.0] - 2025-12-04
+
+### Added
+- New `/devkit.feature-development` command for guided feature development with systematic 7-phase approach
+- Three new general-purpose agents for comprehensive feature development:
+  - `general-code-explorer` - Analyzes existing codebase patterns and traces execution paths
+  - `general-software-architect` - Designs complete implementation blueprints with detailed architecture decisions
+  - `general-code-reviewer` - Reviews code for bugs, security vulnerabilities, and quality issues with confidence-based filtering
+- Integrated Task tool usage pattern for parallel agent execution
+- Fallback mechanism ensuring compatibility across different plugin installation scenarios
+
 ## [1.12.1] - 2025-11-30
 
 ### Fixed
@@ -168,7 +179,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.12.1...HEAD
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.13.0...HEAD
+[1.13.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.12.1...v1.13.0
 [1.12.1]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.12.0...v1.12.1
 [1.12.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.11.0...v1.12.0
 [1.11.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.10.0...v1.11.0
