@@ -7,6 +7,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.15.0] - 2025-12-04
+
+### Added
+- **New comprehensive Makefile with multi-CLI support**:
+  - `make install-claude` - Interactive installer for Claude Code projects
+  - `make install-copilot` - Install for GitHub Copilot CLI
+  - `make install-opencode` - Install for OpenCode CLI
+  - `make install-codex` - Install for Codex CLI
+  - `make install` - Install for all detected CLIs
+  - `make status` - Show installation status for all CLIs
+  - `make backup` - Create backup of existing configurations
+  - `make uninstall` - Remove all installations
+- **Interactive Claude Code installer** (`make install-claude`):
+  - Step-by-step guided installation process with environment validation
+  - Category-based skill selection (AWS Java, AI, JUnit Test, LangChain4j, Spring Boot)
+  - Flexible agent selection (all, specific, or none)
+  - Command selection with full 30-item listing
+  - Smart conflict handling with overwrite, skip, or rename options
+  - Complete project directory structure creation (.claude/skills/, .claude/agents/, .claude/commands/)
+  - Installation progress tracking and detailed summary
+  - Clean, colorized terminal UI with helpful next steps
+- **CLI tool integrations**:
+  - GitHub Copilot CLI support (agents installation)
+  - OpenCode CLI support (agents and commands)
+  - Codex CLI support (instructions and custom prompts)
+- Comprehensive backup system for existing configurations
+- Installation status monitoring and validation commands
+
+### Changed
+- Updated Makefile structure with comprehensive multi-CLI support
+- Enhanced help documentation with clear usage examples for all CLI tools
+- Streamlined installation flow for better user experience
+
+### Fixed
+- Cleaned up ignored files from repository (52bcd54)
+- Fixed merge integration for new installation features
+
+### Security
+- Validates Claude Code environment before installation to ensure proper context
+- Safe file handling with proper backup and restore mechanisms
+
 ## [1.14.0] - 2025-12-04
 
 ### Added
@@ -205,7 +246,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.14.0...HEAD
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.15.0...HEAD
+[1.15.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.14.0...v1.15.0
 [1.14.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.13.0...v1.14.0
 [1.13.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.12.1...v1.13.0
 [1.12.1]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.12.0...v1.12.1

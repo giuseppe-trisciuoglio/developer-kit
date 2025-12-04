@@ -1574,6 +1574,167 @@ mvn dependency:tree
 
 ---
 
+## Long-Running Agent (LRA) Commands
+
+Commands for managing complex projects that span multiple context windows, based on [Anthropic's research on long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents).
+
+### `/devkit.lra.init`
+
+**Description**: Initialize LRA environment for multi-session projects by setting up feature list, progress tracking, and initialization script.
+
+**When to use:**
+- Starting a new complex project that will span multiple sessions
+- When you need systematic progress tracking across days/weeks
+- For large features that require multiple development sessions
+
+**Arguments:**
+```bash
+/devkit.lra.init [project-description]
+```
+
+**Creates:**
+- `features/` directory with feature backlog
+- `progress.md` for tracking completion status
+- `init.sh` for session initialization
+- Project configuration and context
+
+**Example initialization:**
+```bash
+/devkit.lra.init "E-commerce platform with user management, product catalog, and order processing"
+```
+
+### `/devkit.lra.start-session`
+
+**Description**: Start a new coding session by reading progress, checking project health, and selecting the next feature to work on.
+
+**When to use:**
+- Beginning each development session
+- After returning to a project after a break
+- When you need to resume work on a multi-session project
+
+**Features:**
+- Automatic feature selection based on priorities
+- Progress review and health check
+- Context restoration from previous sessions
+- Test suite verification
+
+### `/devkit.lra.add-feature`
+
+**Description**: Add new feature requirements to the feature backlog during development.
+
+**When to use:**
+- Discovering new requirements during implementation
+- Adding edge cases or additional functionality
+- When stakeholders request new features
+
+**Arguments:**
+```bash
+/devkit.lra.add-feature [category] [priority] [description]
+```
+
+**Categories:**
+- `feature` - New user-facing functionality
+- `bug` - Bug fixes and corrections
+- `tech` - Technical debt and improvements
+- `docs` - Documentation updates
+
+**Priorities:**
+- `critical` - Blocks release or core functionality
+- `high` - Important for next release
+- `medium` - Nice to have
+- `low` - Future consideration
+
+### `/devkit.lra.mark-feature`
+
+**Description**: Mark a feature as completed (passed) or failed after implementation and testing.
+
+**When to use:**
+- After completing feature implementation
+- When tests pass and functionality is verified
+- When a feature needs to be marked as failed for any reason
+
+**Arguments:**
+```bash
+/devkit.lra.mark-feature [feature-id] [passed|failed] [optional-notes]
+```
+
+**Updates:**
+- Feature status in progress tracking
+- Test results and quality metrics
+- Implementation notes and lessons learned
+
+### `/devkit.lra.checkpoint`
+
+**Description**: Create session checkpoint by committing changes, updating progress log, and ensuring clean state for the next session.
+
+**When to use:**
+- End of each development session
+- Before taking a break from coding
+- When handing off work to another developer
+
+**Actions:**
+- Commits all changes with descriptive messages
+- Updates progress.md with current status
+- Creates session summary
+- Ensures clean, testable state
+
+### `/devkit.lra.status`
+
+**Description**: Display comprehensive project status including progress metrics, priorities, recent activity, and upcoming work.
+
+**When to use:**
+- Project status reviews with stakeholders
+- Planning next development session
+- When evaluating project health and timeline
+
+**Shows:**
+- Feature completion percentage
+- Priority-based feature breakdown
+- Recent commits and changes
+- Upcoming features and estimated effort
+- Test coverage and quality metrics
+
+### `/devkit.lra.recover`
+
+**Description**: Recover from broken state by diagnosing issues, reverting if needed, and restoring a clean working state.
+
+**When to use:**
+- When the project is in a broken or unbuildable state
+- After failed experiments or refactoring
+- When tests are failing and the cause is unclear
+
+**Recovery steps:**
+- Diagnostic analysis of current state
+- Git history analysis to find last working state
+- Selective revert or reset as needed
+- Restoration of clean, testable state
+
+**LRA Workflow Example:**
+```bash
+# First time setup
+/devkit.lra.init "Customer management system with authentication and profiles"
+
+# Start each session
+/devkit.lra.start-session
+
+# Add new requirements discovered during development
+/devkit.lra.add-feature feature high "Two-factor authentication for security"
+
+# Mark completed features
+/devkit.lra.mark-feature user-registration passed "All tests passing"
+
+# End of session
+/devkit.lra.checkpoint "Implemented user registration and login functionality"
+
+# Check project status anytime
+/devkit.lra.status
+
+# Recover if something goes wrong
+/devkit.lra.recover
+```
+
+---
+
 ## Contributing
 
 To add new commands:

@@ -338,16 +338,17 @@ install-claude:
 	echo "  2) AI Skills (3 skills)"; \
 	echo "  3) JUnit Test Skills (15 skills)"; \
 	echo "  4) LangChain4j Skills (8 skills)"; \
-	echo "  5) Spring Boot Skills (12 skills)"; \
-	echo "  6) All Skills"; \
-	echo "  7) None (skip skills)"; \
+	echo "  5) Spring Boot Skills (13 skills)"; \
+	echo "  6) Spring AI Skills (1 skill)"; \
+	echo "  7) All Skills"; \
+	echo "  8) None (skip skills)"; \
 	echo ""; \
 	read -p "Select categories (comma-separated, e.g., 1,4,5): " skill_cats; \
 	export SKILL_CATEGORIES="$$skill_cats"; \
 	echo ""; \
 	\
 	echo -e "$(GREEN)Step 3: Select Agents$(NC)"; \
-	echo "  1) All Agents (10 available)"; \
+	echo "  1) All Agents (13 available)"; \
 	echo "  2) Select specific agents"; \
 	echo "  3) None (skip agents)"; \
 	echo ""; \
@@ -372,7 +373,7 @@ install-claude:
 	echo ""; \
 	\
 	echo -e "$(GREEN)Step 4: Select Commands$(NC)"; \
-	echo "  1) All Commands (30 available)"; \
+	echo "  1) All Commands (31 available)"; \
 	echo "  2) Select specific commands"; \
 	echo "  3) None (skip commands)"; \
 	echo ""; \
@@ -408,7 +409,7 @@ install-claude:
 	installed_count=0; \
 	skipped_count=0; \
 	\
-	if [ -n "$$SKILL_CATEGORIES" ] && [ "$$SKILL_CATEGORIES" != "7" ]; then \
+	if [ -n "$$SKILL_CATEGORIES" ] && [ "$$SKILL_CATEGORIES" != "8" ]; then \
 		echo -e "$(GREEN)Installing Skills...$(NC)"; \
 		IFS=',' read -ra CATS <<< "$$SKILL_CATEGORIES"; \
 		for cat in "$${CATS[@]}"; do \
@@ -419,7 +420,8 @@ install-claude:
 				3) cat_dir="junit-test"; cat_name="JUnit Test" ;; \
 				4) cat_dir="langchain4j"; cat_name="LangChain4j" ;; \
 				5) cat_dir="spring-boot"; cat_name="Spring Boot" ;; \
-				6) cat_dir="*"; cat_name="All" ;; \
+				6) cat_dir="spring-ai"; cat_name="Spring AI" ;; \
+				7) cat_dir="*"; cat_name="All" ;; \
 				*) continue ;; \
 			esac; \
 			\
