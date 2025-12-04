@@ -109,7 +109,7 @@ make install-codex
 
 **Features:**
 - **31 Custom Prompts**: Specialized commands for development workflows
-- **30 Agents Documentation**: Complete agent descriptions and usage
+- **13 Agents Documentation**: Complete agent descriptions and usage
 - **Usage**: `/prompts:<name>` to invoke custom commands
 
 ### Management Commands
