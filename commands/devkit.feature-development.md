@@ -46,7 +46,7 @@ You are helping a developer implement a new feature. Follow a systematic approac
 **Goal**: Understand relevant existing code and patterns at both high and low levels
 
 **Actions**:
-1. Use the Task tool to launch 2-3 devkit-code-explorer subagents in parallel. Each with different prompts:
+1. Use the Task tool to launch 2-3 general-code-explorer subagents in parallel. Each with different prompts:
    - Trace through the code comprehensively and focus on getting a comprehensive understanding of abstractions, architecture and flow of control
    - Target a different aspect of the codebase (eg. similar features, high level understanding, architectural understanding, user experience, etc.)
    - Include a list of 5-10 key files to read
@@ -56,7 +56,7 @@ You are helping a developer implement a new feature. Follow a systematic approac
 Task(
   description: "Explore similar features",
   prompt: "Find features similar to [feature] and trace through their implementation comprehensively. Focus on understanding patterns, architecture, and integration points.",
-  subagent_type: "devkit-code-explorer"
+  subagent_type: "general-code-explorer"
 )
 ```
 
@@ -92,7 +92,7 @@ If the user says "whatever you think is best", provide your recommendation and g
 **Goal**: Design multiple implementation approaches with different trade-offs
 
 **Actions**:
-1. Use the Task tool to launch 2-3 devkit-software-architect subagents in parallel with different focuses:
+1. Use the Task tool to launch 2-3 general-software-architect subagents in parallel with different focuses:
    - minimal changes (smallest change, maximum reuse)
    - clean architecture (maintainability, elegant abstractions)
    - pragmatic balance (speed + quality)
@@ -123,7 +123,7 @@ If the user says "whatever you think is best", provide your recommendation and g
 **Goal**: Ensure code is simple, DRY, elegant, easy to read, and functionally correct
 
 **Actions**:
-1. Use the Task tool to launch 3 devkit-code-reviewer subagents in parallel with different focuses:
+1. Use the Task tool to launch 3 general-code-reviewer subagents in parallel with different focuses:
    - simplicity/DRY/elegance
    - bugs/functional correctness
    - project conventions/abstractions
@@ -165,11 +165,18 @@ If the user says "whatever you think is best", provide your recommendation and g
 
 ## Integration with Sub-agents
 
-This command leverages three specialized sub-agents using the Task tool:
+This command leverages three specialized sub-agents using the Task tool.
 
-1. **devkit-code-explorer** - Analyzes existing codebase to understand patterns
-2. **devkit-software-architect** - Designs implementation approaches
-3. **devkit-code-reviewer** - Reviews implementation for quality
+## Execution Instructions
+
+**Agent Selection**: To execute this task, use the following agents with fallback:
+- **Code Explorer**: Primary: `general-code-explorer` - If not available: Use `developer-kit:general-code-explorer` or fallback to `general-purpose` agent
+- **Software Architect**: Primary: `general-software-architect` - If not available: Use `developer-kit:general-software-architect` or fallback to `general-purpose` agent
+- **Code Reviewer**: Primary: `general-code-reviewer` - If not available: Use `developer-kit:general-code-reviewer` or fallback to `general-purpose` agent
+
+1. **general-code-explorer** - Analyzes existing codebase to understand patterns
+2. **general-software-architect** - Designs implementation approaches
+3. **general-code-reviewer** - Reviews implementation for quality
 
 ### Usage Pattern
 ```javascript

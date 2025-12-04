@@ -252,3 +252,9 @@ Based on security audit analysis, generating comprehensive assessment document w
 
 Language: $ARGUMENTS
 Format: Based on user preference (Markdown default)
+
+## Execution Instructions
+
+**Agent Selection**: To execute this generation task, use the following approach:
+- Primary: Use `general-purpose` agent with specialized knowledge of the task domain
+- Or use appropriate specialized agent if available for the specific generation task

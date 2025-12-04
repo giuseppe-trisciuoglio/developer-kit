@@ -363,3 +363,11 @@ class UserRepositoryIntegrationTest {
 - **JaCoCo**: Code coverage reporting
 - **Spring Boot Actuator**: Production monitoring
 - **Testcontainers**: Real integration testing
+
+---
+
+## Execution Instructions
+
+**Agent Selection**: To execute this code review, use the following agent with fallback:
+- Primary: `spring-boot-code-review-expert`
+- If not available: Use `developer-kit:spring-boot-code-review-expert` or fallback to `general-purpose` agent with `spring-boot-crud-patterns` skill

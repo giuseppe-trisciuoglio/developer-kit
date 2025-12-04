@@ -277,3 +277,9 @@ This command works best with these skills:
 - **Create comprehensive tests** before refactoring critical paths
 - **Use feature flags** for large, risky refactoring
 - **Monitor production metrics** after deployment
+
+## Execution Instructions
+
+**Agent Selection**: To execute this task, use the following agent with fallback:
+- Primary: `java-refactor-expert`
+- If not available: Use `developer-kit:java-refactor-expert` or fallback to `general-purpose` agent with `spring-boot-crud-patterns` skill

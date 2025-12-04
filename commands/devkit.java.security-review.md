@@ -286,3 +286,9 @@ spring:
    - Monitoring and alerting setup
 
 Target: $ARGUMENTS
+## Execution Instructions
+
+**Agent Selection**: To execute this security review, use the following agent with fallback:
+- Primary: `java-security-expert`
+- If not available: Use `developer-kit:java-security-expert` or fallback to `general-purpose` agent with `spring-boot-crud-patterns` skill
+

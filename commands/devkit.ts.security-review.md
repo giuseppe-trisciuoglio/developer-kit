@@ -416,3 +416,9 @@ logger.info({
    - Monitoring and alerting setup
 
 Target: $ARGUMENTS
+
+## Execution Instructions
+
+**Agent Selection**: To execute this TypeScript security review, use the following agent with fallback:
+- Primary: `ts-security-expert`
+- If not available: Use `developer-kit:ts-security-expert` or fallback to `general-purpose` agent with security expertise

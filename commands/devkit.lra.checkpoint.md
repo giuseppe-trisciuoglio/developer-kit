@@ -132,3 +132,9 @@ Provide a session summary:
 - **ALWAYS update progress.txt with context for the next agent**
 - **ALWAYS commit with descriptive messages**
 - This checkpoint allows context window transitions to be seamless
+
+## Execution Instructions
+
+**Agent Selection**: To execute this LRA task, use the following approach:
+- Primary: Use `general-purpose` agent with task management and state persistence capabilities
+- Or use `plan` agent for complex multi-step workflows

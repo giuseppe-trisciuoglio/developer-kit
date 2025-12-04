@@ -100,3 +100,9 @@ After completion, provide:
 ---
 
 **Note**: This command leverages the `spring-boot-crud-patterns` skill. Make sure the skill is available and the project has the required Spring Boot dependencies (spring-boot-starter-web, spring-boot-starter-data-jpa, validation).
+
+## Execution Instructions
+
+**Agent Selection**: To execute this task, use the following agent with fallback:
+- Primary: `spring-boot-backend-development-expert`
+- If not available: Use `developer-kit:spring-boot-backend-development-expert` or fallback to `general-purpose` agent with `spring-boot-crud-patterns` skill

@@ -502,3 +502,8 @@ Based on the provided arguments:
 7. Provide PR details and next steps
 
 **Remember**: Keep PR descriptions concise and professional without emojis. Focus on technical content and clarity.
+
+## Execution Instructions
+
+**Agent Selection**: To execute this GitHub task, use the following approach:
+- Primary: Use `general-purpose` agent with GitHub CLI expertise and code analysis capabilities
