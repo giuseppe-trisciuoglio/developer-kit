@@ -1394,9 +1394,9 @@ The team reviewed sprint progress, identified blockers, and planned next sprint 
 7. **Summary** - Document what was accomplished
 
 **Specialized Agents Used:**
-- **general-code-explorer** - Traces execution paths and maps architecture
-- **general-software-architect** - Designs complete implementation blueprints
-- **general-code-reviewer** - Reviews code with confidence-based filtering
+- **explorer** - Traces execution paths and maps architecture
+- **architect** - Designs complete implementation blueprints
+- **code-reviewer** - Reviews code with confidence-based filtering
 
 **Practical examples:**
 
