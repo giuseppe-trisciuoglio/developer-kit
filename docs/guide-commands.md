@@ -1369,7 +1369,7 @@ The team reviewed sprint progress, identified blockers, and planned next sprint 
 
 ### `/devkit.feature-development`
 
-**Description**: Guided feature development with systematic 7-phase approach using specialized agents for comprehensive codebase analysis, architecture design, and quality review.
+**Description**: Guided feature development with systematic 9-phase approach using specialized agents for comprehensive codebase analysis, architecture design, testing verification, and quality review.
 
 **When to use:**
 - Building new features from scratch
@@ -1383,15 +1383,36 @@ The team reviewed sprint progress, identified blockers, and planned next sprint 
 /devkit.feature-development [feature-description]
 ```
 
-**The 7 Phases:**
+**The 9 Phases:**
 
 1. **Discovery** - Understand what needs to be built
 2. **Codebase Exploration** - Analyze existing patterns and similar features
 3. **Clarifying Questions** - Resolve all ambiguities before designing
 4. **Architecture Design** - Design multiple approaches with trade-offs
 5. **Implementation** - Build the feature following chosen architecture
-6. **Quality Review** - Comprehensive code review with specialized agents
-7. **Summary** - Document what was accomplished
+6. **Testing & Verification** - Compile code and run tests to verify implementation works
+7. **Quality Review** - Comprehensive code review with specialized agents
+8. **Post-QA Testing** - Re-verify build and tests after any QA changes
+9. **Summary** - Document what was accomplished
+
+**Phase 6: Testing & Verification (Critical)**
+
+This phase ensures the implementation actually works before proceeding to quality review:
+- **Compile the project**: Run build commands (`mvn compile`, `./gradlew build`, `npm run build`)
+- **Run existing tests**: Execute full test suite, fix any failures caused by changes
+- **Verify new/modified tests**: Ensure added tests pass
+- **Report results**: Show actual command output, stop if tests fail
+
+**DO NOT PROCEED TO QUALITY REVIEW IF TESTS FAIL**
+
+**Phase 8: Post-QA Testing (Critical)**
+
+If code was modified during Quality Review, this phase is MANDATORY:
+- **Re-compile**: Ensure no compilation errors were introduced by QA fixes
+- **Re-run tests**: Verify QA changes did not introduce regressions
+- **Sanity check**: Confirm the original feature still works as expected
+
+**DO NOT PROCEED TO SUMMARY IF TESTS FAIL AFTER QA CHANGES**
 
 **Specialized Agents Used:**
 - **explorer** - Traces execution paths and maps architecture
@@ -1415,9 +1436,10 @@ The team reviewed sprint progress, identified blockers, and planned next sprint 
 ```
 
 **Key Benefits:**
-- **Systematic Approach**: 7-phase methodology ensures comprehensive development
+- **Systematic Approach**: 9-phase methodology ensures comprehensive development
 - **Codebase Understanding**: Deep analysis before making changes
 - **Architecture Guidance**: Multiple design approaches with trade-off analysis
+- **Testing Verification**: Mandatory compilation and test execution before and after review
 - **Quality Assurance**: Multi-perspective code review with specialized agents
 - **Documentation**: Complete summary of decisions and implementation
 
