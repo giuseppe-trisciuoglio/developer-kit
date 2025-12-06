@@ -1,6 +1,6 @@
 ---
 description: Guided feature development with codebase understanding and architecture focus
-argument-hint: [feature-description]
+argument-hint: [--lang=java|spring|general] [feature-description]
 allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, TodoWrite, AskUserQuestion
 model: inherit
 ---
@@ -8,6 +8,20 @@ model: inherit
 # Feature Development
 
 You are helping a developer implement a new feature. Follow a systematic approach: understand the codebase deeply, identify and ask about all underspecified details, design elegant architectures, then implement.
+
+## Language/Framework Selection
+
+Parse $ARGUMENTS to detect the optional `--lang` parameter:
+- `--lang=spring` or `--lang=java`: Use Java/Spring Boot specialized agents
+- `--lang=general` or no flag: Use general-purpose agents (default)
+
+**Agent Mapping by Language:**
+
+| Phase | General (default) | Java/Spring Boot (`--lang=spring` or `--lang=java`) |
+|-------|-------------------|-----------------------------------------------------|
+| Exploration | `developer-kit:explorer` | `developer-kit:spring-boot-backend-development-expert` |
+| Architecture | `developer-kit:architect` | `developer-kit:java-software-architect-review` |
+| Code Review | `developer-kit:code-reviewer` | `developer-kit:spring-boot-code-review-expert` |
 
 ## Current Context
 
@@ -47,7 +61,7 @@ You are helping a developer implement a new feature. Follow a systematic approac
 **Goal**: Understand relevant existing code and patterns at both high and low levels
 
 **Actions**:
-1. Use the Task tool to launch 2-3 general-code-explorer subagents in parallel. Each with different prompts:
+1. Use the Task tool to launch 2-3 explorer subagents in parallel (select agent based on `--lang` parameter). Each with different prompts:
    - Trace through the code comprehensively and focus on getting a comprehensive understanding of abstractions, architecture and flow of control
    - Target a different aspect of the codebase (eg. similar features, high level understanding, architectural understanding, user experience, etc.)
    - Include a list of 5-10 key files to read
@@ -57,7 +71,7 @@ You are helping a developer implement a new feature. Follow a systematic approac
 Task(
   description: "Explore similar features",
   prompt: "Find features similar to [feature] and trace through their implementation comprehensively. Focus on understanding patterns, architecture, and integration points.",
-  subagent_type: "general-code-explorer"
+  subagent_type: "developer-kit:explorer"
 )
 ```
 
@@ -93,7 +107,7 @@ If the user says "whatever you think is best", provide your recommendation and g
 **Goal**: Design multiple implementation approaches with different trade-offs
 
 **Actions**:
-1. Use the Task tool to launch 2-3 general-software-architect subagents in parallel with different focuses:
+1. Use the Task tool to launch 2-3 architect subagents in parallel (select agent based on `--lang` parameter) with different focuses:
    - minimal changes (smallest change, maximum reuse)
    - clean architecture (maintainability, elegant abstractions)
    - pragmatic balance (speed + quality)
@@ -124,7 +138,7 @@ If the user says "whatever you think is best", provide your recommendation and g
 **Goal**: Ensure code is simple, DRY, elegant, easy to read, and functionally correct
 
 **Actions**:
-1. Use the Task tool to launch 3 general-code-reviewer subagents in parallel with different focuses:
+1. Use the Task tool to launch 3 code-reviewer subagents in parallel (select agent based on `--lang` parameter) with different focuses:
    - simplicity/DRY/elegance
    - bugs/functional correctness
    - project conventions/abstractions
@@ -151,17 +165,23 @@ If the user says "whatever you think is best", provide your recommendation and g
 ## Usage Examples
 
 ```bash
-# Simple feature
+# Simple feature (general agents)
 /devkit.feature-development Add user authentication
+
+# Java/Spring Boot feature
+/devkit.feature-development --lang=spring Add REST API for user management
+
+# Java feature with specialized agents
+/devkit.feature-development --lang=java Implement caching layer for products
 
 # Complex feature with description
 /devkit.feature-development Implement real-time notifications using WebSockets
 
 # Integration feature
-/devkit.feature-development Add payment processing with Stripe integration
+/devkit.feature-development --lang=spring Add payment processing with Stripe integration
 
-# UI feature
-/devkit.feature-development Create dashboard with charts and filters
+# Explicit general agents
+/devkit.feature-development --lang=general Create dashboard with charts and filters
 ```
 
 ## Integration with Sub-agents
@@ -170,29 +190,34 @@ This command leverages three specialized sub-agents using the Task tool.
 
 ## Execution Instructions
 
-**Agent Selection**: To execute this task, use the following agents with fallback:
-- **Code Explorer**: Primary: `developer-kit:general-code-explorer` - If not available: Use `general-code-explorer` or fallback to `general-purpose` agent
-- **Software Architect**: Primary: `developer-kit:general-software-architect` - If not available: Use `general-software-architect` or fallback to `general-purpose` agent
-- **Code Reviewer**: Primary: `developer-kit:general-code-reviewer` - If not available: Use `general-code-reviewer` or fallback to `general-purpose` agent
+**Agent Selection**: Based on the `--lang` parameter, select the appropriate agents:
 
-1. **general-code-explorer** - Analyzes existing codebase to understand patterns
-2. **general-software-architect** - Designs implementation approaches
-3. **general-code-reviewer** - Reviews implementation for quality
+### General Agents (default, or `--lang=general`)
+- **Code Explorer**: `developer-kit:explorer`
+- **Software Architect**: `developer-kit:architect`
+- **Code Reviewer**: `developer-kit:code-reviewer`
+
+### Java/Spring Boot Agents (`--lang=spring` or `--lang=java`)
+- **Code Explorer**: `developer-kit:spring-boot-backend-development-expert`
+- **Software Architect**: `developer-kit:java-software-architect-review`
+- **Code Reviewer**: `developer-kit:spring-boot-code-review-expert`
+
+**Fallback**: If specialized agents are not available, fall back to `general-purpose` agent.
 
 ### Usage Pattern
 ```javascript
-// Launch a sub-agent with proper fallback order
+// General agents (default)
 Task(
   description: "Brief task description",
   prompt: "Detailed prompt for the sub-agent",
-  subagent_type: "developer-kit:subagent-name"  // Try developer-kit agents first
+  subagent_type: "developer-kit:explorer"
 )
 
-// Fallback to general agents if developer-kit agents not available
+// Java/Spring Boot agents (when --lang=spring or --lang=java)
 Task(
   description: "Brief task description",
   prompt: "Detailed prompt for the sub-agent",
-  subagent_type: "general-agent-name"
+  subagent_type: "developer-kit:spring-boot-backend-development-expert"
 )
 ```
 
