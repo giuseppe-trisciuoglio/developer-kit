@@ -75,7 +75,7 @@ make install-copilot
 ```
 
 **Features:**
-- **13 Specialized Agents**: Code review, architecture, security, testing experts
+- **14 Specialized Agents**: Code review, architecture, security, testing, debugging experts
 - **Usage**: `/agent` to select agents or mention in prompts
 - **Integration**: Works with Copilot's native agent system
 
@@ -91,8 +91,8 @@ make install-opencode
 ```
 
 **Features:**
-- **13 Development Agents**: Full suite of specialized agents
-- **31 Custom Commands**: From code generation to security reviews
+- **14 Development Agents**: Full suite of specialized agents
+- **32 Custom Commands**: From code generation to debugging and security reviews
 - **Usage**: `@agent-name` for agents, `/command-name` for commands
 - **Discovery**: Tab completion and command discovery
 
@@ -108,8 +108,8 @@ make install-codex
 ```
 
 **Features:**
-- **31 Custom Prompts**: Specialized commands for development workflows
-- **13 Agents Documentation**: Complete agent descriptions and usage
+- **32 Custom Prompts**: Specialized commands for development workflows
+- **14 Agents Documentation**: Complete agent descriptions and usage
 - **Usage**: `/prompts:<name>` to invoke custom commands
 
 ### Management Commands
@@ -125,8 +125,8 @@ make backup
 make uninstall
 
 # List available components
-make list-agents      # Show all 13 agents
-make list-commands    # Show all 31 commands
+make list-agents      # Show all 14 agents
+make list-commands    # Show all 32 commands
 make list-skills      # Show all 50 skills by category
 ```
 
@@ -190,7 +190,7 @@ Available skill categories:
 Select categories (comma-separated, e.g., 1,4,5): 4,5
 
 Step 3: Select Agents
-  1) All Agents (13 available)
+  1) All Agents (14 available)
   2) Select specific agents
   3) None (skip agents)
 Choose option [1-3]: 2
@@ -203,7 +203,7 @@ Available agents:
 Select agents (comma-separated numbers, or type 'all'): 1,3
 
 Step 4: Select Commands
-  1) All Commands (31 available)
+  1) All Commands (32 available)
   2) Select specific commands
   3) None (skip commands)
 Choose option [1-3]: 1
@@ -375,6 +375,7 @@ my-project/
 | **[java-documentation-specialist](agents/java-documentation-specialist.md)**                   | Java project documentation     | API docs, architecture guides, technical documentation generation   |
 | **[java-tutorial-engineer](agents/java-tutorial-engineer.md)**                                 | Java/Spring Boot tutorials     | Educational content, hands-on learning, step-by-step guides         |
 | **[prompt-engineering-expert](agents/prompt-engineering-expert.md)**                           | Prompt engineering             | LLM prompt optimization, CoT, few-shot patterns                     |
+| **[general-debugger](agents/general-debugger.md)**                                             | Debugging and root cause analysis| Error troubleshooting, test failures, performance issues             |
 
 ## ✨ Key Features
 

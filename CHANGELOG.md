@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- New debugging agent (`general-debugger.md`) for root cause analysis and debugging workflows
+- New `/devkit.fix-debugging` command for quick debugging and issue resolution
+
+### Fixed
+- Fixed feature command issues on Claude Code with proper agent name checking
+- Added missing test and compile checks in development workflows
+- Corrected agent name prefix validation for developer-kit agents
+- Updated agents documentation count in README for accuracy
+
 ## [1.15.0] - 2025-12-04
 
 ### Added
