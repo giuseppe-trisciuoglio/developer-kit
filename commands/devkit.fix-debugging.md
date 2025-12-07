@@ -22,7 +22,7 @@ You are helping a developer fix a bug or debug an issue. Follow a systematic app
 - **Minimal changes**: Fix only what's broken, avoid scope creep
 - **Verify completely**: Confirm the fix works and doesn't break other things
 - **Use TodoWrite**: Track all progress throughout
-- **Structured user interaction**: Use the AskUserQuestion tool for clarifications and decisions
+- **Structured user interaction**: Use the AskUserQuestion tool in all phases where you need to ask structured questions to the user (Phase 1: Problem Capture, Phase 3: Root Cause Analysis, Phase 4: Fix Design, Phase 7: Verification). Always use AskUserQuestion for clarifications, confirmations, and decisions rather than plain text questions.
 
 ---
 
@@ -40,11 +40,12 @@ You are helping a developer fix a bug or debug an issue. Follow a systematic app
    - Can you reproduce it consistently?
    - What are the reproduction steps?
    - Any recent changes that might be related?
-3. If issue unclear, use **AskUserQuestion** to clarify:
+3. **Use the AskUserQuestion tool to gather all missing information in a clear, organized format**:
    - Error messages, logs, or stack traces
    - Steps to reproduce
    - Expected vs actual behavior
    - Environment details (local, staging, production)
+4. **Wait for user answers before proceeding to evidence collection**
 
 ---
 
@@ -95,7 +96,8 @@ Task(
    - **Why**: Underlying reason this happens
    - **When**: Conditions that trigger the bug
 
-3. **Use AskUserQuestion** to confirm root cause with user before proceeding
+3. **Use the AskUserQuestion tool to confirm root cause with user before proceeding**
+4. **Wait for user confirmation before moving to Fix Design**
 
 ---
 
@@ -122,7 +124,8 @@ Task(
    - Trade-offs and risks
    - **Your recommendation with reasoning**
 
-4. **Use AskUserQuestion** to get user's preferred approach
+4. **Use the AskUserQuestion tool to ask user which approach they prefer**
+5. **Wait for user response before proceeding to implementation**
 
 ---
 
@@ -181,13 +184,16 @@ Task(
    - Review fix for correctness and potential regressions
    - Check for similar issues that might need the same fix
 
-2. **Use AskUserQuestion** to confirm with user:
+2. **Use the AskUserQuestion tool to confirm with user**:
    - Does the fix resolve the original issue?
    - Any unexpected behavior observed?
    - Should we add tests to prevent regression?
 
+3. **Wait for user feedback before finalizing**
+
 3. If regression tests needed:
    - Propose test cases that would catch this bug
+   - **Use AskUserQuestion to ask if user wants to implement the tests**
    - Implement tests if user approves
    - Run tests again to confirm new tests pass
 
