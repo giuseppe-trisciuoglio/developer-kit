@@ -38,7 +38,7 @@ Agents are specialized AI assistants with dedicated context windows, custom prom
 
 ## General Purpose Agents
 
-### `general-code-explorer`
+### `explorer`
 
 **Description**: Expert code analyst specializing in tracing and understanding feature implementations across codebases, mapping execution paths, architecture layers, and documenting dependencies.
 
@@ -67,7 +67,7 @@ Agents are specialized AI assistants with dedicated context windows, custom prom
 Task(
   description: "Analyze user authentication feature",
   prompt: "Trace through the user authentication feature comprehensively. Map all components, data flow, and integration points.",
-  subagent_type: "general-code-explorer"
+  subagent_type: "developer-kit:explorer"
 )
 ```
 
@@ -81,7 +81,7 @@ Task(
 
 ---
 
-### `general-software-architect`
+### `architect`
 
 **Description**: Senior software architect who delivers comprehensive, actionable architecture blueprints by deeply understanding codebases and making confident architectural decisions.
 
@@ -110,7 +110,7 @@ Task(
 Task(
   description: "Design real-time notifications architecture",
   prompt: "Design complete architecture for real-time notifications. Consider scalability, reliability, and integration with existing systems.",
-  subagent_type: "general-software-architect"
+  subagent_type: "developer-kit:architect"
 )
 ```
 
@@ -124,7 +124,7 @@ Task(
 
 ---
 
-### `general-code-reviewer`
+### `code-reviewer`
 
 **Description**: Expert code reviewer specializing in modern software development with high precision to minimize false positives, focusing only on issues that truly matter.
 
@@ -161,7 +161,7 @@ Task(
 Task(
   description: "Review payment processing code",
   prompt: "Review the payment processing implementation for bugs, security vulnerabilities, and performance issues.",
-  subagent_type: "general-code-reviewer"
+  subagent_type: "developer-kit:code-reviewer"
 )
 ```
 
