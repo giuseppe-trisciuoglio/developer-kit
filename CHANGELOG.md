@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Enhanced Codex CLI installation with proper frontmatter processing for custom prompts
+- Improved command detection for Codex CLI by checking AGENTS.md instead of INSTRUCTIONS.md
+- Better prompt name handling and metadata extraction during installation
+
+### Fixed
+- Corrected file path checking for Codex CLI status command
+- Improved error handling in prompt installation process
+
+## [1.16.1] - 2025-12-08
+
 ### Added
 - New debugging agent (`general-debugger.md`) for root cause analysis and debugging workflows
 - New `/devkit.fix-debugging` command for quick debugging and issue resolution
@@ -256,7 +267,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.15.0...HEAD
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.16.1...HEAD
+[1.16.1]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.15.0...v1.16.1
 [1.15.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.14.0...v1.15.0
 [1.14.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.13.0...v1.14.0
 [1.13.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.12.1...v1.13.0
