@@ -240,34 +240,30 @@ install-codex:
 	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
 	@mkdir -p $(CODEX_CONFIG)
 	@mkdir -p $(CODEX_PROMPTS)
-	@# Copy commands as custom prompts with proper frontmatter processing
 	@echo -e "$(GREEN)Installing custom prompts (slash commands):$(NC)"
 	@for cmd in $(COMMANDS_DIR)/*.md; do \
 		if [ -f "$$cmd" ]; then \
 			name=$$(basename "$$cmd" .md); \
 			target="$(CODEX_PROMPTS)/$$name.md"; \
-			# Process the file to ensure proper Codex frontmatter \
 			echo "Processing $$name..."; \
 			echo "---" > "$$target"; \
-			# Extract description from frontmatter or from first line \
 			desc=$$(grep -m1 "^description:" "$$cmd" 2>/dev/null | sed 's/^description: *//'); \
 			if [ -z "$$desc" ]; then \
 				desc=$$(head -1 "$$cmd" | sed 's/^# *//'); \
 			fi; \
 			echo "description: $$desc" >> "$$target"; \
-			# Extract argument hint if exists \
 			arg_hint=$$(grep -m1 "^argument-hint:" "$$cmd" 2>/dev/null | sed 's/^argument-hint: *//'); \
 			if [ -n "$$arg_hint" ]; then \
 				echo "argument-hint: $$arg_hint" >> "$$target"; \
+				echo "  ✓ Prompt: $$name.md [arguments: $$arg_hint]"; \
+			else \
+				echo "  ⚠ Prompt: $$name.md [missing argument-hint]"; \
 			fi; \
 			echo "---" >> "$$target"; \
 			echo "" >> "$$target"; \
-			# Add the command content after the frontmatter \
 			sed '1,/---/d' "$$cmd" >> "$$target"; \
-			echo "  ✓ Prompt: $$name.md"; \
 		fi; \
 	done
-	@# Create or update AGENTS.md with agents context (Codex standard)
 	@echo ""
 	@echo -e "$(GREEN)Creating AGENTS.md with developer kit context:$(NC)"
 	@echo "# Developer Kit for Codex CLI" > $(CODEX_CONFIG)/AGENTS.md
@@ -294,7 +290,12 @@ install-codex:
 			if [ -z "$$desc" ]; then \
 				desc=$$(head -1 "$$cmd" | sed 's/^# *//'); \
 			fi; \
-			echo "- \`/prompts:$$name\`: $$desc" >> $(CODEX_CONFIG)/AGENTS.md; \
+			arg_hint=$$(grep -m1 "^argument-hint:" "$$cmd" 2>/dev/null | sed 's/^argument-hint: *//'); \
+			if [ -n "$$arg_hint" ]; then \
+				echo "- \`/prompts:$$name $$arg_hint\`: $$desc" >> $(CODEX_CONFIG)/AGENTS.md; \
+			else \
+				echo "- \`/prompts:$$name\`: $$desc" >> $(CODEX_CONFIG)/AGENTS.md; \
+			fi; \
 		fi; \
 	done
 	@echo "" >> $(CODEX_CONFIG)/AGENTS.md

@@ -1,5 +1,6 @@
 ---
 description: Recover from a broken state - diagnose issues, revert if needed, restore working state
+argument-hint: [issue-description]
 allowed-tools: Read, Write, Edit, Bash
 ---
 

@@ -1,5 +1,6 @@
 ---
 description: Verify that tasks.md considers existing codebase implementations and integration opportunities before execution.
+argument-hint: [optional-criteria]
 ---
 
 ## User Input
