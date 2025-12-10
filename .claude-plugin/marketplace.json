@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Developer Kit for building applications with Claude Code using best practices and patterns.",
-    "version": "1.16.0"
+    "version": "1.17.0"
   },
   "plugins": [
     {
@@ -64,7 +64,8 @@
         "./skills/aws-java/aws-sdk-java-v2-messaging",
         "./skills/aws-java/aws-sdk-java-v2-rds",
         "./skills/aws-java/aws-sdk-java-v2-s3",
-        "./skills/aws-java/aws-sdk-java-v2-secrets-manager"
+        "./skills/aws-java/aws-sdk-java-v2-secrets-manager",
+        "./skills/typescript-docs"
       ]
     }
   ]
