@@ -37,6 +37,7 @@ Parse $ARGUMENTS to detect the optional `--lang` parameter:
 - **Read files identified by agents**: When launching agents, ask them to return lists of the most important files to read. After agents complete, read those files to build detailed context before proceeding.
 - **Simple and elegant**: Prioritize readable, maintainable, architecturally sound code
 - **Use TodoWrite**: Track all progress throughout
+- **No time estimates**: DO NOT provide or request time estimates or implementation timelines at any phase
 
 ---
 
@@ -61,10 +62,7 @@ Parse $ARGUMENTS to detect the optional `--lang` parameter:
 **Goal**: Understand relevant existing code and patterns at both high and low levels
 
 **Actions**:
-1. Use the Task tool to launch 2-3 explorer subagents in parallel (select agent based on `--lang` parameter). Each with different prompts:
-   - Trace through the code comprehensively and focus on getting a comprehensive understanding of abstractions, architecture and flow of control
-   - Target a different aspect of the codebase (eg. similar features, high level understanding, architectural understanding, user experience, etc.)
-   - Include a list of 5-10 key files to read
+1. Use the Task tool to launch a single explorer subagent (select agent based on `--lang` parameter) to comprehensively trace through the code and provide a prioritized list of key files to read.
 
    **Example Task tool usage**:
 ```
@@ -107,13 +105,10 @@ If the user says "whatever you think is best", provide your recommendation and g
 **Goal**: Design multiple implementation approaches with different trade-offs
 
 **Actions**:
-1. Use the Task tool to launch 2-3 architect subagents in parallel (select agent based on `--lang` parameter) with different focuses:
-   - minimal changes (smallest change, maximum reuse)
-   - clean architecture (maintainability, elegant abstractions)
-   - pragmatic balance (speed + quality)
-2. Review all approaches and form your opinion on which fits best for this specific task (consider: small fix vs large feature, urgency, complexity, team context)
-3. Present to user: brief summary of each approach, trade-offs comparison, **your recommendation with reasoning**, concrete implementation differences
-4. **Use the AskUserQuestion tool to ask user which approach they prefer**
+1. Use the Task tool to launch a single pragmatic architect subagent (select agent based on `--lang` parameter) focused on a balanced, pragmatic approach (speed + quality).
+2. Review the pragmatic approach and form your recommendation based on task context (consider: small fix vs large feature, urgency, complexity, team context).
+3. Present to user: brief summary of the pragmatic approach, trade-offs, and concrete implementation differences.
+4. **Use the AskUserQuestion tool to ask user whether they approve the pragmatic approach or want an alternative**
 
 ---
 
@@ -138,10 +133,7 @@ If the user says "whatever you think is best", provide your recommendation and g
 **Goal**: Ensure code is simple, DRY, elegant, easy to read, and functionally correct
 
 **Actions**:
-1. Use the Task tool to launch 3 code-reviewer subagents in parallel (select agent based on `--lang` parameter) with different focuses:
-   - simplicity/DRY/elegance
-   - bugs/functional correctness
-   - project conventions/abstractions
+1. Use the Task tool to launch a single code-reviewer subagent (select agent based on `--lang` parameter) focused on a balanced review covering simplicity, correctness, and conventions.
 2. Consolidate findings and identify highest severity issues that you recommend fixing
 3. **Present findings to user and ask what they want to do** (fix now, fix later, or proceed as-is)
 4. Address issues based on user decision

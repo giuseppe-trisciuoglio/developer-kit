@@ -7,8 +7,8 @@
 multiple languages and frameworks. It includes specialized agents for code review, testing patterns, REST API design,
 and AI integration.
 
-**50 Total Skills** — Comprehensive coverage of Spring Boot, testing, AI integration, cloud development, AI
-engineering patterns, and documentation generation
+**55 Total Skills** — Comprehensive coverage of Spring Boot, testing, AI integration, cloud development, AI
+engineering patterns, frontend development, backend development (NestJS), and documentation generation
 
 ## 🚀 Quick Start
 
@@ -75,7 +75,7 @@ make install-copilot
 ```
 
 **Features:**
-- **14 Specialized Agents**: Code review, architecture, security, testing, debugging experts
+- **Specialized Agents**: Code review, architecture, security, testing, debugging experts
 - **Usage**: `/agent` to select agents or mention in prompts
 - **Integration**: Works with Copilot's native agent system
 
@@ -91,8 +91,8 @@ make install-opencode
 ```
 
 **Features:**
-- **14 Development Agents**: Full suite of specialized agents
-- **32 Custom Commands**: From code generation to debugging and security reviews
+- **Development Agents**: Full suite of specialized agents
+- **Custom Commands**: From code generation to debugging and security reviews
 - **Usage**: `@agent-name` for agents, `/command-name` for commands
 - **Discovery**: Tab completion and command discovery
 
@@ -108,8 +108,8 @@ make install-codex
 ```
 
 **Features:**
-- **32 Custom Prompts**: Specialized commands for development workflows
-- **14 Agents Documentation**: Complete agent descriptions and usage
+- **Custom Prompts**: Specialized commands for development workflows
+- **Agents Documentation**: Complete agent descriptions and usage
 - **Usage**: `/prompts:<name>` to invoke custom commands
 
 ### Management Commands
@@ -360,6 +360,21 @@ my-project/
 | **[prompt-engineering](skills/ai/prompt-engineering/SKILL.md)** | Advanced prompt design patterns         | CoT, few-shot, system prompts, optimization frameworks   |
 | **[rag](skills/ai/rag/SKILL.md)**                               | Retrieval-Augmented Generation patterns | Vector search, document processing, embedding strategies |
 
+### Frontend Development Skills
+
+| Skill                                                                          | Purpose                             | Key Topics                                                    |
+|--------------------------------------------------------------------------------|-------------------------------------|---------------------------------------------------------------|
+| **[react](skills/react/SKILL.md)**                                              | React development patterns          | Components, hooks, state management, performance optimization |
+| **[shadcn-ui](skills/shadcn-ui/SKILL.md)**                                      | Modern UI component library         | Component design, theming, accessibility, Tailwind CSS       |
+| **[tailwind-css](skills/tailwind-css/SKILL.md)**                                | Utility-first CSS framework         | Responsive design, utility classes, custom components         |
+| **[typescript-docs](skills/typescript-docs/SKILL.md)**                         | TypeScript documentation patterns   | Type definitions, API docs, JSDoc, TSDoc                     |
+
+### Backend Development Skills
+
+| Skill                                                             | Purpose                       | Key Topics                                                    |
+|-------------------------------------------------------------------|-------------------------------|---------------------------------------------------------------|
+| **[nestjs](skills/nestjs/SKILL.md)**                             | NestJS framework patterns     | Controllers, providers, modules, authentication, Drizzle ORM  |
+
 ## 🤖 Available Agents
 
 | Agent                                                                                          | Specialization                 | Best For                                                            |
@@ -376,10 +391,23 @@ my-project/
 | **[java-tutorial-engineer](agents/java-tutorial-engineer.md)**                                 | Java/Spring Boot tutorials     | Educational content, hands-on learning, step-by-step guides         |
 | **[prompt-engineering-expert](agents/prompt-engineering-expert.md)**                           | Prompt engineering             | LLM prompt optimization, CoT, few-shot patterns                     |
 | **[general-debugger](agents/general-debugger.md)**                                             | Debugging and root cause analysis| Error troubleshooting, test failures, performance issues             |
+| **[react-frontend-development-expert](agents/react-frontend-development-expert.md)**           | React frontend development     | Component architecture, hooks, state management, performance       |
+| **[nestjs-backend-development-expert](agents/nestjs-backend-development-expert.md)**           | NestJS backend development     | API development, microservices, authentication, testing             |
+| **[nestjs-code-review-expert](agents/nestjs-code-review-expert.md)**                           | NestJS code review             | Architecture review, security, performance, best practices         |
+| **[nestjs-unit-testing-expert](agents/nestjs-unit-testing-expert.md)**                         | NestJS testing                 | Unit tests, integration tests, e2e testing with Jest                |
+| **[nestjs-database-expert](agents/nestjs-database-expert.md)**                                 | NestJS database patterns       | TypeORM, Drizzle ORM, database design, migrations                  |
+| **[nestjs-security-expert](agents/nestjs-security-expert.md)**                                 | NestJS security analysis       | Authentication, authorization, JWT, OAuth2, security best practices |
+| **[typescript-documentation-expert](agents/typescript-documentation-expert.md)**               | TypeScript documentation        | API documentation, type definitions, code examples                  |
+| **[typescript-refactor-expert](agents/typescript-refactor-expert.md)**                         | TypeScript refactoring         | Modern patterns, performance optimization, code cleanup            |
+| **[typescript-security-expert](agents/typescript-security-expert.md)**                         | TypeScript security analysis   | OWASP Top 10, npm audit, secure coding practices                    |
+| **[typescript-software-architect-review](agents/typescript-software-architect-review.md)**     | TypeScript architecture review | Design patterns, scalability, module organization                  |
+| **[general-code-explorer](agents/general-code-explorer.md)**                                   | Code exploration and analysis  | Understanding codebases, tracing implementations                    |
+| **[general-code-reviewer](agents/general-code-reviewer.md)**                                   | General code review            | Code quality, best practices, maintainability                      |
+| **[general-software-architect](agents/general-software-architect.md)**                         | Software architecture design   | System design, patterns, technology selection                      |
 
 ## ✨ Key Features
 
-**Specialized** — Domain-specific agents for code review, testing, and AI development tailored to Java/Spring Boot
+**Specialized** — Domain-specific agents for code review, testing, AI development, and full-stack development covering Java/Spring Boot, TypeScript/Node.js, React, NestJS, with specialized security and database expertise
 
 **Composable** — Skills stack together automatically. Claude identifies which skills are needed and uses them in
 combination
@@ -387,50 +415,6 @@ combination
 **Portable** — Use the same skills across Claude.ai, Claude Code CLI, Claude Desktop, and the Claude API
 
 **Efficient** — Skills load on-demand, consuming minimal tokens until they're actively used
-
-## 🏗️ Architecture & Patterns
-
-This kit promotes a **feature-based, DDD-inspired architecture** for Java/Spring Boot projects:
-
-```
-feature/
-├── domain/              # Domain-pure logic
-│   ├── model/           # Spring-free entities
-│   ├── repository/      # Domain ports (interfaces)
-│   └── service/         # Domain services
-├── application/         # Use cases & business logic
-│   └── service/         # Application services (@Service)
-├── presentation/        # HTTP layer
-│   ├─ rest/            # REST controllers & mappers
-│   └── dto/             # Immutable DTOs/records
-└── infrastructure/      # Technical adapters
-    └── persistence/     # JPA repositories & adapters
-```
-
-### Core Principles
-
-- ✅ Constructor injection exclusively (never field injection)
-- ✅ Java records (16+) preferred for DTOs
-- ✅ Repository pattern with domain interfaces
-- ✅ Immutability throughout (`final` fields, `@Value`, records)
-- ✅ Clean separation: domain ↔ framework
-
-## 🔧 Technology Stack
-
-| Category                | Technology                             | Version             |
-|-------------------------|----------------------------------------|---------------------|
-| **Java**                | OpenJDK/GraalVM                        | 16+                 |
-| **Framework**           | Spring Boot                            | 3.x                 |
-| **Testing**             | JUnit 5 (Jupiter) + Mockito + AssertJ  | 5.x / 4.x+          |
-| **Integration Testing** | Testcontainers                         | 1.19.0+             |
-| **Data**                | Spring Data JPA                        | Jakarta Persistence |
-| **Graph Database**      | Spring Data Neo4j                      | 7.x                 |
-| **Validation**          | Jakarta Validation                     | 3.0+                |
-| **Utilities**           | Lombok                                 | 1.18.30+            |
-| **Messaging**           | Spring Cloud Stream                    | 4.x                 |
-| **AWS SDK**             | AWS SDK for Java v2                    | 2.20+               |
-| **Cloud**               | AWS (RDS Aurora, S3, Lambda, DynamoDB) | Latest              |
-| **AI/ML**               | LangChain4J, AWS Bedrock               | Latest              |
 
 ## 🎯 Use Cases
 
@@ -630,7 +614,7 @@ practices.
 ## 🌍 Language Roadmap
 
 - **✅ Java/Spring Boot** — Comprehensive patterns and agents
-- **📋 TypeScript** — Node.js, NestJS, Express patterns (planned)
+- **✅ TypeScript/Node.js** — React, NestJS, Express patterns, modern frontend development
 - **📋 Python** — Django, FastAPI patterns (planned)
 - **📋 PHP** — Laravel, Symfony patterns (planned)
 
@@ -687,6 +671,8 @@ Comprehensive documentation for all Developer Kit components:
   integration, AI services, RAG implementation, vector stores, and MCP server patterns
 - **[AWS Java SDK Skills Guide](docs/guide-skills-aws-java.md)** - Cloud development with AWS services including core
   SDK setup, storage (S3), databases (DynamoDB, RDS), compute (Lambda), messaging (SQS/SNS), and security services
+- **[Frontend Skills Guide](docs/guide-skills-frontend.md)** - Best practices and reusable patterns for modern frontend development (React, Vue, Angular, testing, performance, accessibility)
+- **[NestJS Skills Guide](docs/guide-skills-nestjs.md)** - Comprehensive NestJS framework patterns including modules, controllers, providers, authentication, security, database integration with Drizzle ORM, and testing strategies
 
 ### Component Guides
 
@@ -728,6 +714,29 @@ For a complete history of changes, please see the dedicated [CHANGELOG.md](CHANG
 
 Recent highlights:
 
+- **v1.17.0**:
+  - **New Frontend Development Skills**: Added 4 comprehensive skills for modern frontend development
+    - **react**: React development patterns, hooks, state management, performance optimization
+    - **shadcn-ui**: Modern UI component library with Radix UI primitives and Tailwind CSS
+    - **tailwind-css**: Utility-first CSS framework for rapid UI development
+    - **typescript-docs**: TypeScript documentation patterns and type definition best practices
+  - **New TypeScript & Frontend Agents**: Added 8 specialized agents for full-stack TypeScript development
+    - **react-frontend-development-expert**: React architecture, hooks, state management, performance
+    - **nestjs-backend-development-expert**: NestJS modules, microservices, authentication, APIs
+    - **nestjs-code-review-expert**: NestJS security, performance, architecture review
+    - **nestjs-unit-testing-expert**: Unit, integration, and e2e testing with Jest
+    - **nestjs-database-expert**: TypeORM, Drizzle ORM, database design, migrations
+    - **nestjs-security-expert**: Authentication, authorization, JWT, OAuth2, security best practices
+    - **typescript-documentation-expert**: JSDoc/TSDoc, API documentation, type definitions
+    - **typescript-refactor-expert**: Modern patterns, performance optimization, legacy migration
+    - **typescript-security-expert**: OWASP Top 10, npm audit, secure coding practices
+    - **typescript-software-architect-review**: Design patterns, scalability, module organization
+  - **Updated Documentation**: Complete frontend skills guide and expanded agents documentation
+  - **Expanded Support**: Now covering full-stack development with Java/Spring Boot, TypeScript/Node.js, React, and NestJS
+- **v1.16.1**:
+  - Documentation updates and minor bug fixes
+  - Improved skill organization and categorization
+  - Updated agent descriptions for better discoverability
 - **v1.15.0**:
   - **New comprehensive Makefile with multi-CLI support** for GitHub Copilot CLI, OpenCode CLI, and Codex CLI
   - **Interactive Claude Code installer** (`make install-claude`) with category-based skill selection, conflict handling, and project-specific installation
