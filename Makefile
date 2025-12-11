@@ -241,27 +241,19 @@ install-codex:
 	@mkdir -p $(CODEX_CONFIG)
 	@mkdir -p $(CODEX_PROMPTS)
 	@echo -e "$(GREEN)Installing custom prompts (slash commands):$(NC)"
+	@# Codex uses ~/.codex/prompts/ directory for custom commands
+	@# Commands are invoked with /prompts:<name> syntax
 	@for cmd in $(COMMANDS_DIR)/*.md; do \
 		if [ -f "$$cmd" ]; then \
 			name=$$(basename "$$cmd" .md); \
 			target="$(CODEX_PROMPTS)/$$name.md"; \
-			echo "Processing $$name..."; \
-			echo "---" > "$$target"; \
-			desc=$$(grep -m1 "^description:" "$$cmd" 2>/dev/null | sed 's/^description: *//'); \
-			if [ -z "$$desc" ]; then \
-				desc=$$(head -1 "$$cmd" | sed 's/^# *//'); \
-			fi; \
-			echo "description: $$desc" >> "$$target"; \
+			cp "$$cmd" "$$target"; \
 			arg_hint=$$(grep -m1 "^argument-hint:" "$$cmd" 2>/dev/null | sed 's/^argument-hint: *//'); \
 			if [ -n "$$arg_hint" ]; then \
-				echo "argument-hint: $$arg_hint" >> "$$target"; \
-				echo "  ✓ Prompt: $$name.md [arguments: $$arg_hint]"; \
+				echo "  ✓ Prompt: $$name [arguments: $$arg_hint]"; \
 			else \
-				echo "  ⚠ Prompt: $$name.md [missing argument-hint]"; \
+				echo "  ✓ Prompt: $$name"; \
 			fi; \
-			echo "---" >> "$$target"; \
-			echo "" >> "$$target"; \
-			sed '1,/---/d' "$$cmd" >> "$$target"; \
 		fi; \
 	done
 	@echo ""
