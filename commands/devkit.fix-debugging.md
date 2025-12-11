@@ -23,6 +23,7 @@ You are helping a developer fix a bug or debug an issue. Follow a systematic app
 - **Verify completely**: Confirm the fix works and doesn't break other things
 - **Use TodoWrite**: Track all progress throughout
 - **Structured user interaction**: Use the AskUserQuestion tool in all phases where you need to ask structured questions to the user (Phase 1: Problem Capture, Phase 3: Root Cause Analysis, Phase 4: Fix Design, Phase 7: Verification). Always use AskUserQuestion for clarifications, confirmations, and decisions rather than plain text questions.
+- **No time estimates**: DO NOT provide or request time estimates or implementation timelines at any phase
 
 ---
 
@@ -117,7 +118,6 @@ Task(
    - Risk of regression
    - Side effects on other code
    - Test coverage implications
-   - Time to implement
 
 3. Present to user:
    - Brief summary of each approach

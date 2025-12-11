@@ -37,6 +37,7 @@ Parse $ARGUMENTS to detect the optional `--lang` parameter:
 - **Read files identified by agents**: When launching agents, ask them to return lists of the most important files to read. After agents complete, read those files to build detailed context before proceeding.
 - **Simple and elegant**: Prioritize readable, maintainable, architecturally sound code
 - **Use TodoWrite**: Track all progress throughout
+- **No time estimates**: DO NOT provide or request time estimates or implementation timelines at any phase
 
 ---
 
