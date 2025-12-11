@@ -16,6 +16,8 @@ This guide provides comprehensive documentation for all specialized agents (suba
 
 ---
 
+Note: For frontend-specific skills and patterns see the Frontend Skills Guide: [docs/guide-skills-frontend.md](../docs/guide-skills-frontend.md)
+
 ## Overview
 
 Agents are specialized AI assistants with dedicated context windows, custom prompts, and specific tool access. They enable efficient problem-solving by delegating task-specific work to focused experts.

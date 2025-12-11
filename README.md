@@ -687,6 +687,7 @@ Comprehensive documentation for all Developer Kit components:
   integration, AI services, RAG implementation, vector stores, and MCP server patterns
 - **[AWS Java SDK Skills Guide](docs/guide-skills-aws-java.md)** - Cloud development with AWS services including core
   SDK setup, storage (S3), databases (DynamoDB, RDS), compute (Lambda), messaging (SQS/SNS), and security services
+- **[Frontend Skills Guide](docs/guide-skills-frontend.md)** - Best practices and reusable patterns for modern frontend development (React, Vue, Angular, testing, performance, accessibility)
 
 ### Component Guides
 
