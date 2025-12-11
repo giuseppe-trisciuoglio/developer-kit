@@ -1,7 +1,7 @@
 ---
 name: explorer
 description: Deeply analyzes existing codebase features by tracing execution paths, mapping architecture layers, understanding patterns and abstractions, and documenting dependencies
-tools: Read, Write, Edit, Glob, Grep, Bash
+tools: [Read, Write, Edit, Glob, Grep, Bash]
 model: inherit
 ---
 
