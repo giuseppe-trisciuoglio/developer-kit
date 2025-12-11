@@ -65,6 +65,10 @@
         "./skills/aws-java/aws-sdk-java-v2-rds",
         "./skills/aws-java/aws-sdk-java-v2-s3",
         "./skills/aws-java/aws-sdk-java-v2-secrets-manager",
+        "./skills/nestjs",
+        "./skills/react",
+        "./skills/shadcn-ui",
+        "./skills/tailwind-css",
         "./skills/typescript-docs"
       ]
     }

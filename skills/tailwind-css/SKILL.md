@@ -1,14 +1,14 @@
 ---
-name: tailwind-css-5-patterns
-description: Comprehensive Tailwind CSS 5 utility-first styling patterns including responsive design, layout utilities, flexbox, grid, spacing, typography, colors, and modern CSS best practices. Use when styling components, building responsive layouts, or implementing design systems.
-language: html,tsx,jsx
+name: tailwind-css-patterns
+description: Comprehensive Tailwind CSS utility-first styling patterns including responsive design, layout utilities, flexbox, grid, spacing, typography, colors, and modern CSS best practices. Use when styling React/Vue/Svelte components, building responsive layouts, implementing design systems, or optimizing CSS workflow.
+language: html,tsx,jsx,vue,svelte
 framework: tailwindcss
 license: MIT
 ---
 
-# Tailwind CSS 5 Development Patterns
+# Tailwind CSS Development Patterns
 
-Expert guide for building modern, responsive user interfaces with Tailwind CSS 5 utility-first framework.
+Expert guide for building modern, responsive user interfaces with Tailwind CSS utility-first framework. Covers v4.1+ features including CSS-first configuration, custom utilities, and enhanced developer experience.
 
 ## When to Use
 
@@ -510,27 +510,192 @@ module.exports = {
 <div class="animate-bounce">Bouncing</div>
 ```
 
+## Performance Optimization
+
+### Bundle Size Optimization
+
+Configure content sources for optimal purging:
+
+```javascript
+// tailwind.config.js
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx,vue,svelte}",
+    "./node_modules/@mycompany/ui-lib/**/*.{js,ts,jsx,tsx}",
+  ],
+  // Enable JIT for faster builds
+  jit: true,
+}
+```
+
+### CSS Optimization Techniques
+
+```html
+<!-- Use content-visibility for offscreen content -->
+<div class="content-visibility-auto">
+  <div>Heavy content that's initially offscreen</div>
+</div>
+
+<!-- Optimize images with aspect-ratio -->
+<img class="aspect-video w-full object-cover" src="video.jpg" alt="Video thumbnail" />
+
+<!-- Use contain for paint optimization -->
+<div class="contain-layout">
+  Complex layout that doesn't affect outside elements
+</div>
+```
+
+### Development Performance
+
+```css
+/* Enable CSS-first configuration in v4.1 */
+@import "tailwindcss";
+
+@theme {
+  /* Define once, use everywhere */
+  --color-brand: #3b82f6;
+  --font-mono: "Fira Code", monospace;
+}
+
+/* Critical CSS for above-the-fold content */
+@layer critical {
+  .hero-title {
+    @apply text-4xl md:text-6xl font-bold;
+  }
+}
+```
+
+## Accessibility Guidelines
+
+### Focus Management
+
+```html
+<!-- Custom focus styles that meet WCAG AA -->
+<button class="focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-offset-2">
+  Accessible Button
+</button>
+
+<!-- Skip links for keyboard navigation -->
+<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4">
+  Skip to main content
+</a>
+```
+
+### Screen Reader Support
+
+```html
+<!-- Semantic buttons with ARIA labels -->
+<button aria-label="Close dialog" class="p-2">
+  <svg class="w-5 h-5" fill="none" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+  </svg>
+</button>
+
+<!-- Descriptive links -->
+<a href="/docs" aria-describedby="docs-description">
+  Documentation
+</a>
+<p id="docs-description" class="sr-only">
+  Learn how to use our API and integration guides
+</p>
+```
+
+### Color Contrast
+
+```html
+<!-- Ensure sufficient contrast ratios -->
+<div class="bg-gray-900 text-white">
+  High contrast text (WCAG AAA)
+</div>
+
+<div class="bg-blue-500 text-blue-100">
+  Good contrast on colored backgrounds
+</div>
+
+<!-- Use contrast utilities for testing -->
+<div class="bg-red-500 text-white contrast-more:bg-red-600 contrast-more:text-red-100">
+  Adjusts for high contrast mode
+</div>
+```
+
+### Motion Preferences
+
+```html
+<!-- Respect prefers-reduced-motion -->
+<div class="transform transition-transform motion-reduce:transition-none">
+  Doesn't animate when user prefers reduced motion
+</div>
+
+<!-- Conditional animations -->
+<div class="animate-pulse motion-safe:hover:animate-spin">
+  Only animates when motion is preferred
+</div>
+```
+
 ## Best Practices
 
 1. **Mobile-First**: Start with mobile styles, add responsive prefixes for larger screens
 2. **Consistent Spacing**: Use Tailwind's spacing scale (4, 8, 12, 16, etc.)
 3. **Color Palette**: Stick to Tailwind's color system for consistency
 4. **Component Extraction**: Extract repeated patterns into components
-5. **JIT Mode**: Use Just-In-Time mode for development (default in v3+)
-6. **Purging**: Configure content paths to remove unused CSS in production
-7. **Custom Classes**: Use @apply sparingly, prefer utility composition
-8. **Semantic HTML**: Use proper HTML elements with Tailwind classes
+5. **Utility Composition**: Prefer utility classes over @apply for better maintainability
+6. **Semantic HTML**: Use proper HTML elements with Tailwind classes
+7. **Performance**: Configure content paths correctly for optimal CSS purging
+8. **Accessibility**: Include focus styles, ARIA labels, and respect user preferences
+9. **CSS-First Config**: Use @theme directive for v4.1+ instead of JavaScript config
+10. **Custom Utilities**: Create reusable utilities with @utility for complex patterns
 
 ## Configuration
 
-### tailwind.config.js
+### CSS-First Configuration (v4.1+)
+
+Use the `@theme` directive for CSS-based configuration:
+
+```css
+/* src/styles.css */
+@import "tailwindcss";
+
+@theme {
+  /* Custom colors */
+  --color-brand-50: #f0f9ff;
+  --color-brand-500: #3b82f6;
+  --color-brand-900: #1e3a8a;
+
+  /* Custom fonts */
+  --font-display: "Inter", system-ui, sans-serif;
+  --font-mono: "Fira Code", monospace;
+
+  /* Custom spacing */
+  --spacing-128: 32rem;
+
+  /* Custom animations */
+  --animate-fade-in: fadeIn 0.5s ease-in-out;
+
+  /* Custom breakpoints */
+  --breakpoint-3xl: 1920px;
+}
+
+/* Define custom animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Custom utilities */
+@utility content-auto {
+  content-visibility: auto;
+}
+```
+
+### JavaScript Configuration (Legacy)
 
 ```javascript
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
     "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
+    "./src/**/*.{js,ts,jsx,tsx,vue,svelte}",
   ],
   theme: {
     extend: {
@@ -551,6 +716,55 @@ export default {
   },
   plugins: [],
 }
+```
+
+### Vite Integration (v4.1+)
+
+```javascript
+// vite.config.ts
+import { defineConfig } from 'vite'
+import tailwindcss from '@tailwindcss/vite'
+
+export default defineConfig({
+  plugins: [
+    tailwindcss(),
+  ],
+})
+```
+
+## Advanced v4.1 Features
+
+### Native CSS Custom Properties
+
+```html
+<div class="bg-[var(--color-brand-500)] text-[var(--color-white)]">
+  Using CSS custom properties directly
+</div>
+```
+
+### Enhanced Arbitrary Values
+
+```html
+<!-- Complex grid with custom tracks -->
+<div class="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4">
+  Responsive grid without custom CSS
+</div>
+
+<!-- Custom animation timing -->
+<div class="animate-bounce ease-[cubic-bezier(0.68,-0.55,0.265,1.55)]">
+  Bounce with custom easing
+</div>
+```
+
+### Container Queries
+
+```html
+<!-- Component that responds to its container size -->
+<div class="@container">
+  <div class="@lg:text-xl @2xl:text-2xl">
+    Text size based on container, not viewport
+  </div>
+</div>
 ```
 
 ## Common Patterns with React/JSX

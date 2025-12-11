@@ -16,6 +16,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Corrected file path checking for Codex CLI status command
 - Improved error handling in prompt installation process
 
+## [1.17.0] - 2025-12-11
+
+### Added
+- **New Frontend Development Skills** (4 new skills):
+  - `react`: React development patterns, hooks, state management, performance optimization
+  - `shadcn-ui`: Modern UI component library with Radix UI primitives and Tailwind CSS
+  - `tailwind-css`: Utility-first CSS framework for rapid UI development
+  - `typescript-docs`: TypeScript documentation patterns and type definition best practices
+- **New TypeScript & Frontend Agents** (8 new agents):
+  - `react-frontend-development-expert`: React architecture, hooks, state management, performance
+  - `nestjs-backend-development-expert`: NestJS modules, microservices, authentication, APIs
+  - `nestjs-code-review-expert`: NestJS security, performance, architecture review
+  - `nestjs-unit-testing-expert`: Unit, integration, and e2e testing with Jest
+  - `typescript-documentation-expert`: JSDoc/TSDoc, API documentation, type definitions
+  - `typescript-refactor-expert`: Modern patterns, performance optimization, legacy migration
+  - `typescript-security-expert`: OWASP Top 10, npm audit, secure coding practices
+  - `typescript-software-architect-review`: Design patterns, scalability, module organization
+- **New General Purpose Agents** (3 new agents):
+  - `general-code-explorer`: Code tracing, architecture mapping, dependency documentation
+  - `general-code-reviewer`: Code quality, maintainability, best practices across languages
+  - `general-software-architect`: System design, technology selection, scalability patterns
+- **New Documentation**:
+  - Complete Frontend Skills Guide (`docs/guide-skills-frontend.md`) with comprehensive patterns and examples
+  - Updated Agents Guide with new TypeScript & Frontend Development section
+- **Expanded Language Support**: TypeScript/Node.js added as fully supported language stack
+
+### Changed
+- Updated total skills count from 50 to 54
+- Updated total agents count from 12 to 22
+- Expanded Key Features to reflect full-stack development capabilities
+- Updated Language Roadmap to show TypeScript/Node.js as completed
+
+### Documentation
+- Completely rewrote `docs/guide-skills-frontend.md` with practical examples and best practices
+- Added TypeScript integration examples in frontend guide
+- Updated agents documentation with comprehensive descriptions of all new agents
+
 ## [1.16.1] - 2025-12-08
 
 ### Added

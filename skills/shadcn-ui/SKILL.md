@@ -1,23 +1,73 @@
 ---
-name: shadcn-ui-components
-description: shadcn/ui component library patterns including installation, usage, and customization of accessible UI components built with Radix UI and Tailwind CSS. Use when building forms, buttons, dialogs, dropdowns, and other UI components with React and TypeScript.
+name: shadcn-ui
+description: Complete shadcn/ui component library guide including installation, configuration, and implementation of accessible React components. Use when setting up shadcn/ui, installing components, building forms with React Hook Form and Zod, customizing themes with Tailwind CSS, or implementing UI patterns like buttons, dialogs, dropdowns, tables, and complex form layouts.
 language: typescript,tsx
-framework: react,tailwindcss
+framework: react,nextjs,tailwindcss
 license: MIT
+allowed-tools: Read, Write, Bash, Edit, Glob
 ---
 
 # shadcn/ui Component Patterns
 
 Expert guide for building accessible, customizable UI components with shadcn/ui, Radix UI, and Tailwind CSS.
 
+## Table of Contents
+
+- [When to Use](#when-to-use)
+- [Quick Start](#quick-start)
+- [Installation & Setup](#installation--setup)
+- [Project Configuration](#project-configuration)
+- [Core Components](#core-components)
+  - [Button](#button-component)
+  - [Input & Form Fields](#input--form-fields)
+  - [Forms with Validation](#forms-with-validation)
+  - [Card](#card-component)
+  - [Dialog (Modal)](#dialog-modal-component)
+  - [Select (Dropdown)](#select-dropdown-component)
+  - [Sheet (Slide-over)](#sheet-slide-over-component)
+  - [Menubar & Navigation](#menubar--navigation)
+  - [Table](#table-component)
+  - [Toast Notifications](#toast-notifications)
+- [Advanced Patterns](#advanced-patterns)
+- [Customization](#customization)
+- [Next.js Integration](#nextjs-integration)
+- [Best Practices](#best-practices)
+- [Common Component Combinations](#common-component-combinations)
+
 ## When to Use
 
-- Installing and configuring shadcn/ui components
+- Setting up a new project with shadcn/ui
+- Installing or configuring individual components
 - Building forms with React Hook Form and Zod validation
-- Creating accessible UI components (buttons, dialogs, dropdowns)
+- Creating accessible UI components (buttons, dialogs, dropdowns, sheets)
 - Customizing component styling with Tailwind CSS
 - Implementing design systems with shadcn/ui
-- Building modern React applications with TypeScript
+- Building Next.js applications with TypeScript
+- Creating complex layouts and data displays
+
+## Quick Start
+
+For new projects, use the automated setup:
+
+```bash
+# Create Next.js project with shadcn/ui
+npx create-next-app@latest my-app --typescript --tailwind --eslint --app
+cd my-app
+npx shadcn@latest init
+
+# Install essential components
+npx shadcn@latest add button input form card dialog select
+```
+
+For existing projects:
+
+```bash
+# Install dependencies
+npm install tailwindcss-animate class-variance-authority clsx tailwind-merge lucide-react
+
+# Initialize shadcn/ui
+npx shadcn@latest init
+```
 
 ## What is shadcn/ui?
 
@@ -68,6 +118,213 @@ npm install @radix-ui/react-slot
 
 # Copy component code from ui.shadcn.com
 # Place in src/components/ui/
+```
+
+## Project Configuration
+
+### Required Dependencies
+
+```json
+{
+  "dependencies": {
+    "@radix-ui/react-accordion": "^1.1.2",
+    "@radix-ui/react-alert-dialog": "^1.0.5",
+    "@radix-ui/react-dialog": "^1.0.5",
+    "@radix-ui/react-dropdown-menu": "^2.0.6",
+    "@radix-ui/react-label": "^2.0.2",
+    "@radix-ui/react-select": "^2.0.0",
+    "@radix-ui/react-separator": "^1.0.3",
+    "@radix-ui/react-slot": "^1.0.2",
+    "@radix-ui/react-toast": "^1.1.5",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.0.0",
+    "lucide-react": "^0.294.0",
+    "tailwind-merge": "^2.0.0",
+    "tailwindcss-animate": "^1.0.7"
+  }
+}
+```
+
+### TSConfig Configuration
+
+```json
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "es6"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/components/*": ["./src/components/*"],
+      "@/lib/*": ["./src/lib/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+```
+
+### Tailwind Configuration
+
+```js
+// tailwind.config.js
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  darkMode: ["class"],
+  content: [
+    './pages/**/*.{ts,tsx}',
+    './components/**/*.{ts,tsx}',
+    './app/**/*.{ts,tsx}',
+    './src/**/*.{ts,tsx}',
+  ],
+  prefix: "",
+  theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
+    extend: {
+      colors: {
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      keyframes: {
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+      },
+    },
+  },
+  plugins: [require("tailwindcss-animate")],
+}
+```
+
+### CSS Variables (globals.css)
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
 ```
 
 ## Core Components
@@ -138,7 +395,9 @@ export function ButtonLoading() {
 }
 ```
 
-### Input Component
+### Input & Form Fields
+
+#### Input Component
 
 Installation:
 
@@ -188,7 +447,7 @@ export function InputWithButton() {
 }
 ```
 
-### Form Component with Validation
+### Forms with Validation
 
 Installation:
 
@@ -417,6 +676,149 @@ export function DialogDemo() {
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  )
+}
+```
+
+### Sheet (Slide-over) Component
+
+Installation:
+
+```bash
+npx shadcn@latest add sheet
+```
+
+Basic sheet:
+
+```tsx
+import { Button } from "@/components/ui/button"
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+
+export function SheetDemo() {
+  return (
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button variant="outline">Open Sheet</Button>
+      </SheetTrigger>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>Edit profile</SheetTitle>
+          <SheetDescription>
+            Make changes to your profile here. Click save when you're done.
+          </SheetDescription>
+        </SheetHeader>
+        <div className="grid gap-4 py-4">
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="name" className="text-right">
+              Name
+            </Label>
+            <Input id="name" value="Pedro Duarte" className="col-span-3" />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="username" className="text-right">
+              Username
+            </Label>
+            <Input id="username" value="@peduarte" className="col-span-3" />
+          </div>
+        </div>
+      </SheetContent>
+    </Sheet>
+  )
+}
+```
+
+Sheet with side placement:
+
+```tsx
+<Sheet>
+  <SheetTrigger asChild>
+    <Button variant="outline">Open Right Sheet</Button>
+  </SheetTrigger>
+  <SheetContent side="right">
+    <SheetHeader>
+      <SheetTitle>Settings</SheetTitle>
+      <SheetDescription>
+        Configure your application settings here.
+      </SheetDescription>
+    </SheetHeader>
+    {/* Settings content */}
+  </SheetContent>
+</Sheet>
+```
+
+### Menubar & Navigation
+
+#### Menubar Component
+
+Installation:
+
+```bash
+npx shadcn@latest add menubar
+```
+
+Basic menubar:
+
+```tsx
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarSeparator,
+  MenubarShortcut,
+  MenubarSub,
+  MenubarSubContent,
+  MenubarSubTrigger,
+  MenubarTrigger,
+} from "@/components/ui/menubar"
+
+export function MenubarDemo() {
+  return (
+    <Menubar>
+      <MenubarMenu>
+        <MenubarTrigger>File</MenubarTrigger>
+        <MenubarContent>
+          <MenubarItem>
+            New Tab <MenubarShortcut>⌘T</MenubarShortcut>
+          </MenubarItem>
+          <MenubarItem>
+            New Window <MenubarShortcut>⌘N</MenubarShortcut>
+          </MenubarItem>
+          <MenubarSeparator />
+          <MenubarItem>Share</MenubarItem>
+          <MenubarSeparator />
+          <MenubarItem>Print</MenubarItem>
+        </MenubarContent>
+      </MenubarMenu>
+      <MenubarMenu>
+        <MenubarTrigger>Edit</MenubarTrigger>
+        <MenubarContent>
+          <MenubarItem>
+            Undo <MenubarShortcut>⌘Z</MenubarShortcut>
+          </MenubarItem>
+          <MenubarItem>
+            Redo <MenubarShortcut>⌘Y</MenubarShortcut>
+          </MenubarItem>
+          <MenubarSeparator />
+          <MenubarSub>
+            <MenubarSubTrigger>Find</MenubarSubTrigger>
+            <MenubarSubContent>
+              <MenubarItem>Search the web</MenubarItem>
+              <MenubarItem>Find...</MenubarItem>
+              <MenubarItem>Find Next</MenubarItem>
+              <MenubarItem>Find Previous</MenubarItem>
+            </MenubarSubContent>
+          </MenubarSub>
+        </MenubarContent>
+      </MenubarMenu>
+    </Menubar>
   )
 }
 ```
@@ -704,6 +1106,313 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = "Button"
 
 export { Button, buttonVariants }
+```
+
+## Next.js Integration
+
+### App Router Setup
+
+For Next.js 13+ with App Router, ensure components use `"use client"` directive:
+
+```tsx
+// src/components/ui/button.tsx
+"use client"
+
+import * as React from "react"
+import { Slot } from "@radix-ui/react-slot"
+import { cva, type VariantProps } from "class-variance-authority"
+import { cn } from "@/lib/utils"
+
+// ... rest of component
+```
+
+### Layout Integration
+
+Add the Toaster to your root layout:
+
+```tsx
+// app/layout.tsx
+import { Toaster } from "@/components/ui/toaster"
+import "./globals.css"
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body className="min-h-screen bg-background font-sans antialiased">
+        {children}
+        <Toaster />
+      </body>
+    </html>
+  )
+}
+```
+
+### Server Components
+
+When using shadcn/ui components in Server Components, wrap them in a Client Component:
+
+```tsx
+// app/dashboard/page.tsx
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { ButtonClient } from "@/components/ui/button-client"
+
+export default function DashboardPage() {
+  return (
+    <div className="container mx-auto p-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Dashboard</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ButtonClient>Interactive Button</ButtonClient>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+```
+
+```tsx
+// src/components/ui/button-client.tsx
+"use client"
+
+import { Button } from "./button"
+
+export function ButtonClient(props: React.ComponentProps<typeof Button>) {
+  return <Button {...props} />
+}
+```
+
+### Route Handlers with Forms
+
+Create API routes for form submissions:
+
+```tsx
+// app/api/contact/route.ts
+import { NextRequest, NextResponse } from "next/server"
+import { z } from "zod"
+
+const contactSchema = z.object({
+  name: z.string().min(2),
+  email: z.string().email(),
+  message: z.string().min(10),
+})
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const validated = contactSchema.parse(body)
+
+    // Process form data
+    console.log("Form submission:", validated)
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { errors: error.errors },
+        { status: 400 }
+      )
+    }
+
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    )
+  }
+}
+```
+
+### Form with Server Action
+
+Using Next.js 14+ Server Actions:
+
+```tsx
+// app/contact/page.tsx
+"use client"
+
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import * as z from "zod"
+import { Button } from "@/components/ui/button"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { toast } from "@/components/ui/use-toast"
+
+const formSchema = z.object({
+  name: z.string().min(2),
+  email: z.string().email(),
+  message: z.string().min(10),
+})
+
+async function onSubmit(values: z.infer<typeof formSchema>) {
+  try {
+    const response = await fetch("/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(values),
+    })
+
+    if (!response.ok) throw new Error("Failed to submit")
+
+    toast({
+      title: "Success!",
+      description: "Your message has been sent.",
+    })
+  } catch (error) {
+    toast({
+      variant: "destructive",
+      title: "Error",
+      description: "Failed to send message. Please try again.",
+    })
+  }
+}
+
+export default function ContactPage() {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+  })
+
+  return (
+    <div className="container mx-auto max-w-2xl py-8">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Your name" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input type="email" placeholder="your@email.com" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="message"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Message</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Your message..."
+                    className="resize-none"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <Button type="submit" className="w-full">
+            Send Message
+          </Button>
+        </form>
+      </Form>
+    </div>
+  )
+}
+```
+
+### Metadata with shadcn/ui
+
+Using shadcn/ui components in metadata:
+
+```tsx
+// app/layout.tsx
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: {
+    default: "My App",
+    template: "%s | My App",
+  },
+  description: "Built with shadcn/ui and Next.js",
+}
+
+// app/about/page.tsx
+import { Metadata } from "next"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+
+export const metadata: Metadata = {
+  title: "About Us",
+  description: "Learn more about our company",
+}
+
+export default function AboutPage() {
+  return (
+    <div className="container mx-auto py-8">
+      <Card>
+        <CardHeader>
+          <CardTitle>About Our Company</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p>We build amazing products with modern web technologies.</p>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+```
+
+### Font Optimization
+
+Optimize fonts with next/font:
+
+```tsx
+// app/layout.tsx
+import { Inter } from "next/font/google"
+import { Toaster } from "@/components/ui/toaster"
+import { cn } from "@/lib/utils"
+import "./globals.css"
+
+const inter = Inter({ subsets: ["latin"] })
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body className={cn("min-h-screen bg-background font-sans antialiased", inter.className)}>
+        {children}
+        <Toaster />
+      </body>
+    </html>
+  )
+}
 ```
 
 ## Advanced Patterns

@@ -8,11 +8,13 @@ This guide provides comprehensive documentation for all specialized agents (suba
 
 1. [General Purpose Agents](#general-purpose-agents)
 2. [Java Development Agents](#java-development-agents)
-3. [Testing & Quality Agents](#testing--quality-agents)
-4. [AI & LangChain4j Agents](#ai--langchain4j-agents)
-5. [Documentation & Engineering Agents](#documentation--engineering-agents)
-6. [Agent Usage Guidelines](#agent-usage-guidelines)
-7. [Complete Workflow Examples](#complete-workflow-examples)
+3. [TypeScript & Frontend Development Agents](#typescript--frontend-development-agents)
+4. [NestJS Backend Development Agents](#nestjs-backend-development-agents)
+5. [Testing & Quality Agents](#testing--quality-agents)
+6. [AI & LangChain4j Agents](#ai--langchain4j-agents)
+7. [Documentation & Engineering Agents](#documentation--engineering-agents)
+8. [Agent Usage Guidelines](#agent-usage-guidelines)
+9. [Complete Workflow Examples](#complete-workflow-examples)
 
 ---
 
@@ -173,6 +175,117 @@ Task(
 - Specific file paths and line numbers
 - Concrete fix suggestions
 - Project guideline references
+
+### `general-code-explorer`
+
+**Description**: Expert code analyst specializing in tracing and understanding feature implementations across codebases, mapping execution paths, architecture layers, and documenting dependencies.
+
+**When to use:**
+- Understanding existing features before modification
+- Mapping codebase architecture and patterns
+- Tracing data flow through complex systems
+- Documenting legacy code implementations
+- Analyzing performance bottlenecks in execution paths
+- Creating technical documentation from code analysis
+
+**Model**: Sonnet
+
+**Key Capabilities:**
+
+1. **Code Tracing & Analysis**
+   - End-to-end execution path mapping
+   - Data flow visualization
+   - Call stack analysis
+   - Performance bottleneck identification
+   - Dependency graph generation
+
+2. **Architecture Mapping**
+   - Layer identification and separation
+   - Module interaction analysis
+   - Design pattern recognition
+   - Architectural debt detection
+   - Service boundary analysis
+
+3. **Feature Documentation**
+   - Automated technical documentation
+   - Implementation summary generation
+   - API endpoint mapping
+   - Database schema documentation
+   - Configuration documentation
+
+### `general-code-reviewer`
+
+**Description**: General-purpose code review expert focused on code quality, maintainability, and best practices across multiple languages and frameworks.
+
+**When to use:**
+- Code quality assessments
+- Maintainability reviews
+- Best practice validation
+- Code consistency checks
+- Refactoring recommendations
+- Technical debt identification
+
+**Model**: Sonnet
+
+**Key Capabilities:**
+
+1. **Code Quality Analysis**
+   - Code complexity metrics
+   - Maintainability scoring
+   - Readability assessment
+   - Code duplication detection
+   - Anti-pattern identification
+
+2. **Best Practices Validation**
+   - Language-specific conventions
+   - Framework best practices
+   - Security best practices
+   - Performance considerations
+   - Testing coverage analysis
+
+3. **Refactoring Guidance**
+   - Step-by-step refactoring plans
+   - Design pattern applications
+   - Code improvement suggestions
+   - Modernization recommendations
+   - Architectural improvements
+
+### `general-software-architect`
+
+**Description**: Software architecture expert specializing in system design, technology selection, architectural patterns, and scalability solutions across different technology stacks.
+
+**When to use:**
+- System architecture design
+- Technology stack evaluation
+- Scalability planning
+- Microservices design
+- Integration architecture
+- Performance architecture
+
+**Model**: Sonnet
+
+**Key Capabilities:**
+
+1. **System Design**
+   - Architectural pattern selection
+   - System decomposition
+   - Service boundary definition
+   - Data architecture design
+   - Integration patterns
+
+2. **Technology Evaluation**
+   - Technology stack analysis
+   - Framework comparison
+   - Database selection
+   - Cloud platform evaluation
+   - Tool and library recommendations
+
+3. **Scalability & Performance**
+   - Scalability patterns
+   - Performance optimization strategies
+   - Caching strategies
+   - Load balancing designs
+   - Disaster recovery planning
 
 ---
 
@@ -424,6 +537,574 @@ Task(
 - **High (P1)**: Outdated CVEs, insecure configurations, missing security headers
 - **Medium (P2)**: Logging gaps, insufficient validation, access control improvements
 - **Low (P3)**: Documentation, code style security, additional testing
+
+---
+
+## TypeScript & Frontend Development Agents
+
+### `react-frontend-development-expert`
+
+**Description**: Expert React frontend developer specializing in modern React patterns, component architecture, state management, and performance optimization.
+
+**When to use:**
+- Building React applications or features
+- Implementing complex component architectures
+- Optimizing React performance
+- Setting up state management solutions
+- Integrating with TypeScript
+- Implementing responsive designs
+
+**Model**: Sonnet
+
+**Key Capabilities:**
+
+1. **Component Architecture**
+   - Functional components with hooks
+   - Custom hook development
+   - Component composition patterns
+   - Higher-Order Components (HOCs)
+   - Render props patterns
+   - Compound components
+
+2. **State Management**
+   - React Context API
+   - Redux Toolkit integration
+   - Zustand for lightweight state
+   - State management patterns
+   - Data fetching with React Query
+   - Form state management
+
+3. **Performance Optimization**
+   - Code splitting and lazy loading
+   - React.memo and useMemo
+   - useCallback optimization
+   - Virtual scrolling
+   - Bundle size optimization
+   - Render performance profiling
+
+### `nestjs-backend-development-expert`
+
+**Description**: Expert NestJS backend developer specializing in TypeScript, microservices, authentication, and modern Node.js patterns.
+
+**When to use:**
+- Building NestJS applications or modules
+- Implementing microservices architecture
+- Setting up authentication and authorization
+- Database integration with TypeORM/Prisma
+- API development and documentation
+- Testing NestJS applications
+
+**Model**: Sonnet
+
+**Key Capabilities:**
+
+1. **NestJS Architecture**
+   - Module organization and structure
+   - Dependency injection patterns
+   - Controller and service development
+   - Interceptors and guards
+   - Custom decorators
+   - Middleware implementation
+
+2. **API Development**
+   - RESTful API design
+   - GraphQL integration
+   - WebSocket implementation
+   - API validation with DTOs
+   - OpenAPI documentation
+   - Versioning strategies
+
+3. **Authentication & Security**
+   - JWT implementation
+   - OAuth2 integration
+   - Role-based access control
+   - API key authentication
+   - Security best practices
+   - Rate limiting and throttling
+
+### `nestjs-code-review-expert`
+
+**Description**: NestJS code review expert focusing on architecture, security, performance, and best practices specific to the NestJS ecosystem.
+
+**When to use:**
+- Reviewing NestJS code quality
+- Architecture validation
+- Security vulnerability assessment
+- Performance optimization review
+- Best practices compliance
+- Code maintainability assessment
+
+**Model**: Sonnet
+
+**Key Capabilities:**
+
+1. **Architecture Review**
+   - Module structure analysis
+   - Dependency injection review
+   - Service layer organization
+   - Cross-cutting concerns
+   - Module coupling assessment
+   - Design pattern validation
+
+2. **Security Assessment**
+   - Authentication implementation review
+   - Authorization pattern validation
+   - Input sanitization checks
+   - SQL injection prevention
+   - XSS vulnerability detection
+   - Security middleware review
+
+3. **Performance Analysis**
+   - Database query optimization
+   - Caching strategy review
+   - Async/await pattern usage
+   - Memory leak detection
+   - Response time optimization
+   - Resource utilization review
+
+### `nestjs-unit-testing-expert`
+
+**Description**: NestJS testing expert specializing in unit tests, integration tests, and end-to-end testing with Jest and testing best practices.
+
+**When to use:**
+- Writing unit tests for NestJS modules
+- Setting up integration tests
+- Creating e2e test suites
+- Mock testing strategies
+- Test coverage optimization
+- CI/CD testing pipeline setup
+
+**Model**: Sonnet
+
+**Key Capabilities:**
+
+1. **Unit Testing**
+   - Service and controller testing
+   - Mock implementation strategies
+   - Test fixture creation
+   - Assertion patterns
+   - Edge case testing
+   - Test organization and structure
+
+2. **Integration Testing**
+   - Database integration tests
+   - API endpoint testing
+   - External service mocking
+   - Transaction testing
+   - Middleware testing
+   - Module interaction testing
+
+3. **End-to-End Testing**
+   - Full application testing
+   - User flow testing
+   - API contract testing
+   - Performance testing
+   - Load testing strategies
+   - Browser automation with Cypress
+
+### `typescript-documentation-expert`
+
+**Description**: TypeScript documentation expert specializing in JSDoc/TSDoc, API documentation, and comprehensive type definition documentation.
+
+**When to use:**
+- Documenting TypeScript codebases
+- Creating API documentation
+- Writing type definitions
+- Generating documentation from types
+- Documenting React components
+- Creating developer guides
+
+**Model**: Sonnet
+
+**Key Capabilities:**
+
+1. **JSDoc/TSDoc Documentation**
+   - Comprehensive type documentation
+   - Parameter and return type documentation
+   - Example code in documentation
+   - Markdown formatting in comments
+   - Cross-reference documentation
+   - Documentation inheritance
+
+2. **API Documentation**
+   - REST API documentation
+   - GraphQL schema documentation
+   - SDK documentation generation
+   - Interactive API docs
+   - Versioning documentation
+   - Authentication documentation
+
+3. **Type Definition Documentation**
+   - Declaration file creation
+   - Module augmentation documentation
+   - Generic type documentation
+   - Interface documentation
+   - Type utility documentation
+   - Migration guides
+
+### `typescript-refactor-expert`
+
+**Description**: TypeScript refactoring expert specializing in modern patterns, performance optimization, legacy code migration, and code improvement strategies.
+
+**When to use:**
+- Refactoring TypeScript codebases
+- Migrating JavaScript to TypeScript
+- Optimizing type definitions
+- Improving code structure
+- Performance optimization
+- Modernizing legacy code
+
+**Model**: Sonnet
+
+**Key Capabilities:**
+
+1. **Code Modernization**
+   - ES6+ pattern implementation
+   - Modern TypeScript features
+   - Decorator patterns
+   - Async/await migration
+   - Module system updates
+   - Framework migration
+
+2. **Type Optimization**
+   - Type inference improvements
+   - Generic type optimization
+   - Union/intersection types
+   - Conditional types
+   - Mapped types
+   - Type guards implementation
+
+3. **Performance Optimization**
+   - Bundle size reduction
+   - Tree shaking optimization
+   - Lazy loading patterns
+   - Code splitting strategies
+   - Memory optimization
+   - Runtime performance
+
+### `typescript-security-expert`
+
+**Description**: TypeScript security expert focusing on OWASP Top 10, npm audit, secure coding practices, and vulnerability assessment.
+
+**When to use:**
+- Security audit of TypeScript applications
+- Vulnerability assessment
+- Secure coding practice implementation
+- Dependency security review
+- OWASP compliance
+- Security testing implementation
+
+**Model**: Sonnet
+
+**Key Capabilities:**
+
+1. **Vulnerability Assessment**
+   - OWASP Top 10 analysis
+   - Common vulnerability detection
+   - Security pattern review
+   - Input validation review
+   - Output encoding verification
+   - Authentication security
+
+2. **Dependency Security**
+   - npm audit resolution
+   - Package vulnerability scanning
+   - Supply chain security
+   - License compliance
+   - Version management
+   - Security updates
+
+3. **Secure Coding**
+   - XSS prevention
+   - CSRF protection
+   - SQL injection prevention
+   - Authentication patterns
+   - Authorization implementation
+   - Secure data handling
+
+### `typescript-software-architect-review`
+
+**Description**: TypeScript software architecture expert specializing in design patterns, scalability, module organization, and TypeScript-specific architectural patterns.
+
+**When to use:**
+- TypeScript architecture review
+- Design pattern implementation
+- Scalability assessment
+- Module organization review
+- Type system architecture
+- Large-scale application design
+
+**Model**: Sonnet
+
+**Key Capabilities:**
+
+1. **Architectural Patterns**
+   - MVVM/MVC patterns
+   - Micro-Frontend architecture
+   - Modular monolith design
+   - Service-oriented architecture
+   - Event-driven architecture
+   - CQRS patterns
+
+2. **Type System Design**
+   - Advanced type patterns
+   - Generic architecture
+   - Type-safe API design
+   - Domain modeling with types
+   - Type-level programming
+   - Type composition strategies
+
+3. **Scalability Design**
+   - Module scaling strategies
+   - Performance architecture
+   - Code splitting strategies
+   - Lazy loading architecture
+   - Caching strategies
+   - Load balancing patterns
+
+---
+
+## NestJS Backend Development Agents
+
+### `nestjs-backend-development-expert`
+
+**Description**: Expert NestJS backend developer specializing in TypeScript, microservices, authentication, and modern Node.js patterns.
+
+**When to use:**
+- Building NestJS applications or modules
+- Implementing microservices architecture
+- Setting up authentication and authorization
+- Database integration with TypeORM/Prisma
+- API development and documentation
+- Testing NestJS applications
+
+**Model**: Sonnet
+
+**Key Capabilities:**
+
+1. **NestJS Architecture**
+   - Module organization and structure
+   - Dependency injection patterns
+   - Controller and service development
+   - Interceptors and guards
+   - Custom decorators
+   - Middleware implementation
+
+2. **API Development**
+   - RESTful API design
+   - GraphQL integration
+   - WebSocket implementation
+   - API validation with DTOs
+   - OpenAPI documentation
+   - Versioning strategies
+
+3. **Authentication & Security**
+   - JWT implementation
+   - OAuth2 integration
+   - Role-based access control
+   - API key authentication
+   - Security best practices
+   - Rate limiting and throttling
+
+### `nestjs-code-review-expert`
+
+**Description**: NestJS code review expert focusing on architecture, security, performance, and best practices specific to the NestJS ecosystem.
+
+**When to use:**
+- Reviewing NestJS code quality
+- Architecture validation
+- Security vulnerability assessment
+- Performance optimization review
+- Best practices compliance
+- Code maintainability assessment
+
+**Model**: Sonnet
+
+**Key Capabilities:**
+
+1. **Architecture Review**
+   - Module structure analysis
+   - Dependency injection review
+   - Service layer organization
+   - Cross-cutting concerns
+   - Module coupling assessment
+   - Design pattern validation
+
+2. **Security Assessment**
+   - Authentication implementation review
+   - Authorization pattern validation
+   - Input sanitization checks
+   - SQL injection prevention
+   - XSS vulnerability detection
+   - Security middleware review
+
+3. **Performance Analysis**
+   - Database query optimization
+   - Caching strategy review
+   - Async/await pattern usage
+   - Memory leak detection
+   - Response time optimization
+   - Resource utilization review
+
+### `nestjs-unit-testing-expert`
+
+**Description**: NestJS testing expert specializing in unit tests, integration tests, and end-to-end testing with Jest and testing best practices.
+
+**When to use:**
+- Writing unit tests for NestJS modules
+- Setting up integration tests
+- Creating e2e test suites
+- Mock testing strategies
+- Test coverage optimization
+- CI/CD testing pipeline setup
+
+**Model**: Sonnet
+
+**Key Capabilities:**
+
+1. **Unit Testing**
+   - Service and controller testing
+   - Mock implementation strategies
+   - Test fixture creation
+   - Assertion patterns
+   - Edge case testing
+   - Test organization and structure
+
+2. **Integration Testing**
+   - Database integration tests
+   - API endpoint testing
+   - External service mocking
+   - Transaction testing
+   - Middleware testing
+   - Module interaction testing
+
+3. **End-to-End Testing**
+   - Full application testing
+   - User flow testing
+   - API contract testing
+   - Performance testing
+   - Load testing strategies
+   - Browser automation with Cypress
+
+### `nestjs-database-expert`
+
+**Description**: NestJS database expert specializing in TypeORM, Drizzle ORM, database design, migrations, and data access patterns.
+
+**When to use:**
+- Designing database schemas
+- Setting up TypeORM/Drizzle integration
+- Creating and managing migrations
+- Optimizing database queries
+- Setting up database connections
+- Implementing repository patterns
+
+**Model**: Sonnet
+
+**Key Capabilities:**
+
+1. **Database Integration**
+   - TypeORM configuration and setup
+   - Drizzle ORM integration
+   - Database connection management
+   - Connection pooling strategies
+   - Multi-database support
+   - Database health checks
+
+2. **Schema Design**
+   - Entity relationship modeling
+   - Database normalization
+   - Index design strategies
+   - Constraint implementation
+   - Migration management
+   - Schema versioning
+
+3. **Query Optimization**
+   - Query performance analysis
+   - Index optimization
+   - N+1 query prevention
+   - Lazy loading strategies
+   - Caching implementation
+   - Database monitoring
+
+### `nestjs-security-expert`
+
+**Description**: NestJS security expert focusing on authentication, authorization, JWT, OAuth2, and security best practices for NestJS applications.
+
+**When to use:**
+- Implementing authentication systems
+- Setting up authorization
+- Security audit of NestJS apps
+- OAuth2/JWT implementation
+- API security hardening
+- Security testing
+
+**Model**: Sonnet
+
+**Key Capabilities:**
+
+1. **Authentication & Authorization**
+   - JWT token implementation
+   - OAuth2 provider integration
+   - Role-based access control (RBAC)
+   - Custom authentication strategies
+   - Multi-factor authentication
+   - Session management
+
+2. **Security Hardening**
+   - CORS configuration
+   - Rate limiting implementation
+   - Input validation and sanitization
+   - SQL injection prevention
+   - XSS protection
+   - Security headers configuration
+
+3. **Security Testing**
+   - Penetration testing strategies
+   - Security vulnerability scanning
+   - Authentication flow testing
+   - Authorization testing
+   - Security middleware testing
+   - OWASP compliance verification
+
+### `nestjs-testing-expert`
+
+**Description**: Comprehensive NestJS testing expert covering all aspects of testing from unit to e2e, including performance and security testing.
+
+**When to use:**
+- Complete test suite implementation
+- Test strategy development
+- CI/CD pipeline testing setup
+- Performance testing
+- Security testing implementation
+- Test automation
+
+**Model**: Sonnet
+
+**Key Capabilities:**
+
+1. **Testing Strategy**
+   - Test pyramid implementation
+   - Test planning and documentation
+   - Test coverage strategies
+   - Testing best practices
+   - Test data management
+   - Test environment setup
+
+2. **Advanced Testing**
+   - Contract testing with PACT
+   - Performance testing with Artillery
+   - Security testing with OWASP ZAP
+   - Visual regression testing
+   - Load testing strategies
+   - Chaos engineering
+
+3. **Test Automation**
+   - CI/CD pipeline integration
+   - Automated test execution
+   - Test reporting and metrics
+   - Test failure analysis
+   - Test maintenance strategies
+   - Test infrastructure management
 
 ---
 
