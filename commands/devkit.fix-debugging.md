@@ -1,6 +1,6 @@
 ---
 description: Guided bug fixing and debugging with systematic root cause analysis
-argument-hint: [issue-description or error-message]
+argument-hint: [--lang=java|spring|typescript|nestjs|react|general] [issue-description or error-message]
 allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, TodoWrite, AskUserQuestion
 model: inherit
 ---
@@ -8,6 +8,23 @@ model: inherit
 # Fix & Debugging
 
 You are helping a developer fix a bug or debug an issue. Follow a systematic approach: understand the problem, trace the root cause, design a minimal fix, then implement and verify.
+
+## Language/Framework Selection
+
+Parse $ARGUMENTS to detect the optional `--lang` parameter:
+- `--lang=spring` or `--lang=java`: Use Java/Spring Boot specialized agents
+- `--lang=typescript` or `--lang=ts`: Use TypeScript specialized agents
+- `--lang=nestjs`: Use NestJS specialized agents
+- `--lang=react`: Use React frontend specialized agents
+- `--lang=general` or no flag: Use general-purpose agents (default)
+
+**Agent Mapping by Language:**
+
+| Phase | General (default) | Java/Spring Boot (`--lang=spring` or `--lang=java`) | TypeScript (`--lang=typescript` or `--lang=ts`) | NestJS (`--lang=nestjs`) | React (`--lang=react`) |
+|-------|-------------------|-----------------------------------------------------|------------------------------------------------|--------------------------|------------------------|
+| Debugger | `developer-kit:general-debugger` | `developer-kit:general-debugger` | `developer-kit:general-debugger` | `developer-kit:general-debugger` | `developer-kit:general-debugger` |
+| Architect | `developer-kit:general-software-architect` | `developer-kit:java-software-architect-review` | `developer-kit:typescript-software-architect-review` | `developer-kit:typescript-software-architect-review` | `developer-kit:typescript-software-architect-review` |
+| Code Review | `developer-kit:general-code-reviewer` | `developer-kit:spring-boot-code-review-expert` | `developer-kit:general-code-reviewer` | `developer-kit:nestjs-code-review-expert` | `developer-kit:general-code-reviewer` |
 
 ## Current Context
 
@@ -218,11 +235,23 @@ Task(
 ## Usage Examples
 
 ```bash
-# With error message
+# With error message (general agents)
 /devkit.fix-debugging NullPointerException in UserService.getUserProfile()
 
 # With bug description
 /devkit.fix-debugging Users are seeing stale data after profile update
+
+# Java/Spring Boot debugging
+/devkit.fix-debugging --lang=spring Bean injection failing in OrderService
+
+# TypeScript debugging
+/devkit.fix-debugging --lang=typescript Type error in async handler
+
+# NestJS debugging
+/devkit.fix-debugging --lang=nestjs Dependency injection circular reference in AuthModule
+
+# React debugging
+/devkit.fix-debugging --lang=react Component not re-rendering after state update
 
 # With test failure
 /devkit.fix-debugging Test UserServiceTest.testGetProfile is failing intermittently
@@ -240,29 +269,74 @@ This command leverages specialized sub-agents using the Task tool.
 
 ## Execution Instructions
 
-**Agent Selection**: To execute this task, use the following agents with fallback:
-- **Debugger**: Primary: `developer-kit:general-debugger` - If not available: Use `general-debugger` or fallback to `general-code-explorer` agent
-- **Software Architect**: Primary: `developer-kit:general-software-architect` - If not available: Use `general-software-architect` or fallback to `general-purpose` agent
-- **Code Reviewer**: Primary: `developer-kit:general-code-reviewer` - If not available: Use `general-code-reviewer` or fallback to `general-purpose` agent
+**Agent Selection**: Based on the `--lang` parameter, select the appropriate agents:
+
+### General Agents (default, or `--lang=general`)
+- **Debugger**: `developer-kit:general-debugger`
+- **Software Architect**: `developer-kit:general-software-architect`
+- **Code Reviewer**: `developer-kit:general-code-reviewer`
+
+### Java/Spring Boot Agents (`--lang=spring` or `--lang=java`)
+- **Debugger**: `developer-kit:general-debugger`
+- **Software Architect**: `developer-kit:java-software-architect-review`
+- **Code Reviewer**: `developer-kit:spring-boot-code-review-expert`
+
+### TypeScript Agents (`--lang=typescript` or `--lang=ts`)
+- **Debugger**: `developer-kit:general-debugger`
+- **Software Architect**: `developer-kit:typescript-software-architect-review`
+- **Code Reviewer**: `developer-kit:general-code-reviewer`
+
+### NestJS Agents (`--lang=nestjs`)
+- **Debugger**: `developer-kit:general-debugger`
+- **Software Architect**: `developer-kit:typescript-software-architect-review`
+- **Code Reviewer**: `developer-kit:nestjs-code-review-expert`
+
+### React Agents (`--lang=react`)
+- **Debugger**: `developer-kit:general-debugger`
+- **Software Architect**: `developer-kit:typescript-software-architect-review`
+- **Code Reviewer**: `developer-kit:general-code-reviewer`
+
+**Fallback**: If specialized agents are not available, fall back to `general-purpose` agent.
 
 1. **general-debugger** - Analyzes errors, traces execution, finds root cause
-2. **general-software-architect** - Designs fix approaches with trade-offs
-3. **general-code-reviewer** - Reviews fix for quality and regressions
+2. **general-software-architect** / **java-software-architect-review** / **typescript-software-architect-review** - Designs fix approaches with trade-offs
+3. **general-code-reviewer** / **spring-boot-code-review-expert** / **nestjs-code-review-expert** - Reviews fix for quality and regressions
 
 ### Usage Pattern
 ```javascript
-// Launch a sub-agent with proper fallback order
+// General agents (default)
 Task(
   description: "Brief task description",
   prompt: "Detailed prompt for the sub-agent",
-  subagent_type: "developer-kit:subagent-name"  // Try developer-kit agents first
+  subagent_type: "developer-kit:general-debugger"
 )
 
-// Fallback to general agents if developer-kit agents not available
+// Java/Spring Boot agents (when --lang=spring or --lang=java)
 Task(
   description: "Brief task description",
   prompt: "Detailed prompt for the sub-agent",
-  subagent_type: "general-agent-name"
+  subagent_type: "developer-kit:java-software-architect-review"
+)
+
+// TypeScript agents (when --lang=typescript or --lang=ts)
+Task(
+  description: "Brief task description",
+  prompt: "Detailed prompt for the sub-agent",
+  subagent_type: "developer-kit:typescript-software-architect-review"
+)
+
+// NestJS agents (when --lang=nestjs)
+Task(
+  description: "Brief task description",
+  prompt: "Detailed prompt for the sub-agent",
+  subagent_type: "developer-kit:nestjs-code-review-expert"
+)
+
+// React agents (when --lang=react)
+Task(
+  description: "Brief task description",
+  prompt: "Detailed prompt for the sub-agent",
+  subagent_type: "developer-kit:react-frontend-development-expert"
 )
 ```
 

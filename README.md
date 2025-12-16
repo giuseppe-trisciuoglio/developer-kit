@@ -714,6 +714,9 @@ For a complete history of changes, please see the dedicated [CHANGELOG.md](CHANG
 
 Recent highlights:
 
+- **v1.17.1**:
+  - Fixed TypeScript/React support in `/devkit.feature-development` and `/devkit.fix-debugging` commands
+  - Improved language detection for frontend development tasks
 - **v1.17.0**:
   - **New Frontend Development Skills**: Added 4 comprehensive skills for modern frontend development
     - **react**: React development patterns, hooks, state management, performance optimization
