@@ -1,6 +1,6 @@
 ---
 description: Guided feature development with codebase understanding and architecture focus
-argument-hint: [--lang=java|spring|general] [feature-description]
+argument-hint: [--lang=java|spring|typescript|nestjs|react|general] [feature-description]
 allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, TodoWrite, AskUserQuestion
 model: inherit
 ---
@@ -13,15 +13,18 @@ You are helping a developer implement a new feature. Follow a systematic approac
 
 Parse $ARGUMENTS to detect the optional `--lang` parameter:
 - `--lang=spring` or `--lang=java`: Use Java/Spring Boot specialized agents
+- `--lang=typescript` or `--lang=ts`: Use TypeScript specialized agents
+- `--lang=nestjs`: Use NestJS specialized agents
+- `--lang=react`: Use React frontend specialized agents
 - `--lang=general` or no flag: Use general-purpose agents (default)
 
 **Agent Mapping by Language:**
 
-| Phase | General (default) | Java/Spring Boot (`--lang=spring` or `--lang=java`) |
-|-------|-------------------|-----------------------------------------------------|
-| Exploration | `developer-kit:explorer` | `developer-kit:spring-boot-backend-development-expert` |
-| Architecture | `developer-kit:architect` | `developer-kit:java-software-architect-review` |
-| Code Review | `developer-kit:code-reviewer` | `developer-kit:spring-boot-code-review-expert` |
+| Phase | General (default) | Java/Spring Boot (`--lang=spring` or `--lang=java`) | TypeScript (`--lang=typescript` or `--lang=ts`) | NestJS (`--lang=nestjs`) | React (`--lang=react`) |
+|-------|-------------------|-----------------------------------------------------|------------------------------------------------|--------------------------|------------------------|
+| Exploration | `developer-kit:explorer` | `developer-kit:spring-boot-backend-development-expert` | `developer-kit:general-code-explorer` | `developer-kit:nestjs-backend-development-expert` | `developer-kit:react-frontend-development-expert` |
+| Architecture | `developer-kit:architect` | `developer-kit:java-software-architect-review` | `developer-kit:typescript-software-architect-review` | `developer-kit:typescript-software-architect-review` | `developer-kit:typescript-software-architect-review` |
+| Code Review | `developer-kit:code-reviewer` | `developer-kit:spring-boot-code-review-expert` | `developer-kit:general-code-reviewer` | `developer-kit:nestjs-code-review-expert` | `developer-kit:general-code-reviewer` |
 
 ## Current Context
 
@@ -172,6 +175,15 @@ If the user says "whatever you think is best", provide your recommendation and g
 # Integration feature
 /devkit.feature-development --lang=spring Add payment processing with Stripe integration
 
+# TypeScript feature
+/devkit.feature-development --lang=typescript Add GraphQL resolver for user queries
+
+# NestJS feature
+/devkit.feature-development --lang=nestjs Implement authentication module with JWT
+
+# React frontend feature
+/devkit.feature-development --lang=react Create dashboard with charts and user filters
+
 # Explicit general agents
 /devkit.feature-development --lang=general Create dashboard with charts and filters
 ```
@@ -194,6 +206,21 @@ This command leverages three specialized sub-agents using the Task tool.
 - **Software Architect**: `developer-kit:java-software-architect-review`
 - **Code Reviewer**: `developer-kit:spring-boot-code-review-expert`
 
+### TypeScript Agents (`--lang=typescript` or `--lang=ts`)
+- **Code Explorer**: `developer-kit:general-code-explorer`
+- **Software Architect**: `developer-kit:typescript-software-architect-review`
+- **Code Reviewer**: `developer-kit:general-code-reviewer`
+
+### NestJS Agents (`--lang=nestjs`)
+- **Code Explorer**: `developer-kit:nestjs-backend-development-expert`
+- **Software Architect**: `developer-kit:typescript-software-architect-review`
+- **Code Reviewer**: `developer-kit:nestjs-code-review-expert`
+
+### React Agents (`--lang=react`)
+- **Code Explorer**: `developer-kit:react-frontend-development-expert`
+- **Software Architect**: `developer-kit:typescript-software-architect-review`
+- **Code Reviewer**: `developer-kit:general-code-reviewer`
+
 **Fallback**: If specialized agents are not available, fall back to `general-purpose` agent.
 
 ### Usage Pattern
@@ -210,6 +237,27 @@ Task(
   description: "Brief task description",
   prompt: "Detailed prompt for the sub-agent",
   subagent_type: "developer-kit:spring-boot-backend-development-expert"
+)
+
+// TypeScript agents (when --lang=typescript or --lang=ts)
+Task(
+  description: "Brief task description",
+  prompt: "Detailed prompt for the sub-agent",
+  subagent_type: "developer-kit:typescript-software-architect-review"
+)
+
+// NestJS agents (when --lang=nestjs)
+Task(
+  description: "Brief task description",
+  prompt: "Detailed prompt for the sub-agent",
+  subagent_type: "developer-kit:nestjs-backend-development-expert"
+)
+
+// React agents (when --lang=react)
+Task(
+  description: "Brief task description",
+  prompt: "Detailed prompt for the sub-agent",
+  subagent_type: "developer-kit:react-frontend-development-expert"
 )
 ```
 
