@@ -7,14 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-- Enhanced Codex CLI installation with proper frontmatter processing for custom prompts
-- Improved command detection for Codex CLI by checking AGENTS.md instead of INSTRUCTIONS.md
-- Better prompt name handling and metadata extraction during installation
+## [1.17.1] - 2025-12-16
 
 ### Fixed
-- Corrected file path checking for Codex CLI status command
-- Improved error handling in prompt installation process
+- Added TypeScript/React support to `/devkit.feature-development` and `/devkit.fix-debugging` commands
+- Improved language detection for frontend development tasks
 
 ## [1.17.0] - 2025-12-11
 
@@ -304,7 +301,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.16.1...HEAD
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.17.1...HEAD
+[1.17.1]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.17.0...v1.17.1
+[1.17.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.16.1...v1.17.0
 [1.16.1]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.15.0...v1.16.1
 [1.15.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.14.0...v1.15.0
 [1.14.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.13.0...v1.14.0
