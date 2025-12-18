@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `expo-react-native-development-expert` (agents/expo-react-native-development-expert.md): Expert Expo & React Native mobile developer specializing in cross-platform mobile app development with Expo SDK 54, React Native 0.81.5, React 19.1, and TypeScript (781fcb9)
+
+
 ## [1.17.1] - 2025-12-16
 
 ### Fixed

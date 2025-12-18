@@ -392,6 +392,7 @@ my-project/
 | **[prompt-engineering-expert](agents/prompt-engineering-expert.md)**                           | Prompt engineering             | LLM prompt optimization, CoT, few-shot patterns                     |
 | **[general-debugger](agents/general-debugger.md)**                                             | Debugging and root cause analysis| Error troubleshooting, test failures, performance issues             |
 | **[react-frontend-development-expert](agents/react-frontend-development-expert.md)**           | React frontend development     | Component architecture, hooks, state management, performance       |
+| **[expo-react-native-development-expert](agents/expo-react-native-development-expert.md)** | Expo & React Native mobile development | Expo SDK 54, React Native 0.81.5, TypeScript, navigation, performance |
 | **[nestjs-backend-development-expert](agents/nestjs-backend-development-expert.md)**           | NestJS backend development     | API development, microservices, authentication, testing             |
 | **[nestjs-code-review-expert](agents/nestjs-code-review-expert.md)**                           | NestJS code review             | Architecture review, security, performance, best practices         |
 | **[nestjs-unit-testing-expert](agents/nestjs-unit-testing-expert.md)**                         | NestJS testing                 | Unit tests, integration tests, e2e testing with Jest                |
