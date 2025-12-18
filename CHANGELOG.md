@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.18.0] - 2025-12-18
 
 ### Added
 - `expo-react-native-development-expert` (agents/expo-react-native-development-expert.md): Expert Expo & React Native mobile developer specializing in cross-platform mobile app development with Expo SDK 54, React Native 0.81.5, React 19.1, and TypeScript (781fcb9)
@@ -305,7 +305,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.17.1...HEAD
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.18.0...HEAD
+[1.18.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.17.1...v1.18.0
 [1.17.1]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.17.0...v1.17.1
 [1.17.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.16.1...v1.17.0
 [1.16.1]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.15.0...v1.16.1

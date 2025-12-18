@@ -7,7 +7,7 @@
 multiple languages and frameworks. It includes specialized agents for code review, testing patterns, REST API design,
 and AI integration.
 
-**55 Total Skills** — Comprehensive coverage of Spring Boot, testing, AI integration, cloud development, AI
+**56 Total Skills** — Comprehensive coverage of Spring Boot, testing, AI integration, cloud development, AI
 engineering patterns, frontend development, backend development (NestJS), and documentation generation
 
 ## 🚀 Quick Start
@@ -715,6 +715,9 @@ For a complete history of changes, please see the dedicated [CHANGELOG.md](CHANG
 
 Recent highlights:
 
+- **v1.18.0**:
+  - New `expo-react-native-development-expert` agent for cross-platform mobile development with Expo SDK 54, React Native 0.81.5, and TypeScript
+  - Expert mobile app development patterns including navigation, performance optimization, testing with Jest, and Expo deployment workflows
 - **v1.17.1**:
   - Fixed TypeScript/React support in `/devkit.feature-development` and `/devkit.fix-debugging` commands
   - Improved language detection for frontend development tasks
