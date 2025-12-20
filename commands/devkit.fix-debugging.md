@@ -1,17 +1,19 @@
 ---
 description: Guided bug fixing and debugging with systematic root cause analysis
-argument-hint: [--lang=java|spring|typescript|nestjs|react|general] [issue-description or error-message]
+argument-hint: [ --lang=java|spring|typescript|nestjs|react|general ] [ issue-description or error-message ]
 allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, TodoWrite, AskUserQuestion
 model: inherit
 ---
 
 # Fix & Debugging
 
-You are helping a developer fix a bug or debug an issue. Follow a systematic approach: understand the problem, trace the root cause, design a minimal fix, then implement and verify.
+You are helping a developer fix a bug or debug an issue. Follow a systematic approach: understand the problem, trace the
+root cause, design a minimal fix, then implement and verify.
 
 ## Language/Framework Selection
 
 Parse $ARGUMENTS to detect the optional `--lang` parameter:
+
 - `--lang=spring` or `--lang=java`: Use Java/Spring Boot specialized agents
 - `--lang=typescript` or `--lang=ts`: Use TypeScript specialized agents
 - `--lang=nestjs`: Use NestJS specialized agents
@@ -20,11 +22,11 @@ Parse $ARGUMENTS to detect the optional `--lang` parameter:
 
 **Agent Mapping by Language:**
 
-| Phase | General (default) | Java/Spring Boot (`--lang=spring` or `--lang=java`) | TypeScript (`--lang=typescript` or `--lang=ts`) | NestJS (`--lang=nestjs`) | React (`--lang=react`) |
-|-------|-------------------|-----------------------------------------------------|------------------------------------------------|--------------------------|------------------------|
-| Debugger | `developer-kit:general-debugger` | `developer-kit:general-debugger` | `developer-kit:general-debugger` | `developer-kit:general-debugger` | `developer-kit:general-debugger` |
-| Architect | `developer-kit:general-software-architect` | `developer-kit:java-software-architect-review` | `developer-kit:typescript-software-architect-review` | `developer-kit:typescript-software-architect-review` | `developer-kit:typescript-software-architect-review` |
-| Code Review | `developer-kit:general-code-reviewer` | `developer-kit:spring-boot-code-review-expert` | `developer-kit:general-code-reviewer` | `developer-kit:nestjs-code-review-expert` | `developer-kit:general-code-reviewer` |
+| Phase       | General (default)             | Java/Spring Boot (`--lang=spring` or `--lang=java`) | TypeScript (`--lang=typescript` or `--lang=ts`)      | NestJS (`--lang=nestjs`)                             | React (`--lang=react`)                               |
+|-------------|-------------------------------|-----------------------------------------------------|------------------------------------------------------|------------------------------------------------------|------------------------------------------------------|
+| Debugger    | `developer-kit:debugger`      | `developer-kit:debugger`                            | `developer-kit:debugger`                             | `developer-kit:debugger`                             | `developer-kit:debugger`                             |
+| Architect   | `developer-kit:architect`     | `developer-kit:java-software-architect-review`      | `developer-kit:typescript-software-architect-review` | `developer-kit:typescript-software-architect-review` | `developer-kit:typescript-software-architect-review` |
+| Code Review | `developer-kit:code-reviewer` | `developer-kit:spring-boot-code-review-expert`      | `developer-kit:code-reviewer`                        | `developer-kit:nestjs-code-review-expert`            | `developer-kit:code-reviewer`                        |
 
 ## Current Context
 
@@ -39,7 +41,9 @@ Parse $ARGUMENTS to detect the optional `--lang` parameter:
 - **Minimal changes**: Fix only what's broken, avoid scope creep
 - **Verify completely**: Confirm the fix works and doesn't break other things
 - **Use TodoWrite**: Track all progress throughout
-- **Structured user interaction**: Use the AskUserQuestion tool in all phases where you need to ask structured questions to the user (Phase 1: Problem Capture, Phase 3: Root Cause Analysis, Phase 4: Fix Design, Phase 7: Verification). Always use AskUserQuestion for clarifications, confirmations, and decisions rather than plain text questions.
+- **Structured user interaction**: Use the AskUserQuestion tool in all phases where you need to ask structured questions
+  to the user (Phase 1: Problem Capture, Phase 3: Root Cause Analysis, Phase 4: Fix Design, Phase 7: Verification).
+  Always use AskUserQuestion for clarifications, confirmations, and decisions rather than plain text questions.
 - **No time estimates**: DO NOT provide or request time estimates or implementation timelines at any phase
 
 ---
@@ -51,18 +55,19 @@ Parse $ARGUMENTS to detect the optional `--lang` parameter:
 **Initial issue**: $ARGUMENTS
 
 **Actions**:
+
 1. Create todo list with all phases
 2. Gather problem details:
-   - What is the exact error message or unexpected behavior?
-   - When did this start happening?
-   - Can you reproduce it consistently?
-   - What are the reproduction steps?
-   - Any recent changes that might be related?
+    - What is the exact error message or unexpected behavior?
+    - When did this start happening?
+    - Can you reproduce it consistently?
+    - What are the reproduction steps?
+    - Any recent changes that might be related?
 3. **Use the AskUserQuestion tool to gather all missing information in a clear, organized format**:
-   - Error messages, logs, or stack traces
-   - Steps to reproduce
-   - Expected vs actual behavior
-   - Environment details (local, staging, production)
+    - Error messages, logs, or stack traces
+    - Steps to reproduce
+    - Expected vs actual behavior
+    - Environment details (local, staging, production)
 4. **Wait for user answers before proceeding to evidence collection**
 
 ---
@@ -72,12 +77,14 @@ Parse $ARGUMENTS to detect the optional `--lang` parameter:
 **Goal**: Gather all relevant information about the failure
 
 **Actions**:
+
 1. Use the Task tool to launch 2-3 general-debugger subagents in parallel with different focuses:
-   - Analyze stack traces and error messages
-   - Trace execution paths related to the failure
-   - Check recent git changes that might have introduced the bug
+    - Analyze stack traces and error messages
+    - Trace execution paths related to the failure
+    - Check recent git changes that might have introduced the bug
 
    **Example Task tool usage**:
+
 ```
 Task(
   description: "Analyze error and trace execution path",
@@ -87,10 +94,11 @@ Task(
 ```
 
 **Example agent prompts**:
-   - "Analyze this stack trace: [trace]. Identify the root cause and exact failure point"
-   - "Trace the execution flow for [feature/function] and identify where it deviates from expected behavior"
-   - "Check recent git changes (last 5-10 commits) for changes that could have caused [issue]"
-   - "Analyze the data flow for [operation] and identify where data becomes corrupted/invalid"
+
+- "Analyze this stack trace: [trace]. Identify the root cause and exact failure point"
+- "Trace the execution flow for [feature/function] and identify where it deviates from expected behavior"
+- "Check recent git changes (last 5-10 commits) for changes that could have caused [issue]"
+- "Analyze the data flow for [operation] and identify where data becomes corrupted/invalid"
 
 2. Once agents return, read all identified critical files
 3. Compile evidence summary with key findings
@@ -104,15 +112,16 @@ Task(
 **CRITICAL**: Do not proceed to fixing until root cause is confirmed.
 
 **Actions**:
+
 1. Use the Task tool to launch 2 general-debugger subagents with analysis focus:
-   - Deep dive into the most likely failure point
-   - Verify hypothesis with code analysis
+    - Deep dive into the most likely failure point
+    - Verify hypothesis with code analysis
 
 2. Synthesize findings into root cause statement:
-   - **What**: Exact condition causing the failure
-   - **Where**: File and line where the bug originates
-   - **Why**: Underlying reason this happens
-   - **When**: Conditions that trigger the bug
+    - **What**: Exact condition causing the failure
+    - **Where**: File and line where the bug originates
+    - **Why**: Underlying reason this happens
+    - **When**: Conditions that trigger the bug
 
 3. **Use the AskUserQuestion tool to confirm root cause with user before proceeding**
 4. **Wait for user confirmation before moving to Fix Design**
@@ -126,20 +135,21 @@ Task(
 **DO NOT PROCEED WITHOUT ROOT CAUSE CONFIRMATION**
 
 **Actions**:
+
 1. Use the Task tool to launch 2-3 general-software-architect subagents in parallel with different approaches:
-   - Minimal surgical fix (smallest possible change)
-   - Defensive fix (adds guards and validation)
-   - Comprehensive fix (addresses similar issues elsewhere)
+    - Minimal surgical fix (smallest possible change)
+    - Defensive fix (adds guards and validation)
+    - Comprehensive fix (addresses similar issues elsewhere)
 
 2. Review approaches considering:
-   - Risk of regression
-   - Side effects on other code
-   - Test coverage implications
+    - Risk of regression
+    - Side effects on other code
+    - Test coverage implications
 
 3. Present to user:
-   - Brief summary of each approach
-   - Trade-offs and risks
-   - **Your recommendation with reasoning**
+    - Brief summary of each approach
+    - Trade-offs and risks
+    - **Your recommendation with reasoning**
 
 4. **Use the AskUserQuestion tool to ask user which approach they prefer**
 5. **Wait for user response before proceeding to implementation**
@@ -153,6 +163,7 @@ Task(
 **DO NOT START WITHOUT USER APPROVAL**
 
 **Actions**:
+
 1. Wait for explicit user approval
 2. Re-read all affected files to ensure current state
 3. Implement fix following chosen approach
@@ -167,26 +178,27 @@ Task(
 **Goal**: Ensure the code compiles and all tests pass
 
 **Actions**:
+
 1. **Compile/Build** the project:
-   - Run the appropriate build command for the project
-   - Maven: `mvn compile` or `mvn package -DskipTests`
-   - Gradle: `./gradlew build -x test` or `./gradlew compileJava`
-   - npm: `npm run build`
-   - Other: Use project-specific build command
+    - Run the appropriate build command for the project
+    - Maven: `mvn compile` or `mvn package -DskipTests`
+    - Gradle: `./gradlew build -x test` or `./gradlew compileJava`
+    - npm: `npm run build`
+    - Other: Use project-specific build command
 
 2. **Fix any compilation errors** before proceeding
 
 3. **Run tests**:
-   - Run unit tests for affected components first
-   - Run full test suite if quick tests pass
-   - Maven: `mvn test` or `mvn verify`
-   - Gradle: `./gradlew test`
-   - npm: `npm test`
+    - Run unit tests for affected components first
+    - Run full test suite if quick tests pass
+    - Maven: `mvn test` or `mvn verify`
+    - Gradle: `./gradlew test`
+    - npm: `npm test`
 
 4. **If tests fail**:
-   - Analyze failure: Is it related to our fix or pre-existing?
-   - If related to fix: Return to Phase 5 and adjust
-   - If pre-existing: Document and proceed (not our scope)
+    - Analyze failure: Is it related to our fix or pre-existing?
+    - If related to fix: Return to Phase 5 and adjust
+    - If pre-existing: Document and proceed (not our scope)
 
 5. **Confirm all green** before proceeding to verification
 
@@ -197,22 +209,23 @@ Task(
 **Goal**: Confirm the fix is correct and doesn't introduce regressions
 
 **Actions**:
+
 1. Use the Task tool to launch 2 general-code-reviewer subagents:
-   - Review fix for correctness and potential regressions
-   - Check for similar issues that might need the same fix
+    - Review fix for correctness and potential regressions
+    - Check for similar issues that might need the same fix
 
 2. **Use the AskUserQuestion tool to confirm with user**:
-   - Does the fix resolve the original issue?
-   - Any unexpected behavior observed?
-   - Should we add tests to prevent regression?
+    - Does the fix resolve the original issue?
+    - Any unexpected behavior observed?
+    - Should we add tests to prevent regression?
 
 3. **Wait for user feedback before finalizing**
 
 3. If regression tests needed:
-   - Propose test cases that would catch this bug
-   - **Use AskUserQuestion to ask if user wants to implement the tests**
-   - Implement tests if user approves
-   - Run tests again to confirm new tests pass
+    - Propose test cases that would catch this bug
+    - **Use AskUserQuestion to ask if user wants to implement the tests**
+    - Implement tests if user approves
+    - Run tests again to confirm new tests pass
 
 ---
 
@@ -221,14 +234,15 @@ Task(
 **Goal**: Document what was fixed and learned
 
 **Actions**:
+
 1. Mark all todos complete
 2. Summarize:
-   - **Problem**: What was broken
-   - **Root Cause**: Why it was broken
-   - **Fix**: What was changed
-   - **Files Modified**: List of changes
-   - **Tests Added**: If any
-   - **Prevention**: How to avoid similar issues
+    - **Problem**: What was broken
+    - **Root Cause**: Why it was broken
+    - **Fix**: What was changed
+    - **Files Modified**: List of changes
+    - **Tests Added**: If any
+    - **Prevention**: How to avoid similar issues
 
 ---
 
@@ -272,43 +286,51 @@ This command leverages specialized sub-agents using the Task tool.
 **Agent Selection**: Based on the `--lang` parameter, select the appropriate agents:
 
 ### General Agents (default, or `--lang=general`)
-- **Debugger**: `developer-kit:general-debugger`
-- **Software Architect**: `developer-kit:general-software-architect`
-- **Code Reviewer**: `developer-kit:general-code-reviewer`
+
+- **Debugger**: `developer-kit:debugger`
+- **Software Architect**: `developer-kit:architect`
+- **Code Reviewer**: `developer-kit:code-reviewer`
 
 ### Java/Spring Boot Agents (`--lang=spring` or `--lang=java`)
-- **Debugger**: `developer-kit:general-debugger`
+
+- **Debugger**: `developer-kit:debugger`
 - **Software Architect**: `developer-kit:java-software-architect-review`
 - **Code Reviewer**: `developer-kit:spring-boot-code-review-expert`
 
 ### TypeScript Agents (`--lang=typescript` or `--lang=ts`)
-- **Debugger**: `developer-kit:general-debugger`
+
+- **Debugger**: `developer-kit:debugger`
 - **Software Architect**: `developer-kit:typescript-software-architect-review`
-- **Code Reviewer**: `developer-kit:general-code-reviewer`
+- **Code Reviewer**: `developer-kit:code-reviewer`
 
 ### NestJS Agents (`--lang=nestjs`)
-- **Debugger**: `developer-kit:general-debugger`
+
+- **Debugger**: `developer-kit:debugger`
 - **Software Architect**: `developer-kit:typescript-software-architect-review`
 - **Code Reviewer**: `developer-kit:nestjs-code-review-expert`
 
 ### React Agents (`--lang=react`)
-- **Debugger**: `developer-kit:general-debugger`
+
+- **Debugger**: `developer-kit:debugger`
 - **Software Architect**: `developer-kit:typescript-software-architect-review`
-- **Code Reviewer**: `developer-kit:general-code-reviewer`
+- **Code Reviewer**: `developer-kit:code-reviewer`
 
 **Fallback**: If specialized agents are not available, fall back to `general-purpose` agent.
 
 1. **general-debugger** - Analyzes errors, traces execution, finds root cause
-2. **general-software-architect** / **java-software-architect-review** / **typescript-software-architect-review** - Designs fix approaches with trade-offs
-3. **general-code-reviewer** / **spring-boot-code-review-expert** / **nestjs-code-review-expert** - Reviews fix for quality and regressions
+2. **general-software-architect** / **java-software-architect-review** / **typescript-software-architect-review** -
+   Designs fix approaches with trade-offs
+3. **general-code-reviewer** / **spring-boot-code-review-expert** / **nestjs-code-review-expert** - Reviews fix for
+   quality and regressions
 
 ### Usage Pattern
+
 ```javascript
 // General agents (default)
 Task(
   description: "Brief task description",
   prompt: "Detailed prompt for the sub-agent",
-  subagent_type: "developer-kit:general-debugger"
+  subagent_type: "developer-kit:debugger"
 )
 
 // Java/Spring Boot agents (when --lang=spring or --lang=java)
@@ -341,6 +363,7 @@ Task(
 ```
 
 ### Important Notes
+
 - Sub-agents are automatically discovered from `/Users/giuseppe/project/GT/developer-kit/agents/`
 - Each sub-agent operates with its own context window
 - Multiple sub-agents can be launched in parallel for different perspectives
@@ -370,11 +393,13 @@ Update the status as you progress through each phase.
 For simple issues, you can skip some phases:
 
 **When to use quick mode**:
+
 - Error message clearly points to the issue
 - Recent, obvious change caused the bug
 - Simple typo or configuration error
 
 **Quick mode flow**:
+
 1. Phase 1: Problem Capture (simplified)
 2. Phase 3: Root Cause Analysis (focused)
 3. Phase 5: Implementation
@@ -385,4 +410,5 @@ Tell the user: "This appears to be a straightforward issue. Would you like to pr
 
 ---
 
-**Note**: This command follows a systematic debugging approach to ensure bugs are fixed correctly the first time, with minimal risk of regression.
+**Note**: This command follows a systematic debugging approach to ensure bugs are fixed correctly the first time, with
+minimal risk of regression.
