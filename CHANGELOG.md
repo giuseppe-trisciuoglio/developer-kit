@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.19.0] - 2025-12-24
+
+### Added
+- `/devkit.refactor` command: Comprehensive guided refactoring command with backward compatibility options and multi-phase verification
+  - **Phase 1**: Refactoring discovery and understanding
+  - **Phase 2**: Compatibility requirements clarification (backward compatible, breaking changes, or internal-only)
+  - **Phase 3**: Deep codebase exploration with parallel analysis of code structure, usages, and test coverage
+  - **Phase 4**: Refactoring strategy design with risk assessment
+  - **Phase 5**: Pre-refactoring baseline verification
+  - **Phase 6**: Incremental implementation
+  - **Phase 7**: Comprehensive verification (automated tests, static analysis, code review, architecture validation)
+  - **Phase 8**: Issue resolution and remediation
+  - **Phase 9**: Summary and documentation with migration guides
+  - Multi-language support: `--lang=java|spring|typescript|nestjs|react|general`
+  - Scope selection: `--scope=file|module|feature`
+  - Specialized refactoring agents for each language
+  - Breaking change management and deprecation strategy support
+
 ## [1.18.0] - 2025-12-18
 
 ### Added
