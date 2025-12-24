@@ -12,8 +12,9 @@ This guide provides comprehensive documentation for all commands developed for C
 4. [DevKit Management Commands](#devkit-management-commands)
 5. [Utility Commands](#utility-commands)
 6. [Feature Development Command](#feature-development-command)
-7. [Best Practices](#best-practices)
-8. [Complete Workflow Example](#complete-workflow-example)
+7. [Code Refactoring Command](#code-refactoring-command)
+8. [Best Practices](#best-practices)
+9. [Complete Workflow Example](#complete-workflow-example)
 
 ---
 
@@ -1451,7 +1452,140 @@ The command uses agents with automatic fallback:
 
 ---
 
-## Best Practices
+## Code Refactoring Command
+
+### `/devkit.refactor`
+
+**Description**: Guided code refactoring with deep codebase understanding, backward compatibility options, and comprehensive multi-phase verification. Specializes in safe refactoring with clear compatibility requirements and extensive testing.
+
+**When to use:**
+- Improving code quality and maintainability
+- Refactoring for performance optimization
+- Modernizing legacy code or design patterns
+- Restructuring modules or layers
+- When breaking changes may be involved (requires explicit approval)
+- When refactoring is complex with many dependencies
+
+**Arguments**:
+```bash
+/devkit.refactor [--lang=java|spring|typescript|nestjs|react|general] [--scope=file|module|feature] [refactor-description]
+```
+
+**Language options** (`--lang`):
+- `--lang=spring` or `--lang=java`: Java/Spring Boot refactoring with specialized agents
+- `--lang=typescript` or `--lang=ts`: TypeScript refactoring
+- `--lang=nestjs`: NestJS backend refactoring
+- `--lang=react`: React frontend refactoring
+- `--lang=general` (default): Language-agnostic refactoring
+
+**Scope options** (`--scope`):
+- `--scope=file`: Single file refactoring (default for simple changes)
+- `--scope=module`: Module/package level refactoring
+- `--scope=feature`: Cross-cutting feature refactoring (default)
+
+**The 9 Phases:**
+
+1. **Discovery** - Understand what code needs refactoring and why
+2. **Compatibility Requirements** - Clarify if breaking changes are allowed (CRITICAL PHASE)
+3. **Deep Codebase Exploration** - Analyze code structure, usages, and test coverage in detail
+4. **Refactoring Strategy** - Design safe approach based on compatibility constraints
+5. **Pre-Refactoring Verification** - Establish baseline with existing tests
+6. **Implementation** - Execute refactoring incrementally
+7. **Comprehensive Verification** - Multi-step verification: tests, static analysis, code review, architecture validation
+8. **Issue Resolution** - Address any issues found during verification
+9. **Summary & Documentation** - Document changes, migration guides, and breaking change communications
+
+**Compatibility Levels (Phase 2 - CRITICAL):**
+
+The command requires you to explicitly choose one of three compatibility approaches:
+
+**Option A: Strictly Backward Compatible**
+- No breaking changes allowed
+- All public APIs must remain unchanged
+- Existing clients continue working without modifications
+- Internal implementation can be completely refactored
+- Best for: Shared libraries, public APIs, frameworks
+
+**Option B: Breaking Changes Allowed**
+- Breaking changes are acceptable
+- Can modify public APIs, signatures, return types
+- Consumers may need updates
+- Must provide migration guide and deprecation strategy
+- Best for: Internal modules, major version releases
+
+**Option C: Internal Only**
+- Refactoring internal/private implementation only
+- Public API remains unchanged
+- Internal structure can be completely redesigned
+- No consumer updates required
+- Best for: Internal optimization, design pattern improvements
+
+**Practical examples:**
+
+```bash
+# Simple file refactoring - extract utility methods
+/devkit.refactor --scope=file Extract utility methods from UserService
+
+# Spring Boot module refactoring - backward compatible
+/devkit.refactor --lang=spring --scope=module Refactor repository layer to use specification pattern
+
+# Breaking change refactoring with explicit scope
+/devkit.refactor --lang=java Restructure payment module API for v2
+
+# TypeScript refactoring
+/devkit.refactor --lang=typescript Convert callbacks to async/await in data layer
+
+# NestJS refactoring
+/devkit.refactor --lang=nestjs Refactor authentication to use guards instead of middleware
+
+# React component refactoring
+/devkit.refactor --lang=react Extract shared hooks from dashboard components
+
+# Internal performance optimization
+/devkit.refactor --scope=file Improve performance of search algorithm in SearchService
+```
+
+**Phase 3: Deep Codebase Exploration (Critical)**
+
+This phase uses three parallel analyses to ensure complete understanding:
+
+1. **Code Structure Analysis** - Map classes, interfaces, relationships, and public APIs
+2. **Usage & Dependency Analysis** - Find ALL usages, imports, reflection-based references, configuration
+3. **Test Coverage Analysis** - Identify test files, coverage gaps, and test patterns
+
+All identified files are read to build a complete dependency graph.
+
+**Phase 7: Comprehensive Verification (Critical)**
+
+This phase includes four verification steps:
+
+1. **Automated Test Verification** - Run all unit and integration tests, compare with baseline
+2. **Static Analysis Verification** - Run linters, check for new warnings or errors
+3. **Code Review Verification** - Multi-perspective review by code quality agents
+4. **Architecture Verification** - Validate module boundaries, dependencies, SOLID principles (for module/feature scope)
+
+**Specialized Agents Used:**
+- **explorer** - Maps code structure, dependencies, and usages
+- **refactoring expert** - Designs safe refactoring strategies with risk assessment
+- **architect** - Validates architectural integrity post-refactoring
+- **code-reviewer** - Reviews code quality and maintains conventions
+
+**Key Benefits:**
+- **Safe Refactoring**: Deep understanding before making any changes
+- **Compatibility Aware**: Explicit handling of breaking changes with migration guides
+- **Comprehensive Verification**: Four-step verification ensures no regressions
+- **Risk Assessment**: Each refactoring step assessed for risks and rollback strategies
+- **Documentation**: Migration guides and breaking change communication templates provided
+- **Multi-Language**: Specialized agents for Java/Spring Boot, TypeScript, NestJS, React
+
+**Execution Instructions with Fallback:**
+The command uses specialized agents with automatic fallback:
+- Primary: Language-specific agents (e.g., `java-refactor-expert`, `typescript-refactor-expert`)
+- If not available: General refactoring agents
+- Final fallback: `general-purpose` agent
+
+---
+
 
 ### Command Workflow Principles
 
