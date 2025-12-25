@@ -1,5 +1,8 @@
 # Developer Kit for Claude Code
 
+[![Run in Smithery](https://smithery.ai/badge/skills/giuseppe-trisciuoglio)](https://smithery.ai/skills?ns=giuseppe-trisciuoglio&utm_source=github&utm_medium=badge)
+
+
 > A curated collection of reusable skills and agents for automating development tasks in Claude Code — focusing on
 > Java/Spring Boot patterns with extensibility to PHP, TypeScript, and Python
 
