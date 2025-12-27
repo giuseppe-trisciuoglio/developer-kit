@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.20.0] - 2025-12-26
+
+### Added
+- `react-software-architect-review` agent: Expert React software architect specializing in frontend architecture, component design patterns, state management strategies, and performance optimization for complex React applications
+  - React 19 architecture mastery (Server Components, Actions, use hook, concurrent features)
+  - Component design patterns (Compound Components, Render Props, HOCs, Custom Hooks)
+  - State management architecture (Context, TanStack Query, Zustand, Jotai, Redux Toolkit)
+  - Framework-specific patterns for Next.js App Router, Remix, and Vite+React
+  - Performance architecture (memoization, code splitting, lazy loading, bundle optimization)
+  - Accessibility architecture (WCAG compliance, ARIA patterns, keyboard navigation)
+  - Testing architecture (React Testing Library, Vitest, Playwright)
+  - Design system architecture (component API design, theming, token systems)
+
+### Changed
+- Updated `/devkit.feature-development` command to use `react-software-architect-review` agent for React architecture reviews
+- Updated `/devkit.fix-debugging` command to use `react-software-architect-review` agent for React debugging
+- Updated `/devkit.refactor` command to use `react-software-architect-review` agent for React refactoring
+- Total agents count increased from 26 to 27
+
 ## [1.19.0] - 2025-12-24
 
 ### Added
@@ -323,7 +342,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.18.0...HEAD
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.20.0...HEAD
+[1.20.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.19.0...v1.20.0
+[1.19.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.18.0...v1.19.0
 [1.18.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.17.1...v1.18.0
 [1.17.1]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.17.0...v1.17.1
 [1.17.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.16.1...v1.17.0

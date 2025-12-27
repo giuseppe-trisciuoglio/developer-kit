@@ -25,7 +25,7 @@ Parse $ARGUMENTS to detect the optional `--lang` parameter:
 | Phase       | General (default)             | Java/Spring Boot (`--lang=spring` or `--lang=java`) | TypeScript (`--lang=typescript` or `--lang=ts`)      | NestJS (`--lang=nestjs`)                             | React (`--lang=react`)                               |
 |-------------|-------------------------------|-----------------------------------------------------|------------------------------------------------------|------------------------------------------------------|------------------------------------------------------|
 | Debugger    | `developer-kit:debugger`      | `developer-kit:debugger`                            | `developer-kit:debugger`                             | `developer-kit:debugger`                             | `developer-kit:debugger`                             |
-| Architect   | `developer-kit:architect`     | `developer-kit:java-software-architect-review`      | `developer-kit:typescript-software-architect-review` | `developer-kit:typescript-software-architect-review` | `developer-kit:typescript-software-architect-review` |
+| Architect   | `developer-kit:architect`     | `developer-kit:java-software-architect-review`      | `developer-kit:typescript-software-architect-review` | `developer-kit:typescript-software-architect-review` | `developer-kit:react-software-architect-review`      |
 | Code Review | `developer-kit:code-reviewer` | `developer-kit:spring-boot-code-review-expert`      | `developer-kit:code-reviewer`                        | `developer-kit:nestjs-code-review-expert`            | `developer-kit:code-reviewer`                        |
 
 ## Current Context
@@ -312,7 +312,7 @@ This command leverages specialized sub-agents using the Task tool.
 ### React Agents (`--lang=react`)
 
 - **Debugger**: `developer-kit:debugger`
-- **Software Architect**: `developer-kit:typescript-software-architect-review`
+- **Software Architect**: `developer-kit:react-software-architect-review`
 - **Code Reviewer**: `developer-kit:code-reviewer`
 
 **Fallback**: If specialized agents are not available, fall back to `general-purpose` agent.
