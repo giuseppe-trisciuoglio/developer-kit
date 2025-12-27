@@ -23,7 +23,7 @@ Parse $ARGUMENTS to detect the optional `--lang` parameter:
 | Phase | General (default) | Java/Spring Boot (`--lang=spring` or `--lang=java`) | TypeScript (`--lang=typescript` or `--lang=ts`) | NestJS (`--lang=nestjs`) | React (`--lang=react`) |
 |-------|-------------------|-----------------------------------------------------|------------------------------------------------|--------------------------|------------------------|
 | Exploration | `developer-kit:explorer` | `developer-kit:spring-boot-backend-development-expert` | `developer-kit:general-code-explorer` | `developer-kit:nestjs-backend-development-expert` | `developer-kit:react-frontend-development-expert` |
-| Architecture | `developer-kit:architect` | `developer-kit:java-software-architect-review` | `developer-kit:typescript-software-architect-review` | `developer-kit:typescript-software-architect-review` | `developer-kit:typescript-software-architect-review` |
+| Architecture | `developer-kit:architect` | `developer-kit:java-software-architect-review` | `developer-kit:typescript-software-architect-review` | `developer-kit:typescript-software-architect-review` | `developer-kit:react-software-architect-review` |
 | Code Review | `developer-kit:code-reviewer` | `developer-kit:spring-boot-code-review-expert` | `developer-kit:general-code-reviewer` | `developer-kit:nestjs-code-review-expert` | `developer-kit:general-code-reviewer` |
 
 ## Current Context
@@ -218,7 +218,7 @@ This command leverages three specialized sub-agents using the Task tool.
 
 ### React Agents (`--lang=react`)
 - **Code Explorer**: `developer-kit:react-frontend-development-expert`
-- **Software Architect**: `developer-kit:typescript-software-architect-review`
+- **Software Architect**: `developer-kit:react-software-architect-review`
 - **Code Reviewer**: `developer-kit:general-code-reviewer`
 
 **Fallback**: If specialized agents are not available, fall back to `general-purpose` agent.

@@ -35,7 +35,7 @@ Parse $ARGUMENTS to detect the optional `--scope` parameter:
 |---------------------|-------------------------------|--------------------------------------------------------|------------------------------------------------------|------------------------------------------------------|------------------------------------------------------|
 | Deep Exploration    | `developer-kit:explorer`      | `developer-kit:spring-boot-backend-development-expert` | `developer-kit:explorer`                             | `developer-kit:nestjs-backend-development-expert`    | `developer-kit:react-frontend-development-expert`    |
 | Refactoring Expert  | `developer-kit:code-reviewer` | `developer-kit:java-refactor-expert`                   | `developer-kit:typescript-refactor-expert`           | `developer-kit:typescript-refactor-expert`           | `developer-kit:typescript-refactor-expert`           |
-| Architecture Review | `developer-kit:architect`     | `developer-kit:java-software-architect-review`         | `developer-kit:typescript-software-architect-review` | `developer-kit:typescript-software-architect-review` | `developer-kit:typescript-software-architect-review` |
+| Architecture Review | `developer-kit:architect`     | `developer-kit:java-software-architect-review`         | `developer-kit:typescript-software-architect-review` | `developer-kit:typescript-software-architect-review` | `developer-kit:react-software-architect-review`      |
 | Code Review         | `developer-kit:code-reviewer` | `developer-kit:spring-boot-code-review-expert`         | `developer-kit:code-reviewer`                        | `developer-kit:nestjs-code-review-expert`            | `developer-kit:code-reviewer`                        |
 
 ## Current Context
@@ -438,7 +438,7 @@ This command leverages four specialized sub-agents for comprehensive refactoring
 
 - **Code Explorer**: `developer-kit:react-frontend-development-expert`
 - **Refactoring Expert**: `developer-kit:typescript-refactor-expert`
-- **Software Architect**: `developer-kit:typescript-software-architect-review`
+- **Software Architect**: `developer-kit:react-software-architect-review`
 - **Code Reviewer**: `developer-kit:code-reviewer`
 
 **Fallback**: If specialized agents are not available, fall back to `general-purpose` agent.

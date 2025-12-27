@@ -402,6 +402,7 @@ my-project/
 | **[typescript-refactor-expert](agents/typescript-refactor-expert.md)**                         | TypeScript refactoring         | Modern patterns, performance optimization, code cleanup            |
 | **[typescript-security-expert](agents/typescript-security-expert.md)**                         | TypeScript security analysis   | OWASP Top 10, npm audit, secure coding practices                    |
 | **[typescript-software-architect-review](agents/typescript-software-architect-review.md)**     | TypeScript architecture review | Design patterns, scalability, module organization                  |
+| **[react-software-architect-review](agents/react-software-architect-review.md)**               | React architecture review      | Component patterns, state management, performance, accessibility   |
 | **[general-code-explorer](agents/general-code-explorer.md)**                                   | Code exploration and analysis  | Understanding codebases, tracing implementations                    |
 | **[general-code-reviewer](agents/general-code-reviewer.md)**                                   | General code review            | Code quality, best practices, maintainability                      |
 | **[general-software-architect](agents/general-software-architect.md)**                         | Software architecture design   | System design, patterns, technology selection                      |
@@ -715,6 +716,10 @@ For a complete history of changes, please see the dedicated [CHANGELOG.md](CHANG
 
 Recent highlights:
 
+- **v1.20.0**:
+  - New `react-software-architect-review` agent for React frontend architecture reviews
+  - Specialized in React 19, component design patterns, state management strategies, and performance optimization
+  - Updated workflow commands (`/devkit.feature-development`, `/devkit.fix-debugging`, `/devkit.refactor`) to use new React architect agent
 - **v1.18.0**:
   - New `expo-react-native-development-expert` agent for cross-platform mobile development with Expo SDK 54, React Native 0.81.5, and TypeScript
   - Expert mobile app development patterns including navigation, performance optimization, testing with Jest, and Expo deployment workflows
