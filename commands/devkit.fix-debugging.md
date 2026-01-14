@@ -18,15 +18,16 @@ Parse $ARGUMENTS to detect the optional `--lang` parameter:
 - `--lang=typescript` or `--lang=ts`: Use TypeScript specialized agents
 - `--lang=nestjs`: Use NestJS specialized agents
 - `--lang=react`: Use React frontend specialized agents
+- `--lang=aws`: Use AWS specialized agents (architecture, CloudFormation, IaC)
 - `--lang=general` or no flag: Use general-purpose agents (default)
 
 **Agent Mapping by Language:**
 
-| Phase       | General (default)             | Java/Spring Boot (`--lang=spring` or `--lang=java`) | TypeScript (`--lang=typescript` or `--lang=ts`)      | NestJS (`--lang=nestjs`)                             | React (`--lang=react`)                               |
-|-------------|-------------------------------|-----------------------------------------------------|------------------------------------------------------|------------------------------------------------------|------------------------------------------------------|
-| Debugger    | `developer-kit:debugger`      | `developer-kit:debugger`                            | `developer-kit:debugger`                             | `developer-kit:debugger`                             | `developer-kit:debugger`                             |
-| Architect   | `developer-kit:architect`     | `developer-kit:java-software-architect-review`      | `developer-kit:typescript-software-architect-review` | `developer-kit:typescript-software-architect-review` | `developer-kit:react-software-architect-review`      |
-| Code Review | `developer-kit:code-reviewer` | `developer-kit:spring-boot-code-review-expert`      | `developer-kit:code-reviewer`                        | `developer-kit:nestjs-code-review-expert`            | `developer-kit:code-reviewer`                        |
+| Phase       | General (default)                  | Java/Spring Boot (`--lang=spring` or `--lang=java`) | TypeScript (`--lang=typescript` or `--lang=ts`)      | NestJS (`--lang=nestjs`)                             | React (`--lang=react`)                          | AWS (`--lang=aws`)                             |
+|-------------|------------------------------------|-----------------------------------------------------|------------------------------------------------------|------------------------------------------------------|-------------------------------------------------|------------------------------------------------|
+| Debugger    | `developer-kit:debugger`           | `developer-kit:debugger`                            | `developer-kit:debugger`                             | `developer-kit:debugger`                             | `developer-kit:debugger`                        | `developer-kit:debugger`                       |
+| Architect   | `developer-kit:software-architect` | `developer-kit:java-software-architect-review`      | `developer-kit:typescript-software-architect-review` | `developer-kit:typescript-software-architect-review` | `developer-kit:react-software-architect-review` | `developer-kit:aws-solution-architect-expert`  |
+| Code Review | `developer-kit:code-reviewer`      | `developer-kit:spring-boot-code-review-expert`      | `developer-kit:code-reviewer`                        | `developer-kit:nestjs-code-review-expert`            | `developer-kit:code-reviewer`                   | `developer-kit:aws-architecture-review-expert` |
 
 ## Current Context
 
@@ -267,6 +268,12 @@ Task(
 # React debugging
 /devkit.fix-debugging --lang=react Component not re-rendering after state update
 
+# AWS infrastructure debugging
+/devkit.fix-debugging --lang=aws CloudFormation stack creation failing with IAM error
+
+# AWS architecture issues
+/devkit.fix-debugging --lang=aws Lambda function timeout causing API Gateway 504 errors
+
 # With test failure
 /devkit.fix-debugging Test UserServiceTest.testGetProfile is failing intermittently
 
@@ -288,7 +295,7 @@ This command leverages specialized sub-agents using the Task tool.
 ### General Agents (default, or `--lang=general`)
 
 - **Debugger**: `developer-kit:debugger`
-- **Software Architect**: `developer-kit:architect`
+- **Software Architect**: `developer-kit:software-architect`
 - **Code Reviewer**: `developer-kit:code-reviewer`
 
 ### Java/Spring Boot Agents (`--lang=spring` or `--lang=java`)
@@ -315,6 +322,13 @@ This command leverages specialized sub-agents using the Task tool.
 - **Software Architect**: `developer-kit:react-software-architect-review`
 - **Code Reviewer**: `developer-kit:code-reviewer`
 
+### AWS Agents (`--lang=aws`)
+
+- **Debugger**: `developer-kit:aws-architecture-review-expert`
+- **Software Architect**: `developer-kit:aws-solution-architect-expert`
+- **Code Reviewer**: `developer-kit:aws-architecture-review-expert`
+- **CloudFormation Expert**: `developer-kit:aws-cloudformation-devops-expert`
+
 **Fallback**: If specialized agents are not available, fall back to `general-purpose` agent.
 
 1. **general-debugger** - Analyzes errors, traces execution, finds root cause
@@ -325,7 +339,7 @@ This command leverages specialized sub-agents using the Task tool.
 
 ### Usage Pattern
 
-```javascript
+```
 // General agents (default)
 Task(
   description: "Brief task description",
@@ -359,6 +373,25 @@ Task(
   description: "Brief task description",
   prompt: "Detailed prompt for the sub-agent",
   subagent_type: "developer-kit:react-frontend-development-expert"
+)
+
+// AWS agents (when --lang=aws)
+Task(
+  description: "Debug AWS infrastructure issue",
+  prompt: "Analyze CloudFormation template and AWS resources to identify the root cause",
+  subagent_type: "developer-kit:aws-architecture-review-expert"
+)
+
+Task(
+  description: "Fix CloudFormation template",
+  prompt: "Review and fix the CloudFormation template issues",
+  subagent_type: "developer-kit:aws-cloudformation-devops-expert"
+)
+
+Task(
+  description: "Redesign AWS architecture",
+  prompt: "Propose architectural fixes following AWS best practices",
+  subagent_type: "developer-kit:aws-solution-architect-expert"
 )
 ```
 
