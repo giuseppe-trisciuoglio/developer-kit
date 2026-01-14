@@ -19,6 +19,7 @@ Parse $ARGUMENTS to detect the optional `--lang` parameter:
 - `--lang=typescript` or `--lang=ts`: Use TypeScript specialized agents
 - `--lang=nestjs`: Use NestJS specialized agents
 - `--lang=react`: Use React frontend specialized agents
+- `--lang=aws`: Use AWS specialized agents (architecture, CloudFormation, IaC)
 - `--lang=general` or no flag: Use general-purpose agents (default)
 
 ## Scope Selection
@@ -31,12 +32,12 @@ Parse $ARGUMENTS to detect the optional `--scope` parameter:
 
 **Agent Mapping by Language:**
 
-| Phase               | General (default)             | Java/Spring Boot (`--lang=spring` or `--lang=java`)    | TypeScript (`--lang=typescript` or `--lang=ts`)      | NestJS (`--lang=nestjs`)                             | React (`--lang=react`)                               |
-|---------------------|-------------------------------|--------------------------------------------------------|------------------------------------------------------|------------------------------------------------------|------------------------------------------------------|
-| Deep Exploration    | `developer-kit:explorer`      | `developer-kit:spring-boot-backend-development-expert` | `developer-kit:explorer`                             | `developer-kit:nestjs-backend-development-expert`    | `developer-kit:react-frontend-development-expert`    |
-| Refactoring Expert  | `developer-kit:code-reviewer` | `developer-kit:java-refactor-expert`                   | `developer-kit:typescript-refactor-expert`           | `developer-kit:typescript-refactor-expert`           | `developer-kit:typescript-refactor-expert`           |
-| Architecture Review | `developer-kit:architect`     | `developer-kit:java-software-architect-review`         | `developer-kit:typescript-software-architect-review` | `developer-kit:typescript-software-architect-review` | `developer-kit:react-software-architect-review`      |
-| Code Review         | `developer-kit:code-reviewer` | `developer-kit:spring-boot-code-review-expert`         | `developer-kit:code-reviewer`                        | `developer-kit:nestjs-code-review-expert`            | `developer-kit:code-reviewer`                        |
+| Phase               | General (default)                  | Java/Spring Boot (`--lang=spring` or `--lang=java`)    | TypeScript (`--lang=typescript` or `--lang=ts`)      | NestJS (`--lang=nestjs`)                             | React (`--lang=react`)                            | AWS (`--lang=aws`)                             |
+|---------------------|------------------------------------|--------------------------------------------------------|------------------------------------------------------|------------------------------------------------------|---------------------------------------------------|------------------------------------------------|
+| Deep Exploration    | `developer-kit:code-explorer`      | `developer-kit:spring-boot-backend-development-expert` | `developer-kit:code-explorer`                        | `developer-kit:nestjs-backend-development-expert`    | `developer-kit:react-frontend-development-expert` | `developer-kit:aws-solution-architect-expert`  |
+| Refactoring Expert  | `developer-kit:refactor-expert`    | `developer-kit:java-refactor-expert`                   | `developer-kit:typescript-refactor-expert`           | `developer-kit:typescript-refactor-expert`           | `developer-kit:typescript-refactor-expert`        | `developer-kit:refactor-expert`                |
+| Architecture Review | `developer-kit:software-architect` | `developer-kit:java-software-architect-review`         | `developer-kit:typescript-software-architect-review` | `developer-kit:typescript-software-architect-review` | `developer-kit:react-software-architect-review`   | `developer-kit:aws-solution-architect-expert`  |
+| Code Review         | `developer-kit:code-reviewer`      | `developer-kit:spring-boot-code-review-expert`         | `developer-kit:code-reviewer`                        | `developer-kit:nestjs-code-review-expert`            | `developer-kit:code-reviewer`                     | `developer-kit:aws-architecture-review-expert` |
 
 ## Current Context
 
@@ -394,6 +395,12 @@ Task(
 # React component refactoring
 /devkit.refactor --lang=react Extract shared hooks from dashboard components
 
+# AWS infrastructure refactoring
+/devkit.refactor --lang=aws Refactor monolithic CloudFormation template into nested stacks
+
+# AWS architecture modernization
+/devkit.refactor --lang=aws Migrate from EC2-based to serverless architecture
+
 # Internal implementation refactoring
 /devkit.refactor --scope=file Improve performance of search algorithm in SearchService
 ```
@@ -408,9 +415,9 @@ This command leverages four specialized sub-agents for comprehensive refactoring
 
 ### General Agents (default, or `--lang=general`)
 
-- **Code Explorer**: `developer-kit:explorer`
+- **Code Explorer**: `developer-kit:code-explorer`
 - **Refactoring Expert**: `developer-kit:code-reviewer`
-- **Software Architect**: `developer-kit:architect`
+- **Software Architect**: `developer-kit:software-architect`
 - **Code Reviewer**: `developer-kit:code-reviewer`
 
 ### Java/Spring Boot Agents (`--lang=spring` or `--lang=java`)
@@ -422,7 +429,7 @@ This command leverages four specialized sub-agents for comprehensive refactoring
 
 ### TypeScript Agents (`--lang=typescript` or `--lang=ts`)
 
-- **Code Explorer**: `developer-kit:explorer`
+- **Code Explorer**: `developer-kit:code-explorer`
 - **Refactoring Expert**: `developer-kit:typescript-refactor-expert`
 - **Software Architect**: `developer-kit:typescript-software-architect-review`
 - **Code Reviewer**: `developer-kit:code-reviewer`
@@ -441,22 +448,29 @@ This command leverages four specialized sub-agents for comprehensive refactoring
 - **Software Architect**: `developer-kit:react-software-architect-review`
 - **Code Reviewer**: `developer-kit:code-reviewer`
 
+### AWS Agents (`--lang=aws`)
+
+- **Code Explorer**: `developer-kit:aws-solution-architect-expert`
+- **Refactoring Expert**: `developer-kit:aws-cloudformation-devops-expert`
+- **Software Architect**: `developer-kit:aws-solution-architect-expert`
+- **Code Reviewer**: `developer-kit:aws-architecture-review-expert`
+
 **Fallback**: If specialized agents are not available, fall back to `general-purpose` agent.
 
 ### Usage Pattern
 
-```javascript
+```
 // Exploration with multiple agents in parallel
 Task(
   description: "Map code structure",
   prompt: "Analyze [code area] for refactoring...",
-  subagent_type: "developer-kit:explorer"
+  subagent_type: "developer-kit:code-explorer"
 )
 
 Task(
   description: "Find all usages",
   prompt: "Find ALL usages of [code to refactor]...",
-  subagent_type: "developer-kit:explorer"
+  subagent_type: "developer-kit:code-explorer"
 )
 
 // Sequential refactoring design
@@ -477,6 +491,25 @@ Task(
   description: "Verify architectural integrity",
   prompt: "Verify the architectural integrity...",
   subagent_type: "developer-kit:java-software-architect-review"
+)
+
+// AWS agents (when --lang=aws)
+Task(
+  description: "Analyze AWS architecture for refactoring",
+  prompt: "Analyze the current AWS architecture and identify refactoring opportunities",
+  subagent_type: "developer-kit:aws-solution-architect-expert"
+)
+
+Task(
+  description: "Refactor CloudFormation templates",
+  prompt: "Design and implement refactored CloudFormation templates with modular structure",
+  subagent_type: "developer-kit:aws-cloudformation-devops-expert"
+)
+
+Task(
+  description: "Review refactored AWS architecture",
+  prompt: "Review the refactored architecture against Well-Architected Framework",
+  subagent_type: "developer-kit:aws-architecture-review-expert"
 )
 ```
 

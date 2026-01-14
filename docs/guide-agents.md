@@ -71,7 +71,7 @@ Agents are specialized AI assistants with dedicated context windows, custom prom
 Task(
   description: "Analyze user authentication feature",
   prompt: "Trace through the user authentication feature comprehensively. Map all components, data flow, and integration points.",
-  subagent_type: "developer-kit:explorer"
+  subagent_type: "developer-kit:code-explorer"
 )
 ```
 
@@ -114,7 +114,7 @@ Task(
 Task(
   description: "Design real-time notifications architecture",
   prompt: "Design complete architecture for real-time notifications. Consider scalability, reliability, and integration with existing systems.",
-  subagent_type: "developer-kit:architect"
+  subagent_type: "developer-kit:software-architect"
 )
 ```
 

@@ -1,5 +1,5 @@
 ---
-name: architect
+name: software-architect
 description: Designs comprehensive feature architectures by analyzing existing codebase patterns and providing detailed implementation blueprints with specific files, components, data flows, and build sequences
 tools: [Read, Write, Edit, Glob, Grep, Bash]
 model: inherit
