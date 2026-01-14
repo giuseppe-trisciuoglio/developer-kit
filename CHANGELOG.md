@@ -15,6 +15,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `aws-cloudformation-devops-expert`: Expert AWS DevOps engineer specializing in CloudFormation templates, Infrastructure as Code (IaC), and AWS deployment automation. Masters nested stacks, cross-stack references, custom resources, and CI/CD pipeline integration
   - `aws-solution-architect-expert`: Expert AWS Solution Architect specializing in scalable cloud architectures, Well-Architected Framework, and enterprise-grade AWS solutions. Masters multi-region deployments, high availability patterns, cost optimization, and security best practices
   - `general-refactor-expert`: Expert code refactoring specialist. Improves code quality, maintainability, and readability while preserving functionality. Applies clean code principles, SOLID patterns, and language-specific best practices
+### Added
+- Features in development
+
+### Changed
+- Changes in existing functionality
+
+### Deprecated
+- Soon-to-be removed features
+
+### Removed
+- Removed features
+
+### Fixed
+- Bug fixes
+
+### Security
+- Security improvements
+
+## [1.21.0] - 2026-01-12
+
+### Added
+- `document-generator-expert` agent: Expert document generator for creating professional technical and business documentation
+  - Assessment documents (technical debt, security, performance, maturity)
+  - Feature documents (specifications, analysis, proposals)
+  - Analysis documents (gap analysis, impact analysis, comparative studies)
+  - Process documents (SOPs, runbooks, procedures)
+  - Custom documents with user-defined formats
+  - Multi-language support (English, Italian, Spanish, French, German, Portuguese)
+  - Codebase-driven analysis for accurate documentation
+  - Structured templates for each document type
+  - Integration with existing Developer Kit agents
+- `/devkit.generate-document` command: Interactive document generation with multi-language support
+  - Parameters for language (`--lang`), document type (`--type`), and output format (`--format`)
+  - Six-phase workflow (discovery, codebase analysis, content planning, generation, review, output)
+  - Project-specific analysis agents (Spring Boot, NestJS, React, General)
+  - Domain expert coordination for specialized content
+  - Documents saved to `docs/` directory with summary
+
+### Changed
+- Total agents count increased from 27 to 28
 
 ## [1.20.0] - 2025-12-26
 
@@ -355,6 +395,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.22.0...HEAD
 [1.22.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.20.0...v1.22.0
+[1.21.0]: https://github.com/giuseppe.trisciuoglio/developer-kit/compare/v1.20.0...v1.21.0
 [1.20.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.19.0...v1.20.0
 [1.19.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.18.0...v1.19.0
 [1.18.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.17.1...v1.18.0

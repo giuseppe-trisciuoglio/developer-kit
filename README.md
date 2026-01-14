@@ -8,7 +8,7 @@ multiple languages and frameworks. It includes specialized agents for code revie
 and AI integration.
 
 **56 Total Skills** — Comprehensive coverage of Spring Boot, testing, AI integration, cloud development, AI
-engineering patterns, frontend development, backend development (NestJS), and documentation generation
+engineering patterns, frontend development, backend development (NestJS), documentation generation, and document automation
 
 ## 🚀 Quick Start
 
@@ -410,6 +410,7 @@ my-project/
 | **[general-code-explorer](agents/general-code-explorer.md)**                                   | Code exploration and analysis  | Understanding codebases, tracing implementations                    |
 | **[general-code-reviewer](agents/general-code-reviewer.md)**                                   | General code review            | Code quality, best practices, maintainability                      |
 | **[general-software-architect](agents/general-software-architect.md)**                         | Software architecture design   | System design, patterns, technology selection                      |
+| **[document-generator-expert](agents/document-generator-expert.md)**                           | Document generation            | Technical documentation, assessments, feature specs, process docs   |
 
 ## ✨ Key Features
 
@@ -508,6 +509,7 @@ automation:
 
 | Command                                   | Purpose                                   | Use Case                                                                                 |
 |-------------------------------------------|-------------------------------------------|------------------------------------------------------------------------------------------|
+| **`/devkit.generate-document`**           | Generate professional documents            | Create assessments, feature specs, analysis, process docs with multi-language support     |
 | **`/devkit.generate-changelog`**          | Generate project changelog                | Create and maintain CHANGELOG.md for any project type with multi-language support        |
 | **`/devkit.write-a-minute-of-a-meeting`** | Generate meeting minutes from transcripts | Create professional meeting summaries and action items from meeting transcripts or notes |
 | **`/devkit.prompt-optimize`**             | Optimize prompts for AI performance       | Enhance prompt engineering and save optimized prompt to `optimized-prompt.md`            |
@@ -726,6 +728,12 @@ Recent highlights:
     - `aws-cloudformation-devops-expert`: CloudFormation templates and Infrastructure as Code (IaC) specialist
     - `aws-solution-architect-expert`: AWS Solution Architect for scalable cloud architectures and enterprise-grade solutions
     - `general-refactor-expert`: Code refactoring specialist applying clean code principles and SOLID patterns
+- **v1.21.0**:
+  - New `document-generator-expert` agent for creating professional technical and business documentation
+  - Supports 5 document types (assessment, feature, analysis, process, custom) with structured templates
+  - Multi-language support (English, Italian, Spanish, French, German, Portuguese)
+  - Codebase-driven analysis with integration to existing Developer Kit agents
+  - New `/devkit.generate-document` command with 6-phase workflow for interactive document generation
 - **v1.20.0**:
   - New `react-software-architect-review` agent for React frontend architecture reviews
   - Specialized in React 19, component design patterns, state management strategies, and performance optimization
@@ -777,4 +785,4 @@ Recent highlights:
 
 ---
 
-**Made with ❤️ for Java/Spring Boot developers using Claude Code**
+**Made with ❤️ for Developers using Claude Code**
