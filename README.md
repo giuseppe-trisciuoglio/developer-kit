@@ -403,6 +403,10 @@ my-project/
 | **[typescript-security-expert](agents/typescript-security-expert.md)**                         | TypeScript security analysis   | OWASP Top 10, npm audit, secure coding practices                    |
 | **[typescript-software-architect-review](agents/typescript-software-architect-review.md)**     | TypeScript architecture review | Design patterns, scalability, module organization                  |
 | **[react-software-architect-review](agents/react-software-architect-review.md)**               | React architecture review      | Component patterns, state management, performance, accessibility   |
+| **[aws-architecture-review-expert](agents/aws-architecture-review-expert.md)**                 | AWS architecture & CloudFormation review | Well-Architected Framework, security, cost optimization, IaC quality |
+| **[aws-cloudformation-devops-expert](agents/aws-cloudformation-devops-expert.md)**             | AWS DevOps & CloudFormation    | Nested stacks, cross-stack refs, custom resources, CI/CD integration |
+| **[aws-solution-architect-expert](agents/aws-solution-architect-expert.md)**                   | AWS Solution Architecture      | Multi-region deployments, high availability, cost optimization, security |
+| **[general-refactor-expert](agents/general-refactor-expert.md)**                               | Code refactoring               | Code quality, maintainability, SOLID patterns, best practices       |
 | **[general-code-explorer](agents/general-code-explorer.md)**                                   | Code exploration and analysis  | Understanding codebases, tracing implementations                    |
 | **[general-code-reviewer](agents/general-code-reviewer.md)**                                   | General code review            | Code quality, best practices, maintainability                      |
 | **[general-software-architect](agents/general-software-architect.md)**                         | Software architecture design   | System design, patterns, technology selection                      |
@@ -716,6 +720,12 @@ For a complete history of changes, please see the dedicated [CHANGELOG.md](CHANG
 
 Recent highlights:
 
+- **v1.22.0**:
+  - New AWS Cloud Architects agents (4 new specialized agents):
+    - `aws-architecture-review-expert`: AWS architecture and CloudFormation reviewer with Well-Architected Framework compliance
+    - `aws-cloudformation-devops-expert`: CloudFormation templates and Infrastructure as Code (IaC) specialist
+    - `aws-solution-architect-expert`: AWS Solution Architect for scalable cloud architectures and enterprise-grade solutions
+    - `general-refactor-expert`: Code refactoring specialist applying clean code principles and SOLID patterns
 - **v1.20.0**:
   - New `react-software-architect-review` agent for React frontend architecture reviews
   - Specialized in React 19, component design patterns, state management strategies, and performance optimization
