@@ -1,24 +1,23 @@
 # Complete Guide to Developer Kit Agents
 
-This guide provides comprehensive documentation for all specialized agents (subagents) available in the Developer Kit, organized by category with detailed explanations, use cases, and practical examples.
+This guide provides comprehensive documentation for all 36 specialized agents available in the Developer Kit, organized by development domain with descriptions, use cases, and integration patterns.
 
 ---
 
 ## Table of Contents
 
 1. [General Purpose Agents](#general-purpose-agents)
-2. [Java Development Agents](#java-development-agents)
-3. [TypeScript & Frontend Development Agents](#typescript--frontend-development-agents)
+2. [Java/Spring Boot Development Agents](#javaspring-boot-development-agents)
+3. [TypeScript/Node.js Development Agents](#typescriptnodejs-development-agents)
 4. [NestJS Backend Development Agents](#nestjs-backend-development-agents)
-5. [Testing & Quality Agents](#testing--quality-agents)
-6. [AI & LangChain4j Agents](#ai--langchain4j-agents)
-7. [Documentation & Engineering Agents](#documentation--engineering-agents)
-8. [Agent Usage Guidelines](#agent-usage-guidelines)
-9. [Complete Workflow Examples](#complete-workflow-examples)
+5. [React/Frontend Development Agents](#reactfrontend-development-agents)
+6. [Python Development Agents](#python-development-agents)
+7. [AWS Architecture & DevOps Agents](#aws-architecture--devops-agents)
+8. [AI & LangChain4J Agents](#ai--langchain4j-agents)
+9. [Documentation & Specialized Agents](#documentation--specialized-agents)
+10. [Agent Usage Guidelines](#agent-usage-guidelines)
 
 ---
-
-Note: For frontend-specific skills and patterns see the Frontend Skills Guide: [docs/guide-skills-frontend.md](../docs/guide-skills-frontend.md)
 
 ## Overview
 
@@ -42,143 +41,11 @@ Agents are specialized AI assistants with dedicated context windows, custom prom
 
 ## General Purpose Agents
 
-### `explorer`
-
-**Description**: Expert code analyst specializing in tracing and understanding feature implementations across codebases, mapping execution paths, architecture layers, and documenting dependencies.
-
-**When to use:**
-- Understanding existing features before modification
-- Mapping codebase architecture and patterns
-- Tracing data flow through complex systems
-- Documenting implementation details for team members
-- Onboarding new developers to a project
-- Reverse engineering legacy code
-
-**Model**: Inherit (uses same model as main conversation)
-
-**Key Capabilities:**
-- Feature discovery and entry point identification
-- Complete execution flow tracing
-- Architecture layer mapping (presentation → business → data)
-- Pattern and abstraction identification
-- Dependency analysis (internal and external)
-- Cross-cutting concerns documentation (auth, logging, caching)
-
-**Tools Available**: Read, Write, Edit, Glob, Grep, Bash
-
-**Example Usage:**
-```javascript
-Task(
-  description: "Analyze user authentication feature",
-  prompt: "Trace through the user authentication feature comprehensively. Map all components, data flow, and integration points.",
-  subagent_type: "developer-kit:code-explorer"
-)
-```
-
-**Output Provides:**
-- Entry points with file:line references
-- Step-by-step execution flow with data transformations
-- Key components and their responsibilities
-- Architecture insights and patterns
-- Dependencies and integration points
-- Critical files list for understanding
-
----
-
-### `architect`
-
-**Description**: Senior software architect who delivers comprehensive, actionable architecture blueprints by deeply understanding codebases and making confident architectural decisions.
-
-**When to use:**
-- Designing new features from scratch
-- Major refactoring initiatives
-- System integration planning
-- Performance optimization strategies
-- Technology stack decisions
-- Architectural debt assessment
-
-**Model**: Sonnet (recommended for architectural reasoning)
-
-**Key Capabilities:**
-- Codebase pattern analysis and convention extraction
-- Complete architecture design with specific implementations
-- Component design with interfaces and dependencies
-- Data flow mapping from entry points to outputs
-- Build sequence planning with phased implementation
-- Trade-off analysis and decision rationale
-
-**Tools Available**: Read, Write, Edit, Glob, Grep, Bash
-
-**Example Usage:**
-```javascript
-Task(
-  description: "Design real-time notifications architecture",
-  prompt: "Design complete architecture for real-time notifications. Consider scalability, reliability, and integration with existing systems.",
-  subagent_type: "developer-kit:software-architect"
-)
-```
-
-**Output Provides:**
-- Patterns & conventions found with file references
-- Architecture decision with clear rationale
-- Component design with file paths and responsibilities
-- Implementation map with specific files to create/modify
-- Data flow documentation
-- Build sequence with prioritized checklist
-
----
-
-### `code-reviewer`
-
-**Description**: Expert code reviewer specializing in modern software development with high precision to minimize false positives, focusing only on issues that truly matter.
-
-**When to use:**
-- Code quality assurance before commits
-- Pull request reviews
-- Identifying critical bugs and security issues
-- Performance bottleneck detection
-- Architectural anti-pattern identification
-- Best practices compliance verification
-
-**Model**: Inherit (uses same model as main conversation)
-
-**Key Capabilities:**
-- Bug detection (logic errors, null handling, race conditions)
-- Security vulnerability assessment (OWASP Top 10)
-- Performance and scalability analysis
-- Code quality evaluation (DRY, SOLID, complexity)
-- Project guidelines compliance
-- Confidence-based issue filtering (≥80% confidence)
-
-**Tools Available**: Read, Write, Edit, Glob, Grep, Bash
-
-**Confidence Scoring:**
-- **100%**: Absolutely certain, will happen frequently
-- **75%**: Highly confident, very likely real issue
-- **50%**: Moderately confident, real but might be nitpicky
-- **25%**: Somewhat confident, might be false positive
-- **0%**: Not confident, false positive or pre-existing
-- **Only reports ≥80% confidence issues**
-
-**Example Usage:**
-```javascript
-Task(
-  description: "Review payment processing code",
-  prompt: "Review the payment processing implementation for bugs, security vulnerabilities, and performance issues.",
-  subagent_type: "developer-kit:code-reviewer"
-)
-```
-
-**Output Provides:**
-- Issues grouped by severity (Critical, High, Medium)
-- Confidence scores for each issue
-- Specific file paths and line numbers
-- Concrete fix suggestions
-- Project guideline references
-
 ### `general-code-explorer`
 
-**Description**: Expert code analyst specializing in tracing and understanding feature implementations across codebases, mapping execution paths, architecture layers, and documenting dependencies.
+**File**: `agents/general-code-explorer.md`
+
+**Purpose**: Deeply analyzes existing codebase features by tracing execution paths, mapping architecture layers, understanding patterns and abstractions, and documenting dependencies.
 
 **When to use:**
 - Understanding existing features before modification
@@ -188,679 +55,295 @@ Task(
 - Analyzing performance bottlenecks in execution paths
 - Creating technical documentation from code analysis
 
-**Model**: Sonnet
-
 **Key Capabilities:**
+- Feature discovery and entry point identification
+- Complete execution flow tracing with data transformations
+- Architecture layer mapping
+- Pattern and abstraction identification
+- Dependency analysis (internal and external)
+- Cross-cutting concerns documentation
 
-1. **Code Tracing & Analysis**
-   - End-to-end execution path mapping
-   - Data flow visualization
-   - Call stack analysis
-   - Performance bottleneck identification
-   - Dependency graph generation
-
-2. **Architecture Mapping**
-   - Layer identification and separation
-   - Module interaction analysis
-   - Design pattern recognition
-   - Architectural debt detection
-   - Service boundary analysis
-
-3. **Feature Documentation**
-   - Automated technical documentation
-   - Implementation summary generation
-   - API endpoint mapping
-   - Database schema documentation
-   - Configuration documentation
+---
 
 ### `general-code-reviewer`
 
-**Description**: General-purpose code review expert focused on code quality, maintainability, and best practices across multiple languages and frameworks.
+**File**: `agents/general-code-reviewer.md`
+
+**Purpose**: Reviews code for bugs, logic errors, security vulnerabilities, and quality issues using confidence-based filtering to report only high-priority issues that truly matter.
 
 **When to use:**
-- Code quality assessments
-- Maintainability reviews
-- Best practice validation
-- Code consistency checks
-- Refactoring recommendations
-- Technical debt identification
-
-**Model**: Sonnet
+- Code quality assurance before commits
+- Pull request reviews
+- Identifying critical bugs and security issues
+- Performance bottleneck detection
+- Architectural anti-pattern identification
+- Best practices compliance verification
 
 **Key Capabilities:**
+- Bug detection (logic errors, null handling, race conditions)
+- Security vulnerability assessment
+- Performance and scalability analysis
+- Code quality evaluation (DRY, SOLID, complexity)
+- Confidence-based issue filtering
 
-1. **Code Quality Analysis**
-   - Code complexity metrics
-   - Maintainability scoring
-   - Readability assessment
-   - Code duplication detection
-   - Anti-pattern identification
+---
 
-2. **Best Practices Validation**
-   - Language-specific conventions
-   - Framework best practices
-   - Security best practices
-   - Performance considerations
-   - Testing coverage analysis
+### `general-debugger`
 
-3. **Refactoring Guidance**
-   - Step-by-step refactoring plans
-   - Design pattern applications
-   - Code improvement suggestions
-   - Modernization recommendations
-   - Architectural improvements
+**File**: `agents/general-debugger.md`
+
+**Purpose**: Expert debugger for root cause analysis. Traces execution paths, analyzes stack traces, identifies failure points, and proposes targeted fixes with minimal changes.
+
+**When to use:**
+- Debugging errors and unexpected behavior
+- Test failure analysis
+- Stack trace interpretation
+- Root cause identification
+- Performance issue diagnosis
+
+**Key Capabilities:**
+- Execution path tracing
+- Failure point identification
+- Minimal targeted fixes
+- Stack trace analysis
+
+---
 
 ### `general-software-architect`
 
-**Description**: Software architecture expert specializing in system design, technology selection, architectural patterns, and scalability solutions across different technology stacks.
+**File**: `agents/general-software-architect.md`
+
+**Purpose**: Designs comprehensive feature architectures by analyzing existing codebase patterns and providing detailed implementation blueprints with specific files, components, data flows, and build sequences.
 
 **When to use:**
-- System architecture design
-- Technology stack evaluation
-- Scalability planning
-- Microservices design
-- Integration architecture
-- Performance architecture
-
-**Model**: Sonnet
-
-**Key Capabilities:**
-
-1. **System Design**
-   - Architectural pattern selection
-   - System decomposition
-   - Service boundary definition
-   - Data architecture design
-   - Integration patterns
-
-2. **Technology Evaluation**
-   - Technology stack analysis
-   - Framework comparison
-   - Database selection
-   - Cloud platform evaluation
-   - Tool and library recommendations
-
-3. **Scalability & Performance**
-   - Scalability patterns
-   - Performance optimization strategies
-   - Caching strategies
-   - Load balancing designs
-   - Disaster recovery planning
-
----
-
-## Java Development Agents
-
-### `java-software-architect-review`
-
-**Description**: Expert Java software architect specializing in Clean Architecture, Domain-Driven Design (DDD), and Spring Boot patterns.
-
-**When to use:**
+- Designing new features from scratch
 - Major refactoring initiatives
-- Architecture quality assessment
-- Identifying architectural debt
-- Reviewing adherence to DDD principles
-- Evaluating Clean Architecture layering
-- Microservices design validation
-
-**Model**: Sonnet
+- System integration planning
+- Performance optimization strategies
+- Technology stack decisions
+- Architectural debt assessment
 
 **Key Capabilities:**
-
-1. **Clean Architecture Expertise**
-   - Hexagonal Architecture patterns
-   - Proper layer separation (domain → application → infrastructure → presentation)
-   - SOLID principles application
-   - Dependency Injection patterns
-   - Feature-based organization
-
-2. **Domain-Driven Design (DDD)**
-   - Bounded contexts and context mapping
-   - Aggregates and entities design
-   - Domain events with Spring
-   - Value objects with Java records
-   - Repositories and domain services
-   - Ubiquitous language enforcement
-   - Anti-corruption layers
-
-3. **Spring Boot Architecture**
-   - Feature-based architecture patterns
-   - Configuration management best practices
-   - Bean lifecycle and scoping
-   - AOP patterns for cross-cutting concerns
-   - Transaction management strategies
-   - Exception handling patterns
-   - Jakarta Bean Validation integration
-
-4. **Microservices & Distributed Systems**
-   - Spring Cloud architecture
-   - Event sourcing implementations
-   - CQRS patterns
-   - Saga pattern for distributed transactions
-   - API Gateway patterns
-   - Distributed tracing
-   - Message-driven architecture
-
-**Skills Integration**: Automatically invokes 40+ Spring Boot, testing, LangChain4j, and AWS skills for comprehensive architectural reviews.
-
-**Example Interactions:**
-
-```bash
-# Review package structure for Clean Architecture
-"Review this Spring Boot package structure for proper Clean Architecture layering"
-
-# DDD patterns evaluation
-"Assess if this JPA entity design follows DDD aggregate patterns and bounded contexts"
-
-# Spring Security architecture
-"Evaluate this Spring Security configuration for proper separation of concerns"
-
-# Microservices domain events
-"Review this microservice's domain events implementation with Spring ApplicationEvent"
-
-# Transaction boundaries
-"Evaluate our transaction boundaries with @Transactional for aggregate consistency"
-```
-
-**Output Includes:**
-- Assessment of current architecture quality (1-10 scale)
-- Specific violations of Clean Architecture or DDD principles
-- Concrete refactoring recommendations with code examples
-- Risk assessment of proposed changes
-- Next steps for implementation priority
+- Codebase pattern analysis
+- Complete architecture design
+- Component design with interfaces
+- Data flow mapping
+- Build sequence planning
+- Trade-off analysis
 
 ---
+
+### `general-refactor-expert`
+
+**File**: `agents/general-refactor-expert.md`
+
+**Purpose**: Expert code refactoring specialist. Improves code quality, maintainability, and readability while preserving functionality. Applies clean code principles, SOLID patterns, and language-specific best practices.
+
+**When to use:**
+- Code quality improvements
+- Refactoring after feature implementation
+- Legacy code modernization
+- Technical debt reduction
+- Performance optimization
+- Best practices alignment
+
+**Key Capabilities:**
+- Code quality improvement
+- SOLID principles application
+- Design pattern implementation
+- Performance optimization
+- Readability enhancement
+
+---
+
+## Java/Spring Boot Development Agents
 
 ### `spring-boot-backend-development-expert`
 
-**Description**: Expert Spring Boot backend developer specializing in feature implementation, architecture, and best practices.
+**File**: `agents/spring-boot-backend-development-expert.md`
+
+**Purpose**: Expert Spring Boot backend developer specializing in feature implementation, architecture, and best practices.
 
 **When to use:**
-- Implementing new Spring Boot features
-- REST API development
-- Database integration
+- Spring Boot development tasks
+- REST API implementation
 - Backend architecture decisions
+- Feature implementation guidance
+- Spring framework best practices
+
+---
+
+### `spring-boot-code-review-expert`
+
+**File**: `agents/spring-boot-code-review-expert.md`
+
+**Purpose**: Expert Spring Boot code reviewer specializing in Java best practices, patterns, and architectural issues. Reviews code for quality, maintainability, and adherence to Spring Boot conventions.
+
+**When to use:**
+- Spring Boot code review
+- Pull request assessment
+- Architecture validation
+- Best practices verification
+- Code quality improvement
+
+---
+
+### `spring-boot-unit-testing-expert`
+
+**File**: `agents/spring-boot-unit-testing-expert.md`
+
+**Purpose**: Expert in unit testing with Spring Test, JUnit 5, and Mockito for Spring Boot applications. Specializes in comprehensive test strategies, test architecture, and testing best practices.
+
+**When to use:**
+- Writing Spring Boot unit tests
+- Test coverage improvement
+- Testing strategy review
+- Test architecture design
+- Mockito and JUnit 5 patterns
+
+---
+
+### `java-software-architect-review`
+
+**File**: `agents/java-software-architect-review.md`
+
+**Purpose**: Expert Java software architect specializing in Clean Architecture, Domain-Driven Design (DDD), and Spring Boot patterns. Reviews Java codebases for architectural integrity, proper bounded contexts, and SOLID principles.
+
+**When to use:**
+- Java architectural decisions
+- DDD modeling and implementation
+- Clean Architecture reviews
+- Architectural refactoring
+- System design validation
+
+---
+
+### `java-refactor-expert`
+
+**File**: `agents/java-refactor-expert.md`
+
+**Purpose**: Expert Java and Spring Boot code refactoring specialist. Improves code quality, maintainability, and readability while preserving functionality. Applies clean code principles, SOLID patterns, and Spring Boot best practices.
+
+**When to use:**
+- Java code refactoring
+- Spring Boot code quality improvements
+- Legacy Java modernization
+- Design pattern application
 - Performance optimization
-- Security implementation
-
-**Model**: Sonnet
-
-**Key Capabilities:**
-
-1. **Feature Implementation**
-   - REST APIs with proper HTTP methods and status codes
-   - CRUD operations following best practices
-   - Service layer design with business logic
-   - Repository pattern implementation
-   - DTO patterns with Java records
-
-2. **Spring Boot Best Practices**
-   - Constructor injection exclusively
-   - Profile-based configuration management
-   - Proper bean scoping and lifecycle
-   - Exception handling with @ControllerAdvice
-   - Validation with Jakarta Bean Validation
-
-3. **Database & Persistence**
-   - Spring Data JPA with repository pattern
-   - Entity design with relationships
-   - Transaction boundaries with @Transactional
-   - Database migrations with Flyway/Liquibase
-   - Multi-tenancy patterns
-
-4. **Testing Strategy**
-   - Unit tests with JUnit 5 and Mockito
-   - Integration tests with Testcontainers
-   - Slice tests (@WebMvcTest, @DataJpaTest)
-   - Comprehensive test coverage
-
-5. **Security Implementation**
-   - Spring Security with JWT authentication
-   - CORS configuration
-   - Input validation and sanitization
-   - Method-level security with @PreAuthorize
-
-**Skills Integration**: Automatically invokes 33+ Spring Boot, testing, and AWS skills for complete backend development.
-
-**Example Interactions:**
-
-```bash
-# REST API implementation
-"Implement a REST API for user management with CRUD operations"
-
-# Database integration
-"Create a Spring Data JPA repository with custom queries for orders"
-
-# Security implementation
-"Add JWT authentication to this Spring Boot application"
-
-# Performance optimization
-"Implement caching strategy for this service layer"
-
-# AWS integration
-"Integrate S3 file storage for user profile pictures"
-```
-
-**Output Includes:**
-- Complete implementation following Spring Boot best practices
-- Comprehensive test coverage (unit + integration)
-- Error handling and validation
-- Performance considerations
-- Security implications
-- Documentation examples
 
 ---
 
 ### `java-security-expert`
 
-**Description**: Expert security auditor specializing in DevSecOps, comprehensive cybersecurity, and compliance frameworks.
+**File**: `agents/java-security-expert.md`
+
+**Purpose**: Expert security auditor specializing in DevSecOps, comprehensive cybersecurity, and compliance frameworks. Masters vulnerability assessment, threat modeling, secure authentication (OAuth2/OIDC), OWASP standards, cloud security, and security automation.
 
 **When to use:**
-- Security audits and vulnerability assessments
-- Compliance requirements (GDPR, HIPAA, SOC2)
-- DevSecOps integration
-- Authentication/authorization implementation
-- Threat modeling
+- Java/Spring Boot security audits
+- Vulnerability assessment
+- DevSecOps implementation
+- Compliance framework integration (GDPR, HIPAA, SOC2)
 - Incident response planning
-
-**Model**: Sonnet
-
-**Key Capabilities:**
-
-1. **Authentication & Authorization**
-   - OAuth and OpenID Connect
-   - JWT security best practices
-   - Zero-trust architecture
-   - Multi-factor authentication
-   - Authorization patterns (RBAC, ABAC, ReBAC)
-   - API security (scopes, keys, rate limiting)
-
-2. **OWASP & Vulnerability Management**
-   - OWASP Top 10 compliance
-   - Application Security Verification Standard (ASVS)
-   - Vulnerability assessment and penetration testing
-   - Threat modeling (STRIDE, PASTA)
-   - Risk assessment and CVSS scoring
-
-3. **Application Security Testing**
-   - Static analysis (SAST) with SonarQube
-   - Dynamic analysis (DAST) with OWASP ZAP
-   - Interactive testing (IAST)
-   - Dependency scanning with Snyk
-   - Container security scanning
-
-4. **DevSecOps & Security Automation**
-   - Security pipeline integration
-   - Shift-left security practices
-   - Security as Code with OPA
-   - Container and Kubernetes security
-   - Supply chain security (SLSA, SBOM)
-
-5. **Cloud & Infrastructure Security**
-   - Cloud security posture management
-   - Infrastructure as Code security
-   - Network security and access controls
-   - Data protection and encryption
-   - Secrets management
-
-**Skills Integration**: Automatically invokes Spring Boot security and AWS skills for comprehensive security audits.
-
-**Example Interactions:**
-
-```bash
-# Complete security audit
-"Perform a comprehensive security audit of this Spring Boot application"
-
-# OWASP compliance check
-"Review this code for OWASP Top 10 vulnerabilities"
-
-# Authentication implementation
-"Implement OAuth2 authentication with Spring Security"
-
-# DevSecOps integration
-"Set up security scanning in our CI/CD pipeline"
-
-# Compliance assessment
-"Assess our application for GDPR compliance"
-```
-
-**Output Includes:**
-- Security assessment score (1-10)
-- Critical vulnerabilities requiring immediate attention
-- High-priority security improvements
-- Compliance status and gaps
-- Specific implementation guidance
-- Monitoring and maintenance recommendations
-
-**Security Finding Priorities:**
-- **Critical (P0)**: Remote code execution, authentication bypass, data exposure
-- **High (P1)**: Outdated CVEs, insecure configurations, missing security headers
-- **Medium (P2)**: Logging gaps, insufficient validation, access control improvements
-- **Low (P3)**: Documentation, code style security, additional testing
+- Authentication/authorization design
 
 ---
 
-## TypeScript & Frontend Development Agents
+### `java-documentation-specialist`
 
-### `react-frontend-development-expert`
+**File**: `agents/java-documentation-specialist.md`
 
-**Description**: Expert React frontend developer specializing in modern React patterns, component architecture, state management, and performance optimization.
-
-**When to use:**
-- Building React applications or features
-- Implementing complex component architectures
-- Optimizing React performance
-- Setting up state management solutions
-- Integrating with TypeScript
-- Implementing responsive designs
-
-**Model**: Sonnet
-
-**Key Capabilities:**
-
-1. **Component Architecture**
-   - Functional components with hooks
-   - Custom hook development
-   - Component composition patterns
-   - Higher-Order Components (HOCs)
-   - Render props patterns
-   - Compound components
-
-2. **State Management**
-   - React Context API
-   - Redux Toolkit integration
-   - Zustand for lightweight state
-   - State management patterns
-   - Data fetching with React Query
-   - Form state management
-
-3. **Performance Optimization**
-   - Code splitting and lazy loading
-   - React.memo and useMemo
-   - useCallback optimization
-   - Virtual scrolling
-   - Bundle size optimization
-   - Render performance profiling
-
-### `nestjs-backend-development-expert`
-
-**Description**: Expert NestJS backend developer specializing in TypeScript, microservices, authentication, and modern Node.js patterns.
+**Purpose**: Expert Java documentation specialist creating comprehensive technical documentation from Spring Boot codebases. Analyzes architecture, design patterns, and implementation details to produce complete project documentation.
 
 **When to use:**
-- Building NestJS applications or modules
-- Implementing microservices architecture
-- Setting up authentication and authorization
-- Database integration with TypeORM/Prisma
-- API development and documentation
-- Testing NestJS applications
+- Java project documentation
+- API documentation generation
+- Architecture guide creation
+- Technical manual writing
+- Design pattern documentation
+- System documentation
 
-**Model**: Sonnet
+---
 
-**Key Capabilities:**
+### `java-tutorial-engineer`
 
-1. **NestJS Architecture**
-   - Module organization and structure
-   - Dependency injection patterns
-   - Controller and service development
-   - Interceptors and guards
-   - Custom decorators
-   - Middleware implementation
+**File**: `agents/java-tutorial-engineer.md`
 
-2. **API Development**
-   - RESTful API design
-   - GraphQL integration
-   - WebSocket implementation
-   - API validation with DTOs
-   - OpenAPI documentation
-   - Versioning strategies
-
-3. **Authentication & Security**
-   - JWT implementation
-   - OAuth2 integration
-   - Role-based access control
-   - API key authentication
-   - Security best practices
-   - Rate limiting and throttling
-
-### `nestjs-code-review-expert`
-
-**Description**: NestJS code review expert focusing on architecture, security, performance, and best practices specific to the NestJS ecosystem.
+**Purpose**: Expert Java tutorial engineer specializing in Spring Boot and LangChain4j educational content. Creates step-by-step tutorials and hands-on learning experiences for Java developers.
 
 **When to use:**
-- Reviewing NestJS code quality
-- Architecture validation
-- Security vulnerability assessment
-- Performance optimization review
-- Best practices compliance
-- Code maintainability assessment
+- Onboarding guides
+- Feature tutorials
+- Concept explanations
+- Learning paths
+- Educational content creation
+- Knowledge base articles
 
-**Model**: Sonnet
+---
 
-**Key Capabilities:**
-
-1. **Architecture Review**
-   - Module structure analysis
-   - Dependency injection review
-   - Service layer organization
-   - Cross-cutting concerns
-   - Module coupling assessment
-   - Design pattern validation
-
-2. **Security Assessment**
-   - Authentication implementation review
-   - Authorization pattern validation
-   - Input sanitization checks
-   - SQL injection prevention
-   - XSS vulnerability detection
-   - Security middleware review
-
-3. **Performance Analysis**
-   - Database query optimization
-   - Caching strategy review
-   - Async/await pattern usage
-   - Memory leak detection
-   - Response time optimization
-   - Resource utilization review
-
-### `nestjs-unit-testing-expert`
-
-**Description**: NestJS testing expert specializing in unit tests, integration tests, and end-to-end testing with Jest and testing best practices.
-
-**When to use:**
-- Writing unit tests for NestJS modules
-- Setting up integration tests
-- Creating e2e test suites
-- Mock testing strategies
-- Test coverage optimization
-- CI/CD testing pipeline setup
-
-**Model**: Sonnet
-
-**Key Capabilities:**
-
-1. **Unit Testing**
-   - Service and controller testing
-   - Mock implementation strategies
-   - Test fixture creation
-   - Assertion patterns
-   - Edge case testing
-   - Test organization and structure
-
-2. **Integration Testing**
-   - Database integration tests
-   - API endpoint testing
-   - External service mocking
-   - Transaction testing
-   - Middleware testing
-   - Module interaction testing
-
-3. **End-to-End Testing**
-   - Full application testing
-   - User flow testing
-   - API contract testing
-   - Performance testing
-   - Load testing strategies
-   - Browser automation with Cypress
-
-### `typescript-documentation-expert`
-
-**Description**: TypeScript documentation expert specializing in JSDoc/TSDoc, API documentation, and comprehensive type definition documentation.
-
-**When to use:**
-- Documenting TypeScript codebases
-- Creating API documentation
-- Writing type definitions
-- Generating documentation from types
-- Documenting React components
-- Creating developer guides
-
-**Model**: Sonnet
-
-**Key Capabilities:**
-
-1. **JSDoc/TSDoc Documentation**
-   - Comprehensive type documentation
-   - Parameter and return type documentation
-   - Example code in documentation
-   - Markdown formatting in comments
-   - Cross-reference documentation
-   - Documentation inheritance
-
-2. **API Documentation**
-   - REST API documentation
-   - GraphQL schema documentation
-   - SDK documentation generation
-   - Interactive API docs
-   - Versioning documentation
-   - Authentication documentation
-
-3. **Type Definition Documentation**
-   - Declaration file creation
-   - Module augmentation documentation
-   - Generic type documentation
-   - Interface documentation
-   - Type utility documentation
-   - Migration guides
+## TypeScript/Node.js Development Agents
 
 ### `typescript-refactor-expert`
 
-**Description**: TypeScript refactoring expert specializing in modern patterns, performance optimization, legacy code migration, and code improvement strategies.
+**File**: `agents/typescript-refactor-expert.md`
+
+**Purpose**: Expert TypeScript and modern JavaScript code refactoring specialist. Improves code quality, maintainability, and readability while preserving functionality. Applies clean code principles, SOLID patterns, and TypeScript best practices.
 
 **When to use:**
-- Refactoring TypeScript codebases
-- Migrating JavaScript to TypeScript
-- Optimizing type definitions
-- Improving code structure
+- TypeScript code refactoring
+- Modern JavaScript patterns
+- Type safety improvements
+- Code quality enhancement
+- Legacy code modernization
 - Performance optimization
-- Modernizing legacy code
 
-**Model**: Sonnet
-
-**Key Capabilities:**
-
-1. **Code Modernization**
-   - ES6+ pattern implementation
-   - Modern TypeScript features
-   - Decorator patterns
-   - Async/await migration
-   - Module system updates
-   - Framework migration
-
-2. **Type Optimization**
-   - Type inference improvements
-   - Generic type optimization
-   - Union/intersection types
-   - Conditional types
-   - Mapped types
-   - Type guards implementation
-
-3. **Performance Optimization**
-   - Bundle size reduction
-   - Tree shaking optimization
-   - Lazy loading patterns
-   - Code splitting strategies
-   - Memory optimization
-   - Runtime performance
+---
 
 ### `typescript-security-expert`
 
-**Description**: TypeScript security expert focusing on OWASP Top 10, npm audit, secure coding practices, and vulnerability assessment.
+**File**: `agents/typescript-security-expert.md`
+
+**Purpose**: Expert security auditor specializing in TypeScript/Node.js application security, DevSecOps, and comprehensive cybersecurity. Masters vulnerability assessment, threat modeling, secure authentication (JWT/OAuth2), OWASP standards, and TypeScript-specific security patterns.
 
 **When to use:**
-- Security audit of TypeScript applications
+- TypeScript/Node.js security audits
+- Express, NestJS, Next.js security review
 - Vulnerability assessment
-- Secure coding practice implementation
-- Dependency security review
+- DevSecOps integration
+- Authentication design
 - OWASP compliance
-- Security testing implementation
 
-**Model**: Sonnet
+---
 
-**Key Capabilities:**
+### `typescript-documentation-expert`
 
-1. **Vulnerability Assessment**
-   - OWASP Top 10 analysis
-   - Common vulnerability detection
-   - Security pattern review
-   - Input validation review
-   - Output encoding verification
-   - Authentication security
+**File**: `agents/typescript-documentation-expert.md`
 
-2. **Dependency Security**
-   - npm audit resolution
-   - Package vulnerability scanning
-   - Supply chain security
-   - License compliance
-   - Version management
-   - Security updates
+**Purpose**: Expert TypeScript documentation specialist creating comprehensive technical documentation for TypeScript projects. Analyzes architecture, design patterns, and implementation details to produce complete project documentation.
 
-3. **Secure Coding**
-   - XSS prevention
-   - CSRF protection
-   - SQL injection prevention
-   - Authentication patterns
-   - Authorization implementation
-   - Secure data handling
+**When to use:**
+- TypeScript project documentation
+- API documentation
+- Architecture guides
+- ADR (Architecture Decision Record) creation
+- Technical manuals
+- Design documentation
+
+---
 
 ### `typescript-software-architect-review`
 
-**Description**: TypeScript software architecture expert specializing in design patterns, scalability, module organization, and TypeScript-specific architectural patterns.
+**File**: `agents/typescript-software-architect-review.md`
+
+**Purpose**: Expert TypeScript software architect specializing in Clean Architecture, Domain-Driven Design (DDD), Node.js patterns, and modern TypeScript frameworks. Reviews TypeScript codebases for architectural integrity.
 
 **When to use:**
-- TypeScript architecture review
-- Design pattern implementation
-- Scalability assessment
-- Module organization review
-- Type system architecture
-- Large-scale application design
-
-**Model**: Sonnet
-
-**Key Capabilities:**
-
-1. **Architectural Patterns**
-   - MVVM/MVC patterns
-   - Micro-Frontend architecture
-   - Modular monolith design
-   - Service-oriented architecture
-   - Event-driven architecture
-   - CQRS patterns
-
-2. **Type System Design**
-   - Advanced type patterns
-   - Generic architecture
-   - Type-safe API design
-   - Domain modeling with types
-   - Type-level programming
-   - Type composition strategies
-
-3. **Scalability Design**
-   - Module scaling strategies
-   - Performance architecture
-   - Code splitting strategies
-   - Lazy loading architecture
-   - Caching strategies
-   - Load balancing patterns
+- TypeScript architectural decisions
+- Node.js system design
+- DDD implementation
+- Express/Fastify/NestJS architecture
+- System design validation
+- Architectural refactoring
 
 ---
 
@@ -868,953 +351,409 @@ Task(
 
 ### `nestjs-backend-development-expert`
 
-**Description**: Expert NestJS backend developer specializing in TypeScript, microservices, authentication, and modern Node.js patterns.
+**File**: `agents/nestjs-backend-development-expert.md`
+
+**Purpose**: Expert NestJS backend developer specializing in feature implementation, architecture, and best practices.
 
 **When to use:**
-- Building NestJS applications or modules
-- Implementing microservices architecture
-- Setting up authentication and authorization
-- Database integration with TypeORM/Prisma
-- API development and documentation
-- Testing NestJS applications
+- NestJS development tasks
+- REST API implementation
+- Backend architecture decisions
+- Feature implementation
+- NestJS best practices
 
-**Model**: Sonnet
-
-**Key Capabilities:**
-
-1. **NestJS Architecture**
-   - Module organization and structure
-   - Dependency injection patterns
-   - Controller and service development
-   - Interceptors and guards
-   - Custom decorators
-   - Middleware implementation
-
-2. **API Development**
-   - RESTful API design
-   - GraphQL integration
-   - WebSocket implementation
-   - API validation with DTOs
-   - OpenAPI documentation
-   - Versioning strategies
-
-3. **Authentication & Security**
-   - JWT implementation
-   - OAuth2 integration
-   - Role-based access control
-   - API key authentication
-   - Security best practices
-   - Rate limiting and throttling
+---
 
 ### `nestjs-code-review-expert`
 
-**Description**: NestJS code review expert focusing on architecture, security, performance, and best practices specific to the NestJS ecosystem.
+**File**: `agents/nestjs-code-review-expert.md`
+
+**Purpose**: Expert NestJS code reviewer specializing in TypeScript best practices, NestJS patterns, and architectural issues. Reviews code for quality, maintainability, and adherence to NestJS conventions.
 
 **When to use:**
-- Reviewing NestJS code quality
+- NestJS code review
+- Pull request assessment
 - Architecture validation
-- Security vulnerability assessment
-- Performance optimization review
-- Best practices compliance
-- Code maintainability assessment
+- Best practices verification
+- NestJS pattern compliance
 
-**Model**: Sonnet
-
-**Key Capabilities:**
-
-1. **Architecture Review**
-   - Module structure analysis
-   - Dependency injection review
-   - Service layer organization
-   - Cross-cutting concerns
-   - Module coupling assessment
-   - Design pattern validation
-
-2. **Security Assessment**
-   - Authentication implementation review
-   - Authorization pattern validation
-   - Input sanitization checks
-   - SQL injection prevention
-   - XSS vulnerability detection
-   - Security middleware review
-
-3. **Performance Analysis**
-   - Database query optimization
-   - Caching strategy review
-   - Async/await pattern usage
-   - Memory leak detection
-   - Response time optimization
-   - Resource utilization review
+---
 
 ### `nestjs-unit-testing-expert`
 
-**Description**: NestJS testing expert specializing in unit tests, integration tests, and end-to-end testing with Jest and testing best practices.
+**File**: `agents/nestjs-unit-testing-expert.md`
+
+**Purpose**: Expert in unit testing with NestJS, Jest, and testing utilities for TypeScript applications. Specializes in comprehensive test strategies, test architecture, and testing best practices.
 
 **When to use:**
-- Writing unit tests for NestJS modules
-- Setting up integration tests
-- Creating e2e test suites
-- Mock testing strategies
-- Test coverage optimization
-- CI/CD testing pipeline setup
+- NestJS unit testing
+- Jest configuration
+- Test coverage improvement
+- Testing strategy design
+- Mock and fixture creation
 
-**Model**: Sonnet
-
-**Key Capabilities:**
-
-1. **Unit Testing**
-   - Service and controller testing
-   - Mock implementation strategies
-   - Test fixture creation
-   - Assertion patterns
-   - Edge case testing
-   - Test organization and structure
-
-2. **Integration Testing**
-   - Database integration tests
-   - API endpoint testing
-   - External service mocking
-   - Transaction testing
-   - Middleware testing
-   - Module interaction testing
-
-3. **End-to-End Testing**
-   - Full application testing
-   - User flow testing
-   - API contract testing
-   - Performance testing
-   - Load testing strategies
-   - Browser automation with Cypress
+---
 
 ### `nestjs-database-expert`
 
-**Description**: NestJS database expert specializing in TypeORM, Drizzle ORM, database design, migrations, and data access patterns.
+**File**: `agents/nestjs-database-expert.md`
+
+**Purpose**: NestJS database specialist with expertise in Drizzle ORM setup, schema design, migrations, queries, transactions, and database operations.
 
 **When to use:**
-- Designing database schemas
-- Setting up TypeORM/Drizzle integration
-- Creating and managing migrations
-- Optimizing database queries
-- Setting up database connections
-- Implementing repository patterns
+- NestJS database development
+- Drizzle ORM setup and configuration
+- Database schema design
+- Migration creation
+- Query optimization
+- Transaction management
 
-**Model**: Sonnet
-
-**Key Capabilities:**
-
-1. **Database Integration**
-   - TypeORM configuration and setup
-   - Drizzle ORM integration
-   - Database connection management
-   - Connection pooling strategies
-   - Multi-database support
-   - Database health checks
-
-2. **Schema Design**
-   - Entity relationship modeling
-   - Database normalization
-   - Index design strategies
-   - Constraint implementation
-   - Migration management
-   - Schema versioning
-
-3. **Query Optimization**
-   - Query performance analysis
-   - Index optimization
-   - N+1 query prevention
-   - Lazy loading strategies
-   - Caching implementation
-   - Database monitoring
+---
 
 ### `nestjs-security-expert`
 
-**Description**: NestJS security expert focusing on authentication, authorization, JWT, OAuth2, and security best practices for NestJS applications.
+**File**: `agents/nestjs-security-expert.md`
+
+**Purpose**: NestJS security specialist focusing on authentication, authorization, JWT implementation, guards, security middleware, and security best practices.
 
 **When to use:**
-- Implementing authentication systems
-- Setting up authorization
-- Security audit of NestJS apps
-- OAuth2/JWT implementation
-- API security hardening
-- Security testing
+- NestJS authentication implementation
+- Authorization setup
+- JWT configuration
+- Guard and middleware creation
+- OAuth/SSO implementation
+- Security vulnerability fixes
 
-**Model**: Sonnet
-
-**Key Capabilities:**
-
-1. **Authentication & Authorization**
-   - JWT token implementation
-   - OAuth2 provider integration
-   - Role-based access control (RBAC)
-   - Custom authentication strategies
-   - Multi-factor authentication
-   - Session management
-
-2. **Security Hardening**
-   - CORS configuration
-   - Rate limiting implementation
-   - Input validation and sanitization
-   - SQL injection prevention
-   - XSS protection
-   - Security headers configuration
-
-3. **Security Testing**
-   - Penetration testing strategies
-   - Security vulnerability scanning
-   - Authentication flow testing
-   - Authorization testing
-   - Security middleware testing
-   - OWASP compliance verification
+---
 
 ### `nestjs-testing-expert`
 
-**Description**: Comprehensive NestJS testing expert covering all aspects of testing from unit to e2e, including performance and security testing.
+**File**: `agents/nestjs-testing-expert.md`
+
+**Purpose**: NestJS testing specialist focusing on unit tests, integration tests, end-to-end tests, test database setup, mocking strategies, and testing best practices.
 
 **When to use:**
-- Complete test suite implementation
-- Test strategy development
-- CI/CD pipeline testing setup
-- Performance testing
-- Security testing implementation
-- Test automation
-
-**Model**: Sonnet
-
-**Key Capabilities:**
-
-1. **Testing Strategy**
-   - Test pyramid implementation
-   - Test planning and documentation
-   - Test coverage strategies
-   - Testing best practices
-   - Test data management
-   - Test environment setup
-
-2. **Advanced Testing**
-   - Contract testing with PACT
-   - Performance testing with Artillery
-   - Security testing with OWASP ZAP
-   - Visual regression testing
-   - Load testing strategies
-   - Chaos engineering
-
-3. **Test Automation**
-   - CI/CD pipeline integration
-   - Automated test execution
-   - Test reporting and metrics
-   - Test failure analysis
-   - Test maintenance strategies
-   - Test infrastructure management
+- NestJS test infrastructure setup
+- Integration test creation
+- End-to-end test development
+- Test database configuration
+- Mocking strategies
+- Testing best practices
 
 ---
 
-## Testing & Quality Agents
+## React/Frontend Development Agents
 
-### `spring-boot-code-review-expert`
+### `react-frontend-development-expert`
 
-**Description**: Expert Spring Boot code reviewer specializing in Java best practices, patterns, and architectural issues.
+**File**: `agents/react-frontend-development-expert.md`
+
+**Purpose**: Expert React frontend developer specializing in React 19, Vite, TypeScript, Tailwind CSS, and shadcn/ui. Builds modern, responsive, and accessible React applications.
 
 **When to use:**
-- After implementing new features
-- Before creating pull requests
-- During refactoring initiatives
-- When improving code quality
-- For adherence to Spring Boot conventions
-
-**Model**: Sonnet
-
-**Key Capabilities:**
-
-1. **Spring Boot Patterns Review**
-   - Constructor injection with @RequiredArgsConstructor
-   - Proper configuration classes
-   - Correct Spring annotation usage
-   - Service layer patterns
-   - Profile-based configuration
-
-2. **Java Code Quality**
-   - Idiomatic Java usage
-   - Effective use of `final` and immutability
-   - Proper `Optional` usage
-   - Java 16+ records or Lombok
-   - Stream API usage
-
-3. **Architecture & Design Patterns**
-   - Feature-based vs layer-based organization
-   - SOLID principles adherence
-   - Repository pattern implementation
-   - Service layer responsibilities
-   - Clean Architecture layering
-
-4. **REST API Standards**
-   - Correct HTTP methods
-   - Proper status code usage
-   - RESTful naming conventions
-   - Error handling and response formatting
-   - OpenAPI/Swagger documentation
-
-5. **Error Handling**
-   - ResponseStatusException usage
-   - Global exception handler integration
-   - Proper status codes
-   - Meaningful error messages
-   - Logging and monitoring
-
-**Skills Integration**: Automatically invokes 23+ Spring Boot and testing skills for comprehensive code reviews.
-
-**Example Interactions:**
-
-```bash
-# Complete code review
-"Review this Spring Boot service for best practices and code quality"
-
-# Architecture review
-"Assess this package structure for proper layer separation"
-
-# REST API review
-"Review these controller endpoints for RESTful design"
-
-# Security review
-"Check this code for security vulnerabilities and best practices"
-
-# Testing review
-"Review the test coverage and quality for this service"
-```
-
-**Output Includes:**
-- Overall assessment (quality score 1-10)
-- Critical issues that must be fixed
-- Warning areas that should be improved
-- Suggestions for enhancement
-- Specific code examples for improvements
-- Testing recommendations
-
-**Review Priorities:**
-- **Critical (Must Fix)**: Security vulnerabilities, null pointer exceptions, memory leaks, thread safety violations, broken business logic
-- **Warnings (Should Fix)**: SOLID violations, poor naming, missing tests, performance anti-patterns, inconsistent error handling
-- **Suggestions (Consider)**: Readability improvements, additional logging, documentation, modern Java features, architectural refinements
+- React component development
+- Frontend feature implementation
+- State management design
+- UI/UX implementation
+- React 19 patterns
+- Vite configuration
 
 ---
 
-### `spring-boot-unit-testing-expert`
+### `react-software-architect-review`
 
-**Description**: Expert in unit testing with Spring Test, JUnit 5, and Mockito for Spring Boot applications.
+**File**: `agents/react-software-architect-review.md`
+
+**Purpose**: Expert React software architect specializing in frontend architecture, component design patterns, state management strategies, and performance optimization. Reviews React codebases for architectural integrity across React 19, Next.js, and Remix.
 
 **When to use:**
-- Writing unit tests for new code
-- Improving test coverage
-- Reviewing testing strategies
-- Implementing test best practices
-- Test architecture design
-
-**Model**: Sonnet
-
-**Key Capabilities:**
-
-1. **JUnit 5 Best Practices**
-   - Test naming conventions
-   - Parameterized testing with @ParameterizedTest
-   - Test lifecycle management
-   - Test tagging and filtering
-   - AssertJ assertions
-   - Dynamic tests and templates
-
-2. **Mockito Testing Strategies**
-   - Mock creation and configuration
-   - Spy usage for partial mocking
-   - Argument captors
-   - Behavior vs state verification
-   - Strict vs lenient mocking
-   - Mock cleanup patterns
-
-3. **Spring Test Integration**
-   - `@SpringBootTest` configuration
-   - `@WebMvcTest` for controllers
-   - `@DataJpaTest` for repositories
-   - `@JsonTest` for JSON serialization
-   - Test slices and context optimization
-   - `@TestPropertySource` and profiles
-
-4. **Test Architecture & Design**
-   - Given-When-Then structure
-   - Test data builders and factories
-   - Fixture management
-   - Test isolation and independence
-   - Test inheritance and shared config
-   - Naming conventions and organization
-
-5. **Advanced Testing Patterns**
-   - Service layer unit testing
-   - Controller testing with MockMvc
-   - Repository testing with in-memory databases
-   - Exception handling testing
-   - Performance and timeout testing
-   - Parameterized testing
-
-**Skills Integration**: Automatically invokes 19+ JUnit and Spring Boot testing skills for comprehensive test implementation.
-
-**Example Interactions:**
-
-```bash
-# Generate unit tests
-"Write comprehensive unit tests for this UserService class"
-
-# Controller testing
-"Create MockMvc tests for this REST controller"
-
-# Repository testing
-"Write @DataJpaTest tests for this JPA repository"
-
-# Exception testing
-"Add tests for exception handling in this service"
-
-# Parameterized tests
-"Create parameterized tests for input validation"
-```
-
-**Output Includes:**
-- Comprehensive test suite covering all scenarios
-- Proper test structure and organization
-- Clear test documentation and comments
-- Performance considerations
-- Maintenance guidelines
-
-**Test Implementation Process:**
-1. **Test Planning**: Identify scenarios and edge cases
-2. **Test Implementation**: Setup, execution, assertion, cleanup
-3. **Quality Assurance**: Coverage, isolation, assertions, performance
+- React architectural decisions
+- Component design patterns
+- State management architecture
+- Frontend performance optimization
+- Scalable UI architecture
+- Design system creation
 
 ---
 
-## AI & LangChain4j Agents
+### `expo-react-native-development-expert`
+
+**File**: `agents/expo-react-native-development-expert.md`
+
+**Purpose**: Expert Expo and React Native mobile developer specializing in cross-platform mobile app development with Expo SDK 54, React Native 0.81, React 19.1, TypeScript, and modern mobile UI patterns.
+
+**When to use:**
+- Expo/React Native development
+- Cross-platform mobile apps
+- Native module integration
+- Mobile UI implementation
+- Navigation setup
+- Performance optimization for mobile
+- iOS/Android deployment
+
+---
+
+## Python Development Agents
+
+### `python-code-review-expert`
+
+**File**: `agents/python-code-review-expert.md`
+
+**Purpose**: Expert Python code reviewer specializing in code quality, security, performance, and Pythonic best practices. Reviews Python codebases using confidence-based filtering.
+
+**When to use:**
+- Python code review
+- Pull request assessment
+- Code quality improvement
+- Security vulnerability detection
+- Performance analysis
+- Best practices verification
+
+---
+
+### `python-refactor-expert`
+
+**File**: `agents/python-refactor-expert.md`
+
+**Purpose**: Expert Python code refactoring specialist. Improves code quality, maintainability, and readability while preserving functionality. Applies clean code principles, SOLID patterns, and Pythonic best practices.
+
+**When to use:**
+- Python code refactoring
+- Code quality improvement
+- Pythonic pattern adoption
+- Legacy Python modernization
+- Design pattern application
+- Performance optimization
+
+---
+
+### `python-security-expert`
+
+**File**: `agents/python-security-expert.md`
+
+**Purpose**: Expert security auditor specializing in Python application security, DevSecOps, and compliance frameworks. Masters vulnerability assessment, threat modeling, secure authentication (OAuth2/JWT), OWASP standards, and security automation.
+
+**When to use:**
+- Python security audits
+- Vulnerability assessment
+- DevSecOps integration
+- Compliance implementation (GDPR, HIPAA)
+- Authentication design
+- Security automation
+
+---
+
+### `python-software-architect-expert`
+
+**File**: `agents/python-software-architect-expert.md`
+
+**Purpose**: Expert Python software architect specializing in Clean Architecture, Domain-Driven Design (DDD), and modern Python patterns. Reviews Python codebases for architectural integrity, proper module organization, and SOLID principles.
+
+**When to use:**
+- Python architectural decisions
+- DDD implementation
+- Clean Architecture design
+- System design and planning
+- Module organization
+- Architectural refactoring
+
+---
+
+## AWS Architecture & DevOps Agents
+
+### `aws-architecture-review-expert`
+
+**File**: `agents/aws-architecture-review-expert.md`
+
+**Purpose**: AWS architecture reviewer specializing in Well-Architected Framework, security, cost optimization, and Infrastructure as Code quality assessment.
+
+**When to use:**
+- AWS architecture review
+- Well-Architected Framework compliance
+- Cost optimization analysis
+- Security best practices
+- CloudFormation/IaC quality review
+- Multi-region deployment planning
+
+---
+
+### `aws-cloudformation-devops-expert`
+
+**File**: `agents/aws-cloudformation-devops-expert.md`
+
+**Purpose**: Expert AWS DevOps engineer specializing in CloudFormation templates, Infrastructure as Code (IaC), and AWS deployment automation. Masters nested stacks, cross-stack references, custom resources, and CI/CD pipeline integration.
+
+**When to use:**
+- CloudFormation template development
+- IaC best practices
+- AWS infrastructure automation
+- Nested stacks and cross-stack references
+- Custom resources creation
+- CI/CD pipeline integration
+- Infrastructure testing
+
+---
+
+### `aws-solution-architect-expert`
+
+**File**: `agents/aws-solution-architect-expert.md`
+
+**Purpose**: Expert AWS Solution Architect specializing in scalable cloud architectures, Well-Architected Framework, and enterprise-grade AWS solutions. Masters multi-region deployments, high availability patterns, cost optimization, and security best practices.
+
+**When to use:**
+- AWS solution architecture
+- Cloud migration strategies
+- Multi-region deployment design
+- High availability architecture
+- Cost optimization
+- Disaster recovery planning
+- Enterprise-grade solution design
+
+---
+
+## AI & LangChain4J Agents
 
 ### `langchain4j-ai-development-expert`
 
-**Description**: Expert LangChain4j developer for building AI applications, RAG systems, ChatBots, and MCP servers.
+**File**: `agents/langchain4j-ai-development-expert.md`
+
+**Purpose**: Expert LangChain4j developer for building AI applications, RAG systems, ChatBots, and MCP servers. Specializes in AI services, vector stores, embeddings, and model integration patterns.
 
 **When to use:**
-- Building AI-powered applications
-- Implementing RAG (Retrieval-Augmented Generation) systems
-- Creating chatbots and conversational AI
-- Developing MCP (Model Context Protocol) servers
-- Integrating AI services with Spring Boot
-- Vector store configuration
-
-**Model**: Sonnet
-
-**Key Capabilities:**
-
-1. **LangChain4j Core Patterns**
-   - AI Services with declarative interfaces
-   - Chat model integration (OpenAI, Anthropic, HuggingFace)
-   - Embedding models and vector stores
-   - Memory management and conversation context
-   - Tool/function calling patterns
-   - Streaming and real-time interactions
-
-2. **RAG (Retrieval-Augmented Generation) Systems**
-   - Document ingestion and preprocessing pipelines
-   - Text segmentation and chunking strategies
-   - Vector store selection and configuration
-   - Embedding model optimization
-   - Retrieval strategies and similarity search
-   - Context injection and prompt engineering
-
-3. **ChatBot Development**
-   - Conversation flow design
-   - Context management and memory persistence
-   - Multi-turn conversation handling
-   - Intent recognition and routing
-   - Response streaming
-   - Personality customization
-
-4. **MCP (Model Context Protocol) Servers**
-   - MCP server implementation patterns
-   - Tool and resource definitions
-   - Protocol compliance and message handling
-   - Integration with LangChain4j applications
-   - Error handling and fallbacks
-   - Performance optimization
-
-5. **Integration & Architecture**
-   - Spring Boot integration with LangChain4j
-   - Database integration for embeddings
-   - External API integration and tool calling
-   - Observability, monitoring, and logging
-   - Performance optimization and scaling
-   - Security considerations
-
-**Skills Integration**: Automatically invokes 10+ LangChain4j, vector database, and AWS skills for complete AI development.
-
-**Example Interactions:**
-
-```bash
-# AI service creation
-"Create an AI service interface for document question answering"
-
-# RAG implementation
-"Implement a RAG system with vector store for document retrieval"
-
-# ChatBot development
-"Build a customer support chatbot with conversation memory"
-
-# MCP server
-"Create an MCP server with custom tools for document processing"
-
-# Spring Boot integration
-"Integrate LangChain4j AI services into this Spring Boot application"
-```
-
-**Output Includes:**
-- Complete AI service implementation with proper interfaces
-- RAG pipeline configuration and optimization
-- Vector store setup and indexing strategies
-- Testing strategies for AI components
-- Performance monitoring and optimization guidelines
-- Security and compliance considerations
-
-**Implementation Process:**
-1. **Requirements Analysis**: Use case definition, model selection, architecture design
-2. **Implementation**: AI service development, RAG pipeline, vector store setup
-3. **Testing & Optimization**: AI testing, performance tuning, monitoring setup
+- LangChain4j development
+- RAG (Retrieval-Augmented Generation) implementation
+- AI service design
+- ChatBot development
+- Vector store integration
+- MCP server creation
+- Model integration
 
 ---
 
 ### `prompt-engineering-expert`
 
-**Description**: Expert prompt engineer specializing in advanced prompting techniques, LLM optimization, and AI system design.
+**File**: `agents/prompt-engineering-expert.md`
+
+**Purpose**: Expert prompt engineer specializing in advanced prompting techniques, LLM optimization, and AI system design. Masters chain-of-thought, constitutional AI, and production prompt strategies.
 
 **When to use:**
-- Creating optimized prompts for LLMs
-- Improving prompt quality and consistency
-- Reducing token usage and costs
+- Prompt creation and optimization
+- LLM behavior fine-tuning
+- Chain-of-thought design
+- AI system design
 - Document/code analysis prompts
-- Multi-agent system design
-- Production prompt preparation
-
-**Model**: Sonnet
-
-**Key Capabilities:**
-
-1. **Advanced Prompting Techniques**
-   - Chain-of-Thought (CoT) reasoning
-   - Constitutional AI principles
-   - Few-Shot Learning examples
-   - Meta-Prompting patterns
-   - Self-Consistency techniques
-   - Program-Aided Language Models
-
-2. **Document & Information Retrieval**
-   - Document analysis and extraction
-   - Semantic search patterns
-   - Cross-reference analysis
-   - Intelligent summarization
-   - Knowledge extraction
-   - Legal & technical analysis
-
-3. **Code Comprehension & Analysis**
-   - Architecture analysis prompts
-   - Security review prompts
-   - Documentation generation
-   - Test case generation
-   - Refactoring suggestions
-   - Performance analysis
-
-4. **Multi-Agent Systems**
-   - Role definition and personas
-   - Collaboration protocols
-   - Workflow orchestration
-   - Memory management
-   - Conflict resolution
-   - Performance monitoring
-
-5. **Production Optimization**
-   - Token efficiency optimization
-   - Response time reduction
-   - A/B testing frameworks
-   - Performance monitoring
-   - Scalability design
-   - Error handling
-
-6. **Model-Specific Optimization**
-   - Anthropic Claude (Constitutional AI, XML)
-   - OpenAI GPT (Function calling, JSON mode)
-   - Open Source Models (Special tokens)
-   - Multimodal Models (Vision-language)
-
-**Skills Integration**: Automatically invokes 7+ LangChain4j AI skills for prompt optimization.
-
-**Example Interactions:**
-
-```bash
-# Prompt optimization
-"Optimize this prompt for better consistency and reduced token usage"
-
-# Document analysis prompt
-"Create a prompt for extracting key information from technical specifications"
-
-# Code analysis prompt
-"Design a prompt for security vulnerability detection in Java code"
-
-# Multi-agent design
-"Create role definitions and collaboration protocols for a multi-agent system"
-
-# Production optimization
-"Optimize these prompts for production deployment with cost constraints"
-```
-
-**Output Includes:**
-- **The Complete Prompt**: Full text ready for immediate use
-- **Implementation Notes**: Techniques used and design rationale
-- **Testing & Evaluation**: Test cases and success metrics
-- **Usage Guidelines**: When and how to use effectively
-- **Performance Optimization**: Cost and efficiency considerations
-
-**Critical Requirements:**
-- Complete prompt text in clearly marked section
-- Clear instructions with step-by-step guidance
-- Output format specification and examples
-- Error handling and edge case coverage
-- Safety considerations and ethical guidelines
+- Production prompt strategies
+- Prompt testing and iteration
 
 ---
 
-## Documentation & Engineering Agents
+## Documentation & Specialized Agents
 
-### `java-documentation-specialist`
+### `document-generator-expert`
 
-**Description**: Expert Java documentation specialist creating comprehensive technical documentation from Spring Boot codebases.
+**File**: `agents/document-generator-expert.md`
 
-**When to use:**
-- System documentation creation
-- Architecture guides
-- API documentation
-- Technical deep-dives
-- Project onboarding documentation
-- Release documentation
-
-**Model**: Sonnet
-
-**Key Capabilities:**
-
-1. **Java & Spring Boot Documentation**
-   - Spring Boot applications comprehensive docs
-   - JPA & Database documentation
-   - REST API documentation with OpenAPI
-   - Spring Security documentation
-   - Configuration management docs
-
-2. **Modern Java Documentation**
-   - Java 16+ features (records, pattern matching)
-   - Immutability patterns
-   - Stream API documentation
-   - Optional usage documentation
-   - Exception handling patterns
-
-3. **Architecture Documentation**
-   - Clean Architecture layer separation
-   - DDD bounded contexts and aggregates
-   - Microservices architecture
-   - Hexagonal architecture
-   - SOLID principles documentation
-
-4. **API & Integration Documentation**
-   - REST API design documentation
-   - OpenAPI/Swagger specifications
-   - Spring MVC patterns
-   - Integration patterns
-   - Message queue documentation
-
-5. **Database & Persistence Documentation**
-   - JPA entity documentation
-   - Spring Data JPA patterns
-   - Database schema documentation
-   - Transaction management
-   - Database testing patterns
-
-**Skills Integration**: Automatically invokes 40+ Spring Boot, testing, LangChain4j, and AWS skills for complete documentation.
-
-**Example Interactions:**
-
-```bash
-# API documentation
-"Generate comprehensive API documentation for this Spring Boot REST service"
-
-# Architecture documentation
-"Create architecture documentation for our microservices-based Java application"
-
-# Security documentation
-"Document our Spring Security implementation with authentication flows"
-
-# Database documentation
-"Generate database schema and JPA entity relationship documentation"
-
-# Deployment documentation
-"Create deployment documentation including Docker, Kubernetes, and CI/CD"
-```
-
-**Documentation Deliverables:**
-
-1. **Project Overview & Architecture**
-   - Executive summary
-   - System architecture diagrams
-   - Architecture Decision Records (ADRs)
-   - Technology choices and rationale
-
-2. **API Documentation**
-   - OpenAPI specification
-   - Endpoint reference with examples
-   - Data models with validation rules
-   - Authentication guide
-
-3. **Developer Documentation**
-   - Setup guide
-   - Code organization and standards
-   - Database schema and migrations
-   - Testing guide
-
-4. **Operations Documentation**
-   - Deployment guide
-   - Monitoring & health checks
-   - Security procedures
-   - Performance tuning
-
----
-
-### `java-tutorial-engineer`
-
-**Description**: Expert Java tutorial engineer specializing in Spring Boot and LangChain4j educational content.
+**Purpose**: Expert document generator specializing in creating professional technical and business documents. Produces comprehensive assessments, feature specifications, analysis reports, process documentation, and custom documents.
 
 **When to use:**
-- Creating onboarding guides
-- Feature tutorials
-- Concept explanations
-- Learning path development
-- Hands-on training materials
-- Educational content creation
-
-**Model**: Sonnet
-
-**Key Capabilities:**
-
-1. **Java Fundamentals Tutorials**
-   - Java basics (OOP, collections, exceptions)
-   - Modern Java features (records, streams, pattern matching)
-   - Concurrency basics
-   - File I/O and resource management
-
-2. **Spring Boot Tutorial Mastery**
-   - Getting started tutorials
-   - Dependency injection patterns
-   - Web development with @RestController
-   - Data persistence with JPA
-   - Configuration management
-   - Testing strategies
-   - Actuator monitoring
-
-3. **LangChain4j AI Tutorial Specialization**
-   - AI Services creation
-   - Chat memory management
-   - Prompt engineering
-   - RAG implementation
-   - Tool integration
-   - Vector stores setup
-   - Model integration
-
-4. **Advanced Java Topics**
-   - Microservices tutorials
-   - Security with Spring Security
-   - Performance optimization
-   - Cloud integration
-   - Event-driven architecture
-   - API documentation
-
-**Tutorial Structure Patterns:**
-
-- **Beginner Tutorials** (15-45 minutes): Quick starts with step-by-step guidance
-- **Intermediate Tutorials** (1-3 hours): Comprehensive guides with modules
-- **Advanced Tutorials** (4+ hours): Enterprise-grade applications with best practices
-- **Workshop Series** (Multi-day): Complete learning paths with capstone projects
-
-**Skills Integration**: Automatically invokes 40+ Spring Boot, testing, LangChain4j, and AWS skills for tutorial creation.
-
-**Example Interactions:**
-
-```bash
-# Beginner tutorial
-"Create a tutorial for building your first Spring Boot REST API"
-
-# Intermediate tutorial
-"Write a tutorial on implementing RAG with LangChain4j and Spring Boot"
-
-# Advanced tutorial
-"Create an enterprise-grade tutorial for microservices with Spring Cloud"
-
-# Workshop series
-"Design a 4-day workshop on AI-powered applications with Spring Boot"
-
-# Feature tutorial
-"Create a hands-on tutorial for implementing JWT authentication"
-```
-
-**Pedagogical Principles:**
-1. **Progressive Learning**: Foundation first, build complexity gradually
-2. **Hands-On Approach**: Code-first with practical examples
-3. **Multi-Level Support**: Beginner, intermediate, advanced paths
-4. **Real-World Examples**: Practical scenarios, not abstract concepts
-5. **Regular Checkpoints**: Validate understanding at key points
+- Technical documentation
+- Security assessment documents
+- Feature specification writing
+- Process documentation
+- Technical analysis reports
+- Custom document generation
+- Multi-language support (English, Italian, Spanish, French, German, Portuguese)
 
 ---
 
 ## Agent Usage Guidelines
 
-### How Agents Work
+### How to Use Agents
 
-1. **Autonomous Selection**: Claude automatically selects the appropriate agent based on task context
-2. **Explicit Invocation**: You can explicitly request a specific agent
-3. **Context Preservation**: Each agent has its own context window
-4. **Tool Access**: Agents have specific tool permissions based on their role
+Agents can be invoked in multiple ways depending on your development environment:
 
-### When to Use Agents
+#### In Claude Code
 
-**Development Phase:**
-```bash
-# Use spring-boot-backend-development-expert for implementation
-"Implement a user management feature with REST API and database persistence"
-
-# Use spring-boot-unit-testing-expert for testing
-"Write comprehensive unit tests for the UserService"
+```
+@agent-name [description or task]
 ```
 
-**Review Phase:**
-```bash
-# Use spring-boot-code-review-expert for quality review
-"Review this code for Spring Boot best practices and potential issues"
-
-# Use java-software-architect-review for architectural review
-"Assess the architecture of this microservice for DDD compliance"
-
-# Use java-security-expert for security review
-"Perform a security audit focusing on OWASP Top 10"
+Example:
+```
+@spring-boot-code-review-expert Review this controller for security issues
 ```
 
-**Documentation Phase:**
-```bash
-# Use java-documentation-specialist for documentation
-"Generate comprehensive API documentation for this Spring Boot application"
+#### Using Task Tool (Programmatic)
 
-# Use java-tutorial-engineer for learning materials
-"Create a tutorial for new developers on our authentication system"
+```javascript
+Task(
+  description: "Review Spring Boot security",
+  prompt: "Review the payment processing controller for authentication and authorization vulnerabilities",
+  subagent_type: "developer-kit:spring-boot-code-review-expert"
+)
 ```
 
-**AI Development Phase:**
-```bash
-# Use langchain4j-ai-development-expert for AI features
-"Implement a RAG system for document question answering"
+#### In Commands
 
-# Use prompt-engineering-expert for prompt optimization
-"Optimize these AI prompts for better accuracy and lower cost"
+Commands automatically delegate to the appropriate agent based on the task:
+
+```bash
+/devkit.java.code-review full src/main/java
+/devkit.java.security-review src/
+/devkit.feature-development
 ```
 
 ### Best Practices
 
-1. **Trust Agent Expertise**: When an agent completes its work successfully, trust its output without additional validation
-2. **Refine on Failure**: If an agent fails or behaves unexpectedly, refine your prompt and try again
-3. **Sequential Delegation**: For complex tasks, delegate to multiple agents in sequence
-4. **Clear Context**: Provide necessary context, problem statement, and instructions
-5. **Specific Instructions**: Tell the agent to DO the task, not just provide advice
+1. **Choose the Right Agent**: Select agents that match your specific domain and task
+2. **Provide Context**: Give detailed descriptions of what you want analyzed
+3. **Be Specific**: More specific requests lead to better results
+4. **Review Output**: Always review agent recommendations before applying
+5. **Combine Agents**: Use multiple agents for comprehensive analysis (e.g., code-explorer → architect → code-reviewer)
+6. **Leverage Specialization**: Use domain-specific agents (Spring Boot, React, Python) for better expertise
+
+### Agent Selection Guide
+
+| Task | Recommended Agent |
+|------|---|
+| Understand existing code | `code-explorer` |
+| Design new architecture | `software-architect` |
+| Review code quality | `code-reviewer` or domain-specific reviewer |
+| Debug errors | `debugger` |
+| Refactor code | Domain-specific `refactor-expert` |
+| Security audit | Domain-specific `security-expert` |
+| Create documentation | `documentation-specialist` or `document-generator-expert` |
+| Mobile development | `expo-react-native-development-expert` |
+| AI/LangChain4j | `langchain4j-ai-development-expert` |
+| Prompt optimization | `prompt-engineering-expert` |
 
 ---
 
-## Complete Workflow Examples
+## Common Workflows
 
-### Example 1: New Feature Implementation
+### Code Review Workflow
 
-```bash
-# Step 1: Implementation (spring-boot-backend-development-expert)
-"Implement a product management feature with CRUD operations, validation, and pagination"
+1. **Explore**: Use `code-explorer` to understand current implementation
+2. **Review**: Use domain-specific `code-review-expert` to identify issues
+3. **Debug**: Use `debugger` if there are failures
+4. **Refactor**: Use domain-specific `refactor-expert` to improve quality
+5. **Architect**: Use `software-architect` for major redesigns
 
-# Step 2: Testing (spring-boot-unit-testing-expert)
-"Write comprehensive unit and integration tests for the ProductService"
+### Feature Development Workflow
 
-# Step 3: Code Review (spring-boot-code-review-expert)
-"Review the product management code for Spring Boot best practices"
+1. **Architect**: Use `software-architect` to design the feature
+2. **Implement**: Use domain-specific development expert
+3. **Test**: Use domain-specific testing expert
+4. **Review**: Use domain-specific code reviewer
+5. **Document**: Use documentation specialist
 
-# Step 4: Security Review (java-security-expert)
-"Perform security audit of the product management feature"
+### Security Review Workflow
 
-# Step 5: Documentation (java-documentation-specialist)
-"Generate API documentation for the product management endpoints"
-```
-
-### Example 2: Architecture Refactoring
-
-```bash
-# Step 1: Architecture Review (java-software-architect-review)
-"Review the current architecture for Clean Architecture compliance and identify issues"
-
-# Step 2: Implementation (spring-boot-backend-development-expert)
-"Refactor the UserService to follow proper DDD patterns and layer separation"
-
-# Step 3: Testing Update (spring-boot-unit-testing-expert)
-"Update tests to reflect the new architecture and ensure comprehensive coverage"
-
-# Step 4: Code Review (spring-boot-code-review-expert)
-"Review the refactored code for quality and adherence to best practices"
-
-# Step 5: Documentation Update (java-documentation-specialist)
-"Update architecture documentation to reflect the new design"
-```
-
-### Example 3: AI Feature Addition
-
-```bash
-# Step 1: Requirements (langchain4j-ai-development-expert)
-"Design a RAG system for intelligent document search in our Spring Boot application"
-
-# Step 2: Prompt Engineering (prompt-engineering-expert)
-"Create optimized prompts for document question answering with context injection"
-
-# Step 3: Implementation (langchain4j-ai-development-expert)
-"Implement the RAG system with vector store and Spring Boot integration"
-
-# Step 4: Testing (spring-boot-unit-testing-expert)
-"Write tests for the AI service including RAG pipeline and vector store integration"
-
-# Step 5: Documentation (java-documentation-specialist)
-"Generate documentation for the AI-powered search feature"
-
-# Step 6: Tutorial (java-tutorial-engineer)
-"Create a tutorial for developers on how to use and extend the AI search feature"
-```
-
-### Example 4: Security Hardening
-
-```bash
-# Step 1: Security Audit (java-security-expert)
-"Perform comprehensive security audit covering OWASP Top 10 and DevSecOps practices"
-
-# Step 2: Implementation (spring-boot-backend-development-expert)
-"Implement security fixes including input validation, JWT improvements, and CORS configuration"
-
-# Step 3: Security Review (java-security-expert)
-"Verify all security fixes have been properly implemented"
-
-# Step 4: Testing (spring-boot-unit-testing-expert)
-"Add security-focused tests for authentication, authorization, and input validation"
-
-# Step 5: Documentation (java-documentation-specialist)
-"Update security documentation with new authentication flows and best practices"
-```
+1. **Audit**: Use domain-specific `security-expert`
+2. **Assess**: Review findings and impact
+3. **Fix**: Use domain-specific development expert
+4. **Re-audit**: Confirm fixes with security expert
 
 ---
 
-## References
-
-- [Contributing Guide](../CONTRIBUTING.md)
-- [README](../README.md)
-
----
-
-**Version**: 1.0.0  
-**Last Updated**: 2025-01-08  
+**Note**: For frontend-specific skills and patterns, see the [Frontend Skills Guide](guide-skills-frontend.md)

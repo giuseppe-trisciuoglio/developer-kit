@@ -1,6 +1,6 @@
 ---
 description: Guided bug fixing and debugging with systematic root cause analysis
-argument-hint: [ --lang=java|spring|typescript|nestjs|react|general ] [ issue-description or error-message ]
+argument-hint: [ --lang=java|spring|typescript|nestjs|react|python|general ] [ issue-description or error-message ]
 allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, TodoWrite, AskUserQuestion
 model: inherit
 ---
@@ -19,15 +19,16 @@ Parse $ARGUMENTS to detect the optional `--lang` parameter:
 - `--lang=nestjs`: Use NestJS specialized agents
 - `--lang=react`: Use React frontend specialized agents
 - `--lang=aws`: Use AWS specialized agents (architecture, CloudFormation, IaC)
+- `--lang=python` or `--lang=py`: Use Python specialized agents
 - `--lang=general` or no flag: Use general-purpose agents (default)
 
 **Agent Mapping by Language:**
 
-| Phase       | General (default)                  | Java/Spring Boot (`--lang=spring` or `--lang=java`) | TypeScript (`--lang=typescript` or `--lang=ts`)      | NestJS (`--lang=nestjs`)                             | React (`--lang=react`)                          | AWS (`--lang=aws`)                             |
-|-------------|------------------------------------|-----------------------------------------------------|------------------------------------------------------|------------------------------------------------------|-------------------------------------------------|------------------------------------------------|
-| Debugger    | `developer-kit:debugger`           | `developer-kit:debugger`                            | `developer-kit:debugger`                             | `developer-kit:debugger`                             | `developer-kit:debugger`                        | `developer-kit:debugger`                       |
-| Architect   | `developer-kit:software-architect` | `developer-kit:java-software-architect-review`      | `developer-kit:typescript-software-architect-review` | `developer-kit:typescript-software-architect-review` | `developer-kit:react-software-architect-review` | `developer-kit:aws-solution-architect-expert`  |
-| Code Review | `developer-kit:code-reviewer`      | `developer-kit:spring-boot-code-review-expert`      | `developer-kit:code-reviewer`                        | `developer-kit:nestjs-code-review-expert`            | `developer-kit:code-reviewer`                   | `developer-kit:aws-architecture-review-expert` |
+| Phase       | General (default)                  | Java/Spring Boot (`--lang=spring` or `--lang=java`) | TypeScript (`--lang=typescript` or `--lang=ts`)      | NestJS (`--lang=nestjs`)                             | React (`--lang=react`)                          | AWS (`--lang=aws`)                             | Python (`--lang=python` or `--lang=py`)          |
+|-------------|------------------------------------|-----------------------------------------------------|------------------------------------------------------|------------------------------------------------------|-------------------------------------------------|------------------------------------------------|--------------------------------------------------|
+| Debugger    | `developer-kit:debugger`           | `developer-kit:debugger`                            | `developer-kit:debugger`                             | `developer-kit:debugger`                             | `developer-kit:debugger`                        | `developer-kit:debugger`                       | `developer-kit:debugger`                         |
+| Architect   | `developer-kit:software-architect` | `developer-kit:java-software-architect-review`      | `developer-kit:typescript-software-architect-review` | `developer-kit:typescript-software-architect-review` | `developer-kit:react-software-architect-review` | `developer-kit:aws-solution-architect-expert`  | `developer-kit:python-software-architect-expert` |
+| Code Review | `developer-kit:code-reviewer`      | `developer-kit:spring-boot-code-review-expert`      | `developer-kit:code-reviewer`                        | `developer-kit:nestjs-code-review-expert`            | `developer-kit:code-reviewer`                   | `developer-kit:aws-architecture-review-expert` | `developer-kit:python-code-review-expert`        |
 
 ## Current Context
 
@@ -268,6 +269,12 @@ Task(
 # React debugging
 /devkit.fix-debugging --lang=react Component not re-rendering after state update
 
+# Python debugging
+/devkit.fix-debugging --lang=python TypeError in async FastAPI endpoint handler
+
+# Python debugging
+/devkit.fix-debugging --lang=py Import circular dependency in Django models
+
 # AWS infrastructure debugging
 /devkit.fix-debugging --lang=aws CloudFormation stack creation failing with IAM error
 
@@ -322,6 +329,13 @@ This command leverages specialized sub-agents using the Task tool.
 - **Software Architect**: `developer-kit:react-software-architect-review`
 - **Code Reviewer**: `developer-kit:code-reviewer`
 
+### Python Agents (`--lang=python` or `--lang=py`)
+
+- **Debugger**: `developer-kit:debugger`
+- **Software Architect**: `developer-kit:python-software-architect-expert`
+- **Code Reviewer**: `developer-kit:python-code-review-expert`
+- **Security Expert**: `developer-kit:python-security-expert`
+
 ### AWS Agents (`--lang=aws`)
 
 - **Debugger**: `developer-kit:aws-architecture-review-expert`
@@ -373,6 +387,25 @@ Task(
   description: "Brief task description",
   prompt: "Detailed prompt for the sub-agent",
   subagent_type: "developer-kit:react-frontend-development-expert"
+)
+
+// Python agents (when --lang=python or --lang=py)
+Task(
+  description: "Analyze Python error and trace execution",
+  prompt: "Analyze this Python error and identify the root cause",
+  subagent_type: "developer-kit:debugger"
+)
+
+Task(
+  description: "Review Python architecture",
+  prompt: "Review the Python architecture using Clean Architecture and DDD principles",
+  subagent_type: "developer-kit:python-software-architect-expert"
+)
+
+Task(
+  description: "Review Python code quality",
+  prompt: "Review Python code for quality, Pythonic patterns, and best practices",
+  subagent_type: "developer-kit:python-code-review-expert"
 )
 
 // AWS agents (when --lang=aws)
