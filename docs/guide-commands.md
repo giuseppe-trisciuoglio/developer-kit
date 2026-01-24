@@ -1,1914 +1,664 @@
 # Complete Guide to Developer Kit Commands
 
-This guide provides comprehensive documentation for all commands developed for Claude Code, organized by category with detailed explanations, use cases, and practical examples.
+This guide documents all 34 commands available in the Developer Kit, organized by category with brief descriptions, usage, and practical examples. See individual command files for complete details.
 
 ---
 
 ## Table of Contents
 
-1. [Java/Spring Boot Commands](#javaspring-boot-commands)
-2. [Security Commands](#security-commands)
-3. [Testing Commands](#testing-commands)
-4. [DevKit Management Commands](#devkit-management-commands)
-5. [Utility Commands](#utility-commands)
-6. [Feature Development Command](#feature-development-command)
-7. [Code Refactoring Command](#code-refactoring-command)
-8. [Best Practices](#best-practices)
-9. [Complete Workflow Example](#complete-workflow-example)
+1. [Java Development Commands](#java-development-commands)
+2. [TypeScript Commands](#typescript-commands)
+3. [GitHub Commands](#github-commands)
+4. [Security Commands](#security-commands)
+5. [Documentation Commands](#documentation-commands)
+6. [Workflow Commands](#workflow-commands)
+7. [LRA (Long-Running Agent) Commands](#lra-long-running-agent-commands)
+8. [Spec Kit Commands](#spec-kit-commands)
+9. [Skill Management Commands](#skill-management-commands)
+10. [Common Workflows](#common-workflows)
 
 ---
 
-## Java/Spring Boot Commands
+## Java Development Commands
 
 ### `/devkit.java.code-review`
 
-**Description**: Performs comprehensive code review of Java/Spring Boot applications analyzing architecture, security, performance, and best practices.
+**File**: `commands/devkit.java.code-review.md`
 
-**When to use:**
+**Purpose**: Comprehensive code review of Java/Spring Boot applications for architecture, security, performance, and best practices.
+
+**Usage:**
+```bash
+/devkit.java.code-review [full|security|performance|architecture|testing|best-practices] [path] [options]
+```
+
+**Common use cases:**
 - Before creating a pull request
 - After completing a feature
-- To verify existing code quality
-- During refactoring of critical components
-
-**Arguments:**
-```bash
-/devkit.java.code-review [review-type] [file/directory-path] [options]
-```
-
-**Available review types:**
-- `full` - Complete 360° review (default)
-- `security` - Focus on vulnerabilities and security
-- `performance` - Performance and scalability analysis
-- `architecture` - Architectural patterns verification
-- `testing` - Test coverage and quality analysis
-- `best-practices` - Spring/Java conventions verification
-
-**Practical examples:**
-
-```bash
-# Complete project review
-/devkit.java.code-review full
-
-# Security review of specific service
-/devkit.java.code-review security src/main/java/com/example/service/UserService.java
-
-# Performance review of a module
-/devkit.java.code-review performance src/main/java/com/example/order
-
-# Architecture review of entire project
-/devkit.java.code-review architecture
-```
-
-**Output:**
-
-The command generates a detailed report with:
-- **Critical Issues (P0)**: Problems requiring immediate resolution
-- **High Priority (P1)**: Issues to resolve in next release
-- **Medium Priority (P2)**: Improvements for next sprint
-- **Low Priority (P3)**: Optimizations and suggestions for backlog
-
-**Real-world use case:**
-```bash
-# Scenario: Completed JWT authentication feature
-# Want to verify security before creating PR
-
-/devkit.java.code-review security src/main/java/com/example/auth
-
-# Expected output:
-# - Spring Security configuration verification
-# - JWT token management analysis
-# - Input validation checks
-# - Session management verification
-# - OWASP Top 10 vulnerability report
-```
-
-**Analysis areas:**
-- SOLID principles compliance
-- Spring Boot patterns (constructor injection, proper bean scoping)
-- Clean Architecture layer separation
-- Security (Spring Security, OWASP Top 10)
-- Performance (caching, database queries, connection pooling)
-- Code quality (cyclomatic complexity, maintainability)
-- Testing strategy (unit, integration, coverage)
-
----
-
-### `/devkit.java.generate-crud`
-
-**Description**: Generates complete CRUD implementation for a domain class following Spring Boot patterns.
-
-**When to use:**
-- Creating new entities with standard CRUD operations
-- Quick scaffolding of new modules
-- Maintaining architectural consistency
-- Saving time on boilerplate code
-
-**Arguments:**
-```bash
-/devkit.java.generate-crud [domain-class-name]
-```
-
-**Practical examples:**
-
-```bash
-# Generate CRUD for Product entity
-/devkit.java.generate-crud Product
-
-# Generate CRUD for User entity
-/devkit.java.generate-crud User
-
-# Generate CRUD for Order entity
-/devkit.java.generate-crud Order
-```
-
-**Generated structure:**
-```
-/$DomainClass/
-├── domain/
-│   ├── model/
-│   │   └── Product.java              # Domain aggregate (if not exists)
-│   └── repository/
-│       └── ProductRepository.java     # Repository interface
-├── application/
-│   ├── service/
-│   │   └── ProductService.java        # Service with business logic
-│   └── dto/
-│       ├── CreateProductRequest.java  # DTO for creation
-│       ├── UpdateProductRequest.java  # DTO for updates
-│       └── ProductResponse.java       # Response DTO
-├── presentation/
-│   └── rest/
-│       ├── ProductController.java     # REST controller
-│       └── ProductMapper.java         # DTO <-> Entity mapper
-└── infrastructure/
-    └── persistence/
-        ├── ProductEntity.java         # JPA entity
-        ├── ProductJpaRepository.java  # Spring Data repository
-        └── ProductRepositoryAdapter.java # Adapter pattern
-```
-
-**Real-world use case:**
-```bash
-# Scenario: Need to implement product management module
-# with standard CRUD operations
-
-/devkit.java.generate-crud Product
-
-# Output:
-# ✅ ProductController.java - REST endpoints:
-#    GET    /api/products          - List all products (paginated)
-#    GET    /api/products/{id}     - Product details
-#    POST   /api/products          - Create new product
-#    PUT    /api/products/{id}     - Update product
-#    DELETE /api/products/{id}     - Delete product
-#
-# ✅ ProductService.java - Business logic
-# ✅ ProductRepository.java - Domain port
-# ✅ ProductEntity.java - JPA entity
-# ✅ DTO classes - Request/Response objects
-# ✅ Test files - Unit and integration tests
-```
-
-**Applied patterns:**
-- ✅ Constructor injection only
-- ✅ Java records for immutable DTOs
-- ✅ @Valid for input validation
-- ✅ ResponseEntity with correct HTTP status codes
-- ✅ @Transactional on service methods
-- ✅ Pagination on list endpoints
-- ✅ Error handling with ResponseStatusException
+- Verifying code quality
+- Refactoring critical components
 
 ---
 
 ### `/devkit.java.architect-review`
 
-**Description**: Comprehensive architectural review for Java applications focusing on Clean Architecture, DDD, and Spring Boot patterns.
+**File**: `commands/devkit.java.architect-review.md`
 
-**When to use:**
-- Major refactoring initiatives
-- Architecture quality assessment
-- Identifying architectural debt
-- Before major version releases
+**Purpose**: High-level architecture review of Java codebases focusing on design patterns, scalability, and architectural decisions.
 
-**Arguments:**
+**Usage:**
 ```bash
-/devkit.java.architect-review [package-path] [focus-area]
+/devkit.java.architect-review [path]
 ```
-
-**Focus areas:**
-- `clean-architecture` - Clean Architecture layer separation
-- `ddd` - Domain-Driven Design patterns
-- `spring-boot` - Spring Boot specific patterns
-- `security` - Security architecture
-- `performance` - Performance and scalability
-- `testing` - Test architecture
-- `microservices` - Microservices architecture
-- `all` - Complete architectural review (default)
-
-**Practical examples:**
-
-```bash
-# Complete architecture review
-/devkit.java.architect-review
-
-# DDD patterns review for specific module
-/devkit.java.architect-review com.example.users ddd
-
-# Security architecture review
-/devkit.java.architect-review security
-
-# Performance architecture review for order module
-/devkit.java.architect-review src/main/java/com/example/order performance
-```
-
-**Assessment output:**
-- Overall architectural quality score (1-10 scale)
-- SOLID principles compliance
-- Clean Architecture layer separation
-- DDD patterns implementation
-- Spring Boot best practices
-- Identified violations and anti-patterns
-- Specific recommendations with priority (High/Medium/Low)
-- Architecture improvement plan (short/medium/long-term)
 
 ---
 
-### `/devkit.java.dependency-audit`
+### `/devkit.java.security-review`
 
-**Description**: Comprehensive dependency analysis for Java/Maven/Gradle projects identifying security vulnerabilities, licensing issues, outdated packages, and supply chain risks.
+**File**: `commands/devkit.java.security-review.md`
 
-**When to use:**
-- Regular security audits (weekly/monthly)
-- Before production releases
-- After dependency updates
-- Security compliance requirements
+**Purpose**: Security-focused audit for Spring Boot and Jakarta EE applications covering OWASP, CVEs, and configurations.
 
-**Arguments:**
+**Usage:**
 ```bash
-/devkit.java.dependency-audit [scope] [focus] [format]
+/devkit.java.security-review [path]
 ```
 
-**Scopes:**
-- `all` - Complete dependency audit (default)
-- `security` - CVEs and security vulnerabilities only
-- `licenses` - License compliance and compatibility
-- `outdated` - Outdated dependencies with update recommendations
-- `supply-chain` - Supply chain security risks
-- `transitive` - Focus on transitive dependencies
-- `<groupId:artifactId>` - Specific dependency analysis
+---
 
-**Focus areas:**
-- `comprehensive` - All analysis categories (default)
-- `critical-only` - Only critical and high severity issues
-- `production` - Focus on production runtime dependencies
-- `direct` - Only direct dependencies
-- `cve` - CVE database cross-reference
-- `compliance` - License and regulatory compliance
+### `/devkit.java.write-unit-tests`
 
-**Output formats:**
-- `report` - Detailed markdown report (default)
-- `summary` - Executive summary with metrics
-- `json` - Machine-readable JSON format
-- `sarif` - SARIF format for CI/CD integration
-- `remediation` - Actionable fix commands
+**File**: `commands/devkit.java.write-unit-tests.md`
 
-**Practical examples:**
+**Purpose**: Generate comprehensive JUnit 5 unit tests with Mockito and AssertJ patterns.
 
+**Usage:**
 ```bash
-# Complete dependency audit
-/devkit.java.dependency-audit all comprehensive report
-
-# Security vulnerabilities only
-/devkit.java.dependency-audit security critical-only summary
-
-# License compliance check
-/devkit.java.dependency-audit licenses compliance report
-
-# Outdated dependencies
-/devkit.java.dependency-audit outdated
-
-# Specific dependency analysis
-/devkit.java.dependency-audit org.springframework.boot:spring-boot-starter-web
+/devkit.java.write-unit-tests [class-path]
 ```
 
-**Analysis includes:**
-- **Vulnerability scanning**: OWASP Dependency-Check, Snyk, GitHub Advisory Database
-- **License compliance**: Compatibility matrix, legal risk assessment
-- **Outdated analysis**: Update priority scoring, maintenance status
-- **Supply chain**: Typosquatting detection, maintainer changes, package health
-- **Automated remediation**: Fix scripts, pull request generation
+---
 
-**Real-world use case:**
+### `/devkit.java.write-integration-tests`
+
+**File**: `commands/devkit.java.write-integration-tests.md`
+
+**Purpose**: Generate Spring Boot integration tests using Testcontainers for complete workflow testing.
+
+**Usage:**
 ```bash
-# Pre-production security audit
-/devkit.java.dependency-audit security critical-only report
+/devkit.java.write-integration-tests [test-scope]
+```
 
-# Expected output:
-# - 3 high-severity CVEs requiring immediate attention
-# - jackson-databind: CVE-2024-XXXX (update to 2.15.3)
-# - commons-collections: CVE-2015-YYYY (replace vulnerable version)
-# - Automated fix script generated
-# - Pull request template provided
+---
+
+### `/devkit.java.generate-crud`
+
+**File**: `commands/devkit.java.generate-crud.md`
+
+**Purpose**: Generate complete CRUD implementation (controllers, services, DTOs) from a domain class.
+
+**Usage:**
+```bash
+/devkit.java.generate-crud [class-path]
 ```
 
 ---
 
 ### `/devkit.java.generate-docs`
 
-**Description**: Generate comprehensive Java project documentation including API docs, architecture diagrams, and Javadoc.
+**File**: `commands/devkit.java.generate-docs.md`
 
-**When to use:**
-- Project onboarding documentation
-- API documentation for external consumers
-- Architecture documentation for team
-- Release documentation preparation
+**Purpose**: Generate comprehensive API documentation, architecture guides, and technical manuals.
 
-**Arguments:**
+**Usage:**
 ```bash
-/devkit.java.generate-docs [project-path] [doc-types] [output-format]
-```
-
-**Documentation types:**
-- `api` - REST API documentation with OpenAPI/Swagger
-- `architecture` - System architecture and design documentation
-- `javadoc` - Comprehensive Javadoc generation
-- `readme` - Project README and setup guides
-- `full` - Complete documentation suite (default)
-
-**Output formats:**
-- `html` - HTML documentation site (default)
-- `markdown` - Markdown files
-- `asciidoc` - AsciiDoc format
-- `confluence` - Confluence-compatible format
-
-**Practical examples:**
-
-```bash
-# Generate all documentation
-/devkit.java.generate-docs
-
-# Generate API documentation only
-/devkit.java.generate-docs . api html
-
-# Generate architecture documentation in markdown
-/devkit.java.generate-docs . architecture markdown
-
-# Generate documentation for specific project
-/devkit.java.generate-docs /path/to/project full asciidoc
-```
-
-**Generated documentation:**
-
-1. **API Documentation:**
-   - OpenAPI 3.0 specification
-   - Interactive Swagger UI
-   - Endpoint documentation with examples
-   - Request/response schemas
-   - Authentication documentation
-
-2. **Architecture Documentation:**
-   - System architecture diagrams (Mermaid)
-   - Component architecture
-   - Data flow diagrams
-   - Sequence diagrams for key workflows
-   - Technology stack overview
-
-3. **Javadoc:**
-   - Complete API reference
-   - Package documentation
-   - Class and method documentation
-   - Cross-references to Spring documentation
-   - Grouped by layer (web, service, data, config)
-
-4. **README:**
-   - Project overview with badges
-   - Features list
-   - Prerequisites and installation
-   - Quick start guide
-   - Testing instructions
-   - Deployment guide
-   - Configuration reference
-   - Contributing guidelines
-
-**Output structure:**
-```
-docs/
-├── api/
-│   ├── openapi.json
-│   ├── swagger-ui.html
-│   └── postman-collection.json
-├── architecture/
-│   ├── system-diagram.md
-│   ├── data-flow.md
-│   └── deployment-diagram.md
-├── javadoc/
-├── guides/
-│   ├── user-guide.md
-│   ├── developer-guide.md
-│   └── deployment-guide.md
-└── README.md
+/devkit.java.generate-docs [project-path]
 ```
 
 ---
 
 ### `/devkit.java.refactor-class`
 
-**Description**: Intelligent refactoring assistant for complex Java classes with architectural analysis and Spring Boot patterns.
+**File**: `commands/devkit.java.refactor-class.md`
 
-**When to use:**
-- Simplifying complex classes
-- Improving testability
-- Applying architectural patterns
-- Performance optimization
-- Security enhancements
+**Purpose**: Intelligent refactoring with Clean Architecture, DDD patterns, and Spring Boot best practices.
 
-**Arguments:**
+**Usage:**
 ```bash
-/devkit.java.refactor-class [class-file-path] [refactoring-scope] [options]
+/devkit.java.refactor-class [class-path] [cleanup|architecture|performance|security|testing|comprehensive]
 ```
-
-**Refactoring scopes:**
-- `cleanup` - Code cleanup and style improvements (default)
-- `architecture` - Architectural pattern improvements
-- `performance` - Performance optimizations
-- `security` - Security enhancements
-- `testing` - Testability improvements
-- `comprehensive` - All improvements (full refactor)
-
-**Options:**
-- `dry-run` - Preview changes without applying
-- `backup` - Create backup branch before refactoring
-- `validate-only` - Only validate and report issues
-
-**Practical examples:**
-
-```bash
-# Cleanup and style improvements
-/devkit.java.refactor-class src/main/java/com/example/service/UserService.java cleanup
-
-# Full architectural refactoring with backup
-/devkit.java.refactor-class src/main/java/com/example/service/OrderService.java comprehensive backup
-
-# Performance optimization only
-/devkit.java.refactor-class src/main/java/com/example/repository/ProductRepository.java performance
-
-# Dry run to preview changes
-/devkit.java.refactor-class src/main/java/com/example/controller/UserController.java architecture dry-run
-
-# Automatic complex class detection and refactoring
-/devkit.java.refactor-class
-```
-
-**Refactoring patterns applied:**
-
-1. **Extract Method/Service** - Breaking down complex methods
-2. **Replace with Record/Value Object** - Immutable data structures
-3. **Apply Repository Pattern** - Domain interfaces + infrastructure adapters
-4. **Add Spring Security** - Method-level authorization
-5. **Optimize Database Queries** - Eliminate N+1 problems
-6. **Add Caching** - Spring Cache annotations
-7. **Convert to Async** - @Async for non-blocking operations
-
-**Quality metrics:**
-- Cyclomatic complexity reduction
-- Lines of code reduction
-- Test coverage increase
-- Dependency coupling reduction
-
-### `/devkit.generate-refactoring-tasks`
-
-**Description**: Generate a step-by-step refactoring plan for complex Java classes using the java-refactor-expert agent.
-
-**When to use:**
-- Planning a complex refactoring
-- Breaking down large classes into manageable tasks
-- Ensuring DDD compliance before coding
-- Creating a roadmap for legacy code modernization
-
-**Arguments:**
-```bash
-/devkit.generate-refactoring-tasks [class-file-path]
-```
-
-**Practical examples:**
-
-```bash
-# Generate refactoring tasks for a legacy service
-/devkit.generate-refactoring-tasks src/main/java/com/example/legacy/MonolithicService.java
-
-# Plan refactoring for a complex controller
-/devkit.generate-refactoring-tasks src/main/java/com/example/controller/ComplexController.java
-```
-
-**Output:**
-- A markdown file `docs/refactoring/[ClassName]-refactoring-tasks.md` containing:
-    - Analysis of the current class
-    - Step-by-step refactoring tasks
-    - Verification steps for each task
-    - DDD alignment checks
 
 ---
 
-### `/devkit.java.security-review`
+### `/devkit.java.dependency-audit`
 
-**Description**: Comprehensive security review for Java enterprise applications (Spring, Jakarta EE).
+**File**: `commands/devkit.java.dependency-audit.md`
 
-**When to use:**
-- Pre-production security audits
-- Compliance requirements (SOC2, PCI-DSS)
-- After security incidents
-- Regular security assessments
+**Purpose**: Comprehensive dependency audit for vulnerabilities, licenses, and update recommendations.
 
-**Arguments:**
+**Usage:**
 ```bash
-/devkit.java.security-review [scope] [options]
+/devkit.java.dependency-audit [project-path]
 ```
-
-**Scopes:**
-- `code` - Source code security analysis (default)
-- `config` - Configuration security review
-- `dependencies` - Dependency vulnerability scan
-- `infrastructure` - Docker/K8s security
-- `full` - Complete security audit
-
-**Analysis areas:**
-
-1. **OWASP Top 10 for Java:**
-   - A01: Broken Access Control (@PreAuthorize, @Secured)
-   - A02: Cryptographic Failures (BCrypt, PBKDF2)
-   - A03: Injection (SQL, NoSQL, Command, LDAP)
-   - A04: Insecure Design (architecture patterns)
-   - A05: Security Misconfiguration (Spring Boot, Actuator)
-   - A06: Vulnerable Components (OWASP Dependency-Check)
-   - A07: Authentication Failures (Spring Security)
-   - A08: Data Integrity (JAR signatures, deserialization)
-   - A09: Logging/Monitoring (security events)
-   - A10: SSRF (URL validation)
-
-2. **Spring Security Analysis:**
-   - Authentication providers
-   - Authorization rules
-   - Session management
-   - JWT implementation
-   - OAuth2/OpenID Connect
-
-3. **Database Security:**
-   - JPA/Hibernate security
-   - SQL injection prevention
-   - Connection security
-   - Credential management
-
-4. **API Security:**
-   - Input validation
-   - Rate limiting
-   - API authentication
-   - Response security headers
-
-**Practical examples:**
-
-```bash
-# Complete security audit
-/devkit.java.security-review full
-
-# Code security analysis only
-/devkit.java.security-review code
-
-# Configuration security review
-/devkit.java.security-review config
-
-# Dependency vulnerabilities scan
-/devkit.java.security-review dependencies
-```
-
-**Output priorities:**
-- **Critical (P0)**: Remote code execution, authentication bypass, data exposure
-- **High (P1)**: Outdated CVEs, insecure configurations, missing security headers
-- **Medium (P2)**: Logging gaps, insufficient validation, access control improvements
-- **Low (P3)**: Documentation, code style security, additional testing
-
----
-
-### `/devkit.ts.security-review`
-
-**Description**: Comprehensive security review for TypeScript/Node.js applications (Next.js, NestJS, Express, etc.).
-
-**When to use:**
-- Security audit of TypeScript applications
-- Framework-specific security validation
-- Pre-production security checks
-- OWASP compliance verification
-- npm/dependency vulnerability assessment
-
-**Arguments:**
-```bash
-/devkit.ts.security-review [scope] [options]
-```
-
-**Scopes:**
-- `code` - TypeScript code security analysis (default)
-- `dependencies` - npm/yarn package vulnerability scan
-- `config` - Framework configuration security
-- `infrastructure` - Docker/K8s security
-- `full` - Complete security audit
-
-**Analysis areas:**
-
-1. **OWASP Top 10 for TypeScript:**
-   - A01: Broken Access Control (Express middleware, NestJS guards)
-   - A02: Cryptographic Failures (Node.js crypto, bcryptjs)
-   - A03: Injection (SQL in TypeORM/Prisma, Command injection)
-   - A04: Insecure Design (missing security middleware)
-   - A05: Security Misconfiguration (CORS, exposed endpoints)
-   - A06: Vulnerable Components (npm audit, CVE detection)
-   - A07: Authentication Failures (JWT, session management)
-   - A08: Data Integrity (package-lock verification)
-   - A09: Logging/Monitoring (Winston, security events)
-   - A10: SSRF (axios, node-fetch URL validation)
-
-2. **Framework-Specific Analysis:**
-   - **Next.js**: API routes, SSR security, middleware
-   - **NestJS**: Guards, interceptors, Passport strategies
-   - **Express.js**: Middleware security, route protection
-   - **Frontend**: React/Vue XSS prevention, CSP implementation
-
-3. **Dependency Security:**
-   - npm/yarn vulnerability scanning
-   - Package integrity verification
-   - Outdated package detection
-   - Malicious package analysis
-
-**Practical examples:**
-
-```bash
-# Complete TypeScript security audit
-/devkit.ts.security-review full
-
-# Code security analysis only
-/devkit.ts.security-review code
-
-# Dependency vulnerability scan
-/devkit.ts.security-review dependencies
-
-# Next.js specific security
-/devkit.ts.security-review code --framework=nextjs
-```
-
-**Output includes:**
-- Vulnerability severity classification (Critical/High/Medium/Low)
-- Framework-specific security recommendations
-- Automated fix suggestions for dependencies
-- Configuration security improvements
-
----
-
-### `/devkit.generate-security-assessment`
-
-**Description**: Generate comprehensive security assessment document after security audit completion.
-
-**When to use:**
-- After running `/devkit.java.security-review` or `/devkit.ts.security-review`
-- Creating security documentation for stakeholders
-- Compliance reporting (GDPR, ISO 27001, PCI-DSS)
-- Security architecture documentation
-- Incident response planning
-
-**Arguments:**
-```bash
-/devkit.generate-security-assessment [language] [output-format]
-```
-
-**Languages:**
-- `en-US` - English documentation (default)
-- `it-IT` - Italian documentation
-- `es-ES` - Spanish documentation
-- `fr-FR` - French documentation
-
-**Output formats:**
-- `markdown` - Structured Markdown document (default)
-- `pdf` - Professional PDF document
-- `docx` - Microsoft Word format
-- `html` - Interactive HTML report
-
-**Generated document structure:**
-
-1. **Project Overview & Security Scope**
-   - Application description and objectives
-   - Security boundaries and scope definition
-   - Technology stack identification
-
-2. **Identity & Access Management**
-   - Authentication mechanisms analysis
-   - Authorization patterns (RBAC)
-   - Session management security
-
-3. **Data Protection**
-   - Encryption analysis (in transit, at rest)
-   - Data masking and PII protection
-   - Backup and recovery strategies
-
-4. **Threat Protection**
-   - Firewall and WAF configuration
-   - DDoS protection measures
-   - Vulnerability monitoring procedures
-
-5. **Code Security**
-   - Secure coding practices
-   - Code review processes
-   - Security testing strategies
-
-6. **Incident Management**
-   - Response procedures and timelines
-   - Reporting and documentation
-   - Communication protocols
-
-7. **Training & Awareness**
-   - Security training programs
-   - Attack simulations and drills
-
-8. **Compliance & Regulations**
-   - Regulatory framework compliance
-   - Security audit procedures
-
-9. **Maintenance & Updates**
-   - Patch management processes
-   - Continuous monitoring strategies
-
-10. **Appendices**
-    - Security glossary
-    - Useful resources and references
-
-**Practical examples:**
-
-```bash
-# Generate English security assessment in Markdown (default)
-/devkit.generate-security-assessment en-US markdown
-
-# Generate English assessment in PDF format
-/devkit.generate-security-assessment en-US pdf
-
-# Generate Italian assessment for stakeholders
-/devkit.generate-security-assessment it-IT docx
-
-# Generate Spanish assessment for stakeholders
-/devkit.generate-security-assessment es-ES docx
-```
-
-**Key features:**
-- Multi-language support for international teams
-- Professional formatting for executive review
-- Comprehensive security coverage based on audit findings
-- Actionable recommendations with priority levels
-- Compliance framework mapping
-- Integration with previous security audit results
-
-**Usage workflow:**
-1. Run security audit: `/devkit.java.security-review` or `/devkit.ts.security-review`
-2. Review findings and implement critical fixes
-3. Generate assessment document: `/devkit.generate-security-assessment`
-4. Share with stakeholders and track remediation progress
 
 ---
 
 ### `/devkit.java.upgrade-dependencies`
 
-**Description**: Safe and incremental dependency upgrade strategy for Java/Maven/Gradle projects with breaking change detection and migration guides.
+**File**: `commands/devkit.java.upgrade-dependencies.md`
 
-**When to use:**
-- Regular dependency maintenance
-- Security vulnerability patching
-- Major framework upgrades (Spring Boot)
-- Keeping dependencies current
+**Purpose**: Safe dependency upgrade strategies with compatibility testing and rollback procedures.
 
-**Arguments:**
+**Usage:**
 ```bash
-/devkit.java.upgrade-dependencies [scope] [strategy] [version]
+/devkit.java.upgrade-dependencies [project-path]
 ```
-
-**Scopes:**
-- `all` - Analyze all dependencies (default)
-- `spring` - Spring Boot and Spring Framework
-- `testing` - Test dependencies (JUnit, Mockito, Testcontainers)
-- `security` - Prioritize security vulnerabilities
-- `direct` - Only direct dependencies
-- `<groupId:artifactId>` - Specific dependency
-
-**Strategies:**
-- `analyze` - Analyze and report available updates (default)
-- `plan` - Create detailed upgrade plan
-- `migrate` - Generate migration guide for major versions
-- `execute` - Execute planned upgrades (requires confirmation)
-- `rollback` - Create rollback strategy
-
-**Target versions:**
-- Version number (e.g., `3.2.0`, `5.3.31`)
-- `latest` - Latest stable release
-- `latest-minor` - Latest minor version
-- `latest-patch` - Latest patch version
-
-**Practical examples:**
-
-```bash
-# Analyze all dependencies
-/devkit.java.upgrade-dependencies all analyze
-
-# Plan Spring Boot upgrade
-/devkit.java.upgrade-dependencies spring plan
-
-# Generate migration guide for major Spring Boot upgrade
-/devkit.java.upgrade-dependencies spring migrate 3.2.0
-
-# Execute safe patch updates
-/devkit.java.upgrade-dependencies all execute latest-patch
-
-# Analyze specific dependency
-/devkit.java.upgrade-dependencies org.springframework.boot:spring-boot-starter-web analyze
-```
-
-**Upgrade strategies:**
-
-1. **Patch Updates (Safe)** - Same day, smoke tests
-2. **Minor Updates (Careful)** - 1-2 days, full regression
-3. **Major Updates (Planned)** - 3-7 days, comprehensive testing
-4. **Spring Boot Upgrade (Strategic)** - 1-2 sprints, incremental path
-
-**Risk assessment:**
-- **PATCH** (Low risk): Bug fixes, no breaking changes
-- **MINOR** (Medium risk): New features, backward compatible
-- **MAJOR** (High risk): Breaking changes, API modifications
-- **SECURITY** (Critical): Vulnerabilities requiring immediate action
-
-**Migration guide includes:**
-- Breaking changes documentation
-- Step-by-step migration instructions
-- Code examples (before/after)
-- Testing checklist
-- Rollback plan
-- Estimated effort
 
 ---
 
-## Testing Commands
+## TypeScript Commands
 
-### `/devkit.java.write-unit-tests`
+### `/devkit.typescript.code-review`
 
-**Description**: Generate comprehensive JUnit 5 unit tests for Java classes with Mockito mocking and AssertJ assertions.
+**File**: `commands/devkit.typescript.code-review.md`
 
-**When to use:**
-- Adding tests to new code
-- Improving test coverage
-- Refactoring with test safety net
-- TDD (Test-Driven Development)
+**Purpose**: Comprehensive code review of TypeScript codebases for quality, patterns, and best practices.
 
-**Arguments:**
+**Usage:**
 ```bash
-/devkit.java.write-unit-tests <class-file-path>
+/devkit.typescript.code-review [full|security|performance|architecture] [path]
 ```
-
-**Practical examples:**
-
-```bash
-# Generate unit tests for service class
-/devkit.java.write-unit-tests src/main/java/com/example/service/UserService.java
-
-# Generate unit tests for controller
-/devkit.java.write-unit-tests src/main/java/com/example/controller/ProductController.java
-
-# Generate unit tests for mapper
-/devkit.java.write-unit-tests src/main/java/com/example/mapper/OrderMapper.java
-```
-
-**Automatically selects testing strategy based on class type:**
-
-- **@Service classes**: Service layer testing with Mockito
-- **@RestController**: Controller testing with MockMvc
-- **Mappers/Converters**: Bidirectional mapping tests
-- **Utility classes**: Static method testing
-- **Validators**: Bean validation testing
-- **Exception handlers**: @ControllerAdvice testing
-- **Caching logic**: Cache behavior testing
-- **Scheduled/Async**: @Scheduled and @Async testing
-- **Security**: Authorization testing
-- **External APIs**: WireMock testing
-
-**Generated test structure:**
-
-```java
-@ExtendWith(MockitoExtension.class)
-class UserServiceTest {
-  
-  @Mock
-  private UserRepository userRepository;
-  
-  @Mock
-  private PasswordEncoder passwordEncoder;
-  
-  @InjectMocks
-  private UserService userService;
-  
-  @Test
-  void shouldCreateUser_whenValidRequest() {
-    // Arrange
-    when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
-    when(passwordEncoder.encode("password")).thenReturn("hashed");
-    
-    // Act
-    var result = userService.createUser(new CreateUserRequest("test@example.com", "password"));
-    
-    // Assert
-    assertThat(result).isNotNull();
-    assertThat(result.email()).isEqualTo("test@example.com");
-    verify(userRepository).save(any(User.class));
-  }
-}
-```
-
-**Test coverage includes:**
-- ✅ Happy path scenarios
-- ✅ Edge cases and boundary conditions
-- ✅ Null value handling
-- ✅ Empty collections
-- ✅ Exception scenarios
-- ✅ Validation failures
-- ✅ Mock interaction verification
-
-**Best practices applied:**
-- AAA pattern (Arrange, Act, Assert)
-- Descriptive test names (should...when... pattern)
-- One assertion concept per test
-- Fast tests (< 50ms per test)
-- No Spring context loading (pure unit tests)
-- AssertJ fluent assertions
 
 ---
 
-### `/devkit.java.write-integration-tests`
+### `/devkit.ts.security-review`
 
-**Description**: Generate comprehensive integration tests for Spring Boot classes using Testcontainers with `@ServiceConnection` pattern.
+**File**: `commands/devkit.ts.security-review.md`
 
-**When to use:**
-- Testing with real database
-- Testing complete workflows
-- Integration with external systems
-- End-to-end feature testing
+**Purpose**: Security audit for TypeScript/Node.js applications (Next.js, NestJS, Express) with OWASP Top 10 analysis.
 
-**Arguments:**
+**Usage:**
 ```bash
-/devkit.java.write-integration-tests [class-path]
+/devkit.ts.security-review [path]
 ```
-
-**Practical examples:**
-
-```bash
-# Generate integration tests for controller
-/devkit.java.write-integration-tests src/main/java/com/example/controller/UserController.java
-
-# Generate integration tests for service with caching
-/devkit.java.write-integration-tests src/main/java/com/example/service/ProductService.java
-
-# Generate integration tests for repository
-/devkit.java.write-integration-tests src/main/java/com/example/repository/OrderRepository.java
-```
-
-**Automatic container selection:**
-- **@Repository/@DataJpaTest**: PostgreSQL/MySQL container
-- **@Service with caching**: Redis container
-- **@RestController**: MockMvc + backend containers
-- **Message consumers**: RabbitMQ/Kafka container
-- **MongoDB repositories**: MongoDB container
-
-**Generated test with Testcontainers:**
-
-```java
-@SpringBootTest
-@Testcontainers
-class UserServiceIntegrationTest {
-
-    @Container
-    @ServiceConnection
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
-        DockerImageName.parse("postgres:16-alpine"))
-        .withDatabaseName("testdb");
-
-    @Container
-    @ServiceConnection
-    static GenericContainer<?> redis = new GenericContainer<>(
-        DockerImageName.parse("redis:7-alpine"))
-        .withExposedPorts(6379);
-
-    @Autowired
-    private UserService userService;
-
-    @Test
-    void shouldCreateAndRetrieveUser() {
-        // Test with real database and cache
-        User created = userService.createUser("test@example.com", "Test User");
-        User retrieved = userService.findById(created.getId());
-        
-        assertThat(retrieved).isNotNull();
-        assertThat(retrieved.getEmail()).isEqualTo("test@example.com");
-    }
-}
-```
-
-**Key features:**
-- ✅ `@ServiceConnection` for Spring Boot 3.5+ automatic wiring
-- ✅ Static containers for JVM-level reuse
-- ✅ Real dependencies (no mocks)
-- ✅ Complete scenario testing
-- ✅ Performance optimized (< 500ms per test)
-
-**Required dependencies:**
-- spring-boot-starter-test
-- testcontainers:junit-jupiter (1.19.0+)
-- testcontainers:postgresql (or other databases)
 
 ---
 
-## DevKit Management Commands
+## GitHub Commands
+
+### `/devkit.github.create-pr`
+
+**File**: `commands/devkit.github.create-pr.md`
+
+**Purpose**: Create GitHub pull requests with automated branch creation, commits, and description.
+
+**Usage:**
+```bash
+/devkit.github.create-pr [pr-description]
+```
+
+**Features:**
+- Automatic branch creation
+- Git commit management
+- Automated PR description
+- Automated commit messages
+
+---
+
+### `/devkit.github.review-pr`
+
+**File**: `commands/devkit.github.review-pr.md`
+
+**Purpose**: Comprehensive GitHub PR review covering code quality, security, performance, and testing.
+
+**Usage:**
+```bash
+/devkit.github.review-pr [pr-number|pr-url]
+```
+
+---
+
+## Security Commands
+
+### `/devkit.generate-security-assessment`
+
+**File**: `commands/devkit.generate-security-assessment.md`
+
+**Purpose**: Generate comprehensive security assessment documentation (multi-language support).
+
+**Usage:**
+```bash
+/devkit.generate-security-assessment [language] [output-file]
+```
+
+**Supported languages:**
+- English
+- Italian
+- Spanish
+- French
+- German
+- Portuguese
+
+---
+
+## Documentation Commands
+
+### `/devkit.generate-document`
+
+**File**: `commands/devkit.generate-document.md`
+
+**Purpose**: Generate professional technical and business documents with multi-language support.
+
+**Usage:**
+```bash
+/devkit.generate-document [assessment|feature|analysis|process|custom] [output-file]
+```
+
+**Document types:**
+- Assessment documents
+- Feature specifications
+- Technical analysis
+- Process documentation
+- Custom documents
+
+---
 
 ### `/devkit.generate-changelog`
 
-**Description**: Generate and maintain project changelog following Keep a Changelog standard with Git integration and Conventional Commits support.
+**File**: `commands/devkit.generate-changelog.md`
 
-**When to use:**
-- Creating initial changelog
-- Release preparation
-- Version documentation
-- Change tracking
+**Purpose**: Generate or update CHANGELOG.md with git integration for any project type.
 
-**Arguments:**
+**Usage:**
 ```bash
-/devkit.generate-changelog [action] [version] [format]
+/devkit.generate-changelog [project-path] [version]
 ```
-
-**Actions:**
-- `init` - Create initial CHANGELOG.md
-- `update` - Update changelog with changes since last tag
-- `release` - Generate changelog entry for new release
-- `preview` - Preview changes without writing
-- `validate` - Validate existing CHANGELOG.md format
-
-**Versions:**
-- Version number (e.g., `1.2.3`, `2.0.0`)
-- `auto` - Auto-detect from build files (default)
-- `latest-tag` - Use latest Git tag
-- `snapshot` - Mark as unreleased/snapshot
-
-**Formats:**
-- `keepachangelog` - Keep a Changelog format (default)
-- `conventional` - Conventional Changelog format
-- `github` - GitHub Release Notes format
-- `json` - Structured JSON format
-
-**Practical examples:**
-
-```bash
-# Initialize new changelog
-/devkit.generate-changelog init
-
-# Update changelog with auto-detected version
-/devkit.generate-changelog update auto
-
-# Preview changes without writing
-/devkit.generate-changelog preview
-
-# Create release entry for specific version
-/devkit.generate-changelog release 1.2.0
-
-# Validate existing changelog
-/devkit.generate-changelog validate
-
-# Generate in GitHub format
-/devkit.generate-changelog update 1.2.0 github
-```
-
-**Automatic version detection:**
-- Maven: `pom.xml` version
-- Gradle: `build.gradle` or `build.gradle.kts` version
-- npm: `package.json` version
-- Python: `setup.py` or `pyproject.toml` version
-- Rust: `Cargo.toml` version
-- Git tags: Fallback to latest tag
-
-**Conventional Commits support:**
-- `feat:` → Added section
-- `fix:` → Fixed section
-- `security:` → Security section
-- `refactor:`, `perf:`, `style:` → Changed section
-- `remove:`, `delete:` → Removed section
-- `deprecate:` → Deprecated section
-- `BREAKING CHANGE` → Breaking Changes section
-
-**Changelog format:**
-
-```markdown
-# Changelog
-
-All notable changes to this project will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-## [Unreleased]
-
-### Added
-- New features for next release
-
-## [1.2.0] - 2024-01-15
-
-### Added
-- User authentication with JWT tokens
-- Health check endpoints
-- Redis caching for sessions
-
-### Changed
-- Upgraded dependencies to latest versions
-- Improved error handling
-
-### Fixed
-- Memory leak in background task
-- Security vulnerability in authentication
-
-### Security
-- Updated vulnerable dependencies
-- Implemented CSRF protection
-
-[Unreleased]: https://github.com/username/project/compare/v1.2.0...HEAD
-[1.2.0]: https://github.com/username/project/compare/v1.1.0...v1.2.0
-```
-
-**Build system integration:**
-- Maven Changes Plugin
-- Gradle Release Plugin
-- npm version scripts
-- GitHub Actions automated releases
-
----
-
-### `/devkit.verify-skill`
-
-**Description**: Validates a skill against DevKit standards (requirements, template, dependencies).
-
-**When to use:**
-- Before committing new skills
-- After modifying existing skills
-- Quality assurance checks
-- CI/CD skill validation
-
-**Arguments:**
-```bash
-/devkit.verify-skill [skill-name]
-```
-
-**Validation checks:**
-
-1. **Existence Check**
-   - Searches in `.claude/skills/`, `~/.claude/skills/`, and `./skills/` directories
-   - Verifies SKILL.md file exists
-
-2. **Requirements Conformance**
-   - YAML frontmatter validation
-   - Required fields: name, description, allowed-tools, category, tags, version
-   - Field format validation (name: lowercase-hyphen, version: semver)
-   - Description quality (includes WHAT and WHEN)
-
-3. **Template Adherence**
-   - Required sections present
-   - Metadata alignment
-   - Content organization
-   - Progressive complexity in examples
-
-4. **Dependency Validation** (Context7 or u2m)
-   - Library versions current
-   - Trust score adequate (≥ 7.0)
-   - Breaking changes documented
-
-**Practical examples:**
-
-```bash
-# Validate specific skill
-/devkit.verify-skill spring-boot-crud-patterns
-
-# Validate after modifications
-/devkit.verify-skill langchain4j-rag-implementation-patterns
-```
-
-**Success output:**
-```
-✅ Validation completed: The skill 'spring-boot-crud-patterns' complies with all standards.
-
-Details:
-- ✅ SKILL.md file present and valid
-- ✅ Frontmatter correct (name, description)
-- ✅ Structure conforms to template
-- ✅ All referenced files exist
-- ✅ Dependencies validated
-```
-
-**Failure output:**
-```
-❌ Validation failed for the skill 'example-skill'.
-
-Required actions:
-
-* **Requirements:** The `name` field contains uppercase characters. Must use only lowercase letters, numbers, and hyphens.
-* **Template:** The "When to Use This Skill" section is missing.
-* **File:** The `reference.md` file is referenced but does not exist.
-* **Dependencies:** The 'spring-boot' library uses version 2.7.x. Recommended: 3.2.x (Context7 Trust Score: 9.2).
-* **Content:** Description does not specify WHEN to use the skill.
-```
-
----
-
-## Utility Commands
-
-### `/devkit.prompt-optimize`
-
-**Description**: Expert prompt optimization using advanced techniques (CoT, few-shot, constitutional AI) for LLM performance enhancement.
-
-**When to use:**
-- Improving prompt quality
-- Reducing token usage
-- Enhancing consistency
-- Production prompt preparation
-
-**Arguments:**
-```bash
-/devkit.prompt-optimize [prompt-text] [target-model] [optimization-level]
-```
-
-**Target models:**
-- `claude-4.5-sonnet` (default)
-- `claude-4-opus`
-- `claude-4.5-haiku`
-- `gpt-5`
-- `gpt-5-mini`
-- `gemini-2.5-pro`
-
-**Optimization levels:**
-- `basic` - Quick improvements (structure, clarity, basic CoT)
-- `standard` - Comprehensive enhancement (CoT, few-shot, safety)
-- `advanced` - Production-ready (full optimization with testing)
-
-**Practical examples:**
-
-```bash
-# Optimize prompt file
-/devkit.prompt-optimize prompts/code-review-prompt.txt
-
-# Optimize inline prompt
-/devkit.prompt-optimize "Generate unit tests for UserService" claude-3.5-sonnet standard
-
-# Advanced optimization for production
-/devkit.prompt-optimize "Analyze security vulnerabilities" gpt-4 advanced
-```
-
-**Optimization techniques applied:**
-- **Chain-of-Thought (CoT)**: Step-by-step reasoning
-- **Few-Shot Learning**: Strategic examples
-- **Constitutional AI**: Self-critique and safety
-- **Structured Output**: JSON/XML formats
-- **Meta-Prompting**: Dynamic prompt generation
-
-**Output includes:**
-- Complete optimized prompt (saved to `optimized-prompt.md`)
-- Optimization report (before/after analysis)
-- Applied techniques with impact metrics
-- Performance projections
-- Implementation guidelines
 
 ---
 
 ### `/devkit.write-a-minute-of-a-meeting`
 
-**Description**: Generate professional meeting minutes from transcripts or notes.
+**File**: `commands/devkit.write-a-minute-of-a-meeting.md`
 
-**When to use:**
-- After team meetings
-- Client meetings documentation
-- Decision tracking
-- Action item management
+**Purpose**: Generate professional meeting minutes and action items from transcripts or notes.
 
-**Arguments:**
+**Usage:**
 ```bash
-/devkit.write-a-minute-of-a-meeting [transcript-file] [meeting-title] [date]
-```
-
-**Practical examples:**
-
-```bash
-# Generate minutes from transcript
-/devkit.write-a-minute-of-a-meeting meeting-transcript.txt "Sprint Planning" "2024-01-15"
-
-# Generate from notes file
-/devkit.write-a-minute-of-a-meeting notes.md "Architecture Review"
-```
-
-**Generated document structure:**
-
-1. **Executive Summary** - Key outcomes and decisions (3-4 sentences)
-2. **Agenda Items Discussed** - Summary per item with attributions
-3. **Decisions Made** - Final decisions with approvers
-4. **Action Items** - Table with tasks, responsible persons, deadlines
-5. **Open Issues/Next Steps** - Unresolved topics
-6. **Next Meeting** - Date and time if established
-
-**Meeting minute format:**
-
-```markdown
-# Meeting Minutes: Sprint Planning
-
-**Date**: 2024-01-15  
-**Location**: Zoom  
-**Attendees**: John Doe, Jane Smith, Bob Johnson  
-
-## Executive Summary
-
-The team reviewed sprint progress, identified blockers, and planned next sprint goals. Key decision: adopt new deployment strategy. Three action items assigned with deadlines.
-
-## Agenda Items Discussed
-
-### Sprint Progress Review
-- Completed 8 of 10 user stories
-- Integration tests delayed due to infrastructure issues
-- **Jane Smith** reported database performance improvements
-
-### Next Sprint Planning
-- Focus on technical debt reduction
-- Allocate 30% capacity to refactoring
-- **John Doe** proposed new code review process
-
-## Decisions Made
-
-| Decision | Proposed By | Approved By |
-|----------|-------------|-------------|
-| Adopt blue-green deployment | John Doe | All attendees |
-| Increase test coverage target to 85% | Jane Smith | Tech Lead |
-
-## Action Items
-
-| Action | Responsible | Deadline |
-|--------|------------|----------|
-| Setup blue-green deployment pipeline | DevOps Team | 2024-01-22 |
-| Document new code review process | John Doe | 2024-01-20 |
-| Refactor authentication module | Jane Smith | 2024-01-29 |
-
-## Open Issues
-
-- Infrastructure capacity planning needed
-- Decision on microservices migration strategy pending
-
-## Next Meeting
-
-**Date**: 2024-01-22 at 10:00 AM  
-**Agenda**: Deployment strategy review and Q1 planning
+/devkit.write-a-minute-of-a-meeting [meeting-transcript-or-notes]
 ```
 
 ---
 
-## Feature Development Command
+### `/devkit.generate-refactoring-tasks`
+
+**File**: `commands/devkit.generate-refactoring-tasks.md`
+
+**Purpose**: Generate detailed, step-by-step refactoring plan for complex Java classes.
+
+**Usage:**
+```bash
+/devkit.generate-refactoring-tasks [class-path] [complexity-level]
+```
+
+---
+
+## Workflow Commands
 
 ### `/devkit.feature-development`
 
-**Description**: Guided feature development with systematic 9-phase approach using specialized agents for comprehensive codebase analysis, architecture design, testing verification, and quality review.
+**File**: `commands/devkit.feature-development.md`
 
-**When to use:**
-- Building new features from scratch
-- Complex feature requiring deep understanding of existing codebase
-- When you need architectural guidance before implementation
-- For systematic, well-documented feature development
-- When working with unfamiliar codebases
+**Purpose**: Systematic 9-phase approach for guided feature development with specialist agents.
 
-**Arguments:**
+**Usage:**
 ```bash
 /devkit.feature-development [feature-description]
 ```
 
-**The 9 Phases:**
-
-1. **Discovery** - Understand what needs to be built
-2. **Codebase Exploration** - Analyze existing patterns and similar features
-3. **Clarifying Questions** - Resolve all ambiguities before designing
-4. **Architecture Design** - Design multiple approaches with trade-offs
-5. **Implementation** - Build the feature following chosen architecture
-6. **Testing & Verification** - Compile code and run tests to verify implementation works
-7. **Quality Review** - Comprehensive code review with specialized agents
-8. **Post-QA Testing** - Re-verify build and tests after any QA changes
-9. **Summary** - Document what was accomplished
-
-**Phase 6: Testing & Verification (Critical)**
-
-This phase ensures the implementation actually works before proceeding to quality review:
-- **Compile the project**: Run build commands (`mvn compile`, `./gradlew build`, `npm run build`)
-- **Run existing tests**: Execute full test suite, fix any failures caused by changes
-- **Verify new/modified tests**: Ensure added tests pass
-- **Report results**: Show actual command output, stop if tests fail
-
-**DO NOT PROCEED TO QUALITY REVIEW IF TESTS FAIL**
-
-**Phase 8: Post-QA Testing (Critical)**
-
-If code was modified during Quality Review, this phase is MANDATORY:
-- **Re-compile**: Ensure no compilation errors were introduced by QA fixes
-- **Re-run tests**: Verify QA changes did not introduce regressions
-- **Sanity check**: Confirm the original feature still works as expected
-
-**DO NOT PROCEED TO SUMMARY IF TESTS FAIL AFTER QA CHANGES**
-
-**Specialized Agents Used:**
-- **explorer** - Traces execution paths and maps architecture
-- **architect** - Designs complete implementation blueprints
-- **code-reviewer** - Reviews code with confidence-based filtering
-
-**Practical examples:**
-
-```bash
-# Simple feature
-/devkit.feature-development Add user authentication
-
-# Complex feature with description
-/devkit.feature-development Implement real-time notifications using WebSockets
-
-# Integration feature
-/devkit.feature-development Add payment processing with Stripe integration
-
-# UI feature
-/devkit.feature-development Create dashboard with charts and filters
-```
-
-**Key Benefits:**
-- **Systematic Approach**: 9-phase methodology ensures comprehensive development
-- **Codebase Understanding**: Deep analysis before making changes
-- **Architecture Guidance**: Multiple design approaches with trade-off analysis
-- **Testing Verification**: Mandatory compilation and test execution before and after review
-- **Quality Assurance**: Multi-perspective code review with specialized agents
-- **Documentation**: Complete summary of decisions and implementation
-
-**Execution Instructions with Fallback:**
-The command uses agents with automatic fallback:
-- Primary: `general-*` agents
-- If not available: `developer-kit:general-*` agents
-- Final fallback: `general-purpose` agent
+**Phases:**
+1. Analysis
+2. Architecture
+3. Implementation planning
+4. Implementation
+5. Testing
+6. Code review
+7. Documentation
+8. Integration verification
+9. Completion
 
 ---
 
-## Code Refactoring Command
+### `/devkit.fix-debugging`
+
+**File**: `commands/devkit.fix-debugging.md`
+
+**Purpose**: Structured debugging workflow for identifying and fixing errors.
+
+**Usage:**
+```bash
+/devkit.fix-debugging [error-description|stack-trace]
+```
+
+---
 
 ### `/devkit.refactor`
 
-**Description**: Guided code refactoring with deep codebase understanding, backward compatibility options, and comprehensive multi-phase verification. Specializes in safe refactoring with clear compatibility requirements and extensive testing.
+**File**: `commands/devkit.refactor.md`
 
-**When to use:**
-- Improving code quality and maintainability
-- Refactoring for performance optimization
-- Modernizing legacy code or design patterns
-- Restructuring modules or layers
-- When breaking changes may be involved (requires explicit approval)
-- When refactoring is complex with many dependencies
+**Purpose**: Guided code refactoring workflow with quality improvements.
 
-**Arguments**:
+**Usage:**
 ```bash
-/devkit.refactor [--lang=java|spring|typescript|nestjs|react|general] [--scope=file|module|feature] [refactor-description]
-```
-
-**Language options** (`--lang`):
-- `--lang=spring` or `--lang=java`: Java/Spring Boot refactoring with specialized agents
-- `--lang=typescript` or `--lang=ts`: TypeScript refactoring
-- `--lang=nestjs`: NestJS backend refactoring
-- `--lang=react`: React frontend refactoring
-- `--lang=general` (default): Language-agnostic refactoring
-
-**Scope options** (`--scope`):
-- `--scope=file`: Single file refactoring (default for simple changes)
-- `--scope=module`: Module/package level refactoring
-- `--scope=feature`: Cross-cutting feature refactoring (default)
-
-**The 9 Phases:**
-
-1. **Discovery** - Understand what code needs refactoring and why
-2. **Compatibility Requirements** - Clarify if breaking changes are allowed (CRITICAL PHASE)
-3. **Deep Codebase Exploration** - Analyze code structure, usages, and test coverage in detail
-4. **Refactoring Strategy** - Design safe approach based on compatibility constraints
-5. **Pre-Refactoring Verification** - Establish baseline with existing tests
-6. **Implementation** - Execute refactoring incrementally
-7. **Comprehensive Verification** - Multi-step verification: tests, static analysis, code review, architecture validation
-8. **Issue Resolution** - Address any issues found during verification
-9. **Summary & Documentation** - Document changes, migration guides, and breaking change communications
-
-**Compatibility Levels (Phase 2 - CRITICAL):**
-
-The command requires you to explicitly choose one of three compatibility approaches:
-
-**Option A: Strictly Backward Compatible**
-- No breaking changes allowed
-- All public APIs must remain unchanged
-- Existing clients continue working without modifications
-- Internal implementation can be completely refactored
-- Best for: Shared libraries, public APIs, frameworks
-
-**Option B: Breaking Changes Allowed**
-- Breaking changes are acceptable
-- Can modify public APIs, signatures, return types
-- Consumers may need updates
-- Must provide migration guide and deprecation strategy
-- Best for: Internal modules, major version releases
-
-**Option C: Internal Only**
-- Refactoring internal/private implementation only
-- Public API remains unchanged
-- Internal structure can be completely redesigned
-- No consumer updates required
-- Best for: Internal optimization, design pattern improvements
-
-**Practical examples:**
-
-```bash
-# Simple file refactoring - extract utility methods
-/devkit.refactor --scope=file Extract utility methods from UserService
-
-# Spring Boot module refactoring - backward compatible
-/devkit.refactor --lang=spring --scope=module Refactor repository layer to use specification pattern
-
-# Breaking change refactoring with explicit scope
-/devkit.refactor --lang=java Restructure payment module API for v2
-
-# TypeScript refactoring
-/devkit.refactor --lang=typescript Convert callbacks to async/await in data layer
-
-# NestJS refactoring
-/devkit.refactor --lang=nestjs Refactor authentication to use guards instead of middleware
-
-# React component refactoring
-/devkit.refactor --lang=react Extract shared hooks from dashboard components
-
-# Internal performance optimization
-/devkit.refactor --scope=file Improve performance of search algorithm in SearchService
-```
-
-**Phase 3: Deep Codebase Exploration (Critical)**
-
-This phase uses three parallel analyses to ensure complete understanding:
-
-1. **Code Structure Analysis** - Map classes, interfaces, relationships, and public APIs
-2. **Usage & Dependency Analysis** - Find ALL usages, imports, reflection-based references, configuration
-3. **Test Coverage Analysis** - Identify test files, coverage gaps, and test patterns
-
-All identified files are read to build a complete dependency graph.
-
-**Phase 7: Comprehensive Verification (Critical)**
-
-This phase includes four verification steps:
-
-1. **Automated Test Verification** - Run all unit and integration tests, compare with baseline
-2. **Static Analysis Verification** - Run linters, check for new warnings or errors
-3. **Code Review Verification** - Multi-perspective review by code quality agents
-4. **Architecture Verification** - Validate module boundaries, dependencies, SOLID principles (for module/feature scope)
-
-**Specialized Agents Used:**
-- **explorer** - Maps code structure, dependencies, and usages
-- **refactoring expert** - Designs safe refactoring strategies with risk assessment
-- **architect** - Validates architectural integrity post-refactoring
-- **code-reviewer** - Reviews code quality and maintains conventions
-
-**Key Benefits:**
-- **Safe Refactoring**: Deep understanding before making any changes
-- **Compatibility Aware**: Explicit handling of breaking changes with migration guides
-- **Comprehensive Verification**: Four-step verification ensures no regressions
-- **Risk Assessment**: Each refactoring step assessed for risks and rollback strategies
-- **Documentation**: Migration guides and breaking change communication templates provided
-- **Multi-Language**: Specialized agents for Java/Spring Boot, TypeScript, NestJS, React
-
-**Execution Instructions with Fallback:**
-The command uses specialized agents with automatic fallback:
-- Primary: Language-specific agents (e.g., `java-refactor-expert`, `typescript-refactor-expert`)
-- If not available: General refactoring agents
-- Final fallback: `general-purpose` agent
-
----
-
-
-### Command Workflow Principles
-
-1. **Progressive Quality Checks**
-   - Generate code → Write tests → Code review → Security review
-   - Small, incremental changes over big-bang refactoring
-   - Always run tests before and after changes
-
-2. **Documentation First**
-   - Generate documentation alongside code
-   - Keep README and API docs up-to-date
-   - Document architectural decisions
-
-3. **Security by Default**
-   - Regular dependency audits
-   - Security reviews before production
-   - Follow OWASP Top 10 guidelines
-
-4. **Test Coverage**
-   - Aim for 80%+ unit test coverage
-   - 60%+ integration test coverage
-   - 85%+ total coverage target
-
-### When to Use Which Command
-
-**During Development:**
-1. `/devkit.java.generate-crud` - Scaffold new entities
-2. `/devkit.java.write-unit-tests` - Generate tests for new code
-3. `/devkit.java.code-review` - Verify quality before commit
-
-**Before Pull Request:**
-1. `/devkit.java.code-review full` - Complete review
-2. `/devkit.java.security-review` - Security check (Java)
-3. `/devkit.ts.security-review` - Security check (TypeScript)
-4. `/devkit.java.write-integration-tests` - Add integration tests
-
-**Pre-Production:**
-1. `/devkit.java.security-review full` - Complete Java security audit
-2. `/devkit.ts.security-review full` - Complete TypeScript security audit
-3. `/devkit.generate-security-assessment` - Generate security documentation
-4. `/devkit.java.dependency-audit` - Vulnerability check
-5. `/devkit.generate-changelog` - Generate release notes
-
-**Maintenance:**
-1. `/devkit.java.dependency-audit` - Weekly/monthly dependency checks
-2. `/devkit.java.upgrade-dependencies` - Safe upgrades
-3. `/devkit.java.architect-review` - Quarterly architecture review
-
----
-
-## Complete Workflow Example
-
-Real-world scenario: Implementing a complete user management feature
-
-```bash
-# 1. Create CRUD implementation
-/devkit.java.generate-crud User
-
-# 2. Implement custom business logic
-# ... manual coding ...
-
-# 3. Generate unit tests
-/devkit.java.write-unit-tests src/main/java/com/example/service/UserService.java
-
-# 4. Generate integration tests
-/devkit.java.write-integration-tests src/main/java/com/example/controller/UserController.java
-
-# 5. Code quality review
-/devkit.java.code-review full src/main/java/com/example/user
-
-# 6. Security review (Java)
-/devkit.java.security-review code src/main/java/com/example/user
-
-# 6b. Security review (TypeScript, if applicable)
-/devkit.ts.security-review code
-
-# 7. Generate security assessment documentation
-/devkit.generate-security-assessment en-US markdown
-
-# 8. Generate API documentation
-/devkit.java.generate-docs . api html
-
-# 9. Update changelog
-/devkit.generate-changelog update
-
-# 10. Validate and commit
-git add .
-git commit -m "feat: implement user management feature"
-
-# 11. Create pull request (documented separately)
-# Use GitHub Spec Kit commands for PR creation and review
+/devkit.refactor [file-path] [refactoring-scope]
 ```
 
 ---
 
-## Troubleshooting
+### `/devkit.prompt-optimize`
 
-### Command Not Found
+**File**: `commands/devkit.prompt-optimize.md`
+
+**Purpose**: Optimize prompts for better AI performance and save results to `optimized-prompt.md`.
+
+**Usage:**
 ```bash
-# Verify command exists
-ls -la commands/
-
-# Check YAML frontmatter syntax
-cat commands/devkit.java.code-review.md | head -10
-
-# List available commands
-/help
-```
-
-### GitHub CLI Authentication
-```bash
-# Check authentication status
-gh auth status
-
-# Login if needed
-gh auth login
-```
-
-### Test Failures
-```bash
-# Run tests manually
-mvn test
-
-# Run specific test class
-mvn test -Dtest=UserServiceTest
-
-# Check logs
-tail -f target/surefire-reports/*.txt
-```
-
-### Build Failures
-```bash
-# Clean and rebuild
-mvn clean install
-
-# Skip tests if needed
-mvn clean package -DskipTests
-
-# Check for dependency conflicts
-mvn dependency:tree
+/devkit.prompt-optimize [prompt-to-optimize]
 ```
 
 ---
 
-## Long-Running Agent (LRA) Commands
+## LRA (Long-Running Agent) Commands
 
-Commands for managing complex projects that span multiple context windows, based on [Anthropic's research on long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents).
+Long-Running Agent commands manage complex projects spanning multiple context windows based on [Anthropic's research](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents).
 
 ### `/devkit.lra.init`
 
-**Description**: Initialize LRA environment for multi-session projects by setting up feature list, progress tracking, and initialization script.
+**File**: `commands/devkit.lra.init.md`
 
-**When to use:**
-- Starting a new complex project that will span multiple sessions
-- When you need systematic progress tracking across days/weeks
-- For large features that require multiple development sessions
+**Purpose**: Initialize LRA environment for multi-session project management.
 
-**Arguments:**
+**Usage:**
 ```bash
 /devkit.lra.init [project-description]
 ```
 
 **Creates:**
-- `features/` directory with feature backlog
-- `progress.md` for tracking completion status
-- `init.sh` for session initialization
-- Project configuration and context
+- Feature list
+- Progress tracking
+- Init script
 
-**Example initialization:**
-```bash
-/devkit.lra.init "E-commerce platform with user management, product catalog, and order processing"
-```
+---
 
 ### `/devkit.lra.start-session`
 
-**Description**: Start a new coding session by reading progress, checking project health, and selecting the next feature to work on.
+**File**: `commands/devkit.lra.start-session.md`
 
-**When to use:**
-- Beginning each development session
-- After returning to a project after a break
-- When you need to resume work on a multi-session project
+**Purpose**: Start a new coding session with progress status and feature selection.
 
-**Features:**
-- Automatic feature selection based on priorities
-- Progress review and health check
-- Context restoration from previous sessions
-- Test suite verification
+**Usage:**
+```bash
+/devkit.lra.start-session
+```
+
+---
 
 ### `/devkit.lra.add-feature`
 
-**Description**: Add new feature requirements to the feature backlog during development.
+**File**: `commands/devkit.lra.add-feature.md`
 
-**When to use:**
-- Discovering new requirements during implementation
-- Adding edge cases or additional functionality
-- When stakeholders request new features
+**Purpose**: Add new feature to the project list during development.
 
-**Arguments:**
+**Usage:**
 ```bash
-/devkit.lra.add-feature [category] [priority] [description]
+/devkit.lra.add-feature [feature-description]
 ```
 
-**Categories:**
-- `feature` - New user-facing functionality
-- `bug` - Bug fixes and corrections
-- `tech` - Technical debt and improvements
-- `docs` - Documentation updates
-
-**Priorities:**
-- `critical` - Blocks release or core functionality
-- `high` - Important for next release
-- `medium` - Nice to have
-- `low` - Future consideration
+---
 
 ### `/devkit.lra.mark-feature`
 
-**Description**: Mark a feature as completed (passed) or failed after implementation and testing.
+**File**: `commands/devkit.lra.mark-feature.md`
 
-**When to use:**
-- After completing feature implementation
-- When tests pass and functionality is verified
-- When a feature needs to be marked as failed for any reason
+**Purpose**: Mark feature as passed or failed after implementation and testing.
 
-**Arguments:**
+**Usage:**
 ```bash
-/devkit.lra.mark-feature [feature-id] [passed|failed] [optional-notes]
+/devkit.lra.mark-feature [feature-id] [passed|failed]
 ```
 
-**Updates:**
-- Feature status in progress tracking
-- Test results and quality metrics
-- Implementation notes and lessons learned
+---
 
 ### `/devkit.lra.checkpoint`
 
-**Description**: Create session checkpoint by committing changes, updating progress log, and ensuring clean state for the next session.
+**File**: `commands/devkit.lra.checkpoint.md`
 
-**When to use:**
-- End of each development session
-- Before taking a break from coding
-- When handing off work to another developer
+**Purpose**: Create session checkpoint with commits and progress updates.
 
-**Actions:**
-- Commits all changes with descriptive messages
-- Updates progress.md with current status
-- Creates session summary
-- Ensures clean, testable state
-
-### `/devkit.lra.status`
-
-**Description**: Display comprehensive project status including progress metrics, priorities, recent activity, and upcoming work.
-
-**When to use:**
-- Project status reviews with stakeholders
-- Planning next development session
-- When evaluating project health and timeline
-
-**Shows:**
-- Feature completion percentage
-- Priority-based feature breakdown
-- Recent commits and changes
-- Upcoming features and estimated effort
-- Test coverage and quality metrics
-
-### `/devkit.lra.recover`
-
-**Description**: Recover from broken state by diagnosing issues, reverting if needed, and restoring a clean working state.
-
-**When to use:**
-- When the project is in a broken or unbuildable state
-- After failed experiments or refactoring
-- When tests are failing and the cause is unclear
-
-**Recovery steps:**
-- Diagnostic analysis of current state
-- Git history analysis to find last working state
-- Selective revert or reset as needed
-- Restoration of clean, testable state
-
-**LRA Workflow Example:**
+**Usage:**
 ```bash
-# First time setup
-/devkit.lra.init "Customer management system with authentication and profiles"
-
-# Start each session
-/devkit.lra.start-session
-
-# Add new requirements discovered during development
-/devkit.lra.add-feature feature high "Two-factor authentication for security"
-
-# Mark completed features
-/devkit.lra.mark-feature user-registration passed "All tests passing"
-
-# End of session
-/devkit.lra.checkpoint "Implemented user registration and login functionality"
-
-# Check project status anytime
-/devkit.lra.status
-
-# Recover if something goes wrong
-/devkit.lra.recover
+/devkit.lra.checkpoint [summary-message]
 ```
 
 ---
 
-## Contributing
+### `/devkit.lra.status`
 
-To add new commands:
+**File**: `commands/devkit.lra.status.md`
 
-1. Create `.md` file in `commands/` directory
-2. Follow existing format with frontmatter
-3. Test the command thoroughly
-4. Update this documentation
-5. Submit PR
+**Purpose**: Display project status, progress metrics, and recent activity.
 
----
-
-## References
-
-- [Contributing Guide](../CONTRIBUTING.md)
-- [README](../README.md)
+**Usage:**
+```bash
+/devkit.lra.status
+```
 
 ---
 
-**Version**: 1.0.0  
-**Last Updated**: 2025-01-08  
+### `/devkit.lra.recover`
+
+**File**: `commands/devkit.lra.recover.md`
+
+**Purpose**: Recover from broken state with diagnostics and restoration.
+
+**Usage:**
+```bash
+/devkit.lra.recover [--diagnose|--revert]
+```
+
+---
+
+## Spec Kit Commands
+
+Spec Kit commands provide comprehensive project planning and verification.
+
+### `/speckit.check-integration`
+
+**File**: `commands/speckit.check-integration.md`
+
+**Purpose**: Verify task integration with existing codebase. Detect duplication and integration opportunities.
+
+**Usage:**
+```bash
+/speckit.check-integration
+```
+
+**Run after**: `/speckit.tasks`
+
+---
+
+### `/speckit.optimize`
+
+**File**: `commands/speckit.optimize.md`
+
+**Purpose**: Optimize execution plan for parallelization and subagent assignment.
+
+**Usage:**
+```bash
+/speckit.optimize
+```
+
+**Run after**: `/speckit.check-integration`
+
+---
+
+### `/speckit.verify`
+
+**File**: `commands/speckit.verify.md`
+
+**Purpose**: Comprehensive implementation verification covering requirements, tests, and code quality.
+
+**Usage:**
+```bash
+/speckit.verify
+```
+
+**Run after**: `/speckit.implement`
+
+---
+
+## Skill Management Commands
+
+### `/devkit.verify-skill`
+
+**File**: `commands/devkit.verify-skill.md`
+
+**Purpose**: Validate skill compliance with DevKit standards, format, and best practices.
+
+**Usage:**
+```bash
+/devkit.verify-skill [skill-name]
+```
+
+**Checks:**
+- SKILL.md frontmatter
+- File structure and syntax
+- Content quality
+- Referenced files existence
+
+---
+
+## Common Workflows
+
+### Code Review Workflow
+
+```
+1. /devkit.java.code-review full [path]         # Initial review
+2. /devkit.java.security-review [path]          # Security audit
+3. /devkit.java.architect-review [path]         # Architecture check
+4. /devkit.github.review-pr [pr-number]         # PR review
+```
+
+### Feature Development Workflow
+
+```
+1. /devkit.feature-development [feature-description]
+   (Guides through 9 phases: analysis → architecture → implementation → testing → review → documentation → completion)
+```
+
+### Refactoring Workflow
+
+```
+1. /devkit.java.code-review full [path]
+2. /devkit.generate-refactoring-tasks [class]
+3. /devkit.java.refactor-class [class] comprehensive
+4. /devkit.java.write-unit-tests [refactored-class]
+5. /devkit.java.code-review full [path]
+```
+
+### Security Audit Workflow
+
+```
+1. /devkit.java.security-review [path]
+2. /devkit.ts.security-review [path]
+3. /devkit.generate-security-assessment [language] [output-file]
+```
+
+### LRA Multi-Session Workflow
+
+```
+Session 1:
+  1. /devkit.lra.init [project-description]
+  2. /devkit.lra.start-session
+  3. ... implement feature 1 ...
+  4. /devkit.lra.mark-feature feature-1 passed
+  5. /devkit.lra.checkpoint "Session 1 complete"
+
+Session 2:
+  1. /devkit.lra.start-session
+  2. ... implement feature 2 ...
+  3. /devkit.lra.mark-feature feature-2 passed
+  4. /devkit.lra.checkpoint "Session 2 complete"
+```
+
+### Spec Kit Workflow
+
+```
+1. /speckit.tasks
+2. /speckit.check-integration
+3. /speckit.optimize
+4. /speckit.implement
+5. /speckit.verify
+```
+
+---
+
+## Quick Reference
+
+| Command | Category | Purpose |
+|---------|----------|---------|
+| `/devkit.java.code-review` | Java | Code quality review |
+| `/devkit.java.security-review` | Java | Security audit |
+| `/devkit.java.write-unit-tests` | Java | Generate unit tests |
+| `/devkit.java.generate-crud` | Java | Generate CRUD code |
+| `/devkit.typescript.code-review` | TypeScript | Code quality review |
+| `/devkit.ts.security-review` | TypeScript | Security audit |
+| `/devkit.github.create-pr` | GitHub | Create pull request |
+| `/devkit.github.review-pr` | GitHub | Review pull request |
+| `/devkit.feature-development` | Workflow | Guided feature development |
+| `/devkit.fix-debugging` | Workflow | Debug errors |
+| `/devkit.refactor` | Workflow | Code refactoring |
+| `/devkit.lra.init` | LRA | Initialize project |
+| `/devkit.lra.start-session` | LRA | Start session |
+| `/devkit.lra.checkpoint` | LRA | Save session progress |
+| `/speckit.check-integration` | Spec Kit | Check integration |
+| `/speckit.optimize` | Spec Kit | Optimize plan |
+| `/speckit.verify` | Spec Kit | Verify completion |
+| `/devkit.generate-document` | Documentation | Create documents |
+| `/devkit.generate-changelog` | Documentation | Update changelog |
+| `/devkit.verify-skill` | Skill Mgmt | Validate skill |
+
+---
+
+## Using Commands in Claude Code
+
+### Direct Invocation
+
+```bash
+/devkit.java.code-review full src/main/java
+/devkit.feature-development "User authentication system"
+/devkit.lra.start-session
+```
+
+### Within Conversations
+
+Include command references in your prompt:
+
+```
+I need to review my Spring Boot service. Can you run /devkit.java.code-review security?
+```
+
+### Combining Commands
+
+Use command outputs as input for subsequent commands:
+
+```bash
+1. /devkit.java.code-review full
+2. Review the output
+3. /devkit.java.refactor-class [identified-class] comprehensive
+4. /devkit.java.write-unit-tests [refactored-class]
+```
+
+---
+
+**Note**: For complete details on each command, see the individual command files in `commands/` directory.

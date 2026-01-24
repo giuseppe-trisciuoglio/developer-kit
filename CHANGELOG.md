@@ -7,6 +7,56 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.23.0] - 2025-01-24
+
+### Added
+- **New DevOps Agents** (2 new specialized agents):
+  - `general-docker-expert`: Expert Docker containerization specialist. Masters multi-stage builds, Docker Compose orchestration, container optimization, and production deployment strategies. Proficient in Dockerfile best practices, volume management, networking, security hardening, and container lifecycle management
+  - `github-actions-pipeline-expert`: Expert GitHub Actions CI/CD pipeline architect. Masters workflow automation, pipeline optimization, deployment strategies, and production-grade CI/CD implementations. Proficient in composite actions, reusable workflows, custom actions, matrix builds, caching strategies, security hardening, and pipeline monitoring
+- **New Python Agents** (4 new specialized agents):
+  - `python-code-review-expert`: Expert Python code reviewer specializing in code quality, security, performance, and Pythonic best practices. Reviews Python codebases for bugs, logic errors, security vulnerabilities, and quality issues using confidence-based filtering
+  - `python-refactor-expert`: Expert Python code refactoring specialist. Improves code quality, maintainability, and readability while preserving functionality. Applies clean code principles, SOLID patterns, and Pythonic best practices
+  - `python-security-expert`: Expert security auditor specializing in Python application security, DevSecOps, and compliance frameworks. Masters vulnerability assessment, threat modeling, secure authentication (OAuth2/JWT), OWASP standards, and security automation
+  - `python-software-architect-expert`: Expert Python software architect specializing in Clean Architecture, Domain-Driven Design (DDD), and modern Python patterns. Reviews Python codebases for architectural integrity, proper module organization, and SOLID principles
+- **New AWS CloudFormation Skills** (14 comprehensive skills with complete SKILL.md, examples.md, and reference.md files):
+  - `aws-cloudformation-auto-scaling`: Auto Scaling groups, scaling policies, lifecycle hooks, and scheduled actions
+  - `aws-cloudformation-bedrock`: Amazon Bedrock integration, AI/ML foundation models, and serverless AI inference
+  - `aws-cloudformation-cloudfront`: CloudFront distributions, edge functions, origins, cache behaviors, and WAF integration
+  - `aws-cloudformation-cloudwatch`: CloudWatch dashboards, alarms, metrics, logs, and monitoring strategies
+  - `aws-cloudformation-dynamodb`: DynamoDB tables, GSIs, LSIs, streams, auto-scaling, and TTL configuration
+  - `aws-cloudformation-ec2`: EC2 instances, launch templates, ASG integration, security groups, and ENI configuration
+  - `aws-cloudformation-ecs`: ECS clusters, task definitions, services, capacity providers, and Fargate deployment
+  - `aws-cloudformation-elasticache`: ElastiCache Redis/Memcached clusters, replication groups, and node configuration
+  - `aws-cloudformation-iam`: IAM users, groups, roles, policies, and permission boundary management
+  - `aws-cloudformation-lambda`: Lambda functions, layers, event sources, aliases, and versioning strategies
+  - `aws-cloudformation-rds`: RDS instances, Aurora clusters, parameter groups, snapshot management, and Multi-AZ deployment
+  - `aws-cloudformation-s3`: S3 buckets, policies, lifecycle rules, versioning, replication, and event notifications
+  - `aws-cloudformation-security`: Security best practices, WAF, Shield, KMS encryption, and compliance patterns
+  - `aws-cloudformation-vpc`: VPC design, subnets, route tables, NAT gateways, VPC endpoints, and peering
+- **Enhanced AWS Architecture Review**:
+  - Updated `aws-solution-architect-expert` agent with CloudFormation expertise
+  - Added comprehensive infrastructure as code review capabilities
+  - Enhanced Well-Architected Framework compliance checking
+- **GitHub Actions Task Skill**:
+  - `aws-cloudformation-task-ecs-deploy-gh`: Complete ECS deployment to GitHub Actions workflow skill
+  - Production-grade pipeline templates with blue-green deployment
+  - Comprehensive examples and reference documentation
+
+### Changed
+- Updated `.claude-plugin/marketplace.json` with new agents and skills metadata
+- Enhanced README.md with new DevOps, CloudFormation skills, and Python agents documentation
+- Total skills count increased significantly with 14 new AWS CloudFormation skills
+- Total agents count increased from 28 to 34 with new DevOps and Python specialists
+- Updated agents documentation to include Python development capabilities
+
+### Documentation
+- Added comprehensive SKILL.md files for all 14 CloudFormation skills with detailed patterns
+- Added extensive examples.md files with practical CloudFormation template examples
+- Added complete reference.md files with CloudFormation resource properties and reference documentation
+- Added 4 new Python agent definitions with specialized expertise in code review, refactoring, security, and architecture
+- Enhanced agent descriptions with DevOps and infrastructure expertise
+- Added guide-skills-aws-cloudformation.md for comprehensive CloudFormation patterns documentation
+
 ## [1.22.0] - 2026-01-14
 
 ### Added
@@ -393,7 +443,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.22.0...HEAD
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.23.0...HEAD
+[1.23.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.22.0...v1.23.0
 [1.22.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.20.0...v1.22.0
 [1.21.0]: https://github.com/giuseppe.trisciuoglio/developer-kit/compare/v1.20.0...v1.21.0
 [1.20.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.19.0...v1.20.0
