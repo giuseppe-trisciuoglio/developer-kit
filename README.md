@@ -7,7 +7,7 @@
 multiple languages and frameworks. It includes specialized agents for code review, testing patterns, REST API design,
 and AI integration.
 
-**56 Total Skills** — Comprehensive coverage of Spring Boot, testing, AI integration, cloud development, AI
+**62 Total Skills** — Comprehensive coverage of Spring Boot, testing, AI integration, cloud development, AI
 engineering patterns, frontend development, backend development (NestJS), documentation generation, and document automation
 
 ## 🚀 Quick Start
@@ -127,7 +127,7 @@ make uninstall
 # List available components
 make list-agents      # Show all 14 agents
 make list-commands    # Show all 32 commands
-make list-skills      # Show all 50 skills by category
+make list-skills      # Show all 62 skills by category
 ```
 
 ### Installation Safety
@@ -179,13 +179,14 @@ Enter the project path (absolute or relative): ~/my-spring-project
 Step 2: Select Skill Categories
 Available skill categories:
   1) AWS Java Skills (10 skills)
-  2) AI Skills (3 skills)
-  3) JUnit Test Skills (15 skills)
-  4) LangChain4j Skills (8 skills)
-  5) Spring Boot Skills (13 skills)
-  6) Spring AI Skills (1 skill)
-  7) All Skills
-  8) None (skip skills)
+  2) AWS CloudFormation Skills (15 skills)
+  3) AI Skills (3 skills)
+  4) JUnit Test Skills (15 skills)
+  5) LangChain4j Skills (8 skills)
+  6) Spring Boot Skills (13 skills)
+  7) Spring AI Skills (1 skill)
+  8) All Skills
+  9) None (skip skills)
 
 Select categories (comma-separated, e.g., 1,4,5): 4,5
 
@@ -351,6 +352,26 @@ my-project/
 | **[aws-sdk-java-v2-messaging](skills/aws-java/aws-sdk-java-v2-messaging/SKILL.md)**             | SQS/SNS messaging patterns               | Queue operations, topic publishing, message processing        |
 | **[aws-sdk-java-v2-rds](skills/aws-java/aws-sdk-java-v2-rds/SKILL.md)**                         | RDS management operations                | Instance management, snapshots, parameter groups              |
 | **[aws-sdk-java-v2-bedrock](skills/aws-java/aws-sdk-java-v2-bedrock/SKILL.md)**                 | AWS Bedrock AI integration               | Model invocation, streaming, guardrails                       |
+
+### AWS CloudFormation Skills
+
+| Skill                                                                                              | Purpose                                    | Key Topics                                                              |
+|----------------------------------------------------------------------------------------------------|--------------------------------------------|-------------------------------------------------------------------------|
+| **[aws-cloudformation-vpc](skills/aws-cloudformation/aws-cloudformation-vpc/SKILL.md)**            | VPC network infrastructure                  | VPC, subnets, route tables, NAT, VPN, networking                        |
+| **[aws-cloudformation-ec2](skills/aws-cloudformation/aws-cloudformation-ec2/SKILL.md)**            | EC2 compute resources                      | Instances, launch templates, ASG, EC2 security                          |
+| **[aws-cloudformation-ecs](skills/aws-cloudformation/aws-cloudformation-ecs/SKILL.md)**            | ECS container orchestration                 | Task definitions, services, Fargate, capacity providers                 |
+| **[aws-cloudformation-auto-scaling](skills/aws-cloudformation/aws-cloudformation-auto-scaling/SKILL.md)** | Auto Scaling policies                    | Scaling policies, target tracking, scheduled actions                    |
+| **[aws-cloudformation-iam](skills/aws-cloudformation/aws-cloudformation-iam/SKILL.md)**            | IAM security configuration                 | Roles, policies, users, groups, least privilege                        |
+| **[aws-cloudformation-lambda](skills/aws-cloudformation/aws-cloudformation-lambda/SKILL.md)**      | Lambda serverless functions                | Functions, event sources, layers, concurrency                           |
+| **[aws-cloudformation-rds](skills/aws-cloudformation/aws-cloudformation-rds/SKILL.md)**            | RDS database instances                     | Aurora, MySQL, PostgreSQL, read replicas, failover                      |
+| **[aws-cloudformation-s3](skills/aws-cloudformation/aws-cloudformation-s3/SKILL.md)**              | S3 storage buckets                         | Static hosting, versioning, lifecycle policies, encryption             |
+| **[aws-cloudformation-task-ecs-deploy-gh](skills/aws-cloudformation/aws-cloudformation-task-ecs-deploy-gh/SKILL.md)** | GitHub Actions ECS deployment          | CI/CD pipelines, ECS deployment, GitHub Actions integration             |
+| **[aws-cloudformation-cloudwatch](skills/aws-cloudformation/aws-cloudformation-cloudwatch/SKILL.md)** | CloudWatch monitoring & observability   | Metrics, alarms, dashboards, logs, anomaly detection                    |
+| **[aws-cloudformation-cloudfront](skills/aws-cloudformation/aws-cloudformation-cloudfront/SKILL.md)** | CloudFront CDN distributions              | Origins, caching, custom domains, WAF integration                      |
+| **[aws-cloudformation-security](skills/aws-cloudformation/aws-cloudformation-security/SKILL.md)**  | Infrastructure security                    | KMS encryption, Secrets Manager, IAM policies, TLS/SSL                 |
+| **[aws-cloudformation-dynamodb](skills/aws-cloudformation/aws-cloudformation-dynamodb/SKILL.md)**  | DynamoDB NoSQL tables                      | Tables, GSIs, LSIs, auto-scaling, TTL, streams                         |
+| **[aws-cloudformation-elasticache](skills/aws-cloudformation/aws-cloudformation-elasticache/SKILL.md)** | ElastiCache caching clusters             | Redis, Memcached, replication groups, parameter groups                 |
+| **[aws-cloudformation-bedrock](skills/aws-cloudformation/aws-cloudformation-bedrock/SKILL.md)**   | Amazon Bedrock AI infrastructure           | Agents, knowledge bases, RAG, guardrails, prompts, flows               |
 
 ### AI Engineering Skills
 

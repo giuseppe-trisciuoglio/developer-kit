@@ -31,6 +31,14 @@ When invoked:
 - **Metadata**: AWS::CloudFormation::Interface, parameter groups
 - **Transform**: AWS::Include, AWS::Serverless (SAM)
 
+> **Note**: For resource-specific CloudFormation patterns, leverage these specialized skills:
+> - `aws-cloudformation-vpc` - VPC infrastructure templates
+> - `aws-cloudformation-ec2` - EC2 compute resources
+> - `aws-cloudformation-ecs` - Container orchestration templates
+> - `aws-cloudformation-lambda` - Serverless function templates
+> - `aws-cloudformation-rds` - Database instance templates
+> - `aws-cloudformation-s3` - Storage bucket templates
+
 ### 2. Resource Configuration
 - **EC2**: Launch templates, auto scaling groups, user data scripts
 - **VPC**: Subnets, route tables, NAT gateways, security groups
@@ -40,6 +48,11 @@ When invoked:
 - **S3**: Bucket policies, lifecycle rules, replication
 - **IAM**: Roles, policies, instance profiles, service-linked roles
 - **API Gateway**: REST APIs, stages, deployments, custom domains
+- **DynamoDB**: Tables, GSIs, LSIs, auto-scaling, streams
+- **ElastiCache**: Redis/Memcached clusters, replication groups
+- **CloudWatch**: Metrics, alarms, dashboards, log groups
+- **CloudFront**: Distributions, origins, cache behaviors
+- **Bedrock**: Agents, knowledge bases, guardrails, prompts
 
 ### 3. Advanced Template Patterns
 
@@ -452,3 +465,25 @@ For each CloudFormation template, provide:
 - "Create a VPC template with public and private subnets"
 - "Implement cross-stack references for modular infrastructure"
 - "Create custom resources for unsupported AWS features"
+
+## Available CloudFormation Skills
+
+When creating CloudFormation templates for specific AWS resources, leverage these specialized skills:
+
+| Skill | Purpose |
+|-------|---------|
+| `aws-cloudformation-vpc` | VPC, subnets, route tables, NAT, networking |
+| `aws-cloudformation-ec2` | EC2 instances, launch templates, ASG |
+| `aws-cloudformation-ecs` | ECS task definitions, services, Fargate |
+| `aws-cloudformation-auto-scaling` | Auto Scaling policies and targets |
+| `aws-cloudformation-lambda` | Lambda functions, event sources, layers |
+| `aws-cloudformation-rds` | RDS instances, Aurora, read replicas |
+| `aws-cloudformation-dynamodb` | DynamoDB tables, GSIs, LSIs, streams |
+| `aws-cloudformation-elasticache` | Redis/Memcached clusters, replication |
+| `aws-cloudformation-s3` | S3 buckets, policies, lifecycle rules |
+| `aws-cloudformation-iam` | IAM roles, policies, users, groups |
+| `aws-cloudformation-security` | KMS, Secrets Manager, TLS/SSL, security |
+| `aws-cloudformation-cloudwatch` | CloudWatch metrics, alarms, dashboards, logs |
+| `aws-cloudformation-cloudfront` | CloudFront distributions, origins, caching |
+| `aws-cloudformation-bedrock` | Bedrock agents, knowledge bases, RAG, guardrails |
+| `aws-cloudformation-task-ecs-deploy-gh` | GitHub Actions ECS deployment CI/CD |

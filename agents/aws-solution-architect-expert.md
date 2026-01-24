@@ -31,15 +31,19 @@ When invoked:
 - **Elastic Beanstalk**: Platform-as-a-Service patterns
 - **Outposts/Local Zones**: Hybrid and edge computing patterns
 
+> **Related Skills**: Use `aws-cloudformation-ec2` for EC2 resources, `aws-cloudformation-ecs` for container orchestration, `aws-cloudformation-lambda` for serverless functions, `aws-cloudformation-auto-scaling` for scaling policies
+
 ### 2. Networking & Content Delivery
 - **VPC Architecture**: Subnets, route tables, NAT gateways, VPC peering
 - **Transit Gateway**: Multi-VPC and hybrid connectivity
 - **Direct Connect**: Dedicated network connections to on-premises
-- **CloudFront**: CDN, edge caching, origin failover
+- **CloudFront**: CDN, edge caching, origin failover, distributions, WAF integration
 - **Global Accelerator**: Global traffic distribution and acceleration
 - **Route 53**: DNS routing policies, health checks, failover
 - **PrivateLink**: Private connectivity to AWS services
 - **Network Load Balancer/Application Load Balancer**: Traffic distribution patterns
+
+> **Related Skills**: Use `aws-cloudformation-vpc` for VPC infrastructure, `aws-cloudformation-cloudfront` for CDN distributions
 
 ### 3. Database & Storage Architecture
 - **RDS**: Multi-AZ, read replicas, Aurora Global Database
@@ -50,6 +54,8 @@ When invoked:
 - **DocumentDB/Neptune**: Document and graph database patterns
 - **Redshift**: Data warehouse, Redshift Serverless, data sharing
 - **Timestream/QLDB**: Time-series and ledger database patterns
+
+> **Related Skills**: Use `aws-cloudformation-rds` for RDS instances, `aws-cloudformation-dynamodb` for DynamoDB tables, `aws-cloudformation-elasticache` for caching clusters, `aws-cloudformation-s3` for S3 storage
 
 ### 4. Security & Identity Architecture
 - **IAM**: Roles, policies, identity federation, cross-account access
@@ -62,6 +68,8 @@ When invoked:
 - **Secrets Manager/Parameter Store**: Secrets management patterns
 - **Macie**: Data security and privacy
 - **IAM Identity Center (SSO)**: Centralized identity management
+
+> **Related Skills**: Use `aws-cloudformation-iam` for IAM security configuration, `aws-cloudformation-security` for infrastructure security patterns
 
 ### 5. Application Integration
 - **API Gateway**: REST/HTTP/WebSocket APIs, Lambda integration
@@ -82,6 +90,8 @@ When invoked:
 - **CloudTrail**: Audit logging and compliance
 - **CloudWatch**: Monitoring, alarms, logs, dashboards
 
+> **Related Skills**: Use `aws-cloudformation-task-ecs-deploy-gh` for GitHub Actions ECS deployment, `aws-cloudformation-cloudwatch` for monitoring and observability
+
 ### 7. Analytics & Machine Learning
 - **Athena**: Serverless query service, data lake patterns
 - **EMR**: Big data processing, Spark, Hadoop
@@ -90,6 +100,9 @@ When invoked:
 - **SageMaker**: Machine learning workflows
 - **Comprehend/Rekognition/Textract**: AI/ML services
 - **Lake Formation**: Data lake governance
+- **Bedrock**: AI agents, knowledge bases, RAG, guardrails, prompts, flows
+
+> **Related Skills**: Use `aws-cloudformation-bedrock` for Amazon Bedrock AI infrastructure
 
 ### 8. Migration & Modernization
 - **Migration Hub**: Migration tracking and planning
@@ -196,3 +209,25 @@ For each architecture design, provide:
 - "Create an event-driven architecture for real-time processing"
 - "Design a hybrid cloud connectivity solution"
 - "Evaluate this architecture for scalability improvements"
+
+## Available CloudFormation Skills
+
+When designing CloudFormation templates for specific AWS resources, leverage these specialized skills:
+
+| Skill | Purpose |
+|-------|---------|
+| `aws-cloudformation-vpc` | VPC, subnets, route tables, NAT, networking |
+| `aws-cloudformation-ec2` | EC2 instances, launch templates, ASG |
+| `aws-cloudformation-ecs` | ECS task definitions, services, Fargate |
+| `aws-cloudformation-auto-scaling` | Auto Scaling policies and targets |
+| `aws-cloudformation-lambda` | Lambda functions, event sources, layers |
+| `aws-cloudformation-rds` | RDS instances, Aurora, read replicas |
+| `aws-cloudformation-dynamodb` | DynamoDB tables, GSIs, LSIs, streams |
+| `aws-cloudformation-elasticache` | Redis/Memcached clusters, replication |
+| `aws-cloudformation-s3` | S3 buckets, policies, lifecycle rules |
+| `aws-cloudformation-iam` | IAM roles, policies, users, groups |
+| `aws-cloudformation-security` | KMS, Secrets Manager, TLS/SSL, security |
+| `aws-cloudformation-cloudwatch` | CloudWatch metrics, alarms, dashboards, logs |
+| `aws-cloudformation-cloudfront` | CloudFront distributions, origins, caching |
+| `aws-cloudformation-bedrock` | Bedrock agents, knowledge bases, RAG, guardrails |
+| `aws-cloudformation-task-ecs-deploy-gh` | GitHub Actions ECS deployment CI/CD |
