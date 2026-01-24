@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Developer Kit for building applications with Claude Code using best practices and patterns.",
-    "version": "1.22.0"
+    "version": "1.23.0"
   },
   "plugins": [
     {
@@ -55,6 +55,21 @@
         "./skills/langchain4j/langchain4j-tool-function-calling-patterns",
         "./skills/langchain4j/langchain4j-vector-stores-configuration",
         "./skills/langchain4j/qdrant",
+        "./skills/aws-cloudformation/aws-cloudformation-auto-scaling",
+        "./skills/aws-cloudformation/aws-cloudformation-task-ecs-deploy-gh",
+        "./skills/aws-cloudformation/aws-cloudformation-ec2",
+        "./skills/aws-cloudformation/aws-cloudformation-ecs",
+        "./skills/aws-cloudformation/aws-cloudformation-iam",
+        "./skills/aws-cloudformation/aws-cloudformation-lambda",
+        "./skills/aws-cloudformation/aws-cloudformation-rds",
+        "./skills/aws-cloudformation/aws-cloudformation-s3",
+        "./skills/aws-cloudformation/aws-cloudformation-vpc",
+        "./skills/aws-cloudformation/aws-cloudformation-cloudwatch",
+        "./skills/aws-cloudformation/aws-cloudformation-cloudfront",
+        "./skills/aws-cloudformation/aws-cloudformation-security",
+        "./skills/aws-cloudformation/aws-cloudformation-dynamodb",
+        "./skills/aws-cloudformation/aws-cloudformation-elasticache",
+        "./skills/aws-cloudformation/aws-cloudformation-bedrock",
         "./skills/aws-java/aws-rds-spring-boot-integration",
         "./skills/aws-java/aws-sdk-java-v2-bedrock",
         "./skills/aws-java/aws-sdk-java-v2-core",
