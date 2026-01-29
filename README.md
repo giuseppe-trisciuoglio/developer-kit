@@ -36,19 +36,18 @@ and AI integration.
 
 ### Skills
 
-| Category        | Guide                                     |
-|-----------------|-------------------------------------------|
-| JUnit Testing   | [Guide](docs/guide-skills-junit-test.md)  |
-| Spring Boot     | [Guide](docs/guide-skills-spring-boot.md) |
-| AWS Java SDK    | [Guide](docs/guide-skills-aws-java.md)    |
-| LangChain4J     | [Guide](docs/guide-skills-langchain4j.md) |
-| AI Engineering  | —                                         |
-| React           | [Guide](docs/guide-skills-frontend.md)    |
-| shadcn-ui       | [Guide](docs/guide-skills-frontend.md)    |
-| Tailwind CSS    | [Guide](docs/guide-skills-frontend.md)    |
-| TypeScript Docs | [Guide](docs/guide-skills-frontend.md)    |
-| NestJS          | [Guide](docs/guide-skills-nestjs.md)      |
-| Spring AI       | —                                         |
+| Category           | Guide                                          |
+|--------------------|------------------------------------------------|
+| JUnit Testing      | [Guide](docs/guide-skills-junit-test.md)       |
+| Spring Boot        | [Guide](docs/guide-skills-spring-boot.md)      |
+| AWS Java SDK       | [Guide](docs/guide-skills-aws-java.md)         |
+| AWS CloudFormation | [Guide](docs/guide-skills-aws-cloudformation.md) |
+| LangChain4J        | [Guide](docs/guide-skills-langchain4j.md)      |
+| React              | [Guide](docs/guide-skills-frontend.md)         |
+| shadcn-ui          | [Guide](docs/guide-skills-frontend.md)         |
+| Tailwind CSS       | [Guide](docs/guide-skills-frontend.md)         |
+| TypeScript Docs    | [Guide](docs/guide-skills-frontend.md)         |
+| NestJS             | [Guide](docs/guide-skills-nestjs.md)           |
 
 ### Agents
 
@@ -135,8 +134,9 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed instructions on adding skill
 | [Skills - JUnit](docs/guide-skills-junit-test.md)        | Testing patterns                            |
 | [Skills - LangChain4J](docs/guide-skills-langchain4j.md) | AI integration                              |
 | [Skills - AWS](docs/guide-skills-aws-java.md)            | AWS SDK patterns                            |
-| [Skills - Frontend](docs/guide-skills-frontend.md)       | React, Tailwind, shadcn                     |
-| [Skills - NestJS](docs/guide-skills-nestjs.md)           | NestJS patterns                             |
+| [Skills - Frontend](docs/guide-skills-frontend.md)           | React, Tailwind, shadcn                        |
+| [Skills - NestJS](docs/guide-skills-nestjs.md)             | NestJS patterns                               |
+| [Skills - AWS CloudFormation](docs/guide-skills-aws-cloudformation.md) | Infrastructure as Code patterns               |
 
 ---
 

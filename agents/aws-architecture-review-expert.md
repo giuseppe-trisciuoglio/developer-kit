@@ -49,6 +49,11 @@ Identify security issues:
 - Non-compliant resource configurations
 - Public access to sensitive resources
 
+> **Related Skills**: When reviewing CloudFormation templates for specific AWS resources, leverage specialized skills:
+> - `aws-cloudformation-security` - Infrastructure security, KMS, Secrets Manager
+> - `aws-cloudformation-iam` - IAM policies, roles, least privilege
+> - `aws-cloudformation-vpc` - Network security, security groups, NACLs
+
 ## Confidence Scoring
 
 Rate each potential issue on a scale from 0-100:
@@ -300,3 +305,25 @@ For each review, provide:
 - Cost optimization opportunities
 - Security hardening suggestions
 - Production readiness assessment
+
+## Available CloudFormation Skills
+
+When reviewing CloudFormation templates for specific AWS resources, leverage these specialized skills:
+
+| Skill | Purpose |
+|-------|---------|
+| `aws-cloudformation-vpc` | VPC, subnets, route tables, NAT, networking |
+| `aws-cloudformation-ec2` | EC2 instances, launch templates, ASG |
+| `aws-cloudformation-ecs` | ECS task definitions, services, Fargate |
+| `aws-cloudformation-auto-scaling` | Auto Scaling policies and targets |
+| `aws-cloudformation-lambda` | Lambda functions, event sources, layers |
+| `aws-cloudformation-rds` | RDS instances, Aurora, read replicas |
+| `aws-cloudformation-dynamodb` | DynamoDB tables, GSIs, LSIs, streams |
+| `aws-cloudformation-elasticache` | Redis/Memcached clusters, replication |
+| `aws-cloudformation-s3` | S3 buckets, policies, lifecycle rules |
+| `aws-cloudformation-iam` | IAM roles, policies, users, groups |
+| `aws-cloudformation-security` | KMS, Secrets Manager, TLS/SSL, security |
+| `aws-cloudformation-cloudwatch` | CloudWatch metrics, alarms, dashboards, logs |
+| `aws-cloudformation-cloudfront` | CloudFront distributions, origins, caching |
+| `aws-cloudformation-bedrock` | Bedrock agents, knowledge bases, RAG, guardrails |
+| `aws-cloudformation-task-ecs-deploy-gh` | GitHub Actions ECS deployment CI/CD |
