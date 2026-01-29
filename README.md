@@ -62,6 +62,7 @@ Specialized AI assistants for specific development domains.
 | TypeScript/NestJS | `nestjs-backend-development-expert`, `typescript-refactor-expert`, `nestjs-security-expert`                         |
 | React/Frontend    | `react-frontend-development-expert`, `react-software-architect-review`, `expo-react-native-development-expert`      |
 | Python            | `python-code-review-expert`, `python-refactor-expert`, `python-security-expert`, `python-software-architect-expert` |
+| PHP/WordPress     | `php-code-review-expert`, `php-refactor-expert`, `php-security-expert`, `php-software-architect-expert`, `wordpress-development-expert` |
 | AWS               | `aws-solution-architect-expert`, `aws-cloudformation-devops-expert`, `aws-architecture-review-expert`               |
 | AI/LangChain4J    | `langchain4j-ai-development-expert`, `prompt-engineering-expert`                                                    |
 | General Purpose   | `general-debugger`, `general-code-reviewer`, `general-refactor-expert`, `document-generator-expert`                 |
@@ -102,7 +103,7 @@ Workflow automation commands for development tasks.
 | Java/Spring Boot   | ✅ Comprehensive (skills, agents, commands)       |
 | TypeScript/Node.js | ✅ React, NestJS, Expo (skills, agents, commands) |
 | Python             | 🚧 In Progress (agents available)                |
-| PHP                | 📋 Planned (Laravel, Symfony)                    |
+| PHP/WordPress      | ✅ Agents available (code review, refactor, security, architecture, WordPress) |
 
 ---
 

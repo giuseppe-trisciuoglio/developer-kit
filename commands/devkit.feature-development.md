@@ -356,7 +356,6 @@ Task(
 
 ### Important Notes
 
-- Sub-agents are automatically discovered from `/Users/giuseppe/project/GT/developer-kit/agents/`
 - Each sub-agent operates with its own context window
 - Multiple sub-agents can be launched in parallel for different perspectives
 - The main Claude maintains control and coordination of the overall process

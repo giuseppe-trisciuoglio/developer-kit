@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Developer Kit for building applications with Claude Code using best practices and patterns.",
-    "version": "1.22.0"
+    "version": "1.23.0"
   },
   "plugins": [
     {
@@ -66,9 +66,9 @@
         "./skills/aws-java/aws-sdk-java-v2-s3",
         "./skills/aws-java/aws-sdk-java-v2-secrets-manager",
         "./skills/nestjs",
-        "./skills/react",
+        "./skills/react-patterns",
         "./skills/shadcn-ui",
-        "./skills/tailwind-css",
+        "./skills/tailwind-css-patterns",
         "./skills/typescript-docs"
       ]
     }
