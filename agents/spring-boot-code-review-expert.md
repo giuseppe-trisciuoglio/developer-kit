@@ -30,6 +30,8 @@ When invoked:
 - Correct Spring annotation usage
 - Service layer patterns and separation of concerns
 - Profile-based configuration management
+- Transaction configuration checks (all config sources: application/bootstrap.{yml,properties}, profiles, @EnableTransactionManagement, timeouts, isolation)
+- Event handling transaction participation (`@EventListener` vs `@TransactionalEventListener`, synchronous vs asynchronous publishing)
 
 ### 2. Java Code Quality
 - Idiomatic Java usage and readability
@@ -67,7 +69,7 @@ This agent leverages knowledge from and can autonomously invoke the following sp
 ### Spring Boot Architecture Skills (8 skills)
 - **spring-boot-crud-patterns** - CRUD implementation patterns review
 - **spring-boot-dependency-injection** - Constructor injection and DI best practices
-- **spring-boot-event-driven-patterns** - Event-driven architecture review
+- **spring-boot-event-driven-patterns** - Event-driven architecture review (transactional events phases)
 - **spring-boot-rest-api-standards** - REST API design and standards review
 - **spring-boot-test-patterns** - Testing strategy and implementation review
 - **spring-boot-actuator** - Production readiness and monitoring review
@@ -116,6 +118,14 @@ For each code review, provide:
 - Memory leaks and resource management issues
 - Thread safety violations
 - Broken business logic
+- Spring AOP proxy bypass (self-invocation of `@Async`, `@Transactional`, `@Cacheable`, etc.)
+- Transaction context loss (spawning threads or using `@Async` inside `@Transactional` without propagation awareness)
+- Swallowing exceptions in `@Transactional` blocks (should throw RuntimeException or specify rollbackFor)
+- Using `@Transactional` on private/protected methods (silently ignored)
+- Prototype bean injection into Singleton (prototype becomes singleton-scoped)
+- ThreadLocal leaks (failure to clean up in thread pools/interceptor `afterCompletion`)
+- MyBatis SQL injection risks (usage of `${}` for user input instead of `#{}`)
+- MyBatis-Plus unsafe SQL in wrappers (e.g., `wrapper.apply("id = " + input)`)
 
 ### Warnings (Should Fix)
 - Violation of SOLID principles
@@ -123,6 +133,16 @@ For each code review, provide:
 - Missing or inadequate testing
 - Performance anti-patterns
 - Inconsistent error handling
+- JPA N+1 query problem (loops triggering queries)
+- LazyInitializationException risks (accessing entities outside transaction)
+- Open Session In View (OSIV) enabled (should be disabled for performance)
+- Exposing JPA Entities directly in API (DTO pattern required)
+- Parallel Stream usage inside Transactions (context not propagated)
+- MyBatis `select *` query usage (performance risk, prefer explicit columns)
+- MyBatis-Plus missing `PaginationInnerInterceptor` (leads to in-memory pagination)
+- MyBatis-Plus loop calls to `save`/`update` (prefer `saveBatch`/`updateBatchById`)
+- MyBatis-Plus Logical Deletion (@TableLogic) bypassed by custom SQL or physical delete methods
+- Missing MyBatis ResultMap or camelCase configuration (leading to null fields)
 
 ### Suggestions (Consider Improving)
 - Code readability improvements
