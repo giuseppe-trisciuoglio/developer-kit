@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.24.0] - 2026-01-29
+## [1.24.0] - 2026-02-01
 
 ### Added
 - **New PHP Agents** (5 new specialized agents):
@@ -16,6 +16,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `php-security-expert`: Expert security auditor specializing in PHP application security, DevSecOps, and compliance frameworks. Masters vulnerability assessment, threat modeling, secure authentication (OAuth2/JWT), OWASP standards, and security automation for Laravel and Symfony
   - `php-software-architect-expert`: Expert PHP software architect specializing in Clean Architecture, Domain-Driven Design (DDD), and modern PHP patterns. Reviews PHP codebases (Laravel, Symfony) for architectural integrity, proper module organization, and SOLID principles
   - `wordpress-development-expert`: Expert WordPress developer specializing in custom plugin and theme development. Masters WordPress coding standards, hooks/filters architecture, Gutenberg blocks, REST API, WooCommerce integration, and site/portal development
+- **New WordPress Sage Theme Skill**:
+  - `wordpress-sage-theme`: Comprehensive WordPress Sage theme development skill
+  - Sage 10+ theme architecture with modern Blade templates
+  - ACF (Advanced Custom Fields) integration patterns
+  - Bud (Vite-based) build system configuration
+  - Blade templating engine patterns for WordPress themes
+  - Starter layouts and page templates
+  - Reference documentation for Sage, Blade, ACF, and Bud
+  - Asset compilation and optimization strategies
+- **Enhanced Spring Boot Code Review** (contributed by @zmlgit):
+  - Added transaction management checks (JTA, @Transactional, isolation levels)
+  - Added event handling patterns verification (Spring Events, @EventListener)
+  - Added AOP (Aspect-Oriented Programming) patterns review
+  - Added JPA pitfalls detection (N+1 queries, lazy loading, entity lifecycle)
+  - Added MyBatis integration patterns and best practices
 - **Enhanced PHP/Laravel Support**:
   - PHP 8.3+ specific patterns (readonly classes, enums, constructor property promotion)
   - Modern PHP patterns (match expressions, named arguments, attributes, first-class callables)
@@ -35,6 +50,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced README.md with PHP development capabilities documentation
 - Total agents count increased with new PHP and WordPress specialists
 - Updated agents documentation to include PHP/Laravel/Symfony and WordPress development capabilities
+- Organized skills directory structure with `react-patterns` and `tailwind-css-patterns` renames
+- Updated marketplace.json metadata for new skills
+- Enhanced general agents documentation with PHP/WordPress capabilities
 
 ### Documentation
 - Added comprehensive PHP agent definitions with specialized expertise in:
@@ -45,6 +63,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - WordPress plugin and theme development best practices
 - Enhanced agent descriptions with PHP framework expertise (Laravel, Symfony)
 - Added WordPress-specific patterns and coding standards
+- Added comprehensive Sage theme development guide with 281 lines of SKILL.md content
+- Added reference documentation for ACF (465 lines), Blade (304 lines), Bud (327 lines), and Sage (130 lines)
+- Included starter Blade templates for layouts and pages
 
 ## [1.23.0] - 2025-01-24
 
