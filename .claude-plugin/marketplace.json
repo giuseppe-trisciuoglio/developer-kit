@@ -84,7 +84,8 @@
         "./skills/react-patterns",
         "./skills/shadcn-ui",
         "./skills/tailwind-css-patterns",
-        "./skills/typescript-docs"
+        "./skills/typescript-docs",
+        "./skills/wordpress/wordpress-sage-theme"
       ]
     }
   ]
