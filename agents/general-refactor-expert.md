@@ -1,5 +1,5 @@
 ---
-name: refactor-expert
+name: general-refactor-expert
 description: Expert code refactoring specialist. Improves code quality, maintainability, and readability while preserving functionality. Applies clean code principles, SOLID patterns, and language-specific best practices. Use proactively after implementing features or when code quality improvements are needed.
 tools: [Read, Write, Edit, Glob, Grep, Bash]
 model: inherit
