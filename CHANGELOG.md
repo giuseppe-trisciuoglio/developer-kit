@@ -7,6 +7,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.24.0] - 2026-01-29
+
+### Added
+- **New PHP Agents** (5 new specialized agents):
+  - `php-code-review-expert`: Expert PHP code reviewer specializing in code quality, security, performance, and modern PHP best practices. Reviews PHP codebases (Laravel, Symfony) for bugs, logic errors, security vulnerabilities, and quality issues using confidence-based filtering
+  - `php-refactor-expert`: Expert PHP code refactoring specialist. Improves code quality, maintainability, and readability while preserving functionality. Applies clean code principles, SOLID patterns, and modern PHP 8.3+ best practices for Laravel and Symfony
+  - `php-security-expert`: Expert security auditor specializing in PHP application security, DevSecOps, and compliance frameworks. Masters vulnerability assessment, threat modeling, secure authentication (OAuth2/JWT), OWASP standards, and security automation for Laravel and Symfony
+  - `php-software-architect-expert`: Expert PHP software architect specializing in Clean Architecture, Domain-Driven Design (DDD), and modern PHP patterns. Reviews PHP codebases (Laravel, Symfony) for architectural integrity, proper module organization, and SOLID principles
+  - `wordpress-development-expert`: Expert WordPress developer specializing in custom plugin and theme development. Masters WordPress coding standards, hooks/filters architecture, Gutenberg blocks, REST API, WooCommerce integration, and site/portal development
+- **Enhanced PHP/Laravel Support**:
+  - PHP 8.3+ specific patterns (readonly classes, enums, constructor property promotion)
+  - Modern PHP patterns (match expressions, named arguments, attributes, first-class callables)
+  - Laravel-specific patterns (Eloquent ORM, query scopes, service container, middleware)
+  - Symfony-specific patterns (autowiring, security voters, doctrine ORM, messenger)
+  - Clean Architecture and DDD patterns for PHP applications
+- **WordPress Development Expertise**:
+  - Custom plugin architecture and WordPress Plugin API
+  - Theme development (child themes, block themes, Full Site Editing)
+  - Gutenberg block development with React
+  - WordPress REST API integration
+  - WooCommerce customization and extensions
+  - WordPress coding standards and security best practices
+
+### Changed
+- Updated `.claude-plugin/marketplace.json` with new PHP and WordPress agents metadata
+- Enhanced README.md with PHP development capabilities documentation
+- Total agents count increased with new PHP and WordPress specialists
+- Updated agents documentation to include PHP/Laravel/Symfony and WordPress development capabilities
+
+### Documentation
+- Added comprehensive PHP agent definitions with specialized expertise in:
+  - Code review with confidence-based filtering (≥80 threshold)
+  - Refactoring with SOLID principles and clean code patterns
+  - Security auditing with OWASP Top 10 compliance
+  - Software architecture with Clean Architecture and DDD patterns
+  - WordPress plugin and theme development best practices
+- Enhanced agent descriptions with PHP framework expertise (Laravel, Symfony)
+- Added WordPress-specific patterns and coding standards
+
 ## [1.23.0] - 2025-01-24
 
 ### Added
@@ -443,7 +482,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.23.0...HEAD
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.24.0...HEAD
+[1.24.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.23.0...v1.24.0
 [1.23.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.22.0...v1.23.0
 [1.22.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.20.0...v1.22.0
 [1.21.0]: https://github.com/giuseppe.trisciuoglio/developer-kit/compare/v1.20.0...v1.21.0
