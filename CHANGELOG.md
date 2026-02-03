@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Features in development
+
+## [1.25.0] - 2026-02-03
+
+### Added
 - **New Brainstorming Command**:
   - `/devkit.brainstorm`: Transform ideas into fully formed designs through structured dialogue
   - 9-phase systematic approach with specialist agents:
@@ -538,7 +543,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.24.0...HEAD
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.25.0...HEAD
+[1.25.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.24.0...v1.25.0
 [1.24.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.23.0...v1.24.0
 [1.23.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.22.0...v1.23.0
 [1.22.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.20.0...v1.22.0
