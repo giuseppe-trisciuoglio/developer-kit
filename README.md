@@ -164,3 +164,11 @@ See [CHANGELOG.md](CHANGELOG.md) for complete history.
 ---
 
 **Made with ❤️ for Developers using Claude Code**
+
+## Compatible Agents
+
+Developer Kit works with AI coding agents including:
+
+- [Claude Code](https://claude.ai/code) - Anthropic's official CLI
+- [AdaL](https://sylph.ai/adal) - Self-evolving AI coding agent with MCP support
+
