@@ -202,7 +202,7 @@ ENDIF
 ## Execution Instructions
 **Agent Selection**: To execute this code review, use the following agent with fallback:
 - Primary: `developer-kit:typescript-software-architect-review`
-- If not available: `developer-kit:typescript-software-architect-review` fallback to `developer-kit:code-reviewer`, if not available use `general-purpose`
+- If not available: `developer-kit:typescript-software-architect-review` fallback to `developer-kit:general-code-reviewer`, if not available use `general-purpose`
 
 **Run context**:
 - Use `npx nx show projects --affected --base=HEAD~1` to limit scope

@@ -7,7 +7,8 @@ model: inherit
 
 # Document Generation Command
 
-Generate professional technical and business documents with multi-language support. This command analyzes your codebase and produces comprehensive, well-structured documentation based on the specified type and objective.
+Generate professional technical and business documents with multi-language support. This command analyzes your codebase
+and produces comprehensive, well-structured documentation based on the specified type and objective.
 
 ## Current Context
 
@@ -21,32 +22,32 @@ Generate professional technical and business documents with multi-language suppo
 
 ### Parameters
 
-| Parameter | Values | Default | Description |
-|-----------|--------|---------|-------------|
-| `--lang` | `en`, `it`, `es`, `fr`, `de`, `pt` | `en` | Document language |
-| `--type` | `assessment`, `feature`, `analysis`, `process`, `custom` | `assessment` | Document type |
-| `--format` | `markdown`, `html`, `pdf` | `markdown` | Output format |
+| Parameter  | Values                                                   | Default      | Description       |
+|------------|----------------------------------------------------------|--------------|-------------------|
+| `--lang`   | `en`, `it`, `es`, `fr`, `de`, `pt`                       | `en`         | Document language |
+| `--type`   | `assessment`, `feature`, `analysis`, `process`, `custom` | `assessment` | Document type     |
+| `--format` | `markdown`, `html`, `pdf`                                | `markdown`   | Output format     |
 
 ### Document Types
 
-| Type | Description | Use Case |
-|------|-------------|----------|
-| `assessment` | Evaluation and audit documents | Technical debt, security review, performance analysis |
-| `feature` | Feature specifications and proposals | New features, enhancements, requirements |
-| `analysis` | Deep-dive technical analysis | Gap analysis, impact analysis, comparative studies |
-| `process` | Process and workflow documentation | SOPs, runbooks, procedures |
-| `custom` | Custom document format | Any specific documentation need |
+| Type         | Description                          | Use Case                                              |
+|--------------|--------------------------------------|-------------------------------------------------------|
+| `assessment` | Evaluation and audit documents       | Technical debt, security review, performance analysis |
+| `feature`    | Feature specifications and proposals | New features, enhancements, requirements              |
+| `analysis`   | Deep-dive technical analysis         | Gap analysis, impact analysis, comparative studies    |
+| `process`    | Process and workflow documentation   | SOPs, runbooks, procedures                            |
+| `custom`     | Custom document format               | Any specific documentation need                       |
 
 ### Languages
 
-| Code | Language | Full Code |
-|------|----------|-----------|
-| `en` | English | `en-US` |
-| `it` | Italian | `it-IT` |
-| `es` | Spanish | `es-ES` |
-| `fr` | French | `fr-FR` |
-| `de` | German | `de-DE` |
-| `pt` | Portuguese | `pt-BR` |
+| Code | Language   | Full Code |
+|------|------------|-----------|
+| `en` | English    | `en-US`   |
+| `it` | Italian    | `it-IT`   |
+| `es` | Spanish    | `es-ES`   |
+| `fr` | French     | `fr-FR`   |
+| `de` | German     | `de-DE`   |
+| `pt` | Portuguese | `pt-BR`   |
 
 ## Core Principles
 
@@ -63,17 +64,18 @@ Generate professional technical and business documents with multi-language suppo
 **Goal**: Understand what document needs to be generated
 
 **Actions**:
+
 1. Parse $ARGUMENTS to extract:
-   - `--lang` parameter (default: `en`)
-   - `--type` parameter (default: `assessment`)
-   - `--format` parameter (default: `markdown`)
-   - Remaining text as the document objective/description
+    - `--lang` parameter (default: `en`)
+    - `--type` parameter (default: `assessment`)
+    - `--format` parameter (default: `markdown`)
+    - Remaining text as the document objective/description
 2. Create todo list with all phases
 3. If document objective is unclear, ask user for:
-   - What is the purpose of this document?
-   - Who is the target audience?
-   - What specific areas should be covered?
-   - Any constraints or requirements?
+    - What is the purpose of this document?
+    - Who is the target audience?
+    - What specific areas should be covered?
+    - Any constraints or requirements?
 4. Summarize understanding and confirm with user
 
 ---
@@ -83,14 +85,15 @@ Generate professional technical and business documents with multi-language suppo
 **Goal**: Gather relevant information from the codebase
 
 **Actions**:
+
 1. Use the Task tool to launch an explorer agent to analyze the codebase
 
    **Agent Selection by Project Type**:
-   - Java/Spring Boot: `developer-kit:spring-boot-backend-development-expert`
-   - TypeScript/NestJS: `developer-kit:nestjs-backend-development-expert`
-   - TypeScript/General: `developer-kit:general-code-explorer`
-   - React: `developer-kit:react-frontend-development-expert`
-   - General: `developer-kit:general-code-explorer`
+    - Java/Spring Boot: `developer-kit:spring-boot-backend-development-expert`
+    - TypeScript/NestJS: `developer-kit:nestjs-backend-development-expert`
+    - TypeScript/General: `developer-kit:general-code-explorer`
+    - React: `developer-kit:react-frontend-development-expert`
+    - General: `developer-kit:general-code-explorer`
 
    **Example Task Tool Usage**:
    ```
@@ -104,30 +107,30 @@ Generate professional technical and business documents with multi-language suppo
 2. Based on document type, gather specific information:
 
    **For Assessment Documents**:
-   - Code quality metrics
-   - Architecture patterns
-   - Security configurations
-   - Performance characteristics
-   - Test coverage
-   - Dependencies and versions
+    - Code quality metrics
+    - Architecture patterns
+    - Security configurations
+    - Performance characteristics
+    - Test coverage
+    - Dependencies and versions
 
    **For Feature Documents**:
-   - Existing similar features
-   - Technical constraints
-   - Integration points
-   - Current architecture
+    - Existing similar features
+    - Technical constraints
+    - Integration points
+    - Current architecture
 
    **For Analysis Documents**:
-   - Relevant code sections
-   - Configuration files
-   - Documentation gaps
-   - Patterns and anti-patterns
+    - Relevant code sections
+    - Configuration files
+    - Documentation gaps
+    - Patterns and anti-patterns
 
    **For Process Documents**:
-   - Existing workflows
-   - Automation scripts
-   - CI/CD configurations
-   - Deployment procedures
+    - Existing workflows
+    - Automation scripts
+    - CI/CD configurations
+    - Deployment procedures
 
 3. Read all identified key files to build deep understanding
 4. Document findings and patterns discovered
@@ -139,24 +142,25 @@ Generate professional technical and business documents with multi-language suppo
 **Goal**: Define document structure and content outline
 
 **Actions**:
+
 1. Select appropriate template based on `--type`:
-   - `assessment`: Assessment Document Template
-   - `feature`: Feature Specification Template
-   - `analysis`: Analysis Document Template
-   - `process`: Process Document Template
-   - `custom`: User-defined or hybrid template
+    - `assessment`: Assessment Document Template
+    - `feature`: Feature Specification Template
+    - `analysis`: Analysis Document Template
+    - `process`: Process Document Template
+    - `custom`: User-defined or hybrid template
 
 2. Create detailed outline with:
-   - Main sections and subsections
-   - Key points for each section
-   - Required diagrams and visuals
-   - Code examples to include
+    - Main sections and subsections
+    - Key points for each section
+    - Required diagrams and visuals
+    - Code examples to include
 
 3. **Use AskUserQuestion tool** to present outline and get approval:
-   - Show proposed document structure
-   - Highlight key sections
-   - Ask if any sections should be added/removed
-   - Confirm target audience and depth
+    - Show proposed document structure
+    - Highlight key sections
+    - Ask if any sections should be added/removed
+    - Confirm target audience and depth
 
 ---
 
@@ -165,6 +169,7 @@ Generate professional technical and business documents with multi-language suppo
 **Goal**: Generate the complete document
 
 **Actions**:
+
 1. Use the Task tool to launch the document generator agent:
 
    ```
@@ -191,16 +196,16 @@ Generate professional technical and business documents with multi-language suppo
 2. For specialized document types, also invoke domain experts:
 
    **Security Assessment**:
-   - Primary: `developer-kit:document-generator-expert`
-   - Support: `developer-kit:java-security-expert` or `developer-kit:typescript-security-expert`
+    - Primary: `developer-kit:document-generator-expert`
+    - Support: `developer-kit:java-security-expert` or `developer-kit:typescript-security-expert`
 
    **Architecture Analysis**:
-   - Primary: `developer-kit:document-generator-expert`
-   - Support: `developer-kit:java-software-architect-review` or `developer-kit:typescript-software-architect-review`
+    - Primary: `developer-kit:document-generator-expert`
+    - Support: `developer-kit:java-software-architect-review` or `developer-kit:typescript-software-architect-review`
 
    **Feature Specification**:
-   - Primary: `developer-kit:document-generator-expert`
-   - Support: `developer-kit:general-software-architect`
+    - Primary: `developer-kit:document-generator-expert`
+    - Support: `developer-kit:general-software-architect`
 
 3. Generate document content section by section
 4. Include diagrams using Mermaid format
@@ -214,18 +219,19 @@ Generate professional technical and business documents with multi-language suppo
 **Goal**: Ensure document quality and completeness
 
 **Actions**:
+
 1. Review generated document for:
-   - Completeness of all required sections
-   - Accuracy of technical content
-   - Consistency in terminology and style
-   - Appropriate depth for target audience
-   - Language correctness
+    - Completeness of all required sections
+    - Accuracy of technical content
+    - Consistency in terminology and style
+    - Appropriate depth for target audience
+    - Language correctness
 
 2. **Use AskUserQuestion tool** to present draft:
-   - Show complete document
-   - Ask for feedback on each major section
-   - Confirm technical accuracy
-   - Request any additions or modifications
+    - Show complete document
+    - Ask for feedback on each major section
+    - Confirm technical accuracy
+    - Request any additions or modifications
 
 3. Apply requested changes
 4. Add cross-references and links
@@ -238,15 +244,16 @@ Generate professional technical and business documents with multi-language suppo
 **Goal**: Deliver final document and summary
 
 **Actions**:
+
 1. Save document to appropriate location:
-   - Default: `docs/[document-type]-[timestamp].md`
-   - Or user-specified location
+    - Default: `docs/[document-type]-[timestamp].md`
+    - Or user-specified location
 
 2. Generate summary:
-   - Document type and purpose
-   - Key findings/content highlights
-   - Sections included
-   - Next steps or recommendations
+    - Document type and purpose
+    - Key findings/content highlights
+    - Sections included
+    - Next steps or recommendations
 
 3. Mark all todos complete
 
@@ -283,7 +290,9 @@ Generate professional technical and business documents with multi-language suppo
 ## Document Type Details
 
 ### Assessment Documents
+
 Generate comprehensive evaluation documents including:
+
 - Executive summary with key findings
 - Current state analysis
 - Strengths and areas for improvement
@@ -292,6 +301,7 @@ Generate comprehensive evaluation documents including:
 - Implementation roadmap
 
 **Common Assessment Types**:
+
 - Technical Debt Assessment
 - Security Assessment
 - Performance Assessment
@@ -300,7 +310,9 @@ Generate comprehensive evaluation documents including:
 - DevOps Maturity Assessment
 
 ### Feature Documents
+
 Generate detailed feature specifications including:
+
 - Feature overview and value proposition
 - Functional requirements
 - Technical requirements
@@ -310,7 +322,9 @@ Generate detailed feature specifications including:
 - Risks and mitigations
 
 ### Analysis Documents
+
 Generate in-depth analysis documents including:
+
 - Analysis methodology
 - Data and evidence
 - Key observations
@@ -319,6 +333,7 @@ Generate in-depth analysis documents including:
 - Actionable recommendations
 
 **Common Analysis Types**:
+
 - Gap Analysis
 - Impact Analysis
 - Comparative Analysis
@@ -326,7 +341,9 @@ Generate in-depth analysis documents including:
 - Dependency Analysis
 
 ### Process Documents
+
 Generate structured process documentation including:
+
 - Process overview and objectives
 - Roles and responsibilities
 - Prerequisites and requirements
@@ -335,7 +352,9 @@ Generate structured process documentation including:
 - Metrics and KPIs
 
 ### Custom Documents
+
 Generate tailored documents based on user requirements:
+
 - Combine elements from multiple templates
 - Follow user-specified structure
 - Adapt to specific industry or domain requirements
@@ -346,15 +365,15 @@ Generate tailored documents based on user requirements:
 
 This command leverages specialized sub-agents for different aspects:
 
-| Phase | Agent | Purpose |
-|-------|-------|---------|
-| Analysis | `developer-kit:general-code-explorer` | Codebase exploration |
-| Analysis | `developer-kit:spring-boot-backend-development-expert` | Java/Spring analysis |
-| Analysis | `developer-kit:nestjs-backend-development-expert` | NestJS analysis |
-| Generation | `developer-kit:document-generator-expert` | Primary document generation |
-| Support | `developer-kit:java-security-expert` | Security domain expertise |
-| Support | `developer-kit:typescript-security-expert` | TypeScript security |
-| Support | `developer-kit:general-software-architect` | Architecture insights |
+| Phase      | Agent                                                  | Purpose                     |
+|------------|--------------------------------------------------------|-----------------------------|
+| Analysis   | `developer-kit:general-code-explorer`                  | Codebase exploration        |
+| Analysis   | `developer-kit:spring-boot-backend-development-expert` | Java/Spring analysis        |
+| Analysis   | `developer-kit:nestjs-backend-development-expert`      | NestJS analysis             |
+| Generation | `developer-kit:document-generator-expert`              | Primary document generation |
+| Support    | `developer-kit:java-security-expert`                   | Security domain expertise   |
+| Support    | `developer-kit:typescript-security-expert`             | TypeScript security         |
+| Support    | `developer-kit:general-software-architect`             | Architecture insights       |
 
 ---
 
@@ -378,10 +397,12 @@ Update status as you progress through each phase.
 ## Output Format
 
 The generated document will be saved as:
+
 - **Markdown** (default): `docs/[type]-[objective-slug]-[YYYYMMDD].md`
 - **HTML**: `docs/[type]-[objective-slug]-[YYYYMMDD].html`
 - **PDF**: Requires additional processing (pandoc or similar)
 
 ---
 
-**Note**: This command follows a systematic approach to ensure high-quality, professional documentation that accurately reflects your codebase and meets stakeholder requirements.
+**Note**: This command follows a systematic approach to ensure high-quality, professional documentation that accurately
+reflects your codebase and meets stakeholder requirements.

@@ -1,6 +1,6 @@
 # Complete Guide to Developer Kit Commands
 
-This guide documents all 34 commands available in the Developer Kit, organized by category with brief descriptions, usage, and practical examples. See individual command files for complete details.
+This guide documents all 35 commands available in the Developer Kit, organized by category with brief descriptions, usage, and practical examples. See individual command files for complete details.
 
 ---
 
@@ -355,6 +355,35 @@ This guide documents all 34 commands available in the Developer Kit, organized b
 
 ---
 
+### `/devkit.brainstorm`
+
+**File**: `commands/devkit.brainstorm.md`
+
+**Purpose**: Transform ideas into fully formed designs through structured dialogue, codebase exploration, and specialist agent collaboration.
+
+**Usage:**
+```bash
+/devkit.brainstorm [idea-description]
+```
+
+**Phases:**
+1. Context Discovery
+2. Idea Refinement (one question at a time)
+3. Approach Exploration (2-3 alternatives with trade-offs)
+4. Codebase Exploration (uses `general-code-explorer` agent)
+5. Design Presentation (incremental validation)
+6. Documentation Generation (uses `document-generator-expert` agent)
+7. Document Review (uses `general-code-reviewer` agent)
+8. Next Steps Recommendation
+9. Summary
+
+**Output:**
+- Design document saved to `docs/plans/YYYY-MM-DD--design.md`
+- Automatic recommendation for next development command with pre-filled arguments
+- Codebase analysis ensures design aligns with existing patterns
+
+---
+
 ### `/devkit.prompt-optimize`
 
 **File**: `commands/devkit.prompt-optimize.md`
@@ -552,7 +581,12 @@ Spec Kit commands provide comprehensive project planning and verification.
 ### Feature Development Workflow
 
 ```
-1. /devkit.feature-development [feature-description]
+# Optional: Start with brainstorming for new ideas
+1. /devkit.brainstorm [idea-description]
+   (Creates design document, recommends next command)
+
+# Then proceed with implementation
+2. /devkit.feature-development [feature-description]
    (Guides through 9 phases: analysis → architecture → implementation → testing → review → documentation → completion)
 ```
 
@@ -626,6 +660,7 @@ Session 2:
 | `/speckit.verify` | Spec Kit | Verify completion |
 | `/devkit.generate-document` | Documentation | Create documents |
 | `/devkit.generate-changelog` | Documentation | Update changelog |
+| `/devkit.brainstorm` | Workflow | Design brainstorming |
 | `/devkit.verify-skill` | Skill Mgmt | Validate skill |
 
 ---
