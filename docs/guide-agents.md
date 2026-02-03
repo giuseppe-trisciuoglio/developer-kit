@@ -1,6 +1,6 @@
 # Complete Guide to Developer Kit Agents
 
-This guide provides comprehensive documentation for all 36 specialized agents available in the Developer Kit, organized by development domain with descriptions, use cases, and integration patterns.
+This guide provides comprehensive documentation for all 43 specialized agents available in the Developer Kit, organized by development domain with descriptions, use cases, and integration patterns.
 
 ---
 
@@ -16,6 +16,7 @@ This guide provides comprehensive documentation for all 36 specialized agents av
 8. [AI & LangChain4J Agents](#ai--langchain4j-agents)
 9. [Documentation & Specialized Agents](#documentation--specialized-agents)
 10. [Agent Usage Guidelines](#agent-usage-guidelines)
+11. [Common Workflows](#common-workflows)
 
 ---
 
@@ -746,6 +747,22 @@ Commands automatically delegate to the appropriate agent based on the task:
 3. **Test**: Use domain-specific testing expert
 4. **Review**: Use domain-specific code reviewer
 5. **Document**: Use documentation specialist
+
+### Brainstorming Workflow
+
+The `/devkit.brainstorm` command orchestrates multiple specialist agents:
+
+1. **Context Discovery**: Initial project understanding
+2. **Idea Refinement**: Structured dialogue (one question at a time)
+3. **Approach Exploration**: Present 2-3 alternatives with trade-offs
+4. **Codebase Exploration**: `general-code-explorer` analyzes existing patterns
+5. **Design Presentation**: Incremental validation of each section
+6. **Documentation Generation**: `document-generator-expert` creates professional design document
+7. **Document Review**: `general-code-reviewer` verifies quality and completeness
+8. **Next Steps Recommendation**: Suggests appropriate development command
+9. **Summary**: Documents all decisions and outputs
+
+**Output**: Design document at `docs/plans/YYYY-MM-DD--design.md` with pre-filled next command
 
 ### Security Review Workflow
 

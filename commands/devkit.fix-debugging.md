@@ -24,17 +24,18 @@ Parse $ARGUMENTS to detect the optional `--lang` parameter:
 
 **Agent Mapping by Language:**
 
-| Phase       | General (default)                  | Java/Spring Boot (`--lang=spring` or `--lang=java`) | TypeScript (`--lang=typescript` or `--lang=ts`)      | NestJS (`--lang=nestjs`)                             | React (`--lang=react`)                          | AWS (`--lang=aws`)                             | Python (`--lang=python` or `--lang=py`)          |
-|-------------|------------------------------------|-----------------------------------------------------|------------------------------------------------------|------------------------------------------------------|-------------------------------------------------|------------------------------------------------|--------------------------------------------------|
-| Debugger    | `developer-kit:debugger`           | `developer-kit:debugger`                            | `developer-kit:debugger`                             | `developer-kit:debugger`                             | `developer-kit:debugger`                        | `developer-kit:debugger`                       | `developer-kit:debugger`                         |
-| Architect   | `developer-kit:software-architect` | `developer-kit:java-software-architect-review`      | `developer-kit:typescript-software-architect-review` | `developer-kit:typescript-software-architect-review` | `developer-kit:react-software-architect-review` | `developer-kit:aws-solution-architect-expert`  | `developer-kit:python-software-architect-expert` |
-| Code Review | `developer-kit:code-reviewer`      | `developer-kit:spring-boot-code-review-expert`      | `developer-kit:code-reviewer`                        | `developer-kit:nestjs-code-review-expert`            | `developer-kit:code-reviewer`                   | `developer-kit:aws-architecture-review-expert` | `developer-kit:python-code-review-expert`        |
+| Phase       | General (default)                          | Java/Spring Boot (`--lang=spring` or `--lang=java`) | TypeScript (`--lang=typescript` or `--lang=ts`)      | NestJS (`--lang=nestjs`)                             | React (`--lang=react`)                          | AWS (`--lang=aws`)                             | Python (`--lang=python` or `--lang=py`)          |
+|-------------|--------------------------------------------|-----------------------------------------------------|------------------------------------------------------|------------------------------------------------------|-------------------------------------------------|------------------------------------------------|--------------------------------------------------|
+| Debugger    | `developer-kit:general-debugger`           | `developer-kit:general-debugger`                    | `developer-kit:general-debugger`                     | `developer-kit:general-debugger`                     | `developer-kit:general-debugger`                | `developer-kit:general-debugger`               | `developer-kit:general-debugger`                 |
+| Architect   | `developer-kit:general-software-architect` | `developer-kit:java-software-architect-review`      | `developer-kit:typescript-software-architect-review` | `developer-kit:typescript-software-architect-review` | `developer-kit:react-software-architect-review` | `developer-kit:aws-solution-architect-expert`  | `developer-kit:python-software-architect-expert` |
+| Code Review | `developer-kit:general-code-reviewer`      | `developer-kit:spring-boot-code-review-expert`      | `developer-kit:general-code-reviewer`                | `developer-kit:nestjs-code-review-expert`            | `developer-kit:general-code-reviewer`           | `developer-kit:aws-architecture-review-expert` | `developer-kit:python-code-review-expert`        |
 
 ## Current Context
 
-- **Current Git Branch**: !`git branch --show-current`
-- **Git Status**: !`git status --porcelain`
-- **Recent Changes**: !`git diff --name-only HEAD~5`
+The command will automatically gather context information when needed:
+- Current git branch and status
+- Recent commits and changes
+- Available when the repository has history
 
 ## Core Principles
 
@@ -301,37 +302,37 @@ This command leverages specialized sub-agents using the Task tool.
 
 ### General Agents (default, or `--lang=general`)
 
-- **Debugger**: `developer-kit:debugger`
-- **Software Architect**: `developer-kit:software-architect`
-- **Code Reviewer**: `developer-kit:code-reviewer`
+- **Debugger**: `developer-kit:general-debugger`
+- **Software Architect**: `developer-kit:general-software-architect`
+- **Code Reviewer**: `developer-kit:general-code-reviewer`
 
 ### Java/Spring Boot Agents (`--lang=spring` or `--lang=java`)
 
-- **Debugger**: `developer-kit:debugger`
+- **Debugger**: `developer-kit:general-debugger`
 - **Software Architect**: `developer-kit:java-software-architect-review`
 - **Code Reviewer**: `developer-kit:spring-boot-code-review-expert`
 
 ### TypeScript Agents (`--lang=typescript` or `--lang=ts`)
 
-- **Debugger**: `developer-kit:debugger`
+- **Debugger**: `developer-kit:general-debugger`
 - **Software Architect**: `developer-kit:typescript-software-architect-review`
-- **Code Reviewer**: `developer-kit:code-reviewer`
+- **Code Reviewer**: `developer-kit:general-code-reviewer`
 
 ### NestJS Agents (`--lang=nestjs`)
 
-- **Debugger**: `developer-kit:debugger`
+- **Debugger**: `developer-kit:general-debugger`
 - **Software Architect**: `developer-kit:typescript-software-architect-review`
 - **Code Reviewer**: `developer-kit:nestjs-code-review-expert`
 
 ### React Agents (`--lang=react`)
 
-- **Debugger**: `developer-kit:debugger`
+- **Debugger**: `developer-kit:general-debugger`
 - **Software Architect**: `developer-kit:react-software-architect-review`
-- **Code Reviewer**: `developer-kit:code-reviewer`
+- **Code Reviewer**: `developer-kit:general-code-reviewer`
 
 ### Python Agents (`--lang=python` or `--lang=py`)
 
-- **Debugger**: `developer-kit:debugger`
+- **Debugger**: `developer-kit:general-debugger`
 - **Software Architect**: `developer-kit:python-software-architect-expert`
 - **Code Reviewer**: `developer-kit:python-code-review-expert`
 - **Security Expert**: `developer-kit:python-security-expert`
@@ -358,7 +359,7 @@ This command leverages specialized sub-agents using the Task tool.
 Task(
   description: "Brief task description",
   prompt: "Detailed prompt for the sub-agent",
-  subagent_type: "developer-kit:debugger"
+  subagent_type: "developer-kit:general-debugger"
 )
 
 // Java/Spring Boot agents (when --lang=spring or --lang=java)
@@ -393,7 +394,7 @@ Task(
 Task(
   description: "Analyze Python error and trace execution",
   prompt: "Analyze this Python error and identify the root cause",
-  subagent_type: "developer-kit:debugger"
+  subagent_type: "developer-kit:general-debugger"
 )
 
 Task(
