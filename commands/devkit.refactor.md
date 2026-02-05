@@ -33,18 +33,19 @@ Parse $ARGUMENTS to detect the optional `--scope` parameter:
 
 **Agent Mapping by Language:**
 
-| Phase               | General (default)                  | Java/Spring Boot (`--lang=spring` or `--lang=java`)    | TypeScript (`--lang=typescript` or `--lang=ts`)      | NestJS (`--lang=nestjs`)                             | React (`--lang=react`)                            | AWS (`--lang=aws`)                             | Python (`--lang=python` or `--lang=py`)          |
-|---------------------|------------------------------------|--------------------------------------------------------|------------------------------------------------------|------------------------------------------------------|---------------------------------------------------|------------------------------------------------|--------------------------------------------------|
-| Deep Exploration    | `developer-kit:code-explorer`      | `developer-kit:spring-boot-backend-development-expert` | `developer-kit:code-explorer`                        | `developer-kit:nestjs-backend-development-expert`    | `developer-kit:react-frontend-development-expert` | `developer-kit:aws-solution-architect-expert`  | `developer-kit:code-explorer`                    |
-| Refactoring Expert  | `developer-kit:refactor-expert`    | `developer-kit:java-refactor-expert`                   | `developer-kit:typescript-refactor-expert`           | `developer-kit:typescript-refactor-expert`           | `developer-kit:typescript-refactor-expert`        | `developer-kit:refactor-expert`                | `developer-kit:python-refactor-expert`           |
-| Architecture Review | `developer-kit:software-architect` | `developer-kit:java-software-architect-review`         | `developer-kit:typescript-software-architect-review` | `developer-kit:typescript-software-architect-review` | `developer-kit:react-software-architect-review`   | `developer-kit:aws-solution-architect-expert`  | `developer-kit:python-software-architect-expert` |
-| Code Review         | `developer-kit:code-reviewer`      | `developer-kit:spring-boot-code-review-expert`         | `developer-kit:code-reviewer`                        | `developer-kit:nestjs-code-review-expert`            | `developer-kit:code-reviewer`                     | `developer-kit:aws-architecture-review-expert` | `developer-kit:python-code-review-expert`        |
+| Phase               | General (default)                     | Java/Spring Boot (`--lang=spring` or `--lang=java`)    | TypeScript (`--lang=typescript` or `--lang=ts`)      | NestJS (`--lang=nestjs`)                             | React (`--lang=react`)                            | AWS (`--lang=aws`)                             | Python (`--lang=python` or `--lang=py`)          |
+|---------------------|---------------------------------------|--------------------------------------------------------|------------------------------------------------------|------------------------------------------------------|---------------------------------------------------|------------------------------------------------|--------------------------------------------------|
+| Deep Exploration    | `developer-kit:general-code-explorer` | `developer-kit:spring-boot-backend-development-expert` | `developer-kit:general-code-explorer`                | `developer-kit:nestjs-backend-development-expert`    | `developer-kit:react-frontend-development-expert` | `developer-kit:aws-solution-architect-expert`  | `developer-kit:general-code-explorer`            |
+| Refactoring Expert  | `developer-kit:refactor-expert`       | `developer-kit:java-refactor-expert`                   | `developer-kit:typescript-refactor-expert`           | `developer-kit:typescript-refactor-expert`           | `developer-kit:typescript-refactor-expert`        | `developer-kit:refactor-expert`                | `developer-kit:python-refactor-expert`           |
+| Architecture Review | `developer-kit:general-software-architect`    | `developer-kit:java-software-architect-review`         | `developer-kit:typescript-software-architect-review` | `developer-kit:typescript-software-architect-review` | `developer-kit:react-software-architect-review`   | `developer-kit:aws-solution-architect-expert`  | `developer-kit:python-software-architect-expert` |
+| Code Review         | `developer-kit:general-code-reviewer` | `developer-kit:spring-boot-code-review-expert`         | `developer-kit:general-code-reviewer`                | `developer-kit:nestjs-code-review-expert`            | `developer-kit:general-code-reviewer`             | `developer-kit:aws-architecture-review-expert` | `developer-kit:python-code-review-expert`        |
 
 ## Current Context
 
-- **Current Git Branch**: !`git branch --show-current`
-- **Git Status**: !`git status --porcelain`
-- **Recent Changes**: !`git diff --name-only HEAD~1`
+The command will automatically gather context information when needed:
+- Current git branch and status
+- Recent commits and changes
+- Available when the repository has history
 
 ## Core Principles
 
@@ -422,10 +423,10 @@ This command leverages four specialized sub-agents for comprehensive refactoring
 
 ### General Agents (default, or `--lang=general`)
 
-- **Code Explorer**: `developer-kit:code-explorer`
-- **Refactoring Expert**: `developer-kit:code-reviewer`
-- **Software Architect**: `developer-kit:software-architect`
-- **Code Reviewer**: `developer-kit:code-reviewer`
+- **Code Explorer**: `developer-kit:general-code-explorer`
+- **Refactoring Expert**: `developer-kit:general-code-reviewer`
+- **Software Architect**: `developer-kit:general-software-architect`
+- **Code Reviewer**: `developer-kit:general-code-reviewer`
 
 ### Java/Spring Boot Agents (`--lang=spring` or `--lang=java`)
 
@@ -436,10 +437,10 @@ This command leverages four specialized sub-agents for comprehensive refactoring
 
 ### TypeScript Agents (`--lang=typescript` or `--lang=ts`)
 
-- **Code Explorer**: `developer-kit:code-explorer`
+- **Code Explorer**: `developer-kit:general-code-explorer`
 - **Refactoring Expert**: `developer-kit:typescript-refactor-expert`
 - **Software Architect**: `developer-kit:typescript-software-architect-review`
-- **Code Reviewer**: `developer-kit:code-reviewer`
+- **Code Reviewer**: `developer-kit:general-code-reviewer`
 
 ### NestJS Agents (`--lang=nestjs`)
 
@@ -453,11 +454,11 @@ This command leverages four specialized sub-agents for comprehensive refactoring
 - **Code Explorer**: `developer-kit:react-frontend-development-expert`
 - **Refactoring Expert**: `developer-kit:typescript-refactor-expert`
 - **Software Architect**: `developer-kit:react-software-architect-review`
-- **Code Reviewer**: `developer-kit:code-reviewer`
+- **Code Reviewer**: `developer-kit:general-code-reviewer`
 
 ### Python Agents (`--lang=python` or `--lang=py`)
 
-- **Code Explorer**: `developer-kit:code-explorer`
+- **Code Explorer**: `developer-kit:general-code-explorer`
 - **Refactoring Expert**: `developer-kit:python-refactor-expert`
 - **Software Architect**: `developer-kit:python-software-architect-expert`
 - **Code Reviewer**: `developer-kit:python-code-review-expert`
@@ -479,13 +480,13 @@ This command leverages four specialized sub-agents for comprehensive refactoring
 Task(
   description: "Map code structure",
   prompt: "Analyze [code area] for refactoring...",
-  subagent_type: "developer-kit:code-explorer"
+  subagent_type: "developer-kit:general-code-explorer"
 )
 
 Task(
   description: "Find all usages",
   prompt: "Find ALL usages of [code to refactor]...",
-  subagent_type: "developer-kit:code-explorer"
+  subagent_type: "developer-kit:general-code-explorer"
 )
 
 // Sequential refactoring design
@@ -531,7 +532,7 @@ Task(
 Task(
   description: "Explore Python code for refactoring",
   prompt: "Analyze the Python codebase for refactoring opportunities",
-  subagent_type: "developer-kit:code-explorer"
+  subagent_type: "developer-kit:general-code-explorer"
 )
 
 Task(
