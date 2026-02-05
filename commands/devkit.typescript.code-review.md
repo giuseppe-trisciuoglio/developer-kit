@@ -13,7 +13,7 @@ model: inherit
 - **Git Status**: !`git status --porcelain`
 - **Recent Commits**: !`git log --oneline -5`
 - **Modified Files**: !`git diff --name-only HEAD~1`
-- **Nx Affected Projects**: !`npx nx show projects --affected --base=HEAD~1`
+- **Nx Affected Projects**: !`[ -f nx.json ] && npx nx show projects --affected --base=HEAD~1 2>/dev/null || echo "Nx not detected"`
 
 ## Review Configuration
 
@@ -205,5 +205,5 @@ ENDIF
 - If not available: `developer-kit:typescript-software-architect-review` fallback to `developer-kit:code-reviewer`, if not available use `general-purpose`
 
 **Run context**:
-- Use `npx nx show projects --affected --base=HEAD~1` to limit scope
+- Use `npx nx show projects --affected --base=HEAD~1` to limit scope (only if Nx workspace detected)
 - Provide `$1` as `full` or `security` etc., and optional path to a project or file
