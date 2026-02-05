@@ -59,7 +59,7 @@ Specialized AI assistants for specific development domains.
 |-------------------|---------------------------------------------------------------------------------------------------------------------|
 | Java/Spring Boot  | `spring-boot-code-review-expert`, `java-refactor-expert`, `java-security-expert`                                    |
 | TypeScript/NestJS | `nestjs-backend-development-expert`, `typescript-refactor-expert`, `nestjs-security-expert`                         |
-| React/Frontend    | `react-frontend-development-expert`, `react-software-architect-review`, `expo-react-native-development-expert`      |
+| React/Frontend    | `react-frontend-development-expert`, `react-software-architect-review`, `expo-react-native-development-expert`, `devkit.react.code-review`      |
 | Python            | `python-code-review-expert`, `python-refactor-expert`, `python-security-expert`, `python-software-architect-expert` |
 | PHP/WordPress     | `php-code-review-expert`, `php-refactor-expert`, `php-security-expert`, `php-software-architect-expert`, `wordpress-development-expert` |
 | AWS               | `aws-solution-architect-expert`, `aws-cloudformation-devops-expert`, `aws-architecture-review-expert`               |
@@ -79,7 +79,7 @@ Workflow automation commands for development tasks.
 | Security         | `/devkit.java.security-review`, `/devkit.ts.security-review`, `/devkit.generate-security-assessment` |
 | Spec Kit         | `/speckit.check-integration`, `/speckit.optimize`, `/speckit.verify`                                 |
 | GitHub           | `/devkit.github.create-pr`, `/devkit.github.review-pr`                                               |
-| TypeScript       | `/devkit.typescript.code-review`, `/devkit.ts.security-review`                                       |
+| TypeScript       | `/devkit.typescript.code-review`, `/devkit.ts.security-review`, `/devkit.react.code-review`           |
 | Documentation    | `/devkit.generate-document`, `/devkit.generate-changelog`, `/devkit.write-a-minute-of-a-meeting`     |
 | Workflow         | `/devkit.feature-development`, `/devkit.fix-debugging`, `/devkit.refactor`                           |
 

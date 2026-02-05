@@ -1,6 +1,6 @@
 # Complete Guide to Developer Kit Commands
 
-This guide documents all 34 commands available in the Developer Kit, organized by category with brief descriptions, usage, and practical examples. See individual command files for complete details.
+This guide documents all 36 commands available in the Developer Kit, organized by category with brief descriptions, usage, and practical examples. See individual command files for complete details.
 
 ---
 
@@ -163,11 +163,11 @@ This guide documents all 34 commands available in the Developer Kit, organized b
 
 **File**: `commands/devkit.typescript.code-review.md`
 
-**Purpose**: Comprehensive code review of TypeScript codebases for quality, patterns, and best practices.
+**Purpose**: Comprehensive code review of TypeScript/Nx monorepos including NestJS backend, React web, and React Native mobile apps.
 
 **Usage:**
 ```bash
-/devkit.typescript.code-review [full|security|performance|architecture] [path]
+/devkit.typescript.code-review [full|security|performance|architecture|testing|ci|best-practices] [path]
 ```
 
 ---
@@ -181,6 +181,19 @@ This guide documents all 34 commands available in the Developer Kit, organized b
 **Usage:**
 ```bash
 /devkit.ts.security-review [path]
+```
+
+---
+
+### `/devkit.react.code-review`
+
+**File**: `commands/devkit.react.code-review.md`
+
+**Purpose**: Comprehensive React code review for React 19, Next.js, Expo, and React Native applications. Covers architecture, performance, security, accessibility, and testing patterns.
+
+**Usage:**
+```bash
+/devkit.react.code-review [full|architecture|performance|security|accessibility|testing] [path]
 ```
 
 ---
@@ -611,8 +624,9 @@ Session 2:
 | `/devkit.java.security-review` | Java | Security audit |
 | `/devkit.java.write-unit-tests` | Java | Generate unit tests |
 | `/devkit.java.generate-crud` | Java | Generate CRUD code |
-| `/devkit.typescript.code-review` | TypeScript | Code quality review |
+| `/devkit.typescript.code-review` | TypeScript | Code quality review (Nx/NestJS/React) |
 | `/devkit.ts.security-review` | TypeScript | Security audit |
+| `/devkit.react.code-review` | React | React 19/Next.js/React Native review |
 | `/devkit.github.create-pr` | GitHub | Create pull request |
 | `/devkit.github.review-pr` | GitHub | Review pull request |
 | `/devkit.feature-development` | Workflow | Guided feature development |
