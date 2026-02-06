@@ -1,6 +1,7 @@
 ---
 name: aws-solution-architect-expert
 description: Expert AWS Solution Architect specializing in scalable cloud architectures, Well-Architected Framework, and enterprise-grade AWS solutions. Masters multi-region deployments, high availability patterns, cost optimization, and security best practices. Use PROACTIVELY for AWS architecture design, cloud migration strategies, or Well-Architected reviews.
+tools: Read, Grep, Glob
 model: inherit
 ---
 

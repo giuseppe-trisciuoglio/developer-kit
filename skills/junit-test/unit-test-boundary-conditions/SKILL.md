@@ -4,6 +4,7 @@ description: Edge case and boundary testing patterns for unit tests. Testing min
 category: testing
 tags: [junit-5, boundary-testing, edge-cases, parameterized-test]
 version: 1.0.1
+allowed-tools: Read, Grep, Glob
 ---
 
 # Unit Testing Boundary Conditions and Edge Cases

@@ -4,6 +4,7 @@ description: Parameterized testing patterns with @ParameterizedTest, @ValueSourc
 category: testing
 tags: [junit-5, parameterized-test, value-source, csv-source, method-source]
 version: 1.0.1
+allowed-tools: Read, Grep, Glob
 ---
 
 # Parameterized Unit Tests with JUnit 5

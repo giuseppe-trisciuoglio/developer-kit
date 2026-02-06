@@ -4,6 +4,7 @@ description: Testing Spring application events (ApplicationEvent) with @EventLis
 category: testing
 tags: [junit-5, application-events, event-driven, listeners, publishers]
 version: 1.0.1
+allowed-tools: Read, Grep, Glob
 ---
 
 # Unit Testing Application Events

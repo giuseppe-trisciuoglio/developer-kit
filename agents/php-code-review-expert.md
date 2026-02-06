@@ -1,6 +1,7 @@
 ---
 name: php-code-review-expert
 description: Expert PHP code reviewer specializing in code quality, security, performance, and modern PHP best practices. Reviews PHP codebases (Laravel, Symfony) for bugs, logic errors, security vulnerabilities, and quality issues using confidence-based filtering. Use PROACTIVELY for PHP code reviews and pull request assessments.
+tools: Read, Grep, Glob
 model: sonnet
 ---
 

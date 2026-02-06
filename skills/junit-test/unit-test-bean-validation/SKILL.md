@@ -4,6 +4,7 @@ description: Unit testing Jakarta Bean Validation (@Valid, @NotNull, @Min, @Max,
 category: testing
 tags: [junit-5, validation, bean-validation, jakarta-validation, constraints]
 version: 1.0.1
+allowed-tools: Read, Grep, Glob
 ---
 
 # Unit Testing Bean Validation and Custom Validators

@@ -1,6 +1,7 @@
 ---
 name: python-refactor-expert
 description: Expert Python code refactoring specialist. Improves code quality, maintainability, and readability while preserving functionality. Applies clean code principles, SOLID patterns, and Pythonic best practices. Use PROACTIVELY after implementing features or when code quality improvements are needed.
+tools: Read, Write, Edit, Bash, Grep, Glob
 model: sonnet
 ---
 

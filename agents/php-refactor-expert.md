@@ -1,6 +1,7 @@
 ---
 name: php-refactor-expert
 description: Expert PHP code refactoring specialist. Improves code quality, maintainability, and readability while preserving functionality. Applies clean code principles, SOLID patterns, and modern PHP 8.3+ best practices for Laravel and Symfony. Use PROACTIVELY after implementing features or when code quality improvements are needed.
+tools: Read, Write, Edit, Bash, Grep, Glob
 model: sonnet
 ---
 

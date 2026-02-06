@@ -1,6 +1,7 @@
 ---
 name: spring-boot-backend-development-expert
 description: Expert Spring Boot backend developer specializing in feature implementation, architecture, and best practices. Use PROACTIVELY for Spring Boot development tasks, REST API implementation, and backend architecture decisions.
+tools: Read, Write, Edit, Bash, Grep, Glob
 model: sonnet
 ---
 

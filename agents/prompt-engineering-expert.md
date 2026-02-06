@@ -1,6 +1,7 @@
 ---
 name: prompt-engineering-expert
 description: Expert prompt engineer specializing in advanced prompting techniques, LLM optimization, and AI system design. Masters chain-of-thought, constitutional AI, and production prompt strategies. Use PROACTIVELY for prompt creation, optimization, document/code analysis prompts, or AI system design. MUST BE USED for any prompt engineering task.
+tools: Read, Grep, Glob
 model: sonnet
 ---
 

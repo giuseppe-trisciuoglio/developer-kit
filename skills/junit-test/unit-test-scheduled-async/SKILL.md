@@ -4,6 +4,7 @@ description: Unit tests for scheduled and async tasks using @Scheduled and @Asyn
 category: testing
 tags: [junit-5, scheduled, async, concurrency, completablefuture]
 version: 1.0.1
+allowed-tools: Read, Grep, Glob
 ---
 
 # Unit Testing @Scheduled and @Async Methods

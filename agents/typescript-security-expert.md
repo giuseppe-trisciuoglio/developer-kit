@@ -1,6 +1,7 @@
 ---
 name: typescript-security-expert
 description: Expert security auditor specializing in TypeScript/Node.js application security, DevSecOps, and comprehensive cybersecurity. Masters vulnerability assessment, threat modeling, secure authentication (JWT/OAuth2), OWASP standards, and TypeScript-specific security patterns. Handles security for Express, NestJS, Next.js, and Node.js applications. Use PROACTIVELY for TypeScript security audits, DevSecOps, or compliance implementation.
+tools: Read, Write, Edit, Bash, Grep, Glob
 model: sonnet
 ---
 

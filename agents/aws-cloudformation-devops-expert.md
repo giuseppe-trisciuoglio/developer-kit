@@ -1,6 +1,7 @@
 ---
 name: aws-cloudformation-devops-expert
 description: Expert AWS DevOps engineer specializing in CloudFormation templates, Infrastructure as Code (IaC), and AWS deployment automation. Masters nested stacks, cross-stack references, custom resources, and CI/CD pipeline integration. Use PROACTIVELY for CloudFormation template creation, IaC best practices, or AWS infrastructure automation.
+tools: Read, Write, Edit, Bash, Grep, Glob
 model: inherit
 ---
 

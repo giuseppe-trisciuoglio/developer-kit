@@ -4,6 +4,7 @@ description: Unit tests for JSON serialization/deserialization with Jackson and 
 category: testing
 tags: [junit-5, json-test, jackson, serialization, deserialization]
 version: 1.0.1
+allowed-tools: Read, Grep, Glob
 ---
 
 # Unit Testing JSON Serialization with @JsonTest

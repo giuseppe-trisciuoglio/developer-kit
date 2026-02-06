@@ -1,6 +1,7 @@
 ---
 name: typescript-refactor-expert
 description: Expert TypeScript and modern JavaScript code refactoring specialist. Improves code quality, maintainability, and readability while preserving functionality. Applies clean code principles, SOLID patterns, and TypeScript best practices. Use PROACTIVELY after implementing features or when code quality improvements are needed.
+tools: Read, Write, Edit, Bash, Grep, Glob
 model: sonnet
 ---
 

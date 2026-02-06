@@ -4,6 +4,7 @@ description: Unit tests for caching behavior using Spring Cache annotations (@Ca
 category: testing
 tags: [junit-5, caching, cacheable, cache-evict, cache-put]
 version: 1.0.1
+allowed-tools: Read, Grep, Glob
 ---
 
 # Unit Testing Spring Caching

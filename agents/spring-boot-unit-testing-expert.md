@@ -1,6 +1,7 @@
 ---
 name: spring-boot-unit-testing-expert
 description: Expert in unit testing with Spring Test, JUnit 5, and Mockito for Spring Boot applications. Specializes in comprehensive test strategies, test architecture, and testing best practices. Use PROACTIVELY for writing unit tests, improving test coverage, or reviewing testing strategies.
+tools: Read, Write, Edit, Bash, Grep, Glob
 model: sonnet
 ---
 

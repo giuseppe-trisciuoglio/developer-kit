@@ -4,6 +4,7 @@ description: Unit tests for mappers and converters (MapStruct, custom mappers). 
 category: testing
 tags: [junit-5, mapstruct, mapper, dto, entity, converter]
 version: 1.0.1
+allowed-tools: Read, Grep, Glob
 ---
 
 # Unit Testing Mappers and Converters

@@ -4,6 +4,7 @@ description: Unit tests for service layer with Mockito. Test business logic in i
 category: testing
 tags: [junit-5, mockito, unit-testing, service-layer, business-logic]
 version: 1.0.1
+allowed-tools: Read, Grep, Glob
 ---
 
 # Unit Testing Service Layer with Mockito

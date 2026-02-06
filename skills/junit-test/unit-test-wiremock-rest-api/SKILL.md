@@ -4,6 +4,7 @@ description: Unit tests for external REST APIs using WireMock to mock HTTP endpo
 category: testing
 tags: [junit-5, wiremock, unit-testing, rest-api, mocking, http-stubbing]
 version: 1.0.1
+allowed-tools: Read, Grep, Glob
 ---
 
 # Unit Testing REST APIs with WireMock

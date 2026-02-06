@@ -4,6 +4,7 @@ description: Unit tests for Spring Security with @PreAuthorize, @Secured, @Roles
 category: testing
 tags: [junit-5, spring-security, authorization, roles, preauthorize, mockmvc]
 version: 1.0.1
+allowed-tools: Read, Grep, Glob
 ---
 
 # Unit Testing Security and Authorization

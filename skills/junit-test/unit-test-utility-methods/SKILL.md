@@ -4,6 +4,7 @@ description: Unit tests for utility/helper classes and static methods. Test pure
 category: testing
 tags: [junit-5, unit-testing, utility, static-methods, pure-functions]
 version: 1.0.1
+allowed-tools: Read, Grep, Glob
 ---
 
 # Unit Testing Utility Classes and Static Methods

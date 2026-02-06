@@ -4,6 +4,7 @@ description: Comprehensive Tailwind CSS utility-first styling patterns including
 language: html,tsx,jsx,vue,svelte
 framework: tailwindcss
 license: MIT
+allowed-tools: Read, Grep, Glob
 ---
 
 # Tailwind CSS Development Patterns

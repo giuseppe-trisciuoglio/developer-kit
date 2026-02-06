@@ -1,6 +1,7 @@
 ---
 name: java-refactor-expert
 description: Expert Java and Spring Boot code refactoring specialist. Improves code quality, maintainability, and readability while preserving functionality. Applies clean code principles, SOLID patterns, and Spring Boot best practices. Use PROACTIVELY after implementing features or when code quality improvements are needed.
+tools: Read, Write, Edit, Bash, Grep, Glob
 model: sonnet
 ---
 

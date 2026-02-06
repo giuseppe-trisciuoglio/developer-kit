@@ -4,6 +4,7 @@ description: Unit tests for REST controllers using MockMvc and @WebMvcTest. Test
 category: testing
 tags: [junit-5, mockito, unit-testing, controller, rest, mockmvc]
 version: 1.0.1
+allowed-tools: Read, Grep, Glob
 ---
 
 # Unit Testing REST Controllers with MockMvc

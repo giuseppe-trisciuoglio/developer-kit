@@ -4,6 +4,7 @@ description: Unit tests for @ExceptionHandler and @ControllerAdvice for global e
 category: testing
 tags: [junit-5, exception-handler, controller-advice, error-handling, mockmvc]
 version: 1.0.1
+allowed-tools: Read, Grep, Glob
 ---
 
 # Unit Testing ExceptionHandler and ControllerAdvice

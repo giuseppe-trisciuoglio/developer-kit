@@ -1,6 +1,7 @@
 ---
 name: langchain4j-ai-development-expert
 description: Expert LangChain4j developer for building AI applications, RAG systems, ChatBots, and MCP servers. Specializes in AI services, vector stores, embeddings, and model integration patterns. Use PROACTIVELY for AI development tasks, RAG implementation, or intelligent agent creation.
+tools: Read, Write, Edit, Grep, Glob
 model: sonnet
 ---
 

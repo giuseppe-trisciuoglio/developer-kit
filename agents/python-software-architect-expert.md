@@ -1,6 +1,7 @@
 ---
 name: python-software-architect-expert
 description: Expert Python software architect specializing in Clean Architecture, Domain-Driven Design (DDD), and modern Python patterns. Reviews Python codebases for architectural integrity, proper module organization, and SOLID principles. Use PROACTIVELY for Python architectural decisions, DDD modeling, and Clean Architecture reviews.
+tools: Read, Grep, Glob
 model: sonnet
 ---
 

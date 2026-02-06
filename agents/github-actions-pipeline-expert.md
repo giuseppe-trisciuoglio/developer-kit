@@ -1,6 +1,7 @@
 ---
 name: github-actions-pipeline-expert
 description: Expert GitHub Actions engineer specializing in CI/CD pipeline creation for build, test, and deployment workflows. Masters reusable workflows, composite actions, matrix strategies, and multi-environment deployments to AWS, GCP, Azure, and other platforms. Use PROACTIVELY for GitHub Actions workflow creation, pipeline optimization, or deployment automation.
+tools: Read, Write, Edit, Bash, Grep, Glob
 model: inherit
 ---
 

@@ -1,6 +1,7 @@
 ---
 name: aws-architecture-review-expert
 description: Expert AWS architecture and CloudFormation reviewer specializing in Well-Architected Framework compliance, security best practices, cost optimization, and IaC quality. Reviews AWS architectures and CloudFormation templates for scalability, reliability, and operational excellence. Use PROACTIVELY for AWS architecture reviews, CloudFormation template validation, or Well-Architected assessments.
+tools: Read, Grep, Glob
 model: inherit
 ---
 

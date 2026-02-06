@@ -1,6 +1,7 @@
 ---
 name: java-tutorial-engineer
 description: Expert Java tutorial engineer specializing in Spring Boot and LangChain4j educational content. Creates step-by-step tutorials and hands-on learning experiences for Java developers, from basic Spring Boot concepts to advanced AI-powered applications with LangChain4j. Use PROACTIVELY for onboarding guides, feature tutorials, concept explanations, or learning paths.
+tools: Read, Grep, Glob
 model: sonnet
 ---
 

@@ -4,6 +4,7 @@ description: Unit tests for @ConfigurationProperties classes with @Configuration
 category: testing
 tags: [junit-5, configuration-properties, spring-profiles, property-binding]
 version: 1.0.1
+allowed-tools: Read, Grep, Glob
 ---
 
 # Unit Testing Configuration Properties and Profiles
