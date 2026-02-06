@@ -212,7 +212,6 @@ Task(
 
     **Design Title**: [title]
     **Date**: [current date]
-    **Status**: Draft
 
     **Overview**: [brief summary]
 
@@ -236,6 +235,7 @@ Task(
 
     The document should be:
     - Professional and clearly formatted
+    - DO NOT provide or request time estimates or implementation timelines
     - Complete with all sections
     - Ready for team review
     - Using proper markdown structure",

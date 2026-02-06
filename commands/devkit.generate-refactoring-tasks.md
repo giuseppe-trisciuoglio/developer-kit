@@ -1,7 +1,7 @@
 ---
 allowed-tools: Read, Grep, Glob, Write
 argument-hint: [bounded-context-name]
-description: Generate a comprehensive refactoring task list for a specific Bounded Context in Memory-MCP and save it to a file
+description: Generate a comprehensive refactoring task list for a specific Bounded Context in project and save it to a file
 ---
 
 # Refactoring Task List Generator for Bounded Context
@@ -11,7 +11,7 @@ Analyze the bounded context **$1** in the project to create a complete refactori
 Perform the following steps:
 
 1. **Bounded Context Analysis**:
-   - Search for all Java files in the package `org.example.$1`
+   - Search for all Java files in the package `$1`
    - Identify all TODO, FIXME comments, and technical debt indicators
    - Analyze DDD architecture and compliance with SOLID principles
    - Identify incomplete implementations and placeholder code
