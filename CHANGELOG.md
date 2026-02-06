@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Features in development
 
+## [1.25.1] - 2026-02-05
+
+### Fixed
+
+- Added wordpress-sage-theme skill to marketplace.json
+
 ## [1.25.0] - 2026-02-03
 
 ### Added
@@ -543,7 +549,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.25.0...HEAD
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.25.1...HEAD
+[1.25.1]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.25.0...v1.25.1
 [1.25.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.24.0...v1.25.0
 [1.24.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.23.0...v1.24.0
 [1.23.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.22.0...v1.23.0
