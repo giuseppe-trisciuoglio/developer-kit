@@ -1,6 +1,6 @@
 ---
 name: aws-cloudformation-dynamodb
-description: AWS CloudFormation patterns for DynamoDB tables, GSIs, LSIs, auto-scaling, and streams. Use when creating DynamoDB tables with CloudFormation, configuring primary keys, local/global secondary indexes, capacity modes (on-demand/provisioned), point-in-time recovery, encryption, TTL, and implementing template structure with Parameters, Outputs, Mappings, Conditions, cross-stack references.
+description: AWS CloudFormation patterns for DynamoDB tables, GSIs, LSIs, auto-scaling, and streams. Use this skill when creating DynamoDB tables with CloudFormation, configuring primary keys (partition key, sort key), creating Global Secondary Indexes (GSI) and Local Secondary Indexes (LSI), setting up capacity modes (on-demand or provisioned), implementing auto-scaling with Application Auto Scaling, enabling point-in-time recovery and backup, configuring encryption at rest and in transit, setting up TTL for automatic data expiration, enabling DynamoDB Streams for change data capture, organizing templates with Parameters, Outputs, Mappings, Conditions, implementing cross-stack references with export/import, and using Transform for macros and reuse.
 category: aws
 tags: [aws, cloudformation, dynamodb, nosql, database, serverless, tables, indexes, scaling, infrastructure, iaac]
 version: 1.0.0

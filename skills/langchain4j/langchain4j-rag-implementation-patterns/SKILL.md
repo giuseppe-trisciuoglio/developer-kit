@@ -1,6 +1,6 @@
 ---
 name: langchain4j-rag-implementation-patterns
-description: Implement Retrieval-Augmented Generation (RAG) systems with LangChain4j. Build document ingestion pipelines, embedding stores, vector search strategies, and knowledge-enhanced AI applications. Use when creating question-answering systems over document collections or AI assistants with external knowledge bases.
+description: Implement Retrieval-Augmented Generation (RAG) systems with LangChain4j including document ingestion pipelines, embedding stores, vector search strategies, and knowledge-enhanced AI applications. Use this skill when building knowledge-based AI applications requiring external document access, implementing question-answering systems over large document collections, creating AI assistants with access to company knowledge bases, building semantic search capabilities for document repositories, or implementing chat systems that reference specific information sources.
 allowed-tools: Read, Write, Bash
 category: ai-development
 tags: [langchain4j, rag, retrieval-augmented-generation, embedding, vector-search, document-ingestion, java]

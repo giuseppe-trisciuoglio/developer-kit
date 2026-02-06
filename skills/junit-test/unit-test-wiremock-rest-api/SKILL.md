@@ -1,6 +1,6 @@
 ---
 name: unit-test-wiremock-rest-api
-description: Unit tests for external REST APIs using WireMock to mock HTTP endpoints. Use when testing service integrations with external APIs.
+description: Unit testing patterns for external REST API integrations using WireMock for HTTP endpoint mocking. Use this skill when testing services that call external REST APIs, stubbing HTTP responses for predictable test behavior, testing error scenarios like timeouts and 500 errors, verifying request details including headers and query params, integrating with third-party services, or testing without network dependencies in Java applications.
 category: testing
 tags: [junit-5, wiremock, unit-testing, rest-api, mocking, http-stubbing]
 version: 1.0.1

@@ -1,6 +1,6 @@
 ---
 name: unit-test-scheduled-async
-description: Unit tests for scheduled and async tasks using @Scheduled and @Async. Mock task execution and timing. Use when validating asynchronous operations and scheduling behavior.
+description: Unit testing patterns for scheduled and async tasks using @Scheduled and @Async annotations. Use this skill when testing @Scheduled method logic, testing @Async method behavior, verifying CompletableFuture results, testing async error handling, mocking task execution and timing, or validating asynchronous operations in Spring Boot applications.
 category: testing
 tags: [junit-5, scheduled, async, concurrency, completablefuture]
 version: 1.0.1

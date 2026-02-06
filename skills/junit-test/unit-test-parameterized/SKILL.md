@@ -1,6 +1,6 @@
 ---
 name: unit-test-parameterized
-description: Parameterized testing patterns with @ParameterizedTest, @ValueSource, @CsvSource. Run single test method with multiple input combinations. Use when testing multiple scenarios with similar logic.
+description: Parameterized testing patterns with @ParameterizedTest, @ValueSource, @CsvSource for data-driven testing. Use this skill when testing methods with multiple valid inputs, testing boundary values systematically, testing multiple invalid inputs for error cases, reducing test duplication, or testing multiple scenarios with similar logic in JUnit 5 applications.
 category: testing
 tags: [junit-5, parameterized-test, value-source, csv-source, method-source]
 version: 1.0.1

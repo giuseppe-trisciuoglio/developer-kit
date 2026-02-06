@@ -1,6 +1,6 @@
 ---
 name: langchain4j-tool-function-calling-patterns
-description: Tool and function calling patterns with LangChain4j. Define tools, handle function calls, and integrate with LLM agents. Use when building agentic applications that interact with tools.
+description: Tool and function calling patterns with LangChain4j including tool definition, function call handling, parameter validation, and LLM agent integration for agentic applications. Use this skill when building AI applications that need to interact with external APIs and services, creating AI assistants that perform actions beyond text generation, implementing AI systems with real-time data access, building multi-agent systems with specialized tools, or developing production AI applications with robust error handling.
 category: ai-development
 tags: [langchain4j, tools, function-calling, "@Tool", ToolProvider, ToolExecutor, dynamic-tools, parameter-descriptions, java]
 version: 1.1.0

@@ -1,6 +1,6 @@
 ---
 name: spring-boot-cache
-description: Instruction set for enabling and operating the Spring Cache abstraction in Spring Boot when implementing application-level caching for performance-sensitive workloads.
+description: Spring Cache abstraction patterns for Spring Boot using @Cacheable, @CachePut, and @CacheEvict annotations. Use this skill when implementing caching strategies, configuring cache providers (Caffeine, Redis, Ehcache, JCache), diagnosing cache invalidation issues, setting up cache management endpoints, or optimizing Spring Boot application performance with application-level caching.
 allowed-tools: Read, Write, Bash
 category: backend
 tags: [spring-boot, caching, performance, cacheable, cache-managers]

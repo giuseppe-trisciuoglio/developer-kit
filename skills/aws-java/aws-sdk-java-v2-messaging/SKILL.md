@@ -1,6 +1,6 @@
 ---
 name: aws-sdk-java-v2-messaging
-description: Implement AWS messaging patterns using AWS SDK for Java 2.x for SQS queues and SNS topics. Send/receive messages, manage FIFO queues, implement DLQ, publish messages, manage subscriptions, and build pub/sub patterns.
+description: Implement AWS messaging patterns using AWS SDK for Java 2.x for SQS queues and SNS topics. Use this skill when working with Amazon SQS queues for message queuing, SNS topics for event publishing and notification, FIFO queues and standard queues, Dead Letter Queues (DLQ) for message handling, SNS subscriptions with email, SMS, SQS, Lambda endpoints, pub/sub messaging patterns and event-driven architectures, Spring Boot integration with AWS messaging services, and testing strategies using LocalStack or Testcontainers.
 category: aws
 tags: [aws, sqs, sns, java, sdk, messaging, pub-sub, queues, events]
 version: 1.1.0

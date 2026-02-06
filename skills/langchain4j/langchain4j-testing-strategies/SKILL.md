@@ -1,6 +1,6 @@
 ---
 name: langchain4j-testing-strategies
-description: Testing strategies for LangChain4j-powered applications. Mock LLM responses, test retrieval chains, and validate AI workflows. Use when testing AI-powered features reliably.
+description: Testing strategies for LangChain4j-powered applications including mocking LLM responses, testing retrieval chains, validating AI workflows, and ensuring reliable AI-powered features. Use this skill when building AI-powered applications with LangChain4J, writing unit tests for AI services and guardrails, setting up integration tests with real LLM models, creating mock-based tests for faster test execution, using Testcontainers for isolated testing environments, testing RAG systems, validating tool execution and function calling, or testing streaming responses and async operations.
 category: backend
 tags: [langchain4j, testing, unit-tests, integration-tests, testcontainers, java, ai, llm, mock]
 version: 1.1.0

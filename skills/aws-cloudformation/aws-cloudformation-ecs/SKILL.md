@@ -1,6 +1,6 @@
 ---
 name: aws-cloudformation-ecs
-description: AWS CloudFormation patterns for ECS clusters, services, and task definitions. Use when creating ECS infrastructure with CloudFormation, configuring container definitions, scaling policies, service discovery, load balancing integration, and implementing template structure with Parameters, Outputs, Mappings, Conditions, cross-stack references, and blue/green deployments with CodeDeploy.
+description: AWS CloudFormation patterns for ECS clusters, services, and task definitions. Use this skill when creating ECS infrastructure with CloudFormation, defining task definitions for container workloads, configuring ECS services with deployment strategies, integrating ECS with Application Load Balancer, implementing auto scaling for ECS services, configuring service discovery with Cloud Map, implementing blue/green deployments with CodeDeploy, organizing templates with Parameters, Outputs, Mappings, Conditions, implementing cross-stack references with export/import, and using Transform for macro and reuse.
 category: aws
 tags: [aws, cloudformation, ecs, containers, docker, orchestration, infrastructure, iaac]
 version: 1.1.0

@@ -1,6 +1,6 @@
 ---
 name: aws-cloudformation-vpc
-description: AWS CloudFormation patterns for VPC infrastructure. Use when creating VPCs, Subnets, Route Tables, NAT Gateways, Internet Gateways, and implementing template structure with Parameters, Outputs, Mappings, Conditions, and cross-stack references.
+description: AWS CloudFormation patterns for VPC infrastructure. Use this skill when creating VPCs with public and private subnets, configuring route tables for internet and NAT connectivity, setting up Internet Gateways and NAT Gateways, implementing template Parameters with AWS-specific types, creating Outputs for cross-stack references, organizing templates with Mappings and Conditions, and designing reusable, modular CloudFormation templates.
 category: aws
 tags: [aws, cloudformation, vpc, networking, infrastructure, terraform, iaac]
 version: 1.0.0

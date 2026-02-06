@@ -1,6 +1,6 @@
 ---
 name: spring-boot-actuator
-description: Configure Spring Boot Actuator for production-grade monitoring, health probes, secured management endpoints, and Micrometer metrics across JVM services.
+description: Production-grade monitoring and observability patterns for Spring Boot using Actuator endpoints, health probes, secured management endpoints, and Micrometer metrics. Use this skill when enabling actuator endpoints, configuring health probes for orchestrators, securing management ports with Spring Security, exporting metrics to Prometheus, or implementing observability for production Spring Boot services.
 allowed-tools: Read, Write, Bash
 category: backend
 tags: [spring-boot, actuator, monitoring, health-checks, metrics, production]

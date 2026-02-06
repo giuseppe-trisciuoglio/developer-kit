@@ -1,6 +1,6 @@
 ---
 name: aws-cloudformation-task-ecs-deploy-gh
-description: Deploy ECS tasks and services with GitHub Actions CI/CD. Use for building Docker images, pushing to ECR, updating ECS task definitions, deploying ECS services, integrating with CloudFormation stacks, configuring AWS OIDC authentication for GitHub Actions, and implementing production-ready container deployment pipelines. Automate ECS deployments with proper security (OIDC or IAM keys), multi-environment support, blue/green deployments, ECR private repositories with image scanning, and CloudFormation infrastructure updates.
+description: Deploy ECS tasks and services with GitHub Actions CI/CD. Use this skill when deploying Docker containers to Amazon ECS, setting up GitHub Actions CI/CD pipelines for AWS, configuring AWS authentication for GitHub Actions (OIDC or IAM keys), building and pushing Docker images to Amazon ECR, updating ECS task definitions dynamically, implementing blue/green or rolling deployments, managing CloudFormation stacks from CI/CD, setting up multi-environment deployments (dev/staging/prod), configuring private ECR repositories with image scanning, and automating container deployment with proper security practices.
 category: aws
 tags: [aws, cloudformation, github-actions, ecs, ecr, deployment, ci-cd, oidc, containers, docker, cd]
 version: 1.0.0

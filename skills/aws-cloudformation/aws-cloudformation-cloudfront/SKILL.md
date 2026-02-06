@@ -1,6 +1,6 @@
 ---
 name: aws-cloudformation-cloudfront
-description: AWS CloudFormation patterns for CloudFront distributions, origins (ALB, S3, Lambda@Edge, VPC Origins), CacheBehaviors, Functions, SecurityHeaders, parameters, Outputs and cross-stack references. Use when creating CloudFront distributions with CloudFormation, configuring multiple origins, implementing caching strategies, managing custom domains with ACM, configuring WAF, and optimizing performance.
+description: AWS CloudFormation patterns for CloudFront distributions, origins (ALB, S3, Lambda@Edge, VPC Origins), CacheBehaviors, Functions, SecurityHeaders, parameters, Outputs and cross-stack references. Use this skill when creating CloudFront distributions with CloudFormation, configuring multiple origins (ALB, S3, API Gateway, Lambda@Edge, VPC Origins), implementing caching strategies with CacheBehaviors and Cache Policies, managing custom domains with ACM certificates, implementing SecurityHeaders (CSP, HSTS, XSS protection), configuring CloudFront Functions and Lambda@Edge, managing Geo-restrictions and Price Classes, integrating WAF with CloudFront, organizing templates with Parameters, Outputs, Mappings, Conditions, implementing cross-stack references with export/import, and using Transform for macros and reuse.
 category: aws
 tags: [aws, cloudformation, cloudfront, cdn, content-delivery, distributions, origins, cache, waf, security]
 version: 1.0.0

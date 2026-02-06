@@ -1,6 +1,6 @@
 ---
 name: aws-sdk-java-v2-lambda
-description: AWS Lambda patterns using AWS SDK for Java 2.x. Use when invoking Lambda functions, creating/updating functions, managing function configurations, working with Lambda layers, or integrating Lambda with Spring Boot applications.
+description: AWS Lambda patterns using AWS SDK for Java 2.x. Use this skill when invoking Lambda functions programmatically, creating or updating Lambda functions, managing Lambda function configurations, working with Lambda environment variables, managing Lambda layers and aliases, implementing asynchronous Lambda invocations, and integrating Lambda with Spring Boot.
 category: aws
 tags: [aws, lambda, java, sdk, serverless, functions]
 version: 1.1.0

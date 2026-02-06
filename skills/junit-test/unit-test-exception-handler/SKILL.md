@@ -1,6 +1,6 @@
 ---
 name: unit-test-exception-handler
-description: Unit tests for @ExceptionHandler and @ControllerAdvice for global exception handling. Use when validating error response formatting and HTTP status codes.
+description: Unit testing patterns for @ExceptionHandler and @ControllerAdvice for global exception handling. Use this skill when validating error response formatting, testing exception-to-error-response transformations, verifying HTTP status codes for different exception types, testing error message formatting and localization, or testing @ControllerAdvice methods in Spring Boot applications.
 category: testing
 tags: [junit-5, exception-handler, controller-advice, error-handling, mockmvc]
 version: 1.0.1

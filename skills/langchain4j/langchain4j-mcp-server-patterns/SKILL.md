@@ -1,6 +1,6 @@
 ---
 name: langchain4j-mcp-server-patterns
-description: Model Context Protocol (MCP) server implementation patterns with LangChain4j. Use when building MCP servers to extend AI capabilities with custom tools, resources, and prompt templates.
+description: Model Context Protocol (MCP) server implementation patterns with LangChain4j including tool providers, resource handlers, prompt templates, and transport configuration for extending AI capabilities. Use this skill when building AI applications requiring external tool integration, creating enterprise MCP servers with multi-domain support (GitHub, databases, APIs), implementing dynamic tool providers with context-aware filtering, building resource-based data access systems for AI models, creating prompt template servers for standardized AI interactions, or developing production-ready MCP servers with security and monitoring.
 category: ai-integration
 tags: [langchain4j, mcp, model-context-protocol, tools, resources, prompts, ai-services, java, spring-boot, enterprise]
 version: 1.1.0

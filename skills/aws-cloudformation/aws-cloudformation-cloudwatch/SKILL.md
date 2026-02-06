@@ -1,6 +1,6 @@
 ---
 name: aws-cloudformation-cloudwatch
-description: AWS CloudFormation patterns for CloudWatch monitoring, metrics, alarms, dashboards, logs, and observability. Use when creating CloudWatch metrics, alarms, dashboards, log groups, log subscriptions, anomaly detection, synthesized canaries, Application Signals, and implementing template structure with Parameters, Outputs, Mappings, Conditions, cross-stack references, and CloudWatch best practices for monitoring production infrastructure.
+description: AWS CloudFormation patterns for CloudWatch monitoring, metrics, alarms, dashboards, logs, and observability. Use this skill when creating custom CloudWatch metrics, configuring CloudWatch alarms for thresholds and anomaly detection, creating CloudWatch dashboards for multi-region visualization, implementing log groups with retention and encryption, configuring log subscriptions and cross-account log aggregation, implementing synthesized canaries for synthetic monitoring, enabling Application Signals for application performance monitoring, organizing templates with Parameters, Outputs, Mappings, Conditions, implementing cross-stack references with export/import, using Transform for macros and reuse, and implementing CloudWatch best practices for monitoring production infrastructure.
 category: aws
 tags: [aws, cloudformation, cloudwatch, monitoring, observability, metrics, alarms, logs, dashboards, infrastructure, iaac]
 version: 1.0.0

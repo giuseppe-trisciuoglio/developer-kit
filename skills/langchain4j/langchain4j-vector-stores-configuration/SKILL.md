@@ -1,6 +1,6 @@
 ---
 name: langchain4j-vector-stores-configuration
-description: Configure LangChain4J vector stores for RAG applications. Use when building semantic search, integrating vector databases (PostgreSQL/pgvector, Pinecone, MongoDB, Milvus, Neo4j), implementing embedding storage/retrieval, setting up hybrid search, or optimizing vector database performance for production AI applications.
+description: Configure LangChain4J vector stores for RAG applications including embedding storage/retrieval, vector database integration, and semantic search setup. Use this skill when building RAG applications requiring embedding storage and retrieval, implementing semantic search in Java applications, integrating vector databases (PostgreSQL/pgvector, Pinecone, MongoDB, Milvus, Neo4j), configuring multi-modal embedding storage, setting up hybrid search combining vector similarity and full-text search, or optimizing vector database performance for production AI applications.
 allowed-tools: Read, Write, Bash, Edit
 category: backend
 tags: [langchain4j, vector-stores, embeddings, rag, semantic-search, ai, llm, java, databases]

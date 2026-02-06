@@ -1,6 +1,6 @@
 ---
 name: unit-test-service-layer
-description: Unit tests for service layer with Mockito. Test business logic in isolation by mocking dependencies. Use when validating service behaviors and business logic without database or external services.
+description: Unit testing patterns for Spring Boot service layer with Mockito for business logic testing. Use this skill when writing unit tests for @Service beans, testing business logic in isolation, mocking repositories and dependencies, verifying service interactions with mocked collaborators, testing complex workflows and orchestration logic, or testing error handling and edge cases in services.
 category: testing
 tags: [junit-5, mockito, unit-testing, service-layer, business-logic]
 version: 1.0.1

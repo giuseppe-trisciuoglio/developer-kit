@@ -1,6 +1,6 @@
 ---
 name: langchain4j-spring-boot-integration
-description: Integration patterns for LangChain4j with Spring Boot. Auto-configuration, dependency injection, and Spring ecosystem integration. Use when embedding LangChain4j into Spring Boot applications.
+description: Integration patterns for LangChain4j with Spring Boot including auto-configuration, dependency injection, declarative AI Services, and Spring ecosystem integration for AI-powered applications. Use this skill when integrating LangChain4j into existing Spring Boot applications, building AI-powered microservices with Spring Boot, setting up auto-configuration for AI models and services, creating declarative AI Services with Spring dependency injection, configuring multiple AI providers (OpenAI, Azure, Ollama, etc.), implementing RAG systems with Spring Boot, or building production-ready AI applications with Spring Boot.
 category: ai-development
 tags: [langchain4j, spring-boot, ai, llm, rag, chatbot, integration, configuration, java]
 version: 1.1.0

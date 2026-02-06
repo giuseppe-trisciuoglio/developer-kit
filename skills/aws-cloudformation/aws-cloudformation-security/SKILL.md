@@ -1,6 +1,6 @@
 ---
 name: aws-cloudformation-security
-description: AWS CloudFormation patterns for infrastructure security, secrets management, encryption, and secure data handling. Use when creating secure CloudFormation templates with AWS Secrets Manager, KMS encryption, secure parameters, IAM policies, VPC security groups, TLS/SSL certificates, and encrypted traffic configurations. Covers template structure, parameter best practices, cross-stack references, and defense-in-depth strategies.
+description: AWS CloudFormation patterns for infrastructure security, secrets management, encryption, and secure data handling. Use this skill when creating CloudFormation templates with encryption at-rest and in-transit, managing secrets and credentials with AWS Secrets Manager, configuring AWS KMS for encryption keys, implementing secure parameters with SSM Parameter Store, creating IAM policies with least privilege, configuring security groups and network security, implementing secure cross-stack references, configuring TLS/SSL for AWS services, and applying defense-in-depth for infrastructure.
 category: aws
 tags: [aws, cloudformation, security, kms, secrets-manager, iam, encryption, tls, ssl, vpc, infrastructure, iaac]
 version: 1.0.0

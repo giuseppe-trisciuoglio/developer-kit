@@ -1,6 +1,6 @@
 ---
 name: aws-cloudformation-rds
-description: AWS CloudFormation patterns for Amazon RDS databases. Use when creating RDS instances (MySQL, PostgreSQL, Aurora), DB clusters, multi-AZ deployments, parameter groups, subnet groups, and implementing template structure with Parameters, Outputs, Mappings, Conditions, and cross-stack references.
+description: AWS CloudFormation patterns for Amazon RDS databases. Use this skill when creating RDS database instances (MySQL, PostgreSQL, Aurora, MariaDB), configuring DB clusters with read replicas, setting up multi-AZ deployments for high availability, creating DB parameter groups and option groups, configuring DB subnet groups for VPC deployment, implementing template Parameters with AWS-specific types, creating Outputs for cross-stack references, organizing templates with Mappings and Conditions, designing reusable, modular CloudFormation templates, and integrating with Secrets Manager for credential management.
 category: aws
 tags: [aws, cloudformation, rds, database, mysql, postgresql, aurora, mariadb, oracle, infrastructure, iaac]
 version: 1.0.0

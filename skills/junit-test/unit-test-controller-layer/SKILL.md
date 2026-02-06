@@ -1,6 +1,6 @@
 ---
 name: unit-test-controller-layer
-description: Unit tests for REST controllers using MockMvc and @WebMvcTest. Test request/response mapping, validation, and exception handling. Use when testing web layer endpoints in isolation.
+description: Unit testing patterns for REST controllers using MockMvc and @WebMvcTest for web layer testing. Use this skill when testing request/response mapping, verifying HTTP status codes, testing request parameter binding and validation, mocking service layer for isolated controller tests, or testing content negotiation and response headers in Spring Boot applications.
 category: testing
 tags: [junit-5, mockito, unit-testing, controller, rest, mockmvc]
 version: 1.0.1

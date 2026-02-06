@@ -1,6 +1,6 @@
 ---
 name: spring-boot-crud-patterns
-description: Provide repeatable CRUD workflows for Spring Boot 3 services with Spring Data JPA and feature-focused architecture; apply when modeling aggregates, repositories, controllers, and DTOs for REST APIs.
+description: Repeatable CRUD workflow patterns for Spring Boot 3 services using Spring Data JPA and feature-focused DDD-inspired architecture. Use this skill when implementing REST endpoints, modeling aggregates with repositories, creating controllers and DTOs, or building feature-based CRUD operations in Spring Boot applications.
 allowed-tools: Read, Write, Bash
 category: backend
 tags: [spring-boot, java, ddd, rest-api, crud, jpa, feature-architecture]

@@ -1,6 +1,6 @@
 ---
 name: spring-boot-dependency-injection
-description: Dependency injection workflow for Spring Boot projects covering constructor-first patterns, optional collaborator handling, bean selection, and validation practices.
+description: Dependency injection patterns for Spring Boot projects covering constructor-first injection, optional collaborator handling, bean selection strategies, and validation practices. Use this skill when implementing @Service, @Component, or @Repository classes, replacing field injection with constructor injection, configuring optional collaborators, resolving bean ambiguity, or auditing bean definitions in Spring Boot applications.
 allowed-tools: Read, Write, Bash
 category: backend
 tags: [spring-boot, dependency-injection, constructor-injection, bean-configuration, autowiring, testing, java]

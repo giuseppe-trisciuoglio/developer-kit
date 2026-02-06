@@ -1,6 +1,6 @@
 ---
 name: aws-cloudformation-s3
-description: AWS CloudFormation patterns for Amazon S3. Use when creating S3 buckets, policies, versioning, lifecycle rules, and implementing template structure with Parameters, Outputs, Mappings, Conditions, and cross-stack references.
+description: AWS CloudFormation patterns for Amazon S3. Use this skill when creating S3 buckets with custom configurations, implementing bucket policies for access control, configuring S3 versioning for data protection, setting up lifecycle rules for data management, creating Outputs for cross-stack references, using Parameters with AWS-specific types, organizing templates with Mappings and Conditions, and building reusable CloudFormation templates for S3.
 category: aws
 tags: [aws, cloudformation, s3, storage, infrastructure, iaac]
 version: 1.0.0

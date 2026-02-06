@@ -1,6 +1,6 @@
 ---
 name: langchain4j-ai-services-patterns
-description: Build declarative AI Services with LangChain4j using interface-based patterns, annotations, memory management, tools integration, and advanced application patterns. Use when implementing type-safe AI-powered features with minimal boilerplate code in Java applications.
+description: Build declarative AI Services with LangChain4j using interface-based patterns, annotations, memory management, tools integration, and advanced application patterns for type-safe AI-powered features. Use this skill when implementing AI-powered interfaces with minimal boilerplate code, creating conversational AI systems with memory management, building multi-agent systems with specialized AI components, implementing RAG patterns declaratively, or creating production AI applications with proper error handling.
 category: ai-development
 tags: [langchain4j, ai-services, annotations, declarative, tools, memory, function-calling, llm, java]
 version: 1.1.0

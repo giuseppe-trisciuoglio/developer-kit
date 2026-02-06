@@ -1,6 +1,6 @@
 ---
 name: unit-test-mapper-converter
-description: Unit tests for mappers and converters (MapStruct, custom mappers). Test object transformation logic in isolation. Use when ensuring correct data transformation between DTOs and domain objects.
+description: Unit testing patterns for mappers and converters including MapStruct and custom implementations. Use this skill when testing MapStruct mapper implementations, testing custom entity-to-DTO converters, verifying field mapping accuracy and null handling, testing nested object mapping, or testing type conversions and transformations in Spring Boot applications.
 category: testing
 tags: [junit-5, mapstruct, mapper, dto, entity, converter]
 version: 1.0.1
