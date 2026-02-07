@@ -1,64 +1,155 @@
-# Developer Kit Installation Makefile
-# Automates installation of agents and commands for multiple AI CLI tools
+# Developer Kit Installation Makefile - Multi-Plugin Architecture
+# Automates installation of agents, commands, and skills for multiple AI CLI tools
 #
 # Supported CLIs:
-#   - Copilot CLI (GitHub Copilot)
-#   - OpenCode CLI
-#   - Codex CLI (OpenAI)
+#   - Claude Code (local project installation with interactive selection)
+#   - Copilot CLI (GitHub Copilot - agents + skills, NO commands)
+#   - OpenCode CLI (agents + commands + skills)
+#   - Codex CLI (skills only, NO agents)
 #
 # Usage:
-#   make install              # Install for all detected CLIs
-#   make install-copilot      # Install only for Copilot CLI
-#   make install-opencode     # Install only for OpenCode CLI
-#   make install-codex        # Install only for Codex CLI
-#   make uninstall            # Remove all installations
-#   make status               # Show installation status
+#   make help                  Show all available targets
+#   make list-plugins          List all discovered plugins
+#   make install-claude        Interactive installer for Claude Code
+#   make install-opencode      Install for OpenCode CLI
+#   make install-copilot       Install for GitHub Copilot CLI
+#   make install-codex         Install for Codex CLI
+#   make install               Install for all detected CLIs
+#   make status                Show installation status
+#   make backup                Create backup of current configs
+#   make uninstall             Remove all installations
 
 SHELL := /bin/bash
-.PHONY: all install install-copilot install-opencode install-codex install-claude uninstall status help clean
+.PHONY: all help check-deps list-plugins list-components list-agents list-commands list-skills \
+        install install-claude install-opencode install-copilot install-codex \
+        uninstall status backup clean
 
-# Colors for output
-GREEN := \033[0;32m
+# ═══════════════════════════════════════════════════════════════
+# COLORS & OUTPUT FORMATTING
+# ═══════════════════════════════════════════════════════════════
+
+GREEN  := \033[0;32m
 YELLOW := \033[0;33m
-RED := \033[0;31m
-BLUE := \033[0;34m
-NC := \033[0m # No Color
+RED    := \033[0;31m
+BLUE   := \033[0;34m
+CYAN   := \033[0;36m
+NC     := \033[0m # No Color
 
-# Directories
-DEVKIT_DIR := $(shell pwd)
-AGENTS_DIR := $(DEVKIT_DIR)/agents
-COMMANDS_DIR := $(DEVKIT_DIR)/commands
-SKILLS_DIR := $(DEVKIT_DIR)/skills
+# ═══════════════════════════════════════════════════════════════
+# DIRECTORY STRUCTURE
+# ═══════════════════════════════════════════════════════════════
 
-# Config directories
-COPILOT_CONFIG := $(HOME)/.copilot
-COPILOT_AGENTS := $(COPILOT_CONFIG)/agents
-OPENCODE_CONFIG := $(HOME)/.config/opencode
-OPENCODE_AGENTS := $(OPENCODE_CONFIG)/agent
+DEVKIT_DIR   := $(shell pwd)
+PLUGINS_DIR  := $(DEVKIT_DIR)/plugins
+BACKUP_DIR   := $(HOME)/.devkit-backups/$(shell date +%Y%m%d_%H%M%S)
+
+# Target directories per CLI
+CLAUDE_DIR        := .claude
+OPENCODE_CONFIG   := $(HOME)/.config/opencode
+OPENCODE_AGENTS   := $(OPENCODE_CONFIG)/agent
 OPENCODE_COMMANDS := $(OPENCODE_CONFIG)/command
-OPENCODE_JSON := $(OPENCODE_CONFIG)/opencode.json
-CODEX_CONFIG := $(HOME)/.codex
-CODEX_INSTRUCTIONS := $(CODEX_CONFIG)/instructions.md
-CODEX_PROMPTS := $(CODEX_CONFIG)/prompts
+OPENCODE_SKILLS   := $(OPENCODE_CONFIG)/skills
 
-# Backup directory
-BACKUP_DIR := $(HOME)/.devkit-backups/$(shell date +%Y%m%d_%H%M%S)
+COPILOT_CONFIG    := $(HOME)/.copilot
+COPILOT_AGENTS    := $(COPILOT_CONFIG)/agents
+COPILOT_SKILLS    := $(COPILOT_CONFIG)/skills
 
-# Default target
+CODEX_CONFIG      := $(HOME)/.codex
+CODEX_SKILLS      := $(CODEX_CONFIG)/skills
+CODEX_AGENTS_MD   := $(CODEX_CONFIG)/AGENTS.md
+
+# ═══════════════════════════════════════════════════════════════
+# PLUGIN DISCOVERY
+# ═══════════════════════════════════════════════════════════════
+
+# Discover all plugin.json files
+PLUGIN_JSON_FILES := $(shell find $(PLUGINS_DIR) -name "plugin.json" -path "*/.claude-plugin/*" 2>/dev/null)
+
+# ═══════════════════════════════════════════════════════════════
+# UTILITY FUNCTIONS
+# ═══════════════════════════════════════════════════════════════
+
+define check_jq
+	@if ! command -v jq >/dev/null 2>&1; then \
+		echo -e "$(RED)Error: jq is required but not installed$(NC)"; \
+		echo "Install with: brew install jq (macOS) or apt-get install jq (Linux)"; \
+		exit 1; \
+	fi
+endef
+
+define info
+	@echo -e "$(BLUE)ℹ $(1)$(NC)"
+endef
+
+define success
+	@echo -e "$(GREEN)✓ $(1)$(NC)"
+endef
+
+define warning
+	@echo -e "$(YELLOW)⚠ $(1)$(NC)"
+endef
+
+define error
+	@echo -e "$(RED)✗ $(1)$(NC)"
+endef
+
+# Extract plugin name from plugin.json
+define get_plugin_name
+	$(shell jq -r '.name' $(1) 2>/dev/null)
+endef
+
+# Extract agents array from plugin.json
+define get_plugin_agents
+	$(shell jq -r '.agents[]?' $(1) 2>/dev/null)
+endef
+
+# Extract commands array from plugin.json
+define get_plugin_commands
+	$(shell jq -r '.commands[]?' $(1) 2>/dev/null)
+endef
+
+# Extract skills array from plugin.json
+define get_plugin_skills
+	$(shell jq -r '.skills[]?' $(1) 2>/dev/null)
+endef
+
+# Conflict resolution handler
+define handle_conflict
+	@echo -n "  ⚠ $(1) already exists. [O]verwrite, [S]kip, [R]ename? "
+	@read -n 1 action; \
+	echo ""; \
+	case $$action in \
+		O|o) rm -rf "$(2)"; cp -r "$(1)" "$(2)"; echo "  ✓ Overwritten" ;; \
+		R|r) \
+			read -p "  Enter new name: " new_name; \
+			cp -r "$(1)" "$(TARGET_DIR)/$$new_name"; \
+			echo "  ✓ Renamed to $$new_name" ;; \
+		*) echo "  ○ Skipped" ;; \
+	esac
+endef
+
+# ═══════════════════════════════════════════════════════════════
+# DEFAULT TARGET
+# ═══════════════════════════════════════════════════════════════
+
 all: help
+
+# ═══════════════════════════════════════════════════════════════
+# HELP
+# ═══════════════════════════════════════════════════════════════
 
 help:
 	@echo ""
 	@echo -e "$(BLUE)╔═══════════════════════════════════════════════════════════════╗$(NC)"
-	@echo -e "$(BLUE)║       Developer Kit - Multi-CLI Installation Tool             ║$(NC)"
+	@echo -e "$(BLUE)║     Developer Kit - Multi-Plugin Installation Tool           ║$(NC)"
 	@echo -e "$(BLUE)╚═══════════════════════════════════════════════════════════════╝$(NC)"
 	@echo ""
-	@echo -e "$(GREEN)Usage:$(NC)"
+	@echo -e "$(GREEN)Installation Targets:$(NC)"
+	@echo "  make install-claude       Interactive installer for Claude Code (project-local)"
+	@echo "  make install-opencode     Install for OpenCode CLI (global)"
+	@echo "  make install-copilot      Install for GitHub Copilot CLI (global)"
+	@echo "  make install-codex        Install for Codex CLI (global)"
 	@echo "  make install              Install for all detected CLIs"
-	@echo "  make install-copilot      Install only for GitHub Copilot CLI"
-	@echo "  make install-opencode     Install only for OpenCode CLI"
-	@echo "  make install-codex        Install only for Codex CLI"
-	@echo "  make install-claude       Interactive installer for Claude Code (project)"
 	@echo ""
 	@echo -e "$(GREEN)Management:$(NC)"
 	@echo "  make status               Show installation status for all CLIs"
@@ -67,10 +158,159 @@ help:
 	@echo "  make clean                Remove generated files"
 	@echo ""
 	@echo -e "$(GREEN)Information:$(NC)"
-	@echo "  make list-agents          List available agents"
-	@echo "  make list-commands        List available commands"
-	@echo "  make list-skills          List available skills"
+	@echo "  make check-deps           Check if required dependencies are installed"
+	@echo "  make list-plugins         List all discovered plugins"
+	@echo "  make list-components      List components of a specific plugin"
+	@echo "  make list-agents          List all available agents"
+	@echo "  make list-commands        List all available commands"
+	@echo "  make list-skills          List all available skills"
 	@echo ""
+
+# ═══════════════════════════════════════════════════════════════
+# DEPENDENCY CHECK
+# ═══════════════════════════════════════════════════════════════
+
+check-deps:
+	@$(call check_jq)
+
+# ═══════════════════════════════════════════════════════════════
+# LISTING TARGETS
+# ═══════════════════════════════════════════════════════════════
+
+list-plugins: check-deps
+	@echo ""
+	@echo -e "$(BLUE)═══════════════════════════════════════════════════════════════$(NC)"
+	@echo -e "$(BLUE)                  Discovered Plugins                          $(NC)"
+	@echo -e "$(BLUE)═══════════════════════════════════════════════════════════════$(NC)"
+	@echo ""
+	@if [ -z "$(PLUGIN_JSON_FILES)" ]; then \
+		echo -e "$(YELLOW)⚠ No plugins found in $(PLUGINS_DIR)$(NC)"; \
+	else \
+		for plugin_json in $(PLUGIN_JSON_FILES); do \
+			plugin_name=$$(jq -r '.name' "$$plugin_json" 2>/dev/null); \
+			plugin_version=$$(jq -r '.version' "$$plugin_json" 2>/dev/null); \
+			plugin_desc=$$(jq -r '.description' "$$plugin_json" 2>/dev/null); \
+			num_agents=$$(jq -r '.agents | length' "$$plugin_json" 2>/dev/null); \
+			num_commands=$$(jq -r '.commands | length' "$$plugin_json" 2>/dev/null); \
+			num_skills=$$(jq -r '.skills | length' "$$plugin_json" 2>/dev/null); \
+			echo -e "$(GREEN)$$plugin_name$(NC) (v$$plugin_version)"; \
+			echo "  $$plugin_desc"; \
+			echo "  Components: $$num_agents agents, $$num_commands commands, $$num_skills skills"; \
+			echo ""; \
+		done; \
+	fi
+
+list-components: check-deps
+	@if [ -z "$(PLUGIN)" ]; then \
+		echo -e "$(RED)✗ Usage: make list-components PLUGIN=developer-kit-core$(NC)"; \
+		exit 1; \
+	fi
+	@echo ""
+	@echo -e "$(BLUE)Components of plugin: $(GREEN)$(PLUGIN)$(NC)$(BLUE)$(NC)"
+	@echo ""
+	@plugin_json=$$(find "$(PLUGINS_DIR)" -name "plugin.json" -path "*/.claude-plugin/*" -exec jq -r 'select(.name == "$(PLUGIN)") | input_filename' {} \; 2>/dev/null | head -1); \
+	if [ -z "$$plugin_json" ]; then \
+		echo -e "$(RED)✗ Plugin '$(PLUGIN)' not found$(NC)"; \
+		exit 1; \
+	fi; \
+	echo -e "$(CYAN)Agents:$(NC)"; \
+	jq -r '.agents[]? // empty' "$$plugin_json" 2>/dev/null | while read agent; do \
+		echo "  - $$agent"; \
+	done; \
+	echo ""; \
+	echo -e "$(CYAN)Commands:$(NC)"; \
+	jq -r '.commands[]? // empty' "$$plugin_json" 2>/dev/null | while read cmd; do \
+		echo "  - $$cmd"; \
+	done; \
+	echo ""; \
+	echo -e "$(CYAN)Skills:$(NC)"; \
+	jq -r '.skills[]? // empty' "$$plugin_json" 2>/dev/null | while read skill; do \
+		echo "  - $$skill"; \
+	done; \
+	echo ""
+
+list-agents: check-deps
+	@echo ""
+	@echo -e "$(BLUE)Available Agents:$(NC)"
+	@echo ""
+	@for plugin_json in $(PLUGIN_JSON_FILES); do \
+		plugin_name=$$(jq -r '.name' "$$plugin_json" 2>/dev/null); \
+		plugin_dir=$$(dirname "$$plugin_json"); \
+		base_dir=$$(dirname "$$plugin_dir"); \
+		agents=$$(jq -r '.agents[]? // empty' "$$plugin_json" 2>/dev/null); \
+		if [ -n "$$agents" ]; then \
+			echo -e "$(YELLOW)$$plugin_name:$(NC)"; \
+			for agent in $$agents; do \
+				agent_path="$$base_dir/$$agent"; \
+				if [ -f "$$agent_path" ]; then \
+					agent_name=$$(basename "$$agent" .md); \
+					desc=$$(head -10 "$$agent_path" | grep -E '^description:' | head -1 | sed 's/description: *//'); \
+					if [ -z "$$desc" ]; then \
+						desc="No description"; \
+					fi; \
+					printf "  $(GREEN)%-40s$(NC) %s\n" "$$agent_name" "$$desc"; \
+				fi; \
+			done; \
+			echo ""; \
+		fi; \
+	done
+
+list-commands: check-deps
+	@echo ""
+	@echo -e "$(BLUE)Available Commands:$(NC)"
+	@echo ""
+	@for plugin_json in $(PLUGIN_JSON_FILES); do \
+		plugin_name=$$(jq -r '.name' "$$plugin_json" 2>/dev/null); \
+		plugin_dir=$$(dirname "$$plugin_json"); \
+		base_dir=$$(dirname "$$plugin_dir"); \
+		commands=$$(jq -r '.commands[]? // empty' "$$plugin_json" 2>/dev/null); \
+		if [ -n "$$commands" ]; then \
+			echo -e "$(YELLOW)$$plugin_name:$(NC)"; \
+			for cmd in $$commands; do \
+				cmd_path="$$base_dir/$$cmd"; \
+				if [ -f "$$cmd_path" ]; then \
+					cmd_name=$$(basename "$$cmd" .md); \
+					desc=$$(grep -m1 "^description:" "$$cmd_path" 2>/dev/null | sed 's/^description: *//'); \
+					if [ -z "$$desc" ]; then \
+						desc=$$(head -1 "$$cmd_path" | sed 's/^# *//'); \
+					fi; \
+					printf "  $(GREEN)%-45s$(NC) %s\n" "$$cmd_name" "$$desc"; \
+				fi; \
+			done; \
+			echo ""; \
+		fi; \
+	done
+
+list-skills: check-deps
+	@echo ""
+	@echo -e "$(BLUE)Available Skills:$(NC)"
+	@echo ""
+	@for plugin_json in $(PLUGIN_JSON_FILES); do \
+		plugin_name=$$(jq -r '.name' "$$plugin_json" 2>/dev/null); \
+		plugin_dir=$$(dirname "$$plugin_json"); \
+		base_dir=$$(dirname "$$plugin_dir"); \
+		skills=$$(jq -r '.skills[]? // empty' "$$plugin_json" 2>/dev/null); \
+		if [ -n "$$skills" ]; then \
+			echo -e "$(YELLOW)$$plugin_name:$(NC)"; \
+			for skill_pattern in $$skills; do \
+				for skill_dir in $$base_dir/$$skill_pattern; do \
+					if [ -d "$$skill_dir" ]; then \
+						skill_name=$$(basename "$$skill_dir"); \
+						skill_md="$$skill_dir/SKILL.md"; \
+						if [ -f "$$skill_md" ]; then \
+							desc=$$(head -20 "$$skill_md" | grep -E '^description:' | head -1 | sed 's/description: *//'); \
+							if [ -z "$$desc" ]; then \
+								desc=$$(head -10 "$$skill_md" | grep -E '^#' | head -1 | sed 's/^# *//'); \
+							fi; \
+							printf "  $(GREEN)%-40s$(NC) %s\n" "$$skill_name" "$$desc"; \
+						fi; \
+					fi; \
+				done; \
+			done; \
+			echo ""; \
+		fi; \
+	done; \
+	echo ""
 
 # ═══════════════════════════════════════════════════════════════
 # STATUS
@@ -82,14 +322,24 @@ status:
 	@echo -e "$(BLUE)              Developer Kit Installation Status                $(NC)"
 	@echo -e "$(BLUE)═══════════════════════════════════════════════════════════════$(NC)"
 	@echo ""
+	@echo -e "$(GREEN)Claude Code:$(NC)"
+	@echo "  Project-local installation to .claude/ directory"
+	@echo "  Use 'make install-claude' for interactive installation"
+	@echo ""
 	@echo -e "$(GREEN)GitHub Copilot CLI:$(NC)"
 	@if [ -d "$(COPILOT_CONFIG)" ]; then \
 		echo "  ✓ Config directory exists: $(COPILOT_CONFIG)"; \
 		if [ -d "$(COPILOT_AGENTS)" ] && ls "$(COPILOT_AGENTS)"/*.md >/dev/null 2>&1; then \
-			echo -e "  ✓ $(GREEN)Developer Kit installed$(NC)"; \
+			echo -e "  ✓ $(GREEN)Developer Kit agents installed$(NC)"; \
 			echo "    Agents: $$(ls -1 "$(COPILOT_AGENTS)"/*.md 2>/dev/null | wc -l | tr -d ' ')"; \
 		else \
-			echo "  ○ Developer Kit not installed"; \
+			echo "  ○ Developer Kit agents not installed"; \
+		fi; \
+		if [ -d "$(COPILOT_SKILLS)" ] && ls "$(COPILOT_SKILLS)" >/dev/null 2>&1; then \
+			echo -e "  ✓ $(GREEN)Developer Kit skills installed$(NC)"; \
+			echo "    Skills: $$(ls -1d "$(COPILOT_SKILLS)"/* 2>/dev/null | wc -l | tr -d ' ')"; \
+		else \
+			echo "  ○ Developer Kit skills not installed"; \
 		fi; \
 	else \
 		echo -e "  ✗ $(RED)Not configured$(NC)"; \
@@ -110,6 +360,12 @@ status:
 		else \
 			echo "  ○ Developer Kit commands not installed"; \
 		fi; \
+		if [ -d "$(OPENCODE_SKILLS)" ] && ls "$(OPENCODE_SKILLS)" >/dev/null 2>&1; then \
+			echo -e "  ✓ $(GREEN)Developer Kit skills installed$(NC)"; \
+			echo "    Skills: $$(ls -1d "$(OPENCODE_SKILLS)"/* 2>/dev/null | wc -l | tr -d ' ')"; \
+		else \
+			echo "  ○ Developer Kit skills not installed"; \
+		fi; \
 	else \
 		echo -e "  ✗ $(RED)Not configured$(NC)"; \
 	fi
@@ -117,548 +373,21 @@ status:
 	@echo -e "$(GREEN)Codex CLI:$(NC)"
 	@if [ -d "$(CODEX_CONFIG)" ]; then \
 		echo "  ✓ Config directory exists: $(CODEX_CONFIG)"; \
-		if [ -f "$(CODEX_CONFIG)/AGENTS.md" ] && grep -q "Developer Kit" "$(CODEX_CONFIG)/AGENTS.md" 2>/dev/null; then \
+		if [ -f "$(CODEX_AGENTS_MD)" ] && grep -q "Developer Kit" "$(CODEX_AGENTS_MD)" 2>/dev/null; then \
 			echo -e "  ✓ $(GREEN)Developer Kit installed$(NC)"; \
 		else \
 			echo "  ○ Developer Kit not installed"; \
 		fi; \
-		if [ -d "$(CODEX_PROMPTS)" ] && ls "$(CODEX_PROMPTS)"/*.md >/dev/null 2>&1; then \
-			echo -e "  ✓ $(GREEN)Custom prompts installed$(NC)"; \
-			echo "    Prompts: $$(ls -1 "$(CODEX_PROMPTS)"/*.md 2>/dev/null | wc -l | tr -d ' ')"; \
+		if [ -d "$(CODEX_SKILLS)" ] && ls "$(CODEX_SKILLS)" >/dev/null 2>&1; then \
+			echo -e "  ✓ $(GREEN)Developer Kit skills installed$(NC)"; \
+			echo "    Skills: $$(ls -1d "$(CODEX_SKILLS)"/* 2>/dev/null | wc -l | tr -d ' ')"; \
 		else \
-			echo "  ○ Custom prompts not installed"; \
+			echo "  ○ Developer Kit skills not installed"; \
 		fi; \
 	else \
 		echo -e "  ✗ $(RED)Not configured$(NC)"; \
 	fi
 	@echo ""
-
-# ═══════════════════════════════════════════════════════════════
-# INSTALL ALL
-# ═══════════════════════════════════════════════════════════════
-
-install: backup
-	@echo ""
-	@echo -e "$(BLUE)Installing Developer Kit for all detected CLIs...$(NC)"
-	@echo ""
-	@$(MAKE) -s install-copilot-if-exists
-	@$(MAKE) -s install-opencode-if-exists
-	@$(MAKE) -s install-codex-if-exists
-	@echo ""
-	@echo -e "$(GREEN)✓ Installation complete!$(NC)"
-	@$(MAKE) -s status
-
-install-copilot-if-exists:
-	@if [ -d "$(COPILOT_CONFIG)" ]; then \
-		$(MAKE) -s install-copilot; \
-	else \
-		echo -e "$(YELLOW)⚠ Skipping Copilot CLI (not configured)$(NC)"; \
-	fi
-
-install-opencode-if-exists:
-	@if [ -d "$(OPENCODE_CONFIG)" ]; then \
-		$(MAKE) -s install-opencode; \
-	else \
-		echo -e "$(YELLOW)⚠ Skipping OpenCode CLI (not configured)$(NC)"; \
-	fi
-
-install-codex-if-exists:
-	@if [ -d "$(CODEX_CONFIG)" ]; then \
-		$(MAKE) -s install-codex; \
-	else \
-		echo -e "$(YELLOW)⚠ Skipping Codex CLI (not configured)$(NC)"; \
-	fi
-
-# ═══════════════════════════════════════════════════════════════
-# COPILOT CLI INSTALLATION
-# ═══════════════════════════════════════════════════════════════
-
-install-copilot:
-	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
-	@echo -e "$(BLUE)Installing Developer Kit for GitHub Copilot CLI$(NC)"
-	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
-	@mkdir -p $(COPILOT_AGENTS)
-	@# Copy agents as custom agent profiles
-	@for agent in $(AGENTS_DIR)/*.md; do \
-		if [ -f "$$agent" ]; then \
-			name=$$(basename "$$agent" .md); \
-			cp "$$agent" "$(COPILOT_AGENTS)/$$name.md"; \
-			echo "  ✓ Agent: $$name"; \
-		fi; \
-	done
-	@echo ""
-	@echo -e "$(GREEN)✓ Copilot CLI installation complete$(NC)"
-	@echo "  Agents directory: $(COPILOT_AGENTS)/"
-	@echo ""
-	@echo -e "$(YELLOW)Usage:$(NC)"
-	@echo "  - Use /agent slash command to select an agent"
-	@echo "  - Or mention the agent in your prompt: 'Use the code-review agent...'"
-
-# ═══════════════════════════════════════════════════════════════
-# OPENCODE CLI INSTALLATION
-# ═══════════════════════════════════════════════════════════════
-
-install-opencode:
-	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
-	@echo -e "$(BLUE)Installing Developer Kit for OpenCode CLI$(NC)"
-	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
-	@mkdir -p $(OPENCODE_AGENTS)
-	@mkdir -p $(OPENCODE_COMMANDS)
-	@# Copy agents as markdown files with proper frontmatter
-	@for agent in $(AGENTS_DIR)/*.md; do \
-		if [ -f "$$agent" ]; then \
-			name=$$(basename "$$agent"); \
-			cp "$$agent" "$(OPENCODE_AGENTS)/$$name"; \
-			echo "  ✓ Agent: $$name"; \
-		fi; \
-	done
-	@# Copy commands as markdown files
-	@for cmd in $(COMMANDS_DIR)/*.md; do \
-		if [ -f "$$cmd" ]; then \
-			name=$$(basename "$$cmd"); \
-			cp "$$cmd" "$(OPENCODE_COMMANDS)/$$name"; \
-			echo "  ✓ Command: $$name"; \
-		fi; \
-	done
-	@echo ""
-	@echo -e "$(GREEN)✓ OpenCode CLI installation complete$(NC)"
-	@echo "  Agents directory: $(OPENCODE_AGENTS)/"
-	@echo "  Commands directory: $(OPENCODE_COMMANDS)/"
-	@echo ""
-	@echo -e "$(YELLOW)Usage:$(NC)"
-	@echo "  - Press Tab to cycle through primary agents"
-	@echo "  - Use @agent-name to invoke subagents"
-	@echo "  - Use /command-name to run custom commands"
-
-# ═══════════════════════════════════════════════════════════════
-# CODEX CLI INSTALLATION
-# ═══════════════════════════════════════════════════════════════
-
-install-codex:
-	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
-	@echo -e "$(BLUE)Installing Developer Kit for Codex CLI$(NC)"
-	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
-	@mkdir -p $(CODEX_CONFIG)
-	@mkdir -p $(CODEX_PROMPTS)
-	@echo -e "$(GREEN)Installing custom prompts (slash commands):$(NC)"
-	@# Codex uses ~/.codex/prompts/ directory for custom commands
-	@# Commands are invoked with /prompts:<name> syntax
-	@for cmd in $(COMMANDS_DIR)/*.md; do \
-		if [ -f "$$cmd" ]; then \
-			name=$$(basename "$$cmd" .md); \
-			target="$(CODEX_PROMPTS)/$$name.md"; \
-			cp "$$cmd" "$$target"; \
-			arg_hint=$$(grep -m1 "^argument-hint:" "$$cmd" 2>/dev/null | sed 's/^argument-hint: *//'); \
-			if [ -n "$$arg_hint" ]; then \
-				echo "  ✓ Prompt: $$name [arguments: $$arg_hint]"; \
-			else \
-				echo "  ✓ Prompt: $$name"; \
-			fi; \
-		fi; \
-	done
-	@echo ""
-	@echo -e "$(GREEN)Creating AGENTS.md with developer kit context:$(NC)"
-	@echo "# Developer Kit for Codex CLI" > $(CODEX_CONFIG)/AGENTS.md
-	@echo "# Auto-generated by Developer Kit Makefile" >> $(CODEX_CONFIG)/AGENTS.md
-	@echo "# Source: $(DEVKIT_DIR)" >> $(CODEX_CONFIG)/AGENTS.md
-	@echo "" >> $(CODEX_CONFIG)/AGENTS.md
-	@echo "You have access to the Developer Kit, a curated collection of skills and agents" >> $(CODEX_CONFIG)/AGENTS.md
-	@echo "for automating development tasks, focusing on Java/Spring Boot patterns." >> $(CODEX_CONFIG)/AGENTS.md
-	@echo "" >> $(CODEX_CONFIG)/AGENTS.md
-	@echo "## Available Custom Prompts" >> $(CODEX_CONFIG)/AGENTS.md
-	@echo "" >> $(CODEX_CONFIG)/AGENTS.md
-	@echo "Use \`/prompts:<name>\` to invoke custom commands. Example:" >> $(CODEX_CONFIG)/AGENTS.md
-	@echo "" >> $(CODEX_CONFIG)/AGENTS.md
-	@echo "  /prompts:devkit.java.code-review" >> $(CODEX_CONFIG)/AGENTS.md
-	@echo "  /prompts:devkit.java.generate-docs" >> $(CODEX_CONFIG)/AGENTS.md
-	@echo "  /prompts:devkit.fix-debugging \"error message\"" >> $(CODEX_CONFIG)/AGENTS.md
-	@echo "" >> $(CODEX_CONFIG)/AGENTS.md
-	@echo "## Available Commands" >> $(CODEX_CONFIG)/AGENTS.md
-	@echo "" >> $(CODEX_CONFIG)/AGENTS.md
-	@for cmd in $(COMMANDS_DIR)/*.md; do \
-		if [ -f "$$cmd" ]; then \
-			name=$$(basename "$$cmd" .md); \
-			desc=$$(grep -m1 "^description:" "$$cmd" 2>/dev/null | sed 's/^description: *//'); \
-			if [ -z "$$desc" ]; then \
-				desc=$$(head -1 "$$cmd" | sed 's/^# *//'); \
-			fi; \
-			arg_hint=$$(grep -m1 "^argument-hint:" "$$cmd" 2>/dev/null | sed 's/^argument-hint: *//'); \
-			if [ -n "$$arg_hint" ]; then \
-				echo "- \`/prompts:$$name $$arg_hint\`: $$desc" >> $(CODEX_CONFIG)/AGENTS.md; \
-			else \
-				echo "- \`/prompts:$$name\`: $$desc" >> $(CODEX_CONFIG)/AGENTS.md; \
-			fi; \
-		fi; \
-	done
-	@echo "" >> $(CODEX_CONFIG)/AGENTS.md
-	@echo "## Specialized Agents" >> $(CODEX_CONFIG)/AGENTS.md
-	@echo "" >> $(CODEX_CONFIG)/AGENTS.md
-	@echo "The following agents are available and can be referenced in your prompts:" >> $(CODEX_CONFIG)/AGENTS.md
-	@echo "" >> $(CODEX_CONFIG)/AGENTS.md
-	@for agent in $(AGENTS_DIR)/*.md; do \
-		if [ -f "$$agent" ]; then \
-			name=$$(basename "$$agent" .md); \
-			desc=$$(grep -m1 "description:" "$$agent" 2>/dev/null | sed 's/description: *//'); \
-			if [ -z "$$desc" ]; then \
-				desc=$$(grep -m1 "^>" "$$agent" | head -1 | sed 's/^> //'); \
-			fi; \
-			echo "- **$$name**: $$desc" >> $(CODEX_CONFIG)/AGENTS.md; \
-		fi; \
-	done
-	@echo ""
-	@echo -e "$(GREEN)✓ Codex CLI installation complete$(NC)"
-	@echo "  AGENTS.md file: $(CODEX_CONFIG)/AGENTS.md"
-	@echo "  Prompts directory: $(CODEX_PROMPTS)/"
-	@echo ""
-	@echo -e "$(YELLOW)Usage:$(NC)"
-	@echo "  - Type '/' and then 'prompts:' to see available custom commands"
-	@echo "  - Example: /prompts:devkit.java.code-review"
-	@echo "  - Example with args: /prompts:devkit.java.refactor-class path/to/Class.java all"
-	@echo ""
-	@echo -e "$(YELLOW)Note:$(NC) Restart Codex CLI to load new prompts"
-
-# ═══════════════════════════════════════════════════════════════
-# CLAUDE CODE INTERACTIVE INSTALLATION
-# ═══════════════════════════════════════════════════════════════
-
-install-claude:
-	@echo ""
-	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
-	@echo -e "$(BLUE)      Claude Code Interactive Developer Kit Installer          $(NC)"
-	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
-	@echo ""
-	@# Validate Claude Code environment
-	@echo -e "$(YELLOW)⚠ This installer is designed for Claude Code only.$(NC)"
-	@echo ""
-	@read -p "Are you installing for Claude Code? (y/N): " confirm; \
-	if [ "$$confirm" != "y" ] && [ "$$confirm" != "Y" ]; then \
-		echo -e "$(RED)Installation cancelled.$(NC)"; \
-		exit 1; \
-	fi
-	@echo ""
-	@# Get target project path
-	@echo -e "$(GREEN)Step 1: Target Project$(NC)"
-	@read -p "Enter the project path (absolute or relative): " project_path; \
-	if [ -z "$$project_path" ]; then \
-		echo -e "$(RED)Error: Project path cannot be empty$(NC)"; \
-		exit 1; \
-	fi; \
-	if [ ! -d "$$project_path" ]; then \
-		echo -e "$(YELLOW)Directory does not exist. Create it? (y/N):$(NC) "; \
-		read create_dir; \
-		if [ "$$create_dir" != "y" ] && [ "$$create_dir" != "Y" ]; then \
-			echo -e "$(RED)Installation cancelled.$(NC)"; \
-			exit 1; \
-		fi; \
-		mkdir -p "$$project_path"; \
-	fi; \
-	export TARGET_PROJECT="$$(cd "$$project_path" && pwd)"; \
-	echo "  → Target: $$TARGET_PROJECT"; \
-	echo ""; \
-	\
-	echo -e "$(GREEN)Step 2: Select Skill Categories$(NC)"; \
-	echo "Available skill categories:"; \
-	echo "  1) AWS Java Skills (10 skills)"; \
-	echo "  2) AI Skills (3 skills)"; \
-	echo "  3) JUnit Test Skills (15 skills)"; \
-	echo "  4) LangChain4j Skills (8 skills)"; \
-	echo "  5) Spring Boot Skills (13 skills)"; \
-	echo "  6) Spring AI Skills (1 skill)"; \
-	echo "  7) All Skills"; \
-	echo "  8) None (skip skills)"; \
-	echo ""; \
-	read -p "Select categories (comma-separated, e.g., 1,4,5): " skill_cats; \
-	export SKILL_CATEGORIES="$$skill_cats"; \
-	echo ""; \
-	\
-	echo -e "$(GREEN)Step 3: Select Agents$(NC)"; \
-	echo "  1) All Agents (13 available)"; \
-	echo "  2) Select specific agents"; \
-	echo "  3) None (skip agents)"; \
-	echo ""; \
-	read -p "Choose option [1-3]: " agent_choice; \
-	export AGENT_CHOICE="$$agent_choice"; \
-	export SELECTED_AGENTS=""; \
-	if [ "$$agent_choice" = "2" ]; then \
-		echo ""; \
-		echo "Available agents:"; \
-		idx=1; \
-		for agent in $(AGENTS_DIR)/*.md; do \
-			if [ -f "$$agent" ]; then \
-				name=$$(basename "$$agent" .md); \
-				printf "  %2d) %s\n" $$idx "$$name"; \
-				idx=$$((idx + 1)); \
-			fi; \
-		done; \
-		echo ""; \
-		read -p "Select agents (comma-separated numbers, or type 'all'): " agent_nums; \
-		export SELECTED_AGENTS="$$agent_nums"; \
-	fi; \
-	echo ""; \
-	\
-	echo -e "$(GREEN)Step 4: Select Commands$(NC)"; \
-	echo "  1) All Commands (31 available)"; \
-	echo "  2) Select specific commands"; \
-	echo "  3) None (skip commands)"; \
-	echo ""; \
-	read -p "Choose option [1-3]: " command_choice; \
-	export COMMAND_CHOICE="$$command_choice"; \
-	export SELECTED_COMMANDS=""; \
-	if [ "$$command_choice" = "2" ]; then \
-		echo ""; \
-		echo "Available commands:"; \
-		idx=1; \
-		for cmd in $(COMMANDS_DIR)/*.md; do \
-			if [ -f "$$cmd" ]; then \
-				name=$$(basename "$$cmd" .md); \
-				printf "  %2d) %s\n" $$idx "$$name"; \
-				idx=$$((idx + 1)); \
-			fi; \
-		done; \
-		echo ""; \
-		read -p "Select commands (comma-separated numbers, or type 'all'): " command_nums; \
-		export SELECTED_COMMANDS="$$command_nums"; \
-	fi; \
-	echo ""; \
-	\
-	echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"; \
-	echo -e "$(GREEN)Starting Installation...$(NC)"; \
-	echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"; \
-	echo ""; \
-	\
-	mkdir -p "$$TARGET_PROJECT/.claude/skills"; \
-	mkdir -p "$$TARGET_PROJECT/.claude/agents"; \
-	mkdir -p "$$TARGET_PROJECT/.claude/commands"; \
-	\
-	installed_count=0; \
-	skipped_count=0; \
-	\
-	if [ -n "$$SKILL_CATEGORIES" ] && [ "$$SKILL_CATEGORIES" != "8" ]; then \
-		echo -e "$(GREEN)Installing Skills...$(NC)"; \
-		IFS=',' read -ra CATS <<< "$$SKILL_CATEGORIES"; \
-		for cat in "$${CATS[@]}"; do \
-			cat=$$(echo $$cat | xargs); \
-			case $$cat in \
-				1) cat_dir="aws-java"; cat_name="AWS Java" ;; \
-				2) cat_dir="ai"; cat_name="AI" ;; \
-				3) cat_dir="junit-test"; cat_name="JUnit Test" ;; \
-				4) cat_dir="langchain4j"; cat_name="LangChain4j" ;; \
-				5) cat_dir="spring-boot"; cat_name="Spring Boot" ;; \
-				6) cat_dir="spring-ai"; cat_name="Spring AI" ;; \
-				7) cat_dir="*"; cat_name="All" ;; \
-				*) continue ;; \
-			esac; \
-			\
-			echo ""; \
-			echo "  Category: $$cat_name Skills"; \
-			for skill_path in $(SKILLS_DIR)/$$cat_dir/*/SKILL.md; do \
-				if [ -f "$$skill_path" ]; then \
-					skill_dir=$$(dirname "$$skill_path"); \
-					skill_name=$$(basename "$$skill_dir"); \
-					target_skill_dir="$$TARGET_PROJECT/.claude/skills/$$skill_name"; \
-					\
-					if [ -d "$$target_skill_dir" ]; then \
-						echo -n "    ⚠ $$skill_name already exists. [O]verwrite, [S]kip, [R]ename? "; \
-						read -n 1 conflict_action; \
-						echo ""; \
-						case $$conflict_action in \
-							O|o) rm -rf "$$target_skill_dir"; cp -r "$$skill_dir" "$$target_skill_dir"; echo "      ✓ Overwritten: $$skill_name"; installed_count=$$((installed_count + 1)) ;; \
-							R|r) \
-								read -p "      Enter new name: " new_name; \
-								cp -r "$$skill_dir" "$$TARGET_PROJECT/.claude/skills/$$new_name"; \
-								echo "      ✓ Installed as: $$new_name"; \
-								installed_count=$$((installed_count + 1)) ;; \
-							*) echo "      ○ Skipped: $$skill_name"; skipped_count=$$((skipped_count + 1)) ;; \
-						esac; \
-					else \
-						cp -r "$$skill_dir" "$$target_skill_dir"; \
-						echo "    ✓ Installed: $$skill_name"; \
-						installed_count=$$((installed_count + 1)); \
-					fi; \
-				fi; \
-			done; \
-		done; \
-	fi; \
-	\
-	if [ "$$AGENT_CHOICE" = "1" ]; then \
-		echo ""; \
-		echo -e "$(GREEN)Installing All Agents...$(NC)"; \
-		for agent in $(AGENTS_DIR)/*.md; do \
-			if [ -f "$$agent" ]; then \
-				name=$$(basename "$$agent"); \
-				target_file="$$TARGET_PROJECT/.claude/agents/$$name"; \
-				if [ -f "$$target_file" ]; then \
-					echo -n "  ⚠ $$name already exists. [O]verwrite, [S]kip, [R]ename? "; \
-					read -n 1 conflict_action; \
-					echo ""; \
-					case $$conflict_action in \
-						O|o) cp "$$agent" "$$target_file"; echo "    ✓ Overwritten: $$name"; installed_count=$$((installed_count + 1)) ;; \
-						R|r) \
-							read -p "    Enter new name: " new_name; \
-							cp "$$agent" "$$TARGET_PROJECT/.claude/agents/$$new_name.md"; \
-							echo "    ✓ Installed as: $$new_name.md"; \
-							installed_count=$$((installed_count + 1)) ;; \
-						*) echo "    ○ Skipped: $$name"; skipped_count=$$((skipped_count + 1)) ;; \
-					esac; \
-				else \
-					cp "$$agent" "$$target_file"; \
-					echo "  ✓ Installed: $$name"; \
-					installed_count=$$((installed_count + 1)); \
-				fi; \
-			fi; \
-		done; \
-	elif [ "$$AGENT_CHOICE" = "2" ] && [ -n "$$SELECTED_AGENTS" ]; then \
-		echo ""; \
-		echo -e "$(GREEN)Installing Selected Agents...$(NC)"; \
-		if [ "$$SELECTED_AGENTS" = "all" ]; then \
-			SELECTED_AGENTS="1,2,3,4,5,6,7,8,9,10"; \
-		fi; \
-		IFS=',' read -ra NUMS <<< "$$SELECTED_AGENTS"; \
-		idx=1; \
-		for agent in $(AGENTS_DIR)/*.md; do \
-			if [ -f "$$agent" ]; then \
-				for num in "$${NUMS[@]}"; do \
-					num=$$(echo $$num | xargs); \
-					if [ "$$num" = "$$idx" ]; then \
-						name=$$(basename "$$agent"); \
-						target_file="$$TARGET_PROJECT/.claude/agents/$$name"; \
-						if [ -f "$$target_file" ]; then \
-							echo -n "  ⚠ $$name already exists. [O]verwrite, [S]kip, [R]ename? "; \
-							read -n 1 conflict_action; \
-							echo ""; \
-							case $$conflict_action in \
-								O|o) cp "$$agent" "$$target_file"; echo "    ✓ Overwritten: $$name"; installed_count=$$((installed_count + 1)) ;; \
-								R|r) \
-									read -p "    Enter new name: " new_name; \
-									cp "$$agent" "$$TARGET_PROJECT/.claude/agents/$$new_name.md"; \
-									echo "    ✓ Installed as: $$new_name.md"; \
-									installed_count=$$((installed_count + 1)) ;; \
-								*) echo "    ○ Skipped: $$name"; skipped_count=$$((skipped_count + 1)) ;; \
-							esac; \
-						else \
-							cp "$$agent" "$$target_file"; \
-							echo "  ✓ Installed: $$name"; \
-							installed_count=$$((installed_count + 1)); \
-						fi; \
-						break; \
-					fi; \
-				done; \
-				idx=$$((idx + 1)); \
-			fi; \
-		done; \
-	fi; \
-	\
-	if [ "$$COMMAND_CHOICE" = "1" ]; then \
-		echo ""; \
-		echo -e "$(GREEN)Installing All Commands...$(NC)"; \
-		for cmd in $(COMMANDS_DIR)/*.md; do \
-			if [ -f "$$cmd" ]; then \
-				name=$$(basename "$$cmd"); \
-				target_file="$$TARGET_PROJECT/.claude/commands/$$name"; \
-				if [ -f "$$target_file" ]; then \
-					echo -n "  ⚠ $$name already exists. [O]verwrite, [S]kip, [R]ename? "; \
-					read -n 1 conflict_action; \
-					echo ""; \
-					case $$conflict_action in \
-						O|o) cp "$$cmd" "$$target_file"; echo "    ✓ Overwritten: $$name"; installed_count=$$((installed_count + 1)) ;; \
-						R|r) \
-							read -p "    Enter new name: " new_name; \
-							cp "$$cmd" "$$TARGET_PROJECT/.claude/commands/$$new_name.md"; \
-							echo "    ✓ Installed as: $$new_name.md"; \
-							installed_count=$$((installed_count + 1)) ;; \
-						*) echo "    ○ Skipped: $$name"; skipped_count=$$((skipped_count + 1)) ;; \
-					esac; \
-				else \
-					cp "$$cmd" "$$target_file"; \
-					echo "  ✓ Installed: $$name"; \
-					installed_count=$$((installed_count + 1)); \
-				fi; \
-			fi; \
-		done; \
-	elif [ "$$COMMAND_CHOICE" = "2" ] && [ -n "$$SELECTED_COMMANDS" ]; then \
-		echo ""; \
-		echo -e "$(GREEN)Installing Selected Commands...$(NC)"; \
-		if [ "$$SELECTED_COMMANDS" = "all" ]; then \
-			for cmd in $(COMMANDS_DIR)/*.md; do \
-				if [ -f "$$cmd" ]; then \
-					name=$$(basename "$$cmd"); \
-					target_file="$$TARGET_PROJECT/.claude/commands/$$name"; \
-					if [ -f "$$target_file" ]; then \
-						echo -n "  ⚠ $$name already exists. [O]verwrite, [S]kip, [R]ename? "; \
-						read -n 1 conflict_action; \
-						echo ""; \
-						case $$conflict_action in \
-							O|o) cp "$$cmd" "$$target_file"; echo "    ✓ Overwritten: $$name"; installed_count=$$((installed_count + 1)) ;; \
-							R|r) \
-								read -p "    Enter new name: " new_name; \
-								cp "$$cmd" "$$TARGET_PROJECT/.claude/commands/$$new_name.md"; \
-								echo "    ✓ Installed as: $$new_name.md"; \
-								installed_count=$$((installed_count + 1)) ;; \
-							*) echo "    ○ Skipped: $$name"; skipped_count=$$((skipped_count + 1)) ;; \
-						esac; \
-					else \
-						cp "$$cmd" "$$target_file"; \
-						echo "  ✓ Installed: $$name"; \
-						installed_count=$$((installed_count + 1)); \
-					fi; \
-				fi; \
-			done; \
-		else \
-			IFS=',' read -ra NUMS <<< "$$SELECTED_COMMANDS"; \
-			idx=1; \
-			for cmd in $(COMMANDS_DIR)/*.md; do \
-				if [ -f "$$cmd" ]; then \
-					for num in "$${NUMS[@]}"; do \
-						num=$$(echo $$num | xargs); \
-						if [ "$$num" = "$$idx" ]; then \
-							name=$$(basename "$$cmd"); \
-							target_file="$$TARGET_PROJECT/.claude/commands/$$name"; \
-							if [ -f "$$target_file" ]; then \
-								echo -n "  ⚠ $$name already exists. [O]verwrite, [S]kip, [R]ename? "; \
-								read -n 1 conflict_action; \
-								echo ""; \
-								case $$conflict_action in \
-									O|o) cp "$$cmd" "$$target_file"; echo "    ✓ Overwritten: $$name"; installed_count=$$((installed_count + 1)) ;; \
-									R|r) \
-										read -p "    Enter new name: " new_name; \
-										cp "$$cmd" "$$TARGET_PROJECT/.claude/commands/$$new_name.md"; \
-										echo "    ✓ Installed as: $$new_name.md"; \
-										installed_count=$$((installed_count + 1)) ;; \
-									*) echo "    ○ Skipped: $$name"; skipped_count=$$((skipped_count + 1)) ;; \
-								esac; \
-							else \
-								cp "$$cmd" "$$target_file"; \
-								echo "  ✓ Installed: $$name"; \
-								installed_count=$$((installed_count + 1)); \
-							fi; \
-							break; \
-						fi; \
-					done; \
-					idx=$$((idx + 1)); \
-				fi; \
-			done; \
-		fi; \
-	fi; \
-	\
-	echo ""; \
-	echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"; \
-	echo -e "$(GREEN)✓ Installation Complete!$(NC)"; \
-	echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"; \
-	echo ""; \
-	echo "  Target directory: $$TARGET_PROJECT/.claude/"; \
-	echo "  Files installed:  $$installed_count"; \
-	echo "  Files skipped:    $$skipped_count"; \
-	echo ""; \
-	echo -e "$(YELLOW)Next Steps:$(NC)"; \
-	echo "  1. Navigate to your project: cd $$TARGET_PROJECT"; \
-	echo "  2. Start Claude Code in the project directory"; \
-	echo "  3. Your skills, agents, and commands are now available!"; \
-	echo ""; \
-	echo -e "$(YELLOW)Usage:$(NC)"; \
-	echo "  - Skills are automatically discovered by Claude"; \
-	echo "  - Use @agent-name to invoke agents"; \
-	echo "  - Use /command-name to run commands"; \
-	echo ""
 
 # ═══════════════════════════════════════════════════════════════
 # BACKUP
@@ -669,25 +398,35 @@ backup:
 	@mkdir -p $(BACKUP_DIR)
 	@if [ -d "$(COPILOT_AGENTS)" ] && ls "$(COPILOT_AGENTS)"/*.md >/dev/null 2>&1; then \
 		cp -r "$(COPILOT_AGENTS)" "$(BACKUP_DIR)/copilot-agents" 2>/dev/null || true; \
-		echo "  ✓ Backed up Copilot agents"; \
+		echo -e "$(GREEN)✓ Backed up Copilot agents$(NC)"; \
 	fi
 	@if [ -d "$(OPENCODE_AGENTS)" ]; then \
 		cp -r "$(OPENCODE_AGENTS)" "$(BACKUP_DIR)/opencode-agents" 2>/dev/null || true; \
-		echo "  ✓ Backed up OpenCode agents"; \
+		echo -e "$(GREEN)✓ Backed up OpenCode agents$(NC)"; \
 	fi
 	@if [ -d "$(OPENCODE_COMMANDS)" ]; then \
 		cp -r "$(OPENCODE_COMMANDS)" "$(BACKUP_DIR)/opencode-commands" 2>/dev/null || true; \
-		echo "  ✓ Backed up OpenCode commands"; \
+		echo -e "$(GREEN)✓ Backed up OpenCode commands$(NC)"; \
 	fi
-	@if [ -f "$(CODEX_CONFIG)/AGENTS.md" ]; then \
-		cp "$(CODEX_CONFIG)/AGENTS.md" "$(BACKUP_DIR)/codex-AGENTS.md" 2>/dev/null || true; \
-		echo "  ✓ Backed up Codex AGENTS.md"; \
+	@if [ -d "$(OPENCODE_SKILLS)" ]; then \
+		cp -r "$(OPENCODE_SKILLS)" "$(BACKUP_DIR)/opencode-skills" 2>/dev/null || true; \
+		echo -e "$(GREEN)✓ Backed up OpenCode skills$(NC)"; \
 	fi
-	@if [ -d "$(CODEX_PROMPTS)" ] && ls "$(CODEX_PROMPTS)"/*.md >/dev/null 2>&1; then \
-		cp -r "$(CODEX_PROMPTS)" "$(BACKUP_DIR)/codex-prompts" 2>/dev/null || true; \
-		echo "  ✓ Backed up Codex prompts"; \
+	@if [ -d "$(COPILOT_SKILLS)" ]; then \
+		cp -r "$(COPILOT_SKILLS)" "$(BACKUP_DIR)/copilot-skills" 2>/dev/null || true; \
+		echo -e "$(GREEN)✓ Backed up Copilot skills$(NC)"; \
 	fi
+	@if [ -f "$(CODEX_AGENTS_MD)" ]; then \
+		cp "$(CODEX_AGENTS_MD)" "$(BACKUP_DIR)/codex-AGENTS.md" 2>/dev/null || true; \
+		echo -e "$(GREEN)✓ Backed up Codex AGENTS.md$(NC)"; \
+	fi
+	@if [ -d "$(CODEX_SKILLS)" ]; then \
+		cp -r "$(CODEX_SKILLS)" "$(BACKUP_DIR)/codex-skills" 2>/dev/null || true; \
+		echo -e "$(GREEN)✓ Backed up Codex skills$(NC)"; \
+	fi
+	@echo ""
 	@echo "  Backup location: $(BACKUP_DIR)"
+	@echo ""
 
 # ═══════════════════════════════════════════════════════════════
 # UNINSTALL
@@ -696,109 +435,342 @@ backup:
 uninstall:
 	@echo -e "$(BLUE)Removing Developer Kit installations...$(NC)"
 	@echo ""
-	@# Remove Copilot agents installed from this devkit
-	@if [ -d "$(COPILOT_AGENTS)" ]; then \
-		for agent in $(AGENTS_DIR)/*.md; do \
-			if [ -f "$$agent" ]; then \
-				name=$$(basename "$$agent"); \
-				if [ -f "$(COPILOT_AGENTS)/$$name" ]; then \
-					rm -f "$(COPILOT_AGENTS)/$$name"; \
-					echo "  ✓ Removed Copilot agent: $$name"; \
-				fi; \
+	@# Collect all installed files from all plugins
+	@installed_agents=""; \
+	installed_commands=""; \
+	for plugin_json in $(PLUGIN_JSON_FILES); do \
+		plugin_dir=$$(dirname "$$plugin_json"); \
+		base_dir=$$(dirname "$$plugin_dir"); \
+		agents=$$(jq -r '.agents[]? // empty' "$$plugin_json" 2>/dev/null); \
+		for agent in $$agents; do \
+			agent_name=$$(basename "$$agent"); \
+			installed_agents="$$installed_agents $$agent_name"; \
+		done; \
+		commands=$$(jq -r '.commands[]? // empty' "$$plugin_json" 2>/dev/null); \
+		for cmd in $$commands; do \
+			cmd_name=$$(basename "$$cmd"); \
+			installed_commands="$$installed_commands $$cmd_name"; \
+		done; \
+	done; \
+	\
+	if [ -d "$(COPILOT_AGENTS)" ]; then \
+		for agent in $$installed_agents; do \
+			if [ -f "$(COPILOT_AGENTS)/$$agent" ]; then \
+				rm -f "$(COPILOT_AGENTS)/$$agent"; \
+				echo -e "$(GREEN)✓ Removed Copilot agent: $$agent$(NC)"; \
 			fi; \
 		done; \
-	fi
-	@# Remove OpenCode agents installed from this devkit
-	@if [ -d "$(OPENCODE_AGENTS)" ]; then \
-		for agent in $(AGENTS_DIR)/*.md; do \
-			if [ -f "$$agent" ]; then \
-				name=$$(basename "$$agent"); \
-				if [ -f "$(OPENCODE_AGENTS)/$$name" ]; then \
-					rm -f "$(OPENCODE_AGENTS)/$$name"; \
-					echo "  ✓ Removed OpenCode agent: $$name"; \
-				fi; \
+	fi; \
+	\
+	if [ -d "$(OPENCODE_AGENTS)" ]; then \
+		for agent in $$installed_agents; do \
+			if [ -f "$(OPENCODE_AGENTS)/$$agent" ]; then \
+				rm -f "$(OPENCODE_AGENTS)/$$agent"; \
+				echo -e "$(GREEN)✓ Removed OpenCode agent: $$agent$(NC)"; \
 			fi; \
 		done; \
-	fi
-	@# Remove OpenCode commands installed from this devkit
-	@if [ -d "$(OPENCODE_COMMANDS)" ]; then \
-		for cmd in $(COMMANDS_DIR)/*.md; do \
-			if [ -f "$$cmd" ]; then \
-				name=$$(basename "$$cmd"); \
-				if [ -f "$(OPENCODE_COMMANDS)/$$name" ]; then \
-					rm -f "$(OPENCODE_COMMANDS)/$$name"; \
-					echo "  ✓ Removed OpenCode command: $$name"; \
-				fi; \
+	fi; \
+	\
+	if [ -d "$(OPENCODE_COMMANDS)" ]; then \
+		for cmd in $$installed_commands; do \
+			if [ -f "$(OPENCODE_COMMANDS)/$$cmd" ]; then \
+				rm -f "$(OPENCODE_COMMANDS)/$$cmd"; \
+				echo -e "$(GREEN)✓ Removed OpenCode command: $$cmd$(NC)"; \
 			fi; \
 		done; \
-	fi
-	@# Remove Codex AGENTS.md (only if it contains Developer Kit marker)
-	@if [ -f "$(CODEX_CONFIG)/AGENTS.md" ] && grep -q "Developer Kit" "$(CODEX_CONFIG)/AGENTS.md" 2>/dev/null; then \
-		rm -f "$(CODEX_CONFIG)/AGENTS.md"; \
-		echo "  ✓ Removed Codex AGENTS.md"; \
-	fi
-	@# Remove Codex prompts installed from this devkit
-	@if [ -d "$(CODEX_PROMPTS)" ]; then \
-		for cmd in $(COMMANDS_DIR)/*.md; do \
-			if [ -f "$$cmd" ]; then \
-				name=$$(basename "$$cmd" .md).md; \
-				if [ -f "$(CODEX_PROMPTS)/$$name" ]; then \
-					rm -f "$(CODEX_PROMPTS)/$$name"; \
-					echo "  ✓ Removed Codex prompt: $$name"; \
-				fi; \
-			fi; \
-		done; \
+	fi; \
+	\
+	if [ -f "$(CODEX_AGENTS_MD)" ] && grep -q "Developer Kit" "$(CODEX_AGENTS_MD)" 2>/dev/null; then \
+		rm -f "$(CODEX_AGENTS_MD)"; \
+		echo -e "$(GREEN)✓ Removed Codex AGENTS.md$(NC)"; \
 	fi
 	@echo ""
 	@echo -e "$(GREEN)✓ Uninstallation complete$(NC)"
+	@echo ""
 
 # ═══════════════════════════════════════════════════════════════
-# LISTING
+# INSTALL ALL
 # ═══════════════════════════════════════════════════════════════
 
-list-agents:
+install: backup
 	@echo ""
-	@echo -e "$(BLUE)Available Agents:$(NC)"
+	@$(call info "Installing Developer Kit for all detected CLIs...")
 	@echo ""
-	@for agent in $(AGENTS_DIR)/*.md; do \
-		if [ -f "$$agent" ]; then \
-			name=$$(basename "$$agent" .md); \
-			desc=$$(head -10 "$$agent" | grep -E '^>' | head -1 | sed 's/^> //'); \
-			printf "  $(GREEN)%-40s$(NC) %s\n" "$$name" "$$desc"; \
-		fi; \
-	done
+	@$(MAKE) -s install-opencode-if-exists
+	@$(MAKE) -s install-copilot-if-exists
+	@$(MAKE) -s install-codex-if-exists
 	@echo ""
+	@$(call success "Installation complete!")
+	@$(MAKE) -s status
 
-list-commands:
-	@echo ""
-	@echo -e "$(BLUE)Available Commands:$(NC)"
-	@echo ""
-	@for cmd in $(COMMANDS_DIR)/*.md; do \
-		if [ -f "$$cmd" ]; then \
-			name=$$(basename "$$cmd" .md); \
-			desc=$$(head -10 "$$cmd" | grep -E '^>' | head -1 | sed 's/^> //'); \
-			printf "  $(GREEN)%-45s$(NC) %s\n" "$$name" "$$desc"; \
-		fi; \
-	done
-	@echo ""
+install-opencode-if-exists:
+	@if [ -d "$(OPENCODE_CONFIG)" ]; then \
+		$(MAKE) -s install-opencode; \
+	else \
+		$(call warning "Skipping OpenCode CLI (not configured)"); \
+	fi
 
-list-skills:
+install-copilot-if-exists:
+	@if [ -d "$(COPILOT_CONFIG)" ]; then \
+		$(MAKE) -s install-copilot; \
+	else \
+		$(call warning "Skipping Copilot CLI (not configured)"); \
+	fi
+
+install-codex-if-exists:
+	@if [ -d "$(CODEX_CONFIG)" ]; then \
+		$(MAKE) -s install-codex; \
+	else \
+		$(call warning "Skipping Codex CLI (not configured)"); \
+	fi
+
+# ═══════════════════════════════════════════════════════════════
+# OPENCODE CLI INSTALLATION
+# ═══════════════════════════════════════════════════════════════
+
+install-opencode: check-deps
 	@echo ""
-	@echo -e "$(BLUE)Available Skills:$(NC)"
+	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
+	@echo -e "$(BLUE)Installing Developer Kit for OpenCode CLI$(NC)"
+	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
 	@echo ""
-	@for category in $(SKILLS_DIR)/*/; do \
-		if [ -d "$$category" ]; then \
-			catname=$$(basename "$$category"); \
-			echo -e "  $(YELLOW)$$catname:$(NC)"; \
-			for skill in $$category*/; do \
-				if [ -d "$$skill" ]; then \
-					skillname=$$(basename "$$skill"); \
-					echo "    - $$skillname"; \
+	@mkdir -p $(OPENCODE_AGENTS)
+	@mkdir -p $(OPENCODE_COMMANDS)
+	@mkdir -p $(OPENCODE_SKILLS)
+	@echo -e "$(CYAN)Installing agents...$(NC)"
+	@agents_count=0; \
+	for plugin_json in $(PLUGIN_JSON_FILES); do \
+		plugin_dir=$$(dirname "$$plugin_json"); \
+		base_dir=$$(dirname "$$plugin_dir"); \
+		plugin_name=$$(jq -r '.name' "$$plugin_json" 2>/dev/null); \
+		agents=$$(jq -r '.agents[]? // empty' "$$plugin_json" 2>/dev/null); \
+		if [ -n "$$agents" ]; then \
+			for agent in $$agents; do \
+				agent_path="$$base_dir/$$agent"; \
+				if [ -f "$$agent_path" ]; then \
+					agent_name=$$(basename "$$agent"); \
+					cp "$$agent_path" "$(OPENCODE_AGENTS)/$$agent_name"; \
+					echo "  ✓ $$plugin_name: $$agent_name"; \
+					agents_count=$$((agents_count + 1)); \
 				fi; \
 			done; \
-			echo ""; \
+		fi; \
+	done; \
+	echo "  Total agents installed: $$agents_count"
+	@echo ""
+	@echo -e "$(CYAN)Installing commands...$(NC)"
+	@commands_count=0; \
+	for plugin_json in $(PLUGIN_JSON_FILES); do \
+		plugin_dir=$$(dirname "$$plugin_json"); \
+		base_dir=$$(dirname "$$plugin_dir"); \
+		plugin_name=$$(jq -r '.name' "$$plugin_json" 2>/dev/null); \
+		commands=$$(jq -r '.commands[]? // empty' "$$plugin_json" 2>/dev/null); \
+		if [ -n "$$commands" ]; then \
+			for cmd in $$commands; do \
+				cmd_path="$$base_dir/$$cmd"; \
+				if [ -f "$$cmd_path" ]; then \
+					cmd_name=$$(basename "$$cmd"); \
+					cmd_subdir=$$(dirname "$$cmd"); \
+					if [ "$$cmd_subdir" != "." ]; then \
+						cmd_subdir_rel=$$(echo "$$cmd_subdir" | sed 's|^\./commands$$||' | sed 's|^\./commands/||'); \
+						if [ -n "$$cmd_subdir_rel" ]; then \
+							mkdir -p "$(OPENCODE_COMMANDS)/$$cmd_subdir_rel"; \
+							cp "$$cmd_path" "$(OPENCODE_COMMANDS)/$$cmd_subdir_rel/$$cmd_name"; \
+							echo "  ✓ $$plugin_name: $$cmd_subdir_rel/$$cmd_name"; \
+						else \
+							cp "$$cmd_path" "$(OPENCODE_COMMANDS)/$$cmd_name"; \
+							echo "  ✓ $$plugin_name: $$cmd_name"; \
+						fi; \
+					else \
+						cp "$$cmd_path" "$(OPENCODE_COMMANDS)/$$cmd_name"; \
+						echo "  ✓ $$plugin_name: $$cmd_name"; \
+					fi; \
+					commands_count=$$((commands_count + 1)); \
+				fi; \
+			done; \
+		fi; \
+	done; \
+	echo "  Total commands installed: $$commands_count"
+	@echo ""
+	@echo -e "$(CYAN)Installing skills...$(NC)"
+	@skills_count=0; \
+	for plugin_json in $(PLUGIN_JSON_FILES); do \
+		plugin_dir=$$(dirname "$$plugin_json"); \
+		base_dir=$$(dirname "$$plugin_dir"); \
+		plugin_name=$$(jq -r '.name' "$$plugin_json" 2>/dev/null); \
+		skills=$$(jq -r '.skills[]? // empty' "$$plugin_json" 2>/dev/null); \
+		if [ -n "$$skills" ]; then \
+			for skill_pattern in $$skills; do \
+				for skill_dir in $$base_dir/$$skill_pattern; do \
+					if [ -d "$$skill_dir" ]; then \
+						skill_name=$$(basename "$$skill_dir"); \
+						cp -r "$$skill_dir" "$(OPENCODE_SKILLS)/$$skill_name"; \
+						echo "  ✓ $$plugin_name: $$skill_name"; \
+						skills_count=$$((skills_count + 1)); \
+					fi; \
+				done; \
+			done; \
+		fi; \
+	done; \
+	echo "  Total skills installed: $$skills_count"
+	@echo ""
+	@$(call success "OpenCode CLI installation complete")
+	@echo "  Agents directory: $(OPENCODE_AGENTS)/"
+	@echo "  Commands directory: $(OPENCODE_COMMANDS)/"
+	@echo "  Skills directory: $(OPENCODE_SKILLS)/"
+	@echo ""
+
+# ═══════════════════════════════════════════════════════════════
+# COPILOT CLI INSTALLATION
+# ═══════════════════════════════════════════════════════════════
+
+install-copilot: check-deps
+	@echo ""
+	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
+	@echo -e "$(BLUE)Installing Developer Kit for GitHub Copilot CLI$(NC)"
+	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
+	@echo ""
+	@mkdir -p $(COPILOT_AGENTS)
+	@mkdir -p $(COPILOT_SKILLS)
+	@echo -e "$(CYAN)Installing agents...$(NC)"
+	@agents_count=0; \
+	for plugin_json in $(PLUGIN_JSON_FILES); do \
+		plugin_dir=$$(dirname "$$plugin_json"); \
+		base_dir=$$(dirname "$$plugin_dir"); \
+		plugin_name=$$(jq -r '.name' "$$plugin_json" 2>/dev/null); \
+		agents=$$(jq -r '.agents[]? // empty' "$$plugin_json" 2>/dev/null); \
+		if [ -n "$$agents" ]; then \
+			for agent in $$agents; do \
+				agent_path="$$base_dir/$$agent"; \
+				if [ -f "$$agent_path" ]; then \
+					agent_name=$$(basename "$$agent"); \
+					cp "$$agent_path" "$(COPILOT_AGENTS)/$$agent_name"; \
+					echo "  ✓ $$plugin_name: $$agent_name"; \
+					agents_count=$$((agents_count + 1)); \
+				fi; \
+			done; \
+		fi; \
+	done; \
+	echo "  Total agents installed: $$agents_count"
+	@echo ""
+	@echo -e "$(CYAN)Installing skills...$(NC)"
+	@skills_count=0; \
+	for plugin_json in $(PLUGIN_JSON_FILES); do \
+		plugin_dir=$$(dirname "$$plugin_json"); \
+		base_dir=$$(dirname "$$plugin_dir"); \
+		plugin_name=$$(jq -r '.name' "$$plugin_json" 2>/dev/null); \
+		skills=$$(jq -r '.skills[]? // empty' "$$plugin_json" 2>/dev/null); \
+		if [ -n "$$skills" ]; then \
+			for skill_pattern in $$skills; do \
+				for skill_dir in $$base_dir/$$skill_pattern; do \
+					if [ -d "$$skill_dir" ]; then \
+						skill_name=$$(basename "$$skill_dir"); \
+						cp -r "$$skill_dir" "$(COPILOT_SKILLS)/$$skill_name"; \
+						echo "  ✓ $$plugin_name: $$skill_name"; \
+						skills_count=$$((skills_count + 1)); \
+					fi; \
+				done; \
+			done; \
+		fi; \
+	done; \
+	echo "  Total skills installed: $$skills_count"
+	@echo ""
+	@$(call success "Copilot CLI installation complete")
+	@echo "  Agents directory: $(COPILOT_AGENTS)/"
+	@echo "  Skills directory: $(COPILOT_SKILLS)/"
+	@echo "  NOTE: Commands are NOT installed for Copilot CLI (not supported)"
+	@echo ""
+
+# ═══════════════════════════════════════════════════════════════
+# CODEX CLI INSTALLATION
+# ═══════════════════════════════════════════════════════════════
+
+install-codex: check-deps
+	@echo ""
+	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
+	@echo -e "$(BLUE)Installing Developer Kit for Codex CLI$(NC)"
+	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
+	@echo ""
+	@mkdir -p $(CODEX_CONFIG)
+	@mkdir -p $(CODEX_SKILLS)
+	@echo -e "$(CYAN)Installing skills...$(NC)"
+	@skills_count=0; \
+	for plugin_json in $(PLUGIN_JSON_FILES); do \
+		plugin_dir=$$(dirname "$$plugin_json"); \
+		base_dir=$$(dirname "$$plugin_dir"); \
+		plugin_name=$$(jq -r '.name' "$$plugin_json" 2>/dev/null); \
+		skills=$$(jq -r '.skills[]? // empty' "$$plugin_json" 2>/dev/null); \
+		if [ -n "$$skills" ]; then \
+			for skill_pattern in $$skills; do \
+				for skill_dir in $$base_dir/$$skill_pattern; do \
+					if [ -d "$$skill_dir" ]; then \
+						skill_name=$$(basename "$$skill_dir"); \
+						cp -r "$$skill_dir" "$(CODEX_SKILLS)/$$skill_name"; \
+						echo "  ✓ $$plugin_name: $$skill_name"; \
+						skills_count=$$((skills_count + 1)); \
+					fi; \
+				done; \
+			done; \
+		fi; \
+	done; \
+	echo "  Total skills installed: $$skills_count"
+	@echo ""
+	@echo -e "$(CYAN)Creating AGENTS.md index...$(NC)"
+	@echo "# Developer Kit for Codex CLI" > $(CODEX_AGENTS_MD)
+	@echo "# Auto-generated by Developer Kit Makefile" >> $(CODEX_AGENTS_MD)
+	@echo "" >> $(CODEX_AGENTS_MD)
+	@echo "You have access to the Developer Kit, a curated collection of skills" >> $(CODEX_AGENTS_MD)
+	@echo "for automating development tasks." >> $(CODEX_AGENTS_MD)
+	@echo "" >> $(CODEX_AGENTS_MD)
+	@echo "## Available Skills" >> $(CODEX_AGENTS_MD)
+	@echo "" >> $(CODEX_AGENTS_MD)
+	@for plugin_json in $(PLUGIN_JSON_FILES); do \
+		plugin_dir=$$(dirname "$$plugin_json"); \
+		base_dir=$$(dirname "$$plugin_dir"); \
+		plugin_name=$$(jq -r '.name' "$$plugin_json" 2>/dev/null); \
+		skills=$$(jq -r '.skills[]? // empty' "$$plugin_json" 2>/dev/null); \
+		if [ -n "$$skills" ]; then \
+			for skill_pattern in $$skills; do \
+				for skill_dir in $$base_dir/$$skill_pattern; do \
+					if [ -d "$$skill_dir" ]; then \
+						skill_name=$$(basename "$$skill_dir"); \
+						skill_md="$$skill_dir/SKILL.md"; \
+						desc=""; \
+						if [ -f "$$skill_md" ]; then \
+							desc=$$(head -20 "$$skill_md" | grep -E '^description:' | head -1 | sed 's/description: *//'); \
+						fi; \
+						if [ -n "$$desc" ]; then \
+							echo "- **$$skill_name**: $$desc" >> $(CODEX_AGENTS_MD); \
+						else \
+							echo "- $$skill_name" >> $(CODEX_AGENTS_MD); \
+						fi; \
+					fi; \
+				done; \
+			done; \
 		fi; \
 	done
+	@echo "" >> $(CODEX_AGENTS_MD)
+	@$(call success "Codex CLI installation complete")
+	@echo "  AGENTS.md file: $(CODEX_AGENTS_MD)"
+	@echo "  Skills directory: $(CODEX_SKILLS)/"
+	@echo "  NOTE: Agents and commands are NOT installed for Codex CLI (not supported)"
+	@echo ""
+
+# ═══════════════════════════════════════════════════════════════
+# CLAUDE CODE INTERACTIVE INSTALLATION
+# ═══════════════════════════════════════════════════════════════
+# TO BE IMPLEMENTED - This will be a comprehensive interactive installer
+# ═══════════════════════════════════════════════════════════════
+
+install-claude: check-deps
+	@echo ""
+	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
+	@echo -e "$(BLUE)      Claude Code Interactive Developer Kit Installer          $(NC)"
+	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
+	@echo ""
+	@echo -e "$(YELLOW)⚠ This installer is designed for Claude Code only.$(NC)"
+	@echo ""
+	@bash $(DEVKIT_DIR)/scripts/install-claude.sh "$(PLUGIN_JSON_FILES)"
 
 # ═══════════════════════════════════════════════════════════════
 # CLEAN
@@ -807,4 +779,5 @@ list-skills:
 clean:
 	@echo -e "$(BLUE)Cleaning generated files...$(NC)"
 	@rm -f $(DEVKIT_DIR)/*.tmp
-	@echo -e "$(GREEN)✓ Clean complete$(NC)"
+	@$(call success "Clean complete")
+	@echo ""

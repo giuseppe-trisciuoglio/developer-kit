@@ -1,0 +1,25 @@
+{
+  "name": "github-spec-kit",
+  "version": "2.0.0",
+  "description": "GitHub specification integration and verification",
+  "author": {
+    "name": "Giuseppe Trisciuoglio",
+    "email": "giuseppe.trisciuoglio@gmail.com"
+  },
+  "homepage": "https://github.com/giuseppe-trisciuoglio/developer-kit",
+  "repository": "https://github.com/giuseppe-trisciuoglio/developer-kit.git",
+  "license": "MIT",
+  "keywords": [
+    "github",
+    "specifications",
+    "integration",
+    "verification"
+  ],
+  "agents": [],
+  "commands": [
+    "./commands/speckit.check-integration.md",
+    "./commands/speckit.optimize.md",
+    "./commands/speckit.verify.md"
+  ],
+  "skills": []
+}

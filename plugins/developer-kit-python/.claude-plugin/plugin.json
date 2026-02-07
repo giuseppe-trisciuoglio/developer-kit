@@ -1,0 +1,26 @@
+{
+  "name": "developer-kit-python",
+  "version": "2.0.0",
+  "description": "Python development capabilities",
+  "author": {
+    "name": "Giuseppe Trisciuoglio",
+    "email": "giuseppe.trisciuoglio@gmail.com"
+  },
+  "homepage": "https://github.com/giuseppe-trisciuoglio/developer-kit",
+  "repository": "https://github.com/giuseppe-trisciuoglio/developer-kit.git",
+  "license": "MIT",
+  "keywords": [
+    "python",
+    "django",
+    "flask",
+    "fastapi"
+  ],
+  "agents": [
+    "./agents/python-code-review-expert.md",
+    "./agents/python-refactor-expert.md",
+    "./agents/python-security-expert.md",
+    "./agents/python-software-architect-expert.md"
+  ],
+  "commands": [],
+  "skills": []
+}

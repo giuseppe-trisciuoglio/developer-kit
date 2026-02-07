@@ -1,0 +1,49 @@
+{
+  "name": "developer-kit",
+  "version": "2.0.0",
+  "description": "Core agents and commands required by all Developer Kit plugins",
+  "author": {
+    "name": "Giuseppe Trisciuoglio",
+    "email": "giuseppe.trisciuoglio@gmail.com"
+  },
+  "homepage": "https://github.com/giuseppe-trisciuoglio/developer-kit",
+  "repository": "https://github.com/giuseppe-trisciuoglio/developer-kit.git",
+  "license": "MIT",
+  "keywords": [
+    "developer-kit",
+    "core",
+    "code-review",
+    "refactoring",
+    "debugging",
+    "architecture",
+    "documentation"
+  ],
+  "agents": [
+    "./agents/general-code-explorer.md",
+    "./agents/general-code-reviewer.md",
+    "./agents/general-refactor-expert.md",
+    "./agents/general-software-architect.md",
+    "./agents/general-debugger.md",
+    "./agents/document-generator-expert.md"
+  ],
+  "commands": [
+    "./commands/devkit.brainstorm.md",
+    "./commands/devkit.refactor.md",
+    "./commands/devkit.feature-development.md",
+    "./commands/devkit.fix-debugging.md",
+    "./commands/devkit.generate-document.md",
+    "./commands/devkit.generate-changelog.md",
+    "./commands/devkit.github.create-pr.md",
+    "./commands/devkit.github.review-pr.md",
+    "./commands/lra/devkit.lra.init.md",
+    "./commands/lra/devkit.lra.add-feature.md",
+    "./commands/lra/devkit.lra.checkpoint.md",
+    "./commands/lra/devkit.lra.mark-feature.md",
+    "./commands/lra/devkit.lra.recover.md",
+    "./commands/lra/devkit.lra.start-session.md",
+    "./commands/lra/devkit.lra.status.md",
+    "./commands/devkit.verify-skill.md",
+    "./commands/devkit.generate-security-assessment.md"
+  ],
+  "skills": []
+}

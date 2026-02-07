@@ -1,0 +1,23 @@
+# Developer Kit PHP
+
+PHP and WordPress development capabilities.
+
+## Overview
+
+The `developer-kit-php` plugin provides comprehensive PHP development support, including WordPress, Laravel, and Symfony expertise.
+
+## Agents
+
+- **php-code-review-expert** - PHP code review
+- **php-refactor-expert** - PHP refactoring
+- **php-security-expert** - PHP security best practices
+- **php-software-architect-expert** - PHP architecture review
+- **wordpress-development-expert** - WordPress development
+
+## Skills
+
+- **wordpress** - WordPress and Sage theme development
+
+## Dependencies
+
+- `developer-kit` (required)
