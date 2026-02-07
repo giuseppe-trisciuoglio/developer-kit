@@ -1,6 +1,6 @@
 ---
 name: unit-test-wiremock-rest-api
-description: Unit tests for external REST APIs using WireMock to mock HTTP endpoints. Use when testing service integrations with external APIs.
+description: Provides patterns for unit testing external REST APIs using WireMock to mock HTTP endpoints. Use when testing service integrations with external APIs.
 category: testing
 tags: [junit-5, wiremock, unit-testing, rest-api, mocking, http-stubbing]
 version: 1.0.1

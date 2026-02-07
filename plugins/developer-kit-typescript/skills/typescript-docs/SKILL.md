@@ -1,7 +1,7 @@
 ---
 name: typescript-docs
 version: 1.0.0
-description: Create comprehensive TypeScript documentation using JSDoc, TypeDoc, and multi-layered documentation patterns for different audiences. Includes API documentation, architectural decision records (ADRs), code examples, and framework-specific patterns for NestJS, Express, React, Angular, and Vue.
+description: Generates comprehensive TypeScript documentation using JSDoc, TypeDoc, and multi-layered documentation patterns for different audiences. Use when creating API documentation, architectural decision records (ADRs), code examples, and framework-specific patterns for NestJS, Express, React, Angular, and Vue.
 allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 category: frontend
 tags: [typescript, documentation, jsdoc, typedoc, api-docs, adr, react, angular, vue, nestjs, express]

@@ -1,6 +1,6 @@
 ---
 name: unit-test-application-events
-description: Testing Spring application events (ApplicationEvent) with @EventListener and ApplicationEventPublisher. Test event publishing, listening, and async event handling in Spring Boot applications. Use when validating event-driven workflows in your Spring Boot services.
+description: Provides patterns for testing Spring application events (ApplicationEvent) with @EventListener and ApplicationEventPublisher. Handles event publishing, listening, and async event handling in Spring Boot applications. Use when validating event-driven workflows in your Spring Boot services.
 category: testing
 tags: [junit-5, application-events, event-driven, listeners, publishers]
 version: 1.0.1

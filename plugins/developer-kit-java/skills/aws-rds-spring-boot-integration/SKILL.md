@@ -1,6 +1,6 @@
 ---
 name: aws-rds-spring-boot-integration
-description: Configure AWS RDS (Aurora, MySQL, PostgreSQL) with Spring Boot applications. Use when setting up datasources, connection pooling, security, and production-ready database configuration.
+description: Provides patterns to configure AWS RDS (Aurora, MySQL, PostgreSQL) with Spring Boot applications. Use when setting up datasources, connection pooling, security, and production-ready database configuration.
 category: aws
 tags: [aws, rds, aurora, spring-boot, spring-data-jpa, datasource, configuration, hikari, mysql, postgresql]
 version: 1.1.0

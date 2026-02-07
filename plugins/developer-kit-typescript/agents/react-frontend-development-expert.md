@@ -1,6 +1,6 @@
 ---
 name: react-frontend-development-expert
-description: Expert React frontend developer specializing in React 19, Vite, TypeScript, Tailwind CSS, and shadcn/ui. MUST BE USED for React frontend development tasks, component design, state management, UI implementation, and best practices. Use PROACTIVELY for building modern, responsive, and accessible React applications with latest React 19 features.
+description: Expert React frontend developer that provides React 19, Vite, TypeScript, Tailwind CSS, and shadcn/ui capabilities. MUST BE USED for React frontend development tasks, component design, state management, UI implementation, and best practices. Use PROACTIVELY for building modern, responsive, and accessible React applications with latest React 19 features.
 model: sonnet
 ---
 

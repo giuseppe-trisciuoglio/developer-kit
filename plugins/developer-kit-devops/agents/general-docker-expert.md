@@ -1,6 +1,6 @@
 ---
 name: docker-expert
-description: Expert Docker specialist for creating optimized Dockerfiles, multi-stage builds, container images, and Docker Compose configurations. Use proactively for containerization tasks, image optimization, and container orchestration.
+description: Provides expert Docker capability for creating optimized Dockerfiles, multi-stage builds, container images, and Docker Compose configurations. Use proactively when working on containerization tasks, image optimization, and container orchestration.
 tools: [Read, Write, Edit, Glob, Grep, Bash]
 model: inherit
 ---

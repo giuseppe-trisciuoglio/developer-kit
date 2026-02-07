@@ -1,7 +1,7 @@
 ---
 allowed-tools: Read, Write, Edit
 argument-hint: "[prompt-text] [target-model] [optimization-level]"
-description: Expert prompt optimization using advanced techniques (CoT, few-shot, constitutional AI) for LLM performance enhancement
+description: Provides expert prompt optimization using advanced techniques (CoT, few-shot, constitutional AI) for LLM performance enhancement. Use when you need to improve prompt quality or optimize LLM interactions.
 model: sonnet
 ---
 

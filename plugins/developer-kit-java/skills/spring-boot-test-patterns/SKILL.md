@@ -1,6 +1,6 @@
 ---
 name: spring-boot-test-patterns
-description: Comprehensive testing patterns for Spring Boot applications including unit, integration, slice, and container-based testing with JUnit 5, Mockito, Testcontainers, and performance optimization. Use when implementing robust test suites for Spring Boot applications.
+description: Provides comprehensive testing patterns for Spring Boot applications including unit, integration, slice, and container-based testing with JUnit 5, Mockito, Testcontainers, and performance optimization. Use when implementing robust test suites for Spring Boot applications.
 category: testing
 tags: [spring-boot, java, testing, junit5, mockito, testcontainers, integration-testing, unit-testing, test-slices]
 version: 1.5.0

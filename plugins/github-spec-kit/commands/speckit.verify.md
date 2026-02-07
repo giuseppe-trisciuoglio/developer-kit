@@ -1,5 +1,5 @@
 ---
-description: Verify implementation completion by checking tasks, logic, tests, and code quality against specifications.
+description: Validates implementation completion by checking tasks, logic, tests, and code quality against specifications. Use when you need to verify that all tasks are properly completed.
 argument-hint: "[optional-focus-area]"
 ---
 

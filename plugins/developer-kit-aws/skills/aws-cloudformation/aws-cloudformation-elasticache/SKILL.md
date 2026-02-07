@@ -1,6 +1,6 @@
 ---
 name: aws-cloudformation-elasticache
-description: AWS CloudFormation patterns for Amazon ElastiCache. Use when creating ElastiCache clusters (Redis, Memcached), replication groups, parameter groups, subnet groups, and implementing template structure with Parameters, Outputs, Mappings, Conditions, and cross-stack references for distributed caching infrastructure.
+description: Provides AWS CloudFormation patterns for Amazon ElastiCache. Use when creating ElastiCache clusters (Redis, Memcached), replication groups, parameter groups, subnet groups, and implementing template structure with Parameters, Outputs, Mappings, Conditions, and cross-stack references for distributed caching infrastructure.
 category: aws
 tags: [aws, cloudformation, elasticache, redis, memcached, cache, infrastructure, iaac]
 version: 1.0.0

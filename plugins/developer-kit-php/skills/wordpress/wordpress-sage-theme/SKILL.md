@@ -1,6 +1,6 @@
 ---
 name: wordpress-sage-theme
-description: "WordPress theme development using Sage (roots/sage) framework. Use when creating, modifying, or debugging WordPress themes with Sage, including: (1) Creating new Sage themes from scratch, (2) Setting up Blade templates and components, (3) Configuring build tools (Vite, Bud), (4) Working with WordPress theme templates and hierarchy, (5) Implementing ACF fields integration, (6) Theme customization and asset management"
+description: "Provides WordPress theme development patterns using Sage (roots/sage) framework. Use when creating, modifying, or debugging WordPress themes with Sage, including: (1) Creating new Sage themes from scratch, (2) Setting up Blade templates and components, (3) Configuring build tools (Vite, Bud), (4) Working with WordPress theme templates and hierarchy, (5) Implementing ACF fields integration, (6) Theme customization and asset management"
 ---
 
 # WordPress Sage Theme Development

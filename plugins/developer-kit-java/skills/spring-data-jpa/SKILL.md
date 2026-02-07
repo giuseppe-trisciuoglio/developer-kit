@@ -1,6 +1,6 @@
 ---
 name: spring-data-jpa
-description: Implement persistence layers with Spring Data JPA. Use when creating repositories, configuring entity relationships, writing queries (derived and @Query), setting up pagination, database auditing, transactions, UUID primary keys, multiple databases, and database indexing. Covers repository interfaces, JPA entities, custom queries, relationships, and performance optimization patterns.
+description: Provides patterns to implement persistence layers with Spring Data JPA. Use when creating repositories, configuring entity relationships, writing queries (derived and @Query), setting up pagination, database auditing, transactions, UUID primary keys, multiple databases, and database indexing.
 allowed-tools: Read, Write, Bash, Grep
 category: backend
 tags: [spring-data, jpa, database, hibernate, orm, persistence]

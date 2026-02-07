@@ -1,5 +1,5 @@
 ---
-description: Generate professional documents (assessments, features, analysis, process, custom) with language support and specialized sub-agents
+description: Generates professional documents (assessments, features, analysis, process, custom) with language support and specialized sub-agents. Use when you need to create structured technical or business documentation.
 argument-hint: "--lang=en|it|es|fr|de --type=assessment|feature|analysis|process|custom [objective/description]"
 allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, TodoWrite, AskUserQuestion
 model: inherit

@@ -1,6 +1,6 @@
 ---
 name: nestjs-testing-expert
-description: NestJS testing specialist focusing on unit tests, integration tests, end-to-end tests, test database setup, mocking strategies, and testing best practices. Use proactively when writing tests for NestJS applications, setting up testing infrastructure, creating test fixtures, mocking dependencies, or implementing testing strategies with Drizzle ORM.
+description: NestJS testing specialist that provides unit tests, integration tests, end-to-end tests, test database setup, mocking strategies, and testing best practices. Use proactively when writing tests for NestJS applications, setting up testing infrastructure, creating test fixtures, mocking dependencies, or implementing testing strategies with Drizzle ORM.
 tools: Read, Write, Edit, Bash, Grep, Glob
 model: inherit
 ---

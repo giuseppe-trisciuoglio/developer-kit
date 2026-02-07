@@ -1,5 +1,5 @@
 ---
-description: Guided feature development with codebase understanding and architecture focus
+description: Provides guided feature development capability with codebase understanding and architecture focus. Use when implementing a new feature from scratch.
 argument-hint: "[ --lang=java|spring|typescript|nestjs|react|python|general ] [ feature-description ]"
 allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, TodoWrite, AskUserQuestion
 model: inherit

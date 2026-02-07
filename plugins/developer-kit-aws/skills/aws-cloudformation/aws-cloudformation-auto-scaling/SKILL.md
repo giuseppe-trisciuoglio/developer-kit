@@ -1,6 +1,6 @@
 ---
 name: aws-cloudformation-auto-scaling
-description: AWS CloudFormation patterns for Auto Scaling including EC2, ECS, and Lambda. Use when creating Auto Scaling groups, launch configurations, launch templates, scaling policies, lifecycle hooks, and predictive scaling. Covers template structure with Parameters, Outputs, Mappings, Conditions, cross-stack references, and best practices for high availability and cost optimization.
+description: Provides AWS CloudFormation patterns for Auto Scaling including EC2, ECS, and Lambda. Use when creating Auto Scaling groups, launch configurations, launch templates, scaling policies, lifecycle hooks, and predictive scaling. Covers template structure with Parameters, Outputs, Mappings, Conditions, cross-stack references, and best practices for high availability and cost optimization.
 category: aws
 tags: [aws, cloudformation, auto-scaling, ec2, ecs, lambda, infrastructure, iaac, scaling]
 version: 1.1.0

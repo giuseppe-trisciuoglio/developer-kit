@@ -1,6 +1,6 @@
 ---
 name: general-code-reviewer
-description: Reviews code for bugs, logic errors, security vulnerabilities, and quality issues using confidence-based filtering to report only high-priority issues that truly matter
+description: Provides code review capability for bugs, logic errors, security vulnerabilities, and quality issues using confidence-based filtering to report only high-priority issues. Use when reviewing code changes or before merging pull requests.
 tools: [Read, Write, Edit, Glob, Grep, Bash]
 model: inherit
 ---

@@ -1,6 +1,6 @@
 ---
 name: spring-boot-cache
-description: Instruction set for enabling and operating the Spring Cache abstraction in Spring Boot when implementing application-level caching for performance-sensitive workloads.
+description: Provides patterns for enabling and operating the Spring Cache abstraction in Spring Boot. Use when implementing application-level caching for performance-sensitive workloads.
 allowed-tools: Read, Write, Bash
 category: backend
 tags: [spring-boot, caching, performance, cacheable, cache-managers]

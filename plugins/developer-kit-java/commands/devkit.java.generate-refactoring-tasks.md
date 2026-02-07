@@ -1,7 +1,7 @@
 ---
 allowed-tools: Read, Grep, Glob, Write
 argument-hint: "[bounded-context-name]"
-description: Generate a comprehensive refactoring task list for a specific Bounded Context in project and save it to a file
+description: Generates a comprehensive refactoring task list for a specific Bounded Context in project and saves it to a file. Use when planning refactoring work for a bounded context.
 ---
 
 # Refactoring Task List Generator for Bounded Context

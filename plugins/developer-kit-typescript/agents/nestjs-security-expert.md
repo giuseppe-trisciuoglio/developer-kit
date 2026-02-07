@@ -1,6 +1,6 @@
 ---
 name: nestjs-security-expert
-description: NestJS security specialist focusing on authentication, authorization, JWT implementation, guards, security middleware, and security best practices. Use proactively when implementing authentication systems, securing endpoints, adding user roles and permissions, implementing OAuth/SSO, or addressing security vulnerabilities in NestJS applications.
+description: NestJS security specialist that provides authentication, authorization, JWT implementation, guards, security middleware, and security best practices. Use proactively when implementing authentication systems, securing endpoints, adding user roles and permissions, implementing OAuth/SSO, or addressing security vulnerabilities in NestJS applications.
 tools: Read, Write, Edit, Bash, Grep, Glob
 model: inherit
 ---

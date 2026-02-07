@@ -1,5 +1,5 @@
 ---
-description: Generate complete CRUD implementation for a Spring Boot domain class using spring-boot-crud-patterns skill
+description: Generates complete CRUD implementation for a Spring Boot domain class using spring-boot-crud-patterns skill. Use when creating new domain entities with REST endpoints.
 argument-hint: "[domain-class-name]"
 allowed-tools: Read, Write, Bash
 model: inherit

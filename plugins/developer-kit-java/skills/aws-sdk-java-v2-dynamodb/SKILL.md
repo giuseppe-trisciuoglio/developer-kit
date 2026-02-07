@@ -1,6 +1,6 @@
 ---
 name: aws-sdk-java-v2-dynamodb
-description: Amazon DynamoDB patterns using AWS SDK for Java 2.x. Use when creating, querying, scanning, or performing CRUD operations on DynamoDB tables, working with indexes, batch operations, transactions, or integrating with Spring Boot applications.
+description: Provides Amazon DynamoDB patterns using AWS SDK for Java 2.x. Use when creating, querying, scanning, or performing CRUD operations on DynamoDB tables, working with indexes, batch operations, transactions, or integrating with Spring Boot applications.
 category: aws
 tags: [aws, dynamodb, java, sdk, nosql, database]
 version: 1.1.0

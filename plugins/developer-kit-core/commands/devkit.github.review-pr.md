@@ -1,6 +1,5 @@
 ---
-description: Comprehensive GitHub pull request review with code quality, security, and best practices analysis
-category: version-control-git
+description: Provides comprehensive GitHub pull request review with code quality, security, and best practices analysis. Use when reviewing a PR before merging.
 allowed-tools: Bash(gh *), Bash(git *), Read, Grep, Glob
 argument-hint: "[pr-number] [review-focus] [output-format]"
 ---

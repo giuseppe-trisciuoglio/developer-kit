@@ -1,6 +1,6 @@
 ---
 name: spring-boot-saga-pattern
-description: Implement distributed transactions using the Saga Pattern in Spring Boot microservices. Use when building microservices requiring transaction management across multiple services, handling compensating transactions, ensuring eventual consistency, or implementing choreography or orchestration-based sagas with Spring Boot, Kafka, or Axon Framework.
+description: Provides distributed transaction patterns using the Saga Pattern in Spring Boot microservices. Use when building microservices requiring transaction management across multiple services, handling compensating transactions, ensuring eventual consistency, or implementing choreography or orchestration-based sagas with Spring Boot, Kafka, or Axon Framework.
 allowed-tools: Read, Write, Bash
 category: backend
 tags: [spring-boot, saga, distributed-transactions, choreography, orchestration, microservices]

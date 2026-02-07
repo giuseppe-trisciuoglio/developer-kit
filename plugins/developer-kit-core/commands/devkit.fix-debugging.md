@@ -1,5 +1,5 @@
 ---
-description: Guided bug fixing and debugging with systematic root cause analysis
+description: Provides guided bug fixing and debugging capability with systematic root cause analysis. Use when encountering bugs, errors, or unexpected behavior.
 argument-hint: "[ --lang=java|spring|typescript|nestjs|react|python|general ] [ issue-description or error-message ]"
 allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, TodoWrite, AskUserQuestion
 model: inherit

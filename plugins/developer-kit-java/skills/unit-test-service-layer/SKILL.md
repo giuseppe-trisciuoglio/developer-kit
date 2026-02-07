@@ -1,6 +1,6 @@
 ---
 name: unit-test-service-layer
-description: Unit tests for service layer with Mockito. Test business logic in isolation by mocking dependencies. Use when validating service behaviors and business logic without database or external services.
+description: Provides patterns for unit testing service layer with Mockito. Validates business logic in isolation by mocking dependencies. Use when testing service behaviors and business logic without database or external services.
 category: testing
 tags: [junit-5, mockito, unit-testing, service-layer, business-logic]
 version: 1.0.1

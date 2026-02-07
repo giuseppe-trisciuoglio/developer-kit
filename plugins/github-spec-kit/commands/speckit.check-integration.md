@@ -1,5 +1,5 @@
 ---
-description: Verify that tasks.md considers existing codebase implementations and integration opportunities before execution.
+description: Validates that tasks.md considers existing codebase implementations and integration opportunities before execution. Use when you need to check task alignment with the current codebase.
 argument-hint: "[optional-criteria]"
 ---
 

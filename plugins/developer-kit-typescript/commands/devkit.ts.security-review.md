@@ -1,7 +1,7 @@
 ---
 allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 argument-hint: "[scope] [options]"
-description: Comprehensive security review for TypeScript/Node.js applications (Next.js, NestJS, Express, etc.)
+description: Provides comprehensive security review for TypeScript/Node.js applications (Next.js, NestJS, Express, etc.). Use when auditing security vulnerabilities or before deploying to production.
 ---
 
 Execute comprehensive security review for TypeScript/Node.js applications. Analyze vulnerabilities, dependencies, security configurations, and best practices specific to the TypeScript ecosystem.

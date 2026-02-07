@@ -1,6 +1,6 @@
 ---
 name: aws-sdk-java-v2-rds
-description: AWS RDS (Relational Database Service) management using AWS SDK for Java 2.x. Use when creating, modifying, monitoring, or managing Amazon RDS database instances, snapshots, parameter groups, and configurations.
+description: Provides AWS RDS (Relational Database Service) management patterns using AWS SDK for Java 2.x. Use when creating, modifying, monitoring, or managing Amazon RDS database instances, snapshots, parameter groups, and configurations.
 category: aws
 tags: [aws, rds, database, java, sdk, postgresql, mysql, aurora, spring-boot]
 version: 1.1.0

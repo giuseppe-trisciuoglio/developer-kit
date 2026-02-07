@@ -1,5 +1,5 @@
 ---
-description: Generate professional meeting minutes from transcripts or notes
+description: Generates professional meeting minutes from transcripts or notes. Use when you need to create structured meeting documentation after a meeting.
 argument-hint: "[transcript-file] [meeting-title] [date]"
 allowed-tools: Read, Write
 ---

@@ -1,7 +1,7 @@
 ---
 allowed-tools: Read, Write, Bash, Edit, Grep, Glob
 argument-hint: "[review-type] [file/directory-path] [options]"
-description: Comprehensive Java code review for enterprise Spring applications with security, performance, architecture and best practices analysis
+description: Validates Java code quality for enterprise Spring applications with security, performance, architecture and best practices analysis. Use when reviewing code changes or before merging pull requests.
 model: inherit
 ---
 

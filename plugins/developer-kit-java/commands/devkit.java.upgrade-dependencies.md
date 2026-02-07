@@ -1,7 +1,7 @@
 ---
 allowed-tools: Read, Bash, Edit, Write, Grep, Glob
 argument-hint: "[scope] [strategy] [version]"
-description: Safe and incremental dependency upgrade strategy for Java/Maven/Gradle projects with breaking change detection and migration guides
+description: Manages safe and incremental dependency upgrades for Java/Maven/Gradle projects with breaking change detection and migration guides. Use when upgrading project dependencies or migrating to new library versions.
 ---
 
 # Java Dependency Upgrade Strategy

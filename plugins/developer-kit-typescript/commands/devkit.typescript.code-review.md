@@ -1,7 +1,7 @@
 ---
 allowed-tools: Read, Write, Bash, Edit, Grep, Glob
 argument-hint: "[review-type] [file/directory-path] [options]"
-description: Comprehensive TypeScript monorepo code review for Nx workspaces including NestJS backend, React web, and React Native mobile apps. Focus on architecture, boundaries, security, performance, CI/CD and Nx-specific practices.
+description: Provides comprehensive TypeScript monorepo code review for Nx workspaces including NestJS backend, React web, and React Native mobile apps. Use when reviewing architecture, boundaries, security, performance, CI/CD and Nx-specific practices.
 model: inherit
 ---
 

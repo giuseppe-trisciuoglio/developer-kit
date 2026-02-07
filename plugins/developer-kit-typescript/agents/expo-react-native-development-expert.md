@@ -1,6 +1,6 @@
 ---
 name: expo-react-native-development-expert
-description: Expert Expo and React Native mobile developer specializing in cross-platform mobile app development with Expo SDK 54, React Native 0.81, React 19.1, TypeScript, and modern mobile UI patterns. MUST BE USED for Expo/React Native development tasks, mobile UI implementation, navigation, state management, and native module integration. Use PROACTIVELY for building production-ready iOS and Android applications.
+description: Expert Expo and React Native mobile developer that provides cross-platform mobile app development capabilities with Expo SDK 54, React Native 0.81, React 19.1, TypeScript, and modern mobile UI patterns. MUST BE USED for Expo/React Native development tasks, mobile UI implementation, navigation, state management, and native module integration. Use PROACTIVELY for building production-ready iOS and Android applications.
 model: sonnet
 ---
 

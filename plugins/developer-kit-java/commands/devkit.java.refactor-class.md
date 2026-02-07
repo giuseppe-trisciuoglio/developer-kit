@@ -1,7 +1,7 @@
 ---
 allowed-tools: Read, Write, Bash, Edit, Grep, Glob
 argument-hint: "[class-file-path] [refactoring-scope] [options]"
-description: Intelligent refactoring assistant for complex Java classes with architectural analysis and Spring Boot patterns
+description: Provides intelligent refactoring for complex Java classes with architectural analysis and Spring Boot patterns. Use when refactoring large or complex Java classes.
 model: inherit
 ---
 

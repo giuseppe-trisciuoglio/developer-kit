@@ -1,7 +1,7 @@
 ---
 allowed-tools: Read, Write, Edit, Grep, Glob
 argument-hint: "[language] [output-format]"
-description: Generate comprehensive security assessment document after security audit completion
+description: Generates comprehensive security assessment document after security audit completion. Use when you need to create a structured security report.
 ---
 
 Generate comprehensive security assessment document based on security audit findings. Creates structured security documentation in specified language with project-specific analysis.

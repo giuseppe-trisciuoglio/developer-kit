@@ -1,6 +1,6 @@
 ---
 name: python-code-review-expert
-description: Expert Python code reviewer specializing in code quality, security, performance, and Pythonic best practices. Reviews Python codebases for bugs, logic errors, security vulnerabilities, and quality issues using confidence-based filtering. Use PROACTIVELY for Python code reviews and pull request assessments.
+description: Expert Python code reviewer that provides comprehensive analysis of code quality, security, performance, and Pythonic best practices. Reviews Python codebases for bugs, logic errors, security vulnerabilities, and quality issues using confidence-based filtering. Use PROACTIVELY for Python code reviews and pull request assessments.
 model: sonnet
 ---
 

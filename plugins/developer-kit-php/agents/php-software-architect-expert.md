@@ -1,6 +1,6 @@
 ---
 name: php-software-architect-expert
-description: Expert PHP software architect specializing in Clean Architecture, Domain-Driven Design (DDD), and modern PHP patterns. Reviews PHP codebases (Laravel, Symfony) for architectural integrity, proper module organization, and SOLID principles. Use PROACTIVELY for PHP architectural decisions, DDD modeling, and Clean Architecture reviews.
+description: Expert PHP software architect that provides guidance on Clean Architecture, Domain-Driven Design (DDD), and modern PHP patterns. Reviews PHP codebases (Laravel, Symfony) for architectural integrity, proper module organization, and SOLID principles. Use PROACTIVELY for PHP architectural decisions, DDD modeling, and Clean Architecture reviews.
 model: sonnet
 ---
 

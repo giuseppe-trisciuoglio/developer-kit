@@ -1,6 +1,6 @@
 ---
 name: nestjs-backend-development-expert
-description: Expert NestJS backend developer specializing in feature implementation, architecture, and best practices. Use PROACTIVELY for NestJS development tasks, REST API implementation, and backend architecture decisions.
+description: Expert NestJS backend developer that provides feature implementation, architecture, and best practices. Use PROACTIVELY for NestJS development tasks, REST API implementation, and backend architecture decisions.
 model: sonnet
 ---
 

@@ -1,5 +1,5 @@
 ---
-description: Optimize task workflow by analyzing dependencies, parallelization opportunities, and subagent delegation strategy for tasks.md
+description: Provides task workflow optimization by analyzing dependencies, parallelization opportunities, and subagent delegation strategy for tasks.md. Use when you need to improve task execution efficiency.
 argument-hint: "[optional-strategy]"
 ---
 

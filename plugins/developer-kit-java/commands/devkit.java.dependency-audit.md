@@ -1,7 +1,7 @@
 ---
 allowed-tools: Read, Bash, Grep, Glob, Write
 argument-hint: "[scope] [focus] [format]"
-description: Comprehensive dependency audit for Java projects with vulnerability scanning, license compliance, and supply chain security analysis
+description: Validates Java project dependencies with vulnerability scanning, license compliance, and supply chain security analysis. Use when auditing project dependencies or before releases.
 ---
 
 # Java Dependency Audit and Security Analysis

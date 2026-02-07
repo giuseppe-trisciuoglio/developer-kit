@@ -1,7 +1,7 @@
 ---
 allowed-tools: Read, Bash, Grep, Glob
 argument-hint: "[package-path] [focus-area]"
-description: Comprehensive architectural review for Java applications focusing on Clean Architecture, DDD, and Spring Boot patterns
+description: Validates Java application architecture focusing on Clean Architecture, DDD, and Spring Boot patterns. Use when reviewing architectural decisions or before major refactoring.
 ---
 
 # Java Architectural Review

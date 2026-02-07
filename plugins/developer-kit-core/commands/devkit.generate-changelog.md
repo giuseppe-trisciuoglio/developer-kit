@@ -1,7 +1,7 @@
 ---
 allowed-tools: Bash, Read, Write, Edit, Grep
 argument-hint: "[action] [version] [format]"
-description: Generate and maintain project changelog following Keep a Changelog standard with Git integration and Conventional Commits support for any project type
+description: Generates and manages project changelog following Keep a Changelog standard with Git integration and Conventional Commits support. Use when releasing a new version or updating the changelog after commits.
 ---
 
 # Project Changelog Generator and Maintainer

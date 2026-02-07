@@ -1,6 +1,6 @@
 ---
 name: rag
-description: Build Retrieval-Augmented Generation (RAG) systems for AI applications with vector databases and semantic search. Use when implementing knowledge-grounded AI, building document Q&A systems, or integrating LLMs with external knowledge bases.
+description: Provides patterns to build Retrieval-Augmented Generation (RAG) systems for AI applications with vector databases and semantic search. Use when implementing knowledge-grounded AI, building document Q&A systems, or integrating LLMs with external knowledge bases.
 allowed-tools: Read, Write, Bash
 category: ai-engineering
 tags: [rag, vector-databases, embeddings, retrieval, semantic-search]

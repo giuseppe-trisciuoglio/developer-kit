@@ -1,6 +1,6 @@
 ---
 name: general-software-architect
-description: Designs comprehensive feature architectures by analyzing existing codebase patterns and providing detailed implementation blueprints with specific files, components, data flows, and build sequences
+description: Provides comprehensive feature architecture design by analyzing existing codebase patterns and delivering detailed implementation blueprints with specific files, components, data flows, and build sequences. Use when planning new features or designing system architecture.
 tools: [Read, Write, Edit, Glob, Grep, Bash]
 model: inherit
 ---

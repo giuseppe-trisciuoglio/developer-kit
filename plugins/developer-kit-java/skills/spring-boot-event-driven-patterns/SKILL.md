@@ -1,6 +1,6 @@
 ---
 name: spring-boot-event-driven-patterns
-description: Implement Event-Driven Architecture (EDA) in Spring Boot using ApplicationEvent, @EventListener, and Kafka. Use for building loosely-coupled microservices with domain events, transactional event listeners, and distributed messaging patterns.
+description: Provides Event-Driven Architecture (EDA) patterns in Spring Boot using ApplicationEvent, @EventListener, and Kafka. Use when building loosely-coupled microservices with domain events, transactional event listeners, and distributed messaging patterns.
 allowed-tools: Read, Write, Bash
 category: backend
 tags: [spring-boot, java, event-driven, eda, kafka, messaging, domain-events, microservices, spring-cloud-stream]

@@ -1,5 +1,5 @@
 ---
-description: Guided code refactoring with deep codebase understanding, compatibility options, and comprehensive verification
+description: Provides guided code refactoring capability with deep codebase understanding, compatibility options, and comprehensive verification. Use when restructuring or improving existing code.
 argument-hint: "[ --lang=java|spring|typescript|nestjs|react|python|general ] [ --scope=file|module|feature ] [ refactor-description ]"
 allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, TodoWrite, AskUserQuestion
 model: inherit

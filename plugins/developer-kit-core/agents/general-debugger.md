@@ -1,6 +1,6 @@
 ---
 name: general-debugger
-description: Expert debugger for root cause analysis. Traces execution paths, analyzes stack traces, identifies failure points, and proposes targeted fixes with minimal changes. Use proactively for errors, test failures, or unexpected behavior.
+description: Provides expert debugging capability for root cause analysis. Traces execution paths, analyzes stack traces, identifies failure points, and proposes targeted fixes with minimal changes. Use proactively when encountering errors, test failures, or unexpected behavior.
 tools: [Read, Write, Edit, Glob, Grep, Bash]
 model: inherit
 ---

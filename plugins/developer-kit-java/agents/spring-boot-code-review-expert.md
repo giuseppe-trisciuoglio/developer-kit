@@ -1,6 +1,6 @@
 ---
 name: spring-boot-code-review-expert
-description: Expert Spring Boot code reviewer specializing in Java best practices, patterns, and architectural issues. Reviews code for quality, maintainability, and adherence to Spring Boot conventions. Use PROACTIVELY after code changes or when implementing new features.
+description: Provides expert Spring Boot code review capability, specializing in Java best practices, patterns, and architectural issues. Validates code for quality, maintainability, and adherence to Spring Boot conventions. Use proactively after code changes or when implementing new features.
 model: sonnet
 ---
 

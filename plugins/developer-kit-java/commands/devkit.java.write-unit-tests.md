@@ -1,7 +1,7 @@
 ---
 allowed-tools: Read, Edit, Write, Bash, Grep, Glob
 argument-hint: <class-file-path>
-description: Generate comprehensive JUnit 5 unit tests for Java classes with Mockito mocking and AssertJ assertions
+description: Generates comprehensive JUnit 5 unit tests for Java classes with Mockito mocking and AssertJ assertions. Use when writing unit tests for service, controller, or utility classes.
 model: inherit
 ---
 

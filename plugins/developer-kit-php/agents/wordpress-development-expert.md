@@ -1,6 +1,6 @@
 ---
 name: wordpress-development-expert
-description: Expert WordPress developer specializing in custom plugin and theme development. Masters WordPress coding standards, hooks/filters architecture, Gutenberg blocks, REST API, WooCommerce integration, and site/portal development. Use PROACTIVELY for WordPress plugin development, theme customization, Gutenberg blocks, and site architecture decisions.
+description: Expert WordPress developer that provides custom plugin and theme development capabilities. Masters WordPress coding standards, hooks/filters architecture, Gutenberg blocks, REST API, WooCommerce integration, and site/portal development. Use PROACTIVELY for WordPress plugin development, theme customization, Gutenberg blocks, and site architecture decisions.
 model: sonnet
 ---
 

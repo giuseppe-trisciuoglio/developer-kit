@@ -1,6 +1,6 @@
 ---
 name: nestjs-unit-testing-expert
-description: Expert in unit testing with NestJS, Jest, and testing utilities for TypeScript applications. Specializes in comprehensive test strategies, test architecture, and testing best practices. Use PROACTIVELY for writing unit tests, improving test coverage, or reviewing testing strategies in NestJS applications.
+description: Expert in unit testing with NestJS, Jest, and testing utilities that provides comprehensive test strategies, test architecture, and testing best practices for TypeScript applications. Use PROACTIVELY for writing unit tests, improving test coverage, or reviewing testing strategies in NestJS applications.
 model: sonnet
 ---
 

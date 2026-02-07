@@ -1,7 +1,7 @@
 ---
 allowed-tools: Read, Grep, Glob, Bash, Task
 argument-hint: "[scope] [options]"
-description: Comprehensive security review for Java enterprise applications (Spring, Jakarta EE, etc.)
+description: Validates security posture for Java enterprise applications (Spring, Jakarta EE, etc.). Use when auditing application security or before production deployments.
 ---
 
 Execute comprehensive security review for Java enterprise applications. Analyze vulnerabilities, dependencies, security configurations, and best practices specific to the Java ecosystem.

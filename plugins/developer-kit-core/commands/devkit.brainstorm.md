@@ -1,5 +1,5 @@
 ---
-description: Guided brainstorming to transform ideas into fully formed designs with documentation and next-step recommendations
+description: Provides guided brainstorming capability to transform ideas into fully formed designs with documentation and next-step recommendations. Use when starting a new feature or exploring design alternatives.
 argument-hint: "[ idea-description ]"
 allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, TodoWrite, AskUserQuestion
 model: inherit

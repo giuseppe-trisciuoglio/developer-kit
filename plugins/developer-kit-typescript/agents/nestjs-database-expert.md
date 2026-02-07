@@ -1,6 +1,6 @@
 ---
 name: nestjs-database-expert
-description: NestJS database specialist with expertise in Drizzle ORM setup, schema design, migrations, queries, transactions, and database operations. Use proactively when working with database-related code in NestJS applications, setting up Drizzle ORM, creating migrations, writing queries, or optimizing database performance.
+description: NestJS database specialist that provides expertise in Drizzle ORM setup, schema design, migrations, queries, transactions, and database operations. Use proactively when working with database-related code in NestJS applications, setting up Drizzle ORM, creating migrations, writing queries, or optimizing database performance.
 tools: Read, Write, Edit, Bash, Grep, Glob
 model: inherit
 ---

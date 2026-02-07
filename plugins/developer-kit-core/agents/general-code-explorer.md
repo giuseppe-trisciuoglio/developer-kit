@@ -1,6 +1,6 @@
 ---
 name: general-code-explorer
-description: Deeply analyzes existing codebase features by tracing execution paths, mapping architecture layers, understanding patterns and abstractions, and documenting dependencies
+description: Provides deep analysis of existing codebase features by tracing execution paths, mapping architecture layers, understanding patterns and abstractions, and documenting dependencies. Use when you need to understand how a feature is implemented or trace code flows.
 tools: [Read, Write, Edit, Glob, Grep, Bash]
 model: inherit
 ---

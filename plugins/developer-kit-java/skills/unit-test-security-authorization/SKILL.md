@@ -1,6 +1,6 @@
 ---
 name: unit-test-security-authorization
-description: Unit tests for Spring Security with @PreAuthorize, @Secured, @RolesAllowed. Test role-based access control and authorization policies. Use when validating security configurations and access control logic.
+description: Provides patterns for unit testing Spring Security with @PreAuthorize, @Secured, @RolesAllowed. Validates role-based access control and authorization policies. Use when testing security configurations and access control logic.
 category: testing
 tags: [junit-5, spring-security, authorization, roles, preauthorize, mockmvc]
 version: 1.0.1

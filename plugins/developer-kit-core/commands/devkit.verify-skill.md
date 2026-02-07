@@ -1,5 +1,5 @@
 ---
-description: Validates a skill against DevKit standards (requirements, template, dependencies)
+description: Validates a skill against DevKit standards (requirements, template, dependencies). Use when you need to verify a skill before publishing or after modifications.
 argument-hint: "[skill-name]"
 allowed-tools: Read, Grep, Glob
 ---

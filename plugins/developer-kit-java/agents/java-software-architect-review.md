@@ -1,6 +1,6 @@
 ---
 name: java-software-architect-review
-description: Expert Java software architect specializing in Clean Architecture, Domain-Driven Design (DDD), and Spring Boot patterns. Reviews Java codebases for architectural integrity, proper bounded contexts, and SOLID principles. Use PROACTIVELY for Java architectural decisions, DDD modeling, and Clean Architecture reviews.
+description: Provides expert Java software architecture review capability, specializing in Clean Architecture, Domain-Driven Design (DDD), and Spring Boot patterns. Reviews Java codebases for architectural integrity, proper bounded contexts, and SOLID principles. Use proactively when making Java architectural decisions, DDD modeling, and Clean Architecture reviews.
 model: sonnet
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: unit-test-utility-methods
-description: Unit tests for utility/helper classes and static methods. Test pure functions and helper logic. Use when validating utility code correctness.
+description: Provides patterns for unit testing utility/helper classes and static methods. Validates pure functions and helper logic. Use when verifying utility code correctness.
 category: testing
 tags: [junit-5, unit-testing, utility, static-methods, pure-functions]
 version: 1.0.1

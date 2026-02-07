@@ -1,6 +1,6 @@
 ---
 name: nestjs
-description: Comprehensive NestJS framework guide with Drizzle ORM integration. Use when building NestJS applications, setting up APIs, implementing authentication, working with databases, or integrating Drizzle ORM. Covers controllers, providers, modules, middleware, guards, interceptors, testing, microservices, GraphQL, and database patterns.
+description: Provides comprehensive NestJS framework patterns with Drizzle ORM integration. Use when building NestJS applications, setting up APIs, implementing authentication, working with databases, or integrating Drizzle ORM. Covers controllers, providers, modules, middleware, guards, interceptors, testing, microservices, GraphQL, and database patterns.
 license: Complete terms in LICENSE.txt
 ---
 
