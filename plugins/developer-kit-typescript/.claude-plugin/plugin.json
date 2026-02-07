@@ -1,0 +1,49 @@
+{
+  "name": "developer-kit-typescript",
+  "version": "2.0.0",
+  "description": "TypeScript/JavaScript full-stack development with NestJS, React, and React Native",
+  "author": {
+    "name": "Giuseppe Trisciuoglio",
+    "email": "giuseppe.trisciuoglio@gmail.com"
+  },
+  "homepage": "https://github.com/giuseppe-trisciuoglio/developer-kit",
+  "repository": "https://github.com/giuseppe-trisciuoglio/developer-kit.git",
+  "license": "MIT",
+  "keywords": [
+    "typescript",
+    "javascript",
+    "nestjs",
+    "react",
+    "react-native",
+    "expo",
+    "shadcn-ui",
+    "tailwindcss"
+  ],
+  "agents": [
+    "./agents/nestjs-backend-development-expert.md",
+    "./agents/nestjs-code-review-expert.md",
+    "./agents/nestjs-database-expert.md",
+    "./agents/nestjs-security-expert.md",
+    "./agents/nestjs-testing-expert.md",
+    "./agents/nestjs-unit-testing-expert.md",
+    "./agents/react-frontend-development-expert.md",
+    "./agents/react-software-architect-review.md",
+    "./agents/typescript-refactor-expert.md",
+    "./agents/typescript-security-expert.md",
+    "./agents/typescript-software-architect-review.md",
+    "./agents/typescript-documentation-expert.md",
+    "./agents/expo-react-native-development-expert.md"
+  ],
+  "commands": [
+    "./commands/devkit.typescript.code-review.md",
+    "./commands/devkit.react.code-review.md",
+    "./commands/devkit.ts.security-review.md"
+  ],
+  "skills": [
+    "./skills/nestjs",
+    "./skills/react-patterns",
+    "./skills/shadcn-ui",
+    "./skills/tailwind-css-patterns",
+    "./skills/typescript-docs"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "name": "developer-kit-ai",
+  "version": "2.0.0",
+  "description": "AI/ML capabilities including prompt engineering, RAG, and chunking strategies",
+  "author": {
+    "name": "Giuseppe Trisciuoglio",
+    "email": "giuseppe.trisciuoglio@gmail.com"
+  },
+  "homepage": "https://github.com/giuseppe-trisciuoglio/developer-kit",
+  "repository": "https://github.com/giuseppe-trisciuoglio/developer-kit.git",
+  "license": "MIT",
+  "keywords": [
+    "ai",
+    "ml",
+    "prompt-engineering",
+    "rag",
+    "chunking",
+    "langchain"
+  ],
+  "agents": [
+    "./agents/prompt-engineering-expert.md"
+  ],
+  "commands": [
+    "./commands/devkit.prompt-optimize.md"
+  ],
+  "skills": [
+    "./skills/prompt-engineering",
+    "./skills/chunking-strategy",
+    "./skills/rag"
+  ]
+}
