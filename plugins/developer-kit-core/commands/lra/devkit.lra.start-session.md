@@ -1,6 +1,6 @@
 ---
 description: Start a new coding session - reads progress, chooses next feature, runs basic tests
-argument-hint: [optional-context]
+argument-hint: "[optional-context]"
 allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 ---
 

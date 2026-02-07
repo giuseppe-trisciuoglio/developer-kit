@@ -1,6 +1,6 @@
 ---
 description: Validates a skill against DevKit standards (requirements, template, dependencies)
-argument-hint: [skill-name]
+argument-hint: "[skill-name]"
 allowed-tools: Read, Grep, Glob
 ---
 

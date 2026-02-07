@@ -1,6 +1,6 @@
 ---
 description: Guided brainstorming to transform ideas into fully formed designs with documentation and next-step recommendations
-argument-hint: [ idea-description ]
+argument-hint: "[ idea-description ]"
 allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, TodoWrite, AskUserQuestion
 model: inherit
 ---

@@ -1,6 +1,6 @@
 ---
 allowed-tools: Bash, Read, Write, Edit, Grep
-argument-hint: [action] [version] [format]
+argument-hint: "[action] [version] [format]"
 description: Generate and maintain project changelog following Keep a Changelog standard with Git integration and Conventional Commits support for any project type
 ---
 

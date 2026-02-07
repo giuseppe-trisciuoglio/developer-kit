@@ -1,6 +1,6 @@
 ---
 allowed-tools: Read, Bash, Grep, Glob, Write
-argument-hint: [scope] [focus] [format]
+argument-hint: "[scope] [focus] [format]"
 description: Comprehensive dependency audit for Java projects with vulnerability scanning, license compliance, and supply chain security analysis
 ---
 

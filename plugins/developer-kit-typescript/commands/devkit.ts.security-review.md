@@ -1,6 +1,6 @@
 ---
 allowed-tools: Read, Write, Edit, Bash, Grep, Glob
-argument-hint: [scope] [options]
+argument-hint: "[scope] [options]"
 description: Comprehensive security review for TypeScript/Node.js applications (Next.js, NestJS, Express, etc.)
 ---
 

@@ -1,7 +1,7 @@
 ---
 description: Initialize environment for long-running agent workflow (creates feature list, progress file, init.sh)
 allowed-tools: Read, Write, Edit, Bash(git:*), Bash(mkdir:*), Bash(chmod:*)
-argument-hint: [project-description]
+argument-hint: "[project-description]"
 ---
 
 # Long-Running Agent - Initialize Environment

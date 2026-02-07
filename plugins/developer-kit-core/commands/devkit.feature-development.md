@@ -1,6 +1,6 @@
 ---
 description: Guided feature development with codebase understanding and architecture focus
-argument-hint: [ --lang=java|spring|typescript|nestjs|react|python|general ] [ feature-description ]
+argument-hint: "[ --lang=java|spring|typescript|nestjs|react|python|general ] [ feature-description ]"
 allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, TodoWrite, AskUserQuestion
 model: inherit
 ---

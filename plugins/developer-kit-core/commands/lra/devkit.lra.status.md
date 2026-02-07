@@ -1,6 +1,6 @@
 ---
 description: Show current project status - features progress, recent activity, next priorities
-argument-hint: [optional-filter]
+argument-hint: "[optional-filter]"
 allowed-tools: Read, Bash(git log:*), Bash(git status:*)
 ---
 

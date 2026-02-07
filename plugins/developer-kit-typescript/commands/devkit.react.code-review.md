@@ -1,6 +1,6 @@
 ---
 allowed-tools: Read, Write, Bash, Edit, Grep, Glob
-argument-hint: [review-type] [file/directory-path] [options]
+argument-hint: "[review-type] [file/directory-path] [options]"
 description: Comprehensive React 19 + Tailwind CSS code review focusing on modern patterns, hooks, Server Components, Actions, performance, accessibility, and Tailwind best practices.
 model: inherit
 ---

@@ -1,6 +1,6 @@
 ---
 description: Generate complete CRUD implementation for a Spring Boot domain class using spring-boot-crud-patterns skill
-argument-hint: [domain-class-name]
+argument-hint: "[domain-class-name]"
 allowed-tools: Read, Write, Bash
 model: inherit
 ---

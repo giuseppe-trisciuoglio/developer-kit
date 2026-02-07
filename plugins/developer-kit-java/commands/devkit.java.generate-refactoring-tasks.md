@@ -1,6 +1,6 @@
 ---
 allowed-tools: Read, Grep, Glob, Write
-argument-hint: [bounded-context-name]
+argument-hint: "[bounded-context-name]"
 description: Generate a comprehensive refactoring task list for a specific Bounded Context in project and save it to a file
 ---
 

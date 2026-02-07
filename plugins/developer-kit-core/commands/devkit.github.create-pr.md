@@ -2,7 +2,7 @@
 description: Create GitHub pull request with branch creation, commits, and detailed description
 category: version-control-git
 allowed-tools: Bash(git *), Bash(gh *)
-argument-hint: [pr-title] [target-branch] [language]
+argument-hint: "[pr-title] [target-branch] [language]"
 ---
 
 # Create GitHub Pull Request

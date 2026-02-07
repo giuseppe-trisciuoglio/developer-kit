@@ -1,6 +1,6 @@
 ---
 description: Guided bug fixing and debugging with systematic root cause analysis
-argument-hint: [ --lang=java|spring|typescript|nestjs|react|python|general ] [ issue-description or error-message ]
+argument-hint: "[ --lang=java|spring|typescript|nestjs|react|python|general ] [ issue-description or error-message ]"
 allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, TodoWrite, AskUserQuestion
 model: inherit
 ---

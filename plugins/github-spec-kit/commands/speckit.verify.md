@@ -1,6 +1,6 @@
 ---
 description: Verify implementation completion by checking tasks, logic, tests, and code quality against specifications.
-argument-hint: [optional-focus-area]
+argument-hint: "[optional-focus-area]"
 ---
 
 ## User Input

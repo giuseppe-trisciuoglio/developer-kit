@@ -1,7 +1,7 @@
 ---
 description: Mark a feature as completed (passed) or failed
 allowed-tools: Read, Write, Edit
-argument-hint: [feature-id] [passed|failed] [optional-notes]
+argument-hint: "[feature-id] [passed|failed] [optional-notes]"
 ---
 
 # Long-Running Agent - Mark Feature Status

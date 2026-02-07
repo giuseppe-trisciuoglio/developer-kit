@@ -2,7 +2,7 @@
 description: Comprehensive GitHub pull request review with code quality, security, and best practices analysis
 category: version-control-git
 allowed-tools: Bash(gh *), Bash(git *), Read, Grep, Glob
-argument-hint: [pr-number] [review-focus] [output-format]
+argument-hint: "[pr-number] [review-focus] [output-format]"
 ---
 
 # GitHub Pull Request Comprehensive Review

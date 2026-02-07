@@ -1,6 +1,6 @@
 ---
 allowed-tools: Read, Bash, Grep, Glob
-argument-hint: [package-path] [focus-area]
+argument-hint: "[package-path] [focus-area]"
 description: Comprehensive architectural review for Java applications focusing on Clean Architecture, DDD, and Spring Boot patterns
 ---
 

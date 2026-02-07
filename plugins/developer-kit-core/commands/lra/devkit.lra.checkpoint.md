@@ -1,7 +1,7 @@
 ---
 description: Create a checkpoint - commit changes, update progress log, leave clean state for next session
 allowed-tools: Read, Write, Edit, Bash(git:*)
-argument-hint: [summary-of-work-done]
+argument-hint: "[summary-of-work-done]"
 ---
 
 # Long-Running Agent - Create Checkpoint

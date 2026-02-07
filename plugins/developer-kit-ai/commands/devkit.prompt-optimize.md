@@ -1,6 +1,6 @@
 ---
 allowed-tools: Read, Write, Edit
-argument-hint: [prompt-text] [target-model] [optimization-level]
+argument-hint: "[prompt-text] [target-model] [optimization-level]"
 description: Expert prompt optimization using advanced techniques (CoT, few-shot, constitutional AI) for LLM performance enhancement
 model: sonnet
 ---

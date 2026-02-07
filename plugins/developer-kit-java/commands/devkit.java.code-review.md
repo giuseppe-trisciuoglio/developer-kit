@@ -1,6 +1,6 @@
 ---
 allowed-tools: Read, Write, Bash, Edit, Grep, Glob
-argument-hint: [review-type] [file/directory-path] [options]
+argument-hint: "[review-type] [file/directory-path] [options]"
 description: Comprehensive Java code review for enterprise Spring applications with security, performance, architecture and best practices analysis
 model: inherit
 ---

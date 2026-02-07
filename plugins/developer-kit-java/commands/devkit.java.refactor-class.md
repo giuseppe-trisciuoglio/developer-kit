@@ -1,6 +1,6 @@
 ---
 allowed-tools: Read, Write, Bash, Edit, Grep, Glob
-argument-hint: [class-file-path] [refactoring-scope] [options]
+argument-hint: "[class-file-path] [refactoring-scope] [options]"
 description: Intelligent refactoring assistant for complex Java classes with architectural analysis and Spring Boot patterns
 model: inherit
 ---

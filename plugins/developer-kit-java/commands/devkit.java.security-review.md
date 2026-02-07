@@ -1,6 +1,6 @@
 ---
 allowed-tools: Read, Grep, Glob, Bash, Task
-argument-hint: [scope] [options]
+argument-hint: "[scope] [options]"
 description: Comprehensive security review for Java enterprise applications (Spring, Jakarta EE, etc.)
 ---
 

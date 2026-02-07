@@ -1,6 +1,6 @@
 ---
 allowed-tools: Read, Write, Edit, Grep, Glob
-argument-hint: [language] [output-format]
+argument-hint: "[language] [output-format]"
 description: Generate comprehensive security assessment document after security audit completion
 ---
 

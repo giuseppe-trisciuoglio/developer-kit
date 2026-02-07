@@ -1,6 +1,6 @@
 ---
 allowed-tools: Read, Write, Edit, Bash, Grep, Glob
-argument-hint: [project-path] [doc-types] [output-format]
+argument-hint: "[project-path] [doc-types] [output-format]"
 description: Generate comprehensive Java project documentation including API docs, architecture diagrams, and Javadoc
 model: inherit
 ---

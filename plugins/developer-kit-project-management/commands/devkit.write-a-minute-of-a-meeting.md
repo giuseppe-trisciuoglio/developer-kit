@@ -1,6 +1,6 @@
 ---
 description: Generate professional meeting minutes from transcripts or notes
-argument-hint: [transcript-file] [meeting-title] [date]
+argument-hint: "[transcript-file] [meeting-title] [date]"
 allowed-tools: Read, Write
 ---
 

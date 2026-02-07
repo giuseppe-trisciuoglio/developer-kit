@@ -1,7 +1,7 @@
 ---
 description: Add a new feature to the feature list
 allowed-tools: Read, Write, Edit
-argument-hint: [category] [priority] [description]
+argument-hint: "[category] [priority] [description]"
 ---
 
 # Long-Running Agent - Add Feature

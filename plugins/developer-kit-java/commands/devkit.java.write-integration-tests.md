@@ -1,6 +1,6 @@
 ---
 allowed-tools: Read, Write, Bash, Grep, Glob
-argument-hint: [class-path]
+argument-hint: "[class-path]"
 description: Generate comprehensive integration tests for Spring Boot classes using Testcontainers (PostgreSQL, Redis, MongoDB) with `@ServiceConnection` pattern
 model: inherit
 ---
