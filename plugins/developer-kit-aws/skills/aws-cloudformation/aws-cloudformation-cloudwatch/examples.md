@@ -1,17 +1,17 @@
-# AWS CloudFormation CloudWatch - Esempi Completi
+# AWS CloudFormation CloudWatch - Complete Examples
 
-## Indice
+## Table of Contents
 
-- [Esempio 1: Stack di Monitoring Completo](#esempio-1-stack-di-monitoring-completo)
-- [Esempio 2: Multi-Region Dashboard](#esempio-2-multi-region-dashboard)
-- [Esempio 3: Application Performance Monitoring](#esempio-3-application-performance-monitoring)
-- [Esempio 4: Cross-Account Log Aggregation](#esempio-4-cross-account-log-aggregation)
-- [Esempio 5: Synthesized Canary Monitoring](#esempio-5-synthesized-canary-monitoring)
-- [Esempio 6: SLO/SLI Configuration](#esempio-6-slosli-configuration)
+- [Example 1: Complete Monitoring Stack](#example-1-complete-monitoring-stack)
+- [Example 2: Multi-Region Dashboard](#example-2-multi-region-dashboard)
+- [Example 3: Application Performance Monitoring](#example-3-application-performance-monitoring)
+- [Example 4: Cross-Account Log Aggregation](#example-4-cross-account-log-aggregation)
+- [Example 5: Synthesized Canary Monitoring](#example-5-synthesized-canary-monitoring)
+- [Example 6: SLO/SLI Configuration](#example-6-slosli-configuration)
 
 ---
 
-## Esempio 1: Stack di Monitoring Completo
+## Example 1: Complete Monitoring Stack
 
 ```yaml
 AWSTemplateFormatVersion: 2010-09-09
@@ -487,7 +487,7 @@ Outputs:
 
 ---
 
-## Esempio 2: Multi-Region Dashboard
+## Example 2: Multi-Region Dashboard
 
 ```yaml
 AWSTemplateFormatVersion: 2010-09-09
@@ -631,7 +631,7 @@ Resources:
 
 ---
 
-## Esempio 3: Application Performance Monitoring
+## Example 3: Application Performance Monitoring
 
 ```yaml
 AWSTemplateFormatVersion: 2010-09-09
@@ -800,7 +800,7 @@ Resources:
 
 ---
 
-## Esempio 4: Cross-Account Log Aggregation
+## Example 4: Cross-Account Log Aggregation
 
 ```yaml
 AWSTemplateFormatVersion: 2010-09-09
@@ -992,7 +992,7 @@ Resources:
 
 ---
 
-## Esempio 5: Synthesized Canary Monitoring
+## Example 5: Synthesized Canary Monitoring
 
 ```yaml
 AWSTemplateFormatVersion: 2010-09-09
@@ -1240,7 +1240,7 @@ Resources:
 
 ---
 
-## Esempio 6: SLO/SLI Configuration
+## Example 6: SLO/SLI Configuration
 
 ```yaml
 AWSTemplateFormatVersion: 2010-09-09
@@ -1468,7 +1468,7 @@ Resources:
 
 ---
 
-## Risorse Utili
+## Useful Resources
 
 - [CloudWatch Alarms Documentation](https://docs.aws.amazon.com/cloudwatch/latest/monitoring/AlarmThatSendsEmail.html)
 - [CloudWatch Dashboards](https://docs.aws.amazon.com/cloudwatch/latest/monitoring/CloudWatch_Dashboards.html)

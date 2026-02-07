@@ -6,7 +6,7 @@ Core agents and commands required by all Developer Kit plugins.
 
 The `developer-kit` plugin provides foundational agents and commands used across all Developer Kit plugins. This plugin is required by all other plugins in the Developer Kit marketplace.
 
-> **Nota:** Il nome del plugin nel manifesto (`plugin.json`) è `developer-kit` e non `developer-kit-core` per mantenere la retrocompatibilità con i prefissi dei comandi `devkit.*` utilizzati nel vecchio plugin. La directory è denominata `developer-kit-core` per chiarezza strutturale, ma il nome del plugin rimane `developer-kit` per garantire continuità con le configurazioni esistenti.
+> **Note:** The plugin name in the manifest (`plugin.json`) is `developer-kit` rather than `developer-kit-core` to maintain backward compatibility with the `devkit.*` command prefixes used in the legacy plugin. The directory is named `developer-kit-core` for structural clarity, but the plugin name remains `developer-kit` to ensure continuity with existing configurations.
 
 ## Agents
 

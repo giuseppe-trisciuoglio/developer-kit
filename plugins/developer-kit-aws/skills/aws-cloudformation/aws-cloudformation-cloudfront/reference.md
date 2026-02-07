@@ -1,119 +1,119 @@
 # AWS CloudFormation CloudFront - Reference
 
-Questa guida di riferimento contiene informazioni dettagliate sulle risorse AWS CloudFormation, le funzioni intrinseche e le configurazioni per l'infrastruttura CloudFront CDN.
+This reference guide contains detailed information about AWS CloudFormation resources, intrinsic functions, and configurations for CloudFront CDN infrastructure.
 
 ## AWS::CloudFront::Distribution
 
-Crea una distribuzione CloudFront per servire contenuti da origini multiple.
+Creates a CloudFront distribution to serve content from multiple origins.
 
-### Proprieta
+### Properties
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| DistributionConfig | DistributionConfig | Si | Configurazione della distribuzione |
-| Tags | List di Tag | No | Tag per la distribuzione |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| DistributionConfig | DistributionConfig | Yes | Distribution configuration |
+| Tags | List of Tag | No | Tags for the distribution |
 
 ### DistributionConfig Structure
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| CallerReference | String | Si | Identificatore univoco per la distribuzione |
-| Comment | String | No | Commento per la distribuzione |
-| CustomErrorResponses | List | No | Risposte di errore personalizzate |
-| DefaultRootObject | String | No | Oggetto predefinito per richieste root |
-| Enabled | Boolean | Si | Se la distribuzione e abilitata |
-| HttpVersion | String | No | Versione HTTP supportata |
-| IPV6Enabled | Boolean | No | Se IPv6 e abilitato |
-| Logging | LoggingConfig | No | Configurazione logging |
-| OriginGroups | List | No | Gruppi di origini per failover |
-| Origins | List | Si | Lista delle origini |
-| PriceClass | String | No | Classe di prezzo (PriceClass_All, PriceClass_100, PriceClass_200) |
-| Restrictions | GeoRestriction | No | Restrizioni geografiche |
-| ViewerCertificate | ViewerCertificate | No | Certificato per HTTPS |
-| WebACLId | String | No | ID del Web ACL WAF |
-| DefaultCacheBehavior | CacheBehavior | Si | Comportamento cache predefinito |
-| CacheBehaviors | List | No | Comportamenti cache aggiuntivi |
-| RealTimeConfig | RealTimeConfig | No | Configurazione log real-time |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| CallerReference | String | Yes | Unique identifier for the distribution |
+| Comment | String | No | Comment for the distribution |
+| CustomErrorResponses | List | No | Custom error responses |
+| DefaultRootObject | String | No | Default object for root requests |
+| Enabled | Boolean | Yes | Whether the distribution is enabled |
+| HttpVersion | String | No | Supported HTTP version |
+| IPV6Enabled | Boolean | No | Whether IPv6 is enabled |
+| Logging | LoggingConfig | No | Logging configuration |
+| OriginGroups | List | No | Origin groups for failover |
+| Origins | List | Yes | List of origins |
+| PriceClass | String | No | Price class (PriceClass_All, PriceClass_100, PriceClass_200) |
+| Restrictions | GeoRestriction | No | Geographic restrictions |
+| ViewerCertificate | ViewerCertificate | No | Certificate for HTTPS |
+| WebACLId | String | No | WAF Web ACL ID |
+| DefaultCacheBehavior | CacheBehavior | Yes | Default cache behavior |
+| CacheBehaviors | List | No | Additional cache behaviors |
+| RealTimeConfig | RealTimeConfig | No | Real-time log configuration |
 
 ### Origins Structure
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| Id | String | Si | Identificatore univoco per l'origine |
-| DomainName | String | Si | Nome di dominio dell'origine |
-| OriginPath | String | No | Percorso opzionale nell'origine |
-| CustomOriginConfig | CustomOrigin | No | Configurazione per origini personalizzate |
-| S3OriginConfig | S3Origin | No | Configurazione per origini S3 |
-| ConnectionAttempts | Integer | No | Numero di tentativi di connessione |
-| ConnectionTimeout | Integer | No | Timeout connessione in secondi |
-| OriginShield | OriginShield | No | Configurazione Origin Shield |
-| OriginKeepaliveTimeout | Integer | No | Timeout keepalive in secondi |
-| OriginReadTimeout | Integer | No | Timeout lettura in secondi |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| Id | String | Yes | Unique identifier for the origin |
+| DomainName | String | Yes | Domain name of the origin |
+| OriginPath | String | No | Optional path in the origin |
+| CustomOriginConfig | CustomOrigin | No | Configuration for custom origins |
+| S3OriginConfig | S3Origin | No | Configuration for S3 origins |
+| ConnectionAttempts | Integer | No | Number of connection attempts |
+| ConnectionTimeout | Integer | No | Connection timeout in seconds |
+| OriginShield | OriginShield | No | Origin Shield configuration |
+| OriginKeepaliveTimeout | Integer | No | Keepalive timeout in seconds |
+| OriginReadTimeout | Integer | No | Read timeout in seconds |
 
 ### CustomOrigin Structure
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| HTTPPort | Integer | No | Porta HTTP (default: 80) |
-| HTTPSPort | Integer | No | Porta HTTPS (default: 443) |
-| OriginProtocolPolicy | String | Si | Politica protocollo (http-only, https-only, match-viewer) |
-| OriginSSLProtocols | List | No | Protocolli SSL supportati |
-| OriginReadTimeout | Integer | No | Timeout lettura (4-60 secondi) |
-| OriginKeepaliveTimeout | Integer | No | Timeout keepalive (1-60 secondi) |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| HTTPPort | Integer | No | HTTP port (default: 80) |
+| HTTPSPort | Integer | No | HTTPS port (default: 443) |
+| OriginProtocolPolicy | String | Yes | Protocol policy (http-only, https-only, match-viewer) |
+| OriginSSLProtocols | List | No | Supported SSL protocols |
+| OriginReadTimeout | Integer | No | Read timeout (4-60 seconds) |
+| OriginKeepaliveTimeout | Integer | No | Keepalive timeout (1-60 seconds) |
 
 ### S3Origin Structure
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| OriginAccessIdentity | String | No | ID dell'OAI per accesso al bucket |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| OriginAccessIdentity | String | No | OAI ID for bucket access |
 
 ### CacheBehavior Structure
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| AllowedMethods | List | Si | Metodi HTTP permessi |
-| CachePolicyId | String | No | ID della cache policy |
-| Compress | Boolean | No | Se abilitare compressione |
-| DefaultTTL | Integer | No | TTL default in secondi |
-| FieldLevelEncryptionId | String | No | ID crittografia campo |
-| ForwardedValues | ForwardedValues | Si | Valori inoltrati all'origine |
-| FunctionAssociations | List | No | Associazioni CloudFront Functions |
-| LambdaFunctionAssociations | List | No | Associazioni Lambda@Edge |
-| MaxTTL | Integer | No | TTL massimo in secondi |
-| MinTTL | Integer | No | TTL minimo in secondi |
-| OriginRequestPolicyId | String | No | ID della origin request policy |
-| PathPattern | String | Si | Pattern percorso |
-| ResponseHeadersPolicyId | String | No | ID della response headers policy |
-| TargetOriginId | String | Si | ID dell'origine target |
-| TrustedSigners | List | No | Account AWS autorizzati |
-| ViewerProtocolPolicy | String | Si | Politica protocollo viewer |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| AllowedMethods | List | Yes | Allowed HTTP methods |
+| CachePolicyId | String | No | Cache policy ID |
+| Compress | Boolean | No | Whether to enable compression |
+| DefaultTTL | Integer | No | Default TTL in seconds |
+| FieldLevelEncryptionId | String | No | Field-level encryption ID |
+| ForwardedValues | ForwardedValues | Yes | Values forwarded to origin |
+| FunctionAssociations | List | No | CloudFront Functions associations |
+| LambdaFunctionAssociations | List | No | Lambda@Edge associations |
+| MaxTTL | Integer | No | Maximum TTL in seconds |
+| MinTTL | Integer | No | Minimum TTL in seconds |
+| OriginRequestPolicyId | String | No | Origin request policy ID |
+| PathPattern | String | Yes | Path pattern |
+| ResponseHeadersPolicyId | String | No | Response headers policy ID |
+| TargetOriginId | String | Yes | Target origin ID |
+| TrustedSigners | List | No | Authorized AWS accounts |
+| ViewerProtocolPolicy | String | Yes | Viewer protocol policy |
 
 ### ForwardedValues Structure
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| Cookies | Cookies | Si | Configurazione cookie |
-| Headers | List | No | Lista header da inoltrare |
-| QueryString | Boolean | No | Se inoltrare query string |
-| QueryStringCacheKeys | List | No | Chiavi query string da cachare |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| Cookies | Cookies | Yes | Cookie configuration |
+| Headers | List | No | List of headers to forward |
+| QueryString | Boolean | No | Whether to forward query string |
+| QueryStringCacheKeys | List | No | Query string keys to cache |
 
 ### Cookies Structure
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| Forward | String | Si | none, whitelist, all |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| Forward | String | Yes | none, whitelist, all |
 
 ### ViewerCertificate Structure
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| AcmCertificateArn | String | No | ARN certificato ACM |
-| CloudFrontDefaultCertificate | Boolean | No | Usa certificato default |
-| IamCertificateId | String | No | ID certificato IAM |
-| MinimumProtocolVersion | String | No | Versione minima TLS |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| AcmCertificateArn | String | No | ACM certificate ARN |
+| CloudFrontDefaultCertificate | Boolean | No | Use default certificate |
+| IamCertificateId | String | No | IAM certificate ID |
+| MinimumProtocolVersion | String | No | Minimum TLS version |
 | SslSupportMethod | String | No | sni-only, vip |
 
-### Esempio
+### Example
 
 ```yaml
 Resources:
@@ -157,31 +157,31 @@ Resources:
           Value: !Ref Environment
 ```
 
-### Attributi
+### Attributes
 
-| Attributo | Descrizione |
+| Attribute | Description |
 |-----------|-------------|
-| DomainName | Nome dominio della distribuzione |
-| Id | ID della distribuzione |
-| ARN | ARN della distribuzione |
+| DomainName | Distribution domain name |
+| Id | Distribution ID |
+| ARN | Distribution ARN |
 
 ## AWS::CloudFront::CloudFrontOriginAccessIdentity
 
-Crea un Origin Access Identity per permettere a CloudFront di accedere a bucket S3 privati.
+Creates an Origin Access Identity to allow CloudFront to access private S3 buckets.
 
-### Proprieta
+### Properties
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| CloudFrontOriginAccessIdentityConfig | OriginAccessIdentityConfig | Si | Configurazione OAI |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| CloudFrontOriginAccessIdentityConfig | OriginAccessIdentityConfig | Yes | OAI configuration |
 
 ### OriginAccessIdentityConfig Structure
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| Comment | String | No | Commento per l'OAI |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| Comment | String | No | Comment for the OAI |
 
-### Esempio
+### Example
 
 ```yaml
 Resources:
@@ -205,64 +205,64 @@ Resources:
             Resource: !Sub "${StaticBucket.Arn}/*"
 ```
 
-### Attributi
+### Attributes
 
-| Attributo | Descrizione |
+| Attribute | Description |
 |-----------|-------------|
-| S3CanonicalUserId | ID canonico utente S3 |
-| Arn | ARN dell'OAI |
+| S3CanonicalUserId | S3 canonical user ID |
+| Arn | OAI ARN |
 
 ## AWS::CloudFront::CachePolicy
 
-Crea una policy di cache per configurare come CloudFront gestisce la cache.
+Creates a cache policy to configure how CloudFront handles caching.
 
-### Proprieta
+### Properties
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| CachePolicyConfig | CachePolicyConfig | Si | Configurazione della policy |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| CachePolicyConfig | CachePolicyConfig | Yes | Policy configuration |
 
 ### CachePolicyConfig Structure
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| Name | String | Si | Nome della policy |
-| DefaultTTL | Integer | Si | TTL default in secondi |
-| MaxTTL | Integer | Si | TTL massimo in secondi |
-| MinTTL | Integer | Si | TTL minimo in secondi |
-| ParametersInCacheKeyAndForwardedToOrigin | ParametersInCacheKeyAndForwardedToOrigin | Si | Parametri inclusi nella chiave di cache |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| Name | String | Yes | Policy name |
+| DefaultTTL | Integer | Yes | Default TTL in seconds |
+| MaxTTL | Integer | Yes | Maximum TTL in seconds |
+| MinTTL | Integer | Yes | Minimum TTL in seconds |
+| ParametersInCacheKeyAndForwardedToOrigin | ParametersInCacheKeyAndForwardedToOrigin | Yes | Parameters included in cache key |
 
 ### ParametersInCacheKeyAndForwardedToOrigin Structure
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| CookiesConfig | CookiesConfig | Si | Configurazione cookie |
-| EnableAcceptEncodingBrotli | Boolean | No | Se abilitare compressione Brotli |
-| EnableAcceptEncodingGzip | Boolean | No | Se abilitare compressione Gzip |
-| HeadersConfig | HeadersConfig | Si | Configurazione header |
-| QueryStringsConfig | QueryStringsConfig | Si | Configurazione query string |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| CookiesConfig | CookiesConfig | Yes | Cookie configuration |
+| EnableAcceptEncodingBrotli | Boolean | No | Whether to enable Brotli compression |
+| EnableAcceptEncodingGzip | Boolean | No | Whether to enable Gzip compression |
+| HeadersConfig | HeadersConfig | Yes | Header configuration |
+| QueryStringsConfig | QueryStringsConfig | Yes | Query string configuration |
 
 ### CookiesConfig Structure
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| CookieBehavior | String | Si | none, whitelist, all |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| CookieBehavior | String | Yes | none, whitelist, all |
 
 ### HeadersConfig Structure
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| HeaderBehavior | String | Si | none, whitelist, all |
-| Headers | List | Cond | Lista header (richiesto se whitelist) |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| HeaderBehavior | String | Yes | none, whitelist, all |
+| Headers | List | Cond | List of headers (required if whitelist) |
 
 ### QueryStringsConfig Structure
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| QueryStringBehavior | String | Si | none, whitelist, all, allExcept |
-| QueryStrings | List | Cond | Lista query string (richiesto se whitelist/allExcept) |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| QueryStringBehavior | String | Yes | none, whitelist, all, allExcept |
+| QueryStrings | List | Cond | List of query strings (required if whitelist/allExcept) |
 
-### Esempio
+### Example
 
 ```yaml
 Resources:
@@ -304,32 +304,32 @@ Resources:
             QueryStringBehavior: all
 ```
 
-### Attributi
+### Attributes
 
-| Attributo | Descrizione |
+| Attribute | Description |
 |-----------|-------------|
-| Id | ID della policy |
+| Id | Policy ID |
 
 ## AWS::CloudFront::OriginRequestPolicy
 
-Crea una policy per le richieste all'origine.
+Creates a policy for origin requests.
 
-### Proprieta
+### Properties
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| OriginRequestPolicyConfig | OriginRequestPolicyConfig | Si | Configurazione della policy |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| OriginRequestPolicyConfig | OriginRequestPolicyConfig | Yes | Policy configuration |
 
 ### OriginRequestPolicyConfig Structure
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| Name | String | Si | Nome della policy |
-| CookiesConfig | CookiesConfig | Si | Configurazione cookie |
-| HeadersConfig | HeadersConfig | Si | Configurazione header |
-| QueryStringsConfig | QueryStringsConfig | Si | Configurazione query string |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| Name | String | Yes | Policy name |
+| CookiesConfig | CookiesConfig | Yes | Cookie configuration |
+| HeadersConfig | HeadersConfig | Yes | Header configuration |
+| QueryStringsConfig | QueryStringsConfig | Yes | Query string configuration |
 
-### Esempio
+### Example
 
 ```yaml
 Resources:
@@ -350,92 +350,92 @@ Resources:
           QueryStringBehavior: all
 ```
 
-### Attributi
+### Attributes
 
-| Attributo | Descrizione |
+| Attribute | Description |
 |-----------|-------------|
-| Id | ID della policy |
+| Id | Policy ID |
 
 ## AWS::CloudFront::ResponseHeadersPolicy
 
-Crea una policy per gli header di risposta, utile per implementare security headers.
+Creates a policy for response headers, useful for implementing security headers.
 
-### Proprieta
+### Properties
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| ResponseHeadersPolicyConfig | ResponseHeadersPolicyConfig | Si | Configurazione della policy |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| ResponseHeadersPolicyConfig | ResponseHeadersPolicyConfig | Yes | Policy configuration |
 
 ### ResponseHeadersPolicyConfig Structure
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| Name | String | Si | Nome della policy |
-| SecurityHeadersConfig | SecurityHeadersConfig | No | Configurazione security headers |
-| CorsConfig | CorsConfig | No | Configurazione CORS |
-| CustomHeadersConfig | CustomHeadersConfig | No | Header personalizzati |
-| ServerTimingHeadersConfig | ServerTimingHeadersConfig | No | Configurazione header Server-Timing |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| Name | String | Yes | Policy name |
+| SecurityHeadersConfig | SecurityHeadersConfig | No | Security headers configuration |
+| CorsConfig | CorsConfig | No | CORS configuration |
+| CustomHeadersConfig | CustomHeadersConfig | No | Custom headers |
+| ServerTimingHeadersConfig | ServerTimingHeadersConfig | No | Server-Timing header configuration |
 
 ### SecurityHeadersConfig Structure
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| ContentTypeOptions | ContentTypeOptions | No | Header X-Content-Type-Options |
-| FrameOptions | FrameOptions | No | Header X-Frame-Options |
-| ReferrerPolicy | ReferrerPolicy | No | Header Referrer-Policy |
-| StrictTransportSecurity | StrictTransportSecurity | No | Header Strict-Transport-Security |
-| XSSProtection | XSSProtection | No | Header X-XSS-Protection |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| ContentTypeOptions | ContentTypeOptions | No | X-Content-Type-Options header |
+| FrameOptions | FrameOptions | No | X-Frame-Options header |
+| ReferrerPolicy | ReferrerPolicy | No | Referrer-Policy header |
+| StrictTransportSecurity | StrictTransportSecurity | No | Strict-Transport-Security header |
+| XSSProtection | XSSProtection | No | X-XSS-Protection header |
 
 ### ContentTypeOptions Structure
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| Override | Boolean | Si | Se sovrascrivere header esistenti |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| Override | Boolean | Yes | Whether to override existing headers |
 
 ### FrameOptions Structure
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| FrameOption | String | Si | DENY, SAMEORIGIN |
-| Override | Boolean | Si | Se sovrascrivere |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| FrameOption | String | Yes | DENY, SAMEORIGIN |
+| Override | Boolean | Yes | Whether to override |
 
 ### ReferrerPolicy Structure
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| ReferrerPolicy | String | Si | Valore del referrer policy |
-| Override | Boolean | Si | Se sovrascrivere |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| ReferrerPolicy | String | Yes | Referrer policy value |
+| Override | Boolean | Yes | Whether to override |
 
 ### StrictTransportSecurity Structure
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| AccessControlMaxAgeSec | Integer | Si | Max age in secondi |
-| IncludeSubdomains | Boolean | No | Se includere subdomain |
-| Override | Boolean | Si | Se sovrascrivere |
-| Preload | Boolean | No | Se abilitare preload |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| AccessControlMaxAgeSec | Integer | Yes | Max age in seconds |
+| IncludeSubdomains | Boolean | No | Whether to include subdomains |
+| Override | Boolean | Yes | Whether to override |
+| Preload | Boolean | No | Whether to enable preload |
 
 ### XSSProtection Structure
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| ModeBlock | Boolean | No | Se bloccare in modalita block |
-| Override | Boolean | Si | Se sovrascrivere |
-| Protection | Boolean | Si | Se abilitare protezione |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| ModeBlock | Boolean | No | Whether to block in block mode |
+| Override | Boolean | Yes | Whether to override |
+| Protection | Boolean | Yes | Whether to enable protection |
 
 ### CorsConfig Structure
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| AccessControlAllowCredentials | Boolean | No | Se允许 credenziali |
-| AccessControlAllowHeaders | AccessControlAllowHeaders | No | Header permessi |
-| AccessControlAllowMethods | AccessControlAllowMethods | No | Metodi permessi |
-| AccessControlAllowOrigins | AccessControlAllowOrigins | No | Origini permesse |
-| AccessControlMaxAgeSec | Integer | No | Max age per preflight |
-| AccessControlExposeHeaders | AccessControlExposeHeaders | No | Header esposti |
-| OriginOverride | Boolean | Si | Se sovrascrivere header origin |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| AccessControlAllowCredentials | Boolean | No | Whether to allow credentials |
+| AccessControlAllowHeaders | AccessControlAllowHeaders | No | Allowed headers |
+| AccessControlAllowMethods | AccessControlAllowMethods | No | Allowed methods |
+| AccessControlAllowOrigins | AccessControlAllowOrigins | No | Allowed origins |
+| AccessControlMaxAgeSec | Integer | No | Max age for preflight |
+| AccessControlExposeHeaders | AccessControlExposeHeaders | No | Exposed headers |
+| OriginOverride | Boolean | Yes | Whether to override origin header |
 
-### Esempio
+### Example
 
 ```yaml
 Resources:
@@ -479,33 +479,33 @@ Resources:
           OriginOverride: true
 ```
 
-### Attributi
+### Attributes
 
-| Attributo | Descrizione |
+| Attribute | Description |
 |-----------|-------------|
-| Id | ID della policy |
+| Id | Policy ID |
 
 ## AWS::CloudFront::Function
 
-Crea una funzione CloudFront per operazioni leggere sul edge.
+Creates a CloudFront Function for lightweight edge operations.
 
-### Proprieta
+### Properties
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| AutoPublish | Boolean | No | Se pubblicare automaticamente |
-| FunctionCode | String | Si | Codice della funzione |
-| FunctionRuntime | String | Si | Runtime della funzione |
-| Name | String | Si | Nome della funzione |
-| Comment | String | No | Commento |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| AutoPublish | Boolean | No | Whether to auto-publish |
+| FunctionCode | String | Yes | Function code |
+| FunctionRuntime | String | Yes | Function runtime |
+| Name | String | Yes | Function name |
+| Comment | String | No | Comment |
 
-### Runtime Supportati
+### Supported Runtimes
 
-| Runtime | Descrizione |
+| Runtime | Description |
 |---------|-------------|
 | cloudfront-js-1.0 | CloudFront Functions JavaScript |
 
-### Esempio
+### Example
 
 ```yaml
 Resources:
@@ -549,51 +549,51 @@ Resources:
               EventType: viewer-request
 ```
 
-### Eventi Function Association
+### Function Association Events
 
-| Evento | Descrizione |
-|--------|-------------|
-| viewer-request | Prima della richiesta del viewer |
-| viewer-response | Dopo la risposta al viewer |
-| origin-request | Prima della richiesta all'origine |
-| origin-response | Dopo la risposta dall'origine |
+| Event | Description |
+|-------|-------------|
+| viewer-request | Before viewer request |
+| viewer-response | After viewer response |
+| origin-request | Before origin request |
+| origin-response | After origin response |
 
-### Attributi
+### Attributes
 
-| Attributo | Descrizione |
+| Attribute | Description |
 |-----------|-------------|
-| FunctionARN | ARN della funzione |
+| FunctionARN | Function ARN |
 
 ## AWS::WAFv2::WebACL
 
-Crea un Web ACL WAF per proteggere CloudFront.
+Creates a WAF Web ACL to protect CloudFront.
 
-### Proprieta
+### Properties
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| DefaultAction | DefaultAction | Si | Azione default |
-| Name | String | Si | Nome del Web ACL |
-| Rules | List | No | Lista delle regole |
-| Scope | String | Si | CLOUDFRONT o REGIONAL |
-| VisibilityConfig | VisibilityConfig | Si | Configurazione visibilita |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| DefaultAction | DefaultAction | Yes | Default action |
+| Name | String | Yes | Web ACL name |
+| Rules | List | No | List of rules |
+| Scope | String | Yes | CLOUDFRONT or REGIONAL |
+| VisibilityConfig | VisibilityConfig | Yes | Visibility configuration |
 
 ### DefaultAction Structure
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| Allow | AllowAction | No | Azione allow |
-| Block | BlockAction | No | Azione block |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| Allow | AllowAction | No | Allow action |
+| Block | BlockAction | No | Block action |
 
 ### VisibilityConfig Structure
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| CloudWatchMetricsEnabled | Boolean | Si | Se abilitare metriche CloudWatch |
-| MetricName | String | Si | Nome metrica |
-| SampledRequestsEnabled | Boolean | Si | Se abilitare sampling |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| CloudWatchMetricsEnabled | Boolean | Yes | Whether to enable CloudWatch metrics |
+| MetricName | String | Yes | Metric name |
+| SampledRequestsEnabled | Boolean | Yes | Whether to enable sampling |
 
-### Esempio
+### Example
 
 ```yaml
 Resources:
@@ -625,25 +625,25 @@ Resources:
 
 ## AWS::GlobalAccelerator::EndpointGroup
 
-Crea un endpoint group per VPC Origins.
+Creates an endpoint group for VPC Origins.
 
-### Proprieta
+### Properties
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| EndpointGroupRegion | String | Si | Regione del endpoint group |
-| EndpointConfigurations | List | No | Configurazioni endpoint |
-| ListenerArn | String | Si | ARN del listener |
-| TrafficDialPercentage | Integer | No | Percentuale traffico |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| EndpointGroupRegion | String | Yes | Endpoint group region |
+| EndpointConfigurations | List | No | Endpoint configurations |
+| ListenerArn | String | Yes | Listener ARN |
+| TrafficDialPercentage | Integer | No | Traffic percentage |
 
 ### EndpointConfiguration Structure
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| EndpointId | String | Si | ID dell'endpoint |
-| Weight | Integer | No | Peso per traffic routing |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| EndpointId | String | Yes | Endpoint ID |
+| Weight | Integer | No | Weight for traffic routing |
 
-### Esempio
+### Example
 
 ```yaml
 Resources:
@@ -659,32 +659,32 @@ Resources:
 
 ## GeoRestriction Structure
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| Locations | List | Cond | Lista codici paese (whitelist/blacklist) |
-| RestrictionType | String | Si | none, blacklist, whitelist |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| Locations | List | Cond | List of country codes (whitelist/blacklist) |
+| RestrictionType | String | Yes | none, blacklist, whitelist |
 
 ## LoggingConfig Structure
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| Bucket | String | Si | S3 bucket per log |
-| IncludeCookies | Boolean | No | Se includere cookie |
-| Prefix | String | No | Prefisso per log |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| Bucket | String | Yes | S3 bucket for logs |
+| IncludeCookies | Boolean | No | Whether to include cookies |
+| Prefix | String | No | Log prefix |
 
 ## RealTimeConfig Structure
 
-| Proprieta | Tipo | Richiesta | Descrizione |
-|-----------|------|-----------|-------------|
-| Endpoint | String | Si | ARN del Kinesis stream |
-| Fields | List | Si | Campi da includere |
-| RoleArn | String | Si | ARN del ruolo IAM |
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| Endpoint | String | Yes | Kinesis stream ARN |
+| Fields | List | Yes | Fields to include |
+| RoleArn | String | Yes | IAM role ARN |
 
-## Funzioni Intrinseche di Riferimento
+## Reference Intrinsic Functions
 
 ### !GetAtt
 
-Restituisce il valore di un attributo da una risorsa CloudFront.
+Returns the value of an attribute from a CloudFront resource.
 
 ```yaml
 # Get distribution domain name
@@ -702,7 +702,7 @@ BucketDomainName: !GetAtt StaticBucket.RegionalDomainName
 
 ### !Sub
 
-Sostituisce variabili in una stringa.
+Substitutes variables in a string.
 
 ```yaml
 # With variable substitution
@@ -714,7 +714,7 @@ OriginAccessIdentity: !Sub "origin-access-identity/cloudfront/${CloudFrontOAI}"
 
 ### !ImportValue
 
-Importa valori esportati da altri stack.
+Imports values exported from other stacks.
 
 ```yaml
 # Import from another stack
@@ -722,57 +722,57 @@ BucketDomainName: !ImportValue
   !Sub "${NetworkStackName}-StaticAssetsBucketRegionalDomainName"
 ```
 
-## Limiti e Quote
+## Limits and Quotas
 
 ### CloudFront Limits
 
-| Risorsa | Limite Default |
-|---------|----------------|
-| Distribuzioni per account | 200 |
-| Origini per distribuzione | 25 |
-| Cache behaviors per distribuzione | 25 |
-| Certificate per account | 2000 |
-| TTL massimo | 31536000 secondi (1 anno) |
-| Size request body | 20 MB (edge), 5 MB (viewer) |
-| Numero di OAI | 100 per account |
-| Lunghezza dominio personalizzato | 253 caratteri |
+| Resource | Default Limit |
+|----------|---------------|
+| Distributions per account | 200 |
+| Origins per distribution | 25 |
+| Cache behaviors per distribution | 25 |
+| Certificates per account | 2000 |
+| Maximum TTL | 31536000 seconds (1 year) |
+| Request body size | 20 MB (edge), 5 MB (viewer) |
+| Number of OAI | 100 per account |
+| Custom domain length | 253 characters |
 
 ### CloudFront Functions Limits
 
-| Risorsa | Limite |
-|---------|--------|
-| Tempo esecuzione | 1 ms |
+| Resource | Limit |
+|----------|-------|
+| Execution time | 1 ms |
 | Memory | 2 MB |
-| Size request/response | 10 KB |
-| Size function code | 10 KB |
+| Request/response size | 10 KB |
+| Function code size | 10 KB |
 
 ### Lambda@Edge Limits
 
-| Risorso | Limite |
-|---------|--------|
+| Resource | Limit |
+|----------|-------|
 | Memory | 128 MB |
-| Timeout | 30 secondi |
-| Size deployment package | 1 MB |
-| Size response body | 1 MB |
+| Timeout | 30 seconds |
+| Deployment package size | 1 MB |
+| Response body size | 1 MB |
 
 ## Managed Cache Policies
 
-AWS fornisce managed policies predefinite:
+AWS provides predefined managed policies:
 
-| Policy ID | Nome | Descrizione |
+| Policy ID | Name | Description |
 |-----------|------|-------------|
-| 658327ea-f89d-4fab-a63d-7e88639e58f6 | Managed-CachingOptimized | Ottimizzato per caching |
-| 5cc3b908-e619-4b99-88e5-2cf7a4592e4c | Managed-Elemental-MediaPackage | Per MediaPackage |
-| b2884449-e4de-46a7-ac21-5511b5d11b5f | Managed-Amplify | Per Amplify |
+| 658327ea-f89d-4fab-a63d-7e88639e58f6 | Managed-CachingOptimized | Optimized for caching |
+| 5cc3b908-e619-4b99-88e5-2cf7a4592e4c | Managed-Elemental-MediaPackage | For MediaPackage |
+| b2884449-e4de-46a7-ac21-5511b5d11b5f | Managed-Amplify | For Amplify |
 
 ## Managed Origin Request Policies
 
-| Policy ID | Nome | Descrizione |
+| Policy ID | Name | Description |
 |-----------|------|-------------|
-| 33f36d7e-f398-4d50-aaf9-1a26f4830ef3 | Managed-CORS-S3Origin | CORS per S3 |
-| 10c336ab-3b4b-4e2b-a38b-5b4a20d0a1e2 | Managed-AllView | Forward tutto |
+| 33f36d7e-f398-4d50-aaf9-1a26f4830ef3 | Managed-CORS-S3Origin | CORS for S3 |
+| 10c336ab-3b4b-4e2b-a38b-5b4a20d0a1e2 | Managed-AllView | Forward all |
 
-## Tag Comuni per CloudFront
+## Common Tags for CloudFront
 
 ```yaml
 Resources:

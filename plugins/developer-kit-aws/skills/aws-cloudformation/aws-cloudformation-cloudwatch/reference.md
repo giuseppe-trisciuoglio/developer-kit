@@ -1,9 +1,9 @@
-# AWS CloudFormation CloudWatch - Riferimento Dettagliato
+# AWS CloudFormation CloudWatch - Detailed Reference
 
-## Indice
+## Table of Contents
 
-- [Risorse CloudWatch](#risorse-cloudwatch)
-- [Proprieta Comuni](#proprieta-comuni)
+- [CloudWatch Resources](#cloudwatch-resources)
+- [Common Properties](#common-properties)
 - [Alarm Configuration](#alarm-configuration)
 - [Dashboard Widgets](#dashboard-widgets)
 - [Log Group Configuration](#log-group-configuration)
@@ -11,33 +11,33 @@
 
 ---
 
-## Risorse CloudWatch
+## CloudWatch Resources
 
 ### AWS::CloudWatch::Alarm
 
-Risorsa principale per creare CloudWatch alarms.
+Main resource for creating CloudWatch alarms.
 
-#### Proprieta Principali
+#### Main Properties
 
-| Proprieta | Tipo | Richiesto | Descrizione |
+| Property | Type | Required | Description |
 |-----------|------|-----------|-------------|
-| AlarmName | String | No | Nome univoco dell'alarm (max 255 chars) |
-| AlarmDescription | String | No | Descrizione dell'alarm |
-| MetricName | String | Si | Nome della metrica |
-| Namespace | String | No | Namespace della metrica |
-| Dimensions | List | No | Dimensioni per la metrica |
-| Statistic | String | No | Statistica (SampleCount, Average, Sum, Minimum, Maximum) |
-| ExtendedStatistic | String | No | Statistica percentile (es. p99) |
-| Period | Number | No | Periodo in secondi (default: 300) |
-| EvaluationPeriods | Number | Si | Numero di periodi di valutazione |
-| Threshold | Number | Si | Soglia per l'alarm |
-| ComparisonOperator | String | Si | Operatore di confronto |
-| TreatMissingData | String | No | Come trattare dati mancanti |
-| AlarmActions | List | No | ARN delle azioni da eseguire |
-| InsufficientDataActions | List | No | Azioni per dati insufficienti |
-| OKActions | List | No | Azioni quando l'alarm torna OK |
+| AlarmName | String | No | Unique alarm name (max 255 chars) |
+| AlarmDescription | String | No | Alarm description |
+| MetricName | String | Yes | Metric name |
+| Namespace | String | No | Metric namespace |
+| Dimensions | List | No | Dimensions for the metric |
+| Statistic | String | No | Statistic (SampleCount, Average, Sum, Minimum, Maximum) |
+| ExtendedStatistic | String | No | Percentile statistic (e.g., p99) |
+| Period | Number | No | Period in seconds (default: 300) |
+| EvaluationPeriods | Number | Yes | Number of evaluation periods |
+| Threshold | Number | Yes | Threshold for the alarm |
+| ComparisonOperator | String | Yes | Comparison operator |
+| TreatMissingData | String | No | How to treat missing data |
+| AlarmActions | List | No | ARNs of actions to execute |
+| InsufficientDataActions | List | No | Actions for insufficient data |
+| OKActions | List | No | Actions when alarm returns to OK |
 
-#### Valori di ComparisonOperator
+#### ComparisonOperator Values
 
 ```yaml
 ComparisonOperator:
@@ -49,7 +49,7 @@ ComparisonOperator:
   - LessThanLowerBound
 ```
 
-#### Valori di TreatMissingData
+#### TreatMissingData Values
 
 ```yaml
 TreatMissingData:
@@ -63,7 +63,7 @@ TreatMissingData:
   - ignore
 ```
 
-#### Esempio Completo
+#### Complete Example
 
 ```yaml
 Resources:
@@ -104,20 +104,20 @@ Resources:
 
 ### AWS::CloudWatch::CompositeAlarm
 
-Combina multiple alarms in una singola espressione logica.
+Combines multiple alarms into a single logical expression.
 
-#### Proprieta
+#### Properties
 
-| Proprieta | Tipo | Richiesto | Descrizione |
+| Property | Type | Required | Description |
 |-----------|------|-----------|-------------|
-| AlarmName | String | Si | Nome dell'alarm composito |
-| AlarmDescription | String | No | Descrizione |
-| AlarmRule | String | Si | Regola che combina altri alarm |
-| ActionsEnabled | Boolean | No | Se le azioni sono abilitate |
-| AlarmActions | List | No | Azioni da eseguire |
-| OKActions | List | No | Azioni quando OK |
+| AlarmName | String | Yes | Composite alarm name |
+| AlarmDescription | String | No | Description |
+| AlarmRule | String | Yes | Rule that combines other alarms |
+| ActionsEnabled | Boolean | No | Whether actions are enabled |
+| AlarmActions | List | No | Actions to execute |
+| OKActions | List | No | Actions when OK |
 
-#### Operatori per AlarmRule
+#### AlarmRule Operators
 
 ```yaml
 AlarmRule: !Or
@@ -134,17 +134,17 @@ AlarmRule: !Or
 
 ### AWS::CloudWatch::AnomalyDetector
 
-Configura anomaly detection per metriche.
+Configures anomaly detection for metrics.
 
-#### Proprieta
+#### Properties
 
-| Proprieta | Tipo | Richiesto | Descrizione |
+| Property | Type | Required | Description |
 |-----------|------|-----------|-------------|
-| MetricName | String | Si | Nome della metrica |
-| Namespace | String | Si | Namespace della metrica |
-| Dimensions | List | No | Dimensioni |
-| Statistic | String | Si | Statistica |
-| Configuration | Configuration | No | Configurazione anomaly detector |
+| MetricName | String | Yes | Metric name |
+| Namespace | String | Yes | Metric namespace |
+| Dimensions | List | No | Dimensions |
+| Statistic | String | Yes | Statistic |
+| Configuration | Configuration | No | Anomaly detector configuration |
 
 #### Configuration
 
@@ -160,7 +160,7 @@ Configuration:
 
 ### AWS::CloudWatch::Dashboard
 
-Crea dashboard CloudWatch per visualizzazione metriche.
+Creates CloudWatch dashboards for metric visualization.
 
 #### DashboardBody Structure
 
@@ -200,7 +200,7 @@ DashboardBody:
   ]
 ```
 
-#### Tipi di View
+#### View Types
 
 ```yaml
 view:
@@ -215,16 +215,16 @@ view:
 
 ### AWS::Logs::LogGroup
 
-Crea gruppi di log CloudWatch.
+Creates CloudWatch log groups.
 
-#### Proprieta
+#### Properties
 
-| Proprieta | Tipo | Richiesto | Descrizione |
+| Property | Type | Required | Description |
 |-----------|------|-----------|-------------|
-| LogGroupName | String | Si | Nome del log group |
-| RetentionInDays | Number | No | Giorni di retention (1-3650) |
-| KmsKeyId | String | No | ARN della KMS key per encryption |
-| Tags | List | No | Tags per il log group |
+| LogGroupName | String | Yes | Log group name |
+| RetentionInDays | Number | No | Retention days (1-3650) |
+| KmsKeyId | String | No | KMS key ARN for encryption |
+| Tags | List | No | Tags for the log group |
 
 #### Retention Values
 
@@ -258,15 +258,15 @@ RetentionInDays:
 
 ### AWS::Logs::MetricFilter
 
-Estrae metriche da pattern di log.
+Extracts metrics from log patterns.
 
-#### Proprieta
+#### Properties
 
-| Proprieta | Tipo | Richiesto | Descrizione |
+| Property | Type | Required | Description |
 |-----------|------|-----------|-------------|
-| FilterPattern | String | Si | Pattern per filtrare log |
-| LogGroupName | String | Si | Nome del log group |
-| MetricTransformations | List | Si | Trasformazioni in metriche |
+| FilterPattern | String | Yes | Pattern to filter logs |
+| LogGroupName | String | Yes | Log group name |
+| MetricTransformations | List | Yes | Metric transformations |
 
 #### MetricTransformation
 
@@ -282,48 +282,48 @@ MetricTransformations:
 
 ### AWS::Logs::SubscriptionFilter
 
-Invia log a destinazioni esterne (Kinesis, Lambda, ES).
+Sends logs to external destinations (Kinesis, Lambda, ES).
 
-#### Proprieta
+#### Properties
 
-| Proprieta | Tipo | Richiesto | Descrizione |
+| Property | Type | Required | Description |
 |-----------|------|-----------|-------------|
-| DestinationArn | String | Si | ARN della destinazione |
-| FilterPattern | String | Si | Pattern per filtrare log |
-| LogGroupName | String | Si | Nome del log group |
-| RoleArn | String | Si | ARN del role per accesso |
+| DestinationArn | String | Yes | Destination ARN |
+| FilterPattern | String | Yes | Pattern to filter logs |
+| LogGroupName | String | Yes | Log group name |
+| RoleArn | String | Yes | Role ARN for access |
 
 ---
 
 ### AWS::Logs::QueryDefinition
 
-Salva query Log Insights.
+Saves Log Insights queries.
 
-#### Proprieta
+#### Properties
 
-| Proprieta | Tipo | Richiesto | Descrizione |
+| Property | Type | Required | Description |
 |-----------|------|-----------|-------------|
-| Name | String | Si | Nome della query |
-| QueryString | String | Si | Query Log Insights |
+| Name | String | Yes | Query name |
+| QueryString | String | Yes | Log Insights query |
 
 ---
 
 ### AWS::Synthetics::Canary
 
-Crea synthesized canaries per synthetic monitoring.
+Creates synthesized canaries for synthetic monitoring.
 
-#### Proprieta
+#### Properties
 
-| Proprieta | Tipo | Richiesto | Descrizione |
+| Property | Type | Required | Description |
 |-----------|------|-----------|-------------|
-| Name | String | Si | Nome del canary |
-| ArtifactS3Location | String | Si | S3 location per artifacts |
-| Code | Code | Si | Configurazione codice |
-| ExecutionRoleArn | String | Si | ARN del role |
-| RuntimeVersion | String | Si | Runtime version |
-| Schedule | Schedule | Si | Schedule di esecuzione |
-| SuccessRetentionPeriodInDays | Number | No | Retention per successi |
-| FailureRetentionPeriodInDays | Number | No | Retention per fallimenti |
+| Name | String | Yes | Canary name |
+| ArtifactS3Location | String | Yes | S3 location for artifacts |
+| Code | Code | Yes | Code configuration |
+| ExecutionRoleArn | String | Yes | Role ARN |
+| RuntimeVersion | String | Yes | Runtime version |
+| Schedule | Schedule | Yes | Execution schedule |
+| SuccessRetentionPeriodInDays | Number | No | Retention for successes |
+| FailureRetentionPeriodInDays | Number | No | Retention for failures |
 
 #### Runtime Versions
 
@@ -348,51 +348,51 @@ Schedule:
 
 ### AWS::CloudWatch::ServiceLevelIndicator
 
-Definisce SLI per service health.
+Defines SLI for service health.
 
-#### Proprieta
+#### Properties
 
-| Proprieta | Tipo | Richiesto | Descrizione |
+| Property | Type | Required | Description |
 |-----------|------|-----------|-------------|
-| Name | String | Si | Nome dello SLI |
-| Monitor | Monitor | Si | Monitor di riferimento |
-| Metric | Metric | Si | Configurazione metrica |
-| OperationName | String | No | Nome operazione |
+| Name | String | Yes | SLI name |
+| Monitor | Monitor | Yes | Reference monitor |
+| Metric | Metric | Yes | Metric configuration |
+| OperationName | String | No | Operation name |
 
 ---
 
 ### AWS::CloudWatch::ServiceLevelObjective
 
-Definisce SLO basati su SLI.
+Defines SLO based on SLI.
 
-#### Proprieta
+#### Properties
 
-| Proprieta | Tipo | Richiesto | Descrizione |
+| Property | Type | Required | Description |
 |-----------|------|-----------|-------------|
-| Name | String | Si | Nome dello SLO |
-| Description | String | No | Descrizione |
-| Monitor | Monitor | Si | Monitor di riferimento |
-| SliMetric | SliMetric | Si | Metrica SLI |
-| Target | Target | Si | Target obiettivo |
-| Goal | Goal | No | Goal configurazione |
+| Name | String | Yes | SLO name |
+| Description | String | No | Description |
+| Monitor | Monitor | Yes | Reference monitor |
+| SliMetric | SliMetric | Yes | SLI metric |
+| Target | Target | Yes | Objective target |
+| Goal | Goal | No | Goal configuration |
 
 ---
 
 ### AWS::CloudWatch::ApplicationMonitor
 
-Configura Application Signals per APM.
+Configures Application Signals for APM.
 
-#### Proprieta
+#### Properties
 
-| Proprieta | Tipo | Richiesto | Descrizione |
+| Property | Type | Required | Description |
 |-----------|------|-----------|-------------|
-| MonitorName | String | Si | Nome del monitor |
-| MonitorType | String | Si | Tipo (CW_MONITOR) |
-| Telemetry | List | No | Configurazione telemetry |
+| MonitorName | String | Yes | Monitor name |
+| MonitorType | String | Yes | Type (CW_MONITOR) |
+| Telemetry | List | No | Telemetry configuration |
 
 ---
 
-## Proprieta Comuni
+## Common Properties
 
 ### Dimensions
 
@@ -424,11 +424,11 @@ Tags:
 
 ```yaml
 Statistic:
-  - SampleCount    # Numero di datapoints
-  - Average        # Media
-  - Sum            # Somma
-  - Minimum        # Minimo
-  - Maximum        # Massimo
+  - SampleCount    # Number of datapoints
+  - Average        # Average
+  - Sum            # Sum
+  - Minimum        # Minimum
+  - Maximum        # Maximum
 ```
 
 ### Extended Statistics
@@ -708,7 +708,7 @@ MetricName:
 ### Cross-Stack Import
 
 ```yaml
-# Import da network stack
+# Import from network stack
 Parameters:
   NetworkStackName:
     Type: String

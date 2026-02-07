@@ -1,10 +1,10 @@
 # AWS CloudFormation CloudFront - Examples
 
-Questo file contiene esempi completi e production-ready per pattern CloudFront con CloudFormation.
+This file contains complete and production-ready examples for CloudFront patterns with CloudFormation.
 
-## Esempio 1: Static Website Hosting con S3
+## Example 1: Static Website Hosting with S3
 
-Configurazione completa per un sito web statico su S3 con CloudFront, OAI e certificato ACM.
+Complete configuration for a static website on S3 with CloudFront, OAI, and ACM certificate.
 
 ```yaml
 AWSTemplateFormatVersion: 2010-09-09
@@ -45,7 +45,7 @@ Mappings:
       Compress: true
 
 Resources:
-  # S3 Bucket per contenuti statici
+  # S3 Bucket for static content
   StaticAssetsBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -84,7 +84,7 @@ Resources:
       CloudFrontOriginAccessIdentityConfig:
         Comment: !Sub "OAI for ${StaticAssetsBucket}"
 
-  # S3 Bucket Policy - Permetti accesso solo da CloudFront
+  # S3 Bucket Policy - Allow access only from CloudFront
   S3BucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
@@ -162,7 +162,7 @@ Resources:
         EvaluateTargetHealth: false
         HostedZoneId: Z2FDTNDATAQYW2
 
-  # Route53 AAAA Record per IPv6
+  # Route53 AAAA Record for IPv6
   CloudFrontDNSRecordAAAA:
     Type: AWS::Route53::RecordSet
     Properties:
@@ -194,9 +194,9 @@ Outputs:
       Name: !Sub "${AWS::StackName}-StaticAssetsBucketName"
 ```
 
-## Esempio 2: Multi-Origin con API, S3 e Lambda@Edge
+## Example 2: Multi-Origin with API, S3 and Lambda@Edge
 
-Configurazione avanzata con origini multiple per contenuti statici, API e funzioni Lambda@Edge.
+Advanced configuration with multiple origins for static content, API, and Lambda@Edge functions.
 
 ```yaml
 AWSTemplateFormatVersion: 2010-09-09
@@ -410,9 +410,9 @@ Outputs:
     Value: !Ref CloudFrontDistribution
 ```
 
-## Esempio 3: CloudFront con WAF e Security Headers
+## Example 3: CloudFront with WAF and Security Headers
 
-Configurazione completa con WAF, security headers e monitoring.
+Complete configuration with WAF, security headers, and monitoring.
 
 ```yaml
 AWSTemplateFormatVersion: 2010-09-09
@@ -436,7 +436,7 @@ Parameters:
 
   AlertEmail:
     Type: String
-    Description: Email per alert SNS
+    Description: Email for SNS alerts
 
 Mappings:
   EnvironmentConfig:
@@ -501,7 +501,7 @@ Resources:
             CloudWatchMetricsEnabled: true
             MetricName: AWSSQLi
 
-        # Rate-based rule per protezione DDoS
+        # Rate-based rule for DDoS protection
         - Name: RateLimitRule
           Priority: 4
           Statement:
@@ -689,7 +689,7 @@ Resources:
       Threshold: 0.1
       ComparisonOperator: GreaterThanThreshold
 
-  # SNS Topic per Alert
+  # SNS Topic for Alerts
   AlertTopic:
     Type: AWS::SNS::Topic
     Properties:
@@ -706,9 +706,9 @@ Outputs:
     Value: !GetAtt CloudFrontWebACL.Arn
 ```
 
-## Esempio 4: CloudFront Functions per URL Rewrite
+## Example 4: CloudFront Functions for URL Rewrite
 
-CloudFront Functions per operazioni edge leggere come URL rewrite e header management.
+CloudFront Functions for lightweight edge operations such as URL rewrite and header management.
 
 ```yaml
 AWSTemplateFormatVersion: 2010-09-09
@@ -857,9 +857,9 @@ Resources:
               EventType: viewer-response
 ```
 
-## Esempio 5: Real-Time Logs con Kinesis
+## Example 5: Real-Time Logs with Kinesis
 
-Configurazione CloudFront con real-time logs verso Kinesis Data Stream.
+CloudFront configuration with real-time logs to Kinesis Data Stream.
 
 ```yaml
 AWSTemplateFormatVersion: 2010-09-09
@@ -973,9 +973,9 @@ Outputs:
     Value: !Ref CloudFrontLogsStream
 ```
 
-## Esempio 6: Cross-Stack References
+## Example 6: Cross-Stack References
 
-Pattern per organizzare CloudFront in stack separati con cross-stack references.
+Pattern for organizing CloudFront in separate stacks with cross-stack references.
 
 ```yaml
 # Stack A - Network/Infrastructure
@@ -1112,9 +1112,9 @@ Outputs:
       Name: !Sub "${AWS::StackName}-DistributionId"
 ```
 
-## Esempio 7: CloudFront per API Gateway
+## Example 7: CloudFront for API Gateway
 
-Configurazione CloudFront davanti a API Gateway con caching e throttling.
+CloudFront configuration in front of API Gateway with caching and throttling.
 
 ```yaml
 AWSTemplateFormatVersion: 2010-09-09
@@ -1137,7 +1137,7 @@ Parameters:
     Default: api.example.com
 
 Resources:
-  # Origin Request Policy per API
+  # Origin Request Policy for API
   ApiOriginRequestPolicy:
     Type: AWS::CloudFront::OriginRequestPolicy
     Properties:
@@ -1156,7 +1156,7 @@ Resources:
         QueryStringsConfig:
           QueryStringBehavior: all
 
-  # Cache Policy per API
+  # Cache Policy for API
   ApiCachePolicy:
     Type: AWS::CloudFront::CachePolicy
     Properties:
@@ -1226,16 +1226,16 @@ Outputs:
     Value: !Ref ApiCloudFrontDistribution
 ```
 
-## Esempio 8: CloudFront con Custom Error Responses
+## Example 8: CloudFront with Custom Error Responses
 
-Configurazione per pagine di errore personalizzate e redirect.
+Configuration for custom error pages and redirects.
 
 ```yaml
 AWSTemplateFormatVersion: 2010-09-09
 Description: CloudFront with custom error responses
 
 Resources:
-  # S3 Bucket per error pages
+  # S3 Bucket for error pages
   ErrorPagesBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -1265,7 +1265,7 @@ Resources:
             Action: s3:GetObject
             Resource: !Sub "${ErrorPagesBucket.Arn}/*"
 
-  # Origin per error pages
+  # Origin for error pages
   ErrorPagesOrigin:
     Type: String
     Description: Origin domain name
@@ -1332,9 +1332,9 @@ Resources:
           MaxTTL: 31536000
 ```
 
-## Esempio 9: CloudFront con Lambda@Edge per A/B Testing
+## Example 9: CloudFront with Lambda@Edge for A/B Testing
 
-Configurazione completa per A/B testing con Lambda@Edge.
+Complete configuration for A/B testing with Lambda@Edge.
 
 ```yaml
 AWSTemplateFormatVersion: 2010-09-09
@@ -1346,7 +1346,7 @@ Parameters:
     Default: production
 
 Resources:
-  # Lambda@Edge Function per A/B Testing
+  # Lambda@Edge Function for A/B Testing
   ABTestingLambdaEdge:
     Type: AWS::Lambda::Function
     Properties:
@@ -1429,9 +1429,9 @@ Resources:
               EventType: origin-response
 ```
 
-## Esempio 10: CloudFront Distribution con Geo-Restrictions
+## Example 10: CloudFront Distribution with Geo-Restrictions
 
-Configurazione per limitare l'accesso geograficamente.
+Configuration for geographically restricting access.
 
 ```yaml
 AWSTemplateFormatVersion: 2010-09-09

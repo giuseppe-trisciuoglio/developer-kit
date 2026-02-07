@@ -690,7 +690,7 @@ Resources:
 
 ## Intrinsic Functions per Security
 
-### !GetAtt per Risorse di Sicurezza
+### !GetAtt for Security Resources
 
 ```yaml
 # Get KMS key ARN
@@ -706,7 +706,7 @@ SecurityGroupId: !Ref ApplicationSecurityGroup
 LogGroupArn: !GetAtt EncryptedLogGroup.Arn
 ```
 
-### !Sub con Variabili AWS
+### !Sub with AWS Variables
 
 ```yaml
 # Construct ARN with account and region
