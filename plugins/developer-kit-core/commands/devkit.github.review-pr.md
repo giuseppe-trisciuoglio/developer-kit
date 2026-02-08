@@ -590,3 +590,15 @@ Based on the provided PR number and review focus:
 
 **Agent Selection**: To execute this GitHub task, use the following approach:
 - Primary: Use `general-purpose` agent with GitHub CLI expertise and code analysis capabilities
+
+## Usage
+
+```
+/devkit.github.review-pr $ARGUMENTS
+```
+
+## Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |

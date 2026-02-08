@@ -4,7 +4,7 @@ description: Provides REST API design standards and best practices for Spring Bo
 category: backend
 tags: [spring-boot, rest-api, dto, validation, error-handling, pagination, hateoas, architecture, java]
 version: 1.1.0
-allowed-tools: Read, Write, Bash
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
 # Spring Boot REST API Standards
@@ -281,7 +281,7 @@ public class UserService {
 public ResponseEntity<UserResponse> getUserById(@PathVariable Long id)
 ```
 
-## Constraints
+## Constraints and Warnings
 
 ### 1. Never Expose Entities Directly
 Use DTOs to separate API contracts from domain models. This prevents accidental exposure of internal data structures and allows API evolution without database schema changes.
@@ -306,6 +306,12 @@ Avoid field injection (`@Autowired`) for better testability and explicit depende
 
 ### 7. Keep Controllers Thin
 Controllers should only handle HTTP request/response adaptation. Delegate business logic to service layers.
+
+### 8. API Versioning
+Always version APIs from the start (e.g., `/v1/users`) to allow future changes without breaking existing clients.
+
+### 9. Sensitive Data Protection
+Never log or expose sensitive data (passwords, tokens, PII) in API responses or logs.
 
 ## References
 

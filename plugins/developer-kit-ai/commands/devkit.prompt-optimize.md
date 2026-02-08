@@ -93,3 +93,25 @@ The optimized prompt must:
 **Agent Selection**: To execute this prompt optimization task, use the following agent with fallback:
 - Primary: `prompt-engineering-expert`
 - If not available: Use `developer-kit:prompt-engineering-expert` or fallback to `general-purpose` agent with prompt engineering expertise
+
+## Overview
+
+Provides expert prompt optimization using advanced techniques (CoT, few-shot, constitutional AI) for LLM performance enhancement. Use when you need to improve prompt quality or optimize LLM interactions.
+
+## Usage
+
+```
+/devkit.prompt-optimize $ARGUMENTS
+```
+
+## Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
+
+## Examples
+
+```bash
+/devkit.prompt-optimize example-input
+```

@@ -4,13 +4,16 @@ description: Provides parameterized testing patterns with @ParameterizedTest, @V
 category: testing
 tags: [junit-5, parameterized-test, value-source, csv-source, method-source]
 version: 1.0.1
+allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
 # Parameterized Unit Tests with JUnit 5
 
-Write efficient parameterized unit tests that run the same test logic with multiple input values. Reduce test duplication and improve test coverage using @ParameterizedTest.
+## Overview
 
-## When to Use This Skill
+This skill provides patterns for writing efficient parameterized unit tests using JUnit 5's @ParameterizedTest. It covers @ValueSource, @CsvSource, @MethodSource, @EnumSource, @ArgumentsSource, and custom display names to run the same test logic with multiple input values, reducing test duplication and improving coverage.
+
+## When to Use
 
 Use this skill when:
 - Testing methods with multiple valid inputs
@@ -19,6 +22,19 @@ Use this skill when:
 - Want to reduce test duplication
 - Testing multiple scenarios with similar assertions
 - Need data-driven testing approach
+
+## Instructions
+
+1. **Add junit-jupiter-params dependency**: Ensure junit-jupiter-params is on test classpath
+2. **Choose appropriate source**: Use @ValueSource for simple values, @CsvSource for tabular data, @MethodSource for complex objects
+3. **Match parameter types**: Ensure test method parameters match data source types
+4. **Use descriptive display names**: Set `name = "..."` for readable test output
+5. **Test boundary values**: Include edge cases, null values, and extreme values in parameters
+6. **Use @EnumSource**: Test all enum values or filter specific ones
+7. **Create custom ArgumentsProvider**: Build reusable data sources for complex scenarios
+8. **Keep assertions simple**: Focus on single assertion per parameterized test
+
+## Examples
 
 ## Setup: Parameterized Testing
 
@@ -358,6 +374,16 @@ void shouldBeInFibonacciSequence(int number) {
   assertThat(FibonacciChecker.isFibonacci(number)).isTrue();
 }
 ```
+
+## Constraints and Warnings
+
+- **Parameter count must match**: The number of parameters from source must match test method signature
+- **Type conversion is automatic**: JUnit converts source values to target parameter types when possible
+- **@ValueSource limitation**: Only supports literals (strings, ints, longs, doubles); not objects or null
+- **CSV escaping**: Strings containing commas must be enclosed in single quotes in @CsvSource
+- **MethodSource visibility**: @MethodSource methods must be static, can be private but must be in same class
+- **Display name placeholders**: Use {0}, {1}, etc. to reference parameters in display names
+- **Test execution order**: Parameterized tests execute each parameter set as a separate test invocation
 
 ## Troubleshooting
 

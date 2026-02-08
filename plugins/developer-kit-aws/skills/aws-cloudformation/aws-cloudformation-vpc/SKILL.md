@@ -24,6 +24,104 @@ Use this skill when:
 - Organizing templates with Mappings and Conditions
 - Designing reusable, modular CloudFormation templates
 
+## Instructions
+
+Follow these steps to create VPC infrastructure with CloudFormation:
+
+1. **Define VPC Parameters**: Specify CIDR block and DNS settings
+2. **Create Subnets**: Configure public and private subnets across AZs
+3. **Set Up Internet Gateway**: Enable internet connectivity for public subnets
+4. **Configure NAT Gateways**: Provide outbound connectivity for private subnets
+5. **Create Route Tables**: Define routing rules for each subnet type
+6. **Add Security Groups**: Configure network access controls
+7. **Implement VPC Endpoints**: Enable private connectivity to AWS services
+8. **Create VPC Peering**: Connect multiple VPCs if needed
+
+For complete examples, see the [EXAMPLES.md](references/examples.md) file.
+
+## Examples
+
+The following examples demonstrate common VPC patterns:
+
+### Example 1: VPC with Public and Private Subnets
+
+```yaml
+VPC:
+  Type: AWS::EC2::VPC
+  Properties:
+    CidrBlock: 10.0.0.0/16
+    EnableDnsHostnames: true
+    EnableDnsSupport: true
+
+PublicSubnet:
+  Type: AWS::EC2::Subnet
+  Properties:
+    VpcId: !Ref VPC
+    CidrBlock: 10.0.1.0/24
+    AvailabilityZone: !Select [0, !GetAZs ""]
+    MapPublicIpOnLaunch: true
+
+PrivateSubnet:
+  Type: AWS::EC2::Subnet
+  Properties:
+    VpcId: !Ref VPC
+    CidrBlock: 10.0.2.0/24
+    AvailabilityZone: !Select [0, !GetAZs ""]
+```
+
+### Example 2: Internet Gateway and Routes
+
+```yaml
+InternetGateway:
+  Type: AWS::EC2::InternetGateway
+
+VPCGatewayAttachment:
+  Type: AWS::EC2::VPCGatewayAttachment
+  Properties:
+    VpcId: !Ref VPC
+    InternetGatewayId: !Ref InternetGateway
+
+PublicRouteTable:
+  Type: AWS::EC2::RouteTable
+  Properties:
+    VpcId: !Ref VPC
+
+PublicRoute:
+  Type: AWS::EC2::Route
+  DependsOn: VPCGatewayAttachment
+  Properties:
+    RouteTableId: !Ref PublicRouteTable
+    DestinationCidrBlock: 0.0.0.0/0
+    GatewayId: !Ref InternetGateway
+```
+
+### Example 3: NAT Gateway
+
+```yaml
+NatGateway:
+  Type: AWS::EC2::NatGateway
+  Properties:
+    AllocationId: !GetAtt EIP.AllocationId
+    SubnetId: !Ref PublicSubnet
+
+EIP:
+  Type: AWS::EC2::EIP
+
+PrivateRouteTable:
+  Type: AWS::EC2::RouteTable
+  Properties:
+    VpcId: !Ref VPC
+
+PrivateRoute:
+  Type: AWS::EC2::Route
+  Properties:
+    RouteTableId: !Ref PrivateRouteTable
+    DestinationCidrBlock: 0.0.0.0/0
+    NatGatewayId: !Ref NatGateway
+```
+
+For complete production-ready examples, see [EXAMPLES.md](references/examples.md).
+
 ## Quick Start
 
 ### Basic VPC with Public Subnet
@@ -1187,3 +1285,50 @@ jobs:
 - For reference: See [REFERENCE.md](REFERENCE.md)
 - AWS CloudFormation User Guide: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/
 - AWS VPC Documentation: https://docs.aws.amazon.com/vpc/latest/userguide/
+
+## Constraints and Warnings
+
+### Resource Limits
+
+- **VPC Limits**: Maximum 5 VPCs per region (soft limit, can be increased)
+- **Subnet Limits**: Maximum 200 subnets per VPC
+- **Route Table Limits**: Maximum 200 route tables per VPC
+- **Internet Gateway**: One Internet Gateway per VPC
+- **NAT Gateway**: One NAT Gateway per availability zone
+
+### Network Constraints
+
+- **CIDR Overlap**: VPC CIDR blocks cannot overlap with peered VPCs or connected networks
+- **CIDR Changes**: VPC CIDR blocks cannot be modified after creation; recreation required
+- **Subnet Sizing**: Subnet CIDR ranges cannot be changed after subnet creation
+- **Route Propagation**: Route propagation affects all routes in the route table
+
+### Security Constraints
+
+- **Security Group Limits**: Maximum 60 inbound and 60 outbound rules per security group
+- **NACL Stateless**: Network ACLs are stateless; return traffic must be explicitly allowed
+- **Flow Logs Costs**: VPC Flow Logs can generate significant CloudWatch Logs costs
+- **Security Group References**: Security group references cannot span VPC peering in some configurations
+
+### Operational Constraints
+
+- **Subnet Isolation**: Subnets cannot be moved between AZs after creation
+- **Gateway Attachments**: attaching/detaching Internet Gateways and VPGs takes time
+- **Peering Limitations**: VPC peering has limitations with transitive routing
+- **VPN Connections**: Site-to-Site VPN connections have bandwidth limitations
+
+### Cost Considerations
+
+- **NAT Gateway**: NAT gateways incur hourly costs plus data processing per GB
+- **Transit Gateway**: Transit Gateway attachments incur per-AZ hourly and data transfer costs
+- **PrivateLink**: Interface VPC endpoints incur hourly and per-GB data processing costs
+- **Traffic Mirroring**: Traffic mirroring doubles network costs
+
+### Availability Constraints
+
+- **Multi-AZ Requirements**: Resources should be distributed across multiple AZs for HA
+- **AZ Isolation**: Entire AZ failures can affect applications not distributed across AZs
+- **Gateway Redundancy**: Internet Gateways and NAT Gateways are single points of failure within AZ
+- **Route Table Limits**: Associate each subnet with only one route table
+
+## Additional Files

@@ -4,7 +4,7 @@ description: Provides AWS messaging patterns using AWS SDK for Java 2.x for SQS 
 category: aws
 tags: [aws, sqs, sns, java, sdk, messaging, pub-sub, queues, events]
 version: 1.1.0
-allowed-tools: Read, Write, Bash, Grep
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
 # AWS SDK for Java 2.x - Messaging (SQS & SNS)
@@ -304,7 +304,20 @@ SnsClient snsClient = SnsClient.builder()
 
 For comprehensive API documentation and advanced patterns, see:
 
-- [@references/detailed-sqs-operations] - Complete SQS operations reference
-- [@references/detailed-sns-operations] - Complete SNS operations reference
-- [@references/spring-boot-integration] - Spring Boot integration patterns
-- [@references/aws-official-documentation] - Official AWS documentation and best practices
+- [references/detailed-sqs-operations.md](references/detailed-sqs-operations.md) - Complete SQS operations reference
+- [references/detailed-sns-operations.md](references/detailed-sns-operations.md) - Complete SNS operations reference
+- [references/spring-boot-integration.md](references/spring-boot-integration.md) - Spring Boot integration patterns
+- [references/aws-official-documentation.md](references/aws-official-documentation.md) - Official AWS documentation and best practices
+
+## Constraints and Warnings
+
+- **Message Size**: SQS and SNS messages limited to 256KB
+- **Visibility Timeout**: SQS messages become visible again after timeout if not deleted
+- **FIFO Naming**: FIFO queues and topics must end with `.fifo` suffix
+- **FIFO Throughput**: FIFO queues have lower throughput limits (300 msg/sec)
+- **Message Retention**: SQS messages retained maximum 14 days
+- **Dead Letter Queues**: Configure DLQ to prevent message loss
+- **Subscription Limits**: SNS topics have limits on number of subscriptions
+- **Filter Policies**: SNS filter policies have complexity limits
+- **Cross-Region**: SQS queues are region-specific; SNS topics can be cross-region
+- **Cost**: Both services charge per API call and data transfer

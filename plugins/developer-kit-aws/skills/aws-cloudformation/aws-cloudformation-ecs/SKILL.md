@@ -9,6 +9,8 @@ allowed-tools: Read, Write, Bash
 
 # AWS CloudFormation ECS
 
+## Overview
+
 Create production-ready container infrastructure using AWS CloudFormation templates. This skill covers ECS clusters, services, task definitions, container configurations, scaling, service discovery, load balancing, and blue/green deployments with CodeDeploy.
 
 ## When to Use
@@ -24,6 +26,91 @@ Use this skill when:
 - Organizing templates with Parameters, Outputs, Mappings, Conditions
 - Implementing cross-stack references with export/import
 - Using Transform for macro and reuse
+
+## Instructions
+
+Follow these steps to create ECS infrastructure with CloudFormation:
+
+1. **Define Cluster**: Create ECS cluster with container insights
+2. **Configure Task Definition**: Set up container image, resources, and environment
+3. **Create Service**: Configure desired count and deployment strategy
+4. **Set Up ALB Integration**: Configure target groups and listeners
+5. **Implement Service Discovery**: Use Cloud Map for service naming
+6. **Configure Auto Scaling**: Set up target tracking or step scaling
+7. **Add Security**: Configure IAM roles and security groups
+8. **Implement Blue/Green**: Use CodeDeploy for zero-downtime deployments
+
+For complete examples, see the [EXAMPLES.md](references/examples.md) file.
+
+## Examples
+
+The following examples demonstrate common ECS patterns:
+
+### Example 1: ECS Cluster
+
+```yaml
+ECSCluster:
+  Type: AWS::ECS::Cluster
+  Properties:
+    ClusterName: !Sub "${AWS::StackName}-cluster"
+    ClusterSettings:
+      - Name: containerInsights
+        Value: enabled
+```
+
+### Example 2: Task Definition
+
+```yaml
+TaskDefinition:
+  Type: AWS::ECS::TaskDefinition
+  Properties:
+    Family: web-app
+    Cpu: "512"
+    Memory: "1024"
+    NetworkMode: awsvpc
+    RequiresCompatibilities:
+      - EC2
+      - FARGATE
+    ExecutionRoleArn: !Ref TaskExecutionRole
+    ContainerDefinitions:
+      - Name: web
+        Image: nginx:latest
+        PortMappings:
+          - ContainerPort: 80
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group: !Ref LogGroup
+            awslogs-region: !Ref AWS::Region
+```
+
+### Example 3: ECS Service with ALB
+
+```yaml
+EcsService:
+  Type: AWS::ECS::Service
+  Properties:
+    ServiceName: !Sub "${AWS::StackName}-service"
+    Cluster: !Ref ECSCluster
+    TaskDefinition: !Ref TaskDefinition
+    DesiredCount: 2
+    LaunchType: FARGATE
+    DeploymentConfiguration:
+      MaximumPercent: 200
+      MinimumHealthyPercent: 50
+    NetworkConfiguration:
+      AwsvpcConfiguration:
+        AssignPublicIp: DISABLED
+        SecurityGroups:
+          - !Ref ServiceSecurityGroup
+        Subnets: !Ref PrivateSubnets
+    LoadBalancers:
+      - ContainerName: web
+        ContainerPort: 80
+        TargetGroupArn: !Ref TargetGroup
+```
+
+For complete production-ready examples, see [EXAMPLES.md](references/examples.md).
 
 ## Template Structure
 
@@ -1421,6 +1508,95 @@ AlbSecurityGroup:
 - Organize stacks by lifecycle and ownership
 - Test task definitions locally before deployment
 
+## Best Practices
+
+### Container Configuration
+
+- **Use Specific Image Tags**: Avoid `latest` tag; pin specific versions for reproducibility
+- **Limit Container Resources**: Set memory and CPU limits to prevent runaway containers
+- **Health Check Configuration**: Configure appropriate health check intervals and timeouts
+- **Log Configuration**: Use awslogs driver with appropriate retention and log groups
+
+### Task Definition Design
+
+- **One Process Per Container**: Follow single responsibility principle per container
+- **Use Sidecar Patterns**: Deploy log forwarders and monitoring as sidecar containers
+- **Essential Containers**: Mark only one container as essential for task health
+- **Task Roles**: Use IAM roles for tasks instead of passing credentials
+
+### Service Configuration
+
+- **Minimum Healthy Percent**: Set appropriate values for zero-downtime deployments
+- **Maximum Percent**: Control how many extra tasks can run during updates
+- **Placement Strategies**: Use spread strategies across AZs for high availability
+- **Task Networking**: Use awsvpc network mode for ENI-level networking control
+
+### Deployment Strategies
+
+- **Blue/Green Deployments**: Use CodeDeploy for production blue/green deployments
+- **Rolling Updates**: Configure appropriate deployment parameters for rolling updates
+- **Task Definition Versions**: Always create new versions instead of updating existing
+- **Environment Variables**: Use SSM Parameter Store or Secrets Manager for sensitive data
+
+### Performance Optimization
+
+- **Right-Size Resources**: Profile containers to determine optimal CPU/memory allocation
+- **Fargate vs EC2**: Choose Fargate for simplified operations; EC2 for cost optimization at scale
+- **Spot Instances**: Use Spot capacity providers for fault-tolerant workloads
+- **Task Placement**: Use custom task placement strategies for optimization
+
+### Security Hardening
+
+- **Least Privilege IAM**: Grant minimum required permissions in task IAM roles
+- **Network Isolation**: Use security groups to restrict inter-task communication
+- **Secrets Management**: Never store secrets in environment variables or task definitions
+- **Image Scanning**: Enable ECR image scanning and deploy only scanned images
+- **Runtime Security**: Enable ECS Exec only when needed; remove access after debugging
+
+## Constraints and Warnings
+
+### Resource Limits
+
+- **Task Definition Size**: Maximum task definition size is 1 KB (CloudFormation) for certain configurations
+- **Container Limits**: Maximum 10 containers per task definition
+- **Memory Limits**: Memory limits must be set for all containers in a task
+- **CPU Limits**: CPU units must be set for all containers in Fargate
+
+### Operational Constraints
+
+- **Service Update Limits**: Services can only update to new task definitions; cannot modify existing
+- **ENI Limits**: awsvpc mode requires ENIs; each task consumes ENIs from subnet pool
+- **Task Start Time**: Cold starts can take 30-60 seconds depending on image size
+- **Scaling Delays**: Auto scaling takes time to provision new tasks; not instant
+
+### Security Constraints
+
+- **IAM Role Limits**: Task IAM roles must be assumable by ecs-tasks.amazonaws.com
+- **Network Mode**: awsvpc mode required for Fargate; cannot use bridge or host mode
+- **Security Group Rules**: Security groups attached to tasks control all network traffic
+- **Secrets Rotation**: Rotating secrets requires task redeployment to pick up new values
+
+### Cost Considerations
+
+- **Fargate Pricing**: Fargate charges per vCPU and memory per hour; minimum charges apply
+- **Data Transfer**: Data transfer between tasks in different AZs incurs cross-AZ costs
+- **ECR Storage**: Container images stored in ECR incur monthly storage costs
+- **Monitoring Costs**: Container Insights and detailed monitoring add costs
+
+### Deployment Constraints
+
+- **Blue/Green Requirements**: Blue/green deployments require production and listener configuration
+- **CodeDeploy Integration**: CodeDeploy requires appropriate IAM permissions and configuration
+- **Rollback Limitations**: Rollbacks require manual intervention in some failure scenarios
+- **Task Drift**: Manual changes to running tasks are not reflected in CloudFormation
+
+### Availability Constraints
+
+- **Fargate Spot**: Fargate Spot can interrupt tasks with 2-minute notice
+- **Multi-AZ**: Services should be spread across multiple AZs for high availability
+- **Health Check Failures**: Failing health checks can cause rapid task replacement
+- **Service Discovery**: Service discovery has additional costs and latency
+
 ## Related Resources
 
 - [ECS Documentation](https://docs.aws.amazon.com/ecs/)
@@ -1435,5 +1611,5 @@ AlbSecurityGroup:
 ## Additional Files
 
 For complete details on resources and their properties, see:
-- [REFERENCE.md](reference.md) - Detailed reference guide for all CloudFormation resources
-- [EXAMPLES.md](examples.md) - Complete production-ready examples
+- [REFERENCE.md](references/reference.md) - Detailed reference guide for all CloudFormation resources
+- [EXAMPLES.md](references/examples.md) - Complete production-ready examples

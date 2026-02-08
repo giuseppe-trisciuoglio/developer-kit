@@ -4,12 +4,16 @@ description: Provides tool and function calling patterns with LangChain4j. Handl
 category: ai-development
 tags: [langchain4j, tools, function-calling, "@Tool", ToolProvider, ToolExecutor, dynamic-tools, parameter-descriptions, java]
 version: 1.1.0
-allowed-tools: Read, Write, Bash, WebFetch
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep, WebFetch
 ---
 
 # LangChain4j Tool & Function Calling Patterns
 
 Define tools and enable AI agents to interact with external systems, APIs, and services using LangChain4j's annotation-based and programmatic tool system.
+
+## Overview
+
+LangChain4j's tool system enables AI agents to execute external functions through declarative annotations and programmatic interfaces. Tools are defined using the `@Tool` annotation and automatically registered with AI services, allowing LLMs to perform actions beyond text generation such as database queries, API calls, and calculations.
 
 ## When to Use This Skill
 
@@ -22,6 +26,78 @@ Use this skill when:
 - Implementing AI systems that need to integrate with existing business systems
 - Building context-aware AI applications where tool availability depends on user state
 - Developing production AI applications that require robust error handling and monitoring
+
+## Instructions
+
+Follow these steps to implement tools with LangChain4j:
+
+### 1. Define Tool Methods
+
+Create methods annotated with `@Tool` in a class:
+
+```java
+public class WeatherTools {
+    @Tool("Get current weather for a city")
+    public String getWeather(
+        @P("City name") String city,
+        @P("Temperature unit (celsius or fahrenheit)", required = false) String unit) {
+        // Implementation
+        return weatherService.getWeather(city, unit);
+    }
+}
+```
+
+### 2. Configure Parameter Descriptions
+
+Use `@P` annotation for clear parameter descriptions that help the LLM understand how to call the tool:
+
+```java
+@Tool("Calculate total order amount")
+public double calculateOrderTotal(
+    @P("List of product IDs") List<String> productIds,
+    @P("Customer discount percentage", required = false) Double discount) {
+    // Implementation
+}
+```
+
+### 3. Register Tools with AI Service
+
+Connect tools to an AI service using the AiServices builder:
+
+```java
+MathAssistant assistant = AiServices.builder(MathAssistant.class)
+    .chatModel(chatModel)
+    .tools(new Calculator(), new WeatherService())
+    .build();
+```
+
+### 4. Handle Tool Execution Errors
+
+Implement error handling for tool failures:
+
+```java
+AiServices.builder(Assistant.class)
+    .chatModel(chatModel)
+    .tools(new ExternalServiceTools())
+    .toolExecutionErrorHandler((request, exception) -> {
+        log.error("Tool execution failed: {}", exception.getMessage());
+        return "An error occurred while processing your request";
+    })
+    .build();
+```
+
+### 5. Monitor Tool Usage
+
+Track tool calls for debugging and analytics:
+
+```java
+Result<String> result = assistant.chat(question);
+result.toolExecutions().forEach(execution ->
+    log.info("Executed tool: {} in {}ms",
+        execution.request().name(),
+        execution.duration().toMillis())
+);
+```
 
 ## Setup and Configuration
 
@@ -299,6 +375,137 @@ stream
 3. **Monitoring**: Monitor tool performance and error rates
 4. **Resource Management**: Handle external service timeouts gracefully
 
+## Examples
+
+### Simple Calculator Tool
+
+```java
+public class CalculatorTools {
+
+    @Tool("Add two numbers")
+    public double add(@P("First number") double a,
+                      @P("Second number") double b) {
+        return a + b;
+    }
+
+    @Tool("Multiply two numbers")
+    public double multiply(@P("First number") double a,
+                           @P("Second number") double b) {
+        return a * b;
+    }
+}
+
+// Usage
+interface MathAssistant {
+    String ask(String question);
+}
+
+MathAssistant assistant = AiServices.builder(MathAssistant.class)
+    .chatModel(chatModel)
+    .tools(new CalculatorTools())
+    .build();
+
+String result = assistant.ask("What is 15 times 7 plus 3?");
+```
+
+### Database Access Tool
+
+```java
+@Component
+public class DatabaseTools {
+
+    private final CustomerRepository repository;
+
+    @Tool("Get customer information by ID")
+    public Customer getCustomer(@P("Customer ID") Long customerId) {
+        return repository.findById(customerId)
+            .orElseThrow(() -> new IllegalArgumentException("Customer not found"));
+    }
+
+    @Tool("Update customer email address")
+    public String updateEmail(
+        @P("Customer ID") Long customerId,
+        @P("New email address") String newEmail) {
+        Customer customer = repository.findById(customerId)
+            .orElseThrow(() -> new IllegalArgumentException("Customer not found"));
+        customer.setEmail(newEmail);
+        repository.save(customer);
+        return "Email updated successfully";
+    }
+}
+```
+
+### REST API Tool
+
+```java
+@Component
+public class ApiTools {
+
+    private final WebClient webClient;
+
+    @Tool("Get current stock price")
+    public String getStockPrice(@P("Stock symbol") String symbol) {
+        return webClient.get()
+            .uri("/api/stocks/{symbol}", symbol)
+            .retrieve()
+            .bodyToMono(String.class)
+            .block();
+    }
+}
+```
+
+### Context-Aware Tool with Memory ID
+
+```java
+public class UserPreferencesTools {
+
+    @Tool("Get user preferences for a category")
+    public String getPreferences(
+        @ToolMemoryId String userId,
+        @P("Preference category (e.g., theme, language)") String category) {
+        return preferencesService.getPreferences(userId, category);
+    }
+
+    @Tool("Set user preference")
+    public String setPreference(
+        @ToolMemoryId String userId,
+        @P("Preference category") String category,
+        @P("Preference value") String value) {
+        preferencesService.setPreference(userId, category, value);
+        return "Preference saved";
+    }
+}
+```
+
+### Dynamic Tool Provider
+
+```java
+public class DynamicToolProvider implements ToolProvider {
+
+    private final Map<String, Object> availableTools = new HashMap<>();
+
+    public void registerTool(String name, ToolSpecification spec, ToolExecutor executor) {
+        availableTools.put(name, new ToolWithSpec(spec, executor));
+    }
+
+    @Override
+    public ToolProviderResult provideTools(ToolProviderRequest request) {
+        var builder = ToolProviderResult.builder();
+        String message = request.userMessage().singleText().toLowerCase();
+
+        // Dynamically filter tools based on user message
+        if (message.contains("weather")) {
+            builder.add(weatherToolSpec, weatherExecutor);
+        }
+        if (message.contains("calculate") || message.contains("math")) {
+            builder.add(calculatorToolSpec, calculatorExecutor);
+        }
+
+        return builder.build();
+    }
+}
+```
+
 ## Reference Documentation
 
 For detailed API reference, examples, and advanced patterns, see:
@@ -356,3 +563,16 @@ For detailed API reference, examples, and advanced patterns, see:
 - [LangChain4j Tool & Function Calling - API References](./references/references.md)
 - [LangChain4j Tool & Function Calling - Implementation Patterns](./references/implementation-patterns.md)
 - [LangChain4j Tool & Function Calling - Examples](./references/examples.md)
+
+## Constraints and Warnings
+
+- Tools with side effects should have clear descriptions warning about potential impacts.
+- AI models may call tools in unexpected orders or with unexpected parameters.
+- Tool execution can be expensive; implement rate limiting and timeout handling.
+- Never pass sensitive data (API keys, passwords) in tool descriptions or responses.
+- Large tool sets can confuse AI models; consider using dynamic tool providers.
+- Tool execution errors should be handled gracefully; never expose stack traces to AI models.
+- Be cautious with tools that modify data; AI models may call them multiple times.
+- Parameter descriptions should be precise; vague descriptions lead to incorrect tool usage.
+- Tools with long execution times should implement timeout handling.
+- Test tools thoroughly before exposing them to AI models to prevent unexpected behavior.

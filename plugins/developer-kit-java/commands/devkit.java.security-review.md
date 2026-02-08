@@ -292,3 +292,24 @@ Target: $ARGUMENTS
 - Primary: `java-security-expert`
 - If not available: Use `developer-kit:java-security-expert` or fallback to `general-purpose` agent with `spring-boot-crud-patterns` skill
 
+## Overview
+
+Validates security posture for Java enterprise applications (Spring, Jakarta EE, etc.). Use when auditing application security or before production deployments.
+
+## Usage
+
+```
+/devkit.java.security-review $ARGUMENTS
+```
+
+## Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
+
+## Examples
+
+```bash
+/devkit.java.security-review example-input
+```

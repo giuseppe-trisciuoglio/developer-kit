@@ -4,10 +4,12 @@ description: Provides AWS RDS (Relational Database Service) management patterns 
 category: aws
 tags: [aws, rds, database, java, sdk, postgresql, mysql, aurora, spring-boot]
 version: 1.1.0
-allowed-tools: Read, Write, Bash
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
 # AWS SDK for Java v2 - RDS Management
+
+## Overview
 
 This skill provides comprehensive guidance for working with Amazon RDS (Relational Database Service) using the AWS SDK for Java 2.x, covering database instance management, snapshots, parameter groups, and RDS operations.
 
@@ -24,6 +26,19 @@ Use this skill when:
 - Connecting Lambda functions to RDS databases
 - Implementing RDS IAM authentication
 - Monitoring RDS instances and metrics
+
+## Instructions
+
+Follow these steps to work with Amazon RDS:
+
+1. **Add Dependencies** - Include AWS RDS SDK dependency and database drivers
+2. **Create RDS Client** - Instantiate RdsClient with proper region and credentials
+3. **Create DB Instance** - Use createDBInstance() with appropriate configuration
+4. **Configure Security** - Set up VPC security groups and encryption
+5. **Set Up Backups** - Configure automated backup windows and retention
+6. **Monitor Status** - Use describeDBInstances() to check instance state
+7. **Create Snapshots** - Take manual snapshots before major changes
+8. **Handle Failover** - Configure Multi-AZ for high availability
 
 ## Getting Started
 
@@ -250,6 +265,93 @@ public static void deleteDBInstanceWithSnapshot(RdsClient rdsClient,
 }
 ```
 
+## Examples
+
+### Example 1: Complete RDS Instance Creation with All Security Settings
+
+```java
+public String createSecurePostgreSQLInstance(RdsClient rdsClient,
+                                            String instanceIdentifier,
+                                            String dbName,
+                                            String masterUsername,
+                                            String masterPassword,
+                                            String vpcSecurityGroupId) {
+    CreateDbInstanceRequest request = CreateDbInstanceRequest.builder()
+        .dbInstanceIdentifier(instanceIdentifier)
+        .dbName(dbName)
+        .masterUsername(masterUsername)
+        .masterUserPassword(masterPassword)
+        .engine("postgres")
+        .engineVersion("15.4")
+        .dbInstanceClass("db.t3.micro")
+        .allocatedStorage(20)
+        .storageEncrypted(true)
+        .storageType(StorageType.GP2)
+        .vpcSecurityGroupIds(vpcSecurityGroupId)
+        .publiclyAccessible(false)
+        .multiAZ(true)
+        .backupRetentionPeriod(7)
+        .preferredBackupWindow("03:00-04:00")
+        .preferredMaintenanceWindow("sun:04:00-sun:05:00")
+        .deletionProtection(true)
+        .enableCloudwatchLogsExports("postgresql", "upgrade")
+        .build();
+
+    CreateDbInstanceResponse response = rdsClient.createDBInstance(request);
+    return response.dbInstance().dbInstanceArn();
+}
+```
+
+### Example 2: Spring Boot Service for RDS Management
+
+```java
+@Service
+@RequiredArgsConstructor
+public class RdsManagementService {
+
+    private final RdsClient rdsClient;
+
+    public List<DBInstance> listAllInstances() {
+        DescribeDbInstancesResponse response = rdsClient.describeDBInstances();
+        return response.dbInstances();
+    }
+
+    public DBInstance getInstanceById(String instanceId) {
+        DescribeDbInstancesResponse response = rdsClient.describeDBInstances(
+            DescribeDbInstancesRequest.builder()
+                .dbInstanceIdentifier(instanceId)
+                .build()
+        );
+        return response.dbInstances().get(0);
+    }
+
+    public String createSnapshot(String instanceId, String snapshotId) {
+        CreateDbSnapshotResponse response = rdsClient.createDBSnapshot(
+            CreateDbSnapshotRequest.builder()
+                .dbInstanceIdentifier(instanceId)
+                .dbSnapshotIdentifier(snapshotId)
+                .build()
+        );
+        return response.dbSnapshot().dbSnapshotArn();
+    }
+}
+```
+
+### Example 3: Wait for Instance to Be Available
+
+```java
+public void waitForInstanceAvailable(RdsClient rdsClient, String instanceId) {
+    DescribeDbInstancesRequest request = DescribeDbInstancesRequest.builder()
+        .dbInstanceIdentifier(instanceId)
+        .build();
+
+    waiter = rdsClient.waiter();
+    waiter.waitUntilDBInstanceAvailable(request);
+
+    System.out.println("Instance " + instanceId + " is now available!");
+}
+```
+
 ## Best Practices
 
 ### Security
@@ -398,3 +500,16 @@ For support with AWS RDS operations using AWS SDK for Java 2.x:
 - AWS Documentation: [Amazon RDS User Guide](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html)
 - AWS SDK Documentation: [AWS SDK for Java 2.x](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/home.html)
 - AWS Support: [AWS Support Center](https://aws.amazon.com/premiumsupport/)
+
+## Constraints and Warnings
+
+- **Instance Limits**: AWS accounts have limits on number of DB instances per region
+- **Storage Limits**: Maximum storage varies by engine and instance class
+- **Connection Limits**: Each instance type has maximum connection limits
+- **Backup Storage**: Automated backup storage incurs additional costs
+- **Multi-AZ Costs**: Multi-AZ deployments approximately double compute costs
+- **Maintenance Windows**: Instances may be unavailable during maintenance
+- **Snapshot Costs**: Manual snapshots are billed based on storage used
+- **Engine Version**: Older engine versions may not support all features
+- **Port Requirements**: Security groups must allow database port access
+- **IAM Authentication**: Not all database engines support IAM authentication

@@ -4,13 +4,16 @@ description: Provides patterns for unit testing @ConfigurationProperties classes
 category: testing
 tags: [junit-5, configuration-properties, spring-profiles, property-binding]
 version: 1.0.1
+allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
 # Unit Testing Configuration Properties and Profiles
 
-Test @ConfigurationProperties bindings, environment-specific configurations, and property validation using JUnit 5. Verify configuration loading without full Spring context startup.
+## Overview
 
-## When to Use This Skill
+This skill provides patterns for unit testing @ConfigurationProperties bindings, environment-specific configurations, and property validation using JUnit 5. It covers testing property name mapping, type conversions, validation constraints, nested structures, and profile-specific configurations without full Spring context startup.
+
+## When to Use
 
 Use this skill when:
 - Testing @ConfigurationProperties property binding
@@ -19,6 +22,19 @@ Use this skill when:
 - Testing environment-specific configurations
 - Testing nested property structures
 - Want fast configuration tests without Spring context
+
+## Instructions
+
+1. **Use ApplicationContextRunner**: Test property bindings without starting full Spring context
+2. **Test all property paths**: Verify each property including nested structures and collections
+3. **Test validation constraints**: Ensure @Validated properties fail with invalid values
+4. **Test type conversions**: Verify Duration, DataSize, and other special types convert correctly
+5. **Test default values**: Verify properties have correct defaults when not specified
+6. **Test profile-specific configs**: Use @Profile to test environment-specific configurations
+7. **Verify property prefixes**: Ensure the prefix in @ConfigurationProperties matches test properties
+8. **Test edge cases**: Include empty strings, null values, and type mismatches
+
+## Examples
 
 ## Setup: Configuration Testing
 
@@ -442,6 +458,16 @@ class DefaultValuesTest {
 - Not testing nested property structures
 - Testing with wrong property prefix
 - Not handling type conversion properly
+
+## Constraints and Warnings
+
+- **Property name matching**: Kebab-case in properties (app.my-prop) maps to camelCase in Java (myProp)
+- **Loose binding by default**: Spring Boot supports loose binding; enable strict binding if needed
+- **Validation requires @Validated**: Add @Validated to enable validation on configuration properties
+- **@ConstructorBinding limitations**: When using @ConstructorBinding, all parameters must be bindable
+- **List indexing**: List properties use [0], [1] notation; ensure sequential indexing
+- **Duration format**: Duration properties accept standard ISO-8601 format or simple syntax (10s, 1m)
+- **ApplicationContextRunner isolation**: Each ApplicationContextRunner creates a new context; there's no shared state
 
 ## Troubleshooting
 

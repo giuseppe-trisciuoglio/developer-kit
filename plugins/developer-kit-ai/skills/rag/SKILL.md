@@ -28,6 +28,128 @@ Use this skill when:
 - Creating research tools with source citation
 - Developing knowledge management systems
 
+## Instructions
+
+### Step 1: Choose Vector Database
+
+Select an appropriate vector database based on your requirements:
+
+1. **For production scalability**: Use Pinecone or Milvus
+2. **For open-source requirements**: Use Weaviate or Qdrant
+3. **For local development**: Use Chroma or FAISS
+4. **For hybrid search needs**: Use Weaviate with BM25 support
+
+### Step 2: Select Embedding Model
+
+Choose an embedding model based on your use case:
+
+1. **General purpose**: text-embedding-ada-002 (OpenAI)
+2. **Fast and lightweight**: all-MiniLM-L6-v2
+3. **Multilingual support**: e5-large-v2
+4. **Best performance**: bge-large-en-v1.5
+
+### Step 3: Implement Document Processing Pipeline
+
+1. Load documents from your source (file system, database, API)
+2. Clean and preprocess documents (remove formatting artifacts, normalize text)
+3. Split documents into chunks using appropriate chunking strategy
+4. Generate embeddings for each chunk
+5. Store embeddings in your vector database with metadata
+
+### Step 4: Configure Retrieval Strategy
+
+1. **Dense Retrieval**: Use semantic similarity via embeddings for most use cases
+2. **Hybrid Search**: Combine dense + sparse retrieval for better coverage
+3. **Metadata Filtering**: Add filters based on document attributes
+4. **Reranking**: Implement cross-encoder reranking for high-precision requirements
+
+### Step 5: Build RAG Pipeline
+
+1. Create content retriever with your embedding store
+2. Configure AI service with retriever and chat memory
+3. Implement prompt template with context injection
+4. Add response validation and grounding checks
+
+### Step 6: Evaluate and Optimize
+
+1. Measure retrieval metrics (precision@k, recall@k, MRR)
+2. Evaluate answer quality (faithfulness, relevance)
+3. Monitor performance and user feedback
+4. Iterate on chunking, retrieval, and prompt parameters
+
+## Examples
+
+### Example 1: Basic Document Q&A System
+
+```java
+// Simple RAG setup for document Q&A
+List<Document> documents = FileSystemDocumentLoader.loadDocuments("/docs");
+
+InMemoryEmbeddingStore<TextSegment> store = new InMemoryEmbeddingStore<>();
+EmbeddingStoreIngestor.ingest(documents, store);
+
+DocumentAssistant assistant = AiServices.builder(DocumentAssistant.class)
+    .chatModel(chatModel)
+    .contentRetriever(EmbeddingStoreContentRetriever.from(store))
+    .build();
+
+String answer = assistant.answer("What is the company policy on remote work?");
+```
+
+### Example 2: Metadata-Filtered Retrieval
+
+```java
+// RAG with metadata filtering for specific document categories
+EmbeddingStoreContentRetriever retriever = EmbeddingStoreContentRetriever.builder()
+    .embeddingStore(store)
+    .embeddingModel(embeddingModel)
+    .maxResults(5)
+    .minScore(0.7)
+    .filter(metadataKey("category").isEqualTo("technical"))
+    .build();
+```
+
+### Example 3: Multi-Source RAG Pipeline
+
+```java
+// Combine multiple knowledge sources
+ContentRetriever webRetriever = EmbeddingStoreContentRetriever.from(webStore);
+ContentRetriever docRetriever = EmbeddingStoreContentRetriever.from(docStore);
+
+List<Content> results = new ArrayList<>();
+results.addAll(webRetriever.retrieve(query));
+results.addAll(docRetriever.retrieve(query));
+
+// Rerank and return top results
+List<Content> topResults = reranker.reorder(query, results).subList(0, 5);
+```
+
+### Example 4: RAG with Chat Memory
+
+```java
+// Conversational RAG with context retention
+Assistant assistant = AiServices.builder(Assistant.class)
+    .chatModel(chatModel)
+    .chatMemory(MessageWindowChatMemory.withMaxMessages(10))
+    .contentRetriever(retriever)
+    .build();
+
+// Multi-turn conversation with context
+assistant.chat("Tell me about the product features");
+assistant.chat("What about pricing for those features?");  // Maintains context
+```
+
+Use this skill when:
+
+- Building Q&A systems over proprietary documents
+- Creating chatbots with current, factual information
+- Implementing semantic search with natural language queries
+- Reducing hallucinations with grounded responses
+- Enabling AI systems to access domain-specific knowledge
+- Building documentation assistants
+- Creating research tools with source citation
+- Developing knowledge management systems
+
 ## Core Components
 
 ### Vector Databases
@@ -276,6 +398,26 @@ List<Content> rerankedResults = reranker.reorder(query, allResults);
 3. **Data Privacy**: Ensure compliance with data protection regulations
 4. **Resource Requirements**: Consider memory and computational requirements
 5. **Maintenance**: Plan for regular updates and system monitoring
+
+## Constraints and Warnings
+
+### System Constraints
+- Embedding models have maximum token limits per document
+- Vector databases require proper indexing for performance
+- Chunk boundaries may lose context for complex documents
+- Hybrid search requires additional infrastructure components
+
+### Quality Considerations
+- Retrieval quality depends heavily on chunking strategy
+- Embedding models may not capture domain-specific semantics
+- Metadata filtering requires proper document annotation
+- Reranking adds latency to query responses
+
+### Operational Warnings
+- Monitor vector database storage and query performance
+- Implement proper data backup and recovery procedures
+- Regular embedding model updates may affect retrieval quality
+- Document processing pipelines require ongoing maintenance
 
 ## Security Considerations
 

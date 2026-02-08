@@ -704,3 +704,19 @@ Focus on **actionable insights** that enable teams to maintain secure, compliant
 **Agent Selection**: To execute this task, use the following agent with fallback:
 - Primary: `java-security-expert`
 - If not available: Use `developer-kit:java-security-expert` or fallback to `general-purpose` agent with `spring-boot-crud-patterns` skill
+
+## Overview
+
+Validates Java project dependencies with vulnerability scanning, license compliance, and supply chain security analysis. Use when auditing project dependencies or before releases.
+
+## Usage
+
+```
+/devkit.java.dependency-audit $ARGUMENTS
+```
+
+## Examples
+
+```bash
+/devkit.java.dependency-audit example-input
+```

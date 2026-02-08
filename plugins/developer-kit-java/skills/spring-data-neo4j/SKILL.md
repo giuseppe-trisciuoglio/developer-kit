@@ -2,7 +2,7 @@
 name: spring-data-neo4j
 description: Provides Spring Data Neo4j integration patterns for graph database development. Use when working with Neo4j graph databases, node entities, relationships, Cypher queries, reactive Neo4j operations, or Spring Data Neo4j repositories.
 version: 1.1.0
-allowed-tools: Read, Write, Bash, Grep, Glob
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 category: backend
 tags: [spring-data, neo4j, graph-database, database, java, spring-boot]
 ---
@@ -30,6 +30,56 @@ Spring Data Neo4j provides three levels of abstraction for Neo4j integration:
 - **Neo4j Repositories**: High-level repository pattern with query derivation
 
 Key features include reactive and imperative operation modes, immutable entity mapping, custom query support via @Query annotation, Spring's Conversion Service integration, and full support for graph relationships and traversals.
+
+## Instructions
+
+### Set Up Spring Data Neo4j
+
+1. **Add the dependency:**
+   - Maven: `spring-boot-starter-data-neo4j`
+   - Gradle: `implementation 'org.springframework.boot:spring-boot-starter-data-neo4j'`
+
+2. **Configure connection properties:**
+   ```properties
+   spring.neo4j.uri=bolt://localhost:7687
+   spring.neo4j.authentication.username=neo4j
+   spring.neo4j.authentication.password=secret
+   ```
+
+3. **Configure Cypher-DSL dialect (recommended):**
+   ```java
+   @Bean
+   Configuration cypherDslConfiguration() {
+       return Configuration.newConfig()
+           .withDialect(Dialect.NEO4J_5).build();
+   }
+   ```
+
+### Define Node Entities
+
+1. **Use @Node annotation to mark entity classes**
+2. **Choose ID strategy:**
+   - Business key as @Id (immutable, natural identifier)
+   - Generated @Id @GeneratedValue (Neo4j internal ID)
+3. **Define relationships with @Relationship annotation**
+4. **Keep entities immutable with final fields**
+5. **Use @Property for custom property names**
+
+### Create Repositories
+
+1. **Extend appropriate repository interface:**
+   - `Neo4jRepository<Entity, ID>` for imperative operations
+   - `ReactiveNeo4jRepository<Entity, ID>` for reactive operations
+2. **Use query derivation for simple queries**
+3. **Apply @Query annotation for complex Cypher queries**
+4. **Use $paramName syntax for parameters**
+
+### Test Your Implementation
+
+1. **Use @DataNeo4jTest for repository testing**
+2. **Set up Neo4j Harness with test fixtures**
+3. **Test both positive and edge cases**
+4. **Clean up test data between tests**
 
 ## Quick Setup
 
@@ -247,6 +297,61 @@ class BookRepositoryIntegrationTest {
 
 ## Examples
 
+### Example 1: Saving and Retrieving Entities
+
+**Input:**
+```java
+MovieEntity movie = new MovieEntity("The Matrix", "Welcome to the Real World", 1999);
+movieRepository.save(movie);
+
+MovieEntity found = movieRepository.findOneByTitle("The Matrix");
+```
+
+**Output:**
+```java
+MovieEntity{
+    title="The Matrix",
+    description="Welcome to the Real World",
+    year=1999,
+    actorsAndRoles=[],
+    directors=[]
+}
+```
+
+### Example 2: Custom Cypher Query
+
+**Input:**
+```java
+List<Book> books = authorRepository.findBooksAfterYear("J.R.R. Tolkien", 1950);
+```
+
+**Output:**
+```java
+[
+    Book{isbn="978-0547928210", name="The Fellowship of the Ring", year=1954},
+    Book{isbn="978-0547928203", name="The Two Towers", year=1956},
+    Book{isbn="978-0547928227", name="The Return of the King", year=1957}
+]
+```
+
+### Example 3: Relationship Traversal
+
+**Input:**
+```java
+@Query("MATCH (m:Movie)<-[:ACTED_IN]-(a:Person) " +
+       "WHERE m.title = $title RETURN a.name as actorName")
+List<String> findActorsByMovieTitle(@Param("title") String title);
+
+List<String> actors = movieRepository.findActorsByMovieTitle("The Matrix");
+```
+
+**Output:**
+```java
+["Keanu Reeves", "Laurence Fishburne", "Carrie-Anne Moss", "Hugo Weaving"]
+```
+
+---
+
 Progress from basic to advanced examples covering complete movie database, social network patterns, e-commerce product catalogs, custom queries, and reactive operations.
 
 See [examples](./references/examples.md) for comprehensive code examples.
@@ -288,6 +393,17 @@ See [examples](./references/examples.md) for comprehensive code examples.
 - Configure proper authentication and authorization
 - Validate input parameters in service layer
 - Use parameterized queries to prevent Cypher injection
+
+## Constraints and Warnings
+
+- Do not mix imperative and reactive repositories in the same application.
+- Neo4j transactions are required for write operations; ensure `@Transactional` is properly configured.
+- Be cautious with deep relationship traversal as it can cause performance issues.
+- Large result sets should be paginated to avoid memory problems.
+- Cypher queries are case-sensitive; ensure consistent casing in property names.
+- Immutable entities require proper wither methods for generated IDs.
+- Relationships in Spring Data Neo4j are not lazy-loaded by default; consider projection for large graphs.
+- The Neo4j Java driver is not compatible with reactive streams; use the reactive driver for reactive operations.
 
 ## References
 

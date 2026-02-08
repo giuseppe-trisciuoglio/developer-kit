@@ -4,13 +4,16 @@ description: Provides patterns for unit testing utility/helper classes and stati
 category: testing
 tags: [junit-5, unit-testing, utility, static-methods, pure-functions]
 version: 1.0.1
+allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
 # Unit Testing Utility Classes and Static Methods
 
-Test static utility methods using JUnit 5. Focus on pure functions without side effects, edge cases, and boundary conditions.
+## Overview
 
-## When to Use This Skill
+This skill provides comprehensive patterns for testing utility classes and static methods using JUnit 5. It covers testing pure functions without side effects, edge case handling, boundary conditions, and common utility patterns like string manipulation, calculations, collections, and data validation.
+
+## When to Use
 
 Use this skill when:
 - Testing utility classes with static helper methods
@@ -20,6 +23,40 @@ Use this skill when:
 - Testing collections and array utilities
 - Want simple, fast tests without mocking complexity
 - Testing data transformation and validation helpers
+
+## Instructions
+
+Follow these steps to test utility classes and static methods:
+
+### 1. Create Test Class
+
+Create a JUnit 5 test class named after the utility class being tested (e.g., StringUtilsTest).
+
+### 2. Test Happy Path
+
+Write tests for typical use cases with valid inputs to verify correct behavior.
+
+### 3. Test Edge Cases
+
+Test null inputs, empty strings, zero values, and boundary conditions.
+
+### 4. Test Error Cases
+
+Verify proper exception throwing for invalid inputs when applicable.
+
+### 5. Use Descriptive Test Names
+
+Name tests to clearly indicate what scenario is being tested (e.g., shouldCapitalizeFirstLetter).
+
+### 6. Use AssertJ Assertions
+
+Leverage AssertJ's readable assertion methods for clear test code.
+
+### 7. Consider Parameterized Tests
+
+Use @ParameterizedTest for testing multiple similar scenarios with different inputs.
+
+## Examples
 
 ## Basic Pattern: Static Utility Testing
 
@@ -374,7 +411,84 @@ class MathUtilsEdgeCaseTest {
 - Not testing negative numbers and extreme values
 - Test methods too large - split complex scenarios
 
-## Troubleshooting
+## Constraints and Warnings
+
+- **Static methods cannot be mocked**: Use reflection-based utilities like PowerMock only when absolutely necessary
+- **Pure function requirement**: Utility methods should be pure functions; testing stateful utilities is difficult
+- **Floating point precision**: Never use exact equality for floating point comparisons; use tolerance
+- **Null handling consistency**: Decide whether utilities return null or throw exceptions for invalid input
+- **Immutable inputs**: Document clearly whether utility methods modify input parameters
+- **Thread safety**: Static utilities must be thread-safe; verify under concurrent access
+- **External dependencies**: Minimize external dependencies in utility classes for easier testing
+
+## Examples
+
+### Input: Utility Method Without Tests
+
+```java
+public class StringUtils {
+    public static boolean isEmpty(String str) {
+        return str == null || str.trim().isEmpty();
+    }
+}
+```
+
+### Output: Complete Test Coverage
+
+```java
+class StringUtilsTest {
+    @Test
+    void shouldReturnTrueForNullString() {
+        assertThat(StringUtils.isEmpty(null)).isTrue();
+    }
+
+    @Test
+    void shouldReturnTrueForEmptyString() {
+        assertThat(StringUtils.isEmpty("")).isTrue();
+    }
+
+    @Test
+    void shouldReturnTrueForWhitespaceOnly() {
+        assertThat(StringUtils.isEmpty("   ")).isTrue();
+    }
+
+    @Test
+    void shouldReturnFalseForNonEmptyString() {
+        assertThat(StringUtils.isEmpty("hello")).isFalse();
+    }
+}
+```
+
+### Input: Calculation Without Edge Case Testing
+
+```java
+public static double percentage(int value, int total) {
+    return (value / total) * 100.0;
+}
+```
+
+### Output: Tests Covering Edge Cases
+
+```java
+class MathUtilsTest {
+    @Test
+    void shouldCalculateNormalPercentage() {
+        assertThat(MathUtils.percentage(25, 100)).isEqualTo(25.0);
+    }
+
+    @Test
+    void shouldHandleZeroDivisor() {
+        assertThat(MathUtils.percentage(50, 0)).isEqualTo(0.0);
+    }
+
+    @Test
+    void shouldHandleZeroValue() {
+        assertThat(MathUtils.percentage(0, 100)).isEqualTo(0.0);
+    }
+}
+```
+
+## Constraints and Warnings
 
 **Floating point precision issues**: Use `isCloseTo()` with delta instead of exact equality.
 

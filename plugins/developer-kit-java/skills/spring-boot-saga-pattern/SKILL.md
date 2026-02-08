@@ -1,7 +1,7 @@
 ---
 name: spring-boot-saga-pattern
 description: Provides distributed transaction patterns using the Saga Pattern in Spring Boot microservices. Use when building microservices requiring transaction management across multiple services, handling compensating transactions, ensuring eventual consistency, or implementing choreography or orchestration-based sagas with Spring Boot, Kafka, or Axon Framework.
-allowed-tools: Read, Write, Bash
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 category: backend
 tags: [spring-boot, saga, distributed-transactions, choreography, orchestration, microservices]
 version: 1.1.0
@@ -36,6 +36,50 @@ When implementing a saga, make these decisions:
 3. **Framework**: Use Axon Framework, Eventuate Tram, Camunda, or Apache Camel
 4. **State Persistence**: Store saga state in database for recovery and debugging
 5. **Idempotency**: Ensure all operations (especially compensations) are idempotent and retryable
+
+## Instructions
+
+Follow these steps to implement saga pattern for distributed transactions:
+
+### 1. Define Transaction Flow
+
+Identify all services involved in the business process. Map out the sequence of local transactions and their corresponding compensating transactions.
+
+### 2. Choose Saga Approach
+
+Select choreography (event-driven, decentralized) or orchestration (centralized coordinator) based on team expertise and system complexity.
+
+### 3. Design Domain Events
+
+Create events for each transaction step (OrderCreated, PaymentProcessed, InventoryReserved). Include correlationId for tracing.
+
+### 4. Implement Local Transactions
+
+Ensure each service can complete its local transaction atomically within its own database boundary.
+
+### 5. Define Compensating Transactions
+
+For each forward operation, implement a compensating operation that reverses the effect (cancel order, refund payment, release inventory).
+
+### 6. Set Up Message Broker
+
+Configure Kafka or RabbitMQ with appropriate topics/queues. Implement idempotent message consumers.
+
+### 7. Implement Orchestrator (if using orchestration)
+
+Create a saga orchestrator service that tracks saga state, sends commands to participants, and handles compensations on failure.
+
+### 8. Configure Choreography (if using choreography)
+
+Set up event listeners in each service that react to events from other services and trigger next steps.
+
+### 9. Handle Timeouts
+
+Implement timeout mechanisms for each saga step. Configure dead-letter queues for messages that exceed processing time limits.
+
+### 10. Add Monitoring
+
+Track saga execution status, duration, and failure rates. Set up alerts for stuck or failed sagas.
 
 ## Two Approaches to Implement Saga
 
@@ -166,6 +210,18 @@ Implement retry logic, timeouts, and dead-letter queues for failed messages.
 ❌ **Shared Database**: Using same database across multiple services
 ❌ **Ignoring Network Failures**: Not handling partial failures gracefully
 
+## Constraints and Warnings
+
+- Every forward transaction MUST have a corresponding compensating transaction.
+- Compensating transactions MUST be idempotent to handle retry scenarios.
+- Saga state MUST be persisted to handle failures and recovery.
+- Never use synchronous communication between saga participants; it defeats the distributed nature.
+- Be aware that sagas provide eventual consistency, not strong consistency.
+- Monitor saga execution time and set appropriate timeouts to detect stuck sagas.
+- Test all failure scenarios including partial failures to ensure proper compensation.
+- Consider using a saga framework (Axon, Eventuate) for complex orchestrations to avoid reinventing the wheel.
+- Ensure message brokers are highly available to prevent saga interruption.
+
 ## When NOT to Use Saga Pattern
 
 Do not implement this pattern when:
@@ -176,7 +232,114 @@ Do not implement this pattern when:
 - Low transaction volume with simple flows
 - Team lacks experience with distributed systems
 
-## References
+## Examples
+
+### Input: Monolithic Transaction (Anti-Pattern)
+
+```java
+@Transactional
+public Order createOrder(OrderRequest request) {
+    Order order = orderRepository.save(request);
+    paymentService.charge(request.getPayment());
+    inventoryService.reserve(request.getItems());
+    shippingService.schedule(order);
+    return order;
+}
+```
+
+### Output: Saga-Based Distributed Transaction
+
+```java
+@Service
+public class OrderSagaOrchestrator {
+    public OrderSummary createOrder(OrderRequest request) {
+        // Step 1: Create order
+        Order order = orderService.createOrder(request);
+
+        try {
+            // Step 2: Process payment
+            Payment payment = paymentService.processPayment(
+                new PaymentRequest(order.getId(), request.getAmount()));
+
+            // Step 3: Reserve inventory
+            InventoryReservation reservation = inventoryService.reserve(
+                new InventoryRequest(order.getItems()));
+
+            // Step 4: Schedule shipping
+            Shipment shipment = shippingService.schedule(
+                new ShipmentRequest(order.getId()));
+
+            return OrderSummary.completed(order, payment, reservation, shipment);
+
+        } catch (PaymentFailedException e) {
+            // Compensate: cancel order
+            orderService.cancelOrder(order.getId());
+            throw e;
+        } catch (InsufficientInventoryException e) {
+            // Compensate: refund payment, cancel order
+            paymentService.refund(payment.getId());
+            orderService.cancelOrder(order.getId());
+            throw e;
+        }
+    }
+}
+```
+
+### Input: Choreography Event Flow
+
+```java
+// Event published when order is created
+@EventHandler
+public void on(OrderCreatedEvent event) {
+    // Trigger payment processing
+    paymentService.processPayment(event.getOrderId());
+}
+```
+
+### Output: Complete Choreography with Compensation
+
+```java
+@Service
+public class OrderEventHandler {
+    @KafkaListener(topics = "order.created")
+    public void handleOrderCreated(OrderCreatedEvent event) {
+        try {
+            paymentService.processPayment(event.toPaymentRequest());
+        } catch (PaymentException e) {
+            kafkaTemplate.send("order.payment.failed", new PaymentFailedEvent(event.getOrderId()));
+        }
+    }
+}
+
+@Service
+public class PaymentEventHandler {
+    @KafkaListener(topics = "payment.processed")
+    public void handlePaymentProcessed(PaymentProcessedEvent event) {
+        inventoryService.reserve(event.toInventoryRequest());
+    }
+
+    @KafkaListener(topics = "payment.failed")
+    public void handlePaymentFailed(PaymentFailedEvent event) {
+        orderService.cancelOrder(event.getOrderId());
+    }
+}
+
+@Service
+public class InventoryEventHandler {
+    @KafkaListener(topics = "inventory.reserved")
+    public void handleInventoryReserved(InventoryReservedEvent event) {
+        shippingService.scheduleShipment(event.toShipmentRequest());
+    }
+
+    @KafkaListener(topics = "inventory.insufficient")
+    public void handleInsufficientInventory(InsufficientInventoryEvent event) {
+        // Compensate: refund payment
+        paymentService.refund(event.getPaymentId());
+        // Compensate: cancel order
+        orderService.cancelOrder(event.getOrderId());
+    }
+}
+```
 
 For detailed information, consult the following resources:
 

@@ -422,3 +422,25 @@ Target: $ARGUMENTS
 **Agent Selection**: To execute this TypeScript security review, use the following agent with fallback:
 - Primary: `ts-security-expert`
 - If not available: Use `developer-kit:ts-security-expert` or fallback to `general-purpose` agent with security expertise
+
+## Overview
+
+Provides comprehensive security review for TypeScript/Node.js applications (Next.js, NestJS, Express, etc.). Use when auditing security vulnerabilities or before deploying to production.
+
+## Usage
+
+```
+/devkit.ts.security-review $ARGUMENTS
+```
+
+## Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
+
+## Examples
+
+```bash
+/devkit.ts.security-review example-input
+```

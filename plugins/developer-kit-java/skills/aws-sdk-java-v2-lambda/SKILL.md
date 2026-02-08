@@ -4,10 +4,14 @@ description: Provides AWS Lambda patterns using AWS SDK for Java 2.x. Use when i
 category: aws
 tags: [aws, lambda, java, sdk, serverless, functions]
 version: 1.1.0
-allowed-tools: Read, Write, Bash
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
 # AWS SDK for Java 2.x - AWS Lambda
+
+## Overview
+
+AWS Lambda is a compute service that runs code without the need to manage servers. Your code runs automatically, scaling up and down with pay-per-use pricing. Use this skill to implement AWS Lambda operations using AWS SDK for Java 2.x in applications and services.
 
 ## When to Use
 
@@ -20,9 +24,18 @@ Use this skill when:
 - Implementing asynchronous Lambda invocations
 - Integrating Lambda with Spring Boot
 
-## Overview
+## Instructions
 
-AWS Lambda is a compute service that runs code without the need to manage servers. Your code runs automatically, scaling up and down with pay-per-use pricing. Use this skill to implement AWS Lambda operations using AWS SDK for Java 2.x in applications and services.
+Follow these steps to work with AWS Lambda:
+
+1. **Add Dependencies** - Include Lambda SDK dependency
+2. **Create Client** - Instantiate LambdaClient with proper configuration
+3. **Invoke Functions** - Use invoke() with appropriate invocation type
+4. **Handle Responses** - Parse response payloads and handle function errors
+5. **Manage Functions** - Create, update, or delete Lambda functions
+6. **Configure Environment** - Set environment variables and concurrency limits
+7. **Integrate with Spring** - Configure Lambda beans and services
+8. **Test Locally** - Use mocks or LocalStack for development testing
 
 ## Dependencies
 
@@ -437,12 +450,100 @@ public class LambdaInvocationException extends RuntimeException {
 
 ## Examples
 
+### Example 1: Basic Lambda Invocation
+
+```java
+public String invokeFunction(LambdaClient client, String functionName, String payload) {
+    InvokeRequest request = InvokeRequest.builder()
+        .functionName(functionName)
+        .payload(SdkBytes.fromUtf8String(payload))
+        .build();
+
+    InvokeResponse response = client.invoke(request);
+
+    if (response.functionError() != null) {
+        throw new RuntimeException("Lambda error: " + response.functionError());
+    }
+
+    return response.payload().asUtf8String();
+}
+```
+
+### Example 2: Async Invocation
+
+```java
+public void invokeAsync(LambdaClient client, String functionName, Map<String, Object> event) {
+    try {
+        String jsonPayload = new ObjectMapper().writeValueAsString(event);
+
+        InvokeRequest request = InvokeRequest.builder()
+            .functionName(functionName)
+            .invocationType(InvocationType.EVENT)
+            .payload(SdkBytes.fromUtf8String(jsonPayload))
+            .build();
+
+        client.invoke(request);
+
+    } catch (Exception e) {
+        throw new RuntimeException("Async invocation failed", e);
+    }
+}
+```
+
+### Example 3: Spring Boot Service
+
+```java
+@Service
+public class LambdaService {
+
+    private final LambdaClient lambdaClient;
+    private final ObjectMapper objectMapper;
+
+    @Value("${lambda.user-processor-function}")
+    private String userProcessorFunction;
+
+    public UserResponse processUser(UserRequest request) {
+        try {
+            String payload = objectMapper.writeValueAsString(request);
+
+            InvokeResponse response = lambdaClient.invoke(
+                InvokeRequest.builder()
+                    .functionName(userProcessorFunction)
+                    .payload(SdkBytes.fromUtf8String(payload))
+                    .build()
+            );
+
+            return objectMapper.readValue(
+                response.payload().asUtf8String(),
+                UserResponse.class
+            );
+
+        } catch (Exception e) {
+            throw new RuntimeException("User processing failed", e);
+        }
+    }
+}
+```
+
 For comprehensive code examples, see the references section:
 
 - **Basic examples** - Simple invocation patterns and function management
 - **Spring Boot integration** - Complete Spring Boot configuration and service patterns
 - **Testing examples** - Unit and integration test patterns
 - **Advanced patterns** - Complex scenarios and best practices
+
+## Constraints and Warnings
+
+- **Payload Size**: Lambda payload limited to 6MB for sync invocation, 256KB for async
+- **Timeout**: Maximum function timeout is 15 minutes
+- **Memory**: Memory configuration affects CPU and network performance
+- **Concurrency**: Account-level concurrency limits can cause throttling
+- **Cold Starts**: New invocations may have delays for initialization
+- **VPC**: VPC functions need proper security group and subnet configuration
+- **Layers**: Lambda layers count towards deployment package size limit
+- **Reserved Concurrency**: Prevents throttling but limits maximum scaling
+- **Event Source Mappings**: Some event sources require special configuration
+- **Cost**: Unexpected usage can lead to high bills; set budgets and alerts
 
 ## Best Practices
 

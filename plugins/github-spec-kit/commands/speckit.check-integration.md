@@ -1,6 +1,7 @@
 ---
 description: Validates that tasks.md considers existing codebase implementations and integration opportunities before execution. Use when you need to check task alignment with the current codebase.
 argument-hint: "[optional-criteria]"
+allowed-tools: Read, Glob, Grep, Bash
 ---
 
 ## User Input
@@ -456,3 +457,25 @@ $ARGUMENTS
 **Agent Selection**: To execute this task, use the following approach:
 - Primary: Use `general-purpose` agent with appropriate domain expertise
 - Or use specialized agent if available for the specific task type
+
+## Overview
+
+Validates that tasks.md considers existing codebase implementations and integration opportunities before execution. Use when you need to check task alignment with the current codebase.
+
+## Usage
+
+```
+/speckit.check-integration $ARGUMENTS
+```
+
+## Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
+
+## Examples
+
+```bash
+/speckit.check-integration example-input
+```

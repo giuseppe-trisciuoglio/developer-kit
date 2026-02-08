@@ -1,15 +1,14 @@
 ---
 name: shadcn-ui
 description: Provides complete shadcn/ui component library patterns including installation, configuration, and implementation of accessible React components. Use when setting up shadcn/ui, installing components, building forms with React Hook Form and Zod, customizing themes with Tailwind CSS, or implementing UI patterns like buttons, dialogs, dropdowns, tables, and complex form layouts.
-language: typescript,tsx
-framework: react,nextjs,tailwindcss
-license: MIT
 allowed-tools: Read, Write, Bash, Edit, Glob
 ---
 
 # shadcn/ui Component Patterns
 
-Expert guide for building accessible, customizable UI components with shadcn/ui, Radix UI, and Tailwind CSS.
+## Overview
+
+Expert guide for building accessible, customizable UI components with shadcn/ui, Radix UI, and Tailwind CSS. This skill provides comprehensive patterns for implementing production-ready components with full accessibility support.
 
 ## Table of Contents
 
@@ -44,6 +43,68 @@ Expert guide for building accessible, customizable UI components with shadcn/ui,
 - Implementing design systems with shadcn/ui
 - Building Next.js applications with TypeScript
 - Creating complex layouts and data displays
+
+## Instructions
+
+1. **Initialize Project**: Run `npx shadcn@latest init` to configure shadcn/ui
+2. **Install Components**: Add components with `npx shadcn@latest add <component>`
+3. **Configure Theme**: Customize CSS variables in globals.css for theming
+4. **Import Components**: Use components from `@/components/ui/` directory
+5. **Customize as Needed**: Modify component code directly in your project
+6. **Add Form Validation**: Integrate React Hook Form with Zod schemas
+7. **Test Accessibility**: Verify ARIA attributes and keyboard navigation
+
+## Examples
+
+### Complete Form with Validation
+
+```tsx
+"use client"
+
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { Button } from "@/components/ui/button"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+
+const formSchema = z.object({
+  email: z.string().email("Invalid email"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+})
+
+export function LoginForm() {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: { email: "", password: "" },
+  })
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(console.log)} className="space-y-4">
+        <FormField name="email" render={({ field }) => (
+          <FormItem>
+            <FormLabel>Email</FormLabel>
+            <FormControl><Input type="email" {...field} /></FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
+        <Button type="submit">Login</Button>
+      </form>
+    </Form>
+  )
+}
+```
+
+## Constraints and Warnings
+
+- **Not an NPM Package**: Components are copied to your project; you own the code
+- **Client Components**: Most components require "use client" directive
+- **Radix Dependencies**: Ensure all @radix-ui packages are installed
+- **Tailwind Required**: Components rely on Tailwind CSS utilities
+- **TypeScript**: Designed for TypeScript projects; type definitions included
+- **Path Aliases**: Configure @ alias in tsconfig.json for imports
+- **Dark Mode**: Set up dark mode with CSS variables or class strategy
 
 ## Quick Start
 

@@ -1,6 +1,7 @@
 ---
 description: Provides task workflow optimization by analyzing dependencies, parallelization opportunities, and subagent delegation strategy for tasks.md. Use when you need to improve task execution efficiency.
 argument-hint: "[optional-strategy]"
+allowed-tools: Read, Glob, Grep, Bash
 ---
 
 ## User Input
@@ -482,3 +483,25 @@ $ARGUMENTS
 **Agent Selection**: To execute this task, use the following approach:
 - Primary: Use `general-purpose` agent with appropriate domain expertise
 - Or use specialized agent if available for the specific task type
+
+## Overview
+
+Provides task workflow optimization by analyzing dependencies, parallelization opportunities, and subagent delegation strategy for tasks.md. Use when you need to improve task execution efficiency.
+
+## Usage
+
+```
+/speckit.optimize $ARGUMENTS
+```
+
+## Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
+
+## Examples
+
+```bash
+/speckit.optimize example-input
+```

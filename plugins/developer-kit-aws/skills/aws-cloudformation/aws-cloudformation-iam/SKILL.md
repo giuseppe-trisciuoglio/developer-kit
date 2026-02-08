@@ -9,6 +9,8 @@ allowed-tools: Read, Write, Bash
 
 # AWS CloudFormation IAM Security
 
+## Overview
+
 Create production-ready IAM infrastructure using AWS CloudFormation templates. This skill covers users, roles, policies, managed policies, permission boundaries, and best practices for implementing least privilege access.
 
 ## When to Use
@@ -23,6 +25,88 @@ Use this skill when:
 - Implementing cross-stack references for IAM resources
 - Configuring IAM Identity Center (SSO)
 - Managing service control policies (SCP)
+
+## Instructions
+
+Follow these steps to create IAM infrastructure with CloudFormation:
+
+1. **Define User Parameters**: Specify user names and access types
+2. **Create IAM Roles**: Define trust policies for services or users
+3. **Write Policies**: Implement least privilege with specific actions
+4. **Set Up Permission Boundaries**: Limit maximum permissions for users
+5. **Configure Managed Policies**: Attach AWS managed or custom policies
+6. **Implement Cross-Account Access**: Use STS for temporary credentials
+7. **Create Groups**: Organize users for easier permission management
+8. **Enable MFA**: Require MFA for console access
+
+For complete examples, see the [EXAMPLES.md](references/examples.md) file.
+
+## Examples
+
+The following examples demonstrate common IAM patterns:
+
+### Example 1: IAM Role for Lambda
+
+```yaml
+LambdaRole:
+  Type: AWS::IAM::Role
+  Properties:
+    RoleName: !Sub "${AWS::StackName}-lambda-role"
+    AssumeRolePolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+    ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+```
+
+### Example 2: Policy with Least Privilege
+
+```yaml
+DynamoDBPolicy:
+  Type: AWS::IAM::Policy
+  Properties:
+    PolicyName: !Sub "${AWS::StackName}-dynamodb-policy"
+    PolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+          Resource: !GetAtt Table.Arn
+    Roles:
+      - !Ref LambdaRole
+```
+
+### Example 3: Permission Boundary
+
+```yaml
+DeveloperBoundary:
+  Type: AWS::IAM::ManagedPolicy
+  Properties:
+    Description: Permission boundary for developers
+    PolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: Deny
+          Action:
+            - iam:*
+          Resource: "*"
+
+DeveloperUser:
+  Type: AWS::IAM::User
+  Properties:
+    UserName: !Sub "${AWS::StackName}-developer"
+    PermissionsBoundary: !Ref DeveloperBoundary
+```
+
+For complete production-ready examples, see [EXAMPLES.md](references/examples.md).
 
 ## CloudFormation Template Structure
 
@@ -1564,8 +1648,52 @@ aws cloudformation delete-change-set \
 - [IAM Best Practices](https://docs.aws.amazon.com/iam/latest/UserGuide/best-practices.html)
 - [IAM Access Analyzer](https://docs.aws.amazon.com/IAM/latest/UserGuide/what-is-access-analyzer.html)
 
+## Constraints and Warnings
+
+### Resource Limits
+
+- **Roles Limits**: Maximum 1000 IAM roles per AWS account
+- **Policies Limits**: Maximum number of managed and inline policies per account
+- **Policy Size**: IAM policy documents cannot exceed 2048 characters (inline) or 6144 characters (managed)
+- **Users Limits**: Maximum 5000 IAM users per AWS account
+
+### Security Constraints
+
+- **Principal Limits**: IAM trust policies have limits on number of principals
+- **Managed Policy Updates**: Changes to managed policies affect all attached entities immediately
+- **Access Analyzer**: Access Analyzer requires specific permissions to analyze resources
+- **Credential Rotation**: IAM credentials should be rotated regularly; no automatic rotation for access keys
+
+### Operational Constraints
+
+- **Role Deletion**: Roles cannot be deleted while still referenced by resources
+- **Policy Detachment**: Detaching policies requires explicit action; deleting attached roles fails
+- **MFA Delete**: Disabling MFA requires MFA authentication itself
+- **Root Account**: Root account has no restrictions; should never be used for daily operations
+
+### Permissions Constraints
+
+- **Policy Evaluation**: IAM policies are size-limited and complex to write correctly
+- **Service Last Access Data**: Service last access data is updated only every 4 hours
+- **Simulate Principal Policy**: Simulation can only approximate policy evaluation results
+- **Condition Keys**: Not all services support all condition keys in policies
+
+### Cost Considerations
+
+- **Access Analyzer**: Access Analyzer usage generates costs based on number of analyzes
+- **Credential Report**: Generating credential reports doesn't directly cost but consumes API calls
+- **Custom Managed Policies**: Creating many custom managed policies increases management overhead
+- **IAM Access Advisor**: Access advisor provides recommendations but doesn't directly cost
+
+### Best Practice Reminders
+
+- **Least Privilege**: Always grant minimum required permissions
+- **Policy Versioning**: Managed policies support versioning for safer updates
+- **Resource Tags**: Use resource tags for permission boundaries where possible
+- **MFA Enforcement**: Require MFA for privileged operations in production
+
 ## Additional Files
 
 For complete details on IAM resources and their properties, see:
-- [REFERENCE.md](reference.md) - Detailed reference guide for all CloudFormation IAM resources
-- [EXAMPLES.md](examples.md) - Complete production-ready examples
+- [REFERENCE.md](references/reference.md) - Detailed reference guide for all CloudFormation IAM resources
+- [EXAMPLES.md](references/examples.md) - Complete production-ready examples

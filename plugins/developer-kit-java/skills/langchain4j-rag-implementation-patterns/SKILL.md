@@ -342,6 +342,18 @@ public class HybridSearchService {
 - Clean up unused embeddings periodically
 - Monitor and optimize chunk sizes
 
+## Constraints and Warnings
+
+- **Embedding Model Costs**: Generating embeddings for large document collections can be expensive; implement caching and batch processing.
+- **Vector Store Scalability**: In-memory stores are suitable for development only; use persistent stores (Pinecone, Qdrant, Redis) for production.
+- **Chunk Size Trade-offs**: Smaller chunks improve precision but lose context; larger chunks preserve context but may introduce noise.
+- **Stale Data**: Cached embeddings become stale when source documents change; implement update strategies.
+- **Token Limits**: RAG context windows have limits; typically 3-5 retrieved chunks fit within standard model limits.
+- **Hallucination Risk**: RAG reduces but doesn't eliminate hallucinations; always validate critical responses against sources.
+- **Latency**: Vector search and embedding generation add latency; consider async processing for real-time applications.
+- **Metadata Filtering**: Overly restrictive filters may return no results; implement fallback strategies.
+- **Multi-tenancy**: Ensure proper metadata isolation to prevent cross-tenant data leakage.
+
 ## References
 
 - [API Reference](references/references.md) - Complete API documentation and interfaces

@@ -1,7 +1,7 @@
 ---
 name: spring-data-jpa
 description: Provides patterns to implement persistence layers with Spring Data JPA. Use when creating repositories, configuring entity relationships, writing queries (derived and @Query), setting up pagination, database auditing, transactions, UUID primary keys, multiple databases, and database indexing.
-allowed-tools: Read, Write, Bash, Grep
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 category: backend
 tags: [spring-data, jpa, database, hibernate, orm, persistence]
 version: 1.2.0
@@ -182,3 +182,15 @@ For comprehensive examples, detailed patterns, and advanced configurations, see:
 
 - [Examples](references/examples.md) - Complete code examples for common scenarios
 - [Reference](references/reference.md) - Detailed patterns and advanced configurations
+
+## Constraints and Warnings
+
+- Never expose JPA entities directly in REST APIs; always use DTOs to prevent lazy loading issues.
+- Avoid N+1 query problems by using `@EntityGraph` or `JOIN FETCH` in queries.
+- Be cautious with `CascadeType.REMOVE` on large collections as it can cause performance issues.
+- Do not use `EAGER` fetch type for collections; it can cause excessive database queries.
+- Avoid long-running transactions as they can cause database lock contention.
+- Use `@Transactional(readOnly = true)` for read operations to enable optimizations.
+- Be aware of the first-level cache; entities may not reflect database changes within the same transaction.
+- UUID primary keys can cause index fragmentation; consider using sequential UUIDs or Long IDs.
+- Pagination on large datasets requires proper indexing to avoid full table scans.

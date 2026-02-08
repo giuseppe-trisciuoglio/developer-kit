@@ -4,13 +4,16 @@ description: Provides patterns for unit testing caching behavior using Spring Ca
 category: testing
 tags: [junit-5, caching, cacheable, cache-evict, cache-put]
 version: 1.0.1
+allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
 # Unit Testing Spring Caching
 
-Test Spring caching annotations (@Cacheable, @CacheEvict, @CachePut) without full Spring context. Verify cache behavior, hits/misses, and invalidation strategies.
+## Overview
 
-## When to Use This Skill
+This skill provides patterns for unit testing Spring caching annotations (@Cacheable, @CacheEvict, @CachePut) without full Spring context. It covers testing cache behavior, hits/misses, invalidation strategies, cache key generation, and conditional caching using in-memory cache managers.
+
+## When to Use
 
 Use this skill when:
 - Testing @Cacheable method caching
@@ -19,6 +22,19 @@ Use this skill when:
 - Verifying cache key generation
 - Testing conditional caching
 - Want fast caching tests without Redis or cache infrastructure
+
+## Instructions
+
+1. **Use in-memory CacheManager**: Use ConcurrentMapCacheManager for tests instead of Redis or other external caches
+2. **Verify repository call counts**: Use `times(n)` to verify cache hits/misses by counting repository invocations
+3. **Test both cache and eviction scenarios**: Verify data is cached on first call and evicted when appropriate
+4. **Test cache key generation**: Ensure SpEL expressions in `@Cacheable(key = "...")` produce correct keys
+5. **Test conditional caching**: Verify `unless` and `condition` parameters work correctly
+6. **Clear cache between tests**: Reset cache state in @BeforeEach or use @DirtiesContext
+7. **Mock service dependencies**: Use mocks for repositories and other services the caching layer uses
+8. **Verify cache behavior explicitly**: Don't rely on timing; verify actual cache hit/miss behavior
+
+## Examples
 
 ## Setup: Caching Testing
 
@@ -385,6 +401,16 @@ class CacheKeyTest {
 - Forgetting to test cache eviction
 - Not testing conditional caching
 - Not resetting cache between tests
+
+## Constraints and Warnings
+
+- **@Cacheable requires a proxy**: Spring's caching works via proxies; direct method calls bypass caching
+- **Cache key collisions**: Be aware that different parameters can produce the same cache key if key generation is not specific
+- **Serialization requirements**: Cached objects must be serializable when using distributed caches
+- **Memory usage**: In-memory caches can consume significant memory; consider TTL and max-size settings
+- **@CachePut vs @Cacheable**: @CachePut always executes the method, while @Cacheable skips execution on cache hit
+- **Null caching**: By default, null results are cached unless `unless = "#result == null"` is specified
+- **Thread safety**: Cache operations should be thread-safe; verify behavior under concurrent access
 
 ## Troubleshooting
 

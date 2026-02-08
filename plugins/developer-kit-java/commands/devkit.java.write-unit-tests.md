@@ -232,3 +232,25 @@ This will analyze UserService.java, identify it as a @Service class, apply the s
 **Agent Selection**: To execute this task, use the following agent with fallback:
 - Primary: `spring-boot-unit-testing-expert`
 - If not available: Use `developer-kit:spring-boot-unit-testing-expert` or fallback to `general-purpose` agent with `spring-boot-test-patterns` skill
+
+## Overview
+
+Generates comprehensive JUnit 5 unit tests for Java classes with Mockito mocking and AssertJ assertions. Use when writing unit tests for service, controller, or utility classes.
+
+## Usage
+
+```
+/devkit.java.write-unit-tests $ARGUMENTS
+```
+
+## Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
+
+## Examples
+
+```bash
+/devkit.java.write-unit-tests example-input
+```

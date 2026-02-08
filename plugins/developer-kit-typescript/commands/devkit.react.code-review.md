@@ -464,3 +464,25 @@ const button = screen.getByTestId('submit-btn');
 **Run context**:
 - Provide `$1` as `full`, `components`, `hooks`, `performance`, `accessibility`, `styling`, `forms`, or `testing`
 - Optional: specify file or directory path as `$2`
+
+## Overview
+
+Provides comprehensive React 19 + Tailwind CSS code review focusing on modern patterns, hooks, Server Components, Actions, performance, accessibility, and Tailwind best practices. Use when reviewing React code changes or before merging pull requests.
+
+## Usage
+
+```
+/devkit.react.code-review $ARGUMENTS
+```
+
+## Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
+
+## Examples
+
+```bash
+/devkit.react.code-review example-input
+```

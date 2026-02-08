@@ -4,13 +4,16 @@ description: Provides patterns for unit testing @ExceptionHandler and @Controlle
 category: testing
 tags: [junit-5, exception-handler, controller-advice, error-handling, mockmvc]
 version: 1.0.1
+allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
 # Unit Testing ExceptionHandler and ControllerAdvice
 
-Test exception handlers and global exception handling logic using MockMvc. Verify error response formatting, HTTP status codes, and exception-to-response mapping.
+## Overview
 
-## When to Use This Skill
+This skill provides patterns for unit testing @ExceptionHandler methods and @ControllerAdvice classes using MockMvc. It covers testing exception-to-error-response transformations, HTTP status codes, error message formatting, validation error handling, and custom permission evaluators without full integration test overhead.
+
+## When to Use
 
 Use this skill when:
 - Testing @ExceptionHandler methods in @ControllerAdvice
@@ -18,6 +21,19 @@ Use this skill when:
 - Verifying HTTP status codes for different exception types
 - Testing error message formatting and localization
 - Want fast exception handler tests without full integration tests
+
+## Instructions
+
+1. **Create test controllers**: Create simple test controllers that throw exceptions to test handler behavior
+2. **Register ControllerAdvice**: Use `setControllerAdvice()` when building MockMvc to register exception handlers
+3. **Test all exception types**: Verify each @ExceptionHandler method handles its specific exception type
+4. **Verify HTTP status codes**: Use @ResponseStatus assertions to verify correct status codes
+5. **Test error response structure**: Verify error responses contain all required fields (timestamp, status, error, message)
+6. **Test validation errors**: Verify MethodArgumentNotValidException produces field-level error details
+7. **Test logging and side effects**: Verify exception handlers log errors or perform other side effects
+8. **Use mock controllers**: Throw exceptions from mock controllers to trigger exception handlers
+
+## Examples
 
 ## Setup: Exception Handler Testing
 
@@ -450,6 +466,16 @@ class ExceptionHandlerWithContextTest {
 - Not verifying all required fields in error response
 - Testing handler logic instead of exception handling behavior
 - Not testing edge cases (null exceptions, unusual messages)
+
+## Constraints and Warnings
+
+- **@ControllerAdvice execution order**: Multiple @ControllerAdvice handlers can be ordered with @Order annotation
+- **Exception handler specificity**: More specific exception types take precedence over generic handlers
+- **ResponseStatus required**: Without @ResponseStatus or returning ResponseEntity, status defaults to 200
+- **Global vs local handlers**: @ExceptionHandler in @ControllerAdvice is global; in controller it's local to that controller
+- **Logging considerations**: Exception handlers should log exceptions at appropriate levels before returning responses
+- **Message localization**: When using localized messages, test with different locales
+- **Security context**: Exception handlers have access to security context for authentication/authorization errors
 
 ## Troubleshooting
 

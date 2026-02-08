@@ -4,13 +4,16 @@ description: Provides patterns for unit testing scheduled and async tasks using 
 category: testing
 tags: [junit-5, scheduled, async, concurrency, completablefuture]
 version: 1.0.1
+allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
 # Unit Testing @Scheduled and @Async Methods
 
-Test scheduled tasks and async methods using JUnit 5 without running the actual scheduler. Verify execution logic, timing, and asynchronous behavior.
+## Overview
 
-## When to Use This Skill
+This skill provides patterns for unit testing @Scheduled and @Async methods using JUnit 5. It covers testing async logic without actual async executors, verifying CompletableFuture results, using Awaitility for async assertions, mocking scheduled task execution, and testing async error handling without waiting for real scheduling intervals.
+
+## When to Use
 
 Use this skill when:
 - Testing @Scheduled method logic
@@ -19,6 +22,19 @@ Use this skill when:
 - Testing async error handling
 - Want fast tests without actual scheduling
 - Testing background task logic in isolation
+
+## Instructions
+
+1. **Test async methods directly**: Call @Async methods directly instead of relying on Spring's async executor
+2. **Use CompletableFuture.get()**: Wait for async operations to complete with explicit timeout
+3. **Mock async dependencies**: Use @Mock for services that async methods depend on
+4. **Use Awaitility for assertions**: Apply Awaitility.await() when testing actual async behavior
+5. **Test scheduled methods directly**: Call @Scheduled methods directly instead of waiting for cron expressions
+6. **Verify mock interactions**: Ensure dependencies were called correctly after async completion
+7. **Test exception handling**: Verify exceptions in async methods propagate correctly
+8. **Set appropriate timeouts**: Always use timeout with CompletableFuture.get() to avoid hanging tests
+
+## Examples
 
 ## Setup: Async/Scheduled Testing
 
@@ -417,6 +433,16 @@ class ScheduledTaskTimingTest {
 - Forgetting to test exception handling in async methods
 - Not mocking dependencies that async methods call
 - Trying to test actual scheduling timing (test logic instead)
+
+## Constraints and Warnings
+
+- **@Async requires proxy**: Spring's @Async works via proxies; direct method calls bypass async behavior
+- **ThreadPoolTaskScheduler**: Scheduled tasks use a thread pool; order of execution is not guaranteed
+- **CompletableFuture chaining**: Chain operations carefully; exceptions in intermediate stages can be lost
+- **Awaitility timeout**: Set reasonable timeouts; infinite waits can hang test suites
+- **Scheduled task timing**: Don't test actual cron/fixedRate timing; test the method logic directly
+- **Thread safety**: Async code must be thread-safe; verify behavior under concurrent access
+- **@Async on same class**: Calling @Async method from another method in same class won't be async
 
 ## Troubleshooting
 

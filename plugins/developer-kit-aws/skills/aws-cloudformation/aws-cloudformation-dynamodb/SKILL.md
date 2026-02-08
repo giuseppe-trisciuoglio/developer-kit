@@ -29,6 +29,89 @@ Use this skill when:
 - Implementing cross-stack references with export/import
 - Using Transform for macros and reuse
 
+## Instructions
+
+Follow these steps to create DynamoDB tables with CloudFormation:
+
+1. **Define Table Parameters**: Specify table name and billing mode
+2. **Configure Primary Key**: Set partition key and optional sort key
+3. **Add Secondary Indexes**: Create GSIs for alternative access patterns
+4. **Configure Encryption**: Enable encryption using KMS keys
+5. **Set Up TTL**: Define timestamp attribute for automatic deletion
+6. **Enable Streams**: Configure stream for change data capture
+7. **Add Auto Scaling**: Implement Application Auto Scaling for provisioned capacity
+8. **Create Backup**: Enable point-in-time recovery
+
+For complete examples, see the [EXAMPLES.md](references/examples.md) file.
+
+## Examples
+
+The following examples demonstrate common DynamoDB patterns:
+
+### Example 1: Table with GSI
+
+```yaml
+DynamoDBTable:
+  Type: AWS::DynamoDB::Table
+  Properties:
+    TableName: !Sub "${AWS::StackName}-table"
+    BillingMode: PAY_PER_REQUEST
+    AttributeDefinitions:
+      - AttributeName: pk
+        AttributeType: S
+      - AttributeName: sk
+        AttributeType: S
+      - AttributeName: gsi-pk
+        AttributeType: S
+    KeySchema:
+      - AttributeName: pk
+        KeyType: HASH
+      - AttributeName: sk
+        KeyType: RANGE
+    GlobalSecondaryIndexes:
+      - IndexName: gsi
+        KeySchema:
+          - AttributeName: gsi-pk
+            KeyType: HASH
+        Projection:
+          ProjectionType: ALL
+```
+
+### Example 2: Table with Auto Scaling
+
+```yaml
+ScalableTarget:
+  Type: AWS::ApplicationAutoScaling::ScalableTarget
+  Properties:
+    MaxCapacity: 100
+    MinCapacity: 5
+    ResourceId: !Sub "table/${DynamoDBTable}"
+    RoleARN: !GetAtt AutoScalingRole.Arn
+    ScalableDimension: dynamodb:table:ReadCapacityUnits
+    ServiceNamespace: dynamodb
+```
+
+### Example 3: Table with TTL
+
+```yaml
+DynamoDBTable:
+  Type: AWS::DynamoDB::Table
+  Properties:
+    TableName: !Sub "${AWS::StackName}-session-table"
+    BillingMode: PAY_PER_REQUEST
+    AttributeDefinitions:
+      - AttributeName: sessionId
+        AttributeType: S
+    KeySchema:
+      - AttributeName: sessionId
+        KeyType: HASH
+    TimeToLiveSpecification:
+      AttributeName: expiresAt
+      Enabled: true
+```
+
+For complete production-ready examples, see [EXAMPLES.md](references/examples.md).
+
 ## CloudFormation Template Structure
 
 ### Base Template with Standard Format
@@ -1147,8 +1230,46 @@ aws cloudformation describe-stack-resource-drifts \
 - [DynamoDB Best Practices](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/best-practices.html)
 - [Application Auto Scaling](https://docs.aws.amazon.com/autoscaling/application/userguide/what-is-application-auto-scaling.html)
 
+## Constraints and Warnings
+
+### Resource Limits
+
+- **Table Size Limits**: Maximum 40 GB per item; no limit on number of items per table
+- **Partition Key Limits**: Composite keys have specific size limits (attributes combined must be under KB limit)
+- **GSI Limits**: Maximum 20 Global Secondary Indexes per table
+- **LSI Limits**: Maximum 5 Local Secondary Indexes per table (same partition key as base table)
+
+### Throughput Constraints
+
+- **Read/Write Capacity**: Exceeding provisioned capacity results in throttling
+- **Auto Scaling Limits**: Auto scaling takes time to adjust; instant spikes cause throttling
+- **On-Demand Mode**: On-demand tables have unlimited capacity but may throttle if table exceeds account limits
+- **Partition Key Design**: Poor partition key distribution causes hot partitions and throttling
+
+### Operational Constraints
+
+- **Table Creation**: Creating tables with GSIs takes longer than single-table creation
+- **Index Updates**: Adding GSIs to existing tables requires rebuilding the entire table
+- **Stream Limits**: DynamoDB Streams have a 24-hour retention limit; extended retention requires Lambda or Firehose
+- **TTL Processing**: TTL deletes are not instantaneous; may take up to 48 hours
+
+### Security Constraints
+
+- **Encryption**: Once enabled, encryption at rest cannot be disabled
+- **Point-in-Time Recovery**: PITR cannot be disabled once enabled on a table
+- **Global Tables**: Cross-region replication requires specific IAM permissions
+- **Conditional Writes**: Condition expressions that fail due to resource constraints still consume write capacity
+
+### Cost Considerations
+
+- **Provisioned Capacity**: Pay for provisioned capacity even if unused
+- **On-Demand Pricing**: On-demand mode can be significantly more expensive for predictable workloads
+- **GSI Costs**: Each GSI incurs separate read/write capacity costs
+- **Storage Costs**: Encrypting data adds storage overhead; consider this when estimating costs
+- **Data Transfer**: Inter-region replication for global tables incurs data transfer costs
+
 ## Additional Files
 
 For complete details on resources and their properties, see:
-- [REFERENCE.md](reference.md) - Detailed reference guide for all DynamoDB CloudFormation resources
-- [EXAMPLES.md](examples.md) - Complete production-ready examples
+- [REFERENCE.md](references/reference.md) - Detailed reference guide for all DynamoDB CloudFormation resources
+- [EXAMPLES.md](references/examples.md) - Complete production-ready examples

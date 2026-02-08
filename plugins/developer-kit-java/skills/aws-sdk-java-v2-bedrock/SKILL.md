@@ -4,7 +4,7 @@ description: Provides Amazon Bedrock patterns using AWS SDK for Java 2.x. Use wh
 category: aws
 tags: [aws, bedrock, java, sdk, generative-ai, foundation-models]
 version: 2.0.0
-allowed-tools: Read, Write, Bash
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
 # AWS SDK for Java 2.x - Amazon Bedrock
@@ -24,6 +24,19 @@ Use this skill when:
 ## Overview
 
 Amazon Bedrock provides access to foundation models from leading AI providers through a unified API. This skill covers patterns for working with various models including Claude, Llama, Titan, and Stability Diffusion using AWS SDK for Java 2.x.
+
+## Instructions
+
+Follow these steps to work with Amazon Bedrock:
+
+1. **Set Up AWS Credentials** - Configure credentials with appropriate Bedrock permissions
+2. **Enable Bedrock Access** - Request access to specific foundation models in the AWS Console
+3. **Add Dependencies** - Include bedrock and bedrockruntime dependencies
+4. **Create Clients** - Instantiate BedrockClient for management and BedrockRuntimeClient for invocation
+5. **List Models** - Query available foundation models and their capabilities
+6. **Invoke Models** - Build proper payloads for each model provider's format
+7. **Handle Streaming** - Implement streaming response handlers for real-time generation
+8. **Integrate with Spring** - Configure beans and services for enterprise applications
 
 ## Quick Start
 
@@ -330,6 +343,95 @@ public static final String DEEPSEEK_V3_1 = "deepseek.v3-v1:0";
 
 ## Examples
 
+### Example 1: Simple Text Generation with Claude
+
+```java
+public String generateWithClaude(BedrockRuntimeClient client, String prompt) {
+    JSONObject payload = new JSONObject()
+        .put("anthropic_version", "bedrock-2023-05-31")
+        .put("max_tokens", 1000)
+        .put("messages", new JSONObject[]{
+            new JSONObject().put("role", "user").put("content", prompt)
+        });
+
+    InvokeModelResponse response = client.invokeModel(InvokeModelRequest.builder()
+        .modelId("anthropic.claude-sonnet-4-5-20250929-v1:0")
+        .body(SdkBytes.fromUtf8String(payload.toString()))
+        .build());
+
+    JSONObject responseBody = new JSONObject(response.body().asUtf8String());
+    return responseBody.getJSONArray("content")
+        .getJSONObject(0)
+        .getString("text");
+}
+```
+
+### Example 2: Streaming Response
+
+```java
+public void streamResponse(BedrockRuntimeClient client, String modelId, String prompt) {
+    JSONObject payload = new JSONObject()
+        .put("anthropic_version", "bedrock-2023-05-31")
+        .put("max_tokens", 500)
+        .put("messages", new JSONObject[]{
+            new JSONObject().put("role", "user").put("content", prompt)
+        });
+
+    InvokeModelWithResponseStreamRequest request = InvokeModelWithResponseStreamRequest.builder()
+        .modelId(modelId)
+        .body(SdkBytes.fromUtf8String(payload.toString()))
+        .build();
+
+    client.invokeModelWithResponseStream(request,
+        InvokeModelWithResponseStreamResponseHandler.builder()
+            .onEventStream(stream -> stream.forEach(event -> {
+                if (event instanceof PayloadPart) {
+                    String chunk = ((PayloadPart) event).bytes().asUtf8String();
+                    System.out.print(chunk);
+                }
+            }))
+            .build());
+}
+```
+
+### Example 3: Spring Boot Service
+
+```java
+@Service
+public class BedrockService {
+
+    private final BedrockRuntimeClient client;
+    private final ObjectMapper mapper;
+
+    @Value("${bedrock.model:anthropic.claude-sonnet-4-5-20250929-v1:0}")
+    private String modelId;
+
+    public String generate(String prompt) {
+        try {
+            Map<String, Object> payload = Map.of(
+                "anthropic_version", "bedrock-2023-05-31",
+                "max_tokens", 1000,
+                "messages", List.of(Map.of(
+                    "role", "user",
+                    "content", prompt
+                ))
+            );
+
+            InvokeModelResponse response = client.invokeModel(
+                InvokeModelRequest.builder()
+                    .modelId(modelId)
+                    .body(SdkBytes.fromUtf8String(mapper.writeValueAsString(payload)))
+                    .build()
+            );
+
+            return extractText(response.body().asUtf8String());
+        } catch (Exception e) {
+            throw new RuntimeException("Bedrock invocation failed", e);
+        }
+    }
+}
+```
+
 See the [examples directory](examples/) for comprehensive usage patterns.
 
 ## Advanced Topics
@@ -366,12 +468,24 @@ See the [Testing Strategies](references/testing-strategies.md) for:
 - `spring-boot-dependency-injection` - Spring DI patterns
 - `spring-boot-test-patterns` - Spring testing patterns
 
+## Constraints and Warnings
+
+- **Cost Management**: Bedrock API calls incur charges per token; implement usage monitoring and set budget alerts to avoid unexpected costs.
+- **Model Access**: Foundation models must be explicitly enabled in the AWS Console before use; verify model availability in your region.
+- **Rate Limits**: Bedrock has per-model and account-level throttling limits; implement exponential backoff for production workloads.
+- **Region Availability**: Not all models are available in all regions; check model availability before deployment.
+- **Payload Size**: Maximum payload size varies by model; for large documents, consider chunking strategies.
+- **Streaming Complexity**: Streaming responses require careful handling of partial content and error recovery.
+- **Security**: Never embed credentials in code; use IAM roles for EC2/Lambda, environment variables for local development.
+- **Prompt Injection**: Sanitize user inputs to prevent prompt injection attacks that could manipulate model behavior.
+- **Data Privacy**: Prompts and responses may be logged by AWS; review data handling policies for sensitive applications.
+
 ## References
 
 - [AWS Bedrock User Guide](references/aws-bedrock-user-guide.md)
 - [AWS SDK for Java 2.x Documentation](references/aws-sdk-java-bedrock-api.md)
 - [Bedrock API Reference](references/aws-bedrock-api-reference.md)
 - [AWS SDK Examples](references/aws-sdk-examples.md)
-- [Official AWS Examples](bedrock_code_examples.md)
-- [Supported Models](bedrock_models_supported.md)
-- [Runtime Examples](bedrock_runtime_code_examples.md)
+- [Official AWS Examples](references/bedrock_code_examples.md)
+- [Supported Models](references/bedrock_models_supported.md)
+- [Runtime Examples](references/bedrock_runtime_code_examples.md)

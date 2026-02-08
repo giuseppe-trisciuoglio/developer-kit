@@ -1,13 +1,17 @@
 ---
 name: spring-boot-openapi-documentation
 description: Provides patterns to generate comprehensive REST API documentation using SpringDoc OpenAPI 3.0 and Swagger UI in Spring Boot 3.x applications. Use when setting up API documentation, configuring Swagger UI, adding OpenAPI annotations, implementing security documentation, or enhancing REST endpoints with examples and schemas.
-allowed-tools: Read, Write, Bash, Grep
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 category: backend
 tags: [spring-boot, openapi, swagger, api-documentation, springdoc]
 version: 1.1.0
 ---
 
 # Spring Boot OpenAPI Documentation with SpringDoc
+
+## Overview
+
+SpringDoc OpenAPI is a library that automates the generation of OpenAPI 3.0 documentation for Spring Boot projects. It provides a Swagger UI web interface for exploring and testing APIs without writing additional configuration. This skill provides comprehensive patterns for integrating SpringDoc into Spring Boot 3.x applications, documenting REST endpoints, securing API documentation, and customizing the generated specification.
 
 Implement comprehensive REST API documentation using SpringDoc OpenAPI 3.0 and Swagger UI in Spring Boot 3.x applications.
 
@@ -28,6 +32,38 @@ Use this skill when you need to:
 - Document error responses and exception handlers
 - Add JSR-303 Bean Validation to API documentation
 - Support Kotlin-based Spring Boot APIs
+
+## Instructions
+
+Follow these steps to implement comprehensive API documentation with SpringDoc OpenAPI:
+
+### 1. Add Dependencies and Configure
+
+Add the appropriate SpringDoc starter dependency for your application type (WebMvc or WebFlux) and configure basic settings in application.yml or application.properties.
+
+### 2. Document Controllers
+
+Use OpenAPI annotations (@Tag, @Operation, @ApiResponse, @Parameter) to add descriptive information to your REST controllers. Group related endpoints under tags and document all response codes.
+
+### 3. Document Models
+
+Apply @Schema annotations to DTOs and entities to document field constraints, examples, and validation rules. Hide internal fields and mark read-only properties appropriately.
+
+### 4. Configure Security
+
+Set up security schemes for authentication methods (JWT Bearer, OAuth2, Basic Auth) and apply @SecurityRequirement to protected endpoints.
+
+### 5. Test Documentation
+
+Access Swagger UI at /swagger-ui/index.html to verify documentation completeness. Test endpoints directly from the UI to ensure examples are accurate.
+
+### 6. Customize for Production
+
+Configure API grouping, versioning, and customize UI appearance. Set up build plugins to generate OpenAPI JSON/YAML files during the build process.
+
+### 7. Integrate with CI/CD
+
+Add API documentation generation to your build pipeline and consider automated contract testing.
 
 ## Setup Dependencies
 
@@ -607,6 +643,16 @@ public class BookController {
 ## Troubleshooting
 
 For common issues and solutions, refer to the troubleshooting guide in @references/troubleshooting.md
+
+## Constraints and Warnings
+
+- Do not expose sensitive data in API examples or schema descriptions.
+- Keep OpenAPI annotations minimal to avoid cluttering controller code; use global configurations when possible.
+- Large API definitions can impact Swagger UI performance; consider grouping APIs by domain.
+- Schema generation may not work correctly with complex generic types; use explicit `@Schema` annotations.
+- Avoid circular references in DTOs as they cause infinite recursion in schema generation.
+- Security schemes must be properly configured before using `@SecurityRequirement` annotations.
+- Hidden endpoints (`@Operation(hidden = true)`) are still visible in code and may leak through other documentation tools.
 
 ## Related Skills
 

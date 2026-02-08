@@ -4,7 +4,7 @@ description: Provides core patterns and best practices for AWS SDK for Java 2.x.
 category: aws
 tags: [aws, java, sdk, core, authentication, configuration]
 version: 1.1.0
-allowed-tools: Read, Write, Bash
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
 # AWS SDK for Java 2.x - Core Patterns
@@ -12,6 +12,19 @@ allowed-tools: Read, Write, Bash
 ## Overview
 
 Configure AWS service clients, authentication, timeouts, HTTP clients, and implement best practices for AWS SDK for Java 2.x applications. This skill provides essential patterns for building robust, performant, and secure integrations with AWS services.
+
+## Instructions
+
+Follow these steps to configure AWS SDK for Java 2.x:
+
+1. **Add Dependencies** - Include SDK core and appropriate HTTP client dependencies
+2. **Configure Credentials** - Set up credential provider chain (env vars, profiles, IAM roles)
+3. **Create Clients** - Build service clients with proper region and configuration
+4. **Configure Timeouts** - Set API call and attempt timeouts appropriately
+5. **Set HTTP Client** - Choose Apache (sync) or Netty (async) with connection pooling
+6. **Handle Errors** - Implement proper exception handling and retry logic
+7. **Close Resources** - Always close clients and streaming responses
+8. **Test Locally** - Use LocalStack or Testcontainers for integration testing
 
 ## When to Use
 
@@ -561,7 +574,84 @@ dependencies {
 
 ## Examples
 
-### Basic S3 Upload
+### Example 1: Basic S3 Upload with Error Handling
+
+```java
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.model.*;
+
+public class S3UploadService {
+    private final S3Client s3Client;
+
+    public void uploadFile(String bucket, String key, byte[] content) {
+        try {
+            PutObjectRequest request = PutObjectRequest.builder()
+                .bucket(bucket)
+                .key(key)
+                .build();
+
+            s3Client.putObject(request, RequestBody.fromBytes(content));
+
+        } catch (S3Exception e) {
+            if (e.statusCode() == 404) {
+                throw new RuntimeException("Bucket not found: " + bucket, e);
+            }
+            throw new RuntimeException("Upload failed", e);
+        }
+    }
+}
+```
+
+### Example 2: DynamoDB Query with Pagination
+
+```java
+import software.amazon.awssdk.services.dynamodb.model.*;
+
+public List<Item> queryDynamoDB(DynamoDbClient client, String tableName) {
+    QueryRequest request = QueryRequest.builder()
+        .tableName(tableName)
+        .keyConditionExpression("pk = :pk")
+        .expressionAttributeValues(Map.of(":pk", AttributeValue.builder().s("user#123").build()))
+        .build();
+
+    List<Item> allItems = new ArrayList<>();
+    for (Page<Item> page : client.queryPaginator(request).stream()) {
+        allItems.addAll(page.items());
+    }
+    return allItems;
+}
+```
+
+### Example 3: Spring Boot Configuration
+
+```java
+@Configuration
+public class AwsConfiguration {
+
+    @Bean
+    public S3Client s3Client(AwsProperties properties) {
+        return S3Client.builder()
+            .region(Region.of(properties.getRegion()))
+            .credentialsProvider(credentialsProvider(properties))
+            .overrideConfiguration(ClientOverrideConfiguration.builder()
+                .apiCallTimeout(Duration.ofSeconds(30))
+                .build())
+            .build();
+    }
+
+    private CredentialsProvider credentialsProvider(AwsProperties properties) {
+        if (properties.getAccessKeyId() != null) {
+            return StaticCredentialsProvider.create(
+                AwsBasicCredentials.create(
+                    properties.getAccessKeyId(),
+                    properties.getSecretAccessKey()));
+        }
+        return DefaultCredentialsProvider.create();
+    }
+}
+```
+
+## Basic S3 Upload
 
 ```java
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -658,3 +748,15 @@ See [references/](references/) for detailed documentation:
 - [AWS SDK for Java 2.x API Reference](https://sdk.amazonaws.com/java/api/latest/)
 - [Best Practices](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/best-practices.html)
 - [GitHub Repository](https://github.com/aws/aws-sdk-java-v2)
+
+## Constraints and Warnings
+
+- Never hardcode credentials in source code; use credential providers or environment variables.
+- Service clients are thread-safe and should be reused; do not create new clients for each request.
+- Always close streaming responses (`ResponseInputStream`) to prevent connection pool exhaustion.
+- Set appropriate timeouts to prevent hanging requests; default timeouts may not suit all use cases.
+- Be aware of AWS service rate limits; implement exponential backoff for retries.
+- IAM roles should follow the principle of least privilege; avoid using overly permissive policies.
+- Async clients require proper event loop management; ensure sufficient threads for concurrency.
+- LocalStack does not implement all AWS services; verify compatibility for integration tests.
+- SDK metrics can impact performance; disable in production if not needed.

@@ -76,7 +76,7 @@ You are a Spring Boot CRUD generation specialist. Your task is to generate a com
    - Ensure no circular dependencies exist
    - Validate that DTOs don't expose JPA entities directly
 
-## Usage Examples
+## Examples
 
 ```bash
 # Generate CRUD for Product entity
@@ -106,3 +106,20 @@ After completion, provide:
 **Agent Selection**: To execute this task, use the following agent with fallback:
 - Primary: `spring-boot-backend-development-expert`
 - If not available: Use `developer-kit:spring-boot-backend-development-expert` or fallback to `general-purpose` agent with `spring-boot-crud-patterns` skill
+
+## Overview
+
+Generates complete CRUD implementation for a Spring Boot domain class using spring-boot-crud-patterns skill. Use when creating new domain entities with REST endpoints.
+
+
+## Usage
+
+```
+/devkit.java.generate-crud $ARGUMENTS
+```
+
+## Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |

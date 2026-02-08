@@ -1,7 +1,7 @@
 ---
 name: spring-boot-crud-patterns
 description: Provides repeatable CRUD workflows for Spring Boot 3 services with Spring Data JPA and feature-focused architecture. Use when modeling aggregates, repositories, controllers, and DTOs for REST APIs.
-allowed-tools: Read, Write, Bash
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 category: backend
 tags: [spring-boot, java, ddd, rest-api, crud, jpa, feature-architecture]
 version: 1.1.0
@@ -20,6 +20,42 @@ Deliver feature-aligned CRUD services that separate domain, application, present
 - Introduce DTO records, request validation, and controller mappings for external clients.
 - Diagnose CRUD regressions, repository contracts, or transaction boundaries in existing Spring Boot services.
 - Trigger phrases: **"implement Spring CRUD controller"**, **"refine feature-based repository"**, **"map DTOs for JPA aggregate"**, **"add pagination to REST list endpoint"**.
+
+## Instructions
+
+Follow these steps to implement feature-aligned CRUD services:
+
+### 1. Establish Feature Package Structure
+
+Create feature/<name>/ directories with domain, application, presentation, and infrastructure subpackages to maintain architectural boundaries.
+
+### 2. Define Domain Model
+
+Create entity classes with invariants enforced through factory methods (create, update). Keep domain logic framework-free without Spring annotations.
+
+### 3. Declare Repository Interfaces
+
+Define domain repository interfaces in domain/repository that describe persistence contracts without implementation details.
+
+### 4. Implement Infrastructure Adapters
+
+Create JPA entities in infrastructure/persistence that map to domain models. Implement Spring Data repositories that delegate to domain interfaces.
+
+### 5. Build Application Services
+
+Create @Service classes with @Transactional methods that orchestrate domain operations, repository access, and DTO mapping.
+
+### 6. Define Request/Response DTOs
+
+Use Java records or immutable classes for API contracts. Apply jakarta.validation annotations for input validation.
+
+### 7. Expose REST Controllers
+
+Create @RestController classes mapped to /api endpoints. Return ResponseEntity with appropriate status codes (201 for POST, 204 for DELETE).
+
+### 8. Write Tests
+
+Unit test domain logic in isolation. Use @DataJpaTest and Testcontainers for integration testing of persistence layer.
 
 ## Prerequisites
 
@@ -80,6 +116,112 @@ Consult `references/examples-product-feature.md` for complete code listings that
 - Surface health and metrics through Spring Boot Actuator; monitor CRUD throughput and error rates.
 - Log key actions at `info` for lifecycle events (create, update, delete) and use structured logging for audit trails.
 
+## Examples
+
+### Input: Product Create Request
+
+```json
+{
+  "name": "Wireless Keyboard",
+  "description": "Ergonomic wireless keyboard with backlight",
+  "price": 79.99,
+  "stock": 50
+}
+```
+
+### Output: Created Product Response
+
+```json
+{
+  "id": "prod-123",
+  "name": "Wireless Keyboard",
+  "description": "Ergonomic wireless keyboard with backlight",
+  "price": 79.99,
+  "stock": 50,
+  "createdAt": "2024-01-15T10:30:00Z",
+  "_links": {
+    "self": "/api/products/prod-123",
+    "update": "/api/products/prod-123",
+    "delete": "/api/products/prod-123"
+  }
+}
+```
+
+### Input: Product Update Request
+
+```json
+{
+  "price": 69.99,
+  "stock": 45
+}
+```
+
+### Output: Updated Product Response
+
+```json
+{
+  "id": "prod-123",
+  "name": "Wireless Keyboard",
+  "description": "Ergonomic wireless keyboard with backlight",
+  "price": 69.99,
+  "stock": 45,
+  "updatedAt": "2024-01-15T11:45:00Z",
+  "_links": {
+    "self": "/api/products/prod-123"
+  }
+}
+```
+
+### Input: Delete Product
+
+```bash
+curl -X DELETE http://localhost:8080/api/products/prod-123
+```
+
+### Output: 204 No Content
+
+```
+HTTP/1.1 204 No Content
+```
+
+### Input: List Products with Pagination
+
+```bash
+curl "http://localhost:8080/api/products?page=0&size=10&sort=name,asc"
+```
+
+### Output: Paginated Product List
+
+```json
+{
+  "content": [
+    {
+      "id": "prod-123",
+      "name": "Wireless Keyboard",
+      "price": 69.99,
+      "stock": 45
+    },
+    {
+      "id": "prod-456",
+      "name": "Wireless Mouse",
+      "price": 29.99,
+      "stock": 100
+    }
+  ],
+  "pageable": {
+    "page": 0,
+    "size": 10,
+    "total": 2,
+    "totalPages": 1
+  },
+  "_links": {
+    "self": "/api/products?page=0&size=10",
+    "next": null,
+    "last": "/api/products?page=0&size=10"
+  }
+}
+```
+
 ## Best Practices
 
 - Favor feature modules with clear boundaries; colocate domain, application, and presentation code per aggregate.
@@ -102,7 +244,7 @@ Consult `references/examples-product-feature.md` for complete code listings that
 - [Progressive examples from starter to advanced feature implementation.](references/examples-product-feature.md)
 - [Excerpts from official Spring guides and Spring Boot reference documentation.](references/spring-official-docs.md)
 - [Python generator to scaffold CRUD boilerplate from entity spec.](scripts/generate_crud_boilerplate.py) Usage: `python skills/spring-boot-crud-patterns/scripts/generate_crud_boilerplate.py --spec entity.json --package com.example.product --output ./generated`
-- Templates required: place .tpl files in `skills/spring-boot-crud-patterns/templates/` or pass `--templates-dir <path>`; no fallback to built-ins. See `templates/README.md`.
+- Templates required: place .tpl files in `skills/spring-boot-crud-patterns/references/` or pass `--templates-dir <path>`; no fallback to built-ins. See `references/README.md`.
 - Usage guide: [references/generator-usage.md](references/generator-usage.md)
 - Example spec: `skills/spring-boot-crud-patterns/assets/specs/product.json`
 - Example with relationships: `skills/spring-boot-crud-patterns/assets/specs/product_with_rel.json`

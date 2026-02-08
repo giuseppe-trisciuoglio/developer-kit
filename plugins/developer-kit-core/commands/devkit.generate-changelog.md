@@ -16,6 +16,13 @@ Generate and maintain project changelog following Keep a Changelog standard, ext
 - **Build System**: !`if [ -f pom.xml ]; then echo "Maven"; elif [ -f build.gradle ]; then echo "Gradle"; elif [ -f package.json ]; then echo "npm"; elif [ -f setup.py ]; then echo "Python"; elif [ -f Cargo.toml ]; then echo "Rust"; else echo "Generic"; fi`
 - **Existing Changelog**: !`if [ -f CHANGELOG.md ]; then echo "Found"; else echo "Not found"; fi`
 
+
+## Usage
+
+```
+/devkit.generate-changelog $ARGUMENTS
+```
+
 ## Arguments
 
 $1 specifies the action (optional - defaults to `update`):
@@ -752,7 +759,7 @@ echo "2. Wait for CI/CD pipeline to complete"
 echo "3. Verify release at: https://github.com/<username>/<repo>/releases/tag/v$VERSION"
 ```
 
-## Usage Examples
+## Examples
 
 ```bash
 # Initialize new changelog
@@ -836,3 +843,7 @@ Focus on **maintaining a clear, user-friendly changelog** that follows industry 
 **Agent Selection**: To execute this generation task, use the following approach:
 - Primary: Use `general-purpose` agent with specialized knowledge of the task domain
 - Or use appropriate specialized agent if available for the specific generation task
+
+## Overview
+
+Generates and manages project changelog following Keep a Changelog standard with Git integration and Conventional Commits support. Use when releasing a new version or updating the changelog after commits.

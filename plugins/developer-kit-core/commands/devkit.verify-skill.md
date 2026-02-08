@@ -171,3 +171,25 @@ Begin validation now for skill: $1
 **Agent Selection**: To execute this task, use the following approach:
 - Primary: Use `general-purpose` agent with appropriate domain expertise
 - Or use specialized agent if available for the specific task type
+
+## Overview
+
+Validates a skill against DevKit standards (requirements, template, dependencies). Use when you need to verify a skill before publishing or after modifications.
+
+## Usage
+
+```
+/devkit.verify-skill $ARGUMENTS
+```
+
+## Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
+
+## Examples
+
+```bash
+/devkit.verify-skill example-input
+```

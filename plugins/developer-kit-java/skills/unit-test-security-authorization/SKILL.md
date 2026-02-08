@@ -4,13 +4,16 @@ description: Provides patterns for unit testing Spring Security with @PreAuthori
 category: testing
 tags: [junit-5, spring-security, authorization, roles, preauthorize, mockmvc]
 version: 1.0.1
+allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
 # Unit Testing Security and Authorization
 
-Test Spring Security authorization logic using @PreAuthorize, @Secured, and custom permission evaluators. Verify access control decisions without full security infrastructure.
+## Overview
 
-## When to Use This Skill
+This skill provides patterns for unit testing Spring Security authorization logic using @PreAuthorize, @Secured, @RolesAllowed, and custom permission evaluators. It covers testing role-based access control (RBAC), expression-based authorization, custom permission evaluators, and verifying access denied scenarios without full Spring Security context.
+
+## When to Use
 
 Use this skill when:
 - Testing @PreAuthorize and @Secured method-level security
@@ -19,6 +22,40 @@ Use this skill when:
 - Verifying access denied scenarios
 - Testing authorization with authenticated principals
 - Want fast authorization tests without full Spring Security context
+
+## Instructions
+
+Follow these steps to test Spring Security authorization:
+
+### 1. Set Up Security Testing Dependencies
+
+Add spring-security-test to your test dependencies along with JUnit 5 and AssertJ.
+
+### 2. Enable Method Security in Configuration
+
+Use @EnableGlobalMethodSecurity(prePostEnabled = true) to activate @PreAuthorize annotations.
+
+### 3. Create Test with @WithMockUser
+
+Apply @WithMockUser annotation to simulate authenticated users with specific roles and authorities.
+
+### 4. Test Both Allow and Deny Scenarios
+
+For each security rule, test that authorized users can access the method and unauthorized users receive AccessDeniedException.
+
+### 5. Test Expression-Based Authorization
+
+Verify complex expressions like authentication.principal.username == #owner work correctly.
+
+### 6. Test Custom Permission Evaluators
+
+Unit test custom PermissionEvaluator implementations by creating Authentication objects and calling hasPermission directly.
+
+### 7. Verify Method Interactions
+
+Mock external dependencies and verify that security checks don't interfere with business logic.
+
+## Examples
 
 ## Setup: Security Testing
 
@@ -461,7 +498,82 @@ class RoleBasedAccessTest {
 - Not handling null authentication in tests
 - Mixing authentication and authorization tests unnecessarily
 
-## Troubleshooting
+## Constraints and Warnings
+
+- **Method security requires proxy**: @PreAuthorize works via proxies; direct method calls bypass security
+- **@EnableGlobalMethodSecurity**: Must be enabled for @PreAuthorize, @Secured to work
+- **Role prefix**: Spring adds "ROLE_" prefix automatically; use hasRole('ADMIN') not hasRole('ROLE_ADMIN')
+- **Authentication context**: Security context is thread-local; be careful with async tests
+- **@WithMockUser limitations**: Creates a simple Authentication; complex auth scenarios need custom setup
+- **SpEL expressions**: Complex SpEL in @PreAuthorize can be difficult to debug; test thoroughly
+- **Performance impact**: Method security adds overhead; consider security at layer boundaries
+
+## Examples
+
+### Input: Service Without Security Testing
+
+```java
+@Service
+public class AdminService {
+    public void deleteUser(Long userId) {
+        // Delete logic without security check
+    }
+}
+```
+
+### Output: Service With Security Test Coverage
+
+```java
+@Service
+public class AdminService {
+    @PreAuthorize("hasRole('ADMIN')")
+    public void deleteUser(Long userId) {
+        // Delete logic
+    }
+}
+
+// Test
+@Test
+@WithMockUser(roles = "ADMIN")
+void shouldAllowAdminToDeleteUser() {
+    assertThatCode(() -> adminService.deleteUser(1L))
+        .doesNotThrowAnyException();
+}
+
+@Test
+@WithMockUser(roles = "USER")
+void shouldDenyUserFromDeletingUser() {
+    assertThatThrownBy(() -> adminService.deleteUser(1L))
+        .isInstanceOf(AccessDeniedException.class);
+}
+```
+
+### Input: Manual Security Check (Anti-Pattern)
+
+```java
+if (user.hasRole("ADMIN")) {
+    service.deleteUser(userId);
+}
+```
+
+### Output: Declarative Security with Testing
+
+```java
+@PreAuthorize("hasRole('ADMIN')")
+public void deleteUser(Long userId) {
+    // Business logic only, security is declarative
+}
+
+// Test verifies security enforcement
+@Test
+@WithMockUser(roles = "ADMIN")
+void shouldExecuteDelete() {
+    service.deleteUser(1L);
+    verify(repository).deleteById(1L);
+}
+```
+
+## Constraints and Warnings
 
 **AccessDeniedException not thrown**: Ensure `@EnableGlobalMethodSecurity(prePostEnabled = true)` is configured.
 

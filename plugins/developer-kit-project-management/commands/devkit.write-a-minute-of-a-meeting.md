@@ -63,3 +63,25 @@ Include date and time of the next meeting if established.
 **Agent Selection**: To execute this task, use the following approach:
 - Primary: Use `general-purpose` agent with appropriate domain expertise
 - Or use specialized agent if available for the specific task type
+
+## Overview
+
+Generates professional meeting minutes from transcripts or notes. Use when you need to create structured meeting documentation after a meeting.
+
+## Usage
+
+```
+/devkit.write-a-minute-of-a-meeting $ARGUMENTS
+```
+
+## Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
+
+## Examples
+
+```bash
+/devkit.write-a-minute-of-a-meeting example-input
+```

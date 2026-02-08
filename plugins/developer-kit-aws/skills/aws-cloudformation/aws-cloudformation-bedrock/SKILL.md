@@ -28,6 +28,77 @@ Use this skill when:
 - Organizing templates with Parameters, Outputs, Mappings, Conditions
 - Implementing cross-stack references with export/import
 
+## Instructions
+
+Follow these steps to create Bedrock infrastructure with CloudFormation:
+
+1. **Define Agent Parameters**: Specify foundation model, agent name, and description
+2. **Create Agent Resource Role**: Configure IAM role with bedrock:InvokeModel permissions
+3. **Set Up Knowledge Base**: Define vector store configuration and embedding model
+4. **Configure Data Sources**: Connect S3 buckets or other data sources to knowledge base
+5. **Add Guardrails**: Implement content moderation policies for safe AI responses
+6. **Create Action Groups**: Define Lambda functions for agent API operations
+7. **Configure Flows**: Build workflow orchestration for complex AI tasks
+8. **Set Up Inference Profiles**: Configure multi-model access for optimized routing
+
+For complete examples, see the [EXAMPLES.md](references/examples.md) file.
+
+## Examples
+
+The following examples demonstrate common Bedrock patterns:
+
+### Example 1: Bedrock Agent with Knowledge Base
+
+```yaml
+BedrockAgent:
+  Type: AWS::Bedrock::Agent
+  Properties:
+    AgentName: !Sub "${AWS::StackName}-agent"
+    Description: Agent with knowledge base for RAG
+    FoundationModel: anthropic.claude-v3:5
+    AgentResourceRoleArn: !GetAtt AgentRole.Arn
+    AutoPrepare: true
+    KnowledgeBases:
+      - KnowledgeBaseId: !Ref KnowledgeBase
+        Description: Main knowledge base
+```
+
+### Example 2: Knowledge Base with OpenSearch
+
+```yaml
+KnowledgeBase:
+  Type: AWS::Bedrock::KnowledgeBase
+  Properties:
+    KnowledgeBaseName: !Sub "${AWS::StackName}-kb"
+    EmbeddingModelArn: !Sub "arn:aws:bedrock:${AWS::Region}:${AWS::AccountId}:foundation-model/amazon.titan-embed-text-v1"
+    VectorKnowledgeBaseConfiguration:
+      VectorStoreConfiguration:
+        OpensearchServerlessConfiguration:
+          CollectionArn: !Ref OpenSearchCollection.Arn
+          VectorIndexName: kb-index
+    RoleArn: !GetAtt KnowledgeBaseRole.Arn
+```
+
+### Example 3: Content Moderation Guardrail
+
+```yaml
+ContentGuardrail:
+  Type: AWS::Bedrock::Guardrail
+  Properties:
+    GuardrailName: !Sub "${AWS::StackName}-guardrail"
+    TopicPolicy:
+      Topics:
+        - Name: FinancialAdvice
+          Definition: Providing financial investment advice
+          Type: DENIED
+    SensitiveInformationPolicy:
+      PiiEntities:
+        - Name: SSN
+          Action: BLOCK
+```
+
+For complete production-ready examples, see [EXAMPLES.md](references/examples.md).
+
 ## CloudFormation Template Structure
 
 ### Base Template with Standard Format
@@ -1254,8 +1325,45 @@ aws cloudformation describe-stack-resource-drifts \
 - [Bedrock Guardrails](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html)
 - [Bedrock Flows](https://docs.aws.amazon.com/bedrock/latest/userguide/flows.html)
 
+## Constraints and Warnings
+
+### Resource Limits
+
+- **Agent Limits**: Maximum number of agents per AWS account varies by region
+- **Knowledge Base Limits**: Maximum number of documents per knowledge base
+- **Guardrail Limits**: Maximum number of guardrails per account
+- **Flow Limits**: Maximum number of steps and nodes in a workflow flow
+
+### Model Availability Constraints
+
+- **Regional Availability**: Not all foundation models are available in all regions
+- **Model Updates**: Foundation models may be updated without notice, affecting agent behavior
+- **Rate Limiting**: API rate limits vary by model and can affect agent performance
+- **Token Limits**: Different models have different token limits for input and output
+
+### Operational Constraints
+
+- **Agent Preparation**: AutoPrepare agents may take time to initialize
+- **Knowledge Base Sync**: Data source synchronization is not instantaneous
+- **Vector Store Limits**: Vector dimension limits vary by provider (OpenSearch, Pinecone, etc.)
+- **RAG Accuracy**: Retrieved documents depend on embedding quality and chunking strategy
+
+### Security Constraints
+
+- **Guardrail Coverage**: Guardrails cannot intercept all types of harmful content
+- **PII Protection**: Sensitive information may not be detected in all formats
+- **Agent Permissions**: Agents require IAM roles with appropriate resource access
+- **Data Privacy**: Data sent to Bedrock is processed according to AWS service terms
+
+### Cost Considerations
+
+- **On-Demand Pricing**: Model invocation costs can accumulate quickly with agents
+- **Knowledge Base Storage**: Storing and syncing large datasets increases costs
+- **Guardrail Usage**: Content moderation adds latency and per-invocation costs
+- **Token Usage**: RAG implementations increase token consumption
+
 ## Additional Files
 
 For complete details on resources and their properties, see:
-- [REFERENCE.md](reference.md) - Detailed reference guide for all Bedrock CloudFormation resources
-- [EXAMPLES.md](examples.md) - Complete production-ready examples
+- [REFERENCE.md](references/reference.md) - Detailed reference guide for all Bedrock CloudFormation resources
+- [EXAMPLES.md](references/examples.md) - Complete production-ready examples

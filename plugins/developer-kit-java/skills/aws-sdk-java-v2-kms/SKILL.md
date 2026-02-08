@@ -4,7 +4,7 @@ description: Provides AWS Key Management Service (KMS) patterns using AWS SDK fo
 category: aws
 tags: [aws, kms, java, sdk, encryption, security]
 version: 1.1.0
-allowed-tools: Read, Write, Bash, WebFetch
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
 # AWS SDK for Java 2.x - AWS KMS (Key Management Service)
@@ -12,6 +12,19 @@ allowed-tools: Read, Write, Bash, WebFetch
 ## Overview
 
 This skill provides comprehensive patterns for AWS Key Management Service (KMS) using AWS SDK for Java 2.x. Focus on implementing secure encryption solutions with proper key management, envelope encryption, and Spring Boot integration patterns.
+
+## Instructions
+
+Follow these steps to work with AWS KMS:
+
+1. **Set Up IAM Permissions** - Grant kms:* actions as needed with least privilege
+2. **Create KMS Client** - Instantiate KmsClient with proper region and credentials
+3. **Create or Import Keys** - Use createKey() or import existing key material
+4. **Set Key Policies** - Define who can use/manage each key
+5. **Encrypt Data** - Use encrypt() for small data (<4KB) directly
+6. **Use Envelope Encryption** - For larger data, generate and encrypt data keys
+7. **Implement Digital Signatures** - Create signing keys and verify signatures
+8. **Rotate Keys** - Enable automatic key rotation for compliance
 
 ## When to Use
 
@@ -414,3 +427,16 @@ For detailed implementation patterns, advanced techniques, and comprehensive exa
 - [AWS KMS Developer Guide](https://docs.aws.amazon.com/kms/latest/developerguide/)
 - [AWS SDK for Java 2.x Documentation](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/home.html)
 - [KMS Best Practices](https://docs.aws.amazon.com/kms/latest/developerguide/best-practices.html)
+
+## Constraints and Warnings
+
+- **Data Size Limit**: Direct encryption limited to 4KB; use envelope encryption for larger data
+- **Key Usage Limits**: KMS has quotas on API calls per second
+- **Key Material**: Imported key material cannot be managed by AWS for rotation
+- **Key Deletion**: Key deletion requires 7-30 day waiting period
+- **Regional Boundaries**: KMS keys cannot be used across regions
+- **Cost Considerations**: KMS charges per API call and for key storage
+- **Asymmetric Keys**: Not all regions support asymmetric key types
+- **Key Policies**: Changes to key policies require careful IAM review
+- **Envelope Encryption**: Proper implementation required for data key security
+- **Logging**: Enable CloudTrail to audit all KMS API usage

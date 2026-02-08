@@ -4,10 +4,14 @@ description: Provides AWS Secrets Manager patterns using AWS SDK for Java 2.x. U
 category: aws
 tags: [aws, secrets-manager, java, sdk, security, credentials, spring-boot]
 version: 1.1.0
-allowed-tools: Read, Write, Glob, Bash
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
 # AWS SDK for Java 2.x - AWS Secrets Manager
+
+## Overview
+
+AWS Secrets Manager helps you protect secrets needed to access your applications, services, and IT resources. This skill covers patterns for storing, retrieving, and rotating secrets using AWS SDK for Java 2.x, including Spring Boot integration and caching strategies.
 
 ## When to Use
 
@@ -20,6 +24,19 @@ Use this skill when:
 - Creating secure configuration management systems
 - Working with multi-region secret deployments
 - Implementing audit logging for secret access
+
+## Instructions
+
+Follow these steps to work with AWS Secrets Manager:
+
+1. **Add Dependencies** - Include secretsmanager dependency and caching library
+2. **Create Client** - Instantiate SecretsManagerClient with proper configuration
+3. **Store Secrets** - Use createSecret() to store new secrets
+4. **Retrieve Secrets** - Use getSecretValue() to fetch secrets
+5. **Implement Caching** - Use SecretCache for improved performance
+6. **Configure Rotation** - Set up automatic rotation schedules
+7. **Integrate with Spring** - Configure beans and property sources
+8. **Monitor Access** - Enable CloudTrail logging for audit trails
 
 ## Dependencies
 
@@ -340,3 +357,16 @@ For detailed information and advanced patterns, see:
 - `aws-sdk-java-v2-core` - Core AWS SDK patterns and best practices
 - `aws-sdk-java-v2-kms` - KMS encryption and key management
 - `spring-boot-dependency-injection` - Spring dependency injection patterns
+
+## Constraints and Warnings
+
+- **Secret Size**: Maximum secret size is 10KB
+- **API Costs**: Each API call incurs a cost; use caching to reduce calls
+- **Rotation Limits**: Some secret types cannot be rotated automatically
+- **Replication Limits**: Multi-region secrets have replication limits
+- **Version Limits**: Secrets retain up to 100 versions including pending versions
+- **Deletion Delay**: Secret deletion requires 7-30 day recovery window
+- **KMS Encryption**: Secrets are encrypted using AWS KMS; key management is important
+- **Cache Consistency**: Cached secrets may be stale during rotation
+- **IAM Permissions**: Secrets require specific IAM actions for access
+- **Logging**: Avoid logging secret values; use CloudTrail for audit trails

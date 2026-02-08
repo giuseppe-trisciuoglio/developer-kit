@@ -105,3 +105,24 @@ Focus on practical, actionable advice that improves the application's architectu
 - Primary: `java-software-architect-review`
 - If not available: Use `developer-kit:java-software-architect-review` or fallback to `general-purpose` agent with `spring-boot-crud-patterns` skill
 
+## Overview
+
+Validates Java application architecture focusing on Clean Architecture, DDD, and Spring Boot patterns. Use when reviewing architectural decisions or before major refactoring.
+
+## Usage
+
+```
+/devkit.java.architect-review $ARGUMENTS
+```
+
+## Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
+
+## Examples
+
+```bash
+/devkit.java.architect-review example-input
+```

@@ -4,10 +4,14 @@ description: Provides Amazon DynamoDB patterns using AWS SDK for Java 2.x. Use w
 category: aws
 tags: [aws, dynamodb, java, sdk, nosql, database]
 version: 1.1.0
-allowed-tools: Read, Write, Bash
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
 # AWS SDK for Java 2.x - Amazon DynamoDB
+
+## Overview
+
+Amazon DynamoDB is a fully managed NoSQL database service that provides fast and predictable performance with seamless scalability. This skill covers patterns for working with DynamoDB using AWS SDK for Java 2.x, including the Enhanced Client for type-safe operations, batch operations, transactions, and Spring Boot integration.
 
 ## When to Use
 
@@ -20,6 +24,19 @@ Use this skill when:
 - Using DynamoDB transactions
 - Integrating DynamoDB with Spring Boot applications
 - Working with DynamoDB Enhanced Client for type-safe operations
+
+## Instructions
+
+Follow these steps to work with Amazon DynamoDB:
+
+1. **Add Dependencies** - Include dynamodb and dynamodb-enhanced dependencies
+2. **Create Client** - Instantiate DynamoDbEnhancedClient for type-safe operations
+3. **Define Entities** - Annotate classes with `@DynamoDbBean` for mapping
+4. **Configure Tables** - Set up DynamoDbTable instances for your entities
+5. **CRUD Operations** - Implement putItem, getItem, updateItem, deleteItem
+6. **Query Operations** - Use QueryConditional for filtered queries
+7. **Batch Operations** - Use batchGetItem and batchWriteItem for efficiency
+8. **Test Locally** - Use LocalStack or DynamoDB Local for development
 
 ## Dependencies
 
@@ -339,6 +356,84 @@ For detailed testing strategies, see [Testing Strategies](references/testing-str
 9. **Handle conditional writes**: Prevent race conditions
 10. **Use proper error handling**: Handle exceptions like `ProvisionedThroughputExceeded`
 
+## Examples
+
+### Example 1: Complete CRUD Repository
+
+```java
+@Repository
+public class UserRepository {
+
+    private final DynamoDbTable<User> userTable;
+
+    public UserRepository(DynamoDbEnhancedClient enhancedClient) {
+        this.userTable = enhancedClient.table("Users",
+            TableSchema.fromBean(User.class));
+    }
+
+    public User save(User user) {
+        userTable.putItem(user);
+        return user;
+    }
+
+    public Optional<User> findById(String userId) {
+        Key key = Key.builder().partitionValue(userId).build();
+        return Optional.ofNullable(userTable.getItem(key));
+    }
+
+    public List<User> findByEmail(String email) {
+        Expression filter = Expression.builder()
+            .expression("email = :email")
+            .putExpressionValue(":email",
+                AttributeValue.builder().s(email).build())
+            .build();
+
+        return userTable.scan(r -> r.filterExpression(filter))
+            .items().stream()
+            .collect(Collectors.toList());
+    }
+
+    public void deleteById(String userId) {
+        Key key = Key.builder().partitionValue(userId).build();
+        userTable.deleteItem(key);
+    }
+}
+```
+
+### Example 2: Conditional Write with Retry
+
+```java
+public boolean createIfNotExists(User user) {
+    PutItemEnhancedRequest<User> request = PutItemEnhancedRequest.builder(User.class)
+        .item(user)
+        .conditionExpression("attribute_not_exists(userId)")
+        .build();
+
+    try {
+        userTable.putItemWithRequest(request);
+        return true;
+    } catch (ConditionalCheckFailedException e) {
+        return false; // Item already exists
+    }
+}
+```
+
+### Example 3: Transaction Write
+
+```java
+public void placeOrder(Order order, Customer customer) {
+    enhancedClient.transactWriteItems(r -> r
+        .addPutItem(orderTable, order)
+        .addUpdateItem(customerTable,
+            UpdateItem.builder()
+                .key(Key.builder().partitionValue(customer.getId()).build())
+                .updateExpression("ADD orderCount :one")
+                .expressionValues(Map.of(":one",
+                    AttributeValue.builder().n("1").build()))
+                .build()));
+}
+```
+
 ## Common Patterns
 
 ### Conditional Operations
@@ -373,10 +468,23 @@ results.stream().forEach(page -> {
 
 ## Related Skills
 
-- `aws-sdk-java-v2-core `- Core AWS SDK patterns
+- `aws-sdk-java-v2-core` - Core AWS SDK patterns
 - `spring-data-jpa` - Alternative data access patterns
 - `unit-test-service-layer` - Service testing patterns
 - `unit-test-wiremock-rest-api` - Testing external APIs
+
+## Constraints and Warnings
+
+- **Item Size Limit**: DynamoDB items are limited to 400KB
+- **Partition Key Design**: Poor partition key design causes hot partitions
+- **Read/Write Capacity**: Monitor consumed capacity to avoid throttling
+- **Eventual Consistency**: Eventually consistent reads may return stale data
+- **Scan Operations**: Scans consume large amounts of read capacity; avoid when possible
+- **Batch Limits**: Batch operations are limited to 25 or 100 items
+- **Transaction Costs**: Transactions cost 2x the read/write capacity units
+- **Index Limit**: Tables can have up to 5 GSI and 5 LSI
+- **TTL Costs**: Time-to-live deletion still consumes write capacity
+- **Global Tables**: Multi-region replication increases costs significantly
 
 ## References
 

@@ -4,13 +4,16 @@ description: Provides patterns for unit testing service layer with Mockito. Vali
 category: testing
 tags: [junit-5, mockito, unit-testing, service-layer, business-logic]
 version: 1.0.1
+allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
 # Unit Testing Service Layer with Mockito
 
-Test @Service annotated classes by mocking all injected dependencies. Focus on business logic validation without starting the Spring container.
+## Overview
 
-## When to Use This Skill
+This skill provides patterns for unit testing @Service classes using Mockito. It covers mocking all injected dependencies, verifying business logic, testing complex workflows, argument capturing, verification patterns, and testing async/reactive services without starting the Spring container.
+
+## When to Use
 
 Use this skill when:
 - Testing business logic in @Service classes
@@ -19,6 +22,40 @@ Use this skill when:
 - Testing complex workflows and orchestration logic
 - Want fast, isolated unit tests (no database, no API calls)
 - Testing error handling and edge cases in services
+
+## Instructions
+
+Follow these steps to test service layer with Mockito:
+
+### 1. Add Testing Dependencies
+
+Include JUnit 5, Mockito, and AssertJ in your test classpath.
+
+### 2. Create Test Class with Mockito Extension
+
+Use @ExtendWith(MockitoExtension.class) to enable Mockito annotations.
+
+### 3. Declare Mocks and Service Under Test
+
+Use @Mock for dependencies and @InjectMocks for the service being tested.
+
+### 4. Arrange Test Data
+
+Create test data objects and configure mock return values using when().thenReturn().
+
+### 5. Execute Service Method
+
+Call the service method being tested with test inputs.
+
+### 6. Assert Results
+
+Verify the returned value using AssertJ assertions and verify mock interactions.
+
+### 7. Test Exception Scenarios
+
+Configure mocks to throw exceptions and verify error handling.
+
+## Examples
 
 ## Setup with Mockito and JUnit 5
 
@@ -270,6 +307,75 @@ void shouldReturnCompletableFutureWhenFetchingAsyncData() {
 }
 ```
 
+## Examples
+
+### Input: Service Without Test Coverage
+
+```java
+@Service
+public class UserService {
+    private final UserRepository userRepository;
+
+    public User getUser(Long id) {
+        return userRepository.findById(id).orElse(null);
+    }
+}
+```
+
+### Output: Service With Complete Test Coverage
+
+```java
+@ExtendWith(MockitoExtension.class)
+class UserServiceTest {
+    @Mock
+    private UserRepository userRepository;
+
+    @InjectMocks
+    private UserService userService;
+
+    @Test
+    void shouldReturnUserWhenFound() {
+        User expectedUser = new User(1L, "Alice");
+        when(userRepository.findById(1L)).thenReturn(Optional.of(expectedUser));
+
+        User result = userService.getUser(1L);
+
+        assertThat(result).isEqualTo(expectedUser);
+        verify(userRepository).findById(1L);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenNotFound() {
+        when(userRepository.findById(999L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> userService.getUser(999L))
+            .isInstanceOf(UserNotFoundException.class);
+    }
+}
+```
+
+### Input: Manual Mock Creation (Anti-Pattern)
+
+```java
+UserService service = new UserService(new FakeUserRepository());
+```
+
+### Output: Mockito-Based Test
+
+```java
+@Mock
+private UserRepository userRepository;
+
+@InjectMocks
+private UserService userService;
+
+@Test
+void test() {
+    when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+    // Test logic
+}
+```
+
 ## Best Practices
 
 - **Use @ExtendWith(MockitoExtension.class)** for JUnit 5 integration
@@ -321,6 +427,17 @@ void test() {
 **UnnecessaryStubbingException**: Remove unused stub definitions. Use `@ExtendWith(MockitoExtension.class)` with `MockitoExtension.LENIENT` if you intentionally have unused stubs.
 
 **NullPointerException in test**: Verify `@InjectMocks` correctly injects all mocked dependencies into the service constructor.
+
+## Constraints and Warnings
+
+- Do not mock value objects or DTOs; create real instances with test data.
+- Avoid mocking too many dependencies; consider refactoring if a service has too many collaborators.
+- Tests should not rely on execution order; each test must be independent.
+- Be cautious with `@Spy` as it can lead to partial mocking which is harder to understand.
+- Mock static methods with caution using Mockito-Inline; it can cause memory leaks in long-running test suites.
+- Do not test private methods directly; test them through public method behavior.
+- Argument matchers (`any()`, `eq()`) cannot be mixed with actual values in the same stub.
+- Avoid over-verifying; verify only interactions that are important to the test scenario.
 
 ## References
 

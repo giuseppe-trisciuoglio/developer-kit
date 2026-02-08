@@ -103,3 +103,25 @@ Do not include abstract sections like QA, theoretical metrics, or generic risk a
 **Agent Selection**: To execute this generation task, use the following approach:
 - Primary: Use `general-purpose` agent with specialized knowledge of the task domain
 - Or use appropriate specialized agent if available for the specific generation task
+
+## Overview
+
+Generates a comprehensive refactoring task list for a specific Bounded Context in project and saves it to a file. Use when planning refactoring work for a bounded context.
+
+## Usage
+
+```
+/devkit.java.generate-refactoring-tasks $ARGUMENTS
+```
+
+## Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
+
+## Examples
+
+```bash
+/devkit.java.generate-refactoring-tasks example-input
+```

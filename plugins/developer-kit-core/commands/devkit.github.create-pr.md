@@ -506,3 +506,19 @@ Based on the provided arguments:
 
 **Agent Selection**: To execute this GitHub task, use the following approach:
 - Primary: Use `general-purpose` agent with GitHub CLI expertise and code analysis capabilities
+
+## Overview
+
+Creates a GitHub pull request with branch creation, commits, and detailed description. Use when you need to submit changes for review.
+
+## Usage
+
+```
+/devkit.github.create-pr $ARGUMENTS
+```
+
+## Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |

@@ -9,6 +9,8 @@ allowed-tools: Read, Write, Bash
 
 # AWS CloudFormation S3 Patterns
 
+## Overview
+
 Create production-ready Amazon S3 infrastructure using AWS CloudFormation templates. This skill covers S3 bucket configurations, bucket policies, versioning, lifecycle rules, and template structure best practices.
 
 ## When to Use
@@ -22,6 +24,82 @@ Use this skill when:
 - Using Parameters with AWS-specific types
 - Organizing templates with Mappings and Conditions
 - Building reusable CloudFormation templates for S3
+
+## Instructions
+
+Follow these steps to create S3 infrastructure with CloudFormation:
+
+1. **Define Bucket Parameters**: Specify bucket name, versioning, and encryption
+2. **Configure Bucket Policy**: Set up IAM policies for access control
+3. **Set Up Lifecycle Rules**: Define transitions and expiration policies
+4. **Enable Versioning**: Protect against accidental deletions
+5. **Configure CORS**: Allow cross-origin requests if needed
+6. **Add Public Access Block**: Prevent accidental public exposure
+7. **Set Up Logging**: Enable access logging for audit purposes
+8. **Configure Replication**: Implement cross-region replication for DR
+
+For complete examples, see the [EXAMPLES.md](references/examples.md) file.
+
+## Examples
+
+The following examples demonstrate common S3 patterns:
+
+### Example 1: Bucket with Versioning
+
+```yaml
+DataBucket:
+  Type: AWS::S3::Bucket
+  Properties:
+    BucketName: !Sub "${AWS::StackName}-data"
+    VersioningConfiguration:
+      Status: Enabled
+    BucketEncryption:
+      ServerSideEncryptionConfiguration:
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: AES256
+    PublicAccessBlockConfiguration:
+      BlockPublicAcls: true
+      BlockPublicPolicy: true
+```
+
+### Example 2: Bucket Policy
+
+```yaml
+BucketPolicy:
+  Type: AWS::S3::BucketPolicy
+  Properties:
+    Bucket: !Ref DataBucket
+    PolicyDocument:
+      Statement:
+        - Effect: Allow
+          Principal:
+            AWS: !Ref RoleArn
+          Action:
+            - s3:GetObject
+            - s3:PutObject
+          Resource: !Sub "${DataBucket.Arn}/*"
+```
+
+### Example 3: Lifecycle Rule
+
+```yaml
+DataBucket:
+  Type: AWS::S3::Bucket
+  Properties:
+    BucketName: !Sub "${AWS::StackName}-data"
+    LifecycleConfiguration:
+      Rules:
+        - Id: ArchiveOldData
+          Status: Enabled
+          Transitions:
+            - StorageClass: INTELLIGENT_TIERING
+              TransitionInDays: 90
+            - StorageClass: GLACIER
+              TransitionInDays: 365
+          ExpirationInDays: 2555
+```
+
+For complete production-ready examples, see [EXAMPLES.md](references/examples.md).
 
 ## Quick Start
 
@@ -1307,7 +1385,53 @@ aws cloudformation create-change-set \
 ## Related Files
 
 For detailed resource reference information, see:
-- [reference.md](reference.md) - Complete AWS::S3::Bucket and AWS::S3::BucketPolicy properties
+- [reference.md](references/reference.md) - Complete AWS::S3::Bucket and AWS::S3::BucketPolicy properties
 
 For comprehensive examples, see:
-- [examples.md](examples.md) - Real-world S3 patterns and use cases
+- [examples.md](references/examples.md) - Real-world S3 patterns and use cases
+
+## Constraints and Warnings
+
+### Resource Limits
+
+- **Bucket Limits**: Maximum 1000 buckets per AWS account (soft limit, can be increased)
+- **Object Limits**: No limit on number of objects per bucket
+- **Object Size**: Maximum single object size is 5 TB
+- **PUT Requests**: Maximum 3500 PUT requests per second per prefix
+
+### Operational Constraints
+
+- **Bucket Naming**: Bucket names must be globally unique across all AWS accounts
+- **Bucket Namespaces**: Bucket names cannot be changed after creation; recreation required
+- **Immutability**: Object Lock and WORM configurations cannot be disabled once enabled
+- **Versioning Costs**: Enabling versioning multiplies storage costs as old versions accumulate
+
+### Security Constraints
+
+- **Public Access**: Public access settings cannot be fully disabled if buckets must be publicly accessible
+- **Encryption**: Once enabled, default encryption cannot be disabled for the bucket
+- **Bucket Policies**: Conflicting bucket policies and IAM permissions cause access issues
+- **KMS Keys**: SSE-KMS requires KMS key permissions and incurs additional costs
+
+### Cost Considerations
+
+- **Storage Class Tiers**: Different storage classes (Standard, IA, Glacier, Deep Archive) have different pricing
+- **Request Costs**: PUT, GET, DELETE, and other API requests incur costs per 1,000 requests
+- **Data Transfer**: Data transfer out from S3 to internet incurs significant costs
+- **Lifecycle Transitions**: Lifecycle rules transition objects but don't delete them; old versions still cost
+- **Requester Pays**: Requester Pays buckets shift costs to requesters but may break applications
+
+### Performance Constraints
+
+- **Prefix Limits**: Performance scales with number of prefixes in bucket design
+- **Multipart Upload**: Multipart uploads required for objects larger than 100 MB
+- **Event Notifications**: S3 event notifications have delivery rate limits and can be lost
+- **Replication Latency**: Cross-region replication is not instantaneous
+
+### DNS and Access Constraints
+
+- **CNAME Limitations**: CNAME custom DNS cannot be used with SSL certificate verification
+- **Transfer Acceleration**: Transfer acceleration incurs additional costs
+- **VPC Endpoints**: VPC endpoints for S3 may affect routing and access patterns
+
+## Additional Files

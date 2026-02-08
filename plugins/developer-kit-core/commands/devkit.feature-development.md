@@ -182,7 +182,7 @@ If the user says "whatever you think is best", provide your recommendation and g
 
 ---
 
-## Usage Examples
+## Examples
 
 ```bash
 # Simple feature (general agents)
@@ -384,3 +384,13 @@ Update the status as you progress through each phase.
 
 **Note**: This command follows a systematic approach to ensure high-quality implementations that integrate well with
 existing codebases and meet user requirements effectively.
+
+## Overview
+
+Provides guided feature development capability with codebase understanding and architecture focus. Use when implementing a new feature from scratch.
+
+## Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |

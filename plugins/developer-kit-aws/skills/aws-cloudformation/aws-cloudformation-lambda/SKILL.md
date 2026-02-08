@@ -26,6 +26,75 @@ Use this skill when:
 - Implementing cross-stack references with export/import
 - Using Transform for macros and reuse
 
+## Instructions
+
+Follow these steps to create Lambda infrastructure with CloudFormation:
+
+1. **Define Function Parameters**: Specify runtime, handler, and memory settings
+2. **Configure Code Source**: Set S3 bucket and key for deployment package
+3. **Set Up IAM Role**: Define execution role with minimal permissions
+4. **Add Environment Variables**: Configure function settings securely
+5. **Implement Event Sources**: Connect triggers (API Gateway, SQS, SNS, etc.)
+6. **Configure Layers**: Add shared code libraries for reuse
+7. **Set Up Dead Letter Queue**: Configure error handling for failed invocations
+8. **Add Monitoring**: Enable X-Ray tracing and CloudWatch logs
+
+For complete examples, see the [EXAMPLES.md](references/examples.md) file.
+
+## Examples
+
+The following examples demonstrate common Lambda patterns:
+
+### Example 1: Lambda Function
+
+```yaml
+LambdaFunction:
+  Type: AWS::Lambda::Function
+  Properties:
+    FunctionName: !Sub "${AWS::StackName}-handler"
+    Runtime: python3.11
+    Handler: app.handler
+    Code:
+      S3Bucket: !Ref CodeBucket
+      S3Key: lambda/function.zip
+    MemorySize: 256
+    Timeout: 30
+    Role: !GetAtt LambdaRole.Arn
+```
+
+### Example 2: Lambda with API Gateway
+
+```yaml
+ApiGateway:
+  Type: AWS::ApiGateway::RestApi
+  Properties:
+    Name: !Sub "${AWS::StackName}-api"
+    Description: API for Lambda function
+
+LambdaPermission:
+  Type: AWS::Lambda::Permission
+  Properties:
+    FunctionName: !Ref LambdaFunction
+    Action: lambda:InvokeFunction
+    Principal: apigateway.amazonaws.com
+```
+
+### Example 3: Lambda Layer
+
+```yaml
+LambdaLayer:
+  Type: AWS::Lambda::LayerVersion
+  Properties:
+    LayerName: !Sub "${AWS::StackName}-shared-layer"
+    CompatibleRuntimes:
+      - python3.11
+    Content:
+      S3Bucket: !Ref LayerBucket
+      S3Key: layers/shared.zip
+```
+
+For complete production-ready examples, see [EXAMPLES.md](references/examples.md).
+
 ## CloudFormation Template Structure
 
 ### Base Template with Standard Format
@@ -1530,8 +1599,53 @@ aws cloudformation delete-change-set \
 - [AWS SAM Documentation](https://docs.aws.amazon.com/serverless-application-model/)
 - [Lambda Best Practices](https://docs.aws.amazon.com/lambda/latest/dg/best-practices.html)
 
+## Constraints and Warnings
+
+### Resource Limits
+
+- **Function Limits**: Maximum number of Lambda functions per region is account-dependent
+- **Concurrent Execution Limits**: Default safety limit is 1000 concurrent executions per region
+- **Timeout Limits**: Maximum timeout is 15 minutes (900 seconds)
+- **Memory Limits**: Maximum memory is 10,240 MB (10 GB)
+
+### Deployment Constraints
+
+- **Function Size**: Maximum deployment package size is 50 MB (zipped) or 250 MB (unzipped)
+- **Layer Size**: Maximum layer size is 250 MB (unzipped)
+- **Environment Variables**: Maximum 4 KB for environment variables
+- **Concurrency Limits**: Reserved concurrency cannot exceed account limit
+
+### Operational Constraints
+
+- **Cold Starts**: Cold starts add latency to first invocation of each instance
+- **VPC Networking**: Lambda in VPC has ENI limits and potential cold start delays
+- **Event Source Limits**: Event sources have rate limits that can trigger Lambda throttling
+- **Dead Letter Queues**: Failed async invocations with no DLQ are lost
+
+### Security Constraints
+
+- **Execution Role**: Lambda functions require IAM execution roles with appropriate permissions
+- **Resource Policies**: Resource-based policies required for cross-account access
+- **VPC Endpoints**: Private API requires VPC endpoints for AWS service access
+- **Environment Variable Security**: Environment variables are encrypted at rest but visible in console
+
+### Cost Considerations
+
+- **Provisioned Concurrency**: Provisioned concurrency incurs costs even when unused
+- **Request Duration**: Longer function duration directly increases costs
+- **Memory Allocation**: Higher memory settings cost more even if not utilized
+- **Data Transfer**: Data transfer costs apply for responses and external calls
+- **Ephemeral Storage**: Ephemeral storage (/tmp) costs based on size and duration
+
+### Performance Constraints
+
+- **SnapStart**: SnapStart only available for specific runtimes and versions
+- **Layer Versioning**: Modifying layer versions requires function update
+- **X-Ray Tracing**: X-Ray tracing adds latency and costs
+- **Async Invocation**: Async invocations have retry limits and potential duplication
+
 ## Additional Files
 
 For complete details on resources and their properties, see:
-- [REFERENCE.md](reference.md) - Detailed reference guide for all CloudFormation resources
-- [EXAMPLES.md](examples.md) - Complete production-ready examples
+- [REFERENCE.md](references/reference.md) - Detailed reference guide for all CloudFormation resources
+- [EXAMPLES.md](references/examples.md) - Complete production-ready examples

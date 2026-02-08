@@ -4,13 +4,16 @@ description: Provides patterns for unit testing mappers and converters (MapStruc
 category: testing
 tags: [junit-5, mapstruct, mapper, dto, entity, converter]
 version: 1.0.1
+allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
 # Unit Testing Mappers and Converters
 
-Test MapStruct mappers and custom converter classes. Verify field mapping accuracy, null handling, type conversions, and nested object transformations.
+## Overview
 
-## When to Use This Skill
+This skill provides patterns for unit testing MapStruct mappers and custom converter classes. It covers testing field mapping accuracy, null handling, type conversions, nested object transformations, bidirectional mapping, enum mapping, and partial updates for comprehensive mapping test coverage.
+
+## When to Use
 
 Use this skill when:
 - Testing MapStruct mapper implementations
@@ -19,6 +22,19 @@ Use this skill when:
 - Verifying null handling in mappers
 - Testing type conversions and transformations
 - Want comprehensive mapping test coverage before integration tests
+
+## Instructions
+
+1. **Use Mappers.getMapper()**: Get mapper instances for non-Spring standalone tests
+2. **Test bidirectional mapping**: Verify entity→DTO and DTO→entity transformations are symmetric
+3. **Test null handling**: Verify null inputs produce null outputs or appropriate defaults
+4. **Test nested objects**: Verify nested objects are mapped correctly and independently
+5. **Use recursive comparison**: For complex nested structures, use assertThat().usingRecursiveComparison()
+6. **Test custom mappings**: Verify @Mapping annotations with custom expressions work correctly
+7. **Test enum mappings**: Verify @ValueMapping correctly translates enum values
+8. **Test partial updates**: Verify @MappingTarget updates only specified fields
+
+## Examples
 
 ## Setup: Testing Mappers
 
@@ -418,6 +434,16 @@ class PartialMapperTest {
 - Assuming bidirectional mapping is symmetric
 - Not testing edge cases (empty collections, etc.)
 - Tight coupling of mapper tests to MapStruct internals
+
+## Constraints and Warnings
+
+- **MapStruct generates code at compile time**: Tests will fail if mapper doesn't generate correctly
+- **Mapper componentModel**: Spring component model requires @Component for dependency injection
+- **Null value strategies**: Configure nullValueMappingStrategy and nullValuePropertyMappingStrategy appropriately
+- **Collection immutability**: Be aware that mapping immutable collections may require special handling
+- **Circular dependencies**: MapStruct cannot handle circular dependencies between mappers
+- **Date/Time mapping**: Verify date/time objects map correctly across timezones
+- **Expression-based mappings**: Expressions in @Mapping are not validated at compile time
 
 ## Troubleshooting
 

@@ -1,7 +1,7 @@
 ---
 name: spring-boot-security-jwt
 description: Provides JWT authentication and authorization patterns for Spring Boot 3.5.x covering token generation with JJWT, Bearer/cookie authentication, database/OAuth2 integration, and RBAC/permission-based access control using Spring Security 6.x. Use when implementing authentication or authorization in Spring Boot applications.
-allowed-tools: Read, Write, Bash
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 category: backend
 tags: [spring-boot, spring-security, jwt, authentication, authorization, rbac, oauth2, jjwt]
 version: 1.0.0
@@ -145,6 +145,46 @@ dependencies {
     testImplementation("org.testcontainers:junit-jupiter")
 }
 ```
+
+## Instructions
+
+Follow these steps to implement JWT authentication in Spring Boot:
+
+### 1. Add Dependencies
+
+Include spring-boot-starter-security, spring-boot-starter-oauth2-resource-server, and JJWT library (jjwt-api, jjwt-impl, jjwt-jackson) in your project.
+
+### 2. Configure JWT Properties
+
+Set JWT secret, access token expiration, refresh token expiration, and issuer in application.yml. Never hardcode secrets in version control.
+
+### 3. Create JWT Service
+
+Implement JwtService with methods to generate tokens, extract claims, validate tokens, and check expiration. Use Jwts.builder() for token creation.
+
+### 4. Implement JWT Filter
+
+Create JwtAuthenticationFilter extending OncePerRequestFilter. Extract JWT from Authorization header or cookie, validate it, and set SecurityContext authentication.
+
+### 5. Configure Security Filter Chain
+
+Set up SecurityConfig with @EnableWebSecurity and @EnableMethodSecurity. Configure stateless session management, CSRF disabled, and authorization rules.
+
+### 6. Create Authentication Endpoints
+
+Implement /register, /authenticate, /refresh, and /logout endpoints. Return access and refresh tokens on successful authentication.
+
+### 7. Implement Refresh Token Strategy
+
+Store refresh tokens in database with expiration and revocation status. Implement token rotation for enhanced security.
+
+### 8. Add Authorization Rules
+
+Apply @PreAuthorize annotations with role-based (hasRole) or permission-based (hasAuthority) checks to protected endpoints.
+
+### 9. Test Security Configuration
+
+Write tests for authentication success/failure, authorization access control, and token validation scenarios.
 
 ## Quick Start
 
@@ -942,7 +982,7 @@ public class SecurityAuditService {
 }
 ```
 
-## Constraints
+## Constraints and Warnings
 
 ### 1. Token Size Limitations
 - JWT tokens should stay under HTTP header size limits (typically 8KB)
@@ -954,45 +994,136 @@ public class SecurityAuditService {
 - Implement proper token revocation strategies
 - Use different keys for different environments (dev, staging, prod)
 - Regularly rotate signing keys
+- Always use HTTPS in production environments
+- Set appropriate cookie flags: `HttpOnly`, `Secure`, `SameSite`
+- Use strong secret keys: minimum 256 bits for HMAC algorithms
 
-### 3. Rate Limiting
-```java
-@RestController
-@RequestMapping("/api/v1/auth")
-@RequiredArgsConstructor
-public class AuthenticationController {
+### 3. Token Expiration
+- Implement token expiration to limit the window of vulnerability
+- Use short-lived access tokens with refresh token rotation
+- Never use tokens with infinite lifetime
 
-    @PostMapping("/authenticate")
-    @RateLimiter(name = "auth", fallbackMethod = "authenticateFallback")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
-        // Implementation
-    }
+### 4. Performance Considerations
+- Cache user details to avoid database hits on every request
+- Consider token blacklisting for logout and security incidents
+- Monitor token validation latency in production
 
-    public ResponseEntity<AuthenticationResponse> authenticateFallback(
-            AuthenticationRequest request,
-            CallNotPermittedException exception) {
-        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
-    }
+### 5. Common Pitfalls
+- Do not validate JWT signatures on the client side
+- Never accept tokens from untrusted sources
+- Always validate token issuer (`iss`) and audience (`aud`) claims
+- Be aware that JWT claims are not encrypted, only signed
+
+## Examples
+
+### Input: Login Request
+
+```json
+{
+  "email": "user@example.com",
+  "password": "SecurePass123!"
 }
 ```
 
-### 4. CORS Configuration
-```java
-@Configuration
-public class CorsConfig {
+### Output: Authentication Response
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of("*"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true);
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "tokenType": "Bearer",
+  "expiresIn": 86400,
+  "user": {
+    "id": 1,
+    "email": "user@example.com",
+    "role": "USER"
+  }
+}
+```
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
+### Input: Registration Request
+
+```json
+{
+  "username": "newuser",
+  "email": "newuser@example.com",
+  "password": "SecurePass123!",
+  "confirmPassword": "SecurePass123!"
+}
+```
+
+### Output: Registration Response
+
+```json
+{
+  "id": 2,
+  "username": "newuser",
+  "email": "newuser@example.com",
+  "role": "USER",
+  "createdAt": "2024-01-15T10:30:00Z"
+}
+```
+
+### Input: Protected API Request Without Token
+
+```bash
+curl -X GET http://localhost:8080/api/v1/orders
+```
+
+### Output: 401 Unauthorized
+
+```json
+{
+  "timestamp": "2024-01-15T10:35:00Z",
+  "status": 401,
+  "error": "Unauthorized",
+  "message": "Full authentication is required to access this resource"
+}
+```
+
+### Input: Protected API Request With Token
+
+```bash
+curl -X GET http://localhost:8080/api/v1/orders \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+### Output: 200 OK
+
+```json
+{
+  "content": [
+    {
+      "id": 1,
+      "orderNumber": "ORD-001",
+      "status": "COMPLETED",
+      "total": 99.99
     }
+  ],
+  "pageable": {
+    "page": 0,
+    "size": 20,
+    "total": 1
+  }
+}
+```
+
+### Input: Refresh Token Request
+
+```json
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+### Output: New Access Token
+
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "tokenType": "Bearer",
+  "expiresIn": 86400
 }
 ```
 

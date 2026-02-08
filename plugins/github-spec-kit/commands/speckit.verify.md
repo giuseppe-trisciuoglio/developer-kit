@@ -1,6 +1,7 @@
 ---
 description: Validates implementation completion by checking tasks, logic, tests, and code quality against specifications. Use when you need to verify that all tasks are properly completed.
 argument-hint: "[optional-focus-area]"
+allowed-tools: Read, Glob, Grep, Bash
 ---
 
 ## User Input
@@ -702,3 +703,25 @@ $ARGUMENTS
 **Agent Selection**: To execute this task, use the following approach:
 - Primary: Use `general-purpose` agent with appropriate domain expertise
 - Or use specialized agent if available for the specific task type
+
+## Overview
+
+Validates implementation completion by checking tasks, logic, tests, and code quality against specifications. Use when you need to verify that all tasks are properly completed.
+
+## Usage
+
+```
+/speckit.verify $ARGUMENTS
+```
+
+## Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
+
+## Examples
+
+```bash
+/speckit.verify example-input
+```

@@ -2,9 +2,6 @@
 name: react-patterns
 version: 2.0.0
 description: Provides comprehensive React 19 patterns covering Server Components, Actions, use() hook, useOptimistic, useFormStatus, useFormState, React Compiler, concurrent features, Suspense, and modern TypeScript development. Proactively use for any React development, component architecture, state management, performance optimization, or when implementing React 19's latest features.
-language: typescript,javascript,tsx,jsx
-framework: react
-license: MIT
 allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 tags: [react, react-19, typescript, javascript, jsx, tsx, hooks, server-components, actions, suspense, concurrent-rendering, react-compiler, use-optimistic, form-actions]
 category: frontend
@@ -12,7 +9,9 @@ category: frontend
 
 # React Development Patterns
 
-Expert guide for building modern React 19 applications with new concurrent features, Server Components, Actions, and advanced patterns.
+## Overview
+
+Expert guide for building modern React 19 applications with new concurrent features, Server Components, Actions, and advanced patterns. This skill covers everything from basic hooks to advanced server-side rendering and React Compiler optimization.
 
 ## When to Use
 
@@ -27,6 +26,62 @@ Expert guide for building modern React 19 applications with new concurrent featu
 - Implementing Server Components and Actions
 - Working with Suspense and concurrent rendering
 - Building forms with new form hooks
+
+## Instructions
+
+1. **Identify Component Type**: Determine if Server Component or Client Component is needed
+2. **Start with Hooks**: Use appropriate hooks for state management and side effects
+3. **Implement Component Logic**: Build component with proper TypeScript typing
+4. **Add Event Handlers**: Create stable references with useCallback where needed
+5. **Optimize Performance**: Use useMemo for expensive computations
+6. **Handle Errors**: Implement error boundaries for graceful error handling
+7. **Test Components**: Write unit tests with React Testing Library
+
+## Examples
+
+### Server Component with Client Interaction
+
+```tsx
+// Server Component (default)
+async function ProductPage({ id }: { id: string }) {
+  const product = await db.product.findUnique({ where: { id } });
+
+  return (
+    <div>
+      <h1>{product.name}</h1>
+      <AddToCartButton productId={product.id} />
+    </div>
+  );
+}
+
+// Client Component
+'use client';
+function AddToCartButton({ productId }: { productId: string }) {
+  const [isPending, startTransition] = useTransition();
+
+  const handleAdd = () => {
+    startTransition(async () => {
+      await addToCart(productId);
+    });
+  };
+
+  return (
+    <button onClick={handleAdd} disabled={isPending}>
+      {isPending ? 'Adding...' : 'Add to Cart'}
+    </button>
+  );
+}
+```
+
+## Constraints and Warnings
+
+- **Server vs Client**: Server Components cannot use hooks, event handlers, or browser APIs
+- **use() Hook**: Can only be called during render, not in callbacks or effects
+- **Server Actions**: Must include 'use server' directive at the top of the file
+- **State Mutations**: Never mutate state directly; always create new references
+- **Effect Dependencies**: Always include all dependencies in useEffect arrays
+- **Key Stability**: Use stable IDs for list keys, not array indices
+- **Memory Leaks**: Always clean up subscriptions and event listeners in useEffect
 
 ## Core Hooks Patterns
 

@@ -4,10 +4,14 @@ description: Provides Amazon S3 patterns and examples using AWS SDK for Java 2.x
 category: aws
 tags: [aws, s3, java, sdk, storage, objects, transfer-manager, presigned-urls]
 version: 1.1.0
-allowed-tools: Read, Write, Bash
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
 # AWS SDK for Java 2.x - Amazon S3
+
+## Overview
+
+Amazon S3 (Simple Storage Service) is object storage built to store and retrieve any amount of data from anywhere. This skill covers patterns for working with S3 using AWS SDK for Java 2.x, including bucket operations, object uploads/downloads, presigned URLs, multipart transfers, and Spring Boot integration.
 
 ## When to Use
 
@@ -24,6 +28,19 @@ Use this skill when:
 - Managing bucket policies, CORS configuration, and access controls
 - Implementing retry mechanisms and error handling for S3 operations
 - Testing S3 integrations with LocalStack for development environments
+
+## Instructions
+
+Follow these steps to work with Amazon S3:
+
+1. **Add Dependencies** - Include S3 and optional Transfer Manager dependencies
+2. **Create Client** - Instantiate S3Client with region and credentials
+3. **Create Bucket** - Use createBucket() with unique name and configuration
+4. **Upload Objects** - Use putObject() for small files or Transfer Manager for large files
+5. **Download Objects** - Use getObject() with ResponseInputStream
+6. **Generate Presigned URLs** - Use S3Presigner for temporary access
+7. **Configure Permissions** - Set bucket policies and access controls
+8. **Set Lifecycle Rules** - Configure object expiration and transitions
 
 ## Dependencies
 
@@ -686,6 +703,19 @@ For more detailed information, see:
 ## Related Skills
 
 - `aws-sdk-java-v2-core` - Core AWS SDK patterns and configuration
-- `spring-boot-dependency`-injection - Spring dependency injection patterns
+- `spring-boot-dependency-injection` - Spring dependency injection patterns
 - `unit-test-service-layer` - Testing service layer patterns
 - `unit-test-wiremock-rest-api` - Testing external API integrations
+
+## Constraints and Warnings
+
+- **Object Size**: Single PUT limited to 5GB; use multipart uploads for larger files
+- **Bucket Names**: Must be globally unique across all AWS accounts
+- **Object Immutability**: Objects cannot be modified; must be replaced entirely
+- **Eventual Consistency**: List operations may have slight delays after uploads
+- **Request Rates**: S3 supports high request rates but has throttling limits
+- **Storage Classes**: Some storage classes have minimum duration requirements
+- **Presigned URLs**: Maximum expiration time is 7 days
+- **Multipart Uploads**: Parts must be at least 5MB except last part
+- **Delete Markers**: Versioning creates delete markers instead of actual deletion
+- **Cross-Region**: Cross-region replication incurs data transfer costs

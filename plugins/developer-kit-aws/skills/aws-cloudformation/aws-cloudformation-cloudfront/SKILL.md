@@ -28,6 +28,88 @@ Use this skill when:
 - Implementing cross-stack references with export/import
 - Using Transform for macros and reuse
 
+## Instructions
+
+Follow these steps to create CloudFront distributions with CloudFormation:
+
+1. **Define Distribution Parameters**: Specify domain names, ACM certificates, and price class
+2. **Configure Origins**: Add S3 buckets, ALBs, API Gateway, or custom origins
+3. **Set Up Default Cache Behavior**: Configure viewer request/response policies
+4. **Add Additional Cache Behaviors**: Create path-specific caching rules
+5. **Configure Security Settings**: Implement security headers and WAF integration
+6. **Add Lambda@Edge Functions**: Configure functions for request/response manipulation
+7. **Set Up Custom Error Pages**: Define error responses for specific HTTP status codes
+8. **Create Monitoring**: Configure logging and access logs to S3
+
+For complete examples, see the [EXAMPLES.md](references/examples.md) file.
+
+## Examples
+
+The following examples demonstrate common CloudFront patterns:
+
+### Example 1: CloudFront Distribution with S3 Origin
+
+```yaml
+CloudFrontDistribution:
+  Type: AWS::CloudFront::Distribution
+  Properties:
+    DistributionConfig:
+      Origins:
+        - DomainName: !GetAtt S3Bucket.RegionalDomainName
+          Id: S3Origin
+          S3OriginConfig:
+            OriginAccessIdentity: !Sub "origin-access-identity/cloudfront/${OAI}"
+      DefaultCacheBehavior:
+        TargetOriginId: S3Origin
+        ViewerProtocolPolicy: redirect-to-https
+        CachePolicyId: !Ref CachePolicy
+      Enabled: true
+      HttpVersion: http2and3
+      IPV6Enabled: true
+```
+
+### Example 2: Cache Policy Configuration
+
+```yaml
+CachePolicy:
+  Type: AWS::CloudFront::CachePolicy
+  Properties:
+    CachePolicyConfig:
+      Name: !Sub "${AWS::StackName}-cache-policy"
+      DefaultTTL: 86400
+      MaxTTL: 31536000
+      MinTTL: 0
+      ParametersInCacheKeyAndForwardedToOrigin:
+        CookiesConfig:
+          CookieBehavior: none
+        HeadersConfig:
+          HeaderBehavior: none
+        QueryStringsConfig:
+          QueryStringBehavior: none
+```
+
+### Example 3: Origin Request Policy
+
+```yaml
+OriginRequestPolicy:
+  Type: AWS::CloudFront::OriginRequestPolicy
+  Properties:
+    OriginRequestPolicyConfig:
+      Name: !Sub "${AWS::StackName}-origin-request"
+      CookiesConfig:
+        CookieBehavior: all
+      HeadersConfig:
+        HeaderBehavior: whitelist
+        Headers:
+          - Origin
+          - Access-Control-Request-Method
+          - Access-Control-Request-Headers
+      QueryStringsConfig:
+        QueryStringBehavior: all
+```
+
+For complete production-ready examples, see [EXAMPLES.md](references/examples.md).
+
 ## CloudFormation Template Structure
 
 ### Standard Format Base Template
@@ -1693,8 +1775,45 @@ Resources:
 - [CloudFormation Drift Detection](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/detect-drift-stack.html)
 - [CloudFormation Change Sets](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-changesets.html)
 
+## Constraints and Warnings
+
+### Resource Limits
+
+- **Distribution Limits**: Maximum 200 CloudFront distributions per AWS account
+- **Origins Limits**: Maximum 25 origins per distribution
+- **Cache Behaviors**: Maximum 25 cache behaviors per distribution
+- **Custom Headers**: Maximum 10 custom headers per origin
+
+### DNS and Certificate Constraints
+
+- **Domain Registration**: Custom domains must be registered and verified before use
+- **ACM Certificate Limits**: Certificates must be in us-east-1 for CloudFront regardless of distribution region
+- **DNS Propagation**: DNS changes can take up to 24 hours to propagate globally
+- **Alternate Domain Names**: Maximum 300 alternate domain names per distribution
+
+### Operational Constraints
+
+- **Invalidation Limits**: Maximum 15 invalidation requests in progress at once
+- **Deployment Time**: Distribution deployment can take up to 30 minutes
+- **Edge Location Caching**: Changes at origins may not be reflected immediately due to caching
+- **Geo Restriction Accuracy**: Geo restriction based on IP addresses may not be 100% accurate
+
+### Security Constraints
+
+- **HTTPS Only**: Modern browsers block HTTP-only content on HTTPS pages
+- **CSP Headers**: Content Security Policy headers can break functionality if misconfigured
+- **WAF Integration**: WAF rules add latency and may block legitimate traffic
+- **Origin Access**: OAI/OAC restrictions prevent direct S3 access but complicate testing
+
+### Cost Considerations
+
+- **Data Transfer Out**: CloudFront charges for data transfer out to internet
+- **Regional Pricing**: Costs vary significantly by edge location
+- **HTTPS Requests**: Encrypted requests have higher CPU utilization cost
+- **Lambda@Edge**: Lambda@Edge functions add significant per-invocation cost
+
 ## Additional Files
 
 For complete details on resources and their properties, see:
-- [REFERENCE.md](reference.md) - Detailed reference guide for all CloudFormation resources
-- [EXAMPLES.md](examples.md) - Complete production-ready examples
+- [REFERENCE.md](references/reference.md) - Detailed reference guide for all CloudFormation resources
+- [EXAMPLES.md](references/examples.md) - Complete production-ready examples

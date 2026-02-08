@@ -371,3 +371,25 @@ class UserRepositoryIntegrationTest {
 **Agent Selection**: To execute this code review, use the following agent with fallback:
 - Primary: `spring-boot-code-review-expert`
 - If not available: Use `developer-kit:spring-boot-code-review-expert` or fallback to `general-purpose` agent with `spring-boot-crud-patterns` skill
+
+## Overview
+
+Validates Java code quality for enterprise Spring applications with security, performance, architecture and best practices analysis. Use when reviewing code changes or before merging pull requests.
+
+## Usage
+
+```
+/devkit.java.code-review $ARGUMENTS
+```
+
+## Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
+
+## Examples
+
+```bash
+/devkit.java.code-review example-input
+```

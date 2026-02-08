@@ -25,6 +25,92 @@ Use this skill when:
 - Organizing templates with Mappings and Conditions
 - Designing reusable, modular CloudFormation templates
 
+## Instructions
+
+Follow these steps to create EC2 infrastructure with CloudFormation:
+
+1. **Define Instance Parameters**: Specify instance type, AMI ID, and key pair
+2. **Configure Security Groups**: Create rules for inbound/outbound traffic
+3. **Set Up IAM Roles**: Define instance profile for AWS access
+4. **Add Storage**: Configure EBS volumes and mount points
+5. **Implement User Data**: Add bootstrap scripts for initialization
+6. **Configure Monitoring**: Enable detailed monitoring if needed
+7. **Add ALB Integration**: Set up load balancer and target groups
+8. **Use Spot Instances**: Configure for cost optimization
+
+For complete examples, see the [EXAMPLES.md](references/examples.md) file.
+
+## Examples
+
+The following examples demonstrate common EC2 patterns:
+
+### Example 1: EC2 Instance with Security Group
+
+```yaml
+EC2Instance:
+  Type: AWS::EC2::Instance
+  Properties:
+    InstanceType: t3.micro
+    ImageId: !Ref AmiId
+    KeyName: !Ref KeyName
+    SecurityGroupIds:
+      - !Ref InstanceSecurityGroup
+    IamInstanceProfile: !Ref InstanceProfile
+    UserData:
+      Fn::Base64: |
+        #!/bin/bash
+        yum update -y
+        yum install -y httpd
+        systemctl start httpd
+```
+
+### Example 2: Security Group Configuration
+
+```yaml
+InstanceSecurityGroup:
+  Type: AWS::EC2::SecurityGroup
+  Properties:
+    GroupName: !Sub "${AWS::StackName}-sg"
+    GroupDescription: Security group for EC2 instance
+    VpcId: !Ref VpcId
+    SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 10.0.0.0/16
+```
+
+### Example 3: IAM Role for EC2
+
+```yaml
+IAMRole:
+  Type: AWS::IAM::Role
+  Properties:
+    RoleName: !Sub "${AWS::StackName}-role"
+    AssumeRolePolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: Allow
+          Principal:
+            Service: ec2.amazonaws.com
+          Action: sts:AssumeRole
+    ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+
+InstanceProfile:
+  Type: AWS::IAM::InstanceProfile
+  Properties:
+    InstanceProfileName: !Sub "${AWS::StackName}-profile"
+    Roles:
+      - !Ref IAMRole
+```
+
+For complete production-ready examples, see [EXAMPLES.md](references/examples.md).
+
 ## Quick Start
 
 ### Basic EC2 Instance with Secure Configuration
@@ -1808,3 +1894,57 @@ fi
 - AWS CloudFormation User Guide: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/
 - AWS EC2 Documentation: https://docs.aws.amazon.com/ec2/
 - AWS ALB Documentation: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/
+
+## Constraints and Warnings
+
+### Resource Limits
+
+- **Instance Limits**: Maximum number of EC2 instances per region varies by account
+- **ENI Limits**: Each instance type has maximum ENI limits
+- **Security Groups**: Maximum 500 security groups per VPC
+- **EBS Volumes**: Maximum number of EBS volumes per account is 20 by default
+
+### Instance Constraints
+
+- **Instance Type Availability**: Not all instance types available in all regions/AZs
+- **Instance Replacement**: Changing instance type requires instance replacement
+- **Tenancy Changes**: Changing between default and dedicated tenancy requires replacement
+- **Host Resource Group**: Dedicated Hosts have specific allocation and utilization constraints
+
+### Storage Constraints
+
+- **EBS Volume Limits**: EBS volume size varies by volume type (gp3 up to 16 TB)
+- **IOPS Limits**: Provisioned IOPS (io1/io2) has specific IOPS per GB limits
+- **Snapshot Costs**: EBS snapshots incur storage costs even after source volume deletion
+- **Throughput**: Volume throughput limits vary by volume type and size
+
+### Network Constraints
+
+- **ENI Limits**: Each instance type has maximum ENI and IP address per ENI limits
+- **Public IP Assignment**: Public IP addresses are released on instance stop
+- **Elastic IP Limits**: Each account has limited number of Elastic IPs
+- **Security Group Rules**: Maximum 60 inbound and 60 outbound rules per security group
+
+### Security Constraints
+
+- **Key Pairs**: Key pairs cannot be recovered if lost; instance access lost
+- **IAM Roles**: Instance profile roles cannot be changed after instance creation
+- **Password Authentication**: Password authentication for EC2 is disabled by default; use key pairs
+- **Metadata Service**: IMDSv2 should be enabled; IMDSv1 has security vulnerabilities
+
+### Cost Considerations
+
+- **Instance Costs**: Instances incur costs while running; stopped instances may still incur EBS costs
+- **EBS Costs**: EBS volumes incur costs per GB-month even if not attached
+- **Data Transfer**: Data transfer out to internet incurs significant costs
+- **Load Balancer Costs**: ALBs/ELBs/NLBs incur hourly and per-GB data processing costs
+- **Elastic IP**: Unattached Elastic IPs incur small hourly costs
+
+### Availability Constraints
+
+- **Spot Instances**: Spot instances can be terminated with 2-minute notice
+- **Reserved Instances**: Reserved instances require commitment and have specific term limits
+- **Availability Zones**: Not all instance types available in all AZs
+- **Capacity Limits**: On-Demand capacity limits may prevent launching instances during high demand
+
+## Additional Files

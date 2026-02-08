@@ -333,3 +333,19 @@ Analyze the class and generate a comprehensive integration test following the pa
 **Agent Selection**: To execute this task, use the following agent with fallback:
 - Primary: `spring-boot-unit-testing-expert`
 - If not available: Use `developer-kit:spring-boot-unit-testing-expert` or fallback to `general-purpose` agent with `spring-boot-test-patterns` skill
+
+## Overview
+
+Generates comprehensive integration tests for Spring Boot classes using Testcontainers (PostgreSQL, Redis, MongoDB) with `@ServiceConnection` pattern. Use when writing integration tests for service or repository classes.
+
+## Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
+
+## Examples
+
+```bash
+/devkit.java.write-integration-tests example-input
+```

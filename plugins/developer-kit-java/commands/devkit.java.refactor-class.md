@@ -243,7 +243,7 @@ public ResponseEntity<List<UserDto>> getAllUsers() {
 3. **Monitor performance** after deployment
 4. **Update documentation** for changed APIs
 
-## Usage Examples
+## Examples
 
 ```bash
 # Cleanup and style improvements
@@ -283,3 +283,20 @@ This command works best with these skills:
 **Agent Selection**: To execute this task, use the following agent with fallback:
 - Primary: `java-refactor-expert`
 - If not available: Use `developer-kit:java-refactor-expert` or fallback to `general-purpose` agent with `spring-boot-crud-patterns` skill
+
+## Overview
+
+Provides intelligent refactoring for complex Java classes with architectural analysis and Spring Boot patterns. Use when refactoring large or complex Java classes.
+
+
+## Usage
+
+```
+/devkit.java.refactor-class $ARGUMENTS
+```
+
+## Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |

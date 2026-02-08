@@ -4,11 +4,14 @@ description: Provides patterns for unit testing Jakarta Bean Validation (@Valid,
 category: testing
 tags: [junit-5, validation, bean-validation, jakarta-validation, constraints]
 version: 1.0.1
+allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
 # Unit Testing Bean Validation and Custom Validators
 
-Test validation annotations and custom validator implementations using JUnit 5. Verify constraint violations, error messages, and validation logic in isolation.
+## Overview
+
+This skill provides patterns for unit testing Jakarta Bean Validation annotations and custom validator implementations using JUnit 5. It covers testing built-in constraints (@NotNull, @Email, @Min, @Max), creating custom validators, cross-field validation, validation groups, and parameterized testing scenarios.
 
 ## When to Use This Skill
 
@@ -19,6 +22,19 @@ Use this skill when:
 - Testing cross-field validation logic
 - Want fast validation tests without Spring context
 - Testing complex validation scenarios and edge cases
+
+## Instructions
+
+1. **Add validation dependencies**: Include jakarta.validation-api and hibernate-validator in your test classpath
+2. **Create a Validator instance**: Use `Validation.buildDefaultValidatorFactory().getValidator()` in @BeforeEach
+3. **Test valid scenarios**: Always test that valid objects pass validation without violations
+4. **Test each constraint separately**: Create focused tests for individual validation rules
+5. **Extract violation details**: Use assertions to verify property path, message, and invalid value
+6. **Test custom validators**: Write dedicated tests for each custom constraint implementation
+7. **Use parameterized tests**: Apply @ParameterizedTest for testing multiple invalid inputs efficiently
+8. **Test validation groups**: Verify conditional validation based on validation groups
+
+## Examples
 
 ## Setup: Bean Validation
 
@@ -460,6 +476,16 @@ class EmailValidationTest {
 - Testing validation at service/controller level instead of unit tests
 - Creating overly complex custom validators
 - Not documenting constraint purposes in error messages
+
+## Constraints and Warnings
+
+- **Constraints ignore null by default**: Except @NotNull, most constraints ignore null values; combine with @NotNull for mandatory fields
+- **Validator is thread-safe**: Validator instances can be shared across tests, but create new ones for isolation if needed
+- **Message localization**: Test with different locales if your application supports internationalization
+- **Cascading validation**: Use @Valid on nested objects to enable cascading validation
+- **Performance consideration**: Validation has overhead; don't over-validate in critical paths
+- **Custom validators must be stateless**: Validator implementations should not maintain state between invocations
+- **Test in isolation**: Validation tests should not depend on Spring context or database
 
 ## Troubleshooting
 

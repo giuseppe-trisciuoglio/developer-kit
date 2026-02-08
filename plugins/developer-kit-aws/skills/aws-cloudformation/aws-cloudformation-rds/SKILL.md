@@ -27,6 +27,87 @@ Use this skill when:
 - Designing reusable, modular CloudFormation templates
 - Integrating with Secrets Manager for credential management
 
+## Instructions
+
+Follow these steps to create RDS infrastructure with CloudFormation:
+
+1. **Define Database Parameters**: Specify instance type, engine, and credentials
+2. **Configure Subnet Group**: Set up VPC subnets for database deployment
+3. **Create Parameter Group**: Define database engine-specific settings
+4. **Set Up Security Groups**: Configure network access controls
+5. **Enable Multi-AZ**: Deploy standby instance for high availability
+6. **Configure Backup**: Set retention periods and snapshot schedules
+7. **Add Monitoring**: Enable enhanced monitoring and performance insights
+8. **Implement Secrets**: Use Secrets Manager for credential rotation
+
+For complete examples, see the [EXAMPLES.md](references/examples.md) file.
+
+## Examples
+
+The following examples demonstrate common RDS patterns:
+
+### Example 1: MySQL RDS Instance
+
+```yaml
+DBInstance:
+  Type: AWS::RDS::DBInstance
+  Properties:
+    DBInstanceIdentifier: !Sub "${AWS::StackName}-mysql"
+    Engine: mysql
+    DBInstanceClass: db.t3.micro
+    MasterUsername: !Ref DBUsername
+    MasterUserPassword: !Ref DBPassword
+    AllocatedStorage: 20
+    StorageType: gp3
+    VPCSecurityGroups:
+      - !Ref DBSecurityGroup
+    DBSubnetGroupName: !Ref DBSubnetGroup
+```
+
+### Example 2: Aurora Cluster
+
+```yaml
+DBCluster:
+  Type: AWS::RDS::DBCluster
+  Properties:
+    DatabaseName: !Ref DBName
+    Engine: aurora-mysql
+    MasterUsername: !Ref DBUsername
+    MasterUserPassword: !Ref DBPassword
+    DBClusterParameterGroupName: !Ref DBParameterGroup
+    DBSubnetGroupName: !Ref DBSubnetGroup
+    VpcSecurityGroupIds:
+      - !Ref DBSecurityGroup
+
+DBInstance:
+  Type: AWS::RDS::DBInstance
+  Properties:
+    DBClusterIdentifier: !Ref DBCluster
+    DBInstanceClass: db.t3.medium
+    Engine: aurora-mysql
+```
+
+### Example 3: PostgreSQL with Multi-AZ
+
+```yaml
+DBInstance:
+  Type: AWS::RDS::DBInstance
+  Properties:
+    DBInstanceIdentifier: !Sub "${AWS::StackName}-postgres"
+    Engine: postgres
+    DBInstanceClass: db.t3.medium
+    MasterUsername: !Ref DBUsername
+    MasterUserPassword: !Ref DBPassword
+    AllocatedStorage: 50
+    StorageType: gp3
+    MultiAZ: true
+    DBSubnetGroupName: !Ref DBSubnetGroup
+    VpcSecurityGroupIds:
+      - !Ref DBSecurityGroup
+```
+
+For complete production-ready examples, see [EXAMPLES.md](references/examples.md).
+
 ## Quick Start
 
 ### Basic MySQL RDS Instance
@@ -1755,3 +1836,49 @@ aws cloudformation execute-change-set \
 - RDS Documentation: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/
 - RDS Best Practices: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_BestPractices.html
 - Aurora Documentation: https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/
+
+## Constraints and Warnings
+
+### Resource Limits
+
+- **Instance Storage Limits**: Maximum storage size varies by instance class and engine
+- **Database Name Limits**: Database name identifiers have specific length and character requirements
+- **Parameter Groups**: Maximum number of DB parameter groups per account
+- **Option Groups**: Some options are not compatible with specific database engines
+
+### Operational Constraints
+
+- **Instance Replacement**: Certain modifications (like engine version upgrade) require instance replacement with downtime
+- **Snapshot Storage**: Manual snapshots incur storage costs even after instance deletion
+- **Multi-AZ Deployment**: Multi-AZ deployments double compute costs but provide HA
+- **Backup Retention**: Changing backup retention period affects storage costs
+
+### Security Constraints
+
+- **Master Credentials**: Master user password cannot be retrieved after creation; must be reset if lost
+- **Encryption at Rest**: Once enabled, encryption cannot be disabled for RDS storage
+- **VPC Access**: RDS instances must be in VPC; public access not recommended
+- **Security Groups**: Security group rules must allow traffic from application tier only
+
+### Cost Considerations
+
+- **Instance Class Costs**: Larger instance classes significantly increase hourly costs
+- **Multi-AZ Premium**: Multi-AZ deployments cost approximately double single-AZ
+- **IOPS Costs**: Provisioned IOPS (io1) storage type significantly increases costs
+- **Backup Storage**: Automated backups beyond free tier incur monthly GB storage costs
+- **Data Transfer**: Inter-AZ data transfer for Multi-AZ replication incurs costs
+
+### Performance Constraints
+
+- **Storage Autoscaling**: Storage autoscaling has minimum and maximum increments
+- **Connection Limits**: Maximum connections vary by instance class and database engine
+- **Maintenance Windows**: Maintenance windows may cause brief service interruptions
+- **Read Replica Lag**: Read replicas may lag behind primary by seconds to minutes
+
+### Availability Constraints
+
+- **Region Availability**: Not all database engines are available in all regions
+- **Version Support**: Older database versions may be deprecated and require upgrades
+- **Instance Type Availability**: Some instance types may not be available in all AZs
+
+## Additional Files

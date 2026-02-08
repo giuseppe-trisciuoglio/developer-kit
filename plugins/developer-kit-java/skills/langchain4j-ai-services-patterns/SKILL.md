@@ -4,7 +4,7 @@ description: Provides patterns to build declarative AI Services with LangChain4j
 category: ai-development
 tags: [langchain4j, ai-services, annotations, declarative, tools, memory, function-calling, llm, java]
 version: 1.1.0
-allowed-tools: Read, Write, Bash
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
 # LangChain4j AI Services Patterns
@@ -28,6 +28,74 @@ Use this skill when:
 ## Overview
 
 LangChain4j AI Services allow you to define AI-powered functionality using plain Java interfaces with annotations, eliminating the need for manual prompt construction and response parsing. This pattern provides type-safe, declarative AI capabilities with minimal boilerplate code.
+
+## Instructions
+
+Follow these steps to create declarative AI Services with LangChain4j:
+
+### 1. Define AI Service Interface
+
+Create a Java interface with method signatures for AI interactions:
+
+```java
+public interface Assistant {
+    String chat(String userMessage);
+}
+```
+
+### 2. Add Annotations for Messages
+
+Use `@SystemMessage` and `@UserMessage` annotations to define prompts:
+
+```java
+public interface CustomerSupportBot {
+    @SystemMessage("You are a helpful customer support agent for TechCorp")
+    String handleInquiry(String customerMessage);
+
+    @UserMessage("Analyze sentiment: {{it}}")
+    Sentiment analyzeSentiment(String feedback);
+}
+```
+
+### 3. Create AI Service Instance
+
+Use `AiServices` builder to create implementation:
+
+```java
+Assistant assistant = AiServices.builder(Assistant.class)
+    .chatModel(chatModel)
+    .build();
+```
+
+### 4. Configure Memory for Conversations
+
+Add memory management for multi-turn conversations:
+
+```java
+interface MultiUserAssistant {
+    String chat(@MemoryId String userId, String userMessage);
+}
+
+Assistant assistant = AiServices.builder(MultiUserAssistant.class)
+    .chatModel(model)
+    .chatMemoryProvider(userId -> MessageWindowChatMemory.withMaxMessages(10))
+    .build();
+```
+
+### 5. Integrate Tools for Function Calling
+
+Register tools to enable AI to execute external functions:
+
+```java
+class Calculator {
+    @Tool("Add two numbers") double add(double a, double b) { return a + b; }
+}
+
+MathGenius mathGenius = AiServices.builder(MathGenius.class)
+    .chatModel(model)
+    .tools(new Calculator())
+    .build();
+```
 
 ## Quick Start
 
@@ -143,3 +211,15 @@ implementation 'dev.langchain4j:langchain4j-open-ai:1.8.0'
 - [LangChain4j Documentation](https://langchain4j.com/docs/)
 - [LangChain4j AI Services - API References](references/references.md)
 - [LangChain4j AI Services - Practical Examples](references/examples.md)
+
+## Constraints and Warnings
+
+- AI Services rely on LLM responses which are non-deterministic; tests should account for variability.
+- Memory providers store conversation history; ensure proper cleanup for multi-user scenarios.
+- Tool execution can be expensive; implement rate limiting and timeout handling.
+- Never pass sensitive data (API keys, passwords) in system or user messages.
+- Large context windows can lead to high token costs; implement message pruning strategies.
+- Streaming responses require proper error handling for partial failures.
+- AI-generated outputs should be validated before use in production systems.
+- Be cautious with tools that have side effects; AI models may call them unexpectedly.
+- Token limits vary by model; ensure prompts and context fit within model constraints.

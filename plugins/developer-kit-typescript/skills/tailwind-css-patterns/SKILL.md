@@ -1,12 +1,12 @@
 ---
 name: tailwind-css-patterns
 description: Provides comprehensive Tailwind CSS utility-first styling patterns including responsive design, layout utilities, flexbox, grid, spacing, typography, colors, and modern CSS best practices. Use when styling React/Vue/Svelte components, building responsive layouts, implementing design systems, or optimizing CSS workflow.
-language: html,tsx,jsx,vue,svelte
-framework: tailwindcss
-license: MIT
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
 # Tailwind CSS Development Patterns
+
+## Overview
 
 Expert guide for building modern, responsive user interfaces with Tailwind CSS utility-first framework. Covers v4.1+ features including CSS-first configuration, custom utilities, and enhanced developer experience.
 
@@ -19,6 +19,57 @@ Expert guide for building modern, responsive user interfaces with Tailwind CSS u
 - Creating custom design systems
 - Optimizing for mobile-first design
 - Building dark mode interfaces
+
+## Instructions
+
+1. **Start Mobile-First**: Write base styles for mobile, add responsive prefixes for larger screens
+2. **Use Design Tokens**: Leverage Tailwind's spacing, color, and typography scales
+3. **Compose Utilities**: Combine multiple utilities for complex styles
+4. **Extract Components**: Create reusable component classes for repeated patterns
+5. **Configure Theme**: Customize design tokens in tailwind.config.js
+6. **Optimize for Production**: Ensure content paths are configured for CSS purging
+7. **Test Responsive**: Verify layouts at all breakpoint sizes
+
+## Examples
+
+### Responsive Card Component
+
+```tsx
+function ProductCard({ product }: { product: Product }) {
+  return (
+    <div className="bg-white rounded-lg shadow-lg overflow-hidden
+                    sm:flex sm:max-w-2xl">
+      <img
+        className="h-48 w-full object-cover sm:h-auto sm:w-48"
+        src={product.image}
+        alt={product.name}
+      />
+      <div className="p-6">
+        <h3 className="text-lg font-semibold text-gray-900">
+          {product.name}
+        </h3>
+        <p className="mt-2 text-gray-600">
+          {product.description}
+        </p>
+        <button className="mt-4 px-4 py-2 bg-indigo-600 text-white
+                          rounded-lg hover:bg-indigo-700 transition">
+          Add to Cart
+        </button>
+      </div>
+    </div>
+  );
+}
+```
+
+## Constraints and Warnings
+
+- **Class Proliferation**: Long class strings can reduce readability; extract components when needed
+- **Purge Configuration**: Must configure content paths correctly for production builds
+- **Arbitrary Values**: Use sparingly; prefer design tokens for consistency
+- **Specificity Issues**: Avoid @apply with complex selectors
+- **Dark Mode**: Requires proper configuration (class or media strategy)
+- **JIT Mode**: Some dynamic patterns may not be detected; use safelist if needed
+- **Browser Support**: Check Tailwind docs for browser compatibility
 
 ## Core Concepts
 

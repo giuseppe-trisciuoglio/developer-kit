@@ -4,13 +4,16 @@ description: Edge case and boundary testing patterns for unit tests. Testing min
 category: testing
 tags: [junit-5, boundary-testing, edge-cases, parameterized-test]
 version: 1.0.1
+allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
 # Unit Testing Boundary Conditions and Edge Cases
 
-Test boundary conditions, edge cases, and limit values systematically. Verify code behavior at limits, with null/empty inputs, and overflow scenarios.
+## Overview
 
-## When to Use This Skill
+This skill provides systematic patterns for testing boundary conditions, edge cases, and limit values using JUnit 5. It covers numeric boundaries (Integer.MIN_VALUE, MAX_VALUE), string edge cases (null, empty, whitespace), collection boundaries, floating-point precision, date/time limits, and concurrent access patterns.
+
+## When to Use
 
 Use this skill when:
 - Testing minimum and maximum values
@@ -20,6 +23,19 @@ Use this skill when:
 - Testing collections with zero/one/many items
 - Verifying behavior at API boundaries
 - Want comprehensive edge case coverage
+
+## Instructions
+
+1. **Identify boundaries**: List all numeric limits (MIN_VALUE, MAX_VALUE, zero), string states (null, empty, whitespace), and collection sizes (empty, single, many)
+2. **Use parameterized tests**: Apply @ParameterizedTest with @ValueSource for testing multiple boundary values efficiently
+3. **Test both sides of boundaries**: Test values just below, at, and just above each boundary
+4. **Verify floating point precision**: Use `isCloseTo(expected, within(tolerance))` for floating point comparisons
+5. **Test collection states**: Explicitly test empty (0), single (1), and many (>1) element scenarios
+6. **Handle overflow scenarios**: Use Math.addExact() and Math.subtractExact() to detect overflow/underflow
+7. **Test date/time edges**: Verify leap years, month boundaries, and timezone transitions
+8. **Document boundary rationale**: Explain why specific boundaries matter for your domain
+
+## Examples
 
 ## Setup: Boundary Testing
 
@@ -428,6 +444,16 @@ class ParameterizedBoundaryTest {
 - **Verify error messages** are helpful for invalid boundaries
 - **Document why** specific boundaries matter
 - **Test overflow/underflow** for numeric operations
+
+## Constraints and Warnings
+
+- **Integer overflow**: Be aware that integer operations can overflow silently; use Math.addExact() to detect
+- **Floating point precision**: Never use exact equality for floating point; always use tolerance-based assertions
+- **NaN behavior**: Remember that NaN != NaN; use Float.isNaN() or Double.isNaN() for detection
+- **Collection size limits**: Be mindful of memory when testing with very large collections
+- **String encoding**: Test with various Unicode characters and encodings for internationalization
+- **Date/time boundaries**: Be aware of timezone transitions and daylight saving time changes
+- **Array indexing**: Always test index boundaries including 0, length-1, and out-of-bounds scenarios
 
 ## Common Pitfalls
 

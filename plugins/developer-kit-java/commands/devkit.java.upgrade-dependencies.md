@@ -392,3 +392,19 @@ Focus on **safe, incremental upgrades** that maintain system stability while kee
 **Agent Selection**: To execute this task, use the following agent with fallback:
 - Primary: `java-security-expert`
 - If not available: Use `developer-kit:java-security-expert` or fallback to `general-purpose` agent with `spring-boot-crud-patterns` skill
+
+## Overview
+
+Manages safe and incremental dependency upgrades for Java/Maven/Gradle projects with breaking change detection and migration guides. Use when upgrading project dependencies or migrating to new library versions.
+
+## Usage
+
+```
+/devkit.java.upgrade-dependencies $ARGUMENTS
+```
+
+## Examples
+
+```bash
+/devkit.java.upgrade-dependencies example-input
+```

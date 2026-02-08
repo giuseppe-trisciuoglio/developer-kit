@@ -207,3 +207,25 @@ ENDIF
 **Run context**:
 - Use `npx nx show projects --affected --base=HEAD~1` to limit scope (only if Nx workspace detected)
 - Provide `$1` as `full` or `security` etc., and optional path to a project or file
+
+## Overview
+
+Provides comprehensive TypeScript monorepo code review for Nx workspaces including NestJS backend, React web, and React Native mobile apps. Use when reviewing architecture, boundaries, security, performance, CI/CD and Nx-specific practices.
+
+## Usage
+
+```
+/devkit.typescript.code-review $ARGUMENTS
+```
+
+## Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
+
+## Examples
+
+```bash
+/devkit.typescript.code-review example-input
+```

@@ -167,7 +167,7 @@ def semantic_chunk(text, similarity_threshold=0.8):
 - Using one-size-fits-all approach for diverse content types
 - Neglecting overlap for boundary-crossing information
 
-## Constraints
+## Constraints and Warnings
 
 ### Resource Considerations
 - Semantic and contextual methods require significant computational resources

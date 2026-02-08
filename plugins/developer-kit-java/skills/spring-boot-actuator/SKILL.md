@@ -23,6 +23,38 @@ context7_trust_score: 7.5
 - Trigger: "export metrics to prometheus" – Wire Micrometer registries and tune metric exposure.
 - Trigger: "debug actuator startup" – Inspect condition evaluations and startup metrics when endpoints are missing or slow.
 
+## Instructions
+
+Follow these steps to configure Spring Boot Actuator for production-grade monitoring:
+
+### 1. Add Actuator Dependency
+
+Include spring-boot-starter-actuator in your build configuration (Maven or Gradle).
+
+### 2. Expose Required Endpoints
+
+Configure management.endpoints.web.exposure.include property with the specific endpoints you need. Avoid exposing sensitive endpoints like /env, /heapdump in production.
+
+### 3. Secure Management Traffic
+
+Apply Spring Security to management endpoints using @Configuration class with EndpointRequest matcher. Consider using a dedicated management port for additional isolation.
+
+### 4. Configure Health Probes
+
+Enable readiness and liveness probes with management.endpoint.health.probes.enabled=true. Create health groups to aggregate relevant indicators.
+
+### 5. Set Up Metrics Export
+
+Configure Micrometer registry for your monitoring system (Prometheus, OTLP, Wavefront). Add application tags for cross-service correlation.
+
+### 6. Enable Diagnostic Endpoints
+
+Turn on /actuator/startup, /actuator/conditions, and /actuator/httpexchanges for incident response troubleshooting.
+
+### 7. Validate Configuration
+
+Test each endpoint is accessible and returns expected data. Verify health checks integrate with your orchestrator (Kubernetes, Cloud Foundry).
+
 ## Quick Start
 1. Add the starter dependency.
    ```xml
@@ -159,11 +191,14 @@ More end-to-end samples are available in `references/examples.md`.
 - Monitor actuator traffic separately to detect scraping abuse or brute-force attempts.
 - Automate regression checks by scripting `curl` probes in CI/CD pipelines.
 
-## Constraints
+## Constraints and Warnings
 - Avoid exposing `/actuator/env`, `/actuator/configprops`, `/actuator/logfile`, and `/actuator/heapdump` on public networks.
 - Do not ship custom health indicators that block event loop threads or exceed 250 ms unless absolutely necessary.
 - Ensure Actuator metrics exporters run on supported Micrometer registries; unsupported exporters require custom registry beans.
 - Maintain compatibility with Spring Boot 3.5.x conventions; older versions may lack probes and observation features.
+- Never expose actuator endpoints without authentication in production environments.
+- Health indicators should not perform expensive operations that could impact application performance.
+- Be cautious with `/actuator/beans` and `/actuator/mappings` as they reveal internal application structure.
 
 ## Reference Materials
 - [Endpoint quick reference](references/endpoint-reference.md)

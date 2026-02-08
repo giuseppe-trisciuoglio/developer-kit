@@ -4,12 +4,24 @@ description: Provides Model Context Protocol (MCP) server implementation pattern
 category: ai-integration
 tags: [spring-ai, mcp, model-context-protocol, tools, function-calling, prompts, java, spring-boot, enterprise]
 version: 1.0.0
-allowed-tools: Read, Write, Bash, WebFetch
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
 # Spring AI MCP Server Implementation Patterns
 
 Implement Model Context Protocol (MCP) servers with Spring AI to extend AI capabilities with standardized tools, resources, and prompt templates using Spring's native AI abstractions.
+
+## Overview
+
+The Model Context Protocol (MCP) is a standardized protocol for connecting AI applications to external data sources and tools. Spring AI provides native support for building MCP servers that expose Spring components as callable tools, resources, and prompt templates for AI models.
+
+This skill covers the implementation patterns for creating production-ready MCP servers using Spring AI, including:
+- **Tools**: Exposing Spring methods as AI-callable functions using `@Tool` annotation
+- **Resources**: Data sources accessible through MCP endpoints
+- **Prompts**: Reusable prompt templates with `@PromptTemplate` annotation
+- **Transport**: Communication channels (stdio, HTTP, SSE)
+- **Security**: Authentication, authorization, and input validation
+- **Testing**: Unit and integration testing strategies
 
 ## When to Use
 
@@ -22,6 +34,57 @@ Use this skill when building:
 - Production-ready MCP servers with Spring Security and monitoring
 - Microservices that expose AI capabilities via MCP protocol
 - Hybrid systems using both Spring AI and traditional Spring components
+
+## Instructions
+
+Follow these steps to implement an MCP server with Spring AI:
+
+### 1. Project Setup
+
+1. Add Spring AI MCP dependencies to your `pom.xml` or `build.gradle`
+2. Configure the AI model (OpenAI, Anthropic, etc.) in `application.properties`
+3. Enable MCP server with `@EnableMcpServer` annotation
+
+### 2. Define Tools
+
+1. Create a Spring component class (`@Component`)
+2. Annotate methods with `@Tool(description = "...")`
+3. Use `@ToolParam` to document parameters for AI understanding
+4. Implement business logic with proper error handling
+
+### 3. Create Prompt Templates
+
+1. Create prompt template components
+2. Use `@PromptTemplate` for reusable prompts
+3. Define parameters with `@PromptParam`
+4. Return `Prompt` objects with system and user messages
+
+### 4. Configure Transport
+
+1. Choose transport type: `stdio`, `http`, or `sse`
+2. Configure transport properties in `application.yml`
+3. Set up CORS if using HTTP/SSE
+
+### 5. Add Security
+
+1. Implement Spring Security configuration
+2. Create tool filters for role-based access control
+3. Add input validation to prevent injection attacks
+4. Implement audit logging for sensitive operations
+
+### 6. Testing
+
+1. Write unit tests for individual tools
+2. Create integration tests for MCP endpoints
+3. Test security configurations
+4. Use Testcontainers for database-dependent tools
+
+### 7. Deployment
+
+1. Configure actuator endpoints for health checks
+2. Set up metrics and monitoring
+3. Implement rate limiting for production
+4. Configure caching for frequently used operations
 
 ## Quick Start
 
@@ -1294,16 +1357,101 @@ spring.ai.mcp.rate-limiter.requests-per-minute=100
 
 ## Best Practices
 
-1. **Use Declarative Annotations**: Prefer `@Tool` and `@PromptTemplate` over manual registration
-2. **Implement Security**: Always validate user permissions and sanitize inputs
-3. **Add Documentation**: Document all tools, parameters, and return values clearly
-4. **Handle Errors Gracefully**: Implement proper error handling and user-friendly messages
-5. **Use Caching**: Cache expensive operations and frequently used prompts
-6. **Monitor Performance**: Track tool execution times and success rates
-7. **Test Thoroughly**: Write unit and integration tests for all tools
-8. **Version Your API**: Maintain backward compatibility when updating tools
-9. **Use Type Safety**: Leverage Java's type system with records and sealed interfaces
-10. **Implement Rate Limiting**: Protect against abuse and ensure fair usage
+### Tool Design
+
+1. **Use Declarative Annotations**: Prefer `@Tool` and `@PromptTemplate` over manual registration for cleaner, more maintainable code.
+
+2. **Keep Tools Focused**: Each tool should do one thing well. Avoid creating monolithic tools that handle multiple unrelated operations.
+
+3. **Use Descriptive Names**: Tool names should clearly indicate what they do. Use verbs like `get`, `create`, `update`, `delete`, `search` for actions.
+
+4. **Document Parameters**: Use `@ToolParam` with clear descriptions so AI models understand when and how to use each parameter.
+
+5. **Return Structured Data**: Use records or DTOs for return values instead of raw strings or maps to provide schema information to AI models.
+
+### Security Practices
+
+6. **Implement Input Validation**: Always validate user inputs to prevent injection attacks. Never trust AI-generated parameters without validation.
+
+7. **Use Authorization**: Implement role-based access control for sensitive operations. Use Spring Security annotations like `@PreAuthorize`.
+
+8. **Sanitize Error Messages**: Never expose sensitive information in error messages or tool descriptions.
+
+9. **Audit Sensitive Operations**: Log all executions of tools that modify data or access sensitive resources.
+
+10. **Rate Limiting**: Implement rate limiting for expensive operations to prevent abuse and ensure fair usage.
+
+### Performance Optimization
+
+11. **Use Caching**: Cache results of expensive operations using Spring Cache with `@Cacheable`. Set appropriate TTL values.
+
+12. **Implement Timeouts**: Always set timeouts for external API calls to prevent hanging requests.
+
+13. **Use Async Processing**: For long-running operations, consider using `@Async` to return immediately and provide status updates.
+
+14. **Connection Pooling**: Configure proper connection pools for database and HTTP clients.
+
+15. **Monitor Performance**: Track tool execution times and success rates using Micrometer metrics.
+
+### Error Handling
+
+16. **Handle Errors Gracefully**: Implement proper exception handling with user-friendly error messages.
+
+17. **Use Specific Exceptions**: Create custom exceptions for different error scenarios to enable proper error handling.
+
+18. **Implement Fallback**: Provide fallback values or retry logic for transient failures.
+
+19. **Log Context**: Include relevant context (user, tool name, parameters) in error logs for debugging.
+
+### Testing
+
+20. **Write Unit Tests**: Test each tool independently with mocked dependencies.
+
+21. **Write Integration Tests**: Test the entire MCP server flow including transport and serialization.
+
+22. **Test Security**: Verify that authorization rules are properly enforced.
+
+23. **Use Testcontainers**: For database-dependent tools, use Testcontainers for realistic testing.
+
+24. **Test Edge Cases**: Test with invalid inputs, null values, and boundary conditions.
+
+### Documentation
+
+25. **Document Tool Purpose**: Clearly describe what each tool does and when to use it.
+
+26. **Provide Examples**: Include usage examples in the tool description or separate documentation.
+
+27. **Version Your API**: Maintain backward compatibility when updating tools. Use semantic versioning.
+
+28. **Document Return Types**: Clearly describe the structure of return values.
+
+### Configuration
+
+29. **Externalize Configuration**: Use `application.yml` for configurable values like URLs, timeouts, and credentials.
+
+30. **Use Profiles**: Define different configurations for dev, test, and production environments.
+
+31. **Validate Configuration**: Use `@ConfigurationProperties` with validation for type-safe configuration.
+
+### Spring-Specific Best Practices
+
+32. **Leverage Dependency Injection**: Use constructor injection for dependencies to improve testability.
+
+33. **Use Qualifiers**: When multiple beans of the same type exist, use `@Qualifier` to disambiguate.
+
+34. **Implement Health Checks**: Provide health indicators to monitor MCP server status.
+
+35. **Use Profiles**: Different configurations for development and production environments.
+
+### AI-Specific Considerations
+
+36. **Design for Idempotency**: Tools should be idempotent when possible as AI models may retry failed calls.
+
+37. **Be Conservative with Data Modifying Tools**: AI models may call modifying tools unexpectedly - consider adding confirmation steps.
+
+38. **Provide Context**: Include relevant context in responses to help AI models understand results.
+
+39. **Handle Large Responses**: For tools that return large data, consider pagination or summary options.
 
 ## Migration from LangChain4j
 
@@ -1344,6 +1492,490 @@ public class WeatherTools {
 
 ## Examples
 
+### Example 1: Complete Weather MCP Server
+
+A complete, production-ready weather MCP server:
+
+```java
+// Application.java
+@SpringBootApplication
+@EnableMcpServer
+public class WeatherMcpServerApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(WeatherMcpServerApplication.class, args);
+    }
+}
+
+// WeatherTools.java
+@Component
+@Slf4j
+public class WeatherTools {
+
+    private final WeatherService weatherService;
+    private final MeterRegistry meterRegistry;
+
+    public WeatherTools(WeatherService weatherService, MeterRegistry meterRegistry) {
+        this.weatherService = weatherService;
+        this.meterRegistry = meterRegistry;
+    }
+
+    @Tool(description = "Get current weather conditions for a city")
+    public WeatherResponse getCurrentWeather(
+            @ToolParam("City name (e.g., 'New York, NY')") String city) {
+
+        Timer.Sample sample = Timer.start(meterRegistry);
+        try {
+            log.info("Fetching weather for: {}", city);
+            WeatherResponse response = weatherService.getCurrentWeather(city);
+            sample.stop(Timer.builder("weather.tool.duration")
+                    .tag("city", city)
+                    .register(meterRegistry));
+            return response;
+        } catch (Exception e) {
+            log.error("Error fetching weather for {}", city, e);
+            throw new ToolExecutionException("Unable to fetch weather data", e);
+        }
+    }
+
+    @Tool(description = "Get 5-day weather forecast for a city")
+    public ForecastResponse getForecast(
+            @ToolParam("City name") String city,
+            @ToolParam(value = "Temperature unit (celsius or fahrenheit)", required = false)
+            String unit) {
+
+        String tempUnit = unit != null ? unit : "celsius";
+        return weatherService.getForecast(city, tempUnit);
+    }
+
+    @Tool(description = "Get weather alerts for a location")
+    public List<WeatherAlert> getWeatherAlerts(
+            @ToolParam("State or province code (e.g., 'CA', 'NY')") String stateCode) {
+
+        return weatherService.getAlerts(stateCode);
+    }
+}
+
+// WeatherService.java
+@Service
+public class WeatherService {
+
+    private final WebClient webClient;
+    private final WeatherCache cache;
+
+    public WeatherService(WebClient.Builder webClientBuilder,
+                         WeatherCache cache) {
+        this.webClient = webClientBuilder
+                .baseUrl("https://api.weather.gov")
+                .build();
+        this.cache = cache;
+    }
+
+    @Cacheable(value = "weather", key = "#city")
+    public WeatherResponse getCurrentWeather(String city) {
+        return webClient.get()
+                .uri("/points/{city}/forecast", city)
+                .retrieve()
+                .bodyToMono(WeatherResponse.class)
+                .block();
+    }
+}
+```
+
+### Example 2: Database Query MCP Server
+
+```java
+@Component
+@PreAuthorize("hasRole('USER')")
+public class DatabaseTools {
+
+    private final JdbcTemplate jdbcTemplate;
+    private final QueryValidator validator;
+
+    public DatabaseTools(JdbcTemplate jdbcTemplate, QueryValidator validator) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.validator = validator;
+    }
+
+    @Tool(description = "Execute a read-only SQL query and return results")
+    public QueryResult executeQuery(
+            @ToolParam("SQL SELECT query to execute") String sql,
+            @ToolParam(value = "Query parameters as JSON map", required = false)
+            String paramsJson) {
+
+        // Validate query is read-only
+        validator.validateReadOnly(sql);
+
+        // Parse parameters
+        Map<String, Object> params = parseParams(paramsJson);
+
+        // Execute with timeout
+        return jdbcTemplate.query(sql, params, rs -> {
+            ResultSetMetaData metaData = rs.getMetaData();
+            int columnCount = metaData.getColumnCount();
+            List<Map<String, Object>> rows = new ArrayList<>();
+
+            while (rs.next()) {
+                Map<String, Object> row = new LinkedHashMap<>();
+                for (int i = 1; i <= columnCount; i++) {
+                    row.put(metaData.getColumnName(i), rs.getObject(i));
+                }
+                rows.add(row);
+            }
+
+            return new QueryResult(rows, rows.size());
+        });
+    }
+
+    @Tool(description = "Get table metadata including columns and types")
+    public TableMetadata describeTable(
+            @ToolParam("Table name") String tableName) {
+
+        String sql = """
+            SELECT column_name, data_type, is_nullable, column_default
+            FROM information_schema.columns
+            WHERE table_name = ?
+            ORDER BY ordinal_position
+            """;
+
+        List<ColumnInfo> columns = jdbcTemplate.query(sql,
+                (rs, rowNum) -> new ColumnInfo(
+                        rs.getString("column_name"),
+                        rs.getString("data_type"),
+                        rs.getString("is_nullable").equals("YES"),
+                        rs.getString("column_default")
+                ),
+                tableName
+        );
+
+        return new TableMetadata(tableName, columns);
+    }
+}
+```
+
+### Example 3: File Operations MCP Server
+
+```java
+@Component
+@Slf4j
+public class FileSystemTools {
+
+    private final Path basePath;
+    private final FileSecurityFilter securityFilter;
+
+    public FileSystemTools(
+            @Value("${mcp.file.base-path:/tmp}") String basePath,
+            FileSecurityFilter securityFilter) {
+        this.basePath = Paths.get(basePath).normalize();
+        this.securityFilter = securityFilter;
+    }
+
+    @Tool(description = "List files in a directory")
+    public List<FileInfo> listFiles(
+            @ToolParam(value = "Directory path (relative to base)", required = false)
+            String directory) {
+
+        Path targetPath = resolvePath(directory != null ? directory : "");
+        securityFilter.validatePath(targetPath, basePath);
+
+        try (Stream<Path> stream = Files.list(targetPath)) {
+            return stream
+                    .filter(Files::isRegularFile)
+                    .map(this::toFileInfo)
+                    .toList();
+        } catch (IOException e) {
+            throw new ToolExecutionException("Failed to list files", e);
+        }
+    }
+
+    @Tool(description = "Read file contents")
+    public FileContent readFile(
+            @ToolParam("File path (relative to base)") String filePath,
+            @ToolParam(value = "Maximum lines to read", required = false)
+            Integer maxLines) {
+
+        Path targetPath = resolvePath(filePath);
+        securityFilter.validatePath(targetPath, basePath);
+
+        try {
+            List<String> lines = maxLines != null
+                    ? Files.lines(targetPath).limit(maxLines).toList()
+                    : Files.readAllLines(targetPath);
+
+            return new FileContent(targetPath.toString(), lines);
+        } catch (IOException e) {
+            throw new ToolExecutionException("Failed to read file", e);
+        }
+    }
+
+    @Tool(description = "Search for files matching a pattern")
+    public List<FileInfo> searchFiles(
+            @ToolParam("Search pattern (glob, e.g., '*.txt')") String pattern,
+            @ToolParam(value = "Directory to search in", required = false)
+            String directory) {
+
+        Path targetPath = resolvePath(directory != null ? directory : "");
+        securityFilter.validatePath(targetPath, basePath);
+
+        try (Stream<Path> stream = Files.walk(targetPath, 10)) {
+            PathMatcher matcher = FileSystems.getDefault()
+                    .getPathMatcher("glob:" + pattern);
+
+            return stream
+                    .filter(Files::isRegularFile)
+                    .filter(path -> matcher.matches(path.getFileName()))
+                    .map(this::toFileInfo)
+                    .toList();
+        } catch (IOException e) {
+            throw new ToolExecutionException("Search failed", e);
+        }
+    }
+
+    private Path resolvePath(String relativePath) {
+        return basePath.resolve(relativePath).normalize();
+    }
+
+    private FileInfo toFileInfo(Path path) {
+        try {
+            return new FileInfo(
+                    basePath.relativize(path).toString(),
+                    Files.size(path),
+                    Files.getLastModifiedTime(path).toInstant()
+            );
+        } catch (IOException e) {
+            return new FileInfo(path.toString(), 0, Instant.now());
+        }
+    }
+}
+```
+
+### Example 4: REST API Integration MCP Server
+
+```java
+@Component
+@Slf4j
+public class ApiIntegrationTools {
+
+    private final WebClient webClient;
+    private final ApiCredentialManager credentialManager;
+
+    public ApiIntegrationTools(WebClient.Builder webClientBuilder,
+                              ApiCredentialManager credentialManager) {
+        this.webClient = webClientBuilder.build();
+        this.credentialManager = credentialManager;
+    }
+
+    @Tool(description = "Call an external REST API endpoint")
+    public ApiResponse callExternalApi(
+            @ToolParam("HTTP method (GET, POST, PUT, DELETE)") String method,
+            @ToolParam("API URL") String url,
+            @ToolParam(value = "Request body (JSON)", required = false)
+            String body,
+            @ToolParam(value = "Headers (JSON map)", required = false)
+            String headersJson) {
+
+        // Validate URL
+        validateUrl(url);
+
+        // Get credentials
+        ApiCredentials credentials = credentialManager.getCredentials(url);
+
+        // Build request
+        WebClient.RequestBodySpec request = webClient
+                .method(HttpMethod.valueOf(method.toUpperCase()))
+                .uri(url);
+
+        // Add headers
+        addHeaders(request, headersJson, credentials);
+
+        // Add body if applicable
+        if (body != null && !body.isBlank()) {
+            request.contentType(MediaType.APPLICATION_JSON);
+            request.body(body);
+        }
+
+        // Execute
+        return request.retrieve()
+                .bodyToMono(ApiResponse.class)
+                .block();
+    }
+
+    @Tool(description = "Paginate through API results")
+    public List<ApiResponse> fetchPaginatedResults(
+            @ToolParam("Base API URL") String baseUrl,
+            @ToolParam(value = "Page size", required = false)
+            Integer pageSize) {
+
+        int size = pageSize != null ? pageSize : 100;
+        List<ApiResponse> allResults = new ArrayList<>();
+        int page = 0;
+
+        while (true) {
+            String url = baseUrl + "?page=" + page + "&size=" + size;
+            PaginatedResponse response = webClient.get()
+                    .uri(url)
+                    .retrieve()
+                    .bodyToMono(PaginatedResponse.class)
+                    .block();
+
+            allResults.addAll(response.getData());
+
+            if (!response.hasNext()) {
+                break;
+            }
+            page++;
+        }
+
+        return allResults;
+    }
+}
+```
+
+### Example 5: Prompt Template MCP Server
+
+```java
+@Component
+public class CodeReviewPrompts {
+
+    @PromptTemplate(
+        name = "java-code-review",
+        description = "Review Java code for best practices and potential issues"
+    )
+    public Prompt createCodeReviewPrompt(
+            @PromptParam("Java code to review") String code,
+            @PromptParam(value = "Focus areas (comma-separated)", required = false)
+            String focusAreas) {
+
+        String focus = focusAreas != null ? focusAreas : "general best practices";
+
+        return Prompt.builder()
+                .system(createSystemPrompt())
+                .user(createUserPrompt(code, focus))
+                .build();
+    }
+
+    @PromptTemplate(
+        name = "refactor-suggestion",
+        description = "Suggest refactoring improvements for code"
+    )
+    public Prompt createRefactorPrompt(
+            @PromptParam("Code to refactor") String code,
+            @PromptParam("Refactoring goal") String goal) {
+
+        return Prompt.builder()
+                .system("You are an expert software architect specializing in code refactoring.")
+                .user("""
+                    Analyze the following code and suggest refactoring to achieve: {goal}
+
+                    ```java
+                    {code}
+                    ```
+
+                    Provide:
+                    1. Current issues identified
+                    2. Suggested refactoring approach
+                    3. Refactored code example
+                    4. Benefits of the refactoring
+                    """.replace("{code}", code).replace("{goal}", goal))
+                .build();
+    }
+
+    private String createSystemPrompt() {
+        return """
+            You are an expert Java code reviewer with 20 years of experience.
+            Focus on:
+            - Code correctness and potential bugs
+            - Performance optimizations
+            - Security vulnerabilities
+            - SOLID principles adherence
+            - Clean code practices
+            - Design pattern usage
+            """;
+    }
+
+    private String createUserPrompt(String code, String focus) {
+        return """
+            Review the following Java code with focus on: {focus}
+
+            ```java
+            {code}
+            ```
+
+            Format your response as:
+            ## Critical Issues (Must Fix)
+            ## Warnings (Should Fix)
+            ## Suggestions (Consider Improving)
+            ## Positive Aspects
+            """.replace("{code}", code).replace("{focus}", focus);
+    }
+}
+```
+
+### Example 6: Application Configuration
+
+```yaml
+# application.yml
+spring:
+  application:
+    name: weather-mcp-server
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          model: gpt-4o-mini
+          temperature: 0.7
+    mcp:
+      enabled: true
+      server:
+        name: weather-mcp-server
+        version: 1.0.0
+      transport:
+        type: stdio  # or http, sse
+        http:
+          port: 8080
+          path: /mcp
+          cors:
+            enabled: true
+            allowed-origins: "*"
+      security:
+        enabled: true
+        authorization:
+          mode: role-based
+          default-deny: true
+        audit:
+          enabled: true
+      tools:
+        package-scan: com.example.mcp.tools
+        validation:
+          enabled: true
+          max-execution-time: 30s
+        caching:
+          enabled: true
+          ttl: 5m
+      actuator:
+        enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+logging:
+  level:
+    com.example.mcp: DEBUG
+    org.springframework.ai: INFO
+```
+
+## API Reference
+
 For comprehensive examples, see [examples.md](./references/examples.md) including:
 - Basic MCP server setup
 - Multi-tool enterprise servers
@@ -1351,8 +1983,6 @@ For comprehensive examples, see [examples.md](./references/examples.md) includin
 - Integration with Spring Data
 - Real-time data streaming
 - Multi-modal applications
-
-## API Reference
 
 Complete API documentation is available in [api-reference.md](./references/api-reference.md) covering:
 - Core annotations and interfaces
@@ -1367,3 +1997,71 @@ Complete API documentation is available in [api-reference.md](./references/api-r
 - [Model Context Protocol Specification](https://modelcontextprotocol.org/)
 - [LangChain4j MCP Patterns](../langchain4j/langchain4j-mcp-server-patterns/SKILL.md)
 - [Spring Boot Documentation](https://docs.spring.io/spring-boot/docs/current/reference/html/)
+
+## Constraints and Warnings
+
+### Security Constraints
+
+- **Never Expose Sensitive Data**: Tool descriptions, parameter names, and error messages must not contain passwords, API keys, or confidential information.
+
+- **Input Validation is Mandatory**: Always validate and sanitize inputs. AI models may generate malicious or malformed parameters intentionally or unintentionally.
+
+- **SQL Injection Prevention**: For database tools, use parameterized queries exclusively. Never concatenate strings into SQL statements.
+
+- **Path Traversal Prevention**: For file system tools, validate and normalize all paths to prevent directory traversal attacks (e.g., `../../etc/passwd`).
+
+- **Authorization Required**: Every tool should verify that the current user has permission to perform the requested action.
+
+### Operational Constraints
+
+- **Idempotency**: Tools should be idempotent when possible as AI models may retry failed calls. Non-idempotent operations should clearly document this behavior.
+
+- **Timeout Handling**: All tools must implement proper timeout handling to prevent hanging requests. The default timeout should be configurable.
+
+- **Resource Limits**: Implement limits on resource usage (memory, CPU, network) to prevent denial-of-service through resource exhaustion.
+
+- **Rate Limiting**: Rate limiting should be implemented to prevent abuse of expensive operations. Different tools may have different rate limits.
+
+- **Concurrent Execution**: Consider thread safety for tools that may be called concurrently. Use appropriate synchronization.
+
+### AI Model Constraints
+
+- **Context Window Limits**: Tool responses should be concise. Large responses can exceed context window limits, causing the AI model to truncate or ignore information.
+
+- **Response Format**: Use structured data (JSON, records) for responses to help AI models parse and understand results.
+
+- **Description Quality**: Tool and parameter descriptions are critical for AI model understanding. Poor descriptions lead to incorrect tool usage.
+
+- **Tool Naming**: Tool names should be self-describing and avoid abbreviations that might confuse AI models.
+
+### Performance Constraints
+
+- **Caching Considerations**: Be aware that caching can return stale data. Implement cache invalidation for dynamic data.
+
+- **Memory Management**: Dynamic tool registration can cause memory leaks if tools are not properly unregistered. Implement cleanup procedures.
+
+- **Connection Pooling**: Configure appropriate connection pool sizes to avoid resource exhaustion.
+
+### Multi-Model Constraints
+
+- **Model-Specific Capabilities**: Multi-model configurations require careful management of model-specific capabilities. Not all models support all features.
+
+- **Compatibility**: Ensure tool responses are compatible with all configured AI models. Avoid model-specific features unless necessary.
+
+### Spring AI Specific Warnings
+
+- **Version Compatibility**: Spring AI is actively developed. API changes may occur between versions. Pin specific versions in production.
+
+- **Transport Selection**: Choose the appropriate transport (stdio, HTTP, SSE) for your use case. Each has different performance and security characteristics.
+
+- **Error Propagation**: Exceptions thrown by tools are exposed to AI models. Ensure error messages don't leak sensitive information.
+
+### Deployment Constraints
+
+- **Health Checks**: Implement health checks that verify tool availability and connectivity to external services.
+
+- **Configuration Management**: Use environment variables or secure vaults for sensitive configuration values. Never hardcode credentials.
+
+- **Monitoring**: Implement comprehensive monitoring for tool usage, execution times, and error rates.
+
+- **Graceful Shutdown**: Ensure tools can complete in-progress operations when the server is shutting down.

@@ -26,6 +26,72 @@ Use this skill when:
 - Organizing templates with Mappings and Conditions
 - Designing reusable, modular CloudFormation templates for caching infrastructure
 
+## Instructions
+
+Follow these steps to create ElastiCache infrastructure with CloudFormation:
+
+1. **Define Cluster Parameters**: Specify engine, node type, and cluster settings
+2. **Configure Subnet Group**: Set up VPC subnet configuration for cluster
+3. **Create Parameter Group**: Define engine-specific parameter settings
+4. **Set Up Security Groups**: Configure network access controls
+5. **Create Replication Group**: Implement multi-node for high availability
+6. **Configure Backups**: Set up automatic snapshot schedules
+7. **Add Monitoring**: Enable CloudWatch metrics for cluster health
+8. **Implement Scaling**: Configure auto-scaling for node count
+
+For complete examples, see the [EXAMPLES.md](references/examples.md) file.
+
+## Examples
+
+The following examples demonstrate common ElastiCache patterns:
+
+### Example 1: Redis Cluster
+
+```yaml
+RedisCluster:
+  Type: AWS::ElastiCache::CacheCluster
+  Properties:
+    CacheNodeType: cache.t3.micro
+    Engine: redis
+    NumCacheNodes: 3
+    CacheSubnetGroupName: !Ref CacheSubnetGroup
+    VpcSecurityGroupIds:
+      - !Ref CacheSecurityGroup
+    ClusterName: !Sub "${AWS::StackName}-redis"
+```
+
+### Example 2: Redis Replication Group
+
+```yaml
+ReplicationGroup:
+  Type: AWS::ElastiCache::ReplicationGroup
+  Properties:
+    ReplicationGroupId: !Sub "${AWS::StackName}-replica"
+    ReplicationGroupDescription: Primary and read replicas
+    NumNodeGroups: 2
+    ReplicasPerNodeGroup: 1
+    CacheNodeType: cache.t3.micro
+    Engine: redis
+    AutomaticFailoverEnabled: true
+    MultiAZEnabled: true
+```
+
+### Example 3: Memcached Cluster
+
+```yaml
+MemcachedCluster:
+  Type: AWS::ElastiCache::CacheCluster
+  Properties:
+    CacheNodeType: cache.t3.micro
+    Engine: memcached
+    NumCacheNodes: 4
+    CacheSubnetGroupName: !Ref CacheSubnetGroup
+    VpcSecurityGroupIds:
+      - !Ref CacheSecurityGroup
+```
+
+For complete production-ready examples, see [EXAMPLES.md](references/examples.md).
+
 ## Quick Start
 
 ### Basic Redis Cluster
@@ -1234,3 +1300,43 @@ aws cloudformation describe-stack-drift-detection-status \
 - ElastiCache Documentation: https://docs.aws.amazon.com/AmazonElastiCache/latest/redsug/
 - Redis Documentation: https://redis.io/documentation
 - Memcached Documentation: https://memcached.org/documentation
+
+## Constraints and Warnings
+
+### Resource Limits
+
+- **Node Limits**: Maximum number of cache nodes per cluster varies by instance type and region
+- **Shard Limits**: Maximum number of shards per Redis cluster varies by node type
+- **Replication Group Limits**: Maximum number of replication groups per region is account-dependent
+- **Parameter Groups**: Maximum number of parameter groups per region
+
+### Operational Constraints
+
+- **Node Replacement**: Replacing cache nodes results in temporary loss of data stored in memory
+- **Cluster Scaling**: Adding or removing nodes can cause short service disruption
+- **Multi-AZ Failover**: Automatic failover takes time (typically 1-3 minutes)
+- **Redis Engine Versions**: Some Redis versions are not compatible with existing clusters
+
+### Security Constraints
+
+- **Encryption in Transit**: Enforcing encryption in transit requires specific parameter group settings
+- **AUTH Token**: Default Redis auth token should be changed immediately after cluster creation
+- **VPC Access**: ElastiCache clusters are only accessible within VPC; public access not supported
+- **Security Groups**: Security group rules must allow traffic on the cluster port (6379 for Redis, 11211 for Memcached)
+
+### Cost Considerations
+
+- **Node Types**: Larger node types significantly increase hourly costs
+- **Multi-AZ**: Read replicas in multiple AZs double or triple the cost
+- **Data Transfer**: Inter-AZ data transfer between application and cache nodes incurs costs
+- **Backup Storage**: Automatic backups and snapshots incur storage costs
+- **Reserved Instances**: Consider reserved nodes for production workloads to reduce costs
+
+### Performance Constraints
+
+- **Eviction Policy**: Cache eviction can impact application performance
+- **Connection Limits**: Maximum number of client connections varies by node type
+- **Memory Fragmentation**: Redis may show less available memory than expected due to fragmentation
+- **Network Bandwidth**: Network-intensive workloads may saturate network bandwidth
+
+## Additional Files

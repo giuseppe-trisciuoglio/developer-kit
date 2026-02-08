@@ -4,10 +4,14 @@ description: Provides testing strategies for LangChain4j-powered applications. H
 category: backend
 tags: [langchain4j, testing, unit-tests, integration-tests, testcontainers, java, ai, llm, mock]
 version: 1.1.0
-allowed-tools: Read, Write, Bash
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
 # LangChain4J Testing Strategies
+
+## Overview
+
+LangChain4J testing requires specialized strategies due to the non-deterministic nature of LLM responses and the complexity of AI workflows. This skill provides comprehensive patterns for unit testing with mocks, integration testing with Testcontainers, and end-to-end testing for RAG systems, AI Services, and tool execution.
 
 ## When to Use This Skill
 
@@ -259,3 +263,16 @@ assertThat(response).doesNotContain("error");
 - [Integration Testing](references/integration-testing.md)
 - [Advanced Testing](references/advanced-testing.md)
 - [Workflow Patterns](references/workflow-patterns.md)
+
+## Constraints and Warnings
+
+- AI model responses are non-deterministic; tests should use mocks for reliability.
+- Real API calls in tests should be avoided to prevent costs and rate limiting issues.
+- Integration tests with Testcontainers require Docker to be available.
+- Memory management tests should verify proper cleanup between test runs.
+- Tool execution tests should validate both success and failure scenarios.
+- Streaming response tests require proper handling of partial data.
+- RAG tests need properly seeded embedding stores for consistent results.
+- Performance tests may have high variance due to LLM response times.
+- Always use test-specific configuration profiles to avoid affecting production data.
+- Mock-based tests cannot guarantee actual LLM behavior; supplement with integration tests.

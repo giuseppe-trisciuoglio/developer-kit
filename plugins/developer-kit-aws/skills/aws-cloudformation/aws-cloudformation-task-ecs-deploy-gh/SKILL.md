@@ -38,6 +38,107 @@ Deploy containerized applications to Amazon ECS using GitHub Actions workflows. 
 - "Implement blue/green deployment for ECS"
 - "Deploy CloudFormation stack from GitHub Actions"
 
+## Instructions
+
+Follow these steps to set up ECS deployment with GitHub Actions:
+
+1. **Configure AWS Authentication**: Set up OIDC provider for GitHub Actions
+2. **Create IAM Roles**: Define roles for deployment actions
+3. **Set Up ECR Repository**: Create repository with image scanning
+4. **Create ECS Cluster**: Define cluster infrastructure
+5. **Configure Task Definition**: Set up task and container definitions
+6. **Set Up ECS Service**: Configure service with deployment strategy
+7. **Create GitHub Workflow**: Define CI/CD pipeline steps
+8. **Configure Secrets**: Store credentials securely in GitHub Secrets
+
+For complete examples, see the [EXAMPLES.md](references/examples.md) file.
+
+## Examples
+
+The following examples demonstrate common deployment patterns:
+
+### Example 1: GitHub Actions Workflow
+
+```yaml
+name: Deploy to ECS
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::123456789012:role/GitHubActionsRole
+          aws-region: us-east-1
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Build, tag, and push image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: my-app
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+```
+
+### Example 2: Update Task Definition
+
+```yaml
+- name: Update ECS Task Definition
+  id: task-def
+  uses: aws-actions/amazon-ecs-render-task-definition@v1
+  with:
+    task-definition: task-definition.json
+    container-name: my-app
+    image: ${{ steps.login-ecr.outputs.registry }}/my-app:${{ github.sha }}
+
+- name: Deploy to ECS
+  uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+  with:
+    task-definition: ${{ steps.task-def.outputs.task-definition }}
+    service: my-service
+    cluster: my-cluster
+```
+
+### Example 3: OIDC Provider Setup
+
+```yaml
+OidcProvider:
+  Type: AWS::IAM::OIDCProvider
+  Properties:
+    Url: https://token.actions.githubusercontent.com
+    ClientIdList:
+      - sts.amazonaws.com
+    ThumbprintList:
+      - 6938fd4d98bab03faabd97ca34b7b5dbd06c4ee5
+
+GitHubActionsRole:
+  Type: AWS::IAM::Role
+  Properties:
+    AssumeRolePolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: Allow
+          Principal:
+            Federated: !Ref OidcProvider
+          Action: sts:AssumeRoleWithWebIdentity
+          Condition:
+            StringEquals:
+              token.actions.githubusercontent.com:aud: sts.amazonaws.com
+              token.actions.githubusercontent.com:sub: repo:my-org/my-repo:ref:refs/heads/main
+```
+
+For complete production-ready examples, see [EXAMPLES.md](references/examples.md).
+
 ## Quick Start
 
 ### Basic ECS Deployment Workflow
@@ -693,3 +794,49 @@ jobs:
 - [aws-cloudformation-ecs](../aws-cloudformation-ecs/) - Design and implement ECS cluster architecture
 - [aws-sdk-java-v2-ecs](../../aws-java/aws-sdk-java-v2-ecs/) - Programmatic ECS management with Java SDK
 - [aws-cloudformation](../aws-cloudformation/) - Core CloudFormation patterns and best practices
+
+## Constraints and Warnings
+
+### Resource Limits
+
+- **GitHub Actions Limits**: GitHub Actions has usage limits per account (minutes, storage)
+- **Workflow File Size**: Workflow files cannot exceed 1 MB in size
+- **Job Matrix Limits**: Matrix jobs have limits on total combinations
+- **Artifact Retention**: Artifacts and logs have default 90-day retention
+
+### Authentication Constraints
+
+- **OIDC Tokens**: OIDC tokens have limited lifetime (typically 5 minutes)
+- **Role Session Duration**: IAM role session duration maximum is 12 hours
+- **Permission Scope**: GitHub OIDC role should have least-privilege permissions
+- **Cross-Account Access**: Cross-account deployments require appropriate trust relationships
+
+### Operational Constraints
+
+- **Deployment Speed**: CloudFormation deployments may take time; don't assume instant completion
+- **Stack Locking**: Stacks cannot be updated while another deployment is in progress
+- **ECR Rate Limits**: ECR has API rate limits that may affect large deployments
+- **ECS Service Limits**: ECS has limits on tasks per service and services per cluster
+
+### Security Constraints
+
+- **Secret Management**: Never store secrets in GitHub repository or workflow files
+- **OIDC Provider**: OIDC provider must be configured in AWS account before first use
+- **Repository Access**: Workflow secrets are scoped to repository; organization secrets differ
+- **Token Security**: GitHub tokens should have minimum required permissions (contents: read, id-token: write)
+
+### Cost Considerations
+
+- **GitHub Actions**: Minutes beyond free tier incur costs based on runner type
+- **ECR Storage**: Container images stored in ECR incur monthly storage costs
+- **ECS/Fargate**: Fargate tasks incur costs for vCPU and memory resources
+- **Data Transfer**: Data transfer between GitHub runners and AWS resources incurs costs
+
+### Deployment Constraints
+
+- **Stack Drift**: Manual changes to resources cause stack drift
+- **Change Set Limits**: Multiple change sets in progress can cause confusion
+- **Rollback Limits**: Failed deployments roll back by default; can be disabled
+- **Timeout Settings**: Deployment timeouts should account for application startup time
+
+## Additional Files

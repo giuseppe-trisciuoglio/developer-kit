@@ -7,6 +7,66 @@ model: inherit
 
 # Brainstorming
 
+Provides guided brainstorming to transform ideas into fully formed designs with professional documentation and next-step recommendations.
+
+## Overview
+
+This command helps developers transform an initial idea into a comprehensive, validated design through a systematic 9-phase process:
+
+1. **Context Discovery** - Understand the project state and initial idea
+2. **Idea Refinement** - Deeply understand requirements through structured dialogue
+3. **Approach Exploration** - Present 2-3 approaches with trade-offs
+4. **Codebase Exploration** - Analyze existing code for design constraints
+5. **Design Presentation** - Present validated design sections incrementally
+6. **Documentation Generation** - Generate professional design documents
+7. **Document Review** - Quality review by specialist agent
+8. **Next Steps Recommendation** - Suggest appropriate next command
+9. **Summary** - Document what was accomplished
+
+Use this command when starting a new feature, exploring design alternatives, or planning significant changes.
+
+## Usage
+
+```bash
+/developer-kit:devkit.brainstorm [idea-description]
+```
+
+## Arguments
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `idea-description` | No | Description of the idea or feature to brainstorm |
+
+### Argument Details
+
+**idea-description**
+- Purpose: Describes the initial idea, feature, or problem to solve
+- Format: Free text describing the concept
+- Default: If not provided, the command will ask for it interactively
+- Examples: "Add user authentication", "Refactor payment module", "Design caching strategy"
+
+## Examples
+
+### Example 1: Simple Feature Idea
+
+```
+/developer-kit:devkit.brainstorm Add user authentication with JWT tokens
+```
+
+### Example 2: Complex Feature
+
+```
+/developer-kit:devkit.brainstorm Implement real-time notifications using WebSockets
+```
+
+### Example 3: Refactoring
+
+```
+/developer-kit:devkit.brainstorm Refactor the payment processing module to be more maintainable
+```
+
+---
+
 You are helping a developer transform an idea into a fully formed design. Follow a systematic approach: understand the project
 context, explore the idea through targeted questions, explore existing code, propose alternative approaches, present the design
 incrementally, generate professional documentation, review the document, and recommend the next development command.

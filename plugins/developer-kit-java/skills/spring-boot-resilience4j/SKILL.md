@@ -9,6 +9,10 @@ version: 1.1.0
 
 # Spring Boot Resilience4j Patterns
 
+## Overview
+
+Resilience4j is a lightweight fault tolerance library designed for Java 8+ and functional programming. It provides patterns for handling failures in distributed systems including circuit breakers, rate limiters, retry mechanisms, bulkheads, and time limiters. This skill demonstrates how to integrate Resilience4j with Spring Boot 3.x to build resilient microservices that can gracefully handle external service failures and prevent cascading failures across the system.
+
 ## When to Use
 
 To implement resilience patterns in Spring Boot applications, use this skill when:
@@ -369,20 +373,126 @@ Access monitoring endpoints:
 - **Monitor and adjust**: Continuously review metrics and adjust timeouts/thresholds based on production behavior
 - **Document fallback behavior**: Make fallback logic clear and predictable to users and maintainers
 
-## Common Mistakes
+## Constraints and Warnings
 
-Refer to `references/testing-patterns.md` for:
-- Testing circuit breaker state transitions
-- Simulating transient failures with WireMock
-- Validating fallback method signatures
-- Avoiding common misconfiguration errors
+- Fallback methods must have the same signature as the original method plus an optional exception parameter.
+- Circuit breaker state is maintained per-instance; ensure proper bean scoping in multi-tenant scenarios.
+- Retry operations should be idempotent as they may execute multiple times.
+- Do not use circuit breakers for operations that must always complete; use appropriate timeouts instead.
+- Rate limiters can cause thread blocking; configure appropriate wait durations.
+- Bulkhead isolation may lead to rejected requests under load; ensure proper fallback handling.
+- Be cautious with `@Retry` on non-idempotent operations like POST requests.
+- Monitor memory usage when using thread pool bulkheads with high concurrency settings.
 
-Refer to `references/configuration-reference.md` for:
-- Complete property reference for all patterns
-- Configuration validation rules
-- Exception handling configuration
+## Examples
 
-## References and Examples
+### Input: External Service Call Without Resilience
+
+```java
+@Service
+public class PaymentService {
+    public PaymentResponse processPayment(PaymentRequest request) {
+        return restTemplate.postForObject("http://payment-api/process",
+            request, PaymentResponse.class);
+    }
+}
+```
+
+### Output: Circuit Breaker Protected Service
+
+```java
+@Service
+public class PaymentService {
+    @CircuitBreaker(name = "paymentService", fallbackMethod = "paymentFallback")
+    public PaymentResponse processPayment(PaymentRequest request) {
+        return restTemplate.postForObject("http://payment-api/process",
+            request, PaymentResponse.class);
+    }
+
+    private PaymentResponse paymentFallback(PaymentRequest request, Exception ex) {
+        return PaymentResponse.builder()
+            .status("PENDING")
+            .message("Service temporarily unavailable")
+            .build();
+    }
+}
+```
+
+### Input: Service Without Retry
+
+```java
+public Order getOrder(Long orderId) {
+    return orderRepository.findById(orderId)
+        .orElseThrow(() -> new OrderNotFoundException(orderId));
+}
+```
+
+### Output: Retry with Exponential Backoff
+
+```java
+@Retry(name = "orderService", fallbackMethod = "getOrderFallback")
+public Order getOrder(Long orderId) {
+    return orderRepository.findById(orderId)
+        .orElseThrow(() -> new OrderNotFoundException(orderId));
+}
+
+private Order getOrderFallback(Long orderId, Exception ex) {
+    return Order.cachedOrder(orderId);
+}
+```
+
+### Input: Unbounded Rate
+
+```java
+@RestController
+public class ApiController {
+    @GetMapping("/api/data")
+    public Data fetchData() {
+        return dataService.processLargeDataset();
+    }
+}
+```
+
+### Output: Rate Limited Endpoint
+
+```java
+@RestController
+public class ApiController {
+    @RateLimiter(name = "dataService", fallbackMethod = "rateLimitFallback")
+    @GetMapping("/api/data")
+    public Data fetchData() {
+        return dataService.processLargeDataset();
+    }
+
+    private ResponseEntity<ErrorResponse> rateLimitFallback(Exception ex) {
+        return ResponseEntity.status(429)
+            .body(new ErrorResponse("TOO_MANY_REQUESTS", "Rate limit exceeded"));
+    }
+}
+```
+
+### Input: Blocking Thread Pool Operation
+
+```java
+@Service
+public class ReportService {
+    public Report generateReport(ReportRequest request) {
+        return reportGenerator.generate(request);
+    }
+}
+```
+
+### Output: Bulkhead Protected Service
+
+```java
+@Service
+public class ReportService {
+    @Bulkhead(name = "reportService", type = Bulkhead.Type.SEMAPHORE)
+    public Report generateReport(ReportRequest request) {
+        return reportGenerator.generate(request);
+    }
+}
+```
 
 - [Complete property reference and configuration patterns](references/configuration-reference.md)
 - [Unit and integration testing strategies](references/testing-patterns.md)

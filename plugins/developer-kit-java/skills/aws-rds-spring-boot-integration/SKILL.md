@@ -4,12 +4,14 @@ description: Provides patterns to configure AWS RDS (Aurora, MySQL, PostgreSQL) 
 category: aws
 tags: [aws, rds, aurora, spring-boot, spring-data-jpa, datasource, configuration, hikari, mysql, postgresql]
 version: 1.1.0
-allowed-tools: Read, Write, Bash, Glob
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
 # AWS RDS Spring Boot Integration
 
-Configure AWS RDS databases (Aurora, MySQL, PostgreSQL) with Spring Boot applications for production-ready connectivity.
+## Overview
+
+Configure AWS RDS databases (Aurora, MySQL, PostgreSQL) with Spring Boot applications for production-ready connectivity. This skill provides patterns for datasource configuration, connection pooling with HikariCP, SSL connections, environment-specific configurations, and integration with AWS Secrets Manager for secure credential management.
 
 ## When to Use This Skill
 
@@ -34,6 +36,18 @@ Before starting AWS RDS Spring Boot integration:
 4. Security group configured for database access
 5. Database endpoint information available
 6. Database credentials secured (environment variables or Secrets Manager)
+
+## Instructions
+
+Follow these steps to configure AWS RDS with Spring Boot:
+
+1. **Add Dependencies** - Include Spring Data JPA, database driver (MySQL/PostgreSQL), and Flyway for migrations
+2. **Configure Datasource** - Set up connection properties in application.properties or application.yml
+3. **Configure Connection Pool** - Optimize HikariCP settings for your workload
+4. **Set Up SSL** - Enable encrypted connections to RDS
+5. **Configure Profiles** - Set up environment-specific configurations (dev/prod)
+6. **Add Migrations** - Create Flyway migration scripts for schema management
+7. **Test Connectivity** - Verify database connection and health check endpoint
 
 ## Quick Start
 
@@ -317,6 +331,73 @@ For advanced configuration, see the reference documents:
 
 - [Multi-datasource, SSL, Secrets Manager integration](references/advanced-configuration.md)
 - [Common issues and solutions](references/troubleshooting.md)
+
+## Examples
+
+### Example 1: Basic Aurora MySQL Configuration
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:mysql://myapp-aurora-cluster.cluster-abc123xyz.us-east-1.rds.amazonaws.com:3306/devops
+    username: admin
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 20000
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+```
+
+### Example 2: Aurora PostgreSQL with SSL
+
+```properties
+spring.datasource.url=jdbc:postgresql://myapp-aurora-pg-cluster.cluster-abc123xyz.us-east-1.rds.amazonaws.com:5432/devops?ssl=true&sslmode=require
+spring.datasource.username=${DB_USERNAME}
+spring.datasource.password=${DB_PASSWORD}
+spring.datasource.hikari.maximum-pool-size=30
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+```
+
+### Example 3: Read/Write Split Configuration
+
+```java
+@Configuration
+public class DataSourceConfiguration {
+
+    @Bean
+    @Primary
+    public DataSource dataSource(
+            @Qualifier("writerDataSource") DataSource writerDataSource,
+            @Qualifier("readerDataSource") DataSource readerDataSource) {
+        Map<Object, Object> targetDataSources = new HashMap<>();
+        targetDataSources.put("writer", writerDataSource);
+        targetDataSources.put("reader", readerDataSource);
+
+        RoutingDataSource routingDataSource = new RoutingDataSource();
+        routingDataSource.setTargetDataSources(targetDataSources);
+        routingDataSource.setDefaultTargetDataSource(writerDataSource);
+
+        return routingDataSource;
+    }
+}
+```
+
+## Constraints and Warnings
+
+- **Connection Limits**: RDS instances have maximum connection limits; configure pool size accordingly
+- **Connection Timeout**: Set appropriate timeout values to prevent hanging connections
+- **SSL Certificates**: Aurora SSL certificates rotate automatically; ensure your JDBC driver handles this
+- **Failover Handling**: Aurora failover may cause brief connection interruptions; implement retry logic
+- **Cost Monitoring**: Aurora costs scale with instance size and storage; monitor usage regularly
+- **Security Groups**: Ensure security groups allow traffic from your application's IP range
+- **Credential Rotation**: Use AWS Secrets Manager for automated credential rotation
+- **Multi-AZ Costs**: Enabling Multi-AZ increases costs approximately double
+- **Storage Autoscaling**: Enable storage autoscaling to prevent running out of storage space
 
 ## Best Practices
 

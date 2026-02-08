@@ -4,13 +4,16 @@ description: Provides patterns for testing Spring application events (Applicatio
 category: testing
 tags: [junit-5, application-events, event-driven, listeners, publishers]
 version: 1.0.1
+allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
 # Unit Testing Application Events
 
-Test Spring ApplicationEvent publishers and event listeners using JUnit 5. Verify event publishing, listener execution, and event propagation without full context startup.
+## Overview
 
-## When to Use This Skill
+This skill provides comprehensive patterns for testing Spring ApplicationEvent publishers and event listeners using JUnit 5. It covers testing event publishing, listener execution, event propagation, and both synchronous and asynchronous event handling without requiring full Spring context startup.
+
+## When to Use
 
 Use this skill when:
 - Testing ApplicationEventPublisher event publishing
@@ -20,7 +23,17 @@ Use this skill when:
 - Want fast event-driven architecture tests
 - Testing both synchronous and asynchronous event handling
 
-## Setup: Event Testing
+## Instructions
+
+1. **Add required dependencies**: Include spring-boot-starter, JUnit 5, Mockito, and AssertJ in your project
+2. **Mock the ApplicationEventPublisher**: In service tests, use `@Mock` to mock the event publisher
+3. **Use ArgumentCaptor**: Capture published events to verify their content using `ArgumentCaptor.forClass(EventType.class)`
+4. **Test listener side effects**: Invoke listener methods directly and verify their effects on mocked dependencies
+5. **Test event data integrity**: Always verify that the captured event contains the correct data
+6. **Handle async events**: For @Async listeners, use Thread.sleep() or Awaitility to wait for completion
+7. **Test error scenarios**: Verify exception handling in both publishers and listeners
+
+## Examples
 
 ### Maven
 ```xml
@@ -321,7 +334,16 @@ class AsyncEventListenerTest {
 - Testing listener registration instead of logic
 - Not handling listener exceptions
 
-## Troubleshooting
+## Constraints and Warnings
+
+- **Do not test Spring framework behavior**: Focus on your event logic, not Spring's event publishing mechanism
+- **Avoid Thread.sleep() in production code**: Use it only in test scenarios for async event verification
+- **Event listeners should be idempotent**: Design listeners to handle duplicate events gracefully
+- **Beware of event ordering**: Spring does not guarantee listener execution order without @Order annotation
+- **Test event serialization**: If events are sent across JVM boundaries, test serialization/deserialization
+- **Memory considerations**: Be cautious with event-driven architecture in long-running processes; events can accumulate
+
+## Best Practices
 
 **Event not being captured**: Verify ArgumentCaptor type matches event class.
 

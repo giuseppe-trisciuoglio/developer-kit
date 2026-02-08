@@ -27,6 +27,86 @@ Use this skill when:
 - Implementing cross-stack references with export/import
 - Using Transform for macros and reuse
 
+## Instructions
+
+Follow these steps to create CloudWatch monitoring infrastructure with CloudFormation:
+
+1. **Define Alarm Parameters**: Specify metric namespaces, dimensions, and threshold values
+2. **Create CloudWatch Alarms**: Set up alarms for CPU, memory, disk, and custom metrics
+3. **Configure Alarm Actions**: Define SNS topics for notification delivery
+4. **Create Dashboards**: Build visualization widgets for metrics across resources
+5. **Set Up Log Groups**: Configure retention policies and encryption settings
+6. **Implement Anomaly Detection**: Enable ML-based detection for unusual patterns
+7. **Add Synthesized Canaries**: Create CI/CD checks for critical endpoints
+8. **Configure Composite Alarms**: Build multi-condition alarm logic
+
+For complete examples, see the [EXAMPLES.md](references/examples.md) file.
+
+## Examples
+
+The following examples demonstrate common CloudWatch patterns:
+
+### Example 1: CPU Utilization Alarm
+
+```yaml
+HighCpuAlarm:
+  Type: AWS::CloudWatch::Alarm
+  Properties:
+    AlarmName: !Sub "${AWS::StackName}-high-cpu"
+    AlarmDescription: Trigger when CPU utilization exceeds threshold
+    MetricName: CPUUtilization
+    Namespace: AWS/EC2
+    Dimensions:
+      - Name: InstanceId
+        Value: !Ref InstanceId
+    Statistic: Average
+    Period: 60
+    EvaluationPeriods: 3
+    Threshold: 80
+    ComparisonOperator: GreaterThanThreshold
+    AlarmActions:
+      - !Ref SnsTopicArn
+```
+
+### Example 2: Dashboard with Multiple Widgets
+
+```yaml
+Dashboard:
+  Type: AWS::CloudWatch::Dashboard
+  Properties:
+    DashboardName: !Sub "${AWS::StackName}-dashboard"
+    DashboardBody: !Sub |
+      {
+        "widgets": [
+          {
+            "type": "metric",
+            "x": 0, "y": 0,
+            "width": 12, "height": 6,
+            "properties": {
+              "title": "CPU Utilization",
+              "metrics": [["AWS/EC2", "CPUUtilization", "InstanceId", "!Ref InstanceId"]],
+              "period": 300,
+              "stat": "Average",
+              "region": "!Ref AWS::Region"
+            }
+          }
+        ]
+      }
+```
+
+### Example 3: Log Group with Retention
+
+```yaml
+ApplicationLogGroup:
+  Type: AWS::Logs::LogGroup
+  Properties:
+    LogGroupName: !Sub "/ecs/${AWS::StackName}"
+    RetentionInDays: 30
+    KmsKeyId: !Ref KmsKeyArn
+```
+
+For complete production-ready examples, see [EXAMPLES.md](references/examples.md).
+
 ## CloudFormation Template Structure
 
 ### Base Template with Standard Format
@@ -1629,8 +1709,44 @@ Resources:
 - [CloudFormation Drift Detection](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-stack-drift.html)
 - [CloudFormation Change Sets](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-changesets.html)
 
+## Constraints and Warnings
+
+### Resource Limits
+
+- **Alarms Limits**: Maximum 5000 CloudWatch alarms per AWS account per region
+- **Dashboards Limits**: Maximum 500 dashboards per account per region
+- **Metrics Limits**: Each dashboard can contain up to 100 metrics
+- **Log Groups Limits**: Maximum number of log groups per account is virtually unlimited but retention has cost implications
+
+### Operational Constraints
+
+- **Metric Resolution**: Some metrics have 1-minute minimum resolution; higher resolution costs more
+- **Alarm Evaluation Periods**: Alarms with too few evaluation periods may trigger false positives
+- **Dashboard Widgets**: Each dashboard is limited to 500 widgets
+- **Cross-Account Metrics**: Cross-account sharing requires explicit resource policies
+
+### Security Constraints
+
+- **Log Data Access**: CloudWatch Logs may contain sensitive information
+- **Encryption**: KMS keys required for encrypted log groups incur additional costs
+- **Metric Filters**: Metric filters count as separate billable CloudWatch Logs operations
+- **Alarm Actions**: SNS topics used for alarm actions must have appropriate permissions
+
+### Cost Considerations
+
+- **Detailed Monitoring**: Enabling detailed monitoring doubles the number of metrics for EC2
+- **Metric Storage**: Custom metrics stored in CloudWatch incur costs based on resolution and retention
+- **Log Retention**: Longer retention periods significantly increase storage costs
+- **Dashboards**: Dashboard widgets don't directly cost but each metric queried does
+
+### Data Constraints
+
+- **Metric Age**: Metrics are retained for 15 months by default; high-resolution metrics have shorter retention
+- **Log Ingestion**: Large log volumes can impact ingestion latency and query performance
+- **Metric Filters**: Metric filters have limits on number of filters and matching patterns
+
 ## Additional Files
 
 For complete details on resources and their properties, consult:
-- [REFERENCE.md](reference.md) - Detailed reference guide for all CloudFormation resources
-- [EXAMPLES.md](examples.md) - Complete production-ready examples
+- [REFERENCE.md](references/reference.md) - Detailed reference guide for all CloudFormation resources
+- [EXAMPLES.md](references/examples.md) - Complete production-ready examples

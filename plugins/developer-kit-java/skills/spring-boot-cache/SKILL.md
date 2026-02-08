@@ -28,6 +28,38 @@ Use trigger phrases such as **"implement service caching"**, **"configure
 CaffeineCacheManager"**, **"evict caches on update"**, or **"test Spring cache
 behavior"** to load this skill.
 
+## Instructions
+
+Follow these steps to implement caching in Spring Boot applications:
+
+### 1. Add Cache Dependencies
+
+Include spring-boot-starter-cache and your preferred cache provider (Caffeine, Redis, Ehcache) in the project dependencies.
+
+### 2. Enable Caching
+
+Add @EnableCaching to a @Configuration class and declare CacheManager bean(s) for your cache providers.
+
+### 3. Define Cache Configuration
+
+Configure cache names, TTL settings, and capacity limits in application.yml or via CacheManager customizer beans.
+
+### 4. Anotate Service Methods
+
+Apply @Cacheable for read operations, @CachePut for updates, and @CacheEvict for invalidation. Use @CacheConfig to define default cache names at class level.
+
+### 5. Configure Cache Keys and Conditions
+
+Use SpEL expressions to define cache keys (key = "#user.id"), conditions (condition = "#price > 0"), and unless clauses (unless = "#result == null").
+
+### 6. Implement Cache Eviction Strategy
+
+Create scheduled jobs or use @CacheEvict with allEntries=true to periodically clear time-sensitive caches.
+
+### 7. Monitor Cache Performance
+
+Enable Actuator cache endpoint to observe hit/miss ratios. Consider Micrometer metrics for production observability.
+
 ## Prerequisites
 
 - Java 17+ project based on Spring Boot 3.5.x (records encouraged for DTOs).
@@ -147,6 +179,64 @@ behavior"** to load this skill.
   via REST.
 
 ## Examples
+
+### Example 1: Basic @Cacheable Usage
+
+**Input:**
+```java
+// First call - cache miss, method executes
+User user1 = userService.findUser(1L);
+
+// Second call - cache hit, method skipped
+User user2 = userService.findUser(1L);
+```
+
+**Output:**
+```
+// First call logs:
+Hibernate: select u1_0.id,u1_0.name from users u1_0 where u1_0.id=?
+
+// Second call: No SQL executed (served from cache)
+```
+
+### Example 2: Conditional Caching with SpEL
+
+**Input:**
+```java
+@Cacheable(value = "products", key = "#id", condition = "#price > 100")
+public Product getProduct(Long id, BigDecimal price) {
+    return productRepository.findById(id);
+}
+
+// Only expensive products are cached
+getProduct(1L, new BigDecimal("50.00"));   // Not cached
+getProduct(2L, new BigDecimal("150.00"));  // Cached
+```
+
+**Output:**
+```
+Cache 'products' contents after operations:
+{2=Product(id=2, price=150.00)}
+```
+
+### Example 3: Cache Eviction
+
+**Input:**
+```java
+@CacheEvict(value = "users", key = "#id")
+public void deleteUser(Long id) {
+    userRepository.deleteById(id);
+}
+
+deleteUser(1L);
+```
+
+**Output:**
+```
+Cache 'users' entry for key '1' removed
+```
+
+---
 
 - Load [`references/cache-examples.md`](references/cache-examples.md) for
   progressive scenarios (basic product cache, conditional caching, multilevel

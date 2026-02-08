@@ -862,7 +862,7 @@ docs/
 └── README.md                 # Project README
 ```
 
-## Usage Examples
+## Examples
 
 ```bash
 # Generate all documentation for current project
@@ -885,3 +885,20 @@ This command provides comprehensive Java project documentation that follows indu
 **Agent Selection**: To execute this task, use the following agent with fallback:
 - Primary: `java-documentation-specialist`
 - If not available: Use `developer-kit:java-documentation-specialist` or fallback to `general-purpose` agent
+
+## Overview
+
+Generates comprehensive Java project documentation including API docs, architecture diagrams, and Javadoc. Use when creating or updating project documentation.
+
+
+## Usage
+
+```
+/devkit.java.generate-docs $ARGUMENTS
+```
+
+## Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |

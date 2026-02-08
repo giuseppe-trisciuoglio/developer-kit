@@ -1,7 +1,7 @@
 ---
 name: langchain4j-vector-stores-configuration
 description: Provides configuration patterns for LangChain4J vector stores in RAG applications. Use when building semantic search, integrating vector databases (PostgreSQL/pgvector, Pinecone, MongoDB, Milvus, Neo4j), implementing embedding storage/retrieval, setting up hybrid search, or optimizing vector database performance for production AI applications.
-allowed-tools: Read, Write, Bash, Edit
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 category: backend
 tags: [langchain4j, vector-stores, embeddings, rag, semantic-search, ai, llm, java, databases]
 version: 1.1.0
@@ -10,6 +10,10 @@ version: 1.1.0
 # LangChain4J Vector Stores Configuration
 
 Configure vector stores for Retrieval-Augmented Generation applications with LangChain4J.
+
+## Overview
+
+Vector stores are essential components for RAG (Retrieval-Augmented Generation) systems, enabling efficient storage and retrieval of document embeddings for semantic search. LangChain4J provides a unified abstraction over multiple vector database backends including PostgreSQL/pgvector, Pinecone, MongoDB Atlas, Milvus, Neo4j, and in-memory stores for development.
 
 ## When to Use
 
@@ -344,3 +348,16 @@ For comprehensive documentation and advanced configurations, see:
 
 - [API Reference](references/api-reference.md) - Complete API documentation
 - [Examples](references/examples.md) - Production-ready examples
+
+## Constraints and Warnings
+
+- Vector dimensions must match the embedding model; mismatched dimensions will cause errors.
+- Large vector collections require proper indexing configuration for acceptable search performance.
+- Embedding generation can be expensive; implement batching and caching strategies.
+- Different vector stores have different distance metric support; verify compatibility.
+- Connection pooling is critical for production deployments to prevent connection exhaustion.
+- Metadata filtering capabilities vary between vector store implementations.
+- Vector stores consume significant memory; monitor resource usage in production.
+- Migration between vector store providers may require re-embedding all documents.
+- Batch operations are more efficient than single-document operations.
+- Always validate configuration during application startup to fail fast.

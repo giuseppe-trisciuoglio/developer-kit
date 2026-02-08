@@ -1,7 +1,7 @@
 ---
 name: spring-boot-event-driven-patterns
 description: Provides Event-Driven Architecture (EDA) patterns in Spring Boot using ApplicationEvent, @EventListener, and Kafka. Use when building loosely-coupled microservices with domain events, transactional event listeners, and distributed messaging patterns.
-allowed-tools: Read, Write, Bash
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 category: backend
 tags: [spring-boot, java, event-driven, eda, kafka, messaging, domain-events, microservices, spring-cloud-stream]
 version: 1.1.0
@@ -24,6 +24,42 @@ Use this skill when building applications that require:
 - Reliability using the transactional outbox pattern
 - Asynchronous communication between bounded contexts
 - Event sourcing foundations with proper event sourcing patterns
+
+## Instructions
+
+Follow these steps to implement event-driven architecture patterns in Spring Boot:
+
+### 1. Design Domain Events
+
+Create immutable event classes extending a base DomainEvent class. Include eventId, occurredAt, and correlationId fields for traceability.
+
+### 2. Define Event Publishing
+
+Add ApplicationEventPublisher to services that need to publish events. Publish events after domain state changes complete.
+
+### 3. Configure Transactional Listeners
+
+Use @TransactionalEventListener with phase = AFTER_COMMIT to ensure events are only processed after successful database transaction.
+
+### 4. Set Up Kafka Infrastructure
+
+Configure KafkaTemplate for publishing events to topics. Create @KafkaListener beans to consume events from other services.
+
+### 5. Implement Spring Cloud Stream
+
+Use functional programming model with Consumer bean definitions for reactive event consumption. Configure bindings in application.yml.
+
+### 6. Handle Failure Scenarios
+
+Implement retry logic with exponential backoff. Configure dead-letter queues for failed messages. Make event handlers idempotent.
+
+### 7. Implement Outbox Pattern
+
+Create OutboxEvent entity to store events atomically with business data. Use scheduled job to publish outbox events to message broker.
+
+### 8. Add Observability
+
+Enable Spring Cloud Sleuth for distributed tracing. Monitor event processing metrics through Actuator endpoints.
 
 ## Setup and Configuration
 
@@ -515,6 +551,125 @@ See the following resources for comprehensive examples:
 - Use correlation IDs to trace events across services
 - Monitor event processing metrics in Actuator endpoints
 
----
+## Constraints and Warnings
 
-This skill provides the essential patterns and best practices for implementing event-driven architectures in Spring Boot applications.
+- Events published with `@TransactionalEventListener` only fire after transaction commit; ensure this matches your consistency requirements.
+- Avoid publishing large objects in events as this can cause memory pressure and serialization issues.
+- Be cautious with async event handlers as they execute in separate threads and may cause concurrency issues.
+- Kafka consumers must handle duplicate messages by implementing idempotent processing.
+- Event ordering is not guaranteed in distributed systems; design handlers to be order-independent.
+- Never perform blocking operations in event listeners that run on the main transaction thread.
+- Monitor for event processing backlogs as they can indicate system capacity issues.
+
+## Examples
+
+### Input: Monolithic Order Processing (Anti-Pattern)
+
+```java
+@Service
+public class OrderService {
+    @Transactional
+    public Order processOrder(OrderRequest request) {
+        Order order = orderRepository.save(request);
+        inventoryService.reserve(order.getItems());
+        paymentService.charge(order.getPayment());
+        shippingService.schedule(order);
+        emailService.sendConfirmation(order);
+        return order;
+    }
+}
+```
+
+### Output: Event-Driven Order Processing
+
+```java
+@Service
+public class OrderService {
+    private final OrderRepository orderRepository;
+    private final ApplicationEventPublisher eventPublisher;
+
+    @Transactional
+    public Order processOrder(OrderRequest request) {
+        Order order = Order.create(request);
+        orderRepository.save(order);
+
+        // Publish event after transaction commits
+        eventPublisher.publishEvent(new OrderCreatedEvent(
+            order.getId(),
+            order.getItems(),
+            order.getPayment()
+        ));
+
+        return order;
+    }
+}
+
+@Component
+public class OrderEventHandler {
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void handleOrderCreated(OrderCreatedEvent event) {
+        // These execute asynchronously after the order is saved
+        inventoryService.reserve(event.getItems());
+        paymentService.charge(event.getPayment());
+    }
+}
+```
+
+### Input: Synchronous External Service Call
+
+```java
+@Service
+public class NotificationService {
+    public void sendOrderNotification(Order order) {
+        emailClient.send(order); // Blocking call
+    }
+}
+```
+
+### Output: Asynchronous Event-Driven Notification
+
+```java
+public class OrderCreatedEvent extends DomainEvent {
+    private final OrderId orderId;
+    private final String customerEmail;
+    private final BigDecimal total;
+
+    // Constructor and getters
+}
+
+@Component
+public class NotificationEventHandler {
+    @KafkaListener(topics = "order-events")
+    public void handleOrderEvent(OrderCreatedEventDto event) {
+        // Process asynchronously without blocking the order flow
+        emailService.sendOrderConfirmation(event);
+    }
+}
+```
+
+### Input: Event without Traceability
+
+```java
+eventPublisher.publishEvent(new ProductCreatedEvent(productId, name));
+```
+
+### Output: Event with Full Traceability
+
+```java
+public class ProductCreatedEvent extends DomainEvent {
+    private final EventId eventId = EventId.generate();
+    private final ProductId productId;
+    private final String name;
+    private final Instant occurredAt = Instant.now();
+    private final CorrelationId correlationId = CorrelationId.generate();
+
+    // Includes metadata for distributed tracing
+    public Map<String, String> getMetadata() {
+        return Map.of(
+            "eventId", eventId.toString(),
+            "correlationId", correlationId.toString(),
+            "timestamp", occurredAt.toString()
+        );
+    }
+}
+```

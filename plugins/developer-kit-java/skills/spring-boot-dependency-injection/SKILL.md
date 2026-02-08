@@ -1,7 +1,7 @@
 ---
 name: spring-boot-dependency-injection
 description: Provides dependency injection patterns for Spring Boot projects covering constructor-first patterns, optional collaborator handling, bean selection, and validation practices. Use when configuring beans, wiring dependencies, or troubleshooting injection issues.
-allowed-tools: Read, Write, Bash
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 category: backend
 tags: [spring-boot, dependency-injection, constructor-injection, bean-configuration, autowiring, testing, java]
 version: 1.1.0
@@ -26,6 +26,38 @@ This skill captures the dependency injection approach promoted in this repositor
 - Replace legacy field injection while modernizing Spring modules.
 - Configure optional or pluggable collaborators (feature flags, multi-tenant adapters).
 - Audit bean definitions before adding integration tests or migrating Spring Boot versions.
+
+## Instructions
+
+Follow these steps to implement proper dependency injection in Spring Boot:
+
+### 1. Identify Dependencies
+
+List all collaborators required by each class. Distinguish between mandatory dependencies (required for operation) and optional dependencies (feature-specific).
+
+### 2. Apply Constructor Injection
+
+Create constructors that accept all mandatory dependencies. Mark fields as final. Use Lombok @RequiredArgsConstructor to reduce boilerplate.
+
+### 3. Handle Optional Collaborators
+
+For optional dependencies, provide setter methods with @Autowired(required = false) or use ObjectProvider<T> for lazy resolution. Include default no-op implementations.
+
+### 4. Configure Beans
+
+Declare @Bean methods in @Configuration classes. Use conditional annotations (@ConditionalOnProperty, @ConditionalOnMissingBean) for environment-specific beans.
+
+### 5. Resolve Ambiguity
+
+Apply @Primary to default implementations. Use @Qualifier with specific names when multiple beans of the same type exist.
+
+### 6. Validate Wiring
+
+Write unit tests that instantiate classes directly with mock dependencies. Add slice tests (@WebMvcTest, @DataJpaTest) to verify Spring context loads without errors.
+
+### 7. Review Configuration
+
+Ensure no field injection (@Autowired on fields) remains. Verify circular dependencies are resolved through domain events or extracted services.
 
 ## Prerequisites
 
@@ -129,13 +161,16 @@ Additional worked examples (including tests and configuration wiring) are availa
 - Favor domain interfaces in the domain layer and defer framework imports to infrastructure adapters.
 - Document bean names and qualifiers in shared constants to avoid typo-driven mismatches.
 
-## Constraints
- 
+## Constraints and Warnings
+
 - Avoid field injection and service locator patterns because they obscure dependencies and impede unit testing.
 - Prevent circular dependencies by publishing domain events or extracting shared abstractions.
 - Limit `@Lazy` usage to performance-sensitive paths and record the deferred initialization risk.
 - Do not add profile-specific beans without matching integration tests that activate the profile.
 - Ensure each optional collaborator has a deterministic default or feature-flag handling path.
+- Never use `@Autowired` on fields when constructor injection is possible.
+- Be aware that optional dependencies can lead to `NullPointerException` if not properly handled.
+- Profile-specific beans can cause runtime errors if profiles are not correctly activated.
 
 ## Reference Materials
 

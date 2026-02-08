@@ -250,7 +250,7 @@ Task(
 
 ---
 
-## Usage Examples
+## Examples
 
 ```bash
 # With error message (general agents)
@@ -479,3 +479,13 @@ Tell the user: "This appears to be a straightforward issue. Would you like to pr
 
 **Note**: This command follows a systematic debugging approach to ensure bugs are fixed correctly the first time, with
 minimal risk of regression.
+
+## Overview
+
+Provides guided bug fixing and debugging capability with systematic root cause analysis. Use when encountering bugs, errors, or unexpected behavior.
+
+## Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |

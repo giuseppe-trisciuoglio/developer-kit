@@ -4,11 +4,14 @@ category: backend
 tags: [prompt-engineering, few-shot-learning, chain-of-thought, optimization, templates, system-prompts, llm-performance, ai-patterns]
 version: 1.0.0
 description: This skill should be used when creating, optimizing, or implementing advanced prompt patterns including few-shot learning, chain-of-thought reasoning, prompt optimization workflows, template systems, and system prompt design. It provides comprehensive frameworks for building production-ready prompts with measurable performance improvements.
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
 # Prompt Engineering
 
-This skill provides comprehensive frameworks for creating, optimizing, and implementing advanced prompt patterns that significantly improve LLM performance across various tasks and models.
+## Overview
+
+This skill provides comprehensive frameworks for creating, optimizing, and implementing advanced prompt patterns that significantly improve LLM performance across various tasks and models. It covers few-shot learning, chain-of-thought reasoning, prompt optimization workflows, template systems, and system prompt design for production-ready AI applications.
 
 ## When to Use This Skill
 
@@ -298,5 +301,48 @@ Design comprehensive system prompt with behavioral guidelines, output requiremen
 - Optimize example selection for maximum learning efficiency
 - Implement progressive disclosure for complex prompt systems
 - Balance prompt complexity with response quality requirements
+
+## Best Practices
+
+### Design Principles
+- Write clear, specific instructions that leave no ambiguity
+- Structure prompts with logical sections and consistent formatting
+- Use role-based prompts for consistent behavioral patterns
+- Include concrete examples to demonstrate expected outputs
+- Define output format requirements explicitly
+
+### Implementation Guidelines
+- Start with simple prompts and iterate based on testing
+- Test with diverse input scenarios including edge cases
+- Document prompt versions and their performance metrics
+- Implement error handling for unexpected inputs
+- Monitor performance in production environments
+
+### Common Pitfalls to Avoid
+- Overfitting examples to specific patterns
+- Ignoring context window limitations and token budgeting
+- Neglecting output format specifications
+- Failing to handle edge cases and error scenarios
+- Not measuring and tracking prompt performance over time
+
+## Constraints and Warnings
+
+### Model Limitations
+- Different models have varying capabilities and token limits
+- Complex prompts may exceed context windows unexpectedly
+- Model behavior can vary across different versions
+- Some reasoning tasks require specific prompting techniques
+
+### Resource Considerations
+- Longer prompts consume more tokens and increase costs
+- Complex few-shot examples impact context usage
+- Multiple model calls for optimization increase expenses
+- Testing requires sufficient sample sizes for statistical significance
+
+### Quality Requirements
+- Validate prompts with domain-specific test cases
+- Ensure prompts generalize beyond training examples
+- Implement monitoring for prompt performance drift
+- Regularly review and update prompts as requirements evolve
 
 This skill provides the foundational patterns and methodologies for building production-ready prompt systems that consistently deliver high performance across diverse use cases and model types.

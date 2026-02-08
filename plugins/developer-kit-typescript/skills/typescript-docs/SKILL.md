@@ -20,6 +20,64 @@ Deliver production-ready TypeScript documentation that serves multiple audiences
 - "document React component" - Create component documentation with examples
 - "create API reference" - Generate comprehensive API documentation
 
+## Instructions
+
+1. **Configure TypeDoc**: Set up typedoc.json with entry points and output settings
+2. **Add JSDoc Comments**: Document all public APIs with @param, @returns, @example
+3. **Create ADRs**: Document architectural decisions with context and consequences
+4. **Set Up Pipeline**: Configure CI/CD for automated documentation generation
+5. **Write Examples**: Include runnable code examples for complex functions
+6. **Cross-Reference**: Use @see and @link to connect related documentation
+7. **Validate Docs**: Run ESLint with JSDoc rules to ensure completeness
+
+## Examples
+
+### Documenting a Service Class
+
+```typescript
+/**
+ * Service for managing user authentication and authorization
+ *
+ * @remarks
+ * This service handles JWT-based authentication, password hashing,
+ * and role-based access control.
+ *
+ * @example
+ * ```typescript
+ * const authService = new AuthService(config);
+ * const token = await authService.login(email, password);
+ * const user = await authService.verifyToken(token);
+ * ```
+ *
+ * @security
+ * - All passwords hashed with bcrypt (cost factor 12)
+ * - JWT tokens signed with RS256
+ * - Rate limiting on authentication endpoints
+ */
+@Injectable()
+export class AuthService {
+  /**
+   * Authenticates a user and returns access tokens
+   * @param credentials - User login credentials
+   * @returns Authentication result with access and refresh tokens
+   * @throws {InvalidCredentialsError} If credentials are invalid
+   */
+  async login(credentials: LoginCredentials): Promise<AuthResult> {
+    // Implementation
+  }
+}
+```
+
+## Constraints and Warnings
+
+- **Private Members**: Use @private or exclude from TypeDoc output
+- **Complex Types**: Document generic constraints and type parameters
+- **Breaking Changes**: Use @deprecated with migration guidance
+- **Security Info**: Never include secrets or credentials in documentation
+- **Link Validity**: Ensure @see references point to valid locations
+- **Example Code**: All examples should be runnable and tested
+- **Versioning**: Keep documentation in sync with code versions
+
 ## Quick Start
 
 1. Install TypeDoc and related tools:

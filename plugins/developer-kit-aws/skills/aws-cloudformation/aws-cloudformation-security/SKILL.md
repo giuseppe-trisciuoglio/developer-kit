@@ -26,6 +26,85 @@ Use this skill when:
 - Configuring TLS/SSL for AWS services
 - Applying defense-in-depth for infrastructure
 
+## Instructions
+
+Follow these steps to create secure CloudFormation infrastructure:
+
+1. **Define Encryption Keys**: Create KMS keys for data encryption
+2. **Set Up Secrets**: Use Secrets Manager for credentials and API keys
+3. **Configure Secure Parameters**: Use SSM Parameter Store with encryption
+4. **Implement IAM Policies**: Apply least privilege principles
+5. **Create Security Groups**: Configure network access controls
+6. **Set Up TLS Certificates**: Use ACM for SSL/TLS certificates
+7. **Enable Encryption**: Configure encryption for storage and transit
+8. **Implement Monitoring**: Enable CloudTrail and security logging
+
+For complete examples, see the [EXAMPLES.md](references/examples.md) file.
+
+## Examples
+
+The following examples demonstrate common security patterns:
+
+### Example 1: KMS Key for Encryption
+
+```yaml
+KmsKey:
+  Type: AWS::KMS::Key
+  Properties:
+    KeyPolicy:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: Allow
+          Principal:
+            AWS: !Sub "arn:aws:iam::${AWS::AccountId}:root"
+          Action: kms:*
+          Resource: "*"
+        - Effect: Allow
+          Principal:
+            Service: s3.amazonaws.com
+          Action:
+            - kms:Encrypt
+            - kms:Decrypt
+          Resource: "*"
+
+KmsAlias:
+  Type: AWS::KMS::Alias
+  Properties:
+    AliasName: !Sub "alias/${AWS::StackName}-key"
+    TargetKeyId: !Ref KmsKey
+```
+
+### Example 2: Secrets Manager Secret
+
+```yaml
+DatabaseSecret:
+  Type: AWS::SecretsManager::Secret
+  Properties:
+    Name: !Sub "${AWS::StackName}/database-credentials"
+    Description: Database credentials for application
+    SecretString: !Sub |
+      {
+        "username": "${DBUsername}",
+        "password": "${DBPassword}",
+        "host": "${DBInstance.Endpoint.Address}",
+        "port": "${DBInstance.Endpoint.Port}"
+      }
+```
+
+### Example 3: Secure Parameter
+
+```yaml
+SecureParameter:
+  Type: AWS::SSM::Parameter
+  Properties:
+    Name: !Sub "/${AWS::StackName}/api-key"
+    Type: SecureString
+    Value: !Ref ApiKeyValue
+    Description: Secure API key for external service
+```
+
+For complete production-ready examples, see [EXAMPLES.md](references/examples.md).
+
 ## CloudFormation Template Structure
 
 ### Base Template with Security Section
@@ -1218,8 +1297,8 @@ Resources:
 ## Additional Files
 
 For complete details on resources and their properties, see:
-- [REFERENCE.md](reference.md) - Detailed reference guide for all CloudFormation security resources
-- [EXAMPLES.md](examples.md) - Complete production-ready examples for security scenarios
+- [REFERENCE.md](references/reference.md) - Detailed reference guide for all CloudFormation security resources
+- [EXAMPLES.md](references/examples.md) - Complete production-ready examples for security scenarios
 
 ## CloudFormation Stack Management Best Practices
 
@@ -1555,3 +1634,49 @@ Resources:
    - Deploy infrastructure consistently across accounts
    - Use StackSets for organization-wide policies
    - Implement drift detection at organization level
+
+## Constraints and Warnings
+
+### Resource Limits
+
+- **Security Group Rules**: Maximum 60 inbound and 60 outbound rules per security group
+- **Security Groups**: Maximum 500 security groups per VPC
+- **NACL Rules**: Maximum 20 inbound and 20 outbound rules per NACL per subnet
+- **VPC Limits**: Maximum 5 VPCs per region (soft limit, can be increased)
+
+### Security Constraints
+
+- **Default Security Groups**: Default security groups cannot be deleted
+- **Security Group References**: Security group references cannot span VPC peering in some cases
+- **NACL Stateless**: NACLs are stateless; return traffic must be explicitly allowed
+- **Flow Logs**: VPC Flow Logs generate significant CloudWatch Logs costs
+
+### Operational Constraints
+
+- **CIDR Overlap**: VPC CIDR blocks cannot overlap with peered VPCs or on-prem networks
+- **ENI Limits**: Each instance type has maximum ENI limits; affects scaling
+- **Elastic IP Limits**: Each account has limited number of Elastic IPs
+- **NAT Gateway Limits**: Each AZ can have only one NAT gateway per subnet
+
+### Network Constraints
+
+- **Transit Gateway**: Transit Gateway attachments have per-AZ and per-account limits
+- **VPN Connections**: VPN connections have bandwidth limitations
+- **Direct Connect**: Direct Connect requires physical infrastructure and lead time
+- **PrivateLink**: VPC Endpoint services have availability constraints
+
+### Cost Considerations
+
+- **NAT Gateway**: NAT gateways incur hourly costs plus data processing costs
+- **Traffic Mirroring**: Traffic mirroring doubles data transfer costs
+- **Flow Logs**: Flow logs storage and analysis add significant costs
+- **PrivateLink**: Interface VPC endpoints incur hourly and data processing costs
+
+### Access Control Constraints
+
+- **IAM vs Resource Policies**: Some services require both IAM and resource-based policies
+- **SCP Limits**: Service Control Policies have character limits and complexity constraints
+- **Permission Boundaries**: Permission boundaries do not limit service actions
+- **Session Policies**: Session policies cannot grant more permissions than IAM policies
+
+## Additional Files

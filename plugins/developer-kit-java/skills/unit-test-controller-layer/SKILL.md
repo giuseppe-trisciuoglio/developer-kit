@@ -4,13 +4,16 @@ description: Provides patterns for unit testing REST controllers using MockMvc a
 category: testing
 tags: [junit-5, mockito, unit-testing, controller, rest, mockmvc]
 version: 1.0.1
+allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
 # Unit Testing REST Controllers with MockMvc
 
-Test @RestController and @Controller classes by mocking service dependencies and verifying HTTP responses, status codes, and serialization. Use MockMvc for lightweight controller testing without loading the full Spring context.
+## Overview
 
-## When to Use This Skill
+This skill provides patterns for unit testing @RestController and @Controller classes using MockMvc. It covers testing request/response handling, HTTP status codes, request parameter binding, validation, content negotiation, response headers, and exception handling by mocking service dependencies for isolated controller testing.
+
+## When to Use
 
 Use this skill when:
 - Testing REST controller request/response handling
@@ -19,6 +22,19 @@ Use this skill when:
 - Mocking service layer for isolated controller tests
 - Testing content negotiation and response headers
 - Want fast controller tests without integration test overhead
+
+## Instructions
+
+1. **Use standalone MockMvc setup**: Use `MockMvcBuilders.standaloneSetup(controller)` for isolated testing
+2. **Mock all service dependencies**: Use @Mock for all services injected into the controller
+3. **Test all HTTP methods**: Verify GET, POST, PUT, PATCH, DELETE with appropriate status codes
+4. **Verify request/response formats**: Use JsonPath assertions for JSON response validation
+5. **Test validation errors**: Send invalid requests and verify 400 status with error details
+6. **Test error scenarios**: Verify 404, 400, 401, 403, 500 status codes for appropriate conditions
+7. **Test headers**: Verify both request headers (Authorization) and response headers
+8. **Use content negotiation**: Test with different Accept and Content-Type headers
+
+## Examples
 
 ## Setup: MockMvc + Mockito
 
@@ -335,6 +351,16 @@ void shouldReturnDifferentStatusCodesForDifferentScenarios() throws Exception {
 - **Testing framework behavior**: Focus on your code, not Spring code
 - **Hardcoding URLs**: Use MockMvcRequestBuilders helpers
 - **Not verifying mock interactions**: Always verify service was called correctly
+
+## Constraints and Warnings
+
+- **Controller tests are not integration tests**: They verify HTTP handling, not full request flow
+- **MockMvc standalone setup limitations**: Some features like @Validated may not work without full context
+- **JsonPath requires proper JSON structure**: Ensure response body is valid JSON for JsonPath assertions
+- **Don't test framework behavior**: Spring's request mapping is tested by Spring; test your code only
+- **Avoid hardcoding URLs**: Extract URL paths to constants or use the controller's @RequestMapping values
+- **Security annotations**: @PreAuthorize and @Secured require additional setup; consider separate security tests
+- **File uploads**: Use MockMultipartFile for testing multipart file uploads
 
 ## Troubleshooting
 

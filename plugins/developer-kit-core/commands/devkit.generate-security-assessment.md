@@ -258,3 +258,25 @@ Format: Based on user preference (Markdown default)
 **Agent Selection**: To execute this generation task, use the following approach:
 - Primary: Use `general-purpose` agent with specialized knowledge of the task domain
 - Or use appropriate specialized agent if available for the specific generation task
+
+## Overview
+
+Generates comprehensive security assessment document after security audit completion. Use when you need to create a structured security report.
+
+## Usage
+
+```
+/devkit.generate-security-assessment $ARGUMENTS
+```
+
+## Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
+
+## Examples
+
+```bash
+/devkit.generate-security-assessment example-input
+```

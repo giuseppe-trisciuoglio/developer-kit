@@ -4,9 +4,7 @@ description: Provides comprehensive testing patterns for Spring Boot application
 category: testing
 tags: [spring-boot, java, testing, junit5, mockito, testcontainers, integration-testing, unit-testing, test-slices]
 version: 1.5.0
-language: java
-license: Complete terms in LICENSE.txt
-allowed-tools: Read, Write, Bash
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
 # Spring Boot Testing Patterns
@@ -622,5 +620,16 @@ For detailed information, refer to the following resources:
 4. Mock external dependencies, use real databases
 5. Avoid @DirtiesContext unless absolutely necessary
 6. Organize tests by layer to optimize context reuse
+
+## Constraints and Warnings
+
+- Never use `@DirtiesContext` unless absolutely necessary as it forces context rebuild.
+- Avoid mixing `@MockBean` with different configurations as it creates separate contexts.
+- Testcontainers require Docker; ensure CI/CD pipelines have Docker support.
+- Do not rely on test execution order; each test must be independent.
+- Be cautious with `@TestPropertySource` as it creates separate contexts.
+- Do not use `@SpringBootTest` for unit tests; use plain Mockito instead.
+- Context caching can be invalidated by different `@MockBean` configurations.
+- Avoid static mutable state in tests as it can cause flaky tests.
 
 This skill enables building comprehensive test suites that validate Spring Boot applications reliably while maintaining fast feedback loops for development.

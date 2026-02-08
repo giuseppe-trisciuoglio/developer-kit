@@ -26,6 +26,21 @@ Use this skill when:
 - Implementing cross-stack references with export/import
 - Using mixed instances policies for diversity
 
+## Instructions
+
+Follow these steps to create Auto Scaling infrastructure with CloudFormation:
+
+1. **Define Parameters**: Use AWS-specific parameter types for validation (e.g., `AWS::EC2::Image::Id`)
+2. **Configure Launch Resources**: Create LaunchConfiguration or LaunchTemplate with proper instance settings
+3. **Create Auto Scaling Group**: Specify min/max/desired capacity and associate with launch resource
+4. **Add Scaling Policies**: Implement target tracking, step, or simple scaling policies
+5. **Configure Health Checks**: Set up ELB or EC2 health checks with appropriate grace periods
+6. **Add Lifecycle Hooks**: Implement hooks for custom actions during instance lifecycle
+7. **Set Up Monitoring**: Configure CloudWatch alarms for scaling triggers
+8. **Use Cross-Stack References**: Export ASG names and ARNs for other stacks to import
+
+For complete examples, see the [EXAMPLES.md](references/examples.md) file.
+
 ## CloudFormation Template Structure
 
 ### Base Template with Standard Format
@@ -1313,6 +1328,65 @@ ScalingAlarmRole:
               Resource: !Sub "arn:aws:cloudwatch:${AWS::Region}:${AWS::AccountId}:alarm:*"
 ```
 
+## Examples
+
+The following examples demonstrate common Auto Scaling patterns:
+
+### Example 1: EC2 Auto Scaling Group with ALB
+
+Complete ASG with Application Load Balancer, health checks, and target tracking scaling:
+
+```yaml
+AWSTemplateFormatVersion: 2010-09-09
+Description: Production EC2 Auto Scaling with ALB
+
+Resources:
+  MyAutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      AutoScalingGroupName: !Sub "${AWS::StackName}-asg"
+      MinSize: 2
+      MaxSize: 10
+      DesiredCapacity: 2
+      VPCZoneIdentifier: !Ref SubnetIds
+      LaunchConfigurationName: !Ref MyLaunchConfiguration
+      TargetGroupARNs:
+        - !Ref MyTargetGroup
+      HealthCheckType: ELB
+      HealthCheckGracePeriod: 300
+```
+
+### Example 2: Target Tracking Scaling Policy
+
+```yaml
+TargetTrackingPolicy:
+  Type: AWS::AutoScaling::ScalingPolicy
+  Properties:
+    PolicyName: !Sub "${AWS::StackName}-target-tracking"
+    PolicyType: TargetTrackingScaling
+    AutoScalingGroupName: !Ref MyAutoScalingGroup
+    TargetTrackingConfiguration:
+      PredefinedMetricSpecification:
+        PredefinedMetricType: ASGAverageCPUUtilization
+      TargetValue: 70
+```
+
+### Example 3: Lifecycle Hooks
+
+```yaml
+LifecycleHookLaunch:
+  Type: AWS::AutoScaling::LifecycleHook
+  Properties:
+    LifecycleHookName: !Sub "${AWS::StackName}-launch-hook"
+    AutoScalingGroupName: !Ref MyAutoScalingGroup
+    LifecycleTransition: autoscaling:EC2_INSTANCE_LAUNCHING
+    HeartbeatTimeout: 900
+    NotificationTargetARN: !Ref SnsTopicArn
+    RoleARN: !GetAtt LifecycleHookRole.Arn
+```
+
+For complete production-ready examples, see [EXAMPLES.md](references/examples.md).
+
 ## Related Resources
 
 - [Auto Scaling Documentation](https://docs.aws.amazon.com/autoscaling/)
@@ -1322,6 +1396,43 @@ ScalingAlarmRole:
 
 ## Additional Files
 
+## Constraints and Warnings
+
+### Resource Limits
+
+- **Auto Scaling Group Limits**: Maximum 100 Auto Scaling Groups per region per AWS account
+- **Launch Configuration/Launch Template Limits**: Maximum number of launch configurations and templates per region
+- **Scaling Policy Limits**: Maximum 500 step adjustments in a step scaling policy
+- **Lifecycle Hooks**: Maximum number of lifecycle hooks per Auto Scaling Group varies by instance type
+
+### Scaling Constraints
+
+- **Cooldown Periods**: Scaling cooldowns prevent rapid scale-in/scale-out oscillations but can delay response to demand changes
+- **Health Check Grace Period**: Too short grace period may cause termination of instances still bootstrapping
+- **Minimum/Maximum Capacity**: Exceeding these limits prevents scaling operations
+- **Instance Termination**: Scale-in terminates instances without graceful shutdown by default
+
+### Operational Constraints
+
+- **Mixed Instances Policy**: Not all instance types support on-demand/Spot allocation
+- **Predictive Scaling**: Requires at least 24 hours of metric data before predictions are accurate
+- **Instance Refresh**: Replacing all instances simultaneously can cause service disruption
+- **Scaling Policies**: Multiple scaling policies targeting the same metric can cause unpredictable behavior
+
+### Cost Considerations
+
+- **Spot Instances**: Can be terminated with 2-minute notice; not suitable for stateful workloads
+- **Over-provisioning**: Setting minimum capacity too high leads to unnecessary costs
+- **Scaling Frequency**: Frequent scaling activities can accumulate costs from instance provisioning
+
+### Security Constraints
+
+- **IAM Roles**: Auto Scaling requires IAM roles with appropriate permissions for lifecycle hooks
+- **Service-Linked Roles**: Auto Scaling requires creation of service-linked role for certain operations
+- **Launch Template Permissions**: Launch templates referencing encrypted AMIs require KMS permissions
+
+## Additional Files
+
 For complete details on resources and their properties, consult:
-- [REFERENCE.md](reference.md) - Detailed reference guide for all CloudFormation resources
-- [EXAMPLES.md](examples.md) - Complete production-ready examples
+- [REFERENCE.md](references/reference.md) - Detailed reference guide for all CloudFormation resources
+- [EXAMPLES.md](references/examples.md) - Complete production-ready examples

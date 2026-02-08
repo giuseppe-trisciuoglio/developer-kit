@@ -4,13 +4,16 @@ description: Provides patterns for unit testing external REST APIs using WireMoc
 category: testing
 tags: [junit-5, wiremock, unit-testing, rest-api, mocking, http-stubbing]
 version: 1.0.1
+allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
 # Unit Testing REST APIs with WireMock
 
-Test interactions with third-party REST APIs without making real network calls using WireMock. This skill focuses on pure unit tests (no Spring context) that stub HTTP responses and verify requests.
+## Overview
 
-## When to Use This Skill
+This skill provides comprehensive patterns for unit testing external REST API integrations using WireMock. It covers stubbing HTTP responses, verifying requests, testing error scenarios (4xx/5xx responses), and ensuring fast, reliable tests without real network dependencies.
+
+## When to Use
 
 Use this skill when:
 - Testing services that call external REST APIs
@@ -20,6 +23,40 @@ Use this skill when:
 - Integrating with third-party services (payment gateways, weather APIs, etc.)
 - Testing without network dependencies or rate limits
 - Building unit tests that run fast in CI/CD pipelines
+
+## Instructions
+
+Follow these steps to test external REST APIs with WireMock:
+
+### 1. Add WireMock Dependency
+
+Include wiremock in test scope along with JUnit 5 and AssertJ.
+
+### 2. Register WireMock Extension
+
+Use @RegisterExtension with WireMockExtension.newInstance().options(wireMockConfig().dynamicPort()) for dynamic port allocation.
+
+### 3. Configure HTTP Client
+
+Inject the WireMock base URL into your API client using wireMock.getRuntimeInfo().getHttpBaseUrl().
+
+### 4. Stub HTTP Responses
+
+Use stubFor() to define request matching and response behavior.
+
+### 5. Execute Test Logic
+
+Call your service methods that interact with the external API.
+
+### 6. Assert Results
+
+Verify the service behavior using AssertJ assertions.
+
+### 7. Verify Requests
+
+Use verify() to ensure correct requests were sent to the external API.
+
+## Examples
 
 ## Core Dependencies
 
@@ -157,7 +194,78 @@ void shouldVerifyRequestBody() {
 - **Reset WireMock** between tests automatically via `@RegisterExtension`
 - **Never call real APIs** - always stub third-party endpoints
 
-## Troubleshooting
+## Constraints and Warnings
+
+- **Always use dynamic ports**: Fixed ports cause conflicts in parallel test execution
+- **HTTPS testing**: Configure WireMock for HTTPS if testing TLS connections
+- **Request matching specificity**: More specific stubs take precedence over general ones
+- **State between tests**: WireMock resets between tests automatically with @RegisterExtension
+- **Performance**: WireMock adds overhead; consider mocking at the client layer for faster tests
+- **API contract changes**: Stubs may become out of sync with real APIs; keep them updated
+- **Network timeouts**: Configure appropriate timeouts for tests; don't let tests hang
+
+## Examples
+
+### Input: Service Calling External API Without Tests
+
+```java
+@Service
+public class WeatherService {
+    private final WeatherApiClient client;
+
+    public WeatherData getWeather(String city) {
+        return client.fetchWeather(city);
+    }
+}
+```
+
+### Output: WireMock Test Coverage
+
+```java
+@RegisterExtension
+static WireMockExtension wireMock = WireMockExtension.newInstance()
+    .options(wireMockConfig().dynamicPort())
+    .build();
+
+@Test
+void shouldFetchWeatherFromExternalApi() {
+    wireMock.stubFor(get(urlEqualTo("/weather?city=London"))
+        .willReturn(aResponse()
+            .withStatus(200)
+            .withBody("{\"city\":\"London\",\"temperature\":15}")));
+
+    WeatherApiClient client = new WeatherApiClient(
+        wireMock.getRuntimeInfo().getHttpBaseUrl()
+    );
+    WeatherData weather = client.getWeather("London");
+
+    assertThat(weather.getTemperature()).isEqualTo(15);
+}
+```
+
+### Input: Manual API Testing (Slow)
+
+```java
+@Test
+void testWithRealApi() {
+    WeatherData data = weatherService.getWeather("London");
+    // Depends on external API availability
+}
+```
+
+### Output: WireMock Stubbed Test (Fast)
+
+```java
+@Test
+void testWithWireMock() {
+    wireMock.stubFor(get(urlPathEqualTo("/weather"))
+        .willReturn(aResponse().withStatus(200).withBody("{}")));
+
+    // Fast, reliable test with predictable behavior
+}
+```
+
+## Constraints and Warnings
 
 **WireMock not intercepting requests**: Ensure your HTTP client uses the stubbed URL from `wireMock.getRuntimeInfo().getHttpBaseUrl()`.
 
