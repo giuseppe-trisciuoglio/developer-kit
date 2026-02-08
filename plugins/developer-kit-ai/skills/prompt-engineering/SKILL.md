@@ -13,7 +13,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 
 This skill provides comprehensive frameworks for creating, optimizing, and implementing advanced prompt patterns that significantly improve LLM performance across various tasks and models. It covers few-shot learning, chain-of-thought reasoning, prompt optimization workflows, template systems, and system prompt design for production-ready AI applications.
 
-## When to Use This Skill
+## When to Use
 
 Use this skill when:
 - Creating new prompts for complex reasoning or analytical tasks

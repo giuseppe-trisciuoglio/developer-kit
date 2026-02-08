@@ -7,8 +7,16 @@ model: inherit
 
 # Feature Development
 
+## Overview
+
 You are helping a developer implement a new feature. Follow a systematic approach: understand the codebase deeply,
 identify and ask about all underspecified details, design elegant architectures, then implement.
+
+## Arguments
+
+| Argument     | Description                              |
+|--------------|------------------------------------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
 
 ## Language/Framework Selection
 
@@ -384,13 +392,3 @@ Update the status as you progress through each phase.
 
 **Note**: This command follows a systematic approach to ensure high-quality implementations that integrate well with
 existing codebases and meet user requirements effectively.
-
-## Overview
-
-Provides guided feature development capability with codebase understanding and architecture focus. Use when implementing a new feature from scratch.
-
-## Arguments
-
-| Argument | Description |
-|----------|-------------|
-| `$ARGUMENTS` | Combined arguments passed to the command |

@@ -4,7 +4,33 @@ argument-hint: "[scope] [options]"
 description: Provides comprehensive security review for TypeScript/Node.js applications (Next.js, NestJS, Express, etc.). Use when auditing security vulnerabilities or before deploying to production.
 ---
 
-Execute comprehensive security review for TypeScript/Node.js applications. Analyze vulnerabilities, dependencies, security configurations, and best practices specific to the TypeScript ecosystem.
+## Overview
+
+Provides comprehensive security review for TypeScript/Node.js applications (Next.js, NestJS, Express, etc.). Use when
+auditing security vulnerabilities or before deploying to production.
+
+## Usage
+
+```
+/devkit.ts.security-review $ARGUMENTS
+```
+
+## Arguments
+
+| Argument     | Description                              |
+|--------------|------------------------------------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
+
+## Examples
+
+```bash
+/devkit.ts.security-review example-input
+```
+
+## Execution Steps
+
+Execute comprehensive security review for TypeScript/Node.js applications. Analyze vulnerabilities, dependencies,
+security configurations, and best practices specific to the TypeScript ecosystem.
 
 ## Security Analysis for TypeScript/Node.js Applications
 
@@ -17,6 +43,7 @@ Execute comprehensive security review for TypeScript/Node.js applications. Analy
 Analyze the following vulnerability categories in TypeScript context:
 
 #### A01: Broken Access Control
+
 - Verify authentication middleware implementations (Express.js, NestJS guards)
 - Analyze JWT token validation and refresh mechanisms
 - Check role-based access control (RBAC) patterns
@@ -24,6 +51,7 @@ Analyze the following vulnerability categories in TypeScript context:
 - Review GraphQL resolvers authorization
 
 #### A02: Cryptographic Failures
+
 - Analyze crypto library usage (Node.js crypto, bcryptjs)
 - Verify password hashing implementations
 - Check SSL/TLS configurations for Node.js servers
@@ -31,6 +59,7 @@ Analyze the following vulnerability categories in TypeScript context:
 - Validate encryption/decryption patterns
 
 #### A03: Injection
+
 - SQL Injection in TypeORM/Prisma/Sequelize
 - NoSQL Injection in MongoDB/Mongoose
 - Command Injection in child_process.exec/execSync
@@ -38,6 +67,7 @@ Analyze the following vulnerability categories in TypeScript context:
 - XSS in React/Vue/Angular components
 
 #### A04: Insecure Design
+
 - Missing security middleware (Helmet, CORS)
 - Insecure architectural patterns in microservices
 - Lack of input validation strategy
@@ -45,6 +75,7 @@ Analyze the following vulnerability categories in TypeScript context:
 - Missing rate limiting configurations
 
 #### A05: Security Misconfiguration
+
 - Insecure Express.js/NestJS configurations
 - Exposed development endpoints
 - CORS misconfigurations
@@ -52,6 +83,7 @@ Analyze the following vulnerability categories in TypeScript context:
 - Missing security headers
 
 #### A06: Vulnerable and Outdated Components
+
 - npm/yarn dependency scanning (npm audit, yarn audit)
 - Libraries with known CVEs
 - Outdated Node.js/TypeScript versions
@@ -59,6 +91,7 @@ Analyze the following vulnerability categories in TypeScript context:
 - Malicious package detection
 
 #### A07: Identification and Authentication Failures
+
 - Weak password policies in authentication systems
 - Insecure session management
 - Improper JWT implementation
@@ -66,6 +99,7 @@ Analyze the following vulnerability categories in TypeScript context:
 - Insecure OAuth flows
 
 #### A08: Software and Data Integrity Failures
+
 - Missing package integrity verification (npm package-lock.json)
 - Insecure CI/CD pipeline configurations
 - Lack of code signing for critical operations
@@ -73,6 +107,7 @@ Analyze the following vulnerability categories in TypeScript context:
 - Missing checksum validation
 
 #### A09: Security Logging and Monitoring Failures
+
 - Inadequate security logging (Winston, Pino)
 - Missing audit trail implementation
 - Absent security event monitoring
@@ -80,6 +115,7 @@ Analyze the following vulnerability categories in TypeScript context:
 - Missing intrusion detection
 
 #### A10: Server-Side Request Forgery (SSRF)
+
 - Analyze HTTP calls (axios, node-fetch)
 - Missing URL validation in API requests
 - Insecure proxy configurations
@@ -89,6 +125,7 @@ Analyze the following vulnerability categories in TypeScript context:
 ### 2. Framework-Specific Security Analysis
 
 #### Next.js Security Analysis
+
 - API route security configurations
 - Server-side rendering (SSR) security
 - Static site generation (SSG) security
@@ -96,6 +133,7 @@ Analyze the following vulnerability categories in TypeScript context:
 - NextAuth.js configuration review
 
 #### NestJS Security Analysis
+
 - Guard implementations (AuthGuard, RolesGuard)
 - Passport strategy configurations
 - Interceptor security patterns
@@ -103,6 +141,7 @@ Analyze the following vulnerability categories in TypeScript context:
 - Module dependency security
 
 #### Express.js Security Analysis
+
 - Middleware security configurations
 - Route protection patterns
 - Error handling security
@@ -112,6 +151,7 @@ Analyze the following vulnerability categories in TypeScript context:
 ### 3. Dependencies and Libraries Analysis
 
 #### npm/yarn Dependency Analysis
+
 ```bash
 # Run vulnerability scan
 npm audit
@@ -121,6 +161,7 @@ yarn audit --json
 ```
 
 #### Critical Libraries to Review
+
 - Express.js/NestJS versions
 - React/Vue/Angular frameworks
 - Database libraries (TypeORM, Prisma, Mongoose)
@@ -129,6 +170,7 @@ yarn audit --json
 - Utility libraries (lodash, moment.js)
 
 #### Package.json Security Review
+
 - Analyze dependency versions
 - Check for malicious packages
 - Review package scripts security
@@ -138,6 +180,7 @@ yarn audit --json
 ### 4. Database Security
 
 #### TypeORM/Prisma Security
+
 - SQL injection prevention
 - Query builder security
 - Database connection security
@@ -145,12 +188,14 @@ yarn audit --json
 - Entity access control
 
 #### MongoDB/Mongoose Security
+
 - NoSQL injection prevention
 - Schema validation security
 - Connection security
 - Index security considerations
 
 #### Database Connection Security
+
 - Connection pool configuration
 - Database credential management
 - SSL/TLS database connections
@@ -159,6 +204,7 @@ yarn audit --json
 ### 5. API Security
 
 #### REST API Security
+
 - Input validation (Joi, Zod, class-validator)
 - Rate limiting implementation (express-rate-limit)
 - API authentication patterns
@@ -166,6 +212,7 @@ yarn audit --json
 - OpenAPI/Swagger security definitions
 
 #### GraphQL Security
+
 - Query depth limiting
 - Query complexity analysis
 - Resolver authorization
@@ -173,6 +220,7 @@ yarn audit --json
 - Subscription security
 
 #### WebSocket Security
+
 - Socket.IO authentication
 - Message validation
 - Rate limiting for connections
@@ -181,6 +229,7 @@ yarn audit --json
 ### 6. Frontend Security
 
 #### React/Vue/Angular Security
+
 - XSS prevention in components
 - CSRF token handling
 - Content Security Policy (CSP)
@@ -188,6 +237,7 @@ yarn audit --json
 - State management security
 
 #### SPA Security Considerations
+
 - Token storage strategies
 - Authentication flow security
 - API communication security
@@ -197,12 +247,14 @@ yarn audit --json
 ### 7. Containerization and Cloud Security
 
 #### Docker Security
+
 - Container base image security
 - Multi-stage build security
 - Secrets management in containers
 - Dockerfile security best practices
 
 #### Cloud Platform Security
+
 - Vercel/Netlify security configurations
 - AWS Lambda/Cloud security
 - Azure Functions security
@@ -211,6 +263,7 @@ yarn audit --json
 ### 8. Security Testing
 
 #### Unit Testing for Security
+
 ```typescript
 // Authentication middleware test
 describe('AuthMiddleware', () => {
@@ -227,12 +280,14 @@ describe('AuthMiddleware', () => {
 ```
 
 #### Integration Security Testing
+
 - Jest security testing patterns
 - Supertest for API security testing
 - Cypress end-to-end security tests
 - OWASP ZAP integration
 
 #### Static Analysis for TypeScript
+
 - ESLint security rules
 - TypeScript compiler security checks
 - SonarJS security analysis
@@ -241,6 +296,7 @@ describe('AuthMiddleware', () => {
 ### 9. Configuration Security
 
 #### Environment Variables Security
+
 ```typescript
 // Secure configuration loading
 import { config } from 'dotenv';
@@ -257,6 +313,7 @@ if (error) throw new Error('Config validation error');
 ```
 
 #### TypeScript Configuration Security
+
 - Strict TypeScript compiler options
 - ESLint security configuration
 - Prettier security considerations
@@ -265,6 +322,7 @@ if (error) throw new Error('Config validation error');
 ### 10. Code Quality Security Patterns
 
 #### Secure Coding Practices
+
 - Input validation and sanitization
 - Type safety for security
 - Error handling without information disclosure
@@ -272,6 +330,7 @@ if (error) throw new Error('Config validation error');
 - Memory leak prevention
 
 #### Dependency Injection Security
+
 - Secure service instantiation
 - Configuration injection patterns
 - Scoped dependencies security
@@ -280,6 +339,7 @@ if (error) throw new Error('Config validation error');
 ### 11. Performance-Related Security
 
 #### DoS Prevention
+
 - Request timeout configurations
 - Memory usage monitoring
 - CPU usage limits
@@ -287,6 +347,7 @@ if (error) throw new Error('Config validation error');
 - Rate limiting per user/IP
 
 #### Resource Security
+
 - File upload security
 - Memory allocation limits
 - Process management security
@@ -295,6 +356,7 @@ if (error) throw new Error('Config validation error');
 ### 12. Monitoring and Logging Security
 
 #### Security Monitoring
+
 ```typescript
 // Security event logging
 import { Logger } from 'pino';
@@ -314,6 +376,7 @@ logger.info({
 ```
 
 #### Audit Trail Implementation
+
 - User action logging
 - Data access logging
 - API call auditing
@@ -322,6 +385,7 @@ logger.info({
 ### 13. Reporting and Recommendations
 
 #### Critical Security Issues (P0)
+
 - Remote code execution vulnerabilities
 - Authentication bypass vulnerabilities
 - Data exposure incidents
@@ -329,6 +393,7 @@ logger.info({
 - SSRF vulnerabilities
 
 #### High Priority Security Issues (P1)
+
 - Outdated dependencies with CVEs
 - Insecure configurations
 - Missing security headers
@@ -336,12 +401,14 @@ logger.info({
 - XSS vulnerabilities
 
 #### Medium Priority Security Issues (P2)
+
 - Logging/monitoring gaps
 - Insufficient input validation
 - Access control improvements
 - Code quality security improvements
 
 #### Low Priority Security Issues (P3)
+
 - Security documentation updates
 - Code style security improvements
 - Additional security testing
@@ -350,24 +417,28 @@ logger.info({
 ### 14. Tools and Automation
 
 #### Static Analysis Tools
+
 - ESLint with security plugins
 - SonarJS security analysis
 - CodeQL for TypeScript
 - Semgrep for TypeScript
 
 #### Dynamic Testing Tools
+
 - OWASP ZAP
 - Burp Suite
 - Postman security testing
 - OWASP Nettacker
 
 #### Dependency Scanning Tools
+
 - npm audit
 - Snyk
 - GitHub Dependabot
 - OWASP Dependency Check
 
 #### CI/CD Security Integration
+
 ```yaml
 # GitHub Actions security scan example
 - name: Run npm audit
@@ -381,66 +452,46 @@ logger.info({
 ## Execution Steps
 
 1. **Setup Analysis Environment**
-   - Prepare codebase for review
-   - Configure security scanning tools
-   - Set up reporting framework
+    - Prepare codebase for review
+    - Configure security scanning tools
+    - Set up reporting framework
 
 2. **Automated Security Scanning**
-   - Run npm audit for vulnerabilities
-   - Execute ESLint security rules
-   - Perform static analysis with Semgrep
-   - Scan dependencies with Snyk
+    - Run npm audit for vulnerabilities
+    - Execute ESLint security rules
+    - Perform static analysis with Semgrep
+    - Scan dependencies with Snyk
 
 3. **Manual Security Review**
-   - Review authentication/authorization logic
-   - Analyze input validation patterns
-   - Check API endpoint security
-   - Review database security configurations
+    - Review authentication/authorization logic
+    - Analyze input validation patterns
+    - Check API endpoint security
+    - Review database security configurations
 
 4. **Framework-Specific Analysis**
-   - Review Next.js security configurations
-   - Analyze NestJS guard implementations
-   - Check Express.js middleware security
-   - Review frontend security patterns
+    - Review Next.js security configurations
+    - Analyze NestJS guard implementations
+    - Check Express.js middleware security
+    - Review frontend security patterns
 
 5. **Generate Security Report**
-   - Consolidate findings from all tools
-   - Prioritize vulnerabilities by risk
-   - Provide actionable remediation steps
-   - Create implementation timeline
+    - Consolidate findings from all tools
+    - Prioritize vulnerabilities by risk
+    - Provide actionable remediation steps
+    - Create implementation timeline
 
 6. **Security Recommendations**
-   - Framework-specific security improvements
-   - TypeScript security best practices
-   - Configuration security enhancements
-   - Monitoring and alerting setup
+    - Framework-specific security improvements
+    - TypeScript security best practices
+    - Configuration security enhancements
+    - Monitoring and alerting setup
 
 Target: $ARGUMENTS
 
 ## Execution Instructions
 
 **Agent Selection**: To execute this TypeScript security review, use the following agent with fallback:
-- Primary: `ts-security-expert`
-- If not available: Use `developer-kit:ts-security-expert` or fallback to `general-purpose` agent with security expertise
 
-## Overview
-
-Provides comprehensive security review for TypeScript/Node.js applications (Next.js, NestJS, Express, etc.). Use when auditing security vulnerabilities or before deploying to production.
-
-## Usage
-
-```
-/devkit.ts.security-review $ARGUMENTS
-```
-
-## Arguments
-
-| Argument | Description |
-|----------|-------------|
-| `$ARGUMENTS` | Combined arguments passed to the command |
-
-## Examples
-
-```bash
-/devkit.ts.security-review example-input
-```
+- Primary: `developer-kit-typescript:ts-security-expert`
+- If not available: Use `developer-kit-typescript:ts-security-expert` or fallback to `general-purpose` agent with
+  security expertise

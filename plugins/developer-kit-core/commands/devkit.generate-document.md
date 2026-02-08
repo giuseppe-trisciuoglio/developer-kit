@@ -7,6 +7,8 @@ model: inherit
 
 # Document Generation Command
 
+## Overview
+
 Generate professional technical and business documents with multi-language support. This command analyzes your codebase
 and produces comprehensive, well-structured documentation based on the specified type and objective.
 
@@ -15,7 +17,6 @@ and produces comprehensive, well-structured documentation based on the specified
 - **Current Directory**: !`pwd`
 - **Git Branch**: !`git branch --show-current`
 - **Project Structure**: !`ls -la`
-
 
 ## Usage
 
@@ -413,7 +414,3 @@ The generated document will be saved as:
 
 **Note**: This command follows a systematic approach to ensure high-quality, professional documentation that accurately
 reflects your codebase and meets stakeholder requirements.
-
-## Overview
-
-Generates professional documents (assessments, features, analysis, process, custom) with language support and specialized sub-agents. Use when you need to create structured technical or business documentation.

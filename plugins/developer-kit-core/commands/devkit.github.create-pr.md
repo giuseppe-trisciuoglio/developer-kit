@@ -6,7 +6,22 @@ argument-hint: "[pr-title] [target-branch] [language]"
 
 # Create GitHub Pull Request
 
-Create a new branch, commit changes, and submit a pull request with comprehensive description.
+## Overview
+
+Creates a GitHub pull request with branch creation, commits, and detailed description. Use when you need to submit
+changes for review.
+
+## Usage
+
+```
+/devkit.github.create-pr $ARGUMENTS
+```
+
+## Arguments
+
+| Argument     | Description                              |
+|--------------|------------------------------------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
 
 ## Current Context
 
@@ -141,11 +156,13 @@ echo "Created and switched to branch: $BRANCH_NAME"
 Determine if changes should be split into multiple commits:
 
 **Single commit when**:
+
 - Single file modified
 - Related changes in same component
 - Small focused change
 
 **Multiple commits when**:
+
 - Changes span multiple features
 - Mix of feature and tests
 - Configuration and code changes
@@ -178,6 +195,7 @@ Follow Conventional Commits specification:
 ```
 
 **Types**:
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
@@ -190,6 +208,7 @@ Follow Conventional Commits specification:
 - `security`: Security improvements
 
 **Example commits**:
+
 ```bash
 # Feature commit
 git commit -m "feat(user-service): add email verification functionality
@@ -234,6 +253,7 @@ echo "Pushed branch to remote: $BRANCH_NAME"
 Create PR description based on language preference:
 
 **English Template**:
+
 ```markdown
 ## Description
 
@@ -248,6 +268,7 @@ Brief description of changes and motivation.
 ## Testing
 
 Description of testing performed:
+
 - Unit tests added/updated
 - Integration tests verified
 - Manual testing completed
@@ -262,6 +283,7 @@ Description of testing performed:
 ```
 
 **Italian Template**:
+
 ```markdown
 ## Descrizione
 
@@ -276,6 +298,7 @@ Breve descrizione delle modifiche e motivazione.
 ## Test
 
 Descrizione dei test eseguiti:
+
 - Test unitari aggiunti/aggiornati
 - Test di integrazione verificati
 - Test manuali completati
@@ -369,6 +392,7 @@ gh pr merge $PR_NUMBER --auto --squash
 ### Commit Message Guidelines
 
 **Good commit messages**:
+
 ```
 feat(api): add user authentication endpoint
 fix(validation): correct email format validation
@@ -378,6 +402,7 @@ refactor(utils): simplify date formatting utility
 ```
 
 **Bad commit messages**:
+
 ```
 update files
 fix bug
@@ -389,12 +414,14 @@ asdf
 ### PR Title Guidelines
 
 **Good PR titles**:
+
 - "Add JWT authentication to user service"
 - "Fix memory leak in background job processor"
 - "Refactor user repository to use Spring Data JPA"
 - "Update Spring Boot to version 3.2.0"
 
 **Bad PR titles**:
+
 - "Update"
 - "Changes"
 - "Fix"
@@ -416,12 +443,14 @@ asdf
 ### Common Issues
 
 **Authentication Error**:
+
 ```bash
 # Authenticate with GitHub CLI
 gh auth login
 ```
 
 **Branch Already Exists**:
+
 ```bash
 # Switch to existing branch
 git checkout existing-branch
@@ -431,6 +460,7 @@ git checkout -b existing-branch
 ```
 
 **Merge Conflicts**:
+
 ```bash
 # Update from target branch
 git fetch origin
@@ -441,6 +471,7 @@ git commit -m "Resolve merge conflicts"
 ```
 
 **No Changes to Commit**:
+
 ```bash
 # Check status
 git status
@@ -505,20 +536,5 @@ Based on the provided arguments:
 ## Execution Instructions
 
 **Agent Selection**: To execute this GitHub task, use the following approach:
+
 - Primary: Use `general-purpose` agent with GitHub CLI expertise and code analysis capabilities
-
-## Overview
-
-Creates a GitHub pull request with branch creation, commits, and detailed description. Use when you need to submit changes for review.
-
-## Usage
-
-```
-/devkit.github.create-pr $ARGUMENTS
-```
-
-## Arguments
-
-| Argument | Description |
-|----------|-------------|
-| `$ARGUMENTS` | Combined arguments passed to the command |

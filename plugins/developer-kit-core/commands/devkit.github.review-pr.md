@@ -6,7 +6,22 @@ argument-hint: "[pr-number] [review-focus] [output-format]"
 
 # GitHub Pull Request Comprehensive Review
 
-Perform comprehensive code review of a GitHub pull request including code quality, security, architecture, performance, and best practices analysis.
+## Overview
+
+Perform comprehensive code review of a GitHub pull request including code quality, security, architecture, performance,
+and best practices analysis.
+
+## Usage
+
+```
+/devkit.github.review-pr $ARGUMENTS
+```
+
+## Arguments
+
+| Argument     | Description                              |
+|--------------|------------------------------------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
 
 ## Current Context
 
@@ -23,6 +38,7 @@ Perform comprehensive code review of a GitHub pull request including code qualit
 **$3**: Output format (optional - defaults to `summary`)
 
 **Available review focuses**:
+
 - `full` - Complete comprehensive review (default)
 - `security` - Security vulnerabilities and risks only
 - `performance` - Performance bottlenecks and optimizations
@@ -31,6 +47,7 @@ Perform comprehensive code review of a GitHub pull request including code qualit
 - `style` - Code style and conventions
 
 **Output formats**:
+
 - `summary` - Concise executive summary (default)
 - `detailed` - Comprehensive detailed report
 - `checklist` - Review checklist format
@@ -131,6 +148,7 @@ echo ""
 ### 2.1 Code Structure and Organization
 
 Analyze:
+
 - **Package/module structure**: Logical organization and naming
 - **File organization**: Single responsibility principle adherence
 - **Class/function size**: Manageable and focused components
@@ -140,6 +158,7 @@ Analyze:
 ### 2.2 Design Patterns and Best Practices
 
 Review for:
+
 - **Design patterns**: Appropriate pattern usage
 - **SOLID principles**: Single responsibility, open/closed, etc.
 - **Dependency management**: Proper injection and coupling
@@ -149,6 +168,7 @@ Review for:
 ### 2.3 Code Complexity
 
 Evaluate:
+
 - **Cyclomatic complexity**: Number of decision points
 - **Cognitive complexity**: Mental effort to understand
 - **Nesting depth**: Excessive nesting levels
@@ -160,6 +180,7 @@ Evaluate:
 ### 3.1 Common Vulnerabilities
 
 Check for:
+
 - **SQL Injection**: Unsafe query construction
 - **XSS (Cross-Site Scripting)**: Unescaped user input
 - **CSRF**: Missing CSRF protection
@@ -170,6 +191,7 @@ Check for:
 ### 3.2 Security Best Practices
 
 Verify:
+
 - **Input validation**: Proper sanitization and validation
 - **Output encoding**: Preventing injection attacks
 - **Cryptography**: Strong algorithms and key management
@@ -199,6 +221,7 @@ fi
 ### 4.1 Performance Concerns
 
 Identify:
+
 - **N+1 queries**: Database query inefficiencies
 - **Memory leaks**: Unclosed resources, retained references
 - **Inefficient algorithms**: O(n²) or worse complexity
@@ -209,6 +232,7 @@ Identify:
 ### 4.2 Optimization Opportunities
 
 Look for:
+
 - **Caching opportunities**: Repeated expensive operations
 - **Lazy loading**: Deferred resource loading
 - **Batch operations**: Combining multiple operations
@@ -238,6 +262,7 @@ echo "- Test ratio: $TEST_RATIO"
 ### 5.2 Test Quality Assessment
 
 Evaluate:
+
 - **Test completeness**: Edge cases and boundary conditions
 - **Test independence**: Tests don't depend on each other
 - **Test clarity**: Clear test names and assertions
@@ -250,6 +275,7 @@ Evaluate:
 ### 6.1 Architectural Patterns
 
 Assess:
+
 - **Layered architecture**: Proper separation of concerns
 - **Dependency direction**: Dependencies flow correctly
 - **Module boundaries**: Clear module responsibilities
@@ -260,6 +286,7 @@ Assess:
 ### 6.2 Scalability and Maintainability
 
 Consider:
+
 - **Horizontal scalability**: Stateless design
 - **Configuration management**: Externalized configuration
 - **Feature flags**: Gradual rollout capability
@@ -272,6 +299,7 @@ Consider:
 ### 7.1 Style Consistency
 
 Check:
+
 - **Formatting**: Consistent indentation and spacing
 - **Naming conventions**: Consistent naming patterns
 - **Import organization**: Organized and minimal imports
@@ -281,6 +309,7 @@ Check:
 ### 7.2 Language-Specific Conventions
 
 #### Java/Spring Boot
+
 - Constructor injection over field injection
 - Java records for DTOs (Java 16+)
 - Proper use of Optional
@@ -288,6 +317,7 @@ Check:
 - Exception handling patterns
 
 #### JavaScript/TypeScript
+
 - Modern ES6+ syntax
 - Async/await over callbacks
 - Type safety (TypeScript)
@@ -295,6 +325,7 @@ Check:
 - Error boundaries
 
 #### Python
+
 - PEP 8 compliance
 - Type hints usage
 - Context managers
@@ -306,6 +337,7 @@ Check:
 ### 8.1 Critical Issues (Blockers)
 
 Issues that must be fixed before merge:
+
 - Security vulnerabilities
 - Breaking changes without migration path
 - Data loss or corruption risks
@@ -315,6 +347,7 @@ Issues that must be fixed before merge:
 ### 8.2 Major Issues (High Priority)
 
 Issues that should be addressed:
+
 - Significant code quality problems
 - Missing essential tests
 - Performance bottlenecks
@@ -324,6 +357,7 @@ Issues that should be addressed:
 ### 8.3 Minor Issues (Medium Priority)
 
 Issues to consider:
+
 - Code style inconsistencies
 - Minor optimization opportunities
 - Documentation gaps
@@ -333,6 +367,7 @@ Issues to consider:
 ### 8.4 Suggestions (Low Priority)
 
 Nice-to-have improvements:
+
 - Alternative implementation approaches
 - Additional test scenarios
 - Code simplification opportunities
@@ -347,6 +382,7 @@ Nice-to-have improvements:
 # Pull Request Review: #$PR_NUMBER
 
 ## Overview
+
 - **Title**: $PR_TITLE
 - **Author**: $PR_AUTHOR
 - **Branch**: $PR_HEAD → $PR_BASE
@@ -354,36 +390,44 @@ Nice-to-have improvements:
 - **Review Focus**: $REVIEW_FOCUS
 
 ## Summary
+
 [High-level assessment of the PR]
 
 ## Findings
 
 ### Critical Issues (Must Fix)
+
 - Issue 1: Description and location
 - Issue 2: Description and location
 
 ### Major Issues (Should Fix)
+
 - Issue 1: Description and location
 - Issue 2: Description and location
 
 ### Minor Issues (Consider Fixing)
+
 - Issue 1: Description and suggestion
 - Issue 2: Description and suggestion
 
 ### Suggestions
+
 - Suggestion 1: Enhancement idea
 - Suggestion 2: Alternative approach
 
 ## Code Quality Metrics
+
 - Test Coverage: [Percentage or assessment]
 - Code Complexity: [Assessment]
 - Security: [Assessment]
 - Performance: [Assessment]
 
 ## Recommendation
+
 [APPROVE | REQUEST CHANGES | COMMENT]
 
 ## Next Steps
+
 1. Address critical issues
 2. Consider major issues
 3. Respond to questions and suggestions
@@ -392,6 +436,7 @@ Nice-to-have improvements:
 ### 9.2 Detailed Format
 
 Comprehensive report with:
+
 - File-by-file review
 - Line-by-line comments where applicable
 - Code snippets with suggestions
@@ -405,36 +450,42 @@ Comprehensive report with:
 ## Code Review Checklist
 
 ### Functionality
+
 - [ ] Changes implement the intended feature
 - [ ] Edge cases are handled
 - [ ] Error scenarios are covered
 - [ ] Business logic is correct
 
 ### Code Quality
+
 - [ ] Code is readable and maintainable
 - [ ] Naming is clear and consistent
 - [ ] No code duplication
 - [ ] Proper abstraction levels
 
 ### Security
+
 - [ ] No security vulnerabilities introduced
 - [ ] Input validation is present
 - [ ] Authentication/authorization is correct
 - [ ] No secrets in code
 
 ### Performance
+
 - [ ] No obvious performance issues
 - [ ] Efficient algorithms used
 - [ ] Resources are properly managed
 - [ ] Database queries are optimized
 
 ### Testing
+
 - [ ] Unit tests are present
 - [ ] Tests cover happy path
 - [ ] Tests cover edge cases
 - [ ] Tests are meaningful
 
 ### Documentation
+
 - [ ] Code is self-documenting or commented
 - [ ] API documentation is updated
 - [ ] README is updated if needed
@@ -489,12 +540,14 @@ echo "Review comment posted to PR #$PR_NUMBER"
 ### Constructive Feedback
 
 **Good examples**:
+
 - "Consider using a repository pattern here for better testability"
 - "This method could be simplified using Java Streams API"
 - "Missing null check on line 45 could cause NPE"
 - "Great use of design patterns! One suggestion: consider extracting this to a separate class"
 
 **Bad examples**:
+
 - "This is wrong"
 - "Why did you do it this way?"
 - "I would have done it differently"
@@ -563,6 +616,7 @@ echo "View PR: $PR_URL"
 ## Integration with CI/CD
 
 The review can be enhanced by checking:
+
 - CI/CD pipeline status
 - Test coverage reports
 - Code quality metrics (SonarQube)
@@ -584,21 +638,13 @@ Based on the provided PR number and review focus:
 9. Provide actionable recommendations
 10. Post review comments to GitHub
 
-**Remember**: Be thorough, constructive, and professional. Focus on helping the author improve their code while maintaining high quality standards.
+**Remember**: Be thorough, constructive, and professional. Focus on helping the author improve their code while
+maintaining high quality standards.
 
 ## Execution Instructions
 
 **Agent Selection**: To execute this GitHub task, use the following approach:
+
 - Primary: Use `general-purpose` agent with GitHub CLI expertise and code analysis capabilities
 
-## Usage
 
-```
-/devkit.github.review-pr $ARGUMENTS
-```
-
-## Arguments
-
-| Argument | Description |
-|----------|-------------|
-| `$ARGUMENTS` | Combined arguments passed to the command |

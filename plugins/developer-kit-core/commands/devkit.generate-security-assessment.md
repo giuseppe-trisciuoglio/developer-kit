@@ -4,18 +4,30 @@ argument-hint: "[language] [output-format]"
 description: Generates comprehensive security assessment document after security audit completion. Use when you need to create a structured security report.
 ---
 
-Generate comprehensive security assessment document based on security audit findings. Creates structured security documentation in specified language with project-specific analysis.
+## Overview
 
-**Usage**: After running security audit commands, use this to create the assessment document.
+Generates comprehensive security assessment document after security audit completion. Use when you need to create a structured security report.
 
-**Arguments**:
-- **language**: Document language (en/en-US for English, it/it-IT for Italian, es/es-ES for Spanish, fr/fr-FR for French)
-- **output-format**: Export format (markdown, pdf, docx - default: markdown)
+## Arguments
 
-**Examples**:
+| Argument | Description |
+|----------|-------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
+
+## Usage
+
+```
+/devkit.generate-security-assessment $ARGUMENTS
+```
+
+
+## Examples
+
+```bash
 - `/developer-kit:devkit.generate-security-assessment en-US markdown` - Generate English assessment in Markdown
 - `/developer-kit:devkit.generate-security-assessment it-IT pdf` - Generate Italian assessment in PDF
 - `/developer-kit:devkit.generate-security-assessment docx` - Generate English assessment in DOCX
+```
 
 ## Security Assessment Document Generation
 
@@ -258,25 +270,3 @@ Format: Based on user preference (Markdown default)
 **Agent Selection**: To execute this generation task, use the following approach:
 - Primary: Use `general-purpose` agent with specialized knowledge of the task domain
 - Or use appropriate specialized agent if available for the specific generation task
-
-## Overview
-
-Generates comprehensive security assessment document after security audit completion. Use when you need to create a structured security report.
-
-## Usage
-
-```
-/devkit.generate-security-assessment $ARGUMENTS
-```
-
-## Arguments
-
-| Argument | Description |
-|----------|-------------|
-| `$ARGUMENTS` | Combined arguments passed to the command |
-
-## Examples
-
-```bash
-/devkit.generate-security-assessment example-input
-```

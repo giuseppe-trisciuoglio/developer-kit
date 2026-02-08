@@ -6,7 +6,30 @@ description: Validates Java application architecture focusing on Clean Architect
 
 # Java Architectural Review
 
-Perform a comprehensive architectural review of a Java application, focusing on Clean Architecture principles, Domain-Driven Design patterns, and Spring Boot best practices.
+## Overview
+
+Validates Java application architecture focusing on Clean Architecture, DDD, and Spring Boot patterns. Use when
+reviewing architectural decisions or before major refactoring.
+Perform a comprehensive architectural review of a Java application, focusing on Clean Architecture principles,
+Domain-Driven Design patterns, and Spring Boot best practices.
+
+## Usage
+
+```
+/devkit.java.architect-review $ARGUMENTS
+```
+
+## Arguments
+
+| Argument     | Description                              |
+|--------------|------------------------------------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
+
+## Examples
+
+```bash
+/devkit.java.architect-review example-input
+```
 
 ## Context
 
@@ -18,9 +41,11 @@ Perform a comprehensive architectural review of a Java application, focusing on 
 ## Review Focus Areas
 
 $1 specifies the package path to review (optional - defaults to entire codebase):
+
 - Examples: "com.example.users", "src/main/java/com/example/users", "users/"
 
 $2 specifies the focus area (optional):
+
 - `clean-architecture` - Clean Architecture layer separation
 - `ddd` - Domain-Driven Design patterns
 - `spring-boot` - Spring Boot specific patterns
@@ -33,6 +58,7 @@ $2 specifies the focus area (optional):
 ## Architectural Review Checklist
 
 ### Clean Architecture Assessment
+
 - **Layer Separation**: Verify proper dependency direction (domain � application � infrastructure � presentation)
 - **Package Structure**: Feature-based organization with clear boundaries
 - **Dependency Rules**: Check for violations of dependency inversion principle
@@ -40,6 +66,7 @@ $2 specifies the focus area (optional):
 - **Interface Segregation**: Clean API design between layers
 
 ### Domain-Driven Design Evaluation
+
 - **Bounded Contexts**: Proper context mapping and integration
 - **Aggregates**: Correct aggregate root design and consistency boundaries
 - **Value Objects**: Immutable value objects with Java records
@@ -48,6 +75,7 @@ $2 specifies the focus area (optional):
 - **Ubiquitous Language**: Consistent terminology across code
 
 ### Spring Boot Architecture Review
+
 - **Dependency Injection**: Constructor injection patterns, no field injection
 - **Configuration Management**: @ConfigurationProperties and profiles
 - **Bean Lifecycle**: Proper scoping and lifecycle management
@@ -56,6 +84,7 @@ $2 specifies the focus area (optional):
 - **Actuator Integration**: Production-ready monitoring
 
 ### SOLID Principles Compliance
+
 - **Single Responsibility**: Classes have one reason to change
 - **Open/Closed**: Open for extension, closed for modification
 - **Liskov Substitution**: Proper inheritance hierarchies
@@ -77,52 +106,37 @@ $2 specifies the focus area (optional):
 Based on the context and focus area, provide a comprehensive architectural review including:
 
 ### Architecture Assessment (1-10 scale)
+
 - Overall architectural quality score
 - Specific pattern compliance scores
 - Maintainability and extensibility assessment
 
 ### Identified Issues
+
 - **Critical Issues**: Architectural violations that must be fixed
 - **Warnings**: Areas that should be improved
 - **Suggestions**: Optional enhancements for better architecture
 
 ### Specific Recommendations
+
 - Concrete refactoring steps with code examples
 - Priority ordering of changes (High/Medium/Low)
 - Risk assessment for proposed changes
 - Estimated effort for each recommendation
 
 ### Architecture Improvement Plan
+
 - Short-term fixes (critical issues)
 - Medium-term improvements (warnings)
 - Long-term architectural enhancements (suggestions)
 
-Focus on practical, actionable advice that improves the application's architecture while considering the team's current context and constraints.
+Focus on practical, actionable advice that improves the application's architecture while considering the team's current
+context and constraints.
 
 ## Execution Instructions
 
 **Agent Selection**: To execute this architectural review, use the following agent with fallback:
+
 - Primary: `java-software-architect-review`
-- If not available: Use `developer-kit:java-software-architect-review` or fallback to `general-purpose` agent with `spring-boot-crud-patterns` skill
-
-## Overview
-
-Validates Java application architecture focusing on Clean Architecture, DDD, and Spring Boot patterns. Use when reviewing architectural decisions or before major refactoring.
-
-## Usage
-
-```
-/devkit.java.architect-review $ARGUMENTS
-```
-
-## Arguments
-
-| Argument | Description |
-|----------|-------------|
-| `$ARGUMENTS` | Combined arguments passed to the command |
-
-## Examples
-
-```bash
-/devkit.java.architect-review example-input
-```
+- If not available: Use `developer-kit:java-software-architect-review` or fallback to `general-purpose` agent with
+  `spring-boot-crud-patterns` skill

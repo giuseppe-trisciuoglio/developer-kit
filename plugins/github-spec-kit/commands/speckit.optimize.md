@@ -4,6 +4,31 @@ argument-hint: "[optional-strategy]"
 allowed-tools: Read, Glob, Grep, Bash
 ---
 
+# Task Workflow Optimization for tasks.md
+
+## Overview
+
+Provides task workflow optimization by analyzing dependencies, parallelization opportunities, and subagent delegation
+strategy for tasks.md. Use when you need to improve task execution efficiency.
+
+## Usage
+
+```
+/speckit.optimize $ARGUMENTS
+```
+
+## Arguments
+
+| Argument     | Description                              |
+|--------------|------------------------------------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
+
+## Examples
+
+```bash
+/speckit.optimize example-input
+```
+
 ## User Input
 
 ```text
@@ -14,38 +39,47 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ## Outline
 
-**Goal**: Analyze tasks.md to optimize the implementation workflow by identifying parallelization opportunities, task dependencies, resource requirements, and generating an optimized execution plan with subagent delegation strategy. This command prepares tasks.md for efficient execution via `/speckit.implement`.
+**Goal**: Analyze tasks.md to optimize the implementation workflow by identifying parallelization opportunities, task
+dependencies, resource requirements, and generating an optimized execution plan with subagent delegation strategy. This
+command prepares tasks.md for efficient execution via `/speckit.implement`.
 
 **When to run**: After `/speckit.check-integration` completes, BEFORE `/speckit.implement` executes tasks.
 
-**Critical Principle**: This command NEVER modifies tasks.md or code files. It only analyzes and reports optimization recommendations. Output is a READ-ONLY optimization report.
+**Critical Principle**: This command NEVER modifies tasks.md or code files. It only analyzes and reports optimization
+recommendations. Output is a READ-ONLY optimization report.
 
 ## Execution Steps
 
 ### 1. Setup & Prerequisites
 
-Run `.specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks` from repo root and parse JSON for:
+Run `.specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks` from repo root and parse JSON
+for:
+
 - FEATURE_DIR (absolute path)
 - TASKS file path
 - AVAILABLE_DOCS list
 
-For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
+For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm
+Groot").
 
 Abort if tasks.md is missing with error: "No tasks.md found. Run `/speckit.tasks` first."
 
 ### 2. Load Optimization Context
 
 **Required files**:
+
 - tasks.md: Complete task list with phases, IDs, descriptions, and parallelization markers [P]
 - plan.md: Tech stack, architecture, team structure
 - spec.md: Feature requirements and complexity assessment
 
 **Optional files** (load if present):
+
 - data-model.md: Data dependencies between tasks
 - contracts/: API contract dependencies
 - research.md: Technical constraints and decisions
 
 **Codebase scan**:
+
 - Identify project structure and complexity
 - Map existing test patterns (unit, integration, e2e)
 - Assess resource requirements (memory, CPU, external services)
@@ -89,6 +123,7 @@ IMPLICIT DEPENDENCIES:
 ```
 
 **Output**:
+
 ```
 DEPENDENCY ANALYSIS
 
@@ -333,7 +368,8 @@ Priority 4: Error Recovery
 
 ### 11. Execution Phase Table
 
-Generate an aggregated phase view (no time column) that groups tasks by phase, highlights the responsible subagent, and captures the validation check for each phase:
+Generate an aggregated phase view (no time column) that groups tasks by phase, highlights the responsible subagent, and
+captures the validation check for each phase:
 
 ```
 PHASE EXECUTION MATRIX
@@ -373,7 +409,9 @@ Check Action uses mvn/gradle/cli commands or equivalent verification step
 
 1. **Minimal Summary**: One sentence (max two) highlighting the primary optimization gain or risk reminder.
 2. **Phase Execution Matrix**: Present the table from Step 11 exactly once; this is the focal artifact.
-3. **Supporting Sections** (only if needed): Keep Dependency Analysis, Parallelization Opportunities, Subagent Strategy, Resource Estimation, Risk Assessment, Recommendations, and Next Steps succinct—use bullets and avoid repetition. Skip sections that add no new signal.
+3. **Supporting Sections** (only if needed): Keep Dependency Analysis, Parallelization Opportunities, Subagent Strategy,
+   Resource Estimation, Risk Assessment, Recommendations, and Next Steps succinct—use bullets and avoid repetition. Skip
+   sections that add no new signal.
 
 Ensure the report keeps the table front-and-center and avoids reintroducing time-based columns.
 
@@ -415,6 +453,7 @@ RECOMMENDED NEXT STEPS
 ### What This Command Does
 
 ✅ **DOES**:
+
 - Analyze task.md for dependencies and parallelization
 - Calculate resource requirements
 - Identify optimal subagent allocation strategy
@@ -424,6 +463,7 @@ RECOMMENDED NEXT STEPS
 - Recommend risk mitigation approaches
 
 ❌ **DOES NOT**:
+
 - Modify tasks.md or any files (READ-ONLY)
 - Execute tasks or modify code
 - Make final execution decisions (user validates)
@@ -433,16 +473,19 @@ RECOMMENDED NEXT STEPS
 ### Analysis Quality Standards
 
 **Evidence-Based**:
+
 - Every timeline estimate based on task complexity assessment
 - Dependency analysis grounded in task descriptions
 - Resource calculations from typical Spring Boot patterns
 
 **Actionable**:
+
 - Specific subagent type recommendations
 - Concrete batching strategy with timing
 - Checkpoint strategy with validation steps
 
 **Risk-Calibrated**:
+
 - Identify critical path dependencies
 - Highlight parallelization risks
 - Provide mitigation strategies
@@ -450,12 +493,14 @@ RECOMMENDED NEXT STEPS
 ### Token Efficiency
 
 **Progressive analysis**:
+
 - Load tasks on-demand
 - Analyze phase-by-phase
 - Summarize large dependency graphs
 - Focus on high-impact optimizations
 
 **Compact reporting**:
+
 - Use tables for timeline visualization
 - Group related findings
 - Provide executive summary
@@ -481,27 +526,6 @@ $ARGUMENTS
 ## Execution Instructions
 
 **Agent Selection**: To execute this task, use the following approach:
+
 - Primary: Use `general-purpose` agent with appropriate domain expertise
 - Or use specialized agent if available for the specific task type
-
-## Overview
-
-Provides task workflow optimization by analyzing dependencies, parallelization opportunities, and subagent delegation strategy for tasks.md. Use when you need to improve task execution efficiency.
-
-## Usage
-
-```
-/speckit.optimize $ARGUMENTS
-```
-
-## Arguments
-
-| Argument | Description |
-|----------|-------------|
-| `$ARGUMENTS` | Combined arguments passed to the command |
-
-## Examples
-
-```bash
-/speckit.optimize example-input
-```

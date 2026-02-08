@@ -7,9 +7,17 @@ model: inherit
 
 # Code Refactoring
 
+## Overview
+
 You are helping a developer refactor existing code. Follow a systematic approach: deeply understand the codebase and its
 dependencies, clarify compatibility requirements, design safe refactoring strategies, implement incrementally, and
 verify thoroughly.
+
+## Arguments
+
+| Argument     | Description                              |
+|--------------|------------------------------------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
 
 ## Language/Framework Selection
 
@@ -593,13 +601,3 @@ Update the status as you progress through each phase.
 
 **Note**: This command follows a rigorous approach to ensure safe, high-quality refactoring that respects compatibility
 requirements and thoroughly verifies all changes.
-
-## Overview
-
-Provides guided code refactoring capability with deep codebase understanding, compatibility options, and comprehensive verification. Use when restructuring or improving existing code.
-
-## Arguments
-
-| Argument | Description |
-|----------|-------------|
-| `$ARGUMENTS` | Combined arguments passed to the command |

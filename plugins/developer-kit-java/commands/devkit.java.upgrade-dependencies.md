@@ -6,17 +6,38 @@ description: Manages safe and incremental dependency upgrades for Java/Maven/Gra
 
 # Java Dependency Upgrade Strategy
 
-Plan and execute safe, incremental upgrades of Java project dependencies with minimal risk, proper testing, and clear migration paths for breaking changes.
+## Overview
+
+Plan and execute safe, incremental upgrades of Java project dependencies with minimal risk, proper testing, and clear
+migration paths for breaking changes.
+
+Manages safe and incremental dependency upgrades for Java/Maven/Gradle projects with breaking change detection and
+migration guides. Use when upgrading project dependencies or migrating to new library versions.
+
+## Usage
+
+```
+/devkit.java.upgrade-dependencies $ARGUMENTS
+```
+
+## Examples
+
+```bash
+/devkit.java.upgrade-dependencies example-input
+```
 
 ## Context
 
 - Build system: !`ls -la | grep -E "(pom\.xml|build\.gradle|build\.gradle\.kts)"`
-- Current dependencies: !`if [ -f pom.xml ]; then mvn dependency:tree | head -30; elif [ -f build.gradle ]; then ./gradlew dependencies --configuration compileClasspath | head -30; fi`
-- Outdated dependencies: !`if [ -f pom.xml ]; then mvn versions:display-dependency-updates 2>/dev/null | grep -E "\\->" | head -20; elif [ -f build.gradle ]; then ./gradlew dependencyUpdates 2>/dev/null | grep -E "\\->" | head -20; fi`
+- Current dependencies: !
+  `if [ -f pom.xml ]; then mvn dependency:tree | head -30; elif [ -f build.gradle ]; then ./gradlew dependencies --configuration compileClasspath | head -30; fi`
+- Outdated dependencies: !
+  `if [ -f pom.xml ]; then mvn versions:display-dependency-updates 2>/dev/null | grep -E "\\->" | head -20; elif [ -f build.gradle ]; then ./gradlew dependencyUpdates 2>/dev/null | grep -E "\\->" | head -20; fi`
 
 ## Arguments
 
 $1 specifies the scope (optional - defaults to `all`):
+
 - `all` - Analyze all dependencies
 - `spring` - Focus on Spring Boot and Spring Framework dependencies
 - `testing` - Focus on test dependencies (JUnit, Mockito, AssertJ, Testcontainers)
@@ -25,6 +46,7 @@ $1 specifies the scope (optional - defaults to `all`):
 - `<groupId:artifactId>` - Specific dependency (e.g., `org.springframework.boot:spring-boot-starter-web`)
 
 $2 specifies the strategy (optional - defaults to `analyze`):
+
 - `analyze` - Analyze and report available updates with risk assessment
 - `plan` - Create detailed upgrade plan with incremental steps
 - `migrate` - Generate migration guide for major version upgrades
@@ -32,6 +54,7 @@ $2 specifies the strategy (optional - defaults to `analyze`):
 - `rollback` - Create rollback strategy and backup current state
 
 $3 specifies target version for specific dependency upgrades (optional):
+
 - Version number (e.g., `3.2.0`, `5.3.31`)
 - `latest` - Latest stable release
 - `latest-minor` - Latest minor version
@@ -40,21 +63,27 @@ $3 specifies target version for specific dependency upgrades (optional):
 ## Upgrade Analysis Process
 
 ### 1. Dependency Inventory
+
 Analyze current state:
+
 - List all dependencies (direct and transitive)
 - Identify outdated dependencies
 - Check for known security vulnerabilities
 - Detect dependency conflicts
 
 ### 2. Risk Assessment
+
 Categorize updates by risk level:
+
 - **PATCH** (Low risk): Bug fixes, no breaking changes
 - **MINOR** (Medium risk): New features, backward compatible
 - **MAJOR** (High risk): Breaking changes, API modifications
 - **SECURITY** (Critical): Security vulnerabilities requiring immediate action
 
 ### 3. Breaking Change Detection
+
 For each major version update:
+
 - Fetch release notes and changelogs
 - Identify deprecated APIs
 - Detect removed features
@@ -64,7 +93,9 @@ For each major version update:
 ### 4. Framework-Specific Patterns
 
 #### Spring Boot Upgrades
+
 When upgrading Spring Boot:
+
 - Check Spring Boot migration guide
 - Update parent POM version
 - Review breaking changes in Auto-configuration
@@ -74,7 +105,9 @@ When upgrading Spring Boot:
 - Test Actuator endpoint changes
 
 #### JUnit 4 to JUnit 5
+
 When upgrading JUnit:
+
 - Replace `@Test` imports
 - Convert `@Before/@After` to `@BeforeEach/@AfterEach`
 - Update assertions (AssertJ recommended)
@@ -82,7 +115,9 @@ When upgrading JUnit:
 - Replace `@RunWith(SpringRunner.class)` with `@ExtendWith(SpringExtension.class)`
 
 #### Mockito Upgrades
+
 When upgrading Mockito:
+
 - Update import statements
 - Replace deprecated methods
 - Check ArgumentMatchers changes
@@ -90,7 +125,9 @@ When upgrading Mockito:
 - Update MockitoJUnitRunner usage
 
 ### 5. Compatibility Matrix
+
 Check peer dependencies:
+
 - Spring Boot → Spring Framework version
 - Spring Framework → Java version
 - JUnit 5 → Mockito version
@@ -100,6 +137,7 @@ Check peer dependencies:
 ## Upgrade Strategies
 
 ### Strategy 1: Patch Updates (Safe)
+
 ```bash
 # Maven: Update all patch versions
 mvn versions:use-latest-releases -DallowMajorUpdates=false -DallowMinorUpdates=false
@@ -113,6 +151,7 @@ mvn versions:use-latest-releases -DallowMajorUpdates=false -DallowMinorUpdates=f
 **Timeline**: Same day
 
 ### Strategy 2: Minor Updates (Careful)
+
 ```bash
 # Maven: Update minor versions
 mvn versions:use-latest-releases -DallowMajorUpdates=false
@@ -126,7 +165,9 @@ mvn versions:use-latest-releases -DallowMajorUpdates=false
 **Timeline**: 1-2 days
 
 ### Strategy 3: Major Updates (Planned)
+
 Individual upgrade with migration:
+
 1. Create feature branch
 2. Update single dependency
 3. Fix breaking changes
@@ -139,6 +180,7 @@ Individual upgrade with migration:
 **Timeline**: 3-7 days per major dependency
 
 ### Strategy 4: Spring Boot Upgrade (Strategic)
+
 ```bash
 # Check Spring Boot compatibility
 curl -s https://spring.io/projects/spring-boot | grep -A 5 "supported versions"
@@ -154,6 +196,7 @@ curl -s https://spring.io/projects/spring-boot | grep -A 5 "supported versions"
 ## Maven Commands
 
 ### Analysis
+
 ```bash
 # Check for updates
 mvn versions:display-dependency-updates
@@ -169,6 +212,7 @@ mvn dependency:tree -Dverbose
 ```
 
 ### Execution
+
 ```bash
 # Update specific dependency
 mvn versions:use-dep-version -Dincludes=groupId:artifactId -DdepVersion=1.2.3
@@ -186,6 +230,7 @@ mvn versions:revert
 ## Gradle Commands
 
 ### Analysis
+
 ```bash
 # Check for updates (with plugin)
 ./gradlew dependencyUpdates
@@ -198,6 +243,7 @@ mvn versions:revert
 ```
 
 ### Execution
+
 ```bash
 # Update version catalog
 ./gradlew versionCatalogUpdate
@@ -217,6 +263,7 @@ For each major upgrade, generate:
 ## Migration: [Dependency] [Old Version] → [New Version]
 
 ### Breaking Changes
+
 - API change 1: `oldMethod()` → `newMethod()`
 - Removed class: `com.example.OldClass`
 - Configuration change: `old.property` → `new.property`
@@ -224,6 +271,7 @@ For each major upgrade, generate:
 ### Migration Steps
 
 #### Step 1: Update Dependency
+
 ```xml
 <!-- Maven -->
 <dependency>
@@ -234,21 +282,25 @@ For each major upgrade, generate:
 ```
 
 #### Step 2: Fix Compilation Errors
+
 - Replace deprecated imports
 - Update method calls
 - Adjust configuration
 
 #### Step 3: Update Tests
+
 - Fix test compilation
 - Update mocks and stubs
 - Adjust test configurations
 
 #### Step 4: Runtime Verification
+
 - Start application
 - Check logs for warnings
 - Test critical paths
 
 ### Testing Checklist
+
 - [ ] Unit tests pass
 - [ ] Integration tests pass
 - [ ] Application starts successfully
@@ -256,16 +308,19 @@ For each major upgrade, generate:
 - [ ] Manual smoke tests completed
 
 ### Rollback Plan
+
 ```bash
 git revert HEAD
 mvn clean install
 ```
 
 ### Estimated Effort
+
 - Compilation fixes: X hours
 - Test updates: Y hours
 - Testing & validation: Z hours
-**Total**: W hours
+  **Total**: W hours
+
 ```
 
 ## Post-Upgrade Validation
@@ -293,6 +348,7 @@ mvn project-info-reports:dependencies
 ```
 
 ### Runtime Verification
+
 - Application startup time
 - Memory footprint comparison
 - API response times
@@ -302,6 +358,7 @@ mvn project-info-reports:dependencies
 ## Rollback Strategy
 
 ### Create Rollback Point
+
 ```bash
 # Git tag before upgrade
 git tag -a "pre-upgrade-$(date +%Y%m%d)" -m "Pre-upgrade snapshot"
@@ -313,6 +370,7 @@ cp gradle/libs.versions.toml gradle/libs.versions.toml.backup
 ```
 
 ### Execute Rollback
+
 ```bash
 # Restore from backup
 git checkout pom.xml build.gradle gradle/libs.versions.toml
@@ -328,27 +386,33 @@ mvn clean install
 ## Common Java Dependency Upgrades
 
 ### Spring Boot
-- Check [Spring Boot Migration Guide](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Migration-Guide)
+
+-
+Check [Spring Boot Migration Guide](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Migration-Guide)
 - Review breaking changes in Auto-configuration
 - Update Java version if required (Spring Boot 3 requires Java 17+)
 
 ### Hibernate/JPA
+
 - Review JPA specification changes
 - Check for deprecated methods
 - Test lazy loading behavior
 - Verify transaction management
 
 ### Jackson
+
 - Check for breaking changes in serialization
 - Test date/time handling
 - Verify custom serializers/deserializers
 
 ### Lombok
+
 - Update IDE plugin
 - Check annotation processing configuration
 - Verify generated code compatibility
 
 ### Testcontainers
+
 - Update Docker dependencies
 - Check container image versions
 - Verify network configuration
@@ -358,53 +422,40 @@ mvn clean install
 Based on the specified scope and strategy, provide:
 
 1. **Dependency Analysis Report**
-   - Current versions vs. available versions
-   - Risk assessment for each update
-   - Security vulnerability status
-   - Dependency conflicts
+    - Current versions vs. available versions
+    - Risk assessment for each update
+    - Security vulnerability status
+    - Dependency conflicts
 
 2. **Prioritized Upgrade Plan**
-   - Critical security updates (immediate)
-   - Safe patch updates (batch)
-   - Minor version updates (incremental)
-   - Major version updates (planned)
+    - Critical security updates (immediate)
+    - Safe patch updates (batch)
+    - Minor version updates (incremental)
+    - Major version updates (planned)
 
 3. **Migration Guides** (for major upgrades)
-   - Breaking changes
-   - Step-by-step migration
-   - Code examples
-   - Testing strategy
+    - Breaking changes
+    - Step-by-step migration
+    - Code examples
+    - Testing strategy
 
 4. **Execution Commands**
-   - Maven/Gradle commands to execute
-   - Testing commands
-   - Rollback procedures
+    - Maven/Gradle commands to execute
+    - Testing commands
+    - Rollback procedures
 
 5. **Timeline & Effort Estimation**
-   - Realistic schedule
-   - Resource requirements
-   - Risk mitigation steps
+    - Realistic schedule
+    - Resource requirements
+    - Risk mitigation steps
 
-Focus on **safe, incremental upgrades** that maintain system stability while keeping dependencies current and secure. Always provide rollback strategies and comprehensive testing approaches.
+Focus on **safe, incremental upgrades** that maintain system stability while keeping dependencies current and secure.
+Always provide rollback strategies and comprehensive testing approaches.
 
 ## Execution Instructions
 
 **Agent Selection**: To execute this task, use the following agent with fallback:
+
 - Primary: `java-security-expert`
-- If not available: Use `developer-kit:java-security-expert` or fallback to `general-purpose` agent with `spring-boot-crud-patterns` skill
-
-## Overview
-
-Manages safe and incremental dependency upgrades for Java/Maven/Gradle projects with breaking change detection and migration guides. Use when upgrading project dependencies or migrating to new library versions.
-
-## Usage
-
-```
-/devkit.java.upgrade-dependencies $ARGUMENTS
-```
-
-## Examples
-
-```bash
-/devkit.java.upgrade-dependencies example-input
-```
+- If not available: Use `developer-kit:java-security-expert` or fallback to `general-purpose` agent with
+  `spring-boot-crud-patterns` skill

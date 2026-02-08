@@ -7,6 +7,29 @@ model: inherit
 
 # Java Enterprise Code Review - Spring Framework
 
+## Overview
+
+Validates Java code quality for enterprise Spring applications with security, performance, architecture and best
+practices analysis. Use when reviewing code changes or before merging pull requests.
+
+## Usage
+
+```
+/devkit.java.code-review $ARGUMENTS
+```
+
+## Arguments
+
+| Argument     | Description                              |
+|--------------|------------------------------------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
+
+## Examples
+
+```bash
+/devkit.java.code-review example-input
+```
+
 ## Current Context
 
 - **Current Git Branch**: !`git branch --show-current`
@@ -19,6 +42,7 @@ model: inherit
 The review will analyze: **$ARGUMENTS**
 
 **Available review types:**
+
 - `full` - Complete 360° review (default)
 - `security` - Focus on vulnerabilities and security
 - `performance` - Performance and scalability analysis
@@ -48,6 +72,7 @@ ENDIF
 ### 2.1 Project Structure Analysis
 
 Verify feature vs layer organization:
+
 ```
 feature/
 ├── domain/           # Domain entities (Spring-free)
@@ -74,6 +99,7 @@ feature/
 ### 2.3 Spring Architectural Patterns
 
 Verify correct pattern usage:
+
 - **Constructor Injection**: `@RequiredArgsConstructor` (never field injection)
 - **Repository Pattern**: Domain interfaces + infrastructure adapters
 - **Service Layer**: Business logic in @Service separated from controllers
@@ -102,18 +128,18 @@ Verify correct pattern usage:
 @Bean
 public SecurityFilterChain applicationSecurity(HttpSecurity http) throws Exception {
     http
-        .csrf(csrf -> csrf.disable()) // Only for stateless APIs
-        .sessionManagement(session ->
-            session.sessionCreationPolicy(STATELESS))
-        .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/public/**").permitAll()
-            .requestMatchers("/api/admin/**").hasRole(ADMIN)
-            .anyRequest().authenticated())
-        .oauth2ResourceServer(oauth2 ->
-            oauth2.jwt(Customizer.withDefaults()))
-        .headers(headers -> headers
-            .contentSecurityPolicy(csp -> csp
-                .policyDirectives("default-src 'self'")));
+            .csrf(csrf -> csrf.disable()) // Only for stateless APIs
+            .sessionManagement(session ->
+                    session.sessionCreationPolicy(STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                    .requestMatchers("/api/public/**").permitAll()
+                    .requestMatchers("/api/admin/**").hasRole(ADMIN)
+                    .anyRequest().authenticated())
+            .oauth2ResourceServer(oauth2 ->
+                    oauth2.jwt(Customizer.withDefaults()))
+            .headers(headers -> headers
+                    .contentSecurityPolicy(csp -> csp
+                            .policyDirectives("default-src 'self'")));
 
     return http.build();
 }
@@ -202,18 +228,18 @@ public class UserService {
 
         // Mapping with record pattern
         var user = new User(
-            request.name(),
-            request.email(),
-            passwordEncoder.encode(request.password())
+                request.name(),
+                request.email(),
+                passwordEncoder.encode(request.password())
         );
 
         var saved = userRepository.save(user);
 
         return new UserDto(
-            saved.getId(),
-            saved.getName(),
-            saved.getEmail(),
-            saved.getCreatedAt()
+                saved.getId(),
+                saved.getName(),
+                saved.getEmail(),
+                saved.getCreatedAt()
         );
     }
 }
@@ -238,6 +264,7 @@ public class UserService {
 ### 6.2 JUnit 5 + Spring Boot Testing
 
 ```java
+
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
@@ -265,7 +292,7 @@ class UserServiceTest {
         assertThat(result.email()).isEqualTo("test@example.com");
         verify(passwordEncoder).encode("password");
         verify(userRepository).save(argThat(user ->
-            user.getPassword().equals("hashed")));
+                user.getPassword().equals("hashed")));
     }
 }
 ```
@@ -273,6 +300,7 @@ class UserServiceTest {
 ### 6.3 Testcontainers Integration
 
 ```java
+
 @SpringBootTest
 @Testcontainers
 class UserRepositoryIntegrationTest {
@@ -333,17 +361,20 @@ class UserRepositoryIntegrationTest {
 ## Quality Metrics
 
 ### Test Coverage Targets
+
 - **Unit Tests**: > 80%
 - **Integration Tests**: > 60%
 - **Total Coverage**: > 85%
 
 ### Code Quality Metrics
+
 - **Cyclomatic Complexity**: < 10 per method
 - **Maintainability Index**: > 70
 - **Technical Debt Ratio**: < 5%
 - **Code Duplication**: < 3%
 
 ### Performance Targets
+
 - **Response Time**: < 200ms (95th percentile)
 - **Throughput**: > 1000 req/sec
 - **Memory Usage**: < 512MB steady state
@@ -369,27 +400,7 @@ class UserRepositoryIntegrationTest {
 ## Execution Instructions
 
 **Agent Selection**: To execute this code review, use the following agent with fallback:
-- Primary: `spring-boot-code-review-expert`
-- If not available: Use `developer-kit:spring-boot-code-review-expert` or fallback to `general-purpose` agent with `spring-boot-crud-patterns` skill
 
-## Overview
-
-Validates Java code quality for enterprise Spring applications with security, performance, architecture and best practices analysis. Use when reviewing code changes or before merging pull requests.
-
-## Usage
-
-```
-/devkit.java.code-review $ARGUMENTS
-```
-
-## Arguments
-
-| Argument | Description |
-|----------|-------------|
-| `$ARGUMENTS` | Combined arguments passed to the command |
-
-## Examples
-
-```bash
-/devkit.java.code-review example-input
-```
+- Primary: `developer-kit-java:spring-boot-code-review-expert`
+- If not available: Use `developer-kit-java:spring-boot-code-review-expert` or fallback to `general-purpose` agent with
+  `spring-boot-crud-patterns` skill

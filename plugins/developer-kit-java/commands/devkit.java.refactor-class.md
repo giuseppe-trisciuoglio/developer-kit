@@ -7,7 +7,24 @@ model: inherit
 
 # Java Class Refactoring Assistant
 
+## Overview
+
 Intelligently refactor complex Java classes following Clean Architecture, DDD patterns, and Spring Boot best practices.
+
+Provides intelligent refactoring for complex Java classes with architectural analysis and Spring Boot patterns. Use when
+refactoring large or complex Java classes.
+
+## Usage
+
+```
+/devkit.java.refactor-class $ARGUMENTS
+```
+
+## Arguments
+
+| Argument     | Description                              |
+|--------------|------------------------------------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
 
 ## Current Context
 
@@ -21,25 +38,28 @@ Intelligently refactor complex Java classes following Clean Architecture, DDD pa
 Analyzing: **$ARGUMENTS**
 
 **Parameters:**
+
 - `$1` - Class file path (required): Path to Java class to refactor
 - `$2` - Refactoring scope (optional):
-  - `cleanup` - Code cleanup and style improvements (default)
-  - `architecture` - Architectural pattern improvements
-  - `performance` - Performance optimizations
-  - `security` - Security enhancements
-  - `testing` - Testability improvements
-  - `comprehensive` - All improvements (full refactor)
+    - `cleanup` - Code cleanup and style improvements (default)
+    - `architecture` - Architectural pattern improvements
+    - `performance` - Performance optimizations
+    - `security` - Security enhancements
+    - `testing` - Testability improvements
+    - `comprehensive` - All improvements (full refactor)
 - `$3` - Options (optional): `dry-run`, `backup`, `validate-only`
 
 ## Pre-Refactoring Analysis
 
 ### 1. Class Identification and Context
+
 IF "$1" is empty OR not provided
 THEN Analyze the most complex class in the codebase automatically
 ELSE Analyze specific class: $1
 ENDIF
 
 ### 2. Architecture Pattern Detection
+
 ```
 Expected Clean Architecture Structure:
 feature/
@@ -59,6 +79,7 @@ feature/
 ## Refactoring Strategy by Scope
 
 ### Cleanup Refactoring ($2 = "cleanup")
+
 - **Code Style**: Apply consistent formatting, naming conventions
 - **Dead Code**: Remove unused imports, methods, variables
 - **Complexity**: Simplify complex methods (< 10 cyclomatic complexity)
@@ -66,6 +87,7 @@ feature/
 - **Immutability**: Convert to immutable structures where possible
 
 ### Architecture Refactoring ($2 = "architecture")
+
 - **Layer Separation**: Ensure proper dependency direction
 - **DDD Patterns**: Apply aggregates, value objects, domain events
 - **Spring Patterns**: Constructor injection, proper bean scoping
@@ -73,6 +95,7 @@ feature/
 - **DTO Pattern**: Replace JPA entities with records in APIs
 
 ### Performance Refactoring ($2 = "performance")
+
 - **Database Queries**: Optimize JPA queries, eliminate N+1 problems
 - **Caching**: Add @Cacheable, @CachePut, @CacheEvict where appropriate
 - **Async Processing**: Convert blocking operations to @Async
@@ -80,6 +103,7 @@ feature/
 - **Algorithm Optimization**: Improve computational complexity
 
 ### Security Refactoring ($2 = "security")
+
 - **Input Validation**: Add Jakarta Bean Validation
 - **Authentication**: Ensure proper @PreAuthorize usage
 - **Data Exposure**: Prevent sensitive data leakage in DTOs
@@ -87,6 +111,7 @@ feature/
 - **XSS Prevention**: Input sanitization and output encoding
 
 ### Testing Refactoring ($2 = "testing")
+
 - **Testability**: Extract dependencies for better mocking
 - **Test Coverage**: Add missing unit/integration tests
 - **Test Structure**: Apply AAA pattern (Arrange, Act, Assert)
@@ -96,6 +121,7 @@ feature/
 ## Refactoring Process
 
 ### Phase 1: Analysis and Planning
+
 1. **Read and analyze target class** for current patterns and violations
 2. **Identify dependencies** and usage patterns across codebase
 3. **Assess test coverage** - if missing, create tests BEFORE refactoring
@@ -103,6 +129,7 @@ feature/
 5. **Backup strategy** - create branch if not `dry-run`
 
 ### Phase 2: Safety Checks
+
 ```bash
 # Run existing tests
 ./gradlew test || mvn test
@@ -114,6 +141,7 @@ fi
 ```
 
 ### Phase 3: Incremental Refactoring
+
 For each refactoring step:
 
 1. **Make small, focused change**
@@ -122,6 +150,7 @@ For each refactoring step:
 4. **Document improvement** and rationale
 
 ### Phase 4: Validation
+
 ```bash
 # Full test suite
 ./gradlew test || mvn test
@@ -136,6 +165,7 @@ For each refactoring step:
 ## Common Refactoring Patterns
 
 ### Extract Method/Service
+
 ```java
 // Before: Complex method doing too much
 @Service
@@ -169,6 +199,7 @@ public class OrderService {
 ```
 
 ### Replace with Record/Value Object
+
 ```java
 // Before: Mutable entity exposed
 public class UserDto {
@@ -178,15 +209,19 @@ public class UserDto {
 }
 
 // After: Immutable record
-public record UserDto(String id, String name, String email, Instant createdAt) {}
+public record UserDto(String id, String name, String email, Instant createdAt) {
+}
 ```
 
 ### Apply Repository Pattern
+
 ```java
 // Domain port (interface)
 public interface UserRepository {
     User save(User user);
+
     Optional<User> findById(UserId id);
+
     List<User> findByEmail(String email);
 }
 
@@ -207,6 +242,7 @@ public class UserRepositoryAdapter implements UserRepository {
 ```
 
 ### Add Spring Security
+
 ```java
 // Before: No authorization
 @PreAuthorize("hasRole('ADMIN')")
@@ -226,18 +262,21 @@ public ResponseEntity<List<UserDto>> getAllUsers() {
 ## Output and Reporting
 
 ### Refactoring Summary
+
 - **Files Modified**: List of changed files with line counts
 - **Patterns Applied**: Specific patterns and improvements made
 - **Test Impact**: New tests added, existing tests updated
 - **Performance Changes**: Before/after metrics if available
 
 ### Quality Metrics
+
 - **Cyclomatic Complexity**: Reduced from X to Y
 - **Lines of Code**: Reduced by X%
 - **Test Coverage**: Increased from X% to Y%
 - **Dependencies**: Reduced coupling between components
 
 ### Next Steps
+
 1. **Review changes** with team
 2. **Run integration tests** in staging environment
 3. **Monitor performance** after deployment
@@ -265,6 +304,7 @@ public ResponseEntity<List<UserDto>> getAllUsers() {
 ## Integration with Skills
 
 This command works best with these skills:
+
 - **spring-boot-crud-patterns**: For CRUD refactoring
 - **spring-boot-test-patterns**: For test improvements
 - **spring-boot-rest-api-standards**: For API refactoring
@@ -281,22 +321,7 @@ This command works best with these skills:
 ## Execution Instructions
 
 **Agent Selection**: To execute this task, use the following agent with fallback:
-- Primary: `java-refactor-expert`
-- If not available: Use `developer-kit:java-refactor-expert` or fallback to `general-purpose` agent with `spring-boot-crud-patterns` skill
 
-## Overview
-
-Provides intelligent refactoring for complex Java classes with architectural analysis and Spring Boot patterns. Use when refactoring large or complex Java classes.
-
-
-## Usage
-
-```
-/devkit.java.refactor-class $ARGUMENTS
-```
-
-## Arguments
-
-| Argument | Description |
-|----------|-------------|
-| `$ARGUMENTS` | Combined arguments passed to the command |
+- Primary: `developer-kit-java:java-refactor-expert`
+- If not available: Use `developer-kit-java:java-refactor-expert` or fallback to `general-purpose` agent with
+  `spring-boot-crud-patterns` skill

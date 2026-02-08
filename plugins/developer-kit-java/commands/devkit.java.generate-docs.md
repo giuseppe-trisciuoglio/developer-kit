@@ -7,7 +7,25 @@ model: inherit
 
 # Generate Java Project Documentation
 
-You are a Java documentation expert specializing in creating comprehensive, maintainable documentation for Java Spring Boot projects. Generate professional documentation following Java and Spring ecosystem standards.
+## Overview
+
+Generates comprehensive Java project documentation including API docs, architecture diagrams, and Javadoc. Use when
+creating or updating project documentation.
+
+You are a Java documentation expert specializing in creating comprehensive, maintainable documentation for Java Spring
+Boot projects. Generate professional documentation following Java and Spring ecosystem standards.
+
+## Usage
+
+```
+/devkit.java.generate-docs $ARGUMENTS
+```
+
+## Arguments
+
+| Argument     | Description                              |
+|--------------|------------------------------------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
 
 ## Current Project Context
 
@@ -23,6 +41,7 @@ You are a Java documentation expert specializing in creating comprehensive, main
 
 **Default project path**: Current directory
 **Available doc types**:
+
 - `api` - REST API documentation with OpenAPI/Swagger
 - `architecture` - System architecture and design documentation
 - `javadoc` - Comprehensive Javadoc generation
@@ -30,6 +49,7 @@ You are a Java documentation expert specializing in creating comprehensive, main
 - `full` - Complete documentation suite (default)
 
 **Output formats**:
+
 - `html` - HTML documentation site
 - `markdown` - Markdown files
 - `asciidoc` - AsciiDoc format
@@ -85,44 +105,46 @@ src/main/java/
 ### 2.1 OpenAPI/Swagger Configuration
 
 **SpringDoc OpenAPI Setup**:
+
 ```java
+
 @Configuration
 @OpenAPIDefinition(
-    info = @Info(
-        title = "API Documentation",
-        version = "1.0.0",
-        description = "Spring Boot REST API documentation",
-        contact = @Contact(
-            name = "Development Team",
-            email = "dev@example.com"
+        info = @Info(
+                title = "API Documentation",
+                version = "1.0.0",
+                description = "Spring Boot REST API documentation",
+                contact = @Contact(
+                        name = "Development Team",
+                        email = "dev@example.com"
+                ),
+                license = @License(
+                        name = "Apache 2.0",
+                        url = "https://www.apache.org/licenses/LICENSE-2.0"
+                )
         ),
-        license = @License(
-            name = "Apache 2.0",
-            url = "https://www.apache.org/licenses/LICENSE-2.0"
-        )
-    ),
-    servers = {
-        @Server(url = "/", description = "Default server"),
-        @Server(url = "https://api.example.com", description = "Production server")
-    }
+        servers = {
+                @Server(url = "/", description = "Default server"),
+                @Server(url = "https://api.example.com", description = "Production server")
+        }
 )
 public class OpenApiConfig {
 
     @Bean
     public GroupedOpenApi publicApi() {
         return GroupedOpenApi.builder()
-            .group("public")
-            .pathsToMatch("/api/public/**")
-            .build();
+                .group("public")
+                .pathsToMatch("/api/public/**")
+                .build();
     }
 
     @Bean
     public GroupedOpenApi adminApi() {
         return GroupedOpenApi.builder()
-            .group("admin")
-            .pathsToMatch("/api/admin/**")
-            .addOpenApiMethodFilter(method -> method.isAnnotationPresent(PreAuthorize.class))
-            .build();
+                .group("admin")
+                .pathsToMatch("/api/admin/**")
+                .addOpenApiMethodFilter(method -> method.isAnnotationPresent(PreAuthorize.class))
+                .build();
     }
 }
 ```
@@ -130,6 +152,7 @@ public class OpenApiConfig {
 ### 2.2 Enhanced Controller Documentation
 
 ```java
+
 @RestController
 @RequestMapping("/api/v1/users")
 @Tag(name = "User Management", description = "User CRUD operations")
@@ -138,39 +161,39 @@ public class UserController {
 
     @GetMapping
     @Operation(
-        summary = "Get all users",
-        description = "Retrieve a paginated list of users with optional filtering",
-        responses = {
-            @ApiResponse(
-                responseCode = "200",
-                description = "Users retrieved successfully",
-                content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = PaginatedUserResponse.class)
-                )
-            ),
-            @ApiResponse(
-                responseCode = "401",
-                description = "Unauthorized",
-                content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = ErrorResponse.class)
-                )
-            )
-        }
+            summary = "Get all users",
+            description = "Retrieve a paginated list of users with optional filtering",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Users retrieved successfully",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = PaginatedUserResponse.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponse.class)
+                            )
+                    )
+            }
     )
     public ResponseEntity<PaginatedResponse<UserDto>> getUsers(
-        @Parameter(description = "Page number (0-based)", example = "0")
-        @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Page number (0-based)", example = "0")
+            @RequestParam(defaultValue = "0") int page,
 
-        @Parameter(description = "Page size", example = "20")
-        @RequestParam(defaultValue = "20") int size,
+            @Parameter(description = "Page size", example = "20")
+            @RequestParam(defaultValue = "20") int size,
 
-        @Parameter(description = "Sort field", example = "name")
-        @RequestParam(defaultValue = "name") String sort,
+            @Parameter(description = "Sort field", example = "name")
+            @RequestParam(defaultValue = "name") String sort,
 
-        @Parameter(description = "Search term for name/email")
-        @RequestParam(required = false) String search
+            @Parameter(description = "Search term for name/email")
+            @RequestParam(required = false) String search
     ) {
         // Implementation
     }
@@ -180,23 +203,24 @@ public class UserController {
 ### 2.3 Model Documentation
 
 ```java
+
 @Schema(description = "User data transfer object")
 public record UserDto(
-    @Schema(description = "Unique user identifier", example = "123e4567-e89b-12d3-a456-426614174000", accessMode = Schema.AccessMode.READ_ONLY)
-    UUID id,
+        @Schema(description = "Unique user identifier", example = "123e4567-e89b-12d3-a456-426614174000", accessMode = Schema.AccessMode.READ_ONLY)
+        UUID id,
 
-    @Schema(description = "User's full name", example = "John Doe", minLength = 2, maxLength = 100)
-    @NotBlank(message = "Name is required")
-    String name,
+        @Schema(description = "User's full name", example = "John Doe", minLength = 2, maxLength = 100)
+        @NotBlank(message = "Name is required")
+        String name,
 
-    @Schema(description = "User email address", example = "john.doe@example.com", format = "email")
-    @NotBlank(message = "Email is required")
-    @Email(message = "Invalid email format")
-    String email,
+        @Schema(description = "User email address", example = "john.doe@example.com", format = "email")
+        @NotBlank(message = "Email is required")
+        @Email(message = "Invalid email format")
+        String email,
 
-    @Schema(description = "Account creation timestamp", example = "2024-01-15T10:30:00Z", accessMode = Schema.AccessMode.READ_ONLY)
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    LocalDateTime createdAt
+        @Schema(description = "Account creation timestamp", example = "2024-01-15T10:30:00Z", accessMode = Schema.AccessMode.READ_ONLY)
+        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+        LocalDateTime createdAt
 ) {
     @JsonCreator
     public UserDto {
@@ -285,21 +309,25 @@ graph TB
 ## Component Architecture
 
 ### Domain Layer
+
 - **Purpose**: Core business logic and domain models
 - **Technologies**: Plain Java objects, no Spring dependencies
 - **Responsibilities**: Business rules, domain services, repositories interfaces
 
 ### Application Layer
+
 - **Purpose**: Use cases and application services
 - **Technologies**: Spring Boot, @Service, @Transactional
 - **Responsibilities**: Orchestrate domain objects, handle transactions
 
 ### Infrastructure Layer
+
 - **Purpose**: External concerns and implementations
 - **Technologies**: Spring Data JPA, external APIs, file systems
 - **Responsibilities**: Database access, external integrations, caching
 
 ### Presentation Layer
+
 - **Purpose**: API endpoints and data transformation
 - **Technologies**: Spring Web, DTOs, validation
 - **Responsibilities**: HTTP handling, request/response mapping
@@ -345,17 +373,16 @@ sequenceDiagram
     participant Payment as Payment Gateway
     participant Inventory as Inventory Service
     participant Notification as Notification Service
-
-    Client->>API: POST /api/orders
-    API->>Service: orderService.createOrder(request)
-    Service->>Inventory: inventoryService.reserveItems(items)
-    Inventory-->>Service: Reservation confirmed
-    Service->>Payment: paymentGateway.processPayment(paymentDetails)
-    Payment-->>Service: Payment successful
-    Service->>Service: orderRepository.save(order)
-    Service->>Notification: notificationService.sendOrderConfirmation(order)
-    Service-->>API: OrderDto
-    API-->>Client: 201 Created + OrderDto
+    Client ->> API: POST /api/orders
+    API ->> Service: orderService.createOrder(request)
+    Service ->> Inventory: inventoryService.reserveItems(items)
+    Inventory -->> Service: Reservation confirmed
+    Service ->> Payment: paymentGateway.processPayment(paymentDetails)
+    Payment -->> Service: Payment successful
+    Service ->> Service: orderRepository.save(order)
+    Service ->> Notification: notificationService.sendOrderConfirmation(order)
+    Service -->> API: OrderDto
+    API -->> Client: 201 Created + OrderDto
 ```
 
 ## Phase 4: Javadoc Generation
@@ -443,6 +470,7 @@ public class UserService {
 ### 4.2 Maven Javadoc Plugin Configuration
 
 ```xml
+
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-javadoc-plugin</artifactId>
@@ -620,12 +648,12 @@ docker-compose up -d postgres redis
 
 ### Health Endpoints
 
-| Endpoint | Description | Access |
-|----------|-------------|--------|
-| `/actuator/health` | Application health status | Public |
-| `/actuator/health/readiness` | Readiness probe | Internal |
-| `/actuator/health/liveness` | Liveness probe | Internal |
-| `/actuator/metrics` | Application metrics | Admin |
+| Endpoint                     | Description               | Access   |
+|------------------------------|---------------------------|----------|
+| `/actuator/health`           | Application health status | Public   |
+| `/actuator/health/readiness` | Readiness probe           | Internal |
+| `/actuator/health/liveness`  | Liveness probe            | Internal |
+| `/actuator/metrics`          | Application metrics       | Admin    |
 
 ### Prometheus Metrics
 
@@ -672,15 +700,15 @@ kubectl logs -f deployment/project
 
 ### Environment Variables
 
-| Variable | Description | Default | Required |
-|----------|-------------|---------|----------|
-| `SPRING_PROFILES_ACTIVE` | Active profile | `dev` | No |
-| `DATABASE_URL` | PostgreSQL connection string | - | Yes |
-| `DATABASE_USERNAME` | Database username | - | Yes |
-| `DATABASE_PASSWORD` | Database password | - | Yes |
-| `REDIS_URL` | Redis connection string | - | No |
-| `JWT_SECRET` | JWT signing secret | - | Yes |
-| `JWT_EXPIRATION` | JWT token expiration | `86400` | No |
+| Variable                 | Description                  | Default | Required |
+|--------------------------|------------------------------|---------|----------|
+| `SPRING_PROFILES_ACTIVE` | Active profile               | `dev`   | No       |
+| `DATABASE_URL`           | PostgreSQL connection string | -       | Yes      |
+| `DATABASE_USERNAME`      | Database username            | -       | Yes      |
+| `DATABASE_PASSWORD`      | Database password            | -       | Yes      |
+| `REDIS_URL`              | Redis connection string      | -       | No       |
+| `JWT_SECRET`             | JWT signing secret           | -       | Yes      |
+| `JWT_EXPIRATION`         | JWT token expiration         | `86400` | No       |
 
 ### Application Properties
 
@@ -690,13 +718,11 @@ spring.datasource.url=${DATABASE_URL:jdbc:postgresql://localhost:5432/project}
 spring.datasource.username=${DATABASE_USERNAME:project}
 spring.datasource.password=${DATABASE_PASSWORD:password}
 spring.datasource.hikari.maximum-pool-size=20
-
 # JPA configuration
 spring.jpa.hibernate.ddl-auto=validate
 spring.jpa.show-sql=false
 spring.jpa.properties.hibernate.format_sql=true
 spring.jpa.properties.hibernate.jdbc.batch_size=20
-
 # Redis configuration
 spring.cache.type=redis
 spring.data.redis.host=${REDIS_HOST:localhost}
@@ -719,6 +745,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 ### Code Style
 
 This project uses:
+
 - **Spotless** for code formatting
 - **Checkstyle** for style validation
 - **SonarQube** for code quality
@@ -747,6 +774,7 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 ---
 
 Built with ❤️ using [Spring Boot](https://spring.io/projects/spring-boot)
+
 ```
 
 ## Phase 6: Documentation Site Generation
@@ -878,27 +906,12 @@ docs/
 /developer-kit-java:devkit.java.generate-docs . architecture asciidoc
 ```
 
-This command provides comprehensive Java project documentation that follows industry best practices and includes API docs, architecture diagrams, Javadoc, and setup guides.
+This command provides comprehensive Java project documentation that follows industry best practices and includes API
+docs, architecture diagrams, Javadoc, and setup guides.
 
 ## Execution Instructions
 
 **Agent Selection**: To execute this task, use the following agent with fallback:
-- Primary: `java-documentation-specialist`
-- If not available: Use `developer-kit:java-documentation-specialist` or fallback to `general-purpose` agent
 
-## Overview
-
-Generates comprehensive Java project documentation including API docs, architecture diagrams, and Javadoc. Use when creating or updating project documentation.
-
-
-## Usage
-
-```
-/devkit.java.generate-docs $ARGUMENTS
-```
-
-## Arguments
-
-| Argument | Description |
-|----------|-------------|
-| `$ARGUMENTS` | Combined arguments passed to the command |
+- Primary: `developer-kit-java:java-documentation-specialist`
+- If not available: Use `developer-kit-java:java-documentation-specialist` or fallback to `general-purpose` agent

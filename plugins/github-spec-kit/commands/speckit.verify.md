@@ -4,6 +4,31 @@ argument-hint: "[optional-focus-area]"
 allowed-tools: Read, Glob, Grep, Bash
 ---
 
+# Verify Feature Implementation - Comprehensive Validation
+
+## Overview
+
+Validates implementation completion by checking tasks, logic, tests, and code quality against specifications. Use when
+you need to verify that all tasks are properly completed.
+
+## Usage
+
+```
+/speckit.verify $ARGUMENTS
+```
+
+## Arguments
+
+| Argument     | Description                              |
+|--------------|------------------------------------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
+
+## Examples
+
+```bash
+/speckit.verify example-input
+```
+
 ## User Input
 
 ```text
@@ -14,20 +39,26 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ## Outline
 
-**Goal**: Perform comprehensive verification of the implemented feature against specifications, ensuring all requirements are met, tests pass, and code quality standards are satisfied. This command runs AFTER `/speckit.implement` completes.
+**Goal**: Perform comprehensive verification of the implemented feature against specifications, ensuring all
+requirements are met, tests pass, and code quality standards are satisfied. This command runs AFTER `/speckit.implement`
+completes.
 
-**Critical Principle**: This is a READ-ONLY analysis command. The ONLY file that may be written is `verification-report.md` in the feature directory. No other modifications are permitted.
+**Critical Principle**: This is a READ-ONLY analysis command. The ONLY file that may be written is
+`verification-report.md` in the feature directory. No other modifications are permitted.
 
 ## Execution Steps
 
 ### 1. Setup & Prerequisites
 
-Run `.specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks` from repo root and parse JSON for:
+Run `.specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks` from repo root and parse JSON
+for:
+
 - FEATURE_DIR (absolute path)
 - AVAILABLE_DOCS list
 - Repository root
 
-For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
+For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm
+Groot").
 
 Abort if implementation appears incomplete with guidance to run `/speckit.implement` first.
 
@@ -36,11 +67,13 @@ Abort if implementation appears incomplete with guidance to run `/speckit.implem
 **Load artifacts in order** (progressive, on-demand):
 
 **Required**:
+
 - tasks.md: Verify all tasks marked completed [X]
 - spec.md: Requirements, user stories, acceptance criteria
 - plan.md: Tech stack, architecture, file structure
 
 **Optional** (load if present):
+
 - data-model.md: Entity definitions and relationships
 - contracts/: API specifications
 - research.md: Technical decisions and constraints
@@ -48,6 +81,7 @@ Abort if implementation appears incomplete with guidance to run `/speckit.implem
 - checklists/: Quality validation items
 
 **Codebase**:
+
 - Implementation files referenced in tasks.md
 - Test files (unit, integration, e2e)
 - Configuration files
@@ -58,12 +92,14 @@ Abort if implementation appears incomplete with guidance to run `/speckit.implem
 **Check tasks.md**:
 
 For each task in tasks.md:
+
 - [ ] Task is marked [X] or [x] (completed)
 - [ ] No tasks remain with [ ] (incomplete)
 - [ ] All file paths mentioned exist in codebase
 - [ ] Implementation addresses task description
 
 **Output**:
+
 ```
 TASK COMPLETION STATUS
 Total tasks: X
@@ -73,6 +109,7 @@ Status: [PASS/FAIL]
 ```
 
 **If incomplete tasks found**:
+
 ```
 INCOMPLETE TASKS:
 - [Task ID]: [Description] → [Reason not completed]
@@ -87,23 +124,27 @@ Verification FAILS if any task incomplete unless justified (explicitly marked as
 For each requirement in spec.md:
 
 #### A. Functional Requirements
+
 - [ ] Implementation code exists
 - [ ] Code logic matches requirement description
 - [ ] All acceptance criteria satisfied
 - [ ] Edge cases handled
 
 #### B. Non-Functional Requirements
+
 - [ ] Performance targets met (if specified)
 - [ ] Security measures implemented
 - [ ] Accessibility requirements satisfied
 - [ ] Scalability considerations addressed
 
 #### C. User Stories
+
 - [ ] All user actions supported
 - [ ] Success criteria demonstrable
 - [ ] Error scenarios handled gracefully
 
 **Output format**:
+
 ```
 REQUIREMENT: [ID or description]
 Status: [COVERED/PARTIAL/MISSING]
@@ -118,22 +159,26 @@ Issues: [If any]
 **Verify against plan.md**:
 
 #### A. Tech Stack Compliance
+
 - [ ] All specified libraries/frameworks used correctly
 - [ ] No unauthorized dependencies introduced
 - [ ] Version constraints respected
 
 #### B. Project Structure
+
 - [ ] Files in expected locations per plan.md
 - [ ] Directory structure follows specification
 - [ ] Naming conventions consistent
 
 #### C. Architectural Patterns
+
 - [ ] Separation of concerns maintained
 - [ ] Design patterns correctly applied
 - [ ] Component boundaries respected
 - [ ] Integration points match contracts
 
 **Output**:
+
 ```
 ARCHITECTURE COMPLIANCE
 Tech Stack: [COMPLIANT/VIOLATIONS]
@@ -151,6 +196,7 @@ Design Patterns: [COMPLIANT/VIOLATIONS]
 **If data-model.md exists**:
 
 For each entity:
+
 - [ ] Entity class/model exists
 - [ ] All fields present with correct types
 - [ ] Relationships implemented correctly
@@ -158,12 +204,14 @@ For each entity:
 - [ ] State transitions (if any) handled
 
 **Check**:
+
 - Foreign key constraints
 - Cascade behaviors
 - Index definitions
 - Migration files (if applicable)
 
 **Output**:
+
 ```
 DATA MODEL VERIFICATION
 Entity: [Name]
@@ -180,6 +228,7 @@ Entity: [Name]
 For each contract file:
 
 #### A. API Endpoints
+
 - [ ] Route/path matches contract
 - [ ] HTTP methods correct
 - [ ] Request schema validation implemented
@@ -187,16 +236,19 @@ For each contract file:
 - [ ] Status codes per specification
 
 #### B. Error Handling
+
 - [ ] All error cases from contract covered
 - [ ] Error response format matches contract
 - [ ] Appropriate HTTP status codes used
 
 #### C. Business Logic
+
 - [ ] Implements contract behavior precisely
 - [ ] Edge cases from contract handled
 - [ ] Validation rules enforced
 
 **Output**:
+
 ```
 CONTRACT: [Filename]
 Endpoint: [Method] [Path]
@@ -213,6 +265,7 @@ Status: [PASS/FAIL]
 **Run test suites**:
 
 #### A. Execute Tests
+
 ```bash
 # Run all test commands from plan.md or infer from project type
 npm test              # or pytest, cargo test, etc.
@@ -220,12 +273,14 @@ npm run test:coverage # or equivalent
 ```
 
 #### B. Analyze Results
+
 - [ ] All tests pass (100% success rate)
 - [ ] No skipped tests (unless explicitly documented)
 - [ ] No test warnings or errors
 - [ ] Coverage meets threshold (from plan.md or ≥90% default)
 
 #### C. Test Quality
+
 - [ ] Tests cover positive scenarios
 - [ ] Tests cover negative/error scenarios
 - [ ] Tests cover edge cases and boundaries
@@ -234,6 +289,7 @@ npm run test:coverage # or equivalent
 - [ ] E2E tests (if specified) validate user flows
 
 **Output**:
+
 ```
 TEST EXECUTION RESULTS
 Total Tests: X
@@ -257,6 +313,7 @@ Integration: [COVERED/GAPS]
 ```
 
 **If tests fail**:
+
 ```
 FAILED TESTS:
 [Test suite] → [Test name]
@@ -271,23 +328,29 @@ Actual: [Value]
 **Static Analysis**:
 
 #### A. Linting
+
 Run project linter (ESLint, Pylint, Clippy, etc.):
+
 - [ ] Zero errors
 - [ ] Zero warnings (or all justified)
 - [ ] Style guide compliance
 
 #### B. Type Checking
+
 If TypeScript/typed language:
+
 - [ ] No type errors
 - [ ] Strict mode compliance
 - [ ] No 'any' types (unless justified)
 
 #### C. Formatting
+
 - [ ] Code formatted consistently
 - [ ] Follows project style guide
 - [ ] No formatting inconsistencies
 
 **Output**:
+
 ```
 CODE QUALITY SCAN
 Linter: [Tool name]
@@ -307,6 +370,7 @@ Formatter:
 ### 10. Security & Performance Audit
 
 **Security Checks**:
+
 - [ ] No hardcoded secrets/credentials
 - [ ] Input validation on all user inputs
 - [ ] SQL injection prevention (parameterized queries)
@@ -316,6 +380,7 @@ Formatter:
 - [ ] Dependency vulnerabilities scan
 
 **Performance Checks**:
+
 - [ ] No obvious performance anti-patterns
 - [ ] Database queries optimized (indexes, N+1 prevention)
 - [ ] No memory leaks
@@ -323,6 +388,7 @@ Formatter:
 - [ ] Efficient algorithms (no O(n²) where O(n) possible)
 
 **Output**:
+
 ```
 SECURITY AUDIT
 - Hardcoded Secrets: [NONE/FOUND]
@@ -342,6 +408,7 @@ Status: [PASS/FAIL]
 ### 11. Documentation Verification
 
 **Check documentation quality**:
+
 - [ ] README updated with new feature (if significant)
 - [ ] API documentation matches implementation
 - [ ] Complex code has inline comments
@@ -350,6 +417,7 @@ Status: [PASS/FAIL]
 - [ ] Migration guides (if breaking changes)
 
 **Output**:
+
 ```
 DOCUMENTATION REVIEW
 README: [UPDATED/OUTDATED/N/A]
@@ -364,12 +432,14 @@ Status: [PASS/FAIL]
 **If .specify/memory/constitution.md exists**:
 
 Check implementation against project principles:
+
 - [ ] Follows mandated practices
 - [ ] Respects constraints
 - [ ] Adheres to quality standards
 - [ ] Meets governance requirements
 
 **Output**:
+
 ```
 CONSTITUTION COMPLIANCE
 Principle: [Name]
@@ -384,12 +454,14 @@ Overall: [COMPLIANT/VIOLATIONS]
 **If FEATURE_DIR/checklists/ exists**:
 
 For each checklist file:
+
 - Count total items
 - Count completed [X] or [x] items
 - Count incomplete [ ] items
 - Calculate completion percentage
 
 **Output**:
+
 ```
 CHECKLIST STATUS
 | Checklist | Total | Completed | Incomplete | %    | Status |
@@ -418,6 +490,7 @@ Create structured report at `FEATURE_DIR/verification-report.md`:
 [Overall pass/fail with key metrics]
 
 **Quick Stats**:
+
 - Tasks Completed: X/Y (Z%)
 - Requirements Covered: X/Y (Z%)
 - Tests Passed: X/Y (Z%)
@@ -437,6 +510,7 @@ Create structured report at `FEATURE_DIR/verification-report.md`:
 [Results from step 4]
 
 **Coverage Summary**:
+
 - Functional Requirements: X/Y covered
 - Non-Functional Requirements: X/Y covered
 - User Stories: X/Y implemented
@@ -503,15 +577,19 @@ Create structured report at `FEATURE_DIR/verification-report.md`:
 [If FAIL, list all issues with severity]
 
 ### Critical Issues
+
 [Must fix before merge]
 
 ### High Priority
+
 [Should fix before merge]
 
 ### Medium Priority
+
 [Can fix post-merge if needed]
 
 ### Low Priority
+
 [Optional improvements]
 
 ---
@@ -521,10 +599,10 @@ Create structured report at `FEATURE_DIR/verification-report.md`:
 [If FAIL, provide specific actions]
 
 1. **[Issue category]**:
-   - File: [Path]
-   - Problem: [Description]
-   - Fix: [Specific steps]
-   - Verification: [How to confirm fixed]
+    - File: [Path]
+    - Problem: [Description]
+    - Fix: [Specific steps]
+    - Verification: [How to confirm fixed]
 
 ---
 
@@ -561,6 +639,7 @@ Create structured report at `FEATURE_DIR/verification-report.md`:
 ### 15. Output to User
 
 **If PASS**:
+
 ```
 ✅ VERIFICATION PASSED
 
@@ -585,6 +664,7 @@ Next steps:
 ```
 
 **If FAIL**:
+
 ```
 ❌ VERIFICATION FAILED
 
@@ -614,6 +694,7 @@ Do NOT proceed to merge until verification passes.
 ### Strictness Levels
 
 **CRITICAL** (Must Pass):
+
 - All tasks completed
 - All requirements covered
 - All tests passing
@@ -621,23 +702,27 @@ Do NOT proceed to merge until verification passes.
 - No contract violations
 
 **HIGH** (Should Pass):
+
 - Code quality standards
 - Documentation completeness
 - Performance optimization
 - Constitution compliance
 
 **MEDIUM** (Nice to Pass):
+
 - Code comments
 - Optimization opportunities
 - Style improvements
 
 **LOW** (Optional):
+
 - Minor refactoring suggestions
 - Additional test scenarios
 
 ### Pass/Fail Criteria
 
 **PASS** requires:
+
 - 100% task completion (or justified deferrals)
 - 100% requirements covered
 - 100% test pass rate
@@ -648,6 +733,7 @@ Do NOT proceed to merge until verification passes.
 - Architecture compliance
 
 **FAIL** if any:
+
 - Incomplete tasks without justification
 - Uncovered requirements
 - Failing tests
@@ -660,12 +746,14 @@ Do NOT proceed to merge until verification passes.
 ### Evidence Requirements
 
 **Every finding must include**:
+
 - Specific file path and line numbers
 - Concrete evidence (code snippets, test output)
 - Expected vs actual comparison
 - Remediation guidance
 
 **No speculation allowed**:
+
 - Don't assume code exists if not found
 - Don't guess at intent
 - Don't hallucinate test results
@@ -674,12 +762,14 @@ Do NOT proceed to merge until verification passes.
 ### Token Efficiency
 
 **Progressive analysis**:
+
 - Load files on-demand
 - Analyze in phases
 - Stop on critical failures (optional)
 - Summarize verbose output
 
 **Compact reporting**:
+
 - Use tables for metrics
 - Group similar issues
 - Link to full details
@@ -701,27 +791,6 @@ $ARGUMENTS
 ## Execution Instructions
 
 **Agent Selection**: To execute this task, use the following approach:
+
 - Primary: Use `general-purpose` agent with appropriate domain expertise
 - Or use specialized agent if available for the specific task type
-
-## Overview
-
-Validates implementation completion by checking tasks, logic, tests, and code quality against specifications. Use when you need to verify that all tasks are properly completed.
-
-## Usage
-
-```
-/speckit.verify $ARGUMENTS
-```
-
-## Arguments
-
-| Argument | Description |
-|----------|-------------|
-| `$ARGUMENTS` | Combined arguments passed to the command |
-
-## Examples
-
-```bash
-/speckit.verify example-input
-```

@@ -6,21 +6,45 @@ description: Generates a comprehensive refactoring task list for a specific Boun
 
 # Refactoring Task List Generator for Bounded Context
 
+## Overview
+
+Generates a comprehensive refactoring task list for a specific Bounded Context in project and saves it to a file. Use
+when planning refactoring work for a bounded context.
+
+## Usage
+
+```
+/devkit.java.generate-refactoring-tasks $ARGUMENTS
+```
+
+## Arguments
+
+| Argument     | Description                              |
+|--------------|------------------------------------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
+
+## Examples
+
+```bash
+/devkit.java.generate-refactoring-tasks example-input
+```
+## Execution Steps
+
 Analyze the bounded context **$1** in the project to create a complete refactoring task list and save it to a file.
 
 Perform the following steps:
 
 1. **Bounded Context Analysis**:
-   - Search for all Java files in the package `$1`
-   - Identify all TODO, FIXME comments, and technical debt indicators
-   - Analyze DDD architecture and compliance with SOLID principles
-   - Identify incomplete implementations and placeholder code
+    - Search for all Java files in the package `$1`
+    - Identify all TODO, FIXME comments, and technical debt indicators
+    - Analyze DDD architecture and compliance with SOLID principles
+    - Identify incomplete implementations and placeholder code
 
 2. **Map the Structure**:
-   - List all found files by layer (domain, application, infrastructure, presentation)
-   - Identify dependencies between components
-   - Analyze entities, aggregates, value objects, services, repositories, controllers
-   - Detect architectural patterns and violations
+    - List all found files by layer (domain, application, infrastructure, presentation)
+    - Identify dependencies between components
+    - Analyze entities, aggregates, value objects, services, repositories, controllers
+    - Detect architectural patterns and violations
 
 3. **Generate Organized Task List**:
    Create a task list with this exact structure:
@@ -72,56 +96,36 @@ Perform the following steps:
    ```
 
 4. **Specific Details**:
-   - For each file specify: filename, package, type of issue
-   - For each method specify: signature, current issue, fix required
-   - For each TODO specify: line number, type of fix, priority
-   - Include full file paths
+    - For each file specify: filename, package, type of issue
+    - For each method specify: signature, current issue, fix required
+    - For each TODO specify: line number, type of fix, priority
+    - Include full file paths
 
 5. **Output Format**:
-   - Use checkboxes `[ ]` for each task
-   - Be specific about what to do
-   - Clear priorities and logical dependencies
-   - Realistic time estimates
-   - Java code examples where necessary
+    - Use checkboxes `[ ]` for each task
+    - Be specific about what to do
+    - Clear priorities and logical dependencies
+    - Realistic time estimates
+    - Java code examples where necessary
 
 6. **Focus on**:
-   - Concrete and actionable tasks
-   - Specific files and line numbers
-   - Clear and measurable actions
-   - DDD architecture compliance
-   - SOLID principles application
+    - Concrete and actionable tasks
+    - Specific files and line numbers
+    - Clear and measurable actions
+    - DDD architecture compliance
+    - SOLID principles application
 
 7. **Save Output**:
-   - Save the generated content to a file named `docs/refactoring/$1-refactoring-tasks.md`
-   - Create the directory `docs/refactoring` if it doesn't exist
-   - Confirm the file creation to the user
+    - Save the generated content to a file named `docs/refactoring/$1-refactoring-tasks.md`
+    - Create the directory `docs/refactoring` if it doesn't exist
+    - Confirm the file creation to the user
 
-Do not include abstract sections like QA, theoretical metrics, or generic risk assessments. Focus only on practical tasks to implement.
+Do not include abstract sections like QA, theoretical metrics, or generic risk assessments. Focus only on practical
+tasks to implement.
 
 ## Execution Instructions
 
 **Agent Selection**: To execute this generation task, use the following approach:
-- Primary: Use `general-purpose` agent with specialized knowledge of the task domain
+
+- Primary: Use `developer-kit-java:java-refactor-expert` agent with specialized knowledge of the task domain
 - Or use appropriate specialized agent if available for the specific generation task
-
-## Overview
-
-Generates a comprehensive refactoring task list for a specific Bounded Context in project and saves it to a file. Use when planning refactoring work for a bounded context.
-
-## Usage
-
-```
-/devkit.java.generate-refactoring-tasks $ARGUMENTS
-```
-
-## Arguments
-
-| Argument | Description |
-|----------|-------------|
-| `$ARGUMENTS` | Combined arguments passed to the command |
-
-## Examples
-
-```bash
-/devkit.java.generate-refactoring-tasks example-input
-```

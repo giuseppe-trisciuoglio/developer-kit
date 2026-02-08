@@ -7,19 +7,44 @@ model: inherit
 
 # TypeScript Monorepo Code Review - Nx / NestJS / React / React Native
 
+## Overview
+
+Provides comprehensive TypeScript monorepo code review for Nx workspaces including NestJS backend, React web, and React
+Native mobile apps. Use when reviewing architecture, boundaries, security, performance, CI/CD and Nx-specific practices.
+
+## Usage
+
+```
+/devkit.typescript.code-review $ARGUMENTS
+```
+
+## Arguments
+
+| Argument     | Description                              |
+|--------------|------------------------------------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
+
+## Examples
+
+```bash
+/devkit.typescript.code-review example-input
+```
+
 ## Current Context
 
 - **Current Git Branch**: !`git branch --show-current`
 - **Git Status**: !`git status --porcelain`
 - **Recent Commits**: !`git log --oneline -5`
 - **Modified Files**: !`git diff --name-only HEAD~1`
-- **Nx Affected Projects**: !`[ -f nx.json ] && npx nx show projects --affected --base=HEAD~1 2>/dev/null || echo "Nx not detected"`
+- **Nx Affected Projects**: !
+  `[ -f nx.json ] && npx nx show projects --affected --base=HEAD~1 2>/dev/null || echo "Nx not detected"`
 
 ## Review Configuration
 
 The review will analyze: **$ARGUMENTS**
 
 **Available review types:**
+
 - `full` - Complete 360° review (default)
 - `security` - Focus on vulnerabilities, secrets, access control
 - `performance` - Build/runtime and resource usage
@@ -163,34 +188,41 @@ ENDIF
 ## Phase 10: Final Review Report
 
 ### Critical Issues (P0 - Fix Immediately)
+
 - Secrets checked into repo, open auth bypass, critical dependency vulnerability
 - Production-breaking build or release pipeline failure
 
 ### High Priority (P1 - Next Release)
+
 - Circular dependencies in libs, large monolithic libs that block CI
 - Missing tests for public API of shared libs
 - Performance regressions and large bundles
 
 ### Medium Priority (P2 - Next Sprint)
+
 - Inconsistent linting/config mismatches
 - Minor architectural refactors to split oversized libs
 
 ### Low Priority (P3 - Backlog)
+
 - Cosmetic naming, docs, README improvements
 
 ## Quality Metrics
+
 - Unit Test Target: > 80% for critical libs
 - Integration Test Target: > 60% for services
 - CI Time: keep fast feedback loops (< 10m for affected changes)
 - Bundle Size Targets: enforce budgets per app
 
 ## Recommended Actions
+
 1. Immediate: Remove secrets, patch critical vulnerabilities
 2. Short term: Add strict TS rules, centralize shared libs, enable Nx Cloud
 3. Next sprint: Break down large libs, add component catalog and e2e stability
 4. Backlog: Continuous improvement and technical debt reduction
 
 ## Integrated Support Tools
+
 - Nx (affected, dep-graph), Nx Cloud (caching)
 - SonarQube / CodeQL for static analysis
 - Snyk / Dependabot for dependency scanning
@@ -200,32 +232,14 @@ ENDIF
 ---
 
 ## Execution Instructions
+
 **Agent Selection**: To execute this code review, use the following agent with fallback:
-- Primary: `developer-kit:typescript-software-architect-review`
-- If not available: `developer-kit:typescript-software-architect-review` fallback to `developer-kit:general-code-reviewer`, if not available use `general-purpose`
+
+- Primary: `developer-kit-typescript:typescript-software-architect-review`
+- If not available: `developer-kit:typescript-software-architect-review` fallback to
+  `developer-kit:general-code-reviewer`, if not available use `general-purpose`
 
 **Run context**:
+
 - Use `npx nx show projects --affected --base=HEAD~1` to limit scope (only if Nx workspace detected)
 - Provide `$1` as `full` or `security` etc., and optional path to a project or file
-
-## Overview
-
-Provides comprehensive TypeScript monorepo code review for Nx workspaces including NestJS backend, React web, and React Native mobile apps. Use when reviewing architecture, boundaries, security, performance, CI/CD and Nx-specific practices.
-
-## Usage
-
-```
-/devkit.typescript.code-review $ARGUMENTS
-```
-
-## Arguments
-
-| Argument | Description |
-|----------|-------------|
-| `$ARGUMENTS` | Combined arguments passed to the command |
-
-## Examples
-
-```bash
-/devkit.typescript.code-review example-input
-```

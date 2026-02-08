@@ -6,9 +6,16 @@ model: inherit
 ---
 
 # Fix & Debugging
+## Overview
 
 You are helping a developer fix a bug or debug an issue. Follow a systematic approach: understand the problem, trace the
 root cause, design a minimal fix, then implement and verify.
+
+## Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
 
 ## Language/Framework Selection
 
@@ -479,13 +486,3 @@ Tell the user: "This appears to be a straightforward issue. Would you like to pr
 
 **Note**: This command follows a systematic debugging approach to ensure bugs are fixed correctly the first time, with
 minimal risk of regression.
-
-## Overview
-
-Provides guided bug fixing and debugging capability with systematic root cause analysis. Use when encountering bugs, errors, or unexpected behavior.
-
-## Arguments
-
-| Argument | Description |
-|----------|-------------|
-| `$ARGUMENTS` | Combined arguments passed to the command |

@@ -6,16 +6,20 @@ description: Generates and manages project changelog following Keep a Changelog 
 
 # Project Changelog Generator and Maintainer
 
-Generate and maintain project changelog following Keep a Changelog standard, extracting changes from Git history with support for Conventional Commits, version detection from multiple build systems (Maven, Gradle, npm, pip, Cargo), and automated changelog updates.
+## Overview
+
+Generate and maintain project changelog following Keep a Changelog standard, extracting changes from Git history with
+support for Conventional Commits, version detection from multiple build systems (Maven, Gradle, npm, pip, Cargo), and
+automated changelog updates.
 
 ## Context
 
 - **Project Root**: !`pwd`
 - **Current Branch**: !`git branch --show-current 2>/dev/null || echo "Not a git repository"`
 - **Latest Tag**: !`git describe --tags --abbrev=0 2>/dev/null || echo "No tags found"`
-- **Build System**: !`if [ -f pom.xml ]; then echo "Maven"; elif [ -f build.gradle ]; then echo "Gradle"; elif [ -f package.json ]; then echo "npm"; elif [ -f setup.py ]; then echo "Python"; elif [ -f Cargo.toml ]; then echo "Rust"; else echo "Generic"; fi`
+- **Build System**: !
+  `if [ -f pom.xml ]; then echo "Maven"; elif [ -f build.gradle ]; then echo "Gradle"; elif [ -f package.json ]; then echo "npm"; elif [ -f setup.py ]; then echo "Python"; elif [ -f Cargo.toml ]; then echo "Rust"; else echo "Generic"; fi`
 - **Existing Changelog**: !`if [ -f CHANGELOG.md ]; then echo "Found"; else echo "Not found"; fi`
-
 
 ## Usage
 
@@ -26,6 +30,7 @@ Generate and maintain project changelog following Keep a Changelog standard, ext
 ## Arguments
 
 $1 specifies the action (optional - defaults to `update`):
+
 - `init` - Create initial CHANGELOG.md following Keep a Changelog format
 - `update` - Update changelog with changes since last tag/version
 - `release` - Generate changelog entry for new release version
@@ -33,12 +38,14 @@ $1 specifies the action (optional - defaults to `update`):
 - `validate` - Validate existing CHANGELOG.md format
 
 $2 specifies the version (optional - auto-detected from build file):
+
 - Version number (e.g., `1.2.3`, `2.0.0`)
 - `auto` - Auto-detect from build files: pom.xml, build.gradle, package.json, setup.py, Cargo.toml (default)
 - `latest-tag` - Use latest Git tag
 - `snapshot` - Mark as unreleased/snapshot
 
 $3 specifies the format (optional - defaults to `keepachangelog`):
+
 - `keepachangelog` - Keep a Changelog format (default)
 - `conventional` - Conventional Changelog format
 - `github` - GitHub Release Notes format
@@ -61,42 +68,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - New features for the next release
 
 ### Changed
+
 - Changes in existing functionality
 
 ### Deprecated
+
 - Soon-to-be removed features
 
 ### Removed
+
 - Removed features
 
 ### Fixed
+
 - Bug fixes
 
 ### Security
+
 - Security improvements
 
 ## [1.2.0] - 2024-01-15
 
 ### Added
+
 - User authentication with JWT tokens
 - Health check endpoints
 - Redis caching for sessions
 - Comprehensive integration tests
 
 ### Changed
+
 - Upgraded dependencies to latest stable versions
 - Improved error handling
 - Enhanced logging configuration
 
 ### Fixed
+
 - Memory leak in background task executor
 - Security vulnerability in authentication
 - Timezone handling in date conversions
 
 ### Security
+
 - Updated dependencies with known vulnerabilities
 - Implemented CSRF protection
 - Added rate limiting for sensitive endpoints
@@ -104,17 +121,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.1.0] - 2023-12-10
 
 ### Added
+
 - Email notification service
 - Pagination for list endpoints
 - Docker Compose setup for local development
 
 ### Fixed
+
 - Null pointer exception in core service
 - Transaction rollback issues
 
 ## [1.0.0] - 2023-11-01
 
 ### Added
+
 - Initial release
 - Basic CRUD operations
 - REST API implementation
@@ -122,8 +142,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Authentication system
 
 [Unreleased]: https://github.com/username/project/compare/v1.2.0...HEAD
+
 [1.2.0]: https://github.com/username/project/compare/v1.1.0...v1.2.0
+
 [1.1.0]: https://github.com/username/project/compare/v1.0.0...v1.1.0
+
 [1.0.0]: https://github.com/username/project/releases/tag/v1.0.0
 ```
 
@@ -175,6 +198,7 @@ echo "✅ CHANGELOG.md created successfully"
 Analyze Git commits since last tag:
 
 **Detect Version from Build File**
+
 ```bash
 #!/bin/bash
 # detect-version.sh - Auto-detect project version
@@ -240,6 +264,7 @@ echo "$VERSION"
 ```
 
 **Extract Git Commits**
+
 ```bash
 #!/bin/bash
 # extract-changes.sh - Extract changes from Git history
@@ -313,6 +338,7 @@ done
 Support for Conventional Commits specification:
 
 **Commit Types**
+
 ```
 feat: New feature (Added section)
 fix: Bug fix (Fixed section)
@@ -328,6 +354,7 @@ deprecate: Deprecated features (Deprecated section)
 ```
 
 **Breaking Changes**
+
 ```bash
 # Detect breaking changes in commit messages
 git log $LAST_TAG..HEAD --grep="BREAKING CHANGE" --pretty=format:"%s" > breaking.tmp
@@ -348,6 +375,7 @@ rm breaking.tmp
 Support for various project types:
 
 **JavaScript/TypeScript (package.json)**
+
 ```json
 {
   "name": "my-project",
@@ -357,6 +385,7 @@ Support for various project types:
 ```
 
 **Python (setup.py or pyproject.toml)**
+
 ```python
 # setup.py
 setup(
@@ -373,6 +402,7 @@ version = "1.2.0"
 ```
 
 **Rust (Cargo.toml)**
+
 ```toml
 [package]
 name = "my-project"
@@ -380,6 +410,7 @@ version = "1.2.0"
 ```
 
 **PHP (composer.json)**
+
 ```json
 {
   "name": "vendor/package",
@@ -437,6 +468,7 @@ echo "✅ CHANGELOG.md updated with version $VERSION"
 ### 6. Build System Integration
 
 **Maven Changes Plugin (Java)**
+
 ```xml
 <!-- pom.xml -->
 <plugin>
@@ -460,6 +492,7 @@ echo "✅ CHANGELOG.md updated with version $VERSION"
 ```
 
 **Gradle Release Plugin (Java)**
+
 ```groovy
 // build.gradle
 plugins {
@@ -471,7 +504,7 @@ release {
     tagCommitMessage = 'chore: create tag'
     newVersionCommitMessage = 'chore: new version'
     buildTasks = ['build']
-    
+
     git {
         requireBranch = 'main'
         signTag = false
@@ -487,6 +520,7 @@ beforeReleaseBuild.dependsOn updateChangelog
 ```
 
 **npm version (JavaScript/TypeScript)**
+
 ```json
 // package.json - scripts section
 {
@@ -498,6 +532,7 @@ beforeReleaseBuild.dependsOn updateChangelog
 ```
 
 **Python setuptools**
+
 ```python
 # setup.py or release script
 import subprocess
@@ -511,6 +546,7 @@ def update_changelog(version):
 ### 7. GitHub Integration
 
 **GitHub Releases from Changelog**
+
 ```bash
 #!/bin/bash
 # github-release.sh - Create GitHub release from changelog
@@ -538,6 +574,7 @@ echo "✅ GitHub release v$VERSION created"
 ```
 
 **Automated Release Workflow**
+
 ```yaml
 # .github/workflows/release.yml
 name: Release
@@ -550,61 +587,62 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-    
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: 'maven'
-    
-    - name: Extract version from tag
-      id: version
-      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
-    
-    - name: Extract changelog
-      id: changelog
-      run: |
-        VERSION=${{ steps.version.outputs.VERSION }}
-        awk "/## \[$VERSION\]/,/## \[/" CHANGELOG.md | sed '1d;$d' > release-notes.md
-        echo "NOTES<<EOF" >> $GITHUB_OUTPUT
-        cat release-notes.md >> $GITHUB_OUTPUT
-        echo "EOF" >> $GITHUB_OUTPUT
-    
-    - name: Build with Maven
-      run: mvn clean package -DskipTests
-    
-    - name: Create GitHub Release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: v${{ steps.version.outputs.VERSION }}
-        release_name: Release ${{ steps.version.outputs.VERSION }}
-        body: ${{ steps.changelog.outputs.NOTES }}
-        draft: false
-        prerelease: false
-    
-    - name: Upload artifacts
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./target/*.jar
-        asset_name: application.jar
-        asset_content_type: application/java-archive
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Extract changelog
+        id: changelog
+        run: |
+          VERSION=${{ steps.version.outputs.VERSION }}
+          awk "/## \[$VERSION\]/,/## \[/" CHANGELOG.md | sed '1d;$d' > release-notes.md
+          echo "NOTES<<EOF" >> $GITHUB_OUTPUT
+          cat release-notes.md >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Build with Maven
+        run: mvn clean package -DskipTests
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.version.outputs.VERSION }}
+          release_name: Release ${{ steps.version.outputs.VERSION }}
+          body: ${{ steps.changelog.outputs.NOTES }}
+          draft: false
+          prerelease: false
+
+      - name: Upload artifacts
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./target/*.jar
+          asset_name: application.jar
+          asset_content_type: application/java-archive
 ```
 
 ### 8. Validation and Quality Checks
 
 **Validate Changelog Format**
+
 ```bash
 #!/bin/bash
 # validate-changelog.sh - Validate CHANGELOG.md format
@@ -652,6 +690,7 @@ echo "✅ Changelog validation complete"
 ### 9. Release Automation Script
 
 **Complete Release Script**
+
 ```bash
 #!/bin/bash
 # release.sh - Automated release with changelog update
@@ -836,14 +875,12 @@ Based on the specified action, perform:
 4. **Preview**: Show changes that would be added
 5. **Validate**: Check changelog format compliance
 
-Focus on **maintaining a clear, user-friendly changelog** that follows industry standards and integrates seamlessly with any build system (Maven, Gradle, npm, pip, Cargo, etc.) and Git workflows.
+Focus on **maintaining a clear, user-friendly changelog** that follows industry standards and integrates seamlessly with
+any build system (Maven, Gradle, npm, pip, Cargo, etc.) and Git workflows.
 
 ## Execution Instructions
 
 **Agent Selection**: To execute this generation task, use the following approach:
+
 - Primary: Use `general-purpose` agent with specialized knowledge of the task domain
 - Or use appropriate specialized agent if available for the specific generation task
-
-## Overview
-
-Generates and manages project changelog following Keep a Changelog standard with Git integration and Conventional Commits support. Use when releasing a new version or updating the changelog after commits.

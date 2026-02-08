@@ -874,7 +874,7 @@ Outputs:
     Value: !Ref AccessLogBucket
 ```
 
-## CloudFormation Best Practices
+## Best Practices
 
 ### Stack Policies
 
