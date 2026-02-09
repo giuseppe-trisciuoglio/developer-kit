@@ -1,30 +1,178 @@
 # Developer Kit for Claude Code
 
-> A curated collection of reusable skills and agents for automating development tasks in Claude Code — focusing on
-> Java/Spring Boot patterns with extensibility to TypeScript, Python, and PHP
+> A modular plugin system of reusable skills, agents, and commands for automating development tasks in Claude Code
 
 **Developer Kit for Claude Code** teaches Claude how to **perform development tasks in a repeatable way** across
-multiple languages and frameworks. It includes specialized agents for code review, testing patterns, REST API design,
-and AI integration.
+multiple languages and frameworks. Built as a modular marketplace, you can install only the plugins you need.
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
-# Claude Code CLI
+# Install from marketplace (recommended)
 /plugin marketplace add giuseppe-trisciuoglio/developer-kit
 
-# Or from local directory
+# Or install from local directory
 /plugin install /path/to/developer-kit
 ```
 
 **Claude Desktop**: [Enable Skills in Settings](https://claude.ai/settings/capabilities)
 
-📖 **[Complete Installation Guide](docs/installation.md)** — Multi-CLI support, local project installation, team setup
+---
+
+## Architecture
+
+Developer Kit is organized as a **modular marketplace** with 10 independent plugins:
+
+```
+plugins/
+├── developer-kit-core/            # Core agents/commands (required)
+├── developer-kit-java/            # Java/Spring Boot/LangChain4J/AWS SDK
+├── developer-kit-typescript/      # NestJS/React/React Native
+├── developer-kit-python/          # Python development
+├── developer-kit-php/             # PHP/WordPress
+├── developer-kit-aws/             # AWS CloudFormation
+├── developer-kit-ai/              # Prompt Engineering/RAG/Chunking
+├── developer-kit-devops/          # Docker/GitHub Actions
+├── developer-kit-project-management/  # LRA workflow/Meetings
+└── github-spec-kit/               # GitHub specification integration
+```
 
 ---
 
-## ✨ Key Features
+## Available Plugins
 
+### developer-kit-core (Required)
+
+Core agents and commands used by all other plugins.
+
+| Component                    | Description                            |
+|------------------------------|----------------------------------------|
+| `general-code-explorer`      | Deep codebase exploration and analysis |
+| `general-code-reviewer`      | Code quality and security review       |
+| `general-refactor-expert`    | Code refactoring specialist            |
+| `general-software-architect` | Feature architecture design            |
+| `general-debugger`           | Root cause analysis and debugging      |
+| `document-generator-expert`  | Professional document generation       |
+
+**Commands**: `/devkit.brainstorm`, `/devkit.refactor`, `/devkit.feature-development`, `/devkit.fix-debugging`,
+`/devkit.generate-document`, `/devkit.generate-changelog`, `/devkit.github.create-pr`, `/devkit.github.review-pr`,
+`/devkit.lra.*`, `/devkit.verify-skill`, `/devkit.generate-security-assessment`
+
+---
+
+### developer-kit-java
+
+Comprehensive Java development toolkit with Spring Boot, testing, LangChain4J, and AWS SDK integration.
+
+**Agents**: `spring-boot-backend-development-expert`, `spring-boot-code-review-expert`,
+`spring-boot-unit-testing-expert`, `java-refactor-expert`, `java-security-expert`, `java-software-architect-review`,
+`java-documentation-specialist`, `java-tutorial-engineer`, `langchain4j-ai-development-expert`
+
+**Commands**: `/devkit.java.code-review`, `/devkit.java.generate-crud`, `/devkit.java.refactor-class`,
+`/devkit.java.architect-review`, `/devkit.java.dependency-audit`, `/devkit.java.generate-docs`,
+`/devkit.java.security-review`, `/devkit.java.upgrade-dependencies`, `/devkit.java.write-unit-tests`,
+`/devkit.java.write-integration-tests`
+
+**Skills**:
+
+- **Spring Boot**: actuator, cache, crud-patterns, dependency-injection, event-driven-patterns, openapi-documentation,
+  rest-api-standards, saga-pattern, security-jwt, test-patterns, resilience4j
+- **Spring Data**: jpa, neo4j
+- **Spring AI**: mcp-server-patterns
+- **JUnit Testing**: application-events, bean-validation, boundary-conditions, caching, config-properties,
+  controller-layer, exception-handler, json-serialization, mapper-converter, parameterized, scheduled-async,
+  security-authorization, service-layer, utility-methods, wiremock-rest-api
+- **LangChain4J**: ai-services-patterns, mcp-server-patterns, rag-implementation-patterns, spring-boot-integration,
+  testing-strategies, tool-function-calling-patterns, vector-stores-configuration, qdrant
+- **AWS SDK**: rds-spring-boot-integration, bedrock, core, dynamodb, kms, lambda, messaging, rds, s3, secrets-manager
+
+---
+
+### developer-kit-typescript
+
+TypeScript/JavaScript full-stack development with NestJS, React, and React Native.
+
+**Agents**: `nestjs-backend-development-expert`, `nestjs-code-review-expert`, `nestjs-database-expert`,
+`nestjs-security-expert`, `nestjs-testing-expert`, `nestjs-unit-testing-expert`, `react-frontend-development-expert`,
+`react-software-architect-review`, `typescript-refactor-expert`, `typescript-security-expert`,
+`typescript-software-architect-review`, `typescript-documentation-expert`, `expo-react-native-development-expert`
+
+**Commands**: `/devkit.typescript.code-review`, `/devkit.react.code-review`, `/devkit.ts.security-review`
+
+**Skills**: `nestjs`, `react-patterns`, `shadcn-ui`, `tailwind-css-patterns`, `typescript-docs`
+
+---
+
+### developer-kit-python
+
+Python development capabilities for Django, Flask, and FastAPI projects.
+
+**Agents**: `python-code-review-expert`, `python-refactor-expert`, `python-security-expert`,
+`python-software-architect-expert`
+
+---
+
+### developer-kit-php
+
+PHP and WordPress development capabilities.
+
+**Agents**: `php-code-review-expert`, `php-refactor-expert`, `php-security-expert`, `php-software-architect-expert`,
+`wordpress-development-expert`
+
+**Skills**: `wordpress-sage-theme` (Sage theme development)
+
+---
+
+### developer-kit-aws
+
+AWS infrastructure and CloudFormation expertise for Infrastructure as Code.
+
+**Agents**: `aws-solution-architect-expert`, `aws-cloudformation-devops-expert`, `aws-architecture-review-expert`
+
+**Skills** (15 total): `vpc`, `ec2`, `lambda`, `iam`, `s3`, `rds`, `dynamodb`, `ecs`, `auto-scaling`, `cloudwatch`,
+`cloudfront`, `security`, `elasticache`, `bedrock`, `task-ecs-deploy-gh`
+
+---
+
+### developer-kit-ai
+
+AI/ML capabilities including prompt engineering, RAG, and chunking strategies.
+
+**Agents**: `prompt-engineering-expert`
+
+**Commands**: `/devkit.prompt-optimize`
+
+**Skills**: `prompt-engineering`, `chunking-strategy`, `rag`
+
+---
+
+### developer-kit-devops
+
+DevOps and containerization expertise.
+
+**Agents**: `github-actions-pipeline-expert`, `general-docker-expert`
+
+---
+
+### developer-kit-project-management
+
+Project management and workflow commands.
+
+**Commands**: `/devkit.write-a-minute-of-a-meeting`
+
+---
+
+### github-spec-kit
+
+GitHub specification integration and verification.
+
+**Commands**: `/speckit.check-integration`, `/speckit.optimize`, `/speckit.verify`
+
+---
+
+## Key Features
+
+- **Modular** — Install only the plugins you need for your tech stack
 - **Specialized** — Domain-specific agents for code review, testing, AI development, and full-stack development
 - **Composable** — Skills stack together automatically based on task context
 - **Portable** — Use across Claude.ai, Claude Code CLI, Claude Desktop, and Claude API
@@ -32,89 +180,28 @@ and AI integration.
 
 ---
 
-## 📚 Available Components
+## Language Support
 
-### Skills
-
-| Category           | Guide                                          |
-|--------------------|------------------------------------------------|
-| JUnit Testing      | [Guide](docs/guide-skills-junit-test.md)       |
-| Spring Boot        | [Guide](docs/guide-skills-spring-boot.md)      |
-| AWS Java SDK       | [Guide](docs/guide-skills-aws-java.md)         |
-| AWS CloudFormation | [Guide](docs/guide-skills-aws-cloudformation.md) |
-| LangChain4J        | [Guide](docs/guide-skills-langchain4j.md)      |
-| React              | [Guide](docs/guide-skills-frontend.md)         |
-| shadcn-ui          | [Guide](docs/guide-skills-frontend.md)         |
-| Tailwind CSS       | [Guide](docs/guide-skills-frontend.md)         |
-| TypeScript Docs    | [Guide](docs/guide-skills-frontend.md)         |
-| NestJS             | [Guide](docs/guide-skills-nestjs.md)           |
-
-### Agents
-
-Specialized AI assistants for specific development domains.
-
-📖 **[Complete Agents Guide](docs/guide-agents.md)** — All agents with usage examples
-
-| Category          | Examples                                                                                                            |
-|-------------------|---------------------------------------------------------------------------------------------------------------------|
-| Java/Spring Boot  | `spring-boot-code-review-expert`, `java-refactor-expert`, `java-security-expert`                                    |
-| TypeScript/NestJS | `nestjs-backend-development-expert`, `typescript-refactor-expert`, `nestjs-security-expert`                         |
-| React/Frontend    | `react-frontend-development-expert`, `react-software-architect-review`, `expo-react-native-development-expert`, `devkit.react.code-review`      |
-| Python            | `python-code-review-expert`, `python-refactor-expert`, `python-security-expert`, `python-software-architect-expert` |
-| PHP/WordPress     | `php-code-review-expert`, `php-refactor-expert`, `php-security-expert`, `php-software-architect-expert`, `wordpress-development-expert` |
-| AWS               | `aws-solution-architect-expert`, `aws-cloudformation-devops-expert`, `aws-architecture-review-expert`               |
-| AI/LangChain4J    | `langchain4j-ai-development-expert`, `prompt-engineering-expert`                                                    |
-| General Purpose   | `general-debugger`, `general-code-reviewer`, `general-refactor-expert`, `document-generator-expert`                 |
-
-### Commands
-
-Workflow automation commands for development tasks.
-
-📖 **[Complete Commands Guide](docs/guide-commands.md)** — All commands with examples
-
-| Category         | Examples                                                                                             |
-|------------------|------------------------------------------------------------------------------------------------------|
-| Java Development | `/devkit.java.code-review`, `/devkit.java.write-unit-tests`, `/devkit.java.refactor-class`           |
-| LRA Workflow     | `/devkit.lra.init`, `/devkit.lra.start-session`, `/devkit.lra.checkpoint`                            |
-| Security         | `/devkit.java.security-review`, `/devkit.ts.security-review`, `/devkit.generate-security-assessment` |
-| Spec Kit         | `/speckit.check-integration`, `/speckit.optimize`, `/speckit.verify`                                 |
-| GitHub           | `/devkit.github.create-pr`, `/devkit.github.review-pr`                                               |
-| TypeScript       | `/devkit.typescript.code-review`, `/devkit.ts.security-review`, `/devkit.react.code-review`           |
-| Documentation    | `/devkit.generate-document`, `/devkit.generate-changelog`, `/devkit.write-a-minute-of-a-meeting`     |
-| Workflow         | `/devkit.feature-development`, `/devkit.fix-debugging`, `/devkit.refactor`                           |
+| Language           | Plugin                     | Components               |
+|--------------------|----------------------------|--------------------------|
+| Java/Spring Boot   | `developer-kit-java`       | Skills, Agents, Commands |
+| TypeScript/Node.js | `developer-kit-typescript` | Skills, Agents, Commands |
+| Python             | `developer-kit-python`     | Agents                   |
+| PHP/WordPress      | `developer-kit-php`        | Skills, Agents           |
+| AWS CloudFormation | `developer-kit-aws`        | Skills, Agents           |
+| AI/ML              | `developer-kit-ai`         | Skills, Agents, Commands |
 
 ---
 
-## 🎯 Use Cases
-
-- **Code Review & Architecture** — Automated reviews, architecture validation, security analysis
-- **Testing Strategies** — Unit test patterns, integration testing with Testcontainers
-- **REST API Design** — Standardized API development with proper HTTP semantics
-- **AI Integration** — LangChain4J implementation, RAG patterns, MCP server creation
-- **AWS Cloud Development** — RDS, S3, Lambda, DynamoDB, Secrets Manager patterns
-
----
-
-## 🌍 Language Support
-
-| Language           | Status                                           |
-|--------------------|--------------------------------------------------|
-| Java/Spring Boot   | ✅ Comprehensive (skills, agents, commands)       |
-| TypeScript/Node.js | ✅ React, NestJS, Expo (skills, agents, commands) |
-| Python             | 🚧 In Progress (agents available)                |
-| PHP/WordPress      | ✅ Agents available (code review, refactor, security, architecture, WordPress) |
-
----
-
-## 🤝 Contributing
+## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed instructions on adding skills, agents, and commands.
 
 ---
 
-## 🔒 Security
+## Security
 
-⚠️ Skills can execute code. Review all custom skills before deploying.
+Skills can execute code. Review all custom skills before deploying.
 
 - Only install from trusted sources
 - Review SKILL.md before enabling
@@ -122,45 +209,22 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed instructions on adding skill
 
 ---
 
-## 📘 Documentation
-
-| Guide                                                    | Description                                 |
-|----------------------------------------------------------|---------------------------------------------|
-| [Installation](docs/installation.md)                     | Multi-CLI setup, local project installation |
-| [Agents](docs/guide-agents.md)                           | All agents with usage examples              |
-| [Commands](docs/guide-commands.md)                       | All commands with workflows                 |
-| [LRA Workflow](docs/guide-lra-workflow.md)               | Multi-session project management            |
-| [Skills - Spring Boot](docs/guide-skills-spring-boot.md) | Spring Boot patterns                        |
-| [Skills - JUnit](docs/guide-skills-junit-test.md)        | Testing patterns                            |
-| [Skills - LangChain4J](docs/guide-skills-langchain4j.md) | AI integration                              |
-| [Skills - AWS](docs/guide-skills-aws-java.md)            | AWS SDK patterns                            |
-| [Skills - Frontend](docs/guide-skills-frontend.md)           | React, Tailwind, shadcn                        |
-| [Skills - NestJS](docs/guide-skills-nestjs.md)             | NestJS patterns                               |
-| [Skills - AWS CloudFormation](docs/guide-skills-aws-cloudformation.md) | Infrastructure as Code patterns               |
-
----
-
-## 📚 Resources
-
-- [What are Skills?](https://support.claude.com/en/articles/12512176-what-are-skills) — Claude support article
-- [Using Skills in Claude](https://support.claude.com/en/articles/12512180-using-skills-in-claude) — Setup guide
-- [anthropics/skills](https://github.com/anthropics/skills) — Official Anthropic skills repository
-
----
-
-## 📝 License
+## License
 
 See [LICENSE](LICENSE) file.
 
-## 📞 Support
+---
+
+## Support
 
 - **Questions?** [Open an issue](https://github.com/giuseppe-trisciuoglio/developer-kit/issues)
 - **Contributions?** [Submit a PR](https://github.com/giuseppe-trisciuoglio/developer-kit/pulls)
 
-## 📅 Changelog
+## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md) for complete history.
 
 ---
 
-**Made with ❤️ for Developers using Claude Code**
+**Made with care for Developers using Claude Code**
+**Also works with OpenCode, Github Copilot CLI and Codex**

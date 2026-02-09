@@ -1,0 +1,29 @@
+{
+  "name": "developer-kit-php",
+  "version": "2.0.0",
+  "description": "PHP and WordPress development capabilities",
+  "author": {
+    "name": "Giuseppe Trisciuoglio",
+    "email": "giuseppe.trisciuoglio@gmail.com"
+  },
+  "homepage": "https://github.com/giuseppe-trisciuoglio/developer-kit",
+  "repository": "https://github.com/giuseppe-trisciuoglio/developer-kit.git",
+  "license": "MIT",
+  "keywords": [
+    "php",
+    "wordpress",
+    "laravel",
+    "symfony"
+  ],
+  "agents": [
+    "./agents/php-code-review-expert.md",
+    "./agents/php-refactor-expert.md",
+    "./agents/php-security-expert.md",
+    "./agents/php-software-architect-expert.md",
+    "./agents/wordpress-development-expert.md"
+  ],
+  "commands": [],
+  "skills": [
+    "./skills/wordpress/wordpress-sage-theme"
+  ]
+}

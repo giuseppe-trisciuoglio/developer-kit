@@ -1,0 +1,77 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "claude-validator"
+version = "1.0.0"
+description = "Pre-commit validation system for Claude Code components (Skills, Agents, Commands)"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Giuseppe Trisciuoglio", email = "giuseppe.trisciuoglio@gmail.com"}
+]
+requires-python = ">=3.8"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Quality Assurance",
+]
+dependencies = [
+    "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "black>=23.0",
+    "mypy>=1.0",
+    "types-PyYAML>=6.0",
+]
+
+[project.scripts]
+claude-validator = "validators.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/giuseppe-trisciuoglio/developer-kit"
+Issues = "https://github.com/giuseppe-trisciuoglio/developer-kit/issues"
+
+[tool.setuptools.packages.find]
+where = [".skills-validator-check"]
+include = ["validators*"]
+
+[tool.pytest.ini_options]
+testpaths = [".skills-validator-check/tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+
+[tool.coverage.run]
+source = [".skills-validator-check/validators"]
+omit = ["*/tests/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]
+
+[tool.black]
+line-length = 100
+target-version = ["py38", "py39", "py310", "py311", "py312"]
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true

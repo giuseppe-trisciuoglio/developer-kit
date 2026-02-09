@@ -10,6 +10,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Features in development
 
+## [2.0.0] - 2026-02-07
+
+### Changed
+- **Complete restructuring to multi-plugin architecture**:
+  - Restructured codebase from monolithic to multi-plugin system organized by language/technology
+  - Created 10 self-contained plugins in `plugins/` directory:
+    - **developer-kit-core**: Core agents and commands (brainstorm, refactor, debugging, LRA workflow, GitHub integration)
+    - **developer-kit-java**: Java/Spring Boot/LangChain4J/AWS SDK skills and agents
+    - **developer-kit-typescript**: NestJS/React/React Native/TypeScript skills and agents
+    - **developer-kit-python**: Python skills and agents
+    - **developer-kit-php**: PHP/WordPress/Laravel/Symfony skills and agents
+    - **developer-kit-aws**: AWS/CloudFormation skills and agents
+    - **developer-kit-ai**: Prompt engineering, RAG, chunking strategies
+    - **developer-kit-devops**: Docker, GitHub Actions
+    - **developer-kit-project-management**: LRA workflow commands
+    - **github-spec-kit**: GitHub specification tools
+  - Moved all agents to respective plugin directories
+  - Reorganized all commands by category within each plugin
+  - Split all skills by language/technology
+  - Updated `marketplace.json` with new 10 plugin references
+  - Updated Makefile for multi-plugin installation support
+  - Added plugin-specific documentation (README.md, guide-agents.md, guide-commands.md) for each plugin
+
+### Fixed
+- Minor bug fixes
+
 ## [1.25.1] - 2026-02-05
 
 ### Fixed
@@ -549,7 +575,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.25.1...HEAD
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.25.1...v2.0.0
 [1.25.1]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.25.0...v1.25.1
 [1.25.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.24.0...v1.25.0
 [1.24.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.23.0...v1.24.0

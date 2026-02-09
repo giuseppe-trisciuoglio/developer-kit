@@ -1,0 +1,22 @@
+{
+  "name": "developer-kit-project-management",
+  "version": "2.0.0",
+  "description": "Project management and workflow commands",
+  "author": {
+    "name": "Giuseppe Trisciuoglio",
+    "email": "giuseppe.trisciuoglio@gmail.com"
+  },
+  "homepage": "https://github.com/giuseppe-trisciuoglio/developer-kit",
+  "repository": "https://github.com/giuseppe-trisciuoglio/developer-kit.git",
+  "license": "MIT",
+  "keywords": [
+    "project-management",
+    "meetings",
+    "documentation"
+  ],
+  "agents": [],
+  "commands": [
+    "./commands/devkit.write-a-minute-of-a-meeting.md"
+  ],
+  "skills": []
+}
