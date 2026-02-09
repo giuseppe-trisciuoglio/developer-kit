@@ -27,12 +27,13 @@ writing unit tests for service, controller, or utility classes.
 |--------------|------------------------------------------|
 | `$ARGUMENTS` | Combined arguments passed to the command |
 
-## Examples
+## Execution Instructions
 
-```bash
-/devkit.java.write-unit-tests example-input
-```
+**Agent Selection**: To execute this task, use the following agent with fallback:
 
+- Primary: `developer-kit-java:spring-boot-unit-testing-expert`
+- If not available: Use `developer-kit-java:spring-boot-unit-testing-expert` or fallback to `general-purpose` agent with
+  `spring-boot-test-patterns` skill
 ## Instructions
 
 ### 1. Analyze the Java Class
@@ -268,7 +269,7 @@ Leverage these skills for specific scenarios:
 - `unit-test-utility-methods` - Testing utility classes
 - `unit-test-wiremock-rest-api` - Testing external APIs with WireMock
 
-## Example Usage
+## Examples
 
 ```bash
 /developer-kit-java:devkit.java.write-unit-tests src/main/java/com/example/service/UserService.java
@@ -276,11 +277,3 @@ Leverage these skills for specific scenarios:
 
 This will analyze UserService.java, identify it as a @Service class, apply the service-layer testing strategy, and
 generate a comprehensive UserServiceTest.java with all necessary test cases.
-
-## Execution Instructions
-
-**Agent Selection**: To execute this task, use the following agent with fallback:
-
-- Primary: `developer-kit-java:spring-boot-unit-testing-expert`
-- If not available: Use `developer-kit-java:spring-boot-unit-testing-expert` or fallback to `general-purpose` agent with
-  `spring-boot-test-patterns` skill

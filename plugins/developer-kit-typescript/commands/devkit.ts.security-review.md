@@ -3,7 +3,6 @@ allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 argument-hint: "[scope] [options]"
 description: Provides comprehensive security review for TypeScript/Node.js applications (Next.js, NestJS, Express, etc.). Use when auditing security vulnerabilities or before deploying to production.
 ---
-
 ## Overview
 
 Provides comprehensive security review for TypeScript/Node.js applications (Next.js, NestJS, Express, etc.). Use when
@@ -21,17 +20,57 @@ auditing security vulnerabilities or before deploying to production.
 |--------------|------------------------------------------|
 | `$ARGUMENTS` | Combined arguments passed to the command |
 
-## Examples
-
-```bash
-/devkit.ts.security-review example-input
-```
-
 ## Execution Steps
 
 Execute comprehensive security review for TypeScript/Node.js applications. Analyze vulnerabilities, dependencies,
 security configurations, and best practices specific to the TypeScript ecosystem.
 
+## Execution Steps
+
+1. **Setup Analysis Environment**
+    - Prepare codebase for review
+    - Configure security scanning tools
+    - Set up reporting framework
+
+2. **Automated Security Scanning**
+    - Run npm audit for vulnerabilities
+    - Execute ESLint security rules
+    - Perform static analysis with Semgrep
+    - Scan dependencies with Snyk
+
+3. **Manual Security Review**
+    - Review authentication/authorization logic
+    - Analyze input validation patterns
+    - Check API endpoint security
+    - Review database security configurations
+
+4. **Framework-Specific Analysis**
+    - Review Next.js security configurations
+    - Analyze NestJS guard implementations
+    - Check Express.js middleware security
+    - Review frontend security patterns
+
+5. **Generate Security Report**
+    - Consolidate findings from all tools
+    - Prioritize vulnerabilities by risk
+    - Provide actionable remediation steps
+    - Create implementation timeline
+
+6. **Security Recommendations**
+    - Framework-specific security improvements
+    - TypeScript security best practices
+    - Configuration security enhancements
+    - Monitoring and alerting setup
+
+Target: $ARGUMENTS
+
+## Execution Instructions
+
+**Agent Selection**: To execute this TypeScript security review, use the following agent with fallback:
+
+- Primary: `developer-kit-typescript:ts-security-expert`
+- If not available: Use `developer-kit-typescript:ts-security-expert` or fallback to `general-purpose` agent with
+  security expertise
 ## Security Analysis for TypeScript/Node.js Applications
 
 ### Main Analysis Areas
@@ -448,50 +487,10 @@ logger.info({
 - name: Run ESLint security rules
   run: npx eslint . --ext .ts,.tsx --config .eslintrc.security.js
 ```
+---
 
-## Execution Steps
+## Examples
 
-1. **Setup Analysis Environment**
-    - Prepare codebase for review
-    - Configure security scanning tools
-    - Set up reporting framework
-
-2. **Automated Security Scanning**
-    - Run npm audit for vulnerabilities
-    - Execute ESLint security rules
-    - Perform static analysis with Semgrep
-    - Scan dependencies with Snyk
-
-3. **Manual Security Review**
-    - Review authentication/authorization logic
-    - Analyze input validation patterns
-    - Check API endpoint security
-    - Review database security configurations
-
-4. **Framework-Specific Analysis**
-    - Review Next.js security configurations
-    - Analyze NestJS guard implementations
-    - Check Express.js middleware security
-    - Review frontend security patterns
-
-5. **Generate Security Report**
-    - Consolidate findings from all tools
-    - Prioritize vulnerabilities by risk
-    - Provide actionable remediation steps
-    - Create implementation timeline
-
-6. **Security Recommendations**
-    - Framework-specific security improvements
-    - TypeScript security best practices
-    - Configuration security enhancements
-    - Monitoring and alerting setup
-
-Target: $ARGUMENTS
-
-## Execution Instructions
-
-**Agent Selection**: To execute this TypeScript security review, use the following agent with fallback:
-
-- Primary: `developer-kit-typescript:ts-security-expert`
-- If not available: Use `developer-kit-typescript:ts-security-expert` or fallback to `general-purpose` agent with
-  security expertise
+```bash
+/devkit.ts.security-review example-input
+```

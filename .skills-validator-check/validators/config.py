@@ -3,7 +3,7 @@ Configuration constants, validation schemas, and patterns.
 """
 
 import re
-from typing import Dict, Set, FrozenSet
+from typing import Dict, List, Set, FrozenSet
 
 # =============================================================================
 # Version Information
@@ -137,6 +137,8 @@ SKILL_PROHIBITED_FIELDS: FrozenSet[str] = frozenset({
     "language",
     "framework",
     "license",
+    "context7_library",
+    "context7_trust_score",
 })
 
 # =============================================================================
@@ -166,9 +168,7 @@ SKILL_SCHEMA: Dict[str, Set[str]] = {
     "optional": {
         "category",
         "tags",
-        "version",
-        "context7_library",
-        "context7_trust_score",
+        "version"
     },
     "prohibited": SKILL_PROHIBITED_FIELDS,
 }
@@ -223,6 +223,36 @@ COMMAND_REQUIRED_SECTIONS: Dict[str, str] = {
 
 # Section headers that are recommended (for warnings)
 COMMAND_RECOMMENDED_SECTIONS: FrozenSet[str] = frozenset()
+
+# =============================================================================
+# Section Order for Commands (ordered list for validation)
+# =============================================================================
+
+# Ordered list of section names for command validation
+# Sections must appear in this order. Sections not in this list can appear
+# after the last defined section.
+COMMAND_SECTIONS_ORDER: List[str] = [
+    "overview",
+    "usage",
+    "arguments",
+    "current_context",
+    "execution_steps",
+    "execution_instructions",
+    "integration_with_sub_agents",
+    "examples",
+]
+
+# Regex patterns for section order validation (must match the order above)
+COMMAND_SECTION_PATTERNS: Dict[str, str] = {
+    "overview": r"^#{1,3}\s+Overview",
+    "usage": r"^#{1,3}\s+Usage",
+    "arguments": r"^#{1,3}\s+Arguments",
+    "current_context": r"^#{1,3}\s+Current\s+Context",
+    "execution_steps": r"^#{1,3}\s+Execution\s+Steps",
+    "execution_instructions": r"^#{1,3}\s+Execution\s+Instructions",
+    "integration_with_sub_agents": r"^#{1,3}\s+Integration\s+with\s+Sub-agents",
+    "examples": r"^#{1,3}\s+Examples",
+}
 
 # =============================================================================
 # Description Quality Keywords

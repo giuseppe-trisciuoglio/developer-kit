@@ -23,11 +23,12 @@ validation of the skill "$1" against all DevKit standards.
 |--------------|------------------------------------------|
 | `$ARGUMENTS` | Combined arguments passed to the command |
 
-## Examples
+## Execution Instructions
 
-```bash
-/devkit.verify-skill skill-name
-```
+**Agent Selection**: To execute this task, use the following approach:
+
+- Primary: Use `general-purpose` agent with appropriate domain expertise
+- Or use specialized agent if available for the specific task type
 
 ## Validation Process
 
@@ -60,8 +61,6 @@ Check that the skill complies with all requirements from the official Skills doc
 - `category`: field, valid category
 - `tags`: field, relevant, and descriptive (no generic tags like "skill" or "devkit")
 - `version` field: uses semantic versioning (e.g., 1.0.0)
-- `context7_library` fild: valid library name if present
-- `context7_trust_score` field: numeric value between 0 and 10 if present
   **Important:** Other frontmatter fields are not allowed.
 
 **File Structure:**
@@ -205,9 +204,10 @@ Required actions:
 
 Begin validation now for skill: $1
 
-## Execution Instructions
+---
 
-**Agent Selection**: To execute this task, use the following approach:
+## Examples
 
-- Primary: Use `general-purpose` agent with appropriate domain expertise
-- Or use specialized agent if available for the specific task type
+```bash
+/devkit.verify-skill skill-name
+```

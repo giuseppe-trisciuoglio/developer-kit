@@ -25,11 +25,13 @@ Domain-Driven Design patterns, and Spring Boot best practices.
 |--------------|------------------------------------------|
 | `$ARGUMENTS` | Combined arguments passed to the command |
 
-## Examples
+## Execution Instructions
 
-```bash
-/devkit.java.architect-review example-input
-```
+**Agent Selection**: To execute this architectural review, use the following agent with fallback:
+
+- Primary: `java-software-architect-review`
+- If not available: Use `developer-kit:java-software-architect-review` or fallback to `general-purpose` agent with
+  `spring-boot-crud-patterns` skill
 
 ## Context
 
@@ -133,10 +135,8 @@ Based on the context and focus area, provide a comprehensive architectural revie
 Focus on practical, actionable advice that improves the application's architecture while considering the team's current
 context and constraints.
 
-## Execution Instructions
+## Examples
 
-**Agent Selection**: To execute this architectural review, use the following agent with fallback:
-
-- Primary: `java-software-architect-review`
-- If not available: Use `developer-kit:java-software-architect-review` or fallback to `general-purpose` agent with
-  `spring-boot-crud-patterns` skill
+```bash
+/devkit.java.architect-review example-input
+```

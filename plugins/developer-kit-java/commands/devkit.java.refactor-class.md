@@ -33,6 +33,14 @@ refactoring large or complex Java classes.
 - **Recent Commits**: !`git log --oneline -5`
 - **Test Coverage**: !`find . -name "*Test.java" -type f | wc -l` test files found
 
+## Execution Instructions
+
+**Agent Selection**: To execute this task, use the following agent with fallback:
+
+- Primary: `developer-kit-java:java-refactor-expert`
+- If not available: Use `developer-kit-java:java-refactor-expert` or fallback to `general-purpose` agent with
+  `spring-boot-crud-patterns` skill
+
 ## Refactoring Configuration
 
 Analyzing: **$ARGUMENTS**
@@ -282,6 +290,23 @@ public ResponseEntity<List<UserDto>> getAllUsers() {
 3. **Monitor performance** after deployment
 4. **Update documentation** for changed APIs
 
+## Integration with Skills
+
+This command works best with these skills:
+
+- **spring-boot-crud-patterns**: For CRUD refactoring
+- **spring-boot-test-patterns**: For test improvements
+- **spring-boot-rest-api-standards**: For API refactoring
+- **unit-test-service-layer**: For service layer testing
+
+## Safety and Validation
+
+- **Always preserve external behavior** while improving internal structure
+- **Maintain backward compatibility** for public APIs
+- **Create comprehensive tests** before refactoring critical paths
+- **Use feature flags** for large, risky refactoring
+- **Monitor production metrics** after deployment
+
 ## Examples
 
 ```bash
@@ -300,28 +325,3 @@ public ResponseEntity<List<UserDto>> getAllUsers() {
 # Automatic complex class detection
 /developer-kit-java:devkit.java.refactor-class
 ```
-
-## Integration with Skills
-
-This command works best with these skills:
-
-- **spring-boot-crud-patterns**: For CRUD refactoring
-- **spring-boot-test-patterns**: For test improvements
-- **spring-boot-rest-api-standards**: For API refactoring
-- **unit-test-service-layer**: For service layer testing
-
-## Safety and Validation
-
-- **Always preserve external behavior** while improving internal structure
-- **Maintain backward compatibility** for public APIs
-- **Create comprehensive tests** before refactoring critical paths
-- **Use feature flags** for large, risky refactoring
-- **Monitor production metrics** after deployment
-
-## Execution Instructions
-
-**Agent Selection**: To execute this task, use the following agent with fallback:
-
-- Primary: `developer-kit-java:java-refactor-expert`
-- If not available: Use `developer-kit-java:java-refactor-expert` or fallback to `general-purpose` agent with
-  `spring-boot-crud-patterns` skill

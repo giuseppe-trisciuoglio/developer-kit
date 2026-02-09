@@ -5,8 +5,6 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 category: backend
 tags: [spring-boot, dependency-injection, constructor-injection, bean-configuration, autowiring, testing, java]
 version: 1.1.0
-context7_library: /spring-projects/spring-framework
-context7_trust_score: 9.0
 ---
 
 # Spring Boot Dependency Injection

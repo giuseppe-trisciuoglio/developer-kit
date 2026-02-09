@@ -14,17 +14,29 @@ Generates comprehensive integration tests for Spring Boot classes using Testcont
 
 You are tasked with generating a complete integration test for the Java class specified in `$1`.
 
+### Usage
+
+When analyzing the target class, Claude will automatically reference these skills to:
+
+- Determine the appropriate test strategy based on layer (Controller/Service/Repository)
+- Select the correct Testcontainers based on dependencies
+- Apply framework-specific testing patterns
+- Generate comprehensive test scenarios covering all edge cases
+- Use `@MockitoBean` for mocking dependencies (replaces deprecated `@MockBean`)
+
 ## Arguments
 
 | Argument     | Description                              |
 |--------------|------------------------------------------|
 | `$ARGUMENTS` | Combined arguments passed to the command |
 
-## Examples
+## Execution Instructions
 
-```bash
-/devkit.java.write-integration-tests example-input
-```
+**Agent Selection**: To execute this task, use the following agent with fallback:
+
+- Primary: `developer-kit-java:spring-boot-unit-testing-expert`
+- If not available: Use `developer-kit-java:spring-boot-unit-testing-expert` or fallback to `general-purpose` agent with
+  `spring-boot-test-patterns` skill
 
 ## Process
 
@@ -352,16 +364,6 @@ This command leverages the following skills available in the repository:
 - **spring-boot-event-driven-patterns** - Event-driven architecture testing
 - **spring-data-jpa** - JPA repository patterns
 
-### Usage
-
-When analyzing the target class, Claude will automatically reference these skills to:
-
-- Determine the appropriate test strategy based on layer (Controller/Service/Repository)
-- Select the correct Testcontainers based on dependencies
-- Apply framework-specific testing patterns
-- Generate comprehensive test scenarios covering all edge cases
-- Use `@MockitoBean` for mocking dependencies (replaces deprecated `@MockBean`)
-
 ### Important Notes
 
 - **`@MockitoBean` vs `@MockBean`**: Spring Framework 6.2+ introduces `@MockitoBean` from
@@ -377,10 +379,8 @@ When analyzing the target class, Claude will automatically reference these skill
 
 Analyze the class and generate a comprehensive integration test following the patterns above.
 
-## Execution Instructions
+## Examples
 
-**Agent Selection**: To execute this task, use the following agent with fallback:
-
-- Primary: `developer-kit-java:spring-boot-unit-testing-expert`
-- If not available: Use `developer-kit-java:spring-boot-unit-testing-expert` or fallback to `general-purpose` agent with
-  `spring-boot-test-patterns` skill
+```bash
+/devkit.java.write-integration-tests example-input
+```

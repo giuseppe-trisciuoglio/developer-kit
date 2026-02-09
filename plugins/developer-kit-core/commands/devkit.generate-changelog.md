@@ -12,15 +12,6 @@ Generate and maintain project changelog following Keep a Changelog standard, ext
 support for Conventional Commits, version detection from multiple build systems (Maven, Gradle, npm, pip, Cargo), and
 automated changelog updates.
 
-## Context
-
-- **Project Root**: !`pwd`
-- **Current Branch**: !`git branch --show-current 2>/dev/null || echo "Not a git repository"`
-- **Latest Tag**: !`git describe --tags --abbrev=0 2>/dev/null || echo "No tags found"`
-- **Build System**: !
-  `if [ -f pom.xml ]; then echo "Maven"; elif [ -f build.gradle ]; then echo "Gradle"; elif [ -f package.json ]; then echo "npm"; elif [ -f setup.py ]; then echo "Python"; elif [ -f Cargo.toml ]; then echo "Rust"; else echo "Generic"; fi`
-- **Existing Changelog**: !`if [ -f CHANGELOG.md ]; then echo "Found"; else echo "Not found"; fi`
-
 ## Usage
 
 ```
@@ -50,6 +41,21 @@ $3 specifies the format (optional - defaults to `keepachangelog`):
 - `conventional` - Conventional Changelog format
 - `github` - GitHub Release Notes format
 - `json` - Structured JSON format
+
+## Execution Instructions
+
+**Agent Selection**: To execute this generation task, use the following approach:
+
+- Primary: Use `general-purpose` agent with specialized knowledge of the task domain
+- Or use appropriate specialized agent if available for the specific generation task
+## Context
+
+- **Project Root**: !`pwd`
+- **Current Branch**: !`git branch --show-current 2>/dev/null || echo "Not a git repository"`
+- **Latest Tag**: !`git describe --tags --abbrev=0 2>/dev/null || echo "No tags found"`
+- **Build System**: !
+  `if [ -f pom.xml ]; then echo "Maven"; elif [ -f build.gradle ]; then echo "Gradle"; elif [ -f package.json ]; then echo "npm"; elif [ -f setup.py ]; then echo "Python"; elif [ -f Cargo.toml ]; then echo "Rust"; else echo "Generic"; fi`
+- **Existing Changelog**: !`if [ -f CHANGELOG.md ]; then echo "Found"; else echo "Not found"; fi`
 
 ## Changelog Standards
 
@@ -798,37 +804,6 @@ echo "2. Wait for CI/CD pipeline to complete"
 echo "3. Verify release at: https://github.com/<username>/<repo>/releases/tag/v$VERSION"
 ```
 
-## Examples
-
-```bash
-# Initialize new changelog
-/developer-kit:devkit.generate-changelog init
-
-# Update changelog with recent changes (auto-detect version)
-/developer-kit:devkit.generate-changelog update auto
-
-# Preview changes without writing to file
-/developer-kit:devkit.generate-changelog preview
-
-# Create release entry for specific version
-/developer-kit:devkit.generate-changelog release 1.2.0
-
-# Validate existing changelog
-/developer-kit:devkit.generate-changelog validate
-
-# Generate changelog in GitHub format
-/developer-kit:devkit.generate-changelog update 1.2.0 github
-
-# Generate changelog in JSON format
-/developer-kit:devkit.generate-changelog update 1.2.0 json
-
-# Full release process (dry-run)
-./scripts/release.sh 1.2.0 true
-
-# Full release process (live)
-./scripts/release.sh 1.2.0
-```
-
 ## Best Practices
 
 ### Commit Message Guidelines
@@ -878,9 +853,35 @@ Based on the specified action, perform:
 Focus on **maintaining a clear, user-friendly changelog** that follows industry standards and integrates seamlessly with
 any build system (Maven, Gradle, npm, pip, Cargo, etc.) and Git workflows.
 
-## Execution Instructions
+---
 
-**Agent Selection**: To execute this generation task, use the following approach:
+## Examples
 
-- Primary: Use `general-purpose` agent with specialized knowledge of the task domain
-- Or use appropriate specialized agent if available for the specific generation task
+```bash
+# Initialize new changelog
+/developer-kit:devkit.generate-changelog init
+
+# Update changelog with recent changes (auto-detect version)
+/developer-kit:devkit.generate-changelog update auto
+
+# Preview changes without writing to file
+/developer-kit:devkit.generate-changelog preview
+
+# Create release entry for specific version
+/developer-kit:devkit.generate-changelog release 1.2.0
+
+# Validate existing changelog
+/developer-kit:devkit.generate-changelog validate
+
+# Generate changelog in GitHub format
+/developer-kit:devkit.generate-changelog update 1.2.0 github
+
+# Generate changelog in JSON format
+/developer-kit:devkit.generate-changelog update 1.2.0 json
+
+# Full release process (dry-run)
+./scripts/release.sh 1.2.0 true
+
+# Full release process (live)
+./scripts/release.sh 1.2.0
+```

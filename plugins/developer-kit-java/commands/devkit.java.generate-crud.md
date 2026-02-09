@@ -93,18 +93,14 @@ class "$1" using the **spring-boot-crud-patterns** skill.
     - Ensure no circular dependencies exist
     - Validate that DTOs don't expose JPA entities directly
 
-## Examples
+## Execution Instructions
 
-```bash
-# Generate CRUD for Product entity
-/developer-kit-java:devkit.java.generate-crud Product
+**Agent Selection**: To execute this task, use the following agent with fallback:
 
-# Generate CRUD for User entity
-/developer-kit-java:devkit.java.generate-crud User
+- Primary: `developer-kit-java:spring-boot-backend-development-expert`
+- If not available: Use `developer-kit-java:spring-boot-backend-development-expert` or fallback to `general-purpose` agent
+  with `spring-boot-crud-patterns` skill
 
-# Generate CRUD for Order entity
-/developer-kit-java:devkit.java.generate-crud Order
-```
 
 ## Output Summary
 
@@ -120,11 +116,17 @@ After completion, provide:
 **Note**: This command leverages the `spring-boot-crud-patterns` skill. Make sure the skill is available and the project
 has the required Spring Boot dependencies (spring-boot-starter-web, spring-boot-starter-data-jpa, validation).
 
-## Execution Instructions
+---
 
-**Agent Selection**: To execute this task, use the following agent with fallback:
+## Examples
 
-- Primary: `developer-kit-java:spring-boot-backend-development-expert`
-- If not available: Use `developer-kit-java:spring-boot-backend-development-expert` or fallback to `general-purpose` agent
-  with `spring-boot-crud-patterns` skill
+```bash
+# Generate CRUD for Product entity
+/developer-kit-java:devkit.java.generate-crud Product
 
+# Generate CRUD for User entity
+/developer-kit-java:devkit.java.generate-crud User
+
+# Generate CRUD for Order entity
+/developer-kit-java:devkit.java.generate-crud Order
+```

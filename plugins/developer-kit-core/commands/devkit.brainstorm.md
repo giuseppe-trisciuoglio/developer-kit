@@ -37,6 +37,13 @@ Use this command when starting a new feature, exploring design alternatives, or 
 |----------|----------|-------------|
 | `idea-description` | No | Description of the idea or feature to brainstorm |
 
+## Current Context
+
+The command will automatically gather context information when needed:
+- Current git branch and status
+- Recent commits and changes
+- Available when the repository has history
+
 ### Argument Details
 
 **idea-description**
@@ -45,38 +52,11 @@ Use this command when starting a new feature, exploring design alternatives, or 
 - Default: If not provided, the command will ask for it interactively
 - Examples: "Add user authentication", "Refactor payment module", "Design caching strategy"
 
-## Examples
-
-### Example 1: Simple Feature Idea
-
-```
-/developer-kit:devkit.brainstorm Add user authentication with JWT tokens
-```
-
-### Example 2: Complex Feature
-
-```
-/developer-kit:devkit.brainstorm Implement real-time notifications using WebSockets
-```
-
-### Example 3: Refactoring
-
-```
-/developer-kit:devkit.brainstorm Refactor the payment processing module to be more maintainable
-```
-
 ---
 
 You are helping a developer transform an idea into a fully formed design. Follow a systematic approach: understand the project
 context, explore the idea through targeted questions, explore existing code, propose alternative approaches, present the design
 incrementally, generate professional documentation, review the document, and recommend the next development command.
-
-## Current Context
-
-The command will automatically gather context information when needed:
-- Current git branch and status
-- Recent commits and changes
-- Available when the repository has history
 
 ## Core Principles
 
@@ -429,7 +409,7 @@ Task(
 
 ---
 
-## Usage Examples
+## Practical Examples
 
 ```bash
 # Simple feature idea
@@ -528,3 +508,25 @@ Update the status as you progress through each phase and section.
 - Documented professionally with specialist assistance
 - Reviewed for quality before proceeding
 - Ready for implementation with clear next steps
+
+--- 
+
+## Examples
+
+### Example 1: Simple Feature Idea
+
+```
+/developer-kit:devkit.brainstorm Add user authentication with JWT tokens
+```
+
+### Example 2: Complex Feature
+
+```
+/developer-kit:devkit.brainstorm Implement real-time notifications using WebSockets
+```
+
+### Example 3: Refactoring
+
+```
+/developer-kit:devkit.brainstorm Refactor the payment processing module to be more maintainable
+```

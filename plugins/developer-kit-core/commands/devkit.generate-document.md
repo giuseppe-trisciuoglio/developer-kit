@@ -12,12 +12,6 @@ model: inherit
 Generate professional technical and business documents with multi-language support. This command analyzes your codebase
 and produces comprehensive, well-structured documentation based on the specified type and objective.
 
-## Current Context
-
-- **Current Directory**: !`pwd`
-- **Git Branch**: !`git branch --show-current`
-- **Project Structure**: !`ls -la`
-
 ## Usage
 
 ```
@@ -27,6 +21,28 @@ and produces comprehensive, well-structured documentation based on the specified
 ## Arguments
 
 **Input received**: $ARGUMENTS
+
+## Current Context
+
+- **Current Directory**: !`pwd`
+- **Git Branch**: !`git branch --show-current`
+- **Project Structure**: !`ls -la`
+
+## Integration with Sub-agents
+
+This command leverages specialized sub-agents for different aspects:
+
+| Phase      | Agent                                                  | Purpose                     |
+|------------|--------------------------------------------------------|-----------------------------|
+| Analysis   | `developer-kit:general-code-explorer`                  | Codebase exploration        |
+| Analysis   | `developer-kit:spring-boot-backend-development-expert` | Java/Spring analysis        |
+| Analysis   | `developer-kit:nestjs-backend-development-expert`      | NestJS analysis             |
+| Generation | `developer-kit:document-generator-expert`              | Primary document generation |
+| Support    | `developer-kit:java-security-expert`                   | Security domain expertise   |
+| Support    | `developer-kit:typescript-security-expert`             | TypeScript security         |
+| Support    | `developer-kit:general-software-architect`             | Architecture insights       |
+
+---
 
 ### Parameters
 
@@ -267,34 +283,6 @@ and produces comprehensive, well-structured documentation based on the specified
 
 ---
 
-## Examples
-
-```bash
-# Generate technical assessment in English (default)
-/developer-kit:devkit.generate-document --type=assessment List all application features and their current status
-
-# Generate feature specification in Italian
-/developer-kit:devkit.generate-document --lang=it --type=feature User authentication with OAuth2 integration
-
-# Generate security analysis in Spanish
-/developer-kit:devkit.generate-document --lang=es --type=analysis Security vulnerabilities and compliance gaps
-
-# Generate deployment process documentation in French
-/developer-kit:devkit.generate-document --lang=fr --type=process CI/CD pipeline and deployment procedures
-
-# Generate custom report in German
-/developer-kit:devkit.generate-document --lang=de --type=custom API design patterns and best practices used in the project
-
-# Generate feature proposal with HTML output
-/developer-kit:devkit.generate-document --type=feature --format=html Real-time notification system proposal
-
-# Generate gap analysis in Portuguese
-/developer-kit:devkit.generate-document --lang=pt --type=analysis Current vs. target architecture comparison
-
-# Quick assessment (all defaults)
-/developer-kit:devkit.generate-document Technical debt and improvement opportunities
-```
-
 ## Document Type Details
 
 ### Assessment Documents
@@ -369,22 +357,6 @@ Generate tailored documents based on user requirements:
 
 ---
 
-## Integration with Sub-agents
-
-This command leverages specialized sub-agents for different aspects:
-
-| Phase      | Agent                                                  | Purpose                     |
-|------------|--------------------------------------------------------|-----------------------------|
-| Analysis   | `developer-kit:general-code-explorer`                  | Codebase exploration        |
-| Analysis   | `developer-kit:spring-boot-backend-development-expert` | Java/Spring analysis        |
-| Analysis   | `developer-kit:nestjs-backend-development-expert`      | NestJS analysis             |
-| Generation | `developer-kit:document-generator-expert`              | Primary document generation |
-| Support    | `developer-kit:java-security-expert`                   | Security domain expertise   |
-| Support    | `developer-kit:typescript-security-expert`             | TypeScript security         |
-| Support    | `developer-kit:general-software-architect`             | Architecture insights       |
-
----
-
 ## Todo Management
 
 Throughout the process, maintain a todo list:
@@ -414,3 +386,33 @@ The generated document will be saved as:
 
 **Note**: This command follows a systematic approach to ensure high-quality, professional documentation that accurately
 reflects your codebase and meets stakeholder requirements.
+
+---
+
+## Examples
+
+```bash
+# Generate technical assessment in English (default)
+/developer-kit:devkit.generate-document --type=assessment List all application features and their current status
+
+# Generate feature specification in Italian
+/developer-kit:devkit.generate-document --lang=it --type=feature User authentication with OAuth2 integration
+
+# Generate security analysis in Spanish
+/developer-kit:devkit.generate-document --lang=es --type=analysis Security vulnerabilities and compliance gaps
+
+# Generate deployment process documentation in French
+/developer-kit:devkit.generate-document --lang=fr --type=process CI/CD pipeline and deployment procedures
+
+# Generate custom report in German
+/developer-kit:devkit.generate-document --lang=de --type=custom API design patterns and best practices used in the project
+
+# Generate feature proposal with HTML output
+/developer-kit:devkit.generate-document --type=feature --format=html Real-time notification system proposal
+
+# Generate gap analysis in Portuguese
+/developer-kit:devkit.generate-document --lang=pt --type=analysis Current vs. target architecture comparison
+
+# Quick assessment (all defaults)
+/developer-kit:devkit.generate-document Technical debt and improvement opportunities
+```

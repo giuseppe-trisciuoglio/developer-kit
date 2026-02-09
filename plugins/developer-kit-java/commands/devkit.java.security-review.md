@@ -3,7 +3,6 @@ allowed-tools: Read, Grep, Glob, Bash, Task
 argument-hint: "[scope] [options]"
 description: Validates security posture for Java enterprise applications (Spring, Jakarta EE, etc.). Use when auditing application security or before production deployments.
 ---
-
 ## Overview
 
 Validates security posture for Java enterprise applications (Spring, Jakarta EE, etc.). Use when auditing application
@@ -21,16 +20,48 @@ security or before production deployments.
 |--------------|------------------------------------------|
 | `$ARGUMENTS` | Combined arguments passed to the command |
 
-## Examples
-
-```bash
-/devkit.java.security-review example-input
-```
-
 ## Execution Steps
 
 Execute comprehensive security review for Java enterprise applications. Analyze vulnerabilities, dependencies, security
 configurations, and best practices specific to the Java ecosystem.
+
+## Execution Steps
+
+1. **Setup Analysis Environment**
+    - Prepare codebase for review
+    - Configure security scanning tools
+    - Set up reporting framework
+
+2. **Automated Security Scanning**
+    - Run dependency vulnerability scans
+    - Execute static analysis security rules
+    - Perform configuration security checks
+
+3. **Manual Security Review**
+    - Review authentication/authorization logic
+    - Analyze input validation patterns
+    - Check error handling security
+
+4. **Generate Security Report**
+    - Consolidate findings from all tools
+    - Prioritize vulnerabilities by risk
+    - Provide actionable remediation steps
+
+5. **Security Recommendations**
+    - Framework-specific security improvements
+    - Code pattern recommendations
+    - Configuration security enhancements
+    - Monitoring and alerting setup
+
+Target: $ARGUMENTS
+
+## Execution Instructions
+
+**Agent Selection**: To execute this security review, use the following agent with fallback:
+
+- Primary: `java-security-expert`
+- If not available: Use `developer-kit:java-security-expert` or fallback to `general-purpose` agent with
+  `spring-boot-crud-patterns` skill
 
 ## Security Analysis for Java Enterprise Applications
 
@@ -317,40 +348,8 @@ spring:
   uses: SonarSource/sonarcloud-github-action@master
 ```
 
-## Execution Steps
+## Examples
 
-1. **Setup Analysis Environment**
-    - Prepare codebase for review
-    - Configure security scanning tools
-    - Set up reporting framework
-
-2. **Automated Security Scanning**
-    - Run dependency vulnerability scans
-    - Execute static analysis security rules
-    - Perform configuration security checks
-
-3. **Manual Security Review**
-    - Review authentication/authorization logic
-    - Analyze input validation patterns
-    - Check error handling security
-
-4. **Generate Security Report**
-    - Consolidate findings from all tools
-    - Prioritize vulnerabilities by risk
-    - Provide actionable remediation steps
-
-5. **Security Recommendations**
-    - Framework-specific security improvements
-    - Code pattern recommendations
-    - Configuration security enhancements
-    - Monitoring and alerting setup
-
-Target: $ARGUMENTS
-
-## Execution Instructions
-
-**Agent Selection**: To execute this security review, use the following agent with fallback:
-
-- Primary: `java-security-expert`
-- If not available: Use `developer-kit:java-security-expert` or fallback to `general-purpose` agent with
-  `spring-boot-crud-patterns` skill
+```bash
+/devkit.java.security-review example-input
+```

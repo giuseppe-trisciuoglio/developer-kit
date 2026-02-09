@@ -24,18 +24,20 @@ practices analysis. Use when reviewing code changes or before merging pull reque
 |--------------|------------------------------------------|
 | `$ARGUMENTS` | Combined arguments passed to the command |
 
-## Examples
-
-```bash
-/devkit.java.code-review example-input
-```
-
 ## Current Context
 
 - **Current Git Branch**: !`git branch --show-current`
 - **Git Status**: !`git status --porcelain`
 - **Recent Commits**: !`git log --oneline -5`
 - **Modified Files**: !`git diff --name-only HEAD~1`
+
+## Execution Instructions
+
+**Agent Selection**: To execute this code review, use the following agent with fallback:
+
+- Primary: `developer-kit-java:spring-boot-code-review-expert`
+- If not available: Use `developer-kit-java:spring-boot-code-review-expert` or fallback to `general-purpose` agent with
+  `spring-boot-crud-patterns` skill
 
 ## Review Configuration
 
@@ -397,10 +399,8 @@ class UserRepositoryIntegrationTest {
 
 ---
 
-## Execution Instructions
+## Examples
 
-**Agent Selection**: To execute this code review, use the following agent with fallback:
-
-- Primary: `developer-kit-java:spring-boot-code-review-expert`
-- If not available: Use `developer-kit-java:spring-boot-code-review-expert` or fallback to `general-purpose` agent with
-  `spring-boot-crud-patterns` skill
+```bash
+/devkit.java.code-review example-input
+```

@@ -30,6 +30,12 @@ changes for review.
 - **Remote Repository**: !`git config --get remote.origin.url`
 - **Modified Files**: !`git diff --name-only`
 
+## Execution Instructions
+
+**Agent Selection**: To execute this GitHub task, use the following approach:
+
+- Primary: Use `general-purpose` agent with GitHub CLI expertise and code analysis capabilities
+
 ## Configuration
 
 **Arguments received**: `$ARGUMENTS`
@@ -479,6 +485,30 @@ git status
 git diff
 ```
 
+## Integration with CI/CD
+
+The PR will automatically trigger:
+
+- **CI Pipeline**: Build and test execution
+- **Code Quality**: SonarQube analysis
+- **Security Scan**: Dependency vulnerability check
+- **Linting**: Code style validation
+- **Coverage**: Test coverage report
+
+## Your Task
+
+Based on the provided arguments:
+
+1. Analyze current changes in the working directory
+2. Create an appropriate branch name
+3. Categorize and commit changes logically
+4. Generate clear commit messages following Conventional Commits
+5. Push branch to remote repository
+6. Create pull request with description in the specified language
+7. Provide PR details and next steps
+
+**Remember**: Keep PR descriptions concise and professional without emojis. Focus on technical content and clarity.
+
 ## Examples
 
 ### Example 1: Simple Feature PR
@@ -508,33 +538,3 @@ git diff
 # Let the command generate title from changes
 /developer-kit:devkit.github.create-pr
 ```
-
-## Integration with CI/CD
-
-The PR will automatically trigger:
-
-- **CI Pipeline**: Build and test execution
-- **Code Quality**: SonarQube analysis
-- **Security Scan**: Dependency vulnerability check
-- **Linting**: Code style validation
-- **Coverage**: Test coverage report
-
-## Your Task
-
-Based on the provided arguments:
-
-1. Analyze current changes in the working directory
-2. Create an appropriate branch name
-3. Categorize and commit changes logically
-4. Generate clear commit messages following Conventional Commits
-5. Push branch to remote repository
-6. Create pull request with description in the specified language
-7. Provide PR details and next steps
-
-**Remember**: Keep PR descriptions concise and professional without emojis. Focus on technical content and clarity.
-
-## Execution Instructions
-
-**Agent Selection**: To execute this GitHub task, use the following approach:
-
-- Primary: Use `general-purpose` agent with GitHub CLI expertise and code analysis capabilities

@@ -23,11 +23,14 @@ strategy for tasks.md. Use when you need to improve task execution efficiency.
 |--------------|------------------------------------------|
 | `$ARGUMENTS` | Combined arguments passed to the command |
 
-## Examples
+## Execution Steps
 
-```bash
-/speckit.optimize example-input
-```
+## Execution Instructions
+
+**Agent Selection**: To execute this task, use the following approach:
+
+- Primary: Use `general-purpose` agent with appropriate domain expertise
+- Or use specialized agent if available for the specific task type
 
 ## User Input
 
@@ -47,8 +50,6 @@ command prepares tasks.md for efficient execution via `/speckit.implement`.
 
 **Critical Principle**: This command NEVER modifies tasks.md or code files. It only analyzes and reports optimization
 recommendations. Output is a READ-ONLY optimization report.
-
-## Execution Steps
 
 ### 1. Setup & Prerequisites
 
@@ -523,9 +524,10 @@ Before outputting report, verify:
 
 $ARGUMENTS
 
-## Execution Instructions
+---
 
-**Agent Selection**: To execute this task, use the following approach:
+## Examples
 
-- Primary: Use `general-purpose` agent with appropriate domain expertise
-- Or use specialized agent if available for the specific task type
+```bash
+/speckit.optimize example-input
+```

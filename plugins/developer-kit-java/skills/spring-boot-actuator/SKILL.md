@@ -5,8 +5,6 @@ allowed-tools: Read, Write, Bash
 category: backend
 tags: [spring-boot, actuator, monitoring, health-checks, metrics, production]
 version: 1.1.0
-context7_library: /websites/spring_io_spring-boot_3_5
-context7_trust_score: 7.5
 ---
 
 # Spring Boot Actuator Skill

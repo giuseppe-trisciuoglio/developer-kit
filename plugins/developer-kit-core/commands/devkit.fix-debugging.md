@@ -11,11 +11,33 @@ model: inherit
 You are helping a developer fix a bug or debug an issue. Follow a systematic approach: understand the problem, trace the
 root cause, design a minimal fix, then implement and verify.
 
+## Usage
+
+```bash
+/developer-kit:devkit.fix-debugging [--lang=java|spring|typescript|nestjs|react|python|general] [issue-description or error-message]
+```
+
 ## Arguments
 
 | Argument | Description |
 |----------|-------------|
 | `$ARGUMENTS` | Combined arguments passed to the command |
+
+## Current Context
+
+The command will automatically gather context information when needed:
+
+- Current git branch and status
+- Recent commits and changes
+- Available when the repository has history
+
+## Execution Instructions
+
+**Agent Selection**: Based on the `--lang` parameter, select the appropriate agents:
+
+## Integration with Sub-agents
+
+This command leverages specialized sub-agents using the Task tool.
 
 ## Language/Framework Selection
 
@@ -36,14 +58,6 @@ Parse $ARGUMENTS to detect the optional `--lang` parameter:
 | Debugger    | `developer-kit:general-debugger`           | `developer-kit:general-debugger`                    | `developer-kit:general-debugger`                                | `developer-kit:general-debugger`                                | `developer-kit:general-debugger`                           | `developer-kit:general-debugger`                   | `developer-kit:general-debugger`                        |
 | Architect   | `developer-kit:general-software-architect` | `developer-kit-java:java-software-architect-review` | `developer-kit-typescript:typescript-software-architect-review` | `developer-kit-typescript:typescript-software-architect-review` | `developer-kit-typescript:react-software-architect-review` | `developer-kit-aws:aws-solution-architect-expert`  | `developer-kit-python:python-software-architect-expert` |
 | Code Review | `developer-kit:general-code-reviewer`      | `developer-kit-java:spring-boot-code-review-expert` | `developer-kit-typescript:general-code-reviewer`                | `developer-kit-typescript:nestjs-code-review-expert`            | `developer-kit-typescript:general-code-reviewer`           | `developer-kit-aws:aws-architecture-review-expert` | `developer-kit-python:python-code-review-expert`        |
-
-## Current Context
-
-The command will automatically gather context information when needed:
-
-- Current git branch and status
-- Recent commits and changes
-- Available when the repository has history
 
 ## Core Principles
 
@@ -257,57 +271,6 @@ Task(
 
 ---
 
-## Examples
-
-```bash
-# With error message (general agents)
-/developer-kit:devkit.fix-debugging NullPointerException in UserService.getUserProfile()
-
-# With bug description
-/developer-kit:devkit.fix-debugging Users are seeing stale data after profile update
-
-# Java/Spring Boot debugging
-/developer-kit:devkit.fix-debugging --lang=spring Bean injection failing in OrderService
-
-# TypeScript debugging
-/developer-kit:devkit.fix-debugging --lang=typescript Type error in async handler
-
-# NestJS debugging
-/developer-kit:devkit.fix-debugging --lang=nestjs Dependency injection circular reference in AuthModule
-
-# React debugging
-/developer-kit:devkit.fix-debugging --lang=react Component not re-rendering after state update
-
-# Python debugging
-/developer-kit:devkit.fix-debugging --lang=python TypeError in async FastAPI endpoint handler
-
-# Python debugging
-/developer-kit:devkit.fix-debugging --lang=py Import circular dependency in Django models
-
-# AWS infrastructure debugging
-/developer-kit:devkit.fix-debugging --lang=aws CloudFormation stack creation failing with IAM error
-
-# AWS architecture issues
-/developer-kit:devkit.fix-debugging --lang=aws Lambda function timeout causing API Gateway 504 errors
-
-# With test failure
-/developer-kit:devkit.fix-debugging Test UserServiceTest.testGetProfile is failing intermittently
-
-# With performance issue
-/developer-kit:devkit.fix-debugging API response time increased from 50ms to 2s after last deploy
-
-# With production issue
-/developer-kit:devkit.fix-debugging Production errors: "Connection pool exhausted" every 2 hours
-```
-
-## Integration with Sub-agents
-
-This command leverages specialized sub-agents using the Task tool.
-
-## Execution Instructions
-
-**Agent Selection**: Based on the `--lang` parameter, select the appropriate agents:
-
 ### General Agents (default, or `--lang=general`)
 
 - **Debugger**: `developer-kit:general-debugger`
@@ -360,7 +323,7 @@ This command leverages specialized sub-agents using the Task tool.
 3. **general-code-reviewer** / **spring-boot-code-review-expert** / **nestjs-code-review-expert** - Reviews fix for
    quality and regressions
 
-### Usage Pattern
+### Agent Selection Pattern
 
 ```
 // General agents (default)
@@ -486,3 +449,48 @@ Tell the user: "This appears to be a straightforward issue. Would you like to pr
 
 **Note**: This command follows a systematic debugging approach to ensure bugs are fixed correctly the first time, with
 minimal risk of regression.
+
+---
+
+## Examples
+
+```bash
+# With error message (general agents)
+/developer-kit:devkit.fix-debugging NullPointerException in UserService.getUserProfile()
+
+# With bug description
+/developer-kit:devkit.fix-debugging Users are seeing stale data after profile update
+
+# Java/Spring Boot debugging
+/developer-kit:devkit.fix-debugging --lang=spring Bean injection failing in OrderService
+
+# TypeScript debugging
+/developer-kit:devkit.fix-debugging --lang=typescript Type error in async handler
+
+# NestJS debugging
+/developer-kit:devkit.fix-debugging --lang=nestjs Dependency injection circular reference in AuthModule
+
+# React debugging
+/developer-kit:devkit.fix-debugging --lang=react Component not re-rendering after state update
+
+# Python debugging
+/developer-kit:devkit.fix-debugging --lang=python TypeError in async FastAPI endpoint handler
+
+# Python debugging
+/developer-kit:devkit.fix-debugging --lang=py Import circular dependency in Django models
+
+# AWS infrastructure debugging
+/developer-kit:devkit.fix-debugging --lang=aws CloudFormation stack creation failing with IAM error
+
+# AWS architecture issues
+/developer-kit:devkit.fix-debugging --lang=aws Lambda function timeout causing API Gateway 504 errors
+
+# With test failure
+/developer-kit:devkit.fix-debugging Test UserServiceTest.testGetProfile is failing intermittently
+
+# With performance issue
+/developer-kit:devkit.fix-debugging API response time increased from 50ms to 2s after last deploy
+
+# With production issue
+/developer-kit:devkit.fix-debugging Production errors: "Connection pool exhausted" every 2 hours
+```

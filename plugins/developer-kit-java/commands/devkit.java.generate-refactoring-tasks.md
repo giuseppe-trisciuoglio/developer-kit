@@ -23,11 +23,6 @@ when planning refactoring work for a bounded context.
 |--------------|------------------------------------------|
 | `$ARGUMENTS` | Combined arguments passed to the command |
 
-## Examples
-
-```bash
-/devkit.java.generate-refactoring-tasks example-input
-```
 ## Execution Steps
 
 Analyze the bounded context **$1** in the project to create a complete refactoring task list and save it to a file.
@@ -129,3 +124,9 @@ tasks to implement.
 
 - Primary: Use `developer-kit-java:java-refactor-expert` agent with specialized knowledge of the task domain
 - Or use appropriate specialized agent if available for the specific generation task
+
+## Examples
+
+```bash
+/devkit.java.generate-refactoring-tasks example-input
+```

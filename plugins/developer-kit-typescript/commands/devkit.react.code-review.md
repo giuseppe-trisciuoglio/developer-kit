@@ -25,12 +25,6 @@ merging pull requests.
 |--------------|------------------------------------------|
 | `$ARGUMENTS` | Combined arguments passed to the command |
 
-## Examples
-
-```bash
-/devkit.react.code-review example-input
-```
-
 ## Current Context
 
 - **Current Git Branch**: !`git branch --show-current`
@@ -41,6 +35,19 @@ merging pull requests.
   `[ -f package.json ] && grep -o '"react":\s*"[^"]*"' package.json 2>/dev/null || echo "Not detected"`
 - **Tailwind Version**: !
   `[ -f package.json ] && grep -o '"tailwindcss":\s*"[^"]*"' package.json 2>/dev/null || echo "Not detected"`
+
+## Execution Instructions
+
+**Agent Selection**: To execute this code review, use the following agent with fallback:
+
+- Primary: `developer-kit-typescript:typescript-software-architect-review`
+- Fallback: `developer-kit:general-code-reviewer`
+
+**Run context**:
+
+- Provide `$1` as `full`, `components`, `hooks`, `performance`, `accessibility`, `styling`, `forms`, or `testing`
+- Optional: specify file or directory path as `$2`
+
 
 ## Review Configuration
 
@@ -517,15 +524,8 @@ const button = screen.getByTestId('submit-btn');
 
 ---
 
-## Execution Instructions
+## Examples
 
-**Agent Selection**: To execute this code review, use the following agent with fallback:
-
-- Primary: `developer-kit-typescript:typescript-software-architect-review`
-- Fallback: `developer-kit:general-code-reviewer`
-
-**Run context**:
-
-- Provide `$1` as `full`, `components`, `hooks`, `performance`, `accessibility`, `styling`, `forms`, or `testing`
-- Optional: specify file or directory path as `$2`
-
+```bash
+/devkit.react.code-review example-input
+```

@@ -3,16 +3,9 @@ allowed-tools: Read, Write, Edit, Grep, Glob
 argument-hint: "[language] [output-format]"
 description: Generates comprehensive security assessment document after security audit completion. Use when you need to create a structured security report.
 ---
-
 ## Overview
 
 Generates comprehensive security assessment document after security audit completion. Use when you need to create a structured security report.
-
-## Arguments
-
-| Argument | Description |
-|----------|-------------|
-| `$ARGUMENTS` | Combined arguments passed to the command |
 
 ## Usage
 
@@ -21,13 +14,17 @@ Generates comprehensive security assessment document after security audit comple
 ```
 
 
-## Examples
+## Arguments
 
-```bash
-- `/developer-kit:devkit.generate-security-assessment en-US markdown` - Generate English assessment in Markdown
-- `/developer-kit:devkit.generate-security-assessment it-IT pdf` - Generate Italian assessment in PDF
-- `/developer-kit:devkit.generate-security-assessment docx` - Generate English assessment in DOCX
-```
+| Argument | Description |
+|----------|-------------|
+| `$ARGUMENTS` | Combined arguments passed to the command |
+
+## Execution Instructions
+
+**Agent Selection**: To execute this generation task, use the following approach:
+- Primary: Use `general-purpose` agent with specialized knowledge of the task domain
+- Or use appropriate specialized agent if available for the specific generation task
 
 ## Security Assessment Document Generation
 
@@ -265,8 +262,12 @@ Based on security audit analysis, generating comprehensive assessment document w
 Language: $ARGUMENTS
 Format: Based on user preference (Markdown default)
 
-## Execution Instructions
+---
 
-**Agent Selection**: To execute this generation task, use the following approach:
-- Primary: Use `general-purpose` agent with specialized knowledge of the task domain
-- Or use appropriate specialized agent if available for the specific generation task
+## Examples
+
+```bash
+- `/developer-kit:devkit.generate-security-assessment en-US markdown` - Generate English assessment in Markdown
+- `/developer-kit:devkit.generate-security-assessment it-IT pdf` - Generate Italian assessment in PDF
+- `/developer-kit:devkit.generate-security-assessment docx` - Generate English assessment in DOCX
+```

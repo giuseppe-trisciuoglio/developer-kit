@@ -12,11 +12,33 @@ model: inherit
 You are helping a developer implement a new feature. Follow a systematic approach: understand the codebase deeply,
 identify and ask about all underspecified details, design elegant architectures, then implement.
 
+## Usage
+
+```bash
+/developer-kit:devkit.feature-development [--lang=java|spring|typescript|nestjs|react|python|general] [feature-description]
+```
+
 ## Arguments
 
 | Argument     | Description                              |
 |--------------|------------------------------------------|
 | `$ARGUMENTS` | Combined arguments passed to the command |
+
+## Current Context
+
+The command will automatically gather context information when needed:
+
+- Current git branch and status
+- Recent commits and changes
+- Available when the repository has history
+
+## Execution Instructions
+
+**Agent Selection**: Based on the `--lang` parameter, select the appropriate agents:
+
+## Integration with Sub-agents
+
+This command leverages three specialized sub-agents using the Task tool.
 
 ## Language/Framework Selection
 
@@ -37,14 +59,6 @@ Parse $ARGUMENTS to detect the optional `--lang` parameter:
 | Exploration  | `developer-kit:general-code-explorer`      | `developer-kit:general-code-explorer`               | `developer-kit:general-code-explorer`                           | `developer-kit:general-code-explorer`                           | `developer-kit:general-code-explorer`                      | `developer-kit:general-code-explorer`              | `developer-kit:general-code-explorer`                   |
 | Architecture | `developer-kit:general-software-architect` | `developer-kit-java:java-software-architect-review` | `developer-kit-typescript:typescript-software-architect-review` | `developer-kit-typescript:typescript-software-architect-review` | `developer-kit-typescript:react-software-architect-review` | `developer-kit-aws:aws-solution-architect-expert`  | `developer-kit-python:python-software-architect-expert` |
 | Code Review  | `developer-kit:general-code-reviewer`      | `developer-kit-java:spring-boot-code-review-expert` | `developer-kit-typescript:general-code-reviewer`                | `developer-kit-typescript:nestjs-code-review-expert`            | `developer-kit-typescript:general-code-reviewer`           | `developer-kit-aws:aws-architecture-review-expert` | `developer-kit-python:python-code-review-expert`        |
-
-## Current Context
-
-The command will automatically gather context information when needed:
-
-- Current git branch and status
-- Recent commits and changes
-- Available when the repository has history
 
 ## Core Principles
 
@@ -190,57 +204,6 @@ If the user says "whatever you think is best", provide your recommendation and g
 
 ---
 
-## Examples
-
-```bash
-# Simple feature (general agents)
-/developer-kit:devkit.feature-development Add user authentication
-
-# Java/Spring Boot feature
-/developer-kit:devkit.feature-development --lang=spring Add REST API for user management
-
-# Java feature with specialized agents
-/developer-kit:devkit.feature-development --lang=java Implement caching layer for products
-
-# Complex feature with description
-/developer-kit:devkit.feature-development Implement real-time notifications using WebSockets
-
-# Integration feature
-/developer-kit:devkit.feature-development --lang=spring Add payment processing with Stripe integration
-
-# TypeScript feature
-/developer-kit:devkit.feature-development --lang=typescript Add GraphQL resolver for user queries
-
-# NestJS feature
-/developer-kit:devkit.feature-development --lang=nestjs Implement authentication module with JWT
-
-# React frontend feature
-/developer-kit:devkit.feature-development --lang=react Create dashboard with charts and user filters
-
-# Python feature
-/developer-kit:devkit.feature-development --lang=python Implement REST API with FastAPI and SQLAlchemy
-
-# Python feature with specialized agents
-/developer-kit:devkit.feature-development --lang=py Add async task queue with Celery integration
-
-# AWS infrastructure feature
-/developer-kit:devkit.feature-development --lang=aws Design multi-region high availability architecture
-
-# AWS CloudFormation feature
-/developer-kit:devkit.feature-development --lang=aws Create ECS Fargate infrastructure with auto scaling
-
-# Explicit general agents
-/developer-kit:devkit.feature-development --lang=general Create dashboard with charts and filters
-```
-
-## Integration with Sub-agents
-
-This command leverages three specialized sub-agents using the Task tool.
-
-## Execution Instructions
-
-**Agent Selection**: Based on the `--lang` parameter, select the appropriate agents:
-
 ### General Agents (default, or `--lang=general`)
 
 - **Code Explorer**: `developer-kit:general-code-explorer`
@@ -287,7 +250,7 @@ This command leverages three specialized sub-agents using the Task tool.
 
 **Fallback**: If specialized agents are not available, fall back to `general-purpose` agent.
 
-### Usage Pattern
+### Agent Selection Pattern
 
 ```
 // General agents (default)
@@ -392,3 +355,48 @@ Update the status as you progress through each phase.
 
 **Note**: This command follows a systematic approach to ensure high-quality implementations that integrate well with
 existing codebases and meet user requirements effectively.
+
+---
+
+## Examples
+
+```bash
+# Simple feature (general agents)
+/developer-kit:devkit.feature-development Add user authentication
+
+# Java/Spring Boot feature
+/developer-kit:devkit.feature-development --lang=spring Add REST API for user management
+
+# Java feature with specialized agents
+/developer-kit:devkit.feature-development --lang=java Implement caching layer for products
+
+# Complex feature with description
+/developer-kit:devkit.feature-development Implement real-time notifications using WebSockets
+
+# Integration feature
+/developer-kit:devkit.feature-development --lang=spring Add payment processing with Stripe integration
+
+# TypeScript feature
+/developer-kit:devkit.feature-development --lang=typescript Add GraphQL resolver for user queries
+
+# NestJS feature
+/developer-kit:devkit.feature-development --lang=nestjs Implement authentication module with JWT
+
+# React frontend feature
+/developer-kit:devkit.feature-development --lang=react Create dashboard with charts and user filters
+
+# Python feature
+/developer-kit:devkit.feature-development --lang=python Implement REST API with FastAPI and SQLAlchemy
+
+# Python feature with specialized agents
+/developer-kit:devkit.feature-development --lang=py Add async task queue with Celery integration
+
+# AWS infrastructure feature
+/developer-kit:devkit.feature-development --lang=aws Design multi-region high availability architecture
+
+# AWS CloudFormation feature
+/developer-kit:devkit.feature-development --lang=aws Create ECS Fargate infrastructure with auto scaling
+
+# Explicit general agents
+/developer-kit:devkit.feature-development --lang=general Create dashboard with charts and filters
+```

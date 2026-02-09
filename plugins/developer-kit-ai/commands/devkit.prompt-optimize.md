@@ -26,12 +26,13 @@ advanced techniques.
 |--------------|------------------------------------------|
 | `$ARGUMENTS` | Combined arguments passed to the command |
 
-## Examples
+## Execution Instructions
 
-```bash
-/devkit.prompt-optimize example-input
-```
+**Agent Selection**: To execute this prompt optimization task, use the following agent with fallback:
 
+- Primary: `developer-kit-ai:prompt-engineering-expert`
+- If not available: Use `developer-kit-ai:prompt-engineering-expert` or fallback to `general-purpose` agent with prompt
+  engineering expertise
 ## Instructions
 
 ### 1. Analyze the Prompt
@@ -121,10 +122,8 @@ The optimized prompt must:
 
 ---
 
-## Execution Instructions
+## Examples
 
-**Agent Selection**: To execute this prompt optimization task, use the following agent with fallback:
-
-- Primary: `developer-kit-ai:prompt-engineering-expert`
-- If not available: Use `developer-kit-ai:prompt-engineering-expert` or fallback to `general-purpose` agent with prompt
-  engineering expertise
+```bash
+/devkit.prompt-optimize example-input
+```

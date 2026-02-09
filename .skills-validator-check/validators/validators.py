@@ -22,6 +22,8 @@ from .config import (
     SKILL_RECOMMENDED_SECTIONS,
     COMMAND_REQUIRED_SECTIONS,
     COMMAND_RECOMMENDED_SECTIONS,
+    COMMAND_SECTIONS_ORDER,
+    COMMAND_SECTION_PATTERNS,
     AGENT_REQUIRED_SECTIONS,
     AGENT_RECOMMENDED_SECTIONS,
     VALID_TOOLS,
@@ -714,8 +716,9 @@ class CommandValidator(BaseValidator):
                 result
             )
 
-        # Validate markdown structure (required sections)
+        # Validate markdown structure (required sections and order)
         self._validate_markdown_structure(content, result)
+        self._validate_section_order(content, result)
 
     def _validate_markdown_structure(
         self,
@@ -754,6 +757,90 @@ class CommandValidator(BaseValidator):
                     message=f"Missing recommended section: '## {section_name}'",
                     suggestion=f"Consider adding '## {section_name}' section"
                 )
+
+    def _validate_section_order(
+        self,
+        content: str,
+        result: ValidationResult
+    ) -> None:
+        """Validate that command sections appear in the correct order.
+
+        Sections must follow the order defined in COMMAND_SECTIONS_ORDER.
+        Any section not in the order list can appear after the last defined section.
+        """
+        # Find content after frontmatter
+        match = re.search(r"\n---\s*\n", content)
+        if not match:
+            return  # Already caught by frontmatter validation
+
+        body = content[match.end():]
+
+        # Map section names to their expected order index
+        section_order_indices: Dict[str, int] = {
+            name: idx for idx, name in enumerate(COMMAND_SECTIONS_ORDER)
+        }
+
+        # Find all ordered sections in the document with their positions
+        found_ordered_sections: List[tuple] = []
+
+        for order_key, pattern in COMMAND_SECTION_PATTERNS.items():
+            for match in re.finditer(pattern, body, re.IGNORECASE | re.MULTILINE):
+                section_title = match.group(0).strip()
+                section_pos = match.start()
+                order_index = section_order_indices[order_key]
+                found_ordered_sections.append((order_index, section_pos, order_key, section_title))
+
+        # Sort by position in document
+        found_ordered_sections.sort(key=lambda x: x[1])
+
+        # Check if sections are in correct order
+        last_order_index = -1
+        last_section_key = None
+
+        for order_index, section_pos, section_key, section_title in found_ordered_sections:
+            if order_index < last_order_index:
+                # This section is out of order
+                expected_before_key = None
+                expected_before_title = None
+
+                # Find which section this should come before
+                for prev_order_index, prev_pos, prev_key, prev_title in found_ordered_sections:
+                    if prev_pos < section_pos and prev_order_index > order_index:
+                        expected_before_key = prev_key
+                        expected_before_title = prev_title.lstrip("#").strip()
+                        break
+
+                # Find which section this should come after
+                expected_after_key = None
+                for order_idx, section_name in enumerate(COMMAND_SECTIONS_ORDER):
+                    if order_idx < order_index:
+                        # Check if this section exists in the document
+                        for prev_order_idx, prev_pos, prev_key, prev_title in found_ordered_sections:
+                            if prev_key == section_name and prev_pos < section_pos:
+                                expected_after_key = section_name
+
+                current_name = section_key.replace("_", " ").title()
+
+                if expected_before_key:
+                    expected_name = expected_before_key.replace("_", " ").title()
+                    result.add_error(
+                        message=f"Section '## {current_name}' is out of order",
+                        suggestion=f"Move '## {current_name}' before '## {expected_name}' (correct order: Overview → Usage → Arguments → Current Context → Execution Steps → Execution Instructions → Integration with Sub-agents → Examples)"
+                    )
+                elif expected_after_key:
+                    expected_name = expected_after_key.replace("_", " ").title()
+                    result.add_error(
+                        message=f"Section '## {current_name}' is out of order",
+                        suggestion=f"Move '## {current_name}' after '## {expected_name}' (correct order: Overview → Usage → Arguments → Current Context → Execution Steps → Execution Instructions → Integration with Sub-agents → Examples)"
+                    )
+                else:
+                    result.add_error(
+                        message=f"Section '## {current_name}' is out of order",
+                        suggestion=f"Correct order: Overview → Usage → Arguments → Current Context → Execution Steps → Execution Instructions → Integration with Sub-agents → Examples"
+                    )
+            else:
+                last_order_index = order_index
+                last_section_key = section_key
 
     def _validate_boolean(
         self,

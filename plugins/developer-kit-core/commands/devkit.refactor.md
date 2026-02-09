@@ -13,11 +13,33 @@ You are helping a developer refactor existing code. Follow a systematic approach
 dependencies, clarify compatibility requirements, design safe refactoring strategies, implement incrementally, and
 verify thoroughly.
 
+## Usage
+
+```bash
+/developer-kit:devkit.refactor [--lang=java|spring|typescript|nestjs|react|python|general] [--scope=file|module|feature] [refactor-description]
+```
+
 ## Arguments
 
 | Argument     | Description                              |
 |--------------|------------------------------------------|
 | `$ARGUMENTS` | Combined arguments passed to the command |
+
+## Current Context
+
+The command will automatically gather context information when needed:
+
+- Current git branch and status
+- Recent commits and changes
+- Available when the repository has history
+
+## Execution Instructions
+
+**Agent Selection**: Based on the `--lang` parameter, select the appropriate agents:
+
+## Integration with Sub-agents
+
+This command leverages four specialized sub-agents for comprehensive refactoring:
 
 ## Language/Framework Selection
 
@@ -47,14 +69,6 @@ Parse $ARGUMENTS to detect the optional `--scope` parameter:
 | Refactoring Expert  | `developer-kit:refactor-expert`            | `developer-kit-java:java-refactor-expert`                   | `developer-kit-typescript:typescript-refactor-expert`           | `developer-kit-typescript:typescript-refactor-expert`           | `developer-kit-typescript:typescript-refactor-expert`        | `developer-kit-aws:refactor-expert`                | `developer-kit-python:python-refactor-expert`           |
 | Architecture Review | `developer-kit:general-software-architect` | `developer-kit-java:java-software-architect-review`         | `developer-kit-typescript:typescript-software-architect-review` | `developer-kit-typescript:typescript-software-architect-review` | `developer-kit-typescript:react-software-architect-review`   | `developer-kit-aws:aws-solution-architect-expert`  | `developer-kit-python:python-software-architect-expert` |
 | Code Review         | `developer-kit:general-code-reviewer`      | `developer-kit-java:spring-boot-code-review-expert`         | `developer-kit:general-code-reviewer`                           | `developer-kit-typescript:nestjs-code-review-expert`            | `developer-kit:general-code-reviewer`                        | `developer-kit-aws:aws-architecture-review-expert` | `developer-kit-python:python-code-review-expert`        |
-
-## Current Context
-
-The command will automatically gather context information when needed:
-
-- Current git branch and status
-- Recent commits and changes
-- Available when the repository has history
 
 ## Core Principles
 
@@ -385,51 +399,6 @@ Task(
 
 ---
 
-## Examples
-
-```bash
-# Simple file refactoring (general agents)
-/developer-kit:devkit.refactor --scope=file Extract utility methods from UserService
-
-# Java/Spring Boot module refactoring
-/developer-kit:devkit.refactor --lang=spring --scope=module Refactor repository layer to use specification pattern
-
-# Breaking change refactoring with explicit scope
-/developer-kit:devkit.refactor --lang=java Restructure payment module API for v2
-
-# TypeScript refactoring
-/developer-kit:devkit.refactor --lang=typescript Convert callbacks to async/await in data layer
-
-# NestJS refactoring
-/developer-kit:devkit.refactor --lang=nestjs Refactor authentication to use guards instead of middleware
-
-# React component refactoring
-/developer-kit:devkit.refactor --lang=react Extract shared hooks from dashboard components
-
-# Python refactoring
-/developer-kit:devkit.refactor --lang=python Refactor data access layer to use repository pattern
-
-# Python refactoring
-/developer-kit:devkit.refactor --lang=py Convert synchronous code to async with asyncio
-
-# AWS infrastructure refactoring
-/developer-kit:devkit.refactor --lang=aws Refactor monolithic CloudFormation template into nested stacks
-
-# AWS architecture modernization
-/developer-kit:devkit.refactor --lang=aws Migrate from EC2-based to serverless architecture
-
-# Internal implementation refactoring
-/developer-kit:devkit.refactor --scope=file Improve performance of search algorithm in SearchService
-```
-
-## Integration with Sub-agents
-
-This command leverages four specialized sub-agents for comprehensive refactoring:
-
-## Execution Instructions
-
-**Agent Selection**: Based on the `--lang` parameter, select the appropriate agents:
-
 ### General Agents (default, or `--lang=general`)
 
 - **Code Explorer**: `developer-kit:general-code-explorer`
@@ -482,7 +451,7 @@ This command leverages four specialized sub-agents for comprehensive refactoring
 
 **Fallback**: If specialized agents are not available, fall back to `general-purpose` agent.
 
-### Usage Pattern
+### Agent Selection Pattern
 
 ```
 // Exploration with multiple agents in parallel
@@ -601,3 +570,42 @@ Update the status as you progress through each phase.
 
 **Note**: This command follows a rigorous approach to ensure safe, high-quality refactoring that respects compatibility
 requirements and thoroughly verifies all changes.
+
+---
+
+## Examples
+
+```bash
+# Simple file refactoring (general agents)
+/developer-kit:devkit.refactor --scope=file Extract utility methods from UserService
+
+# Java/Spring Boot module refactoring
+/developer-kit:devkit.refactor --lang=spring --scope=module Refactor repository layer to use specification pattern
+
+# Breaking change refactoring with explicit scope
+/developer-kit:devkit.refactor --lang=java Restructure payment module API for v2
+
+# TypeScript refactoring
+/developer-kit:devkit.refactor --lang=typescript Convert callbacks to async/await in data layer
+
+# NestJS refactoring
+/developer-kit:devkit.refactor --lang=nestjs Refactor authentication to use guards instead of middleware
+
+# React component refactoring
+/developer-kit:devkit.refactor --lang=react Extract shared hooks from dashboard components
+
+# Python refactoring
+/developer-kit:devkit.refactor --lang=python Refactor data access layer to use repository pattern
+
+# Python refactoring
+/developer-kit:devkit.refactor --lang=py Convert synchronous code to async with asyncio
+
+# AWS infrastructure refactoring
+/developer-kit:devkit.refactor --lang=aws Refactor monolithic CloudFormation template into nested stacks
+
+# AWS architecture modernization
+/developer-kit:devkit.refactor --lang=aws Migrate from EC2-based to serverless architecture
+
+# Internal implementation refactoring
+/developer-kit:devkit.refactor --scope=file Improve performance of search algorithm in SearchService
+```

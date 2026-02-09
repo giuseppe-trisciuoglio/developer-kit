@@ -20,20 +20,6 @@ migration guides. Use when upgrading project dependencies or migrating to new li
 /devkit.java.upgrade-dependencies $ARGUMENTS
 ```
 
-## Examples
-
-```bash
-/devkit.java.upgrade-dependencies example-input
-```
-
-## Context
-
-- Build system: !`ls -la | grep -E "(pom\.xml|build\.gradle|build\.gradle\.kts)"`
-- Current dependencies: !
-  `if [ -f pom.xml ]; then mvn dependency:tree | head -30; elif [ -f build.gradle ]; then ./gradlew dependencies --configuration compileClasspath | head -30; fi`
-- Outdated dependencies: !
-  `if [ -f pom.xml ]; then mvn versions:display-dependency-updates 2>/dev/null | grep -E "\\->" | head -20; elif [ -f build.gradle ]; then ./gradlew dependencyUpdates 2>/dev/null | grep -E "\\->" | head -20; fi`
-
 ## Arguments
 
 $1 specifies the scope (optional - defaults to `all`):
@@ -59,6 +45,22 @@ $3 specifies target version for specific dependency upgrades (optional):
 - `latest` - Latest stable release
 - `latest-minor` - Latest minor version
 - `latest-patch` - Latest patch version
+
+## Execution Instructions
+
+**Agent Selection**: To execute this task, use the following agent with fallback:
+
+- Primary: `java-security-expert`
+- If not available: Use `developer-kit:java-security-expert` or fallback to `general-purpose` agent with
+  `spring-boot-crud-patterns` skill
+
+## Context
+
+- Build system: !`ls -la | grep -E "(pom\.xml|build\.gradle|build\.gradle\.kts)"`
+- Current dependencies: !
+  `if [ -f pom.xml ]; then mvn dependency:tree | head -30; elif [ -f build.gradle ]; then ./gradlew dependencies --configuration compileClasspath | head -30; fi`
+- Outdated dependencies: !
+  `if [ -f pom.xml ]; then mvn versions:display-dependency-updates 2>/dev/null | grep -E "\\->" | head -20; elif [ -f build.gradle ]; then ./gradlew dependencyUpdates 2>/dev/null | grep -E "\\->" | head -20; fi`
 
 ## Upgrade Analysis Process
 
@@ -452,10 +454,8 @@ Based on the specified scope and strategy, provide:
 Focus on **safe, incremental upgrades** that maintain system stability while keeping dependencies current and secure.
 Always provide rollback strategies and comprehensive testing approaches.
 
-## Execution Instructions
+## Examples
 
-**Agent Selection**: To execute this task, use the following agent with fallback:
-
-- Primary: `java-security-expert`
-- If not available: Use `developer-kit:java-security-expert` or fallback to `general-purpose` agent with
-  `spring-boot-crud-patterns` skill
+```bash
+/devkit.java.upgrade-dependencies example-input
+```

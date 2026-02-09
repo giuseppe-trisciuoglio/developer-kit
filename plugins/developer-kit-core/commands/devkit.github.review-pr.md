@@ -11,6 +11,14 @@ argument-hint: "[pr-number] [review-focus] [output-format]"
 Perform comprehensive code review of a GitHub pull request including code quality, security, architecture, performance,
 and best practices analysis.
 
+## Overview
+
+- **Title**: $PR_TITLE
+- **Author**: $PR_AUTHOR
+- **Branch**: $PR_HEAD → $PR_BASE
+- **Changes**: +$PR_ADDITIONS -$PR_DELETIONS across $PR_CHANGED_FILES files
+- **Review Focus**: $REVIEW_FOCUS
+
 ## Usage
 
 ```
@@ -28,6 +36,14 @@ and best practices analysis.
 - **Current Branch**: !`git branch --show-current`
 - **Remote Repository**: !`git config --get remote.origin.url`
 - **Git Status**: !`git status --porcelain`
+
+## Execution Instructions
+
+**Agent Selection**: To execute this GitHub task, use the following approach:
+
+- Primary: Use `general-purpose` agent with GitHub CLI expertise and code analysis capabilities
+
+
 
 ## Configuration
 
@@ -381,14 +397,6 @@ Nice-to-have improvements:
 ```markdown
 # Pull Request Review: #$PR_NUMBER
 
-## Overview
-
-- **Title**: $PR_TITLE
-- **Author**: $PR_AUTHOR
-- **Branch**: $PR_HEAD → $PR_BASE
-- **Changes**: +$PR_ADDITIONS -$PR_DELETIONS across $PR_CHANGED_FILES files
-- **Review Focus**: $REVIEW_FOCUS
-
 ## Summary
 
 [High-level assessment of the PR]
@@ -583,6 +591,36 @@ echo "Review completed for PR #$PR_NUMBER"
 echo "View PR: $PR_URL"
 ```
 
+## Integration with CI/CD
+
+The review can be enhanced by checking:
+
+- CI/CD pipeline status
+- Test coverage reports
+- Code quality metrics (SonarQube)
+- Security scan results (Snyk, OWASP)
+- Build artifacts and logs
+
+## Your Task
+
+Based on the provided PR number and review focus:
+
+1. Extract PR information and changed files
+2. Analyze code quality and structure
+3. Review for security vulnerabilities
+4. Assess performance implications
+5. Evaluate test coverage and quality
+6. Check architectural decisions
+7. Verify code style and conventions
+8. Generate comprehensive review report
+9. Provide actionable recommendations
+10. Post review comments to GitHub
+
+**Remember**: Be thorough, constructive, and professional. Focus on helping the author improve their code while
+maintaining high quality standards.
+
+---
+
 ## Examples
 
 ### Example 1: Full Review
@@ -612,39 +650,4 @@ echo "View PR: $PR_URL"
 # Performance review in checklist format
 /developer-kit:devkit.github.review-pr 321 performance checklist
 ```
-
-## Integration with CI/CD
-
-The review can be enhanced by checking:
-
-- CI/CD pipeline status
-- Test coverage reports
-- Code quality metrics (SonarQube)
-- Security scan results (Snyk, OWASP)
-- Build artifacts and logs
-
-## Your Task
-
-Based on the provided PR number and review focus:
-
-1. Extract PR information and changed files
-2. Analyze code quality and structure
-3. Review for security vulnerabilities
-4. Assess performance implications
-5. Evaluate test coverage and quality
-6. Check architectural decisions
-7. Verify code style and conventions
-8. Generate comprehensive review report
-9. Provide actionable recommendations
-10. Post review comments to GitHub
-
-**Remember**: Be thorough, constructive, and professional. Focus on helping the author improve their code while
-maintaining high quality standards.
-
-## Execution Instructions
-
-**Agent Selection**: To execute this GitHub task, use the following approach:
-
-- Primary: Use `general-purpose` agent with GitHub CLI expertise and code analysis capabilities
-
-
+ 

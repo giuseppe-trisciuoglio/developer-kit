@@ -27,6 +27,13 @@ Boot projects. Generate professional documentation following Java and Spring eco
 |--------------|------------------------------------------|
 | `$ARGUMENTS` | Combined arguments passed to the command |
 
+## Execution Instructions
+
+**Agent Selection**: To execute this task, use the following agent with fallback:
+
+- Primary: `developer-kit-java:java-documentation-specialist`
+- If not available: Use `developer-kit-java:java-documentation-specialist` or fallback to `general-purpose` agent
+
 ## Current Project Context
 
 - **Project Root**: !`pwd`
@@ -908,10 +915,3 @@ docs/
 
 This command provides comprehensive Java project documentation that follows industry best practices and includes API
 docs, architecture diagrams, Javadoc, and setup guides.
-
-## Execution Instructions
-
-**Agent Selection**: To execute this task, use the following agent with fallback:
-
-- Primary: `developer-kit-java:java-documentation-specialist`
-- If not available: Use `developer-kit-java:java-documentation-specialist` or fallback to `general-purpose` agent

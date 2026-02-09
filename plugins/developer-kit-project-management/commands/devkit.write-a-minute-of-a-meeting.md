@@ -3,7 +3,6 @@ description: Generates professional meeting minutes from transcripts or notes. U
 argument-hint: "[transcript-file] [meeting-title] [date]"
 allowed-tools: Read, Write
 ---
-
 ## Overview
 
 Generates professional meeting minutes from transcripts or notes. Use when you need to create structured meeting
@@ -24,12 +23,12 @@ notes and produce a clear, concise, and professional meeting minute document.
 |--------------|------------------------------------------|
 | `$ARGUMENTS` | Combined arguments passed to the command |
 
-## Examples
+## Execution Instructions
 
-```bash
-/devkit.write-a-minute-of-a-meeting example-input
-```
+**Agent Selection**: To execute this task, use the following approach:
 
+- Primary: Use `general-purpose` agent with appropriate domain expertise
+- Or use specialized agent if available for the specific task type
 ## Input
 
 Read the meeting transcript from: **$1**
@@ -91,9 +90,8 @@ Include date and time of the next meeting if established.
 - Maintain a neutral and factual tone
 - Format using proper Markdown syntax
 
-## Execution Instructions
+## Examples
 
-**Agent Selection**: To execute this task, use the following approach:
-
-- Primary: Use `general-purpose` agent with appropriate domain expertise
-- Or use specialized agent if available for the specific task type
+```bash
+/devkit.write-a-minute-of-a-meeting example-input
+```

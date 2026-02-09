@@ -24,12 +24,6 @@ Native mobile apps. Use when reviewing architecture, boundaries, security, perfo
 |--------------|------------------------------------------|
 | `$ARGUMENTS` | Combined arguments passed to the command |
 
-## Examples
-
-```bash
-/devkit.typescript.code-review example-input
-```
-
 ## Current Context
 
 - **Current Git Branch**: !`git branch --show-current`
@@ -38,6 +32,19 @@ Native mobile apps. Use when reviewing architecture, boundaries, security, perfo
 - **Modified Files**: !`git diff --name-only HEAD~1`
 - **Nx Affected Projects**: !
   `[ -f nx.json ] && npx nx show projects --affected --base=HEAD~1 2>/dev/null || echo "Nx not detected"`
+
+## Execution Instructions
+
+**Agent Selection**: To execute this code review, use the following agent with fallback:
+
+- Primary: `developer-kit-typescript:typescript-software-architect-review`
+- If not available: `developer-kit:typescript-software-architect-review` fallback to
+  `developer-kit:general-code-reviewer`, if not available use `general-purpose`
+
+**Run context**:
+
+- Use `npx nx show projects --affected --base=HEAD~1` to limit scope (only if Nx workspace detected)
+- Provide `$1` as `full` or `security` etc., and optional path to a project or file
 
 ## Review Configuration
 
@@ -231,15 +238,8 @@ ENDIF
 
 ---
 
-## Execution Instructions
+## Examples
 
-**Agent Selection**: To execute this code review, use the following agent with fallback:
-
-- Primary: `developer-kit-typescript:typescript-software-architect-review`
-- If not available: `developer-kit:typescript-software-architect-review` fallback to
-  `developer-kit:general-code-reviewer`, if not available use `general-purpose`
-
-**Run context**:
-
-- Use `npx nx show projects --affected --base=HEAD~1` to limit scope (only if Nx workspace detected)
-- Provide `$1` as `full` or `security` etc., and optional path to a project or file
+```bash
+/devkit.typescript.code-review example-input
+```

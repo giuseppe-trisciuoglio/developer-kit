@@ -23,11 +23,14 @@ when you need to check task alignment with the current codebase.
 |--------------|------------------------------------------|
 | `$ARGUMENTS` | Combined arguments passed to the command |
 
-## Examples
+## Execution Steps
 
-```bash
-/speckit.check-integration example-input
-```
+## Execution Instructions
+
+**Agent Selection**: To execute this task, use the following approach:
+
+- Primary: Use `general-purpose` agent with appropriate domain expertise
+- Or use specialized agent if available for the specific task type
 
 ## User Input
 
@@ -45,8 +48,6 @@ and architectural compatibility. This is a READ-ONLY analysis command that repor
 **When to run**: After `/speckit.tasks` generates tasks.md but BEFORE `/speckit.implement` executes them.
 
 **Critical Principle**: This command NEVER modifies code, tasks, or any files. It only analyzes and reports.
-
-## Execution Steps
 
 ### 1. Setup & Prerequisites
 
@@ -519,9 +520,10 @@ Before outputting report, verify:
 
 $ARGUMENTS
 
-## Execution Instructions
+--- 
 
-**Agent Selection**: To execute this task, use the following approach:
+## Examples
 
-- Primary: Use `general-purpose` agent with appropriate domain expertise
-- Or use specialized agent if available for the specific task type
+```bash
+/speckit.check-integration example-input
+```

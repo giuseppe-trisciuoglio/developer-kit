@@ -23,11 +23,14 @@ you need to verify that all tasks are properly completed.
 |--------------|------------------------------------------|
 | `$ARGUMENTS` | Combined arguments passed to the command |
 
-## Examples
+## Execution Steps
 
-```bash
-/speckit.verify example-input
-```
+## Execution Instructions
+
+**Agent Selection**: To execute this task, use the following approach:
+
+- Primary: Use `general-purpose` agent with appropriate domain expertise
+- Or use specialized agent if available for the specific task type
 
 ## User Input
 
@@ -45,8 +48,6 @@ completes.
 
 **Critical Principle**: This is a READ-ONLY analysis command. The ONLY file that may be written is
 `verification-report.md` in the feature directory. No other modifications are permitted.
-
-## Execution Steps
 
 ### 1. Setup & Prerequisites
 
@@ -788,9 +789,10 @@ $ARGUMENTS
 - Integrates with CI/CD pipelines
 - Provides audit trail of verification
 
-## Execution Instructions
+---
 
-**Agent Selection**: To execute this task, use the following approach:
+## Examples
 
-- Primary: Use `general-purpose` agent with appropriate domain expertise
-- Or use specialized agent if available for the specific task type
+```bash
+/speckit.verify example-input
+```

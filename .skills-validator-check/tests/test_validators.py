@@ -683,6 +683,188 @@ argument-hint: [arg]
         assert not result.is_valid
         assert any(i.field_name == "description" for i in result.issues)
 
+    def test_section_order_valid(self, validator, temp_command_file):
+        """Test that sections in correct order pass validation."""
+        content = """---
+description: Test command
+allowed-tools: Read
+---
+
+# Test Command
+
+## Overview
+
+Overview content.
+
+## Usage
+
+Usage content.
+
+## Arguments
+
+Arguments content.
+
+## Examples
+
+Examples content.
+"""
+        command_file = temp_command_file(content)
+        result = validator.validate(command_file)
+
+        # Should not have section order errors
+        order_errors = [i for i in result.errors if "out of order" in i.message]
+        assert len(order_errors) == 0, f"Unexpected order errors: {order_errors}"
+
+    def test_section_order_invalid_examples_before_usage(self, validator, temp_command_file):
+        """Test that Examples before Usage fails validation."""
+        content = """---
+description: Test command
+allowed-tools: Read
+---
+
+# Test Command
+
+## Overview
+
+Overview content.
+
+## Examples
+
+Examples content.
+
+## Usage
+
+Usage content.
+"""
+        command_file = temp_command_file(content)
+        result = validator.validate(command_file)
+
+        # Should have section order error
+        order_errors = [i for i in result.errors if "out of order" in i.message]
+        assert len(order_errors) > 0, "Expected section order error but found none"
+        assert any("Usage" in e.message for e in order_errors)
+
+    def test_section_order_invalid_arguments_before_overview(self, validator, temp_command_file):
+        """Test that Arguments before Overview fails validation."""
+        content = """---
+description: Test command
+allowed-tools: Read
+---
+
+# Test Command
+
+## Arguments
+
+Arguments content.
+
+## Overview
+
+Overview content.
+
+## Usage
+
+Usage content.
+
+## Examples
+
+Examples content.
+"""
+        command_file = temp_command_file(content)
+        result = validator.validate(command_file)
+
+        # Should have section order error
+        order_errors = [i for i in result.errors if "out of order" in i.message]
+        assert len(order_errors) > 0, "Expected section order error but found none"
+        assert any("Overview" in e.message for e in order_errors)
+
+    def test_section_order_with_optional_sections(self, validator, temp_command_file):
+        """Test that optional sections in correct order pass validation."""
+        content = """---
+description: Test command
+allowed-tools: Read
+---
+
+# Test Command
+
+## Overview
+
+Overview content.
+
+## Usage
+
+Usage content.
+
+## Arguments
+
+Arguments content.
+
+## Current Context
+
+Context content.
+
+## Execution Steps
+
+Steps content.
+
+## Execution Instructions
+
+Instructions content.
+
+## Integration with Sub-agents
+
+Integration content.
+
+## Examples
+
+Examples content.
+
+## Additional Notes
+
+Notes content.
+"""
+        command_file = temp_command_file(content)
+        result = validator.validate(command_file)
+
+        # Should not have section order errors
+        order_errors = [i for i in result.errors if "out of order" in i.message]
+        assert len(order_errors) == 0, f"Unexpected order errors: {order_errors}"
+
+    def test_section_order_execution_steps_before_arguments(self, validator, temp_command_file):
+        """Test that Execution Steps before Arguments fails validation."""
+        content = """---
+description: Test command
+allowed-tools: Read
+---
+
+# Test Command
+
+## Overview
+
+Overview content.
+
+## Usage
+
+Usage content.
+
+## Execution Steps
+
+Steps content.
+
+## Arguments
+
+Arguments content.
+
+## Examples
+
+Examples content.
+"""
+        command_file = temp_command_file(content)
+        result = validator.validate(command_file)
+
+        # Should have section order error
+        order_errors = [i for i in result.errors if "out of order" in i.message]
+        assert len(order_errors) > 0, "Expected section order error but found none"
+
 
 class TestValidatorFactory:
     """Tests for ValidatorFactory."""

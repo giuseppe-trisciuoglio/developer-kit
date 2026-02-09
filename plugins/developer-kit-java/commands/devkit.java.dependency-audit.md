@@ -20,20 +20,6 @@ Use when auditing project dependencies or before releases.
 /devkit.java.dependency-audit $ARGUMENTS
 ```
 
-## Examples
-
-```bash
-/devkit.java.dependency-audit example-input
-```
-
-## Context
-
-- Build system: !`ls -la | grep -E "(pom\.xml|build\.gradle|build\.gradle\.kts)"`
-- Current dependencies: !
-  `if [ -f pom.xml ]; then mvn dependency:list 2>/dev/null | head -30; elif [ -f build.gradle ]; then ./gradlew dependencies 2>/dev/null | head -30; fi`
-- Dependency tree depth: !
-  `if [ -f pom.xml ]; then mvn dependency:tree 2>/dev/null | wc -l; elif [ -f build.gradle ]; then ./gradlew dependencies 2>/dev/null | wc -l; fi`
-
 ## Arguments
 
 $1 specifies the scope (optional - defaults to `all`):
@@ -62,6 +48,20 @@ $3 specifies the output format (optional - defaults to `report`):
 - `json` - Machine-readable JSON format
 - `sarif` - SARIF format for CI/CD integration
 - `remediation` - Actionable fix commands and PRs
+
+## Execution Instructions
+
+**Agent Selection**: To execute this task, use the following agent with fallback:
+
+- Primary: `developer-kit-javajava-security-expert`
+- If not available: Use `developer-kit-java:java-security-expert` or fallback to `general-purpose` agent
+## Context
+
+- Build system: !`ls -la | grep -E "(pom\.xml|build\.gradle|build\.gradle\.kts)"`
+- Current dependencies: !
+  `if [ -f pom.xml ]; then mvn dependency:list 2>/dev/null | head -30; elif [ -f build.gradle ]; then ./gradlew dependencies 2>/dev/null | head -30; fi`
+- Dependency tree depth: !
+  `if [ -f pom.xml ]; then mvn dependency:tree 2>/dev/null | wc -l; elif [ -f build.gradle ]; then ./gradlew dependencies 2>/dev/null | wc -l; fi`
 
 ## Audit Analysis Process
 
@@ -766,9 +766,8 @@ Based on the specified scope and focus, provide:
 Focus on **actionable insights** that enable teams to maintain secure, compliant, and efficient dependency management
 for Java enterprise applications.
 
-## Execution Instructions
+## Examples
 
-**Agent Selection**: To execute this task, use the following agent with fallback:
-
-- Primary: `developer-kit-javajava-security-expert`
-- If not available: Use `developer-kit-java:java-security-expert` or fallback to `general-purpose` agent
+```bash
+/devkit.java.dependency-audit example-input
+```
