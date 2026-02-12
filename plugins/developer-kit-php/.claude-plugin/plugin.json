@@ -24,6 +24,7 @@
   ],
   "commands": [],
   "skills": [
-    "./skills/wordpress/wordpress-sage-theme"
+    "./skills/wordpress/wordpress-sage-theme",
+    "./skills/clean-architecture"
   ]
 }

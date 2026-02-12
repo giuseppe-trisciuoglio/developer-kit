@@ -22,5 +22,7 @@
     "./agents/python-software-architect-expert.md"
   ],
   "commands": [],
-  "skills": []
+  "skills": [
+    "./skills/clean-architecture"
+  ]
 }
