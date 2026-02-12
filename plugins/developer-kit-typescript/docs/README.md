@@ -10,6 +10,7 @@ Welcome to the Developer Kit TypeScript Plugin documentation. This plugin provid
 
 - **[NestJS Skills](./guide-skills-nestjs.md)** - NestJS framework skills
 - **[Frontend Skills](./guide-skills-frontend.md)** - React, TypeScript, UI framework skills
+- **[Architecture Skills](./guide-skills-architecture.md)** - Clean Architecture and DDD skills (1 skill)
 
 ### Component Guides
 
@@ -24,7 +25,7 @@ The Developer Kit TypeScript Plugin provides:
 
 - **TypeScript Agents**: 13 specialized agents for NestJS, React, TypeScript, and React Native development
 - **TypeScript Commands**: 3 commands for code review and security assessment
-- **TypeScript Skills**: 5 skills covering NestJS, React patterns, shadcn-ui, Tailwind CSS, and TypeScript documentation
+- **TypeScript Skills**: 6 skills covering NestJS, React patterns, shadcn-ui, Tailwind CSS, TypeScript documentation, and Clean Architecture
 
 ---
 

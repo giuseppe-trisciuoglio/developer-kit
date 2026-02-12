@@ -6,6 +6,10 @@ Welcome to the Developer Kit Python Plugin documentation. This plugin provides c
 
 ## Available Documentation
 
+### Skills Guides
+
+- **[Architecture Skills](./guide-skills-architecture.md)** - Clean Architecture and DDD skills (1 skill)
+
 ### Component Guides
 
 - **[Agent Guide](./guide-agents.md)** - Python specialized agents

@@ -40,6 +40,7 @@ The `developer-kit-typescript` plugin provides comprehensive support for TypeScr
 - **shadcn-ui** - shadcn/ui component library
 - **tailwind-css-patterns** - Tailwind CSS patterns
 - **typescript-docs** - TypeScript documentation standards
+- **clean-architecture** - Clean Architecture, Hexagonal Architecture, and DDD patterns for TypeScript/Node.js
 
 ## Dependencies
 
