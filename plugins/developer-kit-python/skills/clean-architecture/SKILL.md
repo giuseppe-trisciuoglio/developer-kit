@@ -2,6 +2,9 @@
 name: clean-architecture
 description: Provides implementation patterns for Clean Architecture, Hexagonal Architecture (Ports & Adapters), and Domain-Driven Design in Python applications with FastAPI or Flask. Use when designing maintainable backends with separation of concerns, implementing repository patterns, creating entities/value objects/aggregates, or structuring domain logic independent of frameworks for testability.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
+category: backend
+tags: [clean-architecture, hexagonal-architecture, ddd, domain-driven-design, python, fastapi, flask, ports-adapters]
+version: 1.0.0
 ---
 
 # Clean Architecture, DDD & Hexagonal Architecture for Python
