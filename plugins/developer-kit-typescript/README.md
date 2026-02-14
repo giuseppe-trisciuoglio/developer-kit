@@ -35,11 +35,17 @@ The `developer-kit-typescript` plugin provides comprehensive support for TypeScr
 
 ## Skills
 
+### Backend (NestJS)
 - **nestjs** - NestJS framework patterns
+- **clean-architecture** - Clean Architecture, Hexagonal Architecture, and DDD patterns for NestJS backend applications
+
+### Frontend (React)
 - **react-patterns** - React 19 design patterns
 - **shadcn-ui** - shadcn/ui component library
 - **tailwind-css-patterns** - Tailwind CSS patterns
-- **typescript-docs** - TypeScript documentation standards
+
+### Core/Shared
+- **typescript-docs** - TypeScript documentation standards 
 
 ## Dependencies
 

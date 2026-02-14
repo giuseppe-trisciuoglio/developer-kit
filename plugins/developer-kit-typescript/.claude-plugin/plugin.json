@@ -45,6 +45,7 @@
     "./skills/shadcn-ui",
     "./skills/tailwind-css-patterns",
     "./skills/typescript-docs",
+    "./skills/clean-architecture",
     "./skills/aws-lambda-integration"
   ]
 }
