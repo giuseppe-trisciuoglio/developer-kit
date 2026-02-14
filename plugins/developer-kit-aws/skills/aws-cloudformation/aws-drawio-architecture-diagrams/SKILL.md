@@ -93,30 +93,35 @@ style="points=[[...same points...]];outlineConnect=0;gradientColor=none;html=1;w
 
 Service icons use the `shape=mxgraph.aws4.resourceIcon` pattern with `resIcon` for the specific service, or dedicated shape names.
 
+**CRITICAL: `strokeColor=#ffffff` is required** for all `resourceIcon` shapes. This makes the icon glyph render as **white** on the colored background. Using `strokeColor=none` causes the icon to render as black.
+
 **Standard service icon pattern:**
 ```xml
-<mxCell id="10" value="Amazon S3" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#7AA116;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.s3;" vertex="1" parent="1">
+<mxCell id="10" value="Amazon S3" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;gradientColor=#60A337;gradientDirection=north;fillColor=#277116;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.s3;" vertex="1" parent="1">
   <mxGeometry x="100" y="100" width="60" height="60" as="geometry" />
 </mxCell>
 ```
 
+**Note:** Dedicated shapes like `lambda_function`, `applicationLoadBalancer`, `users` do NOT use `resourceIcon` and should keep `strokeColor=none`.
+
 ### AWS Service Color Codes
 
-Each AWS service category has an official color:
+Each AWS service category uses official colors with gradients for `resourceIcon` shapes. All `resourceIcon` shapes **must** use `strokeColor=#ffffff` and `gradientDirection=north`.
 
-| Category | Fill Color | Services |
-|----------|-----------|----------|
-| **Compute** | `#ED7100` | EC2, Lambda, ECS, EKS, Fargate |
-| **Storage** | `#3F8624` | S3, EBS, EFS, Glacier |
-| **Database** | `#C925D1` | RDS, DynamoDB, ElastiCache, Redshift |
-| **Networking** | `#8C4FFF` | VPC, CloudFront, Route 53, ELB, API Gateway |
-| **Security** | `#DD344C` | IAM, Cognito, KMS, WAF, Shield |
-| **Analytics** | `#8C4FFF` | Kinesis, Athena, Glue, EMR |
-| **Application Integration** | `#E7157B` | SQS, SNS, EventBridge, Step Functions |
-| **Management** | `#E7157B` | CloudWatch, CloudFormation, Systems Manager |
-| **Machine Learning** | `#01A88D` | SageMaker, Comprehend, Rekognition, Lex |
-| **Developer Tools** | `#C925D1` | CodePipeline, CodeBuild, CodeDeploy |
-| **General / AWS** | `#232F3E` | AWS Cloud boundary, generic icons |
+| Category | fillColor | gradientColor | strokeColor | Services |
+|----------|-----------|---------------|-------------|----------|
+| **Compute** | `#D05C17` | `#F78E04` | `#ffffff` | EC2, ECS, EKS, Fargate |
+| **Compute (dedicated shapes)** | `#ED7100` | none | none | Lambda (`lambda_function`), ALB (`applicationLoadBalancer`) |
+| **Storage** | `#277116` | `#60A337` | `#ffffff` | S3, EBS, EFS, Glacier |
+| **Database** | `#3334B9` | `#4D72F3` | `#ffffff` | RDS, DynamoDB, ElastiCache, Aurora, Redshift |
+| **Networking** | `#5A30B5` | `#945DF2` | `#ffffff` | CloudFront, Route 53, ELB, API Gateway, NAT GW, IGW |
+| **Security** | `#C7131F` | `#F54749` | `#ffffff` | IAM, Cognito, KMS, WAF, Shield, Pinpoint |
+| **Analytics** | `#5A30B5` | `#945DF2` | `#ffffff` | Kinesis, Athena, Glue, EMR, Lake Formation |
+| **Application Integration** | `#BC1356` | `#F54749` | `#ffffff` | SQS, SNS, EventBridge, Step Functions |
+| **Management** | `#BC1356` | `#F54749` | `#ffffff` | CloudWatch, CloudFormation, Systems Manager |
+| **Machine Learning** | `#116D5B` | `#4AB29A` | `#ffffff` | SageMaker, Bedrock, Comprehend, Lex, Rekognition |
+| **Developer Tools** | `#5A30B5` | `#945DF2` | `#ffffff` | CodePipeline, CodeBuild, CodeDeploy |
+| **General / External** | `#232F3E` | none | none | Users, Mobile Client, Corporate DC (dedicated shapes) |
 
 ### Connector Styles for AWS Diagrams
 
@@ -194,10 +199,10 @@ https://app.diagrams.net/?libs=aws4
         <mxCell id="12" value="Application&lt;br&gt;Load Balancer" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.applicationLoadBalancer;" vertex="1" parent="6">
           <mxGeometry x="170" y="50" width="60" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="13" value="EC2 Instance" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ec2;" vertex="1" parent="7">
+        <mxCell id="13" value="EC2 Instance" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ec2;" vertex="1" parent="7">
           <mxGeometry x="170" y="50" width="60" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="15" value="RDS Primary" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#C925D1;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.rds;" vertex="1" parent="8">
+        <mxCell id="15" value="RDS Primary" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;gradientColor=#4D72F3;gradientDirection=north;fillColor=#3334B9;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.rds;" vertex="1" parent="8">
           <mxGeometry x="170" y="50" width="60" height="60" as="geometry" />
         </mxCell>
         <mxCell id="20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endFill=0;strokeColor=#545B64;strokeWidth=2;" edge="1" parent="1" source="2" target="12">

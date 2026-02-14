@@ -28,277 +28,277 @@ collapsible=0;recursiveResize=0;
 
 ### EC2 Instance
 ```xml
-<mxCell id="ID" value="Amazon EC2" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ec2;" vertex="1" parent="PARENT">
+<mxCell id="ID" value="Amazon EC2" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ec2;" vertex="1" parent="PARENT">
   <mxGeometry x="X" y="Y" width="60" height="60" as="geometry" />
 </mxCell>
 ```
 
 ### Lambda Function
 ```xml
-style="...fillColor=#ED7100;...shape=mxgraph.aws4.lambda_function;"
+style="...fillColor=#ED7100;strokeColor=none;...shape=mxgraph.aws4.lambda_function;"
 ```
 
 ### ECS Service
 ```xml
-style="...fillColor=#ED7100;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ecs;"
+style="...gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ecs;"
 ```
 
 ### EKS
 ```xml
-style="...fillColor=#ED7100;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.eks;"
+style="...gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.eks;"
 ```
 
 ### Fargate
 ```xml
-style="...fillColor=#ED7100;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.fargate;"
+style="...gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.fargate;"
 ```
 
 ### Auto Scaling
 ```xml
-style="...fillColor=#ED7100;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.auto_scaling2;"
+style="...gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.auto_scaling2;"
 ```
 
 ## Networking Services
 
 ### Elastic Load Balancer (ALB)
 ```xml
-style="...fillColor=#8C4FFF;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.elastic_load_balancing;"
+style="...gradientColor=#945DF2;gradientDirection=north;fillColor=#5A30B5;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.elastic_load_balancing;"
 ```
 
 ### Application Load Balancer
 ```xml
-style="...fillColor=#8C4FFF;...shape=mxgraph.aws4.applicationLoadBalancer;"
+style="...fillColor=#8C4FFF;strokeColor=none;...shape=mxgraph.aws4.applicationLoadBalancer;"
 ```
 
 ### Network Load Balancer
 ```xml
-style="...fillColor=#8C4FFF;...shape=mxgraph.aws4.networkLoadBalancer;"
+style="...fillColor=#8C4FFF;strokeColor=none;...shape=mxgraph.aws4.networkLoadBalancer;"
 ```
 
 ### API Gateway
 ```xml
-style="...fillColor=#E7157B;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.api_gateway;"
+style="...gradientColor=#945DF2;gradientDirection=north;fillColor=#5A30B5;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.api_gateway;"
 ```
 
 ### CloudFront
 ```xml
-style="...fillColor=#8C4FFF;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cloudfront;"
+style="...gradientColor=#945DF2;gradientDirection=north;fillColor=#5A30B5;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cloudfront;"
 ```
 
 ### Route 53
 ```xml
-style="...fillColor=#8C4FFF;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.route_53;"
+style="...gradientColor=#945DF2;gradientDirection=north;fillColor=#5A30B5;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.route_53;"
 ```
 
 ### NAT Gateway
 ```xml
-style="...fillColor=#8C4FFF;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.nat_gateway;"
+style="...gradientColor=#945DF2;gradientDirection=north;fillColor=#5A30B5;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.nat_gateway;"
 ```
 
 ### Internet Gateway
 ```xml
-style="...fillColor=#8C4FFF;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.internet_gateway;"
+style="...gradientColor=#945DF2;gradientDirection=north;fillColor=#5A30B5;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.internet_gateway;"
 ```
 
 ### VPN Gateway
 ```xml
-style="...fillColor=#8C4FFF;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.vpn_gateway;"
+style="...gradientColor=#945DF2;gradientDirection=north;fillColor=#5A30B5;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.vpn_gateway;"
 ```
 
 ## Storage Services
 
 ### Amazon S3
 ```xml
-style="...fillColor=#3F8624;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.s3;"
+style="...gradientColor=#60A337;gradientDirection=north;fillColor=#277116;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.s3;"
 ```
 
 ### EBS (Elastic Block Store)
 ```xml
-style="...fillColor=#3F8624;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.elastic_block_store;"
+style="...gradientColor=#60A337;gradientDirection=north;fillColor=#277116;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.elastic_block_store;"
 ```
 
 ### EFS (Elastic File System)
 ```xml
-style="...fillColor=#3F8624;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.elastic_file_system;"
+style="...gradientColor=#60A337;gradientDirection=north;fillColor=#277116;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.elastic_file_system;"
 ```
 
 ### S3 Glacier
 ```xml
-style="...fillColor=#3F8624;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.glacier;"
+style="...gradientColor=#60A337;gradientDirection=north;fillColor=#277116;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.glacier;"
 ```
 
 ## Database Services
 
 ### Amazon RDS
 ```xml
-style="...fillColor=#C925D1;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.rds;"
+style="...gradientColor=#4D72F3;gradientDirection=north;fillColor=#3334B9;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.rds;"
 ```
 
 ### Aurora
 ```xml
-style="...fillColor=#C925D1;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.aurora;"
+style="...gradientColor=#4D72F3;gradientDirection=north;fillColor=#3334B9;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.aurora;"
 ```
 
 ### DynamoDB
 ```xml
-style="...fillColor=#C925D1;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.dynamodb;"
+style="...gradientColor=#4D72F3;gradientDirection=north;fillColor=#3334B9;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.dynamodb;"
 ```
 
 ### ElastiCache
 ```xml
-style="...fillColor=#C925D1;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.elasticache;"
+style="...gradientColor=#4D72F3;gradientDirection=north;fillColor=#3334B9;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.elasticache;"
 ```
 
 ### Redshift
 ```xml
-style="...fillColor=#C925D1;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.redshift;"
+style="...gradientColor=#4D72F3;gradientDirection=north;fillColor=#3334B9;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.redshift;"
 ```
 
 ## Security Services
 
 ### IAM
 ```xml
-style="...fillColor=#DD344C;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.identity_and_access_management;"
+style="...gradientColor=#F54749;gradientDirection=north;fillColor=#C7131F;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.identity_and_access_management;"
 ```
 
 ### Cognito
 ```xml
-style="...fillColor=#DD344C;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cognito;"
+style="...gradientColor=#F54749;gradientDirection=north;fillColor=#C7131F;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cognito;"
 ```
 
 ### KMS
 ```xml
-style="...fillColor=#DD344C;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.key_management_service;"
+style="...gradientColor=#F54749;gradientDirection=north;fillColor=#C7131F;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.key_management_service;"
 ```
 
 ### WAF
 ```xml
-style="...fillColor=#DD344C;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.waf;"
+style="...gradientColor=#F54749;gradientDirection=north;fillColor=#C7131F;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.waf;"
 ```
 
 ### Shield
 ```xml
-style="...fillColor=#DD344C;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.shield;"
+style="...gradientColor=#F54749;gradientDirection=north;fillColor=#C7131F;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.shield;"
 ```
 
 ### Secrets Manager
 ```xml
-style="...fillColor=#DD344C;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.secrets_manager;"
+style="...gradientColor=#F54749;gradientDirection=north;fillColor=#C7131F;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.secrets_manager;"
 ```
 
 ### Certificate Manager
 ```xml
-style="...fillColor=#DD344C;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.certificate_manager;"
+style="...gradientColor=#F54749;gradientDirection=north;fillColor=#C7131F;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.certificate_manager;"
 ```
 
 ## Application Integration
 
 ### SQS
 ```xml
-style="...fillColor=#E7157B;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.sqs;"
+style="...gradientColor=#F54749;gradientDirection=north;fillColor=#BC1356;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.sqs;"
 ```
 
 ### SNS
 ```xml
-style="...fillColor=#E7157B;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.sns;"
+style="...gradientColor=#F54749;gradientDirection=north;fillColor=#BC1356;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.sns;"
 ```
 
 ### EventBridge
 ```xml
-style="...fillColor=#E7157B;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.eventbridge;"
+style="...gradientColor=#F54749;gradientDirection=north;fillColor=#BC1356;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.eventbridge;"
 ```
 
 ### Step Functions
 ```xml
-style="...fillColor=#E7157B;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.step_functions;"
+style="...gradientColor=#F54749;gradientDirection=north;fillColor=#BC1356;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.step_functions;"
 ```
 
 ## Analytics
 
 ### Kinesis Data Streams
 ```xml
-style="...fillColor=#8C4FFF;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.kinesis_data_streams;"
+style="...gradientColor=#945DF2;gradientDirection=north;fillColor=#5A30B5;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.kinesis_data_streams;"
 ```
 
 ### Kinesis Data Firehose
 ```xml
-style="...fillColor=#8C4FFF;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.kinesis_data_firehose;"
+style="...gradientColor=#945DF2;gradientDirection=north;fillColor=#5A30B5;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.kinesis_data_firehose;"
 ```
 
 ### Athena
 ```xml
-style="...fillColor=#8C4FFF;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.athena;"
+style="...gradientColor=#945DF2;gradientDirection=north;fillColor=#5A30B5;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.athena;"
 ```
 
 ### Glue
 ```xml
-style="...fillColor=#8C4FFF;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.glue;"
+style="...gradientColor=#945DF2;gradientDirection=north;fillColor=#5A30B5;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.glue;"
 ```
 
 ## Machine Learning
 
 ### SageMaker
 ```xml
-style="...fillColor=#01A88D;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.sagemaker;"
+style="...gradientColor=#4AB29A;gradientDirection=north;fillColor=#116D5B;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.sagemaker;"
 ```
 
 ### Bedrock
 ```xml
-style="...fillColor=#01A88D;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.bedrock;"
+style="...gradientColor=#4AB29A;gradientDirection=north;fillColor=#116D5B;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.bedrock;"
 ```
 
 ### Comprehend
 ```xml
-style="...fillColor=#01A88D;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.comprehend;"
+style="...gradientColor=#4AB29A;gradientDirection=north;fillColor=#116D5B;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.comprehend;"
 ```
 
 ### Lex
 ```xml
-style="...fillColor=#01A88D;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lex;"
+style="...gradientColor=#4AB29A;gradientDirection=north;fillColor=#116D5B;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lex;"
 ```
 
 ### Rekognition
 ```xml
-style="...fillColor=#01A88D;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.rekognition;"
+style="...gradientColor=#4AB29A;gradientDirection=north;fillColor=#116D5B;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.rekognition;"
 ```
 
 ## Management & Monitoring
 
 ### CloudWatch
 ```xml
-style="...fillColor=#E7157B;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cloudwatch;"
+style="...gradientColor=#F54749;gradientDirection=north;fillColor=#BC1356;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cloudwatch;"
 ```
 
 ### CloudFormation
 ```xml
-style="...fillColor=#E7157B;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cloudformation;"
+style="...gradientColor=#F54749;gradientDirection=north;fillColor=#BC1356;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cloudformation;"
 ```
 
 ### Systems Manager
 ```xml
-style="...fillColor=#E7157B;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.systems_manager;"
+style="...gradientColor=#F54749;gradientDirection=north;fillColor=#BC1356;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.systems_manager;"
 ```
 
 ### CloudTrail
 ```xml
-style="...fillColor=#E7157B;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cloudtrail;"
+style="...gradientColor=#F54749;gradientDirection=north;fillColor=#BC1356;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cloudtrail;"
 ```
 
 ## Developer Tools
 
 ### CodePipeline
 ```xml
-style="...fillColor=#C925D1;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.codepipeline;"
+style="...gradientColor=#945DF2;gradientDirection=north;fillColor=#5A30B5;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.codepipeline;"
 ```
 
 ### CodeBuild
 ```xml
-style="...fillColor=#C925D1;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.codebuild;"
+style="...gradientColor=#945DF2;gradientDirection=north;fillColor=#5A30B5;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.codebuild;"
 ```
 
 ### CodeDeploy
 ```xml
-style="...fillColor=#C925D1;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.codedeploy;"
+style="...gradientColor=#945DF2;gradientDirection=north;fillColor=#5A30B5;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.codedeploy;"
 ```
 
 ## External Actors
@@ -325,7 +325,7 @@ style="...fillColor=#232F3E;...shape=mxgraph.aws4.mobile_client;"
 
 ### IoT Device (Generic)
 ```xml
-style="...fillColor=#232F3E;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.iot_core;"
+style="...gradientColor=#60A337;gradientDirection=north;fillColor=#277116;strokeColor=#ffffff;...shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.iot_core;"
 ```
 
 ## Common Points Array (for all service icons)
