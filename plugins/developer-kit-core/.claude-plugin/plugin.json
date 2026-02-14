@@ -45,5 +45,7 @@
     "./commands/devkit.verify-skill.md",
     "./commands/devkit.generate-security-assessment.md"
   ],
-  "skills": []
+  "skills": [
+    "./skills/claude-md-management"
+  ]
 }
