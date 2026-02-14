@@ -39,6 +39,9 @@ The `developer-kit-java` plugin provides extensive support for Java development,
 - Event-Driven Patterns, OpenAPI Documentation, REST API Standards
 - Saga Pattern, Security JWT, Test Patterns, Resilience4j
 
+### Architecture
+- **clean-architecture** - Clean Architecture, Hexagonal Architecture, and DDD patterns for Java 21+ Spring Boot 3.5+
+
 ### Spring Data
 - Spring Data JPA, Spring Data Neo4j
 

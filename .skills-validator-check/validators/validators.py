@@ -132,6 +132,11 @@ class BaseValidator(ABC):
         # Extract YAML content
         yaml_content = content[3:end_match.start() + 3]
 
+        # Run enhanced YAML validation BEFORE parsing
+        yaml_issues = self._validate_yaml_syntax_enhanced(yaml_content, result)
+        if yaml_issues:
+            return None  # Critical YAML syntax errors found
+
         try:
             frontmatter = yaml.safe_load(yaml_content)
             if frontmatter is None:
@@ -152,6 +157,72 @@ class BaseValidator(ABC):
                 suggestion="Fix the YAML syntax error"
             )
             return None
+
+    def _validate_yaml_syntax_enhanced(self, yaml_content: str, result: ValidationResult) -> bool:
+        """Enhanced YAML validation to catch common syntax issues before parsing.
+
+        Returns True if critical issues found (parsing should stop).
+        """
+        issues_found = False
+        lines = yaml_content.split('\n')
+
+        for line_num, line in enumerate(lines, start=1):
+            stripped = line.strip()
+
+            # Skip empty lines and comments
+            if not stripped or stripped.startswith('#'):
+                continue
+
+            # Skip lines that are clearly keys (ending with colon)
+            if stripped.endswith(':'):
+                continue
+
+            # Check for unquoted strings with problematic patterns
+            # Pattern 1: String containing (N): where N is a number - common YAML error
+            # e.g., "including: (1) one, (2) two" - the (2): is interpreted as a key
+            unquoted_match = re.search(r'\([^)]+\):', stripped)
+            if unquoted_match:
+                # Check if this line is NOT part of a quoted string continuation
+                # by counting quotes before the match
+                before_match = stripped[:unquoted_match.start()]
+                quote_count = before_match.count('"') + before_match.count("'")
+                # If quote count is odd, we're inside a quoted string (continuation) - OK
+                if quote_count % 2 == 0:
+                    result.add_error(
+                        message=f"Potential YAML syntax error: '{unquoted_match.group()}' in unquoted string",
+                        line_number=line_num,
+                        suggestion="Use single quotes instead of double quotes for strings containing '):' patterns (e.g., '(1):'). YAML interprets '):' as a key-value separator in unquoted strings."
+                    )
+                    issues_found = True
+
+            # Pattern 2: Detect potential flow-style mapping issues
+            # Lines with multiple colons in unquoted context
+            if ':' in stripped and not stripped.startswith('- '):
+                # Check if quotes are balanced
+                if stripped.startswith('"') or stripped.startswith("'"):
+                    single_quotes = stripped.count("'") % 2
+                    double_quotes = stripped.count('"') % 2
+                    if single_quotes or double_quotes:
+                        result.add_error(
+                            message=f"Unbalanced quotes in YAML value at line {line_num}",
+                            line_number=line_num,
+                            suggestion="Ensure all quotes are properly closed"
+                        )
+                        issues_found = True
+
+            # Pattern 3: Double-quoted strings with ): patterns - suggest single quotes
+            # Some YAML parsers (like Codex) may have issues with "..." containing (N):
+            if '"' in stripped:
+                # Check for ): pattern anywhere in the line
+                if re.search(r'\):', stripped) or re.search(r'\([0-9]+\)', stripped):
+                    if stripped.count('"') >= 2:
+                        result.add_warning(
+                            message="Double-quoted string contains '):' pattern which may cause issues with some YAML parsers",
+                            line_number=line_num,
+                            suggestion="Consider using single quotes instead of double quotes for strings containing '):' patterns (e.g., '(1):', '(2):')"
+                        )
+
+        return issues_found
 
     def _validate_schema(
         self,

@@ -15,7 +15,7 @@ The `developer-kit-python` plugin provides Python development expertise, includi
 
 ## Skills
 
-Python-specific skills will be added in future releases.
+- **clean-architecture** - Clean Architecture, Hexagonal Architecture, and DDD patterns for Python
 
 ## Dependencies
 

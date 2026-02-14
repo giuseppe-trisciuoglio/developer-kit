@@ -9,6 +9,7 @@ Welcome to the Developer Kit PHP Plugin documentation. This plugin provides comp
 ### Skills Guides
 
 - **[WordPress Sage Theme Skill](../skills/wordpress-sage-theme/)** - WordPress Sage theme development skill
+- **[Architecture Skills](./guide-skills-architecture.md)** - Clean Architecture and DDD skills (1 skill)
 
 ### Component Guides
 
@@ -21,7 +22,7 @@ Welcome to the Developer Kit PHP Plugin documentation. This plugin provides comp
 The Developer Kit PHP Plugin provides:
 
 - **PHP Agents**: 5 specialized agents for PHP code review, refactoring, security, architecture, and WordPress development
-- **PHP Skills**: 1 skill for WordPress Sage theme development
+- **PHP Skills**: 2 skills covering WordPress Sage theme development and Clean Architecture
 
 ---
 

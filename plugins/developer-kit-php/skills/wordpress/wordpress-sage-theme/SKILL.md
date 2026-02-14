@@ -1,12 +1,20 @@
 ---
 name: wordpress-sage-theme
-description: "Provides WordPress theme development patterns using Sage (roots/sage) framework. Use when creating, modifying, or debugging WordPress themes with Sage, including: (1) Creating new Sage themes from scratch, (2) Setting up Blade templates and components, (3) Configuring build tools (Vite, Bud), (4) Working with WordPress theme templates and hierarchy, (5) Implementing ACF fields integration, (6) Theme customization and asset management"
+description: 'Provides WordPress theme development patterns using Sage (roots/sage) framework. Use when creating, modifying, or debugging WordPress themes with Sage, including (1): creating new Sage themes from scratch, (2): setting up Blade templates and components, (3): configuring build tools (Vite, Bud), (4): working with WordPress theme templates and hierarchy, (5): implementing ACF fields integration, (6): theme customization and asset management.'
 allowed-tools: Read, Write, Bash, Glob, Grep
+category: frontend
+tags: [wordpress, sage, theme, blade, acf, bud, vite, php]
+version: 1.0.0
 ---
 
 # WordPress Sage Theme Development
 
+## Overview
+
+Sage is a WordPress theme framework by Roots that provides modern development practices including Blade templates, dependency management with Composer, and build tools with Vite/Bud.
+
 ## When to Use
+
 Use this skill when working with WordPress theme development using the Sage (Roots) framework. Specific scenarios include:
 
 - Creating new Sage themes from scratch or from composer templates
@@ -64,10 +72,6 @@ npm run dev
   @endwhile
 @endif
 ```
-
-## Overview
-
-Sage is a WordPress theme framework by Roots that provides modern development practices including Blade templates, dependency management with Composer, and build tools with Vite/Bud.
 
 ## Quick Start
 
