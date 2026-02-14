@@ -6,9 +6,9 @@ Quick reference to Clean Architecture skill for TypeScript/Node.js applications.
 
 ## Skills Overview
 
-| Skill | Purpose |
-|-------|---------|
-| **clean-architecture** | Clean Architecture, Hexagonal Architecture, and DDD patterns for TypeScript/Node.js |
+| Skill                  | Purpose                                                                               |
+|------------------------|---------------------------------------------------------------------------------------|
+| **clean-architecture** | Clean Architecture, Hexagonal Architecture, and DDD patterns for NestJS or Typescript |
 
 ---
 
@@ -16,7 +16,8 @@ Quick reference to Clean Architecture skill for TypeScript/Node.js applications.
 
 **File**: `skills/clean-architecture/SKILL.md`
 
-Provides implementation patterns for Clean Architecture, Hexagonal Architecture (Ports & Adapters), and Domain-Driven Design in TypeScript/Node.js applications.
+Provides implementation patterns for Clean Architecture, Hexagonal Architecture (Ports & Adapters), and Domain-Driven
+Design in NestJS or Typescript applications.
 
 ### When to use
 
@@ -31,12 +32,12 @@ Provides implementation patterns for Clean Architecture, Hexagonal Architecture 
 
 #### Clean Architecture Layers
 
-| Layer | Responsibility | TypeScript Equivalent |
-|-------|---------------|----------------------|
-| **Domain** | Entities, value objects, domain events, repository interfaces | `domain/` - pure TypeScript |
-| **Application** | Use cases, application services, DTOs, ports | `application/` - services, use cases |
-| **Infrastructure** | Frameworks, database, external APIs | `infrastructure/` - TypeORM, Prisma adapters |
-| **Adapter** | Controllers, presenters, external gateways | `adapter/` - NestJS controllers |
+| Layer              | Responsibility                                                | TypeScript Equivalent                        |
+|--------------------|---------------------------------------------------------------|----------------------------------------------|
+| **Domain**         | Entities, value objects, domain events, repository interfaces | `domain/` - pure TypeScript                  |
+| **Application**    | Use cases, application services, DTOs, ports                  | `application/` - services, use cases         |
+| **Infrastructure** | Frameworks, database, external APIs                           | `infrastructure/` - TypeORM, Prisma adapters |
+| **Adapter**        | Controllers, presenters, external gateways                    | `adapter/` - NestJS controllers              |
 
 #### Hexagonal Architecture (Ports & Adapters)
 
