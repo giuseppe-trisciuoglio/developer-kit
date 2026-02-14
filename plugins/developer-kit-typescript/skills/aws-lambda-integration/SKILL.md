@@ -1,6 +1,6 @@
 ---
 name: aws-lambda-integration
-description: AWS Lambda integration patterns for NestJS applications with cold start optimization, instance caching, and lifecycle management. Use when deploying NestJS to AWS Lambda, handling serverless architecture, optimizing cold starts, configuring API Gateway/ALB integration, or implementing warm start patterns with Express/Fastify adapters.
+description: Provides AWS Lambda integration patterns for NestJS applications with cold start optimization, instance caching, and lifecycle management. Use when deploying NestJS to AWS Lambda, handling serverless architecture, optimizing cold starts, configuring API Gateway/ALB integration, or implementing warm start patterns with Express/Fastify adapters.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
