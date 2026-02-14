@@ -10,6 +10,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Features in development
 
+## [2.1.0] - 2026-02-14
+
+### Added
+- **New Clean Architecture skills** across multiple languages:
+  - PHP Clean Architecture patterns (Clean Architecture, Hexagonal Architecture, DDD)
+  - Python Clean Architecture patterns with FastAPI/Flask examples
+  - TypeScript/NestJS Clean Architecture with Domain-Driven Design
+  - Java/Spring Boot Clean Architecture with enterprise patterns
+- **New AWS Architecture Diagrams skill**:
+  - Professional AWS architecture diagram creation in draw.io format
+  - Well-Architected Framework visualization patterns
+  - Infrastructure as Code diagram representations
+- **New shadcn-ui Chart component**:
+  - Recharts integration for data visualization
+  - Line, bar, pie, area, and radar chart components
+  - Responsive chart patterns with Tailwind CSS
+- **New CLAUDE.md handler skill**:
+  - Project instruction management and optimization
+  - Best practices for maintaining project guidelines
+
+### Changed
+- Enhanced skill documentation with clearer scope definitions
+- Improved multi-language Clean Architecture coverage
+
+### Fixed
+- YAML parser warning in wordpress-sage-theme skill
+- Clean Architecture skill configuration issues
+
 ## [2.0.0] - 2026-02-07
 
 ### Changed
@@ -575,34 +603,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v2.0.0...HEAD
-[2.0.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.25.1...v2.0.0
-[1.25.1]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.25.0...v1.25.1
-[1.25.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.24.0...v1.25.0
-[1.24.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.23.0...v1.24.0
-[1.23.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.22.0...v1.23.0
-[1.22.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.20.0...v1.22.0
-[1.21.0]: https://github.com/giuseppe.trisciuoglio/developer-kit/compare/v1.20.0...v1.21.0
-[1.20.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.19.0...v1.20.0
-[1.19.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.18.0...v1.19.0
-[1.18.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.17.1...v1.18.0
-[1.17.1]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.17.0...v1.17.1
-[1.17.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.16.1...v1.17.0
-[1.16.1]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.15.0...v1.16.1
-[1.15.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.14.0...v1.15.0
-[1.14.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.13.0...v1.14.0
-[1.13.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.12.1...v1.13.0
-[1.12.1]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.12.0...v1.12.1
-[1.12.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.11.0...v1.12.0
-[1.11.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.10.0...v1.11.0
-[1.10.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.9.0...v1.10.0
-[1.9.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.8.0...v1.9.0
-[1.8.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.7.0...v1.8.0
-[1.7.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.6.0...v1.7.0
-[1.6.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.5.0...v1.6.0
-[1.5.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.4.0...v1.5.0
-[1.4.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.3.0...v1.4.0
-[1.3.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.2.0...v1.3.0
-[1.2.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.1.0...v1.2.0
-[1.1.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/compare/v1.0.0...v1.1.0
-[1.0.0]: https://github.com/giuseppe-trisciuoglio/developer-kit-claude-code/releases/tag/v1.0.0
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.0.0...v2.1.0
+[2.0.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.25.1...v2.0.0
+[1.25.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.25.0...v1.25.1
+[1.25.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.24.0...v1.25.0
+[1.24.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.23.0...v1.24.0
+[1.23.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.22.0...v1.23.0
+[1.22.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.20.0...v1.22.0
+[1.21.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.20.0...v1.21.0
+[1.20.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.19.0...v1.20.0
+[1.19.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.18.0...v1.19.0
+[1.18.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.17.1...v1.18.0
+[1.17.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.17.0...v1.17.1
+[1.17.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.16.1...v1.17.0
+[1.16.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.15.0...v1.16.1
+[1.15.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.14.0...v1.15.0
+[1.14.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.13.0...v1.14.0
+[1.13.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.12.1...v1.13.0
+[1.12.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.12.0...v1.12.1
+[1.12.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.11.0...v1.12.0
+[1.11.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.10.0...v1.11.0
+[1.10.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.9.0...v1.10.0
+[1.9.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.8.0...v1.9.0
+[1.8.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.7.0...v1.8.0
+[1.7.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.6.0...v1.7.0
+[1.6.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.5.0...v1.6.0
+[1.5.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.4.0...v1.5.0
+[1.4.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.3.0...v1.4.0
+[1.3.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.2.0...v1.3.0
+[1.2.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.1.0...v1.2.0
+[1.1.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.0.0...v1.1.0
+[1.0.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/releases/tag/v1.0.0
