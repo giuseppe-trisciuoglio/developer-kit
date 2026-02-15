@@ -72,6 +72,11 @@ Parameters:
     NoEcho: true
     Description: Database connection string
 
+  AllowedOrigins:
+    Type: String
+    Default: ""
+    Description: Comma-separated list of allowed CORS origins (leave empty to disable CORS)
+
 Conditions:
   IsProduction: !Equals [!Ref Environment, prod]
 
@@ -84,7 +89,7 @@ Resources:
       Cors:
         AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
         AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-        AllowOrigin: "'*'"
+        AllowOrigin: !Sub "'${AllowedOrigins}'"
         MaxAge: "'600'"
       Auth:
         DefaultAuthorizer: CognitoAuthorizer
@@ -520,7 +525,8 @@ provider:
           Action:
             - xray:PutTraceSegments
             - xray:PutTelemetryRecords
-          Resource: '*'
+          Resource:
+            - !Sub 'arn:aws:xray:${aws:region}:${aws:accountId}:*'
 
         # SSM Parameter Store
         - Effect: Allow
@@ -580,7 +586,8 @@ provider:
             - ses:SendEmail
             - ses:SendRawEmail
             - ses:SendTemplatedEmail
-          Resource: '*'
+          Resource:
+            - !Sub 'arn:aws:ses:${aws:region}:${aws:accountId}:identity/${self:custom.email.from}'
           Condition:
             StringEquals:
               ses:FromAddress: ${self:custom.email.from}
@@ -742,7 +749,8 @@ functions:
       - Effect: Allow
         Action:
           - execute-api:Invoke
-        Resource: '*'
+        Resource:
+          - !Sub 'arn:aws:execute-api:${aws:region}:${aws:accountId}:${ApiGatewayRestApiId}/*'
 
   worker:
     name: ${self:service}-${self:provider.stage}-worker
@@ -933,7 +941,9 @@ const serverlessConfiguration: AWS = {
           {
             Effect: 'Allow',
             Action: ['logs:*'],
-            Resource: '*',
+            Resource: {
+              'Fn::Sub': 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${self:service}-*',
+            },
           },
         ],
       },
@@ -1802,7 +1812,8 @@ Resources:
             - Effect: Allow
               Action:
                 - codedeploy:PutLifecycleEventHookExecutionStatus
-              Resource: '*'
+              Resource:
+                - !Sub 'arn:aws:codedeploy:${aws:region}:${aws:accountId}:deploymentgroup:${AWS::StackName}/*'
 
   PostTrafficHook:
     Type: AWS::Serverless::Function
@@ -1815,7 +1826,8 @@ Resources:
             - Effect: Allow
               Action:
                 - codedeploy:PutLifecycleEventHookExecutionStatus
-              Resource: '*'
+              Resource:
+                - !Sub 'arn:aws:codedeploy:${aws:region}:${aws:accountId}:deploymentgroup:${AWS::StackName}/*'
 ```
 
 ### Serverless Canary
