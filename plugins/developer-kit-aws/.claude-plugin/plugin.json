@@ -37,6 +37,6 @@
     "./skills/aws-cloudformation/aws-cloudformation-elasticache",
     "./skills/aws-cloudformation/aws-cloudformation-bedrock",
     "./skills/aws-cloudformation/aws-cloudformation-task-ecs-deploy-gh",
-    "./skills/aws-cloudformation/aws-drawio-architecture-diagrams"
+    "./skills/aws/aws-drawio-architecture-diagrams"
   ]
 }
