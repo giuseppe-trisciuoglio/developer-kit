@@ -213,7 +213,7 @@ System data movement:
 ### Decision Diamond
 ```xml
 <mxCell id="3" value="Decision?"
-  style="rhombus;whiteSpace=wrap=html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;"
+  style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;"
   vertex="1" parent="1">
   <mxGeometry x="280" y="200" width="80" height="80" as="geometry" />
 </mxCell>
