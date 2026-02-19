@@ -50,6 +50,7 @@
     "./skills/typescript-docs",
     "./skills/clean-architecture",
     "./skills/nextjs-app-router",
-    "./skills/nextjs-authentication"
+    "./skills/nextjs-authentication",
+    "./skills/nextjs-data-fetching"
   ]
 }
