@@ -49,6 +49,7 @@
     "./skills/tailwind-css-patterns",
     "./skills/typescript-docs",
     "./skills/clean-architecture",
-    "./skills/nextjs-app-router"
+    "./skills/nextjs-app-router",
+    "./skills/nextjs-authentication"
   ]
 }
