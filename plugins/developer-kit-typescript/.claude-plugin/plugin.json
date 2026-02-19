@@ -51,6 +51,8 @@
     "./skills/clean-architecture",
     "./skills/nextjs-app-router",
     "./skills/nextjs-authentication",
-    "./skills/nextjs-data-fetching"
+    "./skills/nextjs-data-fetching",
+    "./skills/nextjs-performance",
+    "./skills/nextjs-deployment"
   ]
 }

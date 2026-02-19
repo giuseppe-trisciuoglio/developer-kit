@@ -8,7 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Features in development
+- **New Next.js Skills** (4 comprehensive skills for Next.js development):
+  - `nextjs-app-router`: Next.js App Router patterns, file-based routing, nested layouts, and server components (61e1e28)
+  - `nextjs-authentication`: Authentication implementation with NextAuth.js, JWT, OAuth providers, and session management (e933e13)
+  - `nextjs-data-fetching`: Data fetching patterns with Server Components, Client Components, caching strategies, and mutations (23e1d69)
+  - `nextjs-performance`: Performance optimization with image optimization, lazy loading, code splitting, and Core Web Vitals (2752ed0)
+
+### Changed
+- Moved `aws-drawio-architecture-diagrams` skill to generic AWS folder for better organization (07ef653, a2275e4)
 
 ## [2.1.0] - 2026-02-14
 
