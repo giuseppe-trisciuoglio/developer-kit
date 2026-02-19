@@ -928,17 +928,155 @@ class CommandValidator(BaseValidator):
             )
 
 
+class PluginJsonValidator:
+    """Validator for plugin.json files - verifies component registration."""
+
+    PLUGIN_JSON_PATTERN = re.compile(r"plugin\.json$")
+
+    def can_validate(self, file_path: Path) -> bool:
+        """Check if this validator can handle the given file."""
+        return bool(self.PLUGIN_JSON_PATTERN.search(str(file_path)))
+
+    def validate(self, file_path: Path) -> ValidationResult:
+        """Validate plugin.json and check component registration."""
+        result = ValidationResult(
+            file_path=file_path,
+            component_type="plugin.json"
+        )
+
+        # Read plugin.json
+        try:
+            import json
+            content = file_path.read_text(encoding="utf-8")
+            plugin_data = json.loads(content)
+        except FileNotFoundError:
+            result.add_error(
+                message=f"File not found: {file_path}",
+                suggestion="Verify the file path is correct"
+            )
+            return result
+        except json.JSONDecodeError as e:
+            result.add_error(
+                message=f"Invalid JSON: {e}",
+                suggestion="Fix the JSON syntax error"
+            )
+            return result
+
+        # Get plugin directory
+        plugin_dir = file_path.parent.parent
+
+        # Validate each component type
+        self._validate_components(
+            plugin_data, plugin_dir, "skills", result
+        )
+        self._validate_components(
+            plugin_data, plugin_dir, "agents", result
+        )
+        self._validate_components(
+            plugin_data, plugin_dir, "commands", result
+        )
+
+        # Check for unregistered components
+        self._check_unregistered_components(
+            plugin_data, plugin_dir, "skills", result
+        )
+        self._check_unregistered_components(
+            plugin_data, plugin_dir, "agents", result
+        )
+        self._check_unregistered_components(
+            plugin_data, plugin_dir, "commands", result
+        )
+
+        return result
+
+    def _validate_components(
+        self,
+        plugin_data: dict,
+        plugin_dir: Path,
+        component_type: str,
+        result: ValidationResult
+    ) -> None:
+        """Validate that registered components exist on filesystem."""
+        components = plugin_data.get(component_type, [])
+
+        for component_path in components:
+            full_path = plugin_dir / component_path
+
+            if component_type == "skills":
+                # Skills point to directories containing SKILL.md
+                skill_md = full_path / "SKILL.md"
+                if not skill_md.exists():
+                    result.add_error(
+                        message=f"Skill not found: '{component_path}'",
+                        field_name=component_type,
+                        suggestion=f"Ensure '{component_path}/SKILL.md' exists or remove from plugin.json"
+                    )
+            else:
+                # Agents and commands point directly to .md files
+                if not full_path.exists():
+                    result.add_error(
+                        message=f"{component_type[:-1].title()} not found: '{component_path}'",
+                        field_name=component_type,
+                        suggestion=f"Ensure '{component_path}' exists or remove from plugin.json"
+                    )
+                elif not full_path.suffix == ".md":
+                    result.add_error(
+                        message=f"{component_type[:-1].title()} must be a .md file: '{component_path}'",
+                        field_name=component_type,
+                        suggestion="Use .md extension for agent/command files"
+                    )
+
+    def _check_unregistered_components(
+        self,
+        plugin_data: dict,
+        plugin_dir: Path,
+        component_type: str,
+        result: ValidationResult
+    ) -> None:
+        """Check for components on filesystem that are not registered in plugin.json."""
+        registered = set(plugin_data.get(component_type, []))
+
+        # Get the directory for this component type
+        component_dir = plugin_dir / component_type
+        if not component_dir.exists():
+            return
+
+        if component_type == "skills":
+            # Skills are directories with SKILL.md
+            for item in component_dir.iterdir():
+                if item.is_dir() and (item / "SKILL.md").exists():
+                    relative_path = f"./{component_type}/{item.name}"
+                    if relative_path not in registered:
+                        result.add_error(
+                            message=f"Unregistered skill: '{item.name}'",
+                            field_name=component_type,
+                            suggestion=f"Add './{component_type}/{item.name}' to plugin.json skills array"
+                        )
+        else:
+            # Agents and commands are .md files
+            for item in component_dir.iterdir():
+                if item.is_file() and item.suffix == ".md":
+                    relative_path = f"./{component_type}/{item.name}"
+                    if relative_path not in registered:
+                        result.add_error(
+                            message=f"Unregistered {component_type[:-1]}: '{item.name}'",
+                            field_name=component_type,
+                            suggestion=f"Add './{component_type}/{item.name}' to plugin.json {component_type} array"
+                        )
+
+
 class ValidatorFactory:
     """Factory for creating appropriate validators."""
 
-    _validators: List[BaseValidator] = [
+    _validators: List[Any] = [
         SkillValidator(),
         AgentValidator(),
         CommandValidator(),
+        PluginJsonValidator(),
     ]
 
     @classmethod
-    def get_validator(cls, file_path: Path) -> Optional[BaseValidator]:
+    def get_validator(cls, file_path: Path) -> Optional[Any]:
         """Get the appropriate validator for a file."""
         for validator in cls._validators:
             if validator.can_validate(file_path):
@@ -948,4 +1086,4 @@ class ValidatorFactory:
     @classmethod
     def get_all_patterns(cls) -> List[re.Pattern]:
         """Get all file patterns for component files."""
-        return [v.file_pattern for v in cls._validators]
+        return [v.file_pattern for v in cls._validators if hasattr(v, 'file_pattern')]

@@ -44,6 +44,7 @@
   ],
   "skills": [
     "./skills/nestjs",
+    "./skills/nestjs-drizzle-crud-generator",
     "./skills/react-patterns",
     "./skills/shadcn-ui",
     "./skills/tailwind-css-patterns",

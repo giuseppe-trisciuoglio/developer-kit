@@ -8,7 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Features in development
+- **New Drizzle ORM patterns skill**:
+  - Complete Drizzle ORM patterns for NestJS
+  - Schema definitions, migrations, queries, and transactions
+- **New NestJS Drizzle CRUD Generator skill**:
+  - Automated CRUD generation for Drizzle ORM
+  - Integration with NestJS applications
+
+### Changed
+- Reorganized AWS drawio-architecture-diagrams skill to generic aws folder
 
 ## [2.1.0] - 2026-02-14
 
