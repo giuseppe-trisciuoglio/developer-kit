@@ -8,7 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Features in development
+- **New Monorepo Skills** for developer-kit-typescript plugin:
+  - `nx-monorepo`: Complete Nx workspace patterns including configuration, generators, CI/CD integration, and framework-specific guides for NestJS, React, and TypeScript
+  - `turborepo-monorepo`: Complete Turborepo patterns including turbo.json configuration, package management, testing, CI/CD integration, and framework-specific configurations
+- **New Monorepo Documentation**: Comprehensive `guide-skills-monorepo.md` with best practices for both Nx and Turborepo monorepo architectures
+
+### Changed
+- Updated plugin manifests to include new monorepo skills
+- Enhanced README documentation to reflect new monorepo capabilities
+
+### Removed
+- Consolidated AWS drawio-architecture-diagrams skill into generic AWS folder
 
 ## [2.1.0] - 2026-02-14
 
@@ -604,6 +614,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Foundation documentation
 
 [Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.1.0...HEAD
+[2.2.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.25.1...v2.0.0
 [1.25.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.25.0...v1.25.1
