@@ -40,14 +40,29 @@ The `developer-kit-typescript` plugin provides comprehensive support for TypeScr
 - **better-auth** - Comprehensive Better Auth integration for NestJS backend and Next.js frontend with Drizzle ORM + PostgreSQL
 - **clean-architecture** - Clean Architecture, Hexagonal Architecture, and DDD patterns for NestJS backend applications
 
-### Frontend (React)
+### Frontend (React & Next.js)
 - **react-patterns** - React 19 design patterns
 - **shadcn-ui** - shadcn/ui component library
 - **tailwind-css-patterns** - Tailwind CSS patterns
+- **nextjs-app-router** - Next.js App Router patterns and fundamentals
+- **nextjs-authentication** - Authentication implementation with Auth.js/NextAuth
+- **nextjs-data-fetching** - Data fetching strategies with React Query/TanStack Query
+- **nextjs-performance** - Performance optimization and Core Web Vitals
+- **nextjs-deployment** - Deployment patterns, Docker, and CI/CD
+
+### Monorepo
+- **nx-monorepo** - Nx monorepo management with generators, affected commands, Module Federation, and CI/CD
+- **turborepo-monorepo** - Turborepo monorepo management with turbo.json, framework integration, and caching
+
+### Database & ORM
+- **drizzle-orm-patterns** - Complete Drizzle ORM patterns for schema, queries, relations, transactions, and migrations
+- **nestjs-drizzle-crud-generator** - Automated NestJS CRUD module generation with Drizzle ORM
+
+### AWS Lambda Integration
+- **aws-lambda-typescript-integration** - AWS Lambda integration patterns for TypeScript with NestJS adapters and Serverless Framework
 
 ### Core/Shared
 - **typescript-docs** - TypeScript documentation standards
-- **nx-monorepo** - Nx monorepo patterns for workspace management, executors, and generators 
 
 ## Dependencies
 

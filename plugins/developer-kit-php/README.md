@@ -16,8 +16,9 @@ The `developer-kit-php` plugin provides comprehensive PHP development support, i
 
 ## Skills
 
-- **wordpress** - WordPress and Sage theme development
+- **wordpress-sage-theme** - WordPress and Sage theme development
 - **clean-architecture** - Clean Architecture, Hexagonal Architecture, and DDD patterns for PHP (Laravel/Symfony)
+- **aws-lambda-php-integration** - AWS Lambda integration patterns for PHP with Bref Framework and Raw PHP handlers
 
 ## Dependencies
 

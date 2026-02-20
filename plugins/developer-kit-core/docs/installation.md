@@ -85,32 +85,32 @@ make install              # Auto-install for all detected CLIs
 
 The Developer Kit now uses a **plugin-based architecture** with 10 separate plugins:
 
-- **developer-kit** - Core agents and commands (6 agents, 17 commands)
-- **developer-kit-java** - Java/Spring Boot/LangChain4J/AWS integration (9 agents, 11 commands, 47 skills)
-- **developer-kit-typescript** - TypeScript/NestJS/React (13 agents, 3 commands, 5 skills)
-- **developer-kit-python** - Python capabilities (4 agents)
-- **developer-kit-php** - PHP/WordPress (5 agents, 1 skill)
-- **developer-kit-aws** - AWS/CloudFormation (3 agents, 15 skills)
+- **developer-kit** - Core agents, commands, and skills (6 agents, 17 commands, 2 skills)
+- **developer-kit-java** - Java/Spring Boot/LangChain4J/AWS Lambda integration (9 agents, 11 commands, 49 skills)
+- **developer-kit-typescript** - TypeScript/NestJS/React/Next.js/Drizzle/Monorepo (13 agents, 3 commands, 16 skills)
+- **developer-kit-python** - Python/AWS Lambda capabilities (4 agents, 2 skills)
+- **developer-kit-php** - PHP/WordPress/AWS Lambda (5 agents, 3 skills)
+- **developer-kit-aws** - AWS/CloudFormation (3 agents, 16 skills)
 - **developer-kit-ai** - Prompt engineering/RAG/chunking (1 agent, 1 command, 3 skills)
 - **developer-kit-devops** - Docker/GitHub Actions (2 agents)
 - **developer-kit-project-management** - LRA workflow (1 command)
 - **github-spec-kit** - GitHub specifications (3 commands)
 
-**Total Components:** 46 agents, 36 commands, 71 skills across all plugins
+**Total Components:** 43 agents, 36 commands, 91 skills across all plugins
 
 | Plugin | Agents | Commands | Skills |
 |--------|--------|----------|--------|
-| developer-kit | 6 | 17 | 0 |
-| developer-kit-java | 9 | 11 | 47 |
-| developer-kit-typescript | 13 | 3 | 5 |
-| developer-kit-python | 4 | 0 | 0 |
-| developer-kit-php | 5 | 0 | 1 |
-| developer-kit-aws | 3 | 0 | 15 |
+| developer-kit | 6 | 17 | 2 |
+| developer-kit-java | 9 | 11 | 49 |
+| developer-kit-typescript | 13 | 3 | 16 |
+| developer-kit-python | 4 | 0 | 2 |
+| developer-kit-php | 5 | 0 | 3 |
+| developer-kit-aws | 3 | 0 | 16 |
 | developer-kit-ai | 1 | 1 | 3 |
 | developer-kit-devops | 2 | 0 | 0 |
 | developer-kit-project-management | 0 | 1 | 0 |
 | github-spec-kit | 0 | 3 | 0 |
-| **Total** | **43** | **36** | **71** |
+| **Total** | **43** | **36** | **91** |
 
 **Plugin Discovery:** The Makefile automatically scans `plugins/*/.claude-plugin/plugin.json` files to discover all available plugins and their components (agents, commands, skills).
 
@@ -429,8 +429,8 @@ done
 ```bash
 # Check installed components
 ls -1 "$TARGET_DIR/agents/" | wc -l      # Should show 43+ agents
-ls -1 "$TARGET_DIR/commands/" | wc -l     # Should show 36+ commands
-ls -1d "$TARGET_DIR/skills/"* | wc -l     # Should show 71+ skills
+ls -1 "$TARGET_DIR/commands/" | wc -l     # Should show 37+ commands
+ls -1d "$TARGET_DIR/skills/"* | wc -l     # Should show 77+ skills
 ```
 
 ---

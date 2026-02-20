@@ -2,7 +2,6 @@
 Validation logic for Claude Code components.
 """
 
-import os
 import re
 from abc import ABC, abstractmethod
 from pathlib import Path
@@ -14,10 +13,6 @@ from .config import (
     SKILL_PATTERN,
     AGENT_PATTERN,
     COMMAND_PATTERN,
-    MARKDOWN_FILE_PATTERN,
-    SKILL_PACKAGE_PATTERN,
-    PLUGIN_PATTERN,
-    MARKETPLACE_PATTERN,
     SKILL_SCHEMA,
     AGENT_SCHEMA,
     COMMAND_SCHEMA,
@@ -41,7 +36,6 @@ from .config import (
     MAX_DESCRIPTION_LENGTH,
     WHAT_KEYWORDS,
     WHEN_KEYWORDS,
-    KEBAB_CASE_EXEMPT_FILES,
 )
 from .models import ValidationResult, Severity
 
@@ -480,89 +474,6 @@ class SkillValidator(BaseValidator):
 
         # Validate directory structure (Anthropic convention)
         self._validate_directory_structure(file_path.parent, result)
-
-        # Check for empty folders under skills/
-        self._check_empty_skill_folders(file_path, result)
-
-    def _check_empty_skill_folders(self, file_path: Path, result: ValidationResult) -> None:
-        """Check for empty folders in the skills directory tree.
-
-        Scans the skills directory to find any empty skill folders that should be removed.
-        Only checks direct subdirectories of skills/ (flat structure) or skills/category/ (nested).
-        """
-        # Find the skills root directory
-        skills_root = None
-        parts = list(file_path.parts)
-        for i, part in enumerate(parts):
-            if part == "skills" and i < len(parts) - 1:
-                # Build path up to and including skills/
-                skills_root = Path(*parts[:i+1])
-                break
-
-        if not skills_root or not skills_root.exists():
-            return
-
-        # Track already-checked paths to avoid duplicates
-        checked_paths = set()
-
-        # Check each subdirectory under skills/
-        try:
-            for category_dir in skills_root.iterdir():
-                if not category_dir.is_dir() or category_dir.name.startswith('.'):
-                    continue
-
-                # Check if this is a direct skill (contains SKILL.md)
-                if (category_dir / "SKILL.md").exists():
-                    # This is a skill with flat structure, check if empty
-                    self._check_skill_directory(category_dir, "", result, checked_paths)
-                    continue
-
-                # Otherwise, treat as category and check subdirectories
-                for skill_dir in category_dir.iterdir():
-                    if not skill_dir.is_dir() or skill_dir.name.startswith('.'):
-                        continue
-
-                    # Skip if already checked
-                    if str(skill_dir) in checked_paths:
-                        continue
-
-                    # Only check if it looks like a skill (has SKILL.md or common skill subdirs)
-                    # Skip subdirectories of skills (like scripts/, assets/ inside a skill)
-                    if (skill_dir / "SKILL.md").exists():
-                        self._check_skill_directory(skill_dir, category_dir.name, result, checked_paths)
-                    elif not any((skill_dir / sub).exists() for sub in ["scripts", "assets", "references"]):
-                        # Might be a skill without SKILL.md - check if empty
-                        self._check_skill_directory(skill_dir, category_dir.name, result, checked_paths)
-
-        except (PermissionError, OSError):
-            # Ignore permission errors during directory scanning
-            pass
-
-    def _check_skill_directory(self, skill_dir: Path, category_name: str, result: ValidationResult, checked_paths: set) -> None:
-        """Check if a skill directory is empty or malformed."""
-        if str(skill_dir) in checked_paths:
-            return
-        checked_paths.add(str(skill_dir))
-
-        skill_md = skill_dir / "SKILL.md"
-
-        # Get visible contents (excluding common subdirectories)
-        visible_files = [
-            f for f in skill_dir.iterdir()
-            if not f.name.startswith('.') and f.is_file()
-        ]
-        visible_dirs = [
-            d for d in skill_dir.iterdir()
-            if not d.name.startswith('.') and d.is_dir()
-        ]
-
-        # If no SKILL.md and no content, it's an empty skill folder
-        if not skill_md.exists() and not visible_files and not visible_dirs:
-            path_display = f"{category_name}/{skill_dir.name}/" if category_name else f"{skill_dir.name}/"
-            result.add_error(
-                message=f"Empty skill folder: '{path_display}'",
-                suggestion="Remove empty skill folder or add SKILL.md and supporting files"
-            )
 
     def _validate_markdown_structure(
         self,
@@ -1242,20 +1153,158 @@ class PluginVersionValidator(BaseValidator):
         pass
 
 
+class PluginJsonValidator:
+    """Validator for plugin.json files - verifies component registration."""
+
+    PLUGIN_JSON_PATTERN = re.compile(r"plugin\.json$")
+
+    def can_validate(self, file_path: Path) -> bool:
+        """Check if this validator can handle the given file."""
+        return bool(self.PLUGIN_JSON_PATTERN.search(str(file_path)))
+
+    def validate(self, file_path: Path) -> ValidationResult:
+        """Validate plugin.json and check component registration."""
+        result = ValidationResult(
+            file_path=file_path,
+            component_type="plugin.json"
+        )
+
+        # Read plugin.json
+        try:
+            import json
+            content = file_path.read_text(encoding="utf-8")
+            plugin_data = json.loads(content)
+        except FileNotFoundError:
+            result.add_error(
+                message=f"File not found: {file_path}",
+                suggestion="Verify the file path is correct"
+            )
+            return result
+        except json.JSONDecodeError as e:
+            result.add_error(
+                message=f"Invalid JSON: {e}",
+                suggestion="Fix the JSON syntax error"
+            )
+            return result
+
+        # Get plugin directory
+        plugin_dir = file_path.parent.parent
+
+        # Validate each component type
+        self._validate_components(
+            plugin_data, plugin_dir, "skills", result
+        )
+        self._validate_components(
+            plugin_data, plugin_dir, "agents", result
+        )
+        self._validate_components(
+            plugin_data, plugin_dir, "commands", result
+        )
+
+        # Check for unregistered components
+        self._check_unregistered_components(
+            plugin_data, plugin_dir, "skills", result
+        )
+        self._check_unregistered_components(
+            plugin_data, plugin_dir, "agents", result
+        )
+        self._check_unregistered_components(
+            plugin_data, plugin_dir, "commands", result
+        )
+
+        return result
+
+    def _validate_components(
+        self,
+        plugin_data: dict,
+        plugin_dir: Path,
+        component_type: str,
+        result: ValidationResult
+    ) -> None:
+        """Validate that registered components exist on filesystem."""
+        components = plugin_data.get(component_type, [])
+
+        for component_path in components:
+            full_path = plugin_dir / component_path
+
+            if component_type == "skills":
+                # Skills point to directories containing SKILL.md
+                skill_md = full_path / "SKILL.md"
+                if not skill_md.exists():
+                    result.add_error(
+                        message=f"Skill not found: '{component_path}'",
+                        field_name=component_type,
+                        suggestion=f"Ensure '{component_path}/SKILL.md' exists or remove from plugin.json"
+                    )
+            else:
+                # Agents and commands point directly to .md files
+                if not full_path.exists():
+                    result.add_error(
+                        message=f"{component_type[:-1].title()} not found: '{component_path}'",
+                        field_name=component_type,
+                        suggestion=f"Ensure '{component_path}' exists or remove from plugin.json"
+                    )
+                elif not full_path.suffix == ".md":
+                    result.add_error(
+                        message=f"{component_type[:-1].title()} must be a .md file: '{component_path}'",
+                        field_name=component_type,
+                        suggestion="Use .md extension for agent/command files"
+                    )
+
+    def _check_unregistered_components(
+        self,
+        plugin_data: dict,
+        plugin_dir: Path,
+        component_type: str,
+        result: ValidationResult
+    ) -> None:
+        """Check for components on filesystem that are not registered in plugin.json."""
+        registered = set(plugin_data.get(component_type, []))
+
+        # Get the directory for this component type
+        component_dir = plugin_dir / component_type
+        if not component_dir.exists():
+            return
+
+        if component_type == "skills":
+            # Skills are directories with SKILL.md
+            for item in component_dir.iterdir():
+                if item.is_dir() and (item / "SKILL.md").exists():
+                    relative_path = f"./{component_type}/{item.name}"
+                    if relative_path not in registered:
+                        result.add_error(
+                            message=f"Unregistered skill: '{item.name}'",
+                            field_name=component_type,
+                            suggestion=f"Add './{component_type}/{item.name}' to plugin.json skills array"
+                        )
+        else:
+            # Agents and commands are .md files
+            for item in component_dir.iterdir():
+                if item.is_file() and item.suffix == ".md":
+                    relative_path = f"./{component_type}/{item.name}"
+                    if relative_path not in registered:
+                        result.add_error(
+                            message=f"Unregistered {component_type[:-1]}: '{item.name}'",
+                            field_name=component_type,
+                            suggestion=f"Add './{component_type}/{item.name}' to plugin.json {component_type} array"
+                        )
+
+
 class ValidatorFactory:
     """Factory for creating appropriate validators."""
 
-    _validators: List[BaseValidator] = [
+    _validators: List[Any] = [
         SkillValidator(),
         AgentValidator(),
         CommandValidator(),
         KebabCaseValidator(),
         SkillPackageValidator(),
         PluginVersionValidator(),
+        PluginJsonValidator(),
     ]
 
     @classmethod
-    def get_validator(cls, file_path: Path) -> Optional[BaseValidator]:
+    def get_validator(cls, file_path: Path) -> Optional[Any]:
         """Get the appropriate validator for a file."""
         for validator in cls._validators:
             if validator.can_validate(file_path):
@@ -1265,4 +1314,4 @@ class ValidatorFactory:
     @classmethod
     def get_all_patterns(cls) -> List[re.Pattern]:
         """Get all file patterns for component files."""
-        return [v.file_pattern for v in cls._validators]
+        return [v.file_pattern for v in cls._validators if hasattr(v, 'file_pattern')]
