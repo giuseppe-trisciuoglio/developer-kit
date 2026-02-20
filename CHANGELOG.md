@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **New Drizzle ORM patterns skill**:
+  - Complete Drizzle ORM patterns for NestJS
+  - Schema definitions, migrations, queries, and transactions
+- **New NestJS Drizzle CRUD Generator skill**:
+  - Automated CRUD generation for Drizzle ORM
+  - Integration with NestJS applications
+
+### Changed
+- Reorganized AWS drawio-architecture-diagrams skill to generic aws folder
 - **New Monorepo Skills** for developer-kit-typescript plugin:
   - `nx-monorepo`: Complete Nx workspace patterns including configuration, generators, CI/CD integration, and framework-specific guides for NestJS, React, and TypeScript
   - `turborepo-monorepo`: Complete Turborepo patterns including turbo.json configuration, package management, testing, CI/CD integration, and framework-specific configurations
