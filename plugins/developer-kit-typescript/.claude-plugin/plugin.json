@@ -55,9 +55,9 @@
     "./skills/tailwind-css-patterns",
     "./skills/typescript-docs",
     "./skills/clean-architecture",
-    "./skills/drizzle-orm-patterns"
+    "./skills/drizzle-orm-patterns",
     "./skills/nx-monorepo",
-    "./skills/turborepo-monorepo"
+    "./skills/turborepo-monorepo",
     "./skills/aws-lambda-typescript-integration"
   ]
 }
