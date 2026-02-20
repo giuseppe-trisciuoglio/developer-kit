@@ -8,52 +8,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- **New Next.js Skills** (4 comprehensive skills for Next.js development):
-    - `nextjs-app-router`: Next.js App Router patterns, file-based routing, nested layouts, and server components (61e1e28)
-    - `nextjs-authentication`: Authentication implementation with NextAuth.js, JWT, OAuth providers, and session management (e933e13)
-    - `nextjs-data-fetching`: Data fetching patterns with Server Components, Client Components, caching strategies, and mutations (23e1d69)
-    - `nextjs-performance`: Performance optimization with image optimization, lazy loading, code splitting, and Core Web Vitals (2752ed0)
+- **New Draw.io Logical Diagrams skill** (`developer-kit-core`):
+  - `drawio-logical-diagrams`: Professional logical flow diagrams and system architecture diagrams in draw.io XML format
+  - Supports flowcharts, BPMN, UML (class, sequence, activity), DFD, and system interaction diagrams
+  - Includes shape styles reference and diagram templates
+
+- **New Next.js Skills** (5 comprehensive skills for `developer-kit-typescript`):
+  - `nextjs-app-router`: Next.js 16+ App Router patterns, file-based routing, nested layouts, Server Components, Server Actions, and `"use cache"` directive
+  - `nextjs-authentication`: Authentication implementation with Auth.js 5 (NextAuth.js), JWT, OAuth providers, RBAC, and session management
+  - `nextjs-data-fetching`: Data fetching patterns with Server Components, SWR, React Query, ISR, and revalidation strategies
+  - `nextjs-performance`: Performance optimization with Core Web Vitals (LCP, INP, CLS), `next/image`, `next/font`, streaming with Suspense, and bundle optimization
+  - `nextjs-deployment`: Deployment patterns with Docker multi-stage builds, GitHub Actions CI/CD, environment variables, preview deployments, and OpenTelemetry monitoring
+
+- **New Drizzle ORM Skills** (2 skills for `developer-kit-typescript`):
+  - `drizzle-orm-patterns`: Complete Drizzle ORM patterns for schema definitions, CRUD operations, relations (one-to-one, one-to-many, many-to-many), type-safe queries, transactions, and migrations with Drizzle Kit
+  - `nestjs-drizzle-crud-generator`: Automated NestJS CRUD module generation with Drizzle ORM via Python script, including controllers, services, Zod-validated DTOs, schema, and unit tests
+
+- **New Monorepo Skills** (2 skills for `developer-kit-typescript`):
+  - `nx-monorepo`: Complete Nx workspace patterns including configuration, generators, affected commands, Module Federation, CI/CD integration, remote caching with Nx Cloud, and framework-specific guides for NestJS, React, and TypeScript
+  - `turborepo-monorepo`: Complete Turborepo patterns including turbo.json configuration, task dependencies, Next.js and NestJS integration, testing with Vitest/Jest, CI/CD, and remote caching with Vercel
+
+- **New AWS Lambda Integration Skills** (4 skills across multiple plugins):
+  - `aws-lambda-typescript-integration` (`developer-kit-typescript`): AWS Lambda patterns for TypeScript with NestJS adapters, Express/Fastify adapters, raw TypeScript handlers, and Serverless Framework deployment
+  - `aws-lambda-java-integration` (`developer-kit-java`): AWS Lambda patterns for Java with Micronaut Framework (cold start < 1s) and Raw Java handlers (cold start < 500ms), API Gateway/ALB support
+  - `aws-lambda-python-integration` (`developer-kit-python`): AWS Lambda patterns for Python with AWS Chalice Framework (cold start < 200ms) and Raw Python handlers (cold start < 100ms)
+  - `aws-lambda-php-integration` (`developer-kit-php`): AWS Lambda patterns for PHP with Bref Framework and Raw PHP handlers, Symfony integration
+
+- **New Monorepo Documentation**: Comprehensive `guide-skills-monorepo.md` for `developer-kit-typescript` with best practices for both Nx and Turborepo architectures
 
 ### Changed
-- Moved `aws-drawio-architecture-diagrams` skill to generic AWS folder for better organization (07ef653, a2275e4)
-- Updated documentation and changelog for Next.js skills (c8cbfea)
-- **New Drizzle ORM patterns skill**:
-    - Complete Drizzle ORM patterns for NestJS
-    - Schema definitions, migrations, queries, and transactions
-- **New NestJS Drizzle CRUD Generator skill**:
-    - Automated CRUD generation for Drizzle ORM
-    - Integration with NestJS applications
-
-### Changed
-- Reorganized AWS drawio-architecture-diagrams skill to generic aws folder
-- **New Monorepo Skills** for developer-kit-typescript plugin:
-    - `nx-monorepo`: Complete Nx workspace patterns including configuration, generators, CI/CD integration, and framework-specific guides for NestJS, React, and TypeScript
-    - `turborepo-monorepo`: Complete Turborepo patterns including turbo.json configuration, package management, testing, CI/CD integration, and framework-specific configurations
-- **New Monorepo Documentation**: Comprehensive `guide-skills-monorepo.md` with best practices for both Nx and Turborepo monorepo architectures
-
-### Changed
-- Updated plugin manifests to include new monorepo skills
-- Enhanced README documentation to reflect new monorepo capabilities
-
-### Removed
-- Consolidated AWS drawio-architecture-diagrams skill into generic AWS folder
-
-### Changed
-- **Refactored AWS skill directory structure**:
+- **Refactored AWS skill directory structure** (`developer-kit-aws`):
   - Moved `aws-drawio-architecture-diagrams` skill from `skills/aws-cloudformation/` to `skills/aws/` directory
-  - Created new `skills/aws/` directory for general AWS skills (non-CloudFormation)
-  - Updated `plugin.json` path reference to `./skills/aws/aws-drawio-architecture-diagrams`
   - Better separation between CloudFormation IaC skills and general AWS skills
+- Updated `developer-kit-typescript` plugin.json with 10 new skills and 11 new keywords (nextjs, drizzle, monorepo, aws, lambda, serverless)
+- Updated `developer-kit-python` plugin.json with `aws` and `lambda` keywords
+- Enhanced frontend documentation (`guide-skills-frontend.md`) with Next.js Development Skills section
+- Updated all plugin manifests to include new skills
+- Updated documentation component counts across all plugins:
+  - Total components: **91 skills, 43 agents, 36 commands** (was 77 skills, 43 agents, 37 commands)
 
 ### Fixed
-- Updated documentation to reflect correct component counts across all plugins:
-  - developer-kit-core: added `claude-md-management` skill (1 skill), corrected commands count to 17
-  - developer-kit-java: added `clean-architecture` skill (48 skills), added `/devkit.java.generate-refactoring-tasks` command (11 commands)
-  - developer-kit-typescript: added `clean-architecture` skill (6 skills)
-  - developer-kit-python: added `clean-architecture` skill (1 skill)
-  - developer-kit-php: added `clean-architecture` skill (2 skills)
-  - developer-kit-aws: added `aws-drawio-architecture-diagrams` skill (16 skills)
-  - Total components updated: 77 skills, 43 agents, 37 commands
+- Corrected XML syntax error in draw.io decision diamond example
+- Minor bug fixes in TypeScript skill configurations
 
 ## [2.1.0] - 2026-02-14
 

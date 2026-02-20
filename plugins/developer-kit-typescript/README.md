@@ -53,8 +53,19 @@ The `developer-kit-typescript` plugin provides comprehensive support for TypeScr
 - **nx-monorepo** - Nx monorepo management with generators, affected commands, Module Federation, and CI/CD
 - **turborepo-monorepo** - Turborepo monorepo management with turbo.json, framework integration, and caching
 
+### Database & ORM
+- **drizzle-orm-patterns** - Complete Drizzle ORM patterns for schema, queries, relations, transactions, and migrations
+- **nestjs-drizzle-crud-generator** - Automated NestJS CRUD module generation with Drizzle ORM
+
+### Monorepo
+- **nx-monorepo** - Nx monorepo management with generators, affected commands, Module Federation, and CI/CD
+- **turborepo-monorepo** - Turborepo monorepo management with turbo.json, framework integration, and caching
+
+### AWS Lambda Integration
+- **aws-lambda-typescript-integration** - AWS Lambda integration patterns for TypeScript with NestJS adapters and Serverless Framework
+
 ### Core/Shared
-- **typescript-docs** - TypeScript documentation standards 
+- **typescript-docs** - TypeScript documentation standards
 
 ## Dependencies
 

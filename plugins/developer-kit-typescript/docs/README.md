@@ -11,6 +11,7 @@ Welcome to the Developer Kit TypeScript Plugin documentation. This plugin provid
 - **[NestJS Skills](./guide-skills-nestjs.md)** - NestJS framework skills
 - **[Frontend Skills](./guide-skills-frontend.md)** - React, Next.js, TypeScript, UI framework skills
 - **[Architecture Skills](./guide-skills-architecture.md)** - Clean Architecture and DDD skills
+- **[Monorepo Skills](./guide-skills-monorepo.md)** - Nx and Turborepo monorepo patterns
 
 ### Component Guides
 
@@ -25,7 +26,7 @@ The Developer Kit TypeScript Plugin provides:
 
 - **TypeScript Agents**: 13 specialized agents for NestJS, React, TypeScript, and React Native development
 - **TypeScript Commands**: 3 commands for code review and security assessment
-- **TypeScript Skills**: 11 skills covering NestJS, React patterns, Next.js, shadcn-ui, Tailwind CSS, TypeScript documentation, and Clean Architecture
+- **TypeScript Skills**: 16 skills covering NestJS, React patterns, Next.js, Drizzle ORM, Monorepo (Nx/Turborepo), shadcn-ui, Tailwind CSS, AWS Lambda, TypeScript documentation, and Clean Architecture
 
 ---
 
@@ -46,7 +47,12 @@ developer-kit-typescript/
 │   ├── nextjs-authentication/  # Next.js Authentication
 │   ├── nextjs-data-fetching/   # Next.js Data Fetching
 │   ├── nextjs-performance/     # Next.js Performance
-│   └── nextjs-deployment/      # Next.js Deployment
+│   ├── nextjs-deployment/      # Next.js Deployment
+│   ├── drizzle-orm-patterns/   # Drizzle ORM patterns
+│   ├── nestjs-drizzle-crud-generator/ # NestJS CRUD generator with Drizzle
+│   ├── nx-monorepo/            # Nx monorepo patterns
+│   ├── turborepo-monorepo/     # Turborepo monorepo patterns
+│   └── aws-lambda-typescript-integration/ # AWS Lambda TypeScript integration
 └── docs/               # This documentation
 ```
 
@@ -87,6 +93,25 @@ developer-kit-typescript/
 - Performance optimization and Core Web Vitals
 - Deployment patterns (Docker, Vercel, AWS)
 - SEO and metadata optimization
+
+### Drizzle ORM & Database
+- Schema definitions and type-safe queries
+- Relations (one-to-one, one-to-many, many-to-many)
+- Transactions and migrations with Drizzle Kit
+- NestJS CRUD module generation with Drizzle ORM
+- Support for PostgreSQL, MySQL, SQLite
+
+### Monorepo Management
+- Nx workspace patterns (generators, affected commands, Module Federation)
+- Turborepo patterns (turbo.json, task dependencies, remote caching)
+- CI/CD integration for monorepo architectures
+- Framework-specific configurations (NestJS, React, Next.js)
+
+### AWS Lambda Integration
+- TypeScript Lambda handlers with NestJS adapters
+- Express and Fastify Lambda adapters
+- Serverless Framework deployment patterns
+- Raw TypeScript Lambda handlers
 
 ### React Native Mobile
 - Expo development workflow

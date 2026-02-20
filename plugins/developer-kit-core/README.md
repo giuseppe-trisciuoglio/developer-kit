@@ -44,6 +44,11 @@ The `developer-kit` plugin provides foundational agents and commands used across
 ### Plugin Management
 - `devkit.verify-skill` - Skill verification [TODO to be moved to a separate plugin]
 
+## Skills
+
+- **claude-md-management** - CLAUDE.md file management and optimization
+- **drawio-logical-diagrams** - Professional logical flow diagrams and system architecture diagrams in draw.io XML format
+
 ## Dependencies
 
 None - this is the foundational plugin.

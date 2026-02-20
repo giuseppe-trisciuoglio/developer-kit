@@ -16,6 +16,7 @@ The `developer-kit-python` plugin provides Python development expertise, includi
 ## Skills
 
 - **clean-architecture** - Clean Architecture, Hexagonal Architecture, and DDD patterns for Python
+- **aws-lambda-python-integration** - AWS Lambda integration patterns for Python with AWS Chalice Framework and Raw Python handlers
 
 ## Dependencies
 

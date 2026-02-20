@@ -55,6 +55,9 @@ The `developer-kit-java` plugin provides extensive support for Java development,
 ### AWS Java SDK
 - RDS, Bedrock, DynamoDB, KMS, Lambda, Messaging, S3, Secrets Manager
 
+### AWS Lambda Integration
+- **aws-lambda-java-integration** - AWS Lambda integration patterns for Java with Micronaut Framework and Raw Java handlers
+
 ## Dependencies
 
 - `developer-kit` (required)
