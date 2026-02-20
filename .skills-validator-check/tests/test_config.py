@@ -76,6 +76,9 @@ class TestKebabCasePattern:
         "skill-123",
         "my-long-skill-name",
         "a1-b2-c3",
+        "devkit.lra.add-feature",  # Dotted namespace style
+        "my.plugin.command",
+        "a.b.c",
     ])
     def test_valid_kebab_case(self, name):
         """Test valid kebab-case names."""

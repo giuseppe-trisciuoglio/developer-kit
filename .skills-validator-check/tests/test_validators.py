@@ -11,6 +11,9 @@ from validators.validators import (
     AgentValidator,
     CommandValidator,
     ValidatorFactory,
+    KebabCaseValidator,
+    SkillPackageValidator,
+    PluginVersionValidator,
 )
 from validators.models import Severity
 
@@ -892,4 +895,257 @@ class TestValidatorFactory:
     def test_get_all_patterns(self):
         """Test factory returns all patterns."""
         patterns = ValidatorFactory.get_all_patterns()
-        assert len(patterns) == 3
+        assert len(patterns) == 6  # Skill, Agent, Command, KebabCase, SkillPackage, PluginVersion
+
+
+class TestPluginVersionValidator:
+    """Tests for PluginVersionValidator."""
+
+    @pytest.fixture
+    def validator(self):
+        return PluginVersionValidator()
+
+    @pytest.fixture
+    def temp_plugin_with_marketplace(self, tmp_path: Path):
+        """Create a temporary plugin.json and marketplace.json with matching versions."""
+        def _create(plugin_version="2.1.0", marketplace_version="2.1.0"):
+            # Create marketplace.json
+            marketplace_dir = tmp_path / ".claude-plugin"
+            marketplace_dir.mkdir()
+            marketplace_file = marketplace_dir / "marketplace.json"
+            marketplace_file.write_text(f'''{{
+  "name": "test-marketplace",
+  "version": "{marketplace_version}",
+  "plugins": []
+}}''')
+
+            # Create plugin directory structure
+            plugin_dir = tmp_path / "plugins" / "test-plugin" / ".claude-plugin"
+            plugin_dir.mkdir(parents=True)
+            plugin_file = plugin_dir / "plugin.json"
+            plugin_file.write_text(f'''{{
+  "name": "test-plugin",
+  "version": "{plugin_version}"
+}}''')
+
+            return plugin_file, marketplace_file
+        return _create
+
+    def test_can_validate_plugin_files(self, validator):
+        """Test validator recognizes plugin.json files."""
+        assert validator.can_validate(Path("plugins/test/.claude-plugin/plugin.json"))
+        assert validator.can_validate(Path(".claude-plugin/plugin.json"))
+
+    def test_cannot_validate_other_files(self, validator):
+        """Test validator rejects non-plugin files."""
+        assert not validator.can_validate(Path("README.md"))
+        assert not validator.can_validate(Path("marketplace.json"))
+        assert not validator.can_validate(Path("plugin.json"))  # Must be in .claude-plugin/
+
+    def test_matching_versions_pass(self, validator, temp_plugin_with_marketplace):
+        """Test that matching versions pass validation."""
+        plugin_file, _ = temp_plugin_with_marketplace("2.1.0", "2.1.0")
+        result = validator.validate(plugin_file)
+        assert result.is_valid
+
+    def test_mismatched_versions_fail(self, validator, temp_plugin_with_marketplace):
+        """Test that mismatched versions fail validation."""
+        plugin_file, _ = temp_plugin_with_marketplace("2.0.0", "2.1.0")
+        result = validator.validate(plugin_file)
+        assert not result.is_valid
+        assert any("Version mismatch" in i.message for i in result.issues)
+
+    def test_missing_marketplace_error(self, validator, tmp_path):
+        """Test error when marketplace.json is missing."""
+        plugin_dir = tmp_path / "plugins" / "test" / ".claude-plugin"
+        plugin_dir.mkdir(parents=True)
+        plugin_file = plugin_dir / "plugin.json"
+        plugin_file.write_text('{"name": "test", "version": "1.0.0"}')
+
+        result = validator.validate(plugin_file)
+        assert not result.is_valid
+        assert any("Cannot find marketplace.json" in i.message for i in result.issues)
+
+    def test_missing_plugin_version_error(self, validator, temp_plugin_with_marketplace):
+        """Test error when plugin.json has no version."""
+        plugin_file, _ = temp_plugin_with_marketplace(plugin_version=None)
+        # Overwrite with no version
+        plugin_file.write_text('{"name": "test-plugin"}')
+
+        result = validator.validate(plugin_file)
+        assert not result.is_valid
+        assert any("Cannot read version from plugin.json" in i.message for i in result.issues)
+
+
+class TestEmptyFolderValidator:
+    """Tests for empty folder validation in SkillValidator."""
+
+    @pytest.fixture
+    def validator(self):
+        return SkillValidator()
+
+    def test_empty_skill_folder_fails(self, validator, tmp_path):
+        """Test that empty skill directories are detected."""
+        # Create skills/category/empty-skill/ structure
+        skills_dir = tmp_path / "skills" / "category"
+        empty_skill_dir = skills_dir / "empty-skill"
+        empty_skill_dir.mkdir(parents=True)
+
+        # Create SKILL.md in a different skill to trigger validation
+        other_skill = skills_dir / "valid-skill"
+        other_skill.mkdir()
+        skill_file = other_skill / "SKILL.md"
+        skill_file.write_text("""---
+name: valid-skill
+description: A valid skill for testing
+allowed-tools: Read
+---
+
+# Valid Skill
+
+## Overview
+
+Test skill.
+
+## When to Use
+
+Use this when testing.
+
+## Instructions
+
+1. Step one
+
+## Examples
+
+Example usage.
+""")
+
+        result = validator.validate(skill_file)
+        # Should find the empty folder error
+        assert any("Empty skill folder" in i.message for i in result.issues)
+
+    def test_valid_skill_folder_passes(self, validator, tmp_path):
+        """Test that valid skill directories with content pass."""
+        skills_dir = tmp_path / "skills" / "category"
+        skill_dir = skills_dir / "valid-skill"
+        skill_dir.mkdir(parents=True)
+
+        skill_file = skill_dir / "SKILL.md"
+        skill_file.write_text("""---
+name: valid-skill
+description: A valid skill for testing
+allowed-tools: Read
+---
+
+# Valid Skill
+
+## Overview
+
+Test skill.
+
+## When to Use
+
+Use this when testing.
+
+## Instructions
+
+1. Step one
+
+## Examples
+
+Example usage.
+""")
+
+        result = validator.validate(skill_file)
+        # Should not have empty folder errors
+        assert not any("Empty skill folder" in i.message for i in result.issues)
+
+
+class TestKebabCaseValidator:
+    """Tests for KebabCaseValidator."""
+
+    @pytest.fixture
+    def validator(self):
+        return KebabCaseValidator()
+
+    def test_can_validate_markdown_files(self, validator):
+        """Test validator recognizes markdown files."""
+        assert validator.can_validate(Path("skills/test/my-file.md"))
+        assert validator.can_validate(Path("agents/my-agent.md"))
+        assert validator.can_validate(Path("commands/my-command.md"))
+
+    def test_cannot_validate_non_markdown(self, validator):
+        """Test validator rejects non-markdown files."""
+        assert not validator.can_validate(Path("skills/test/script.py"))
+        assert not validator.can_validate(Path("README.txt"))
+
+    def test_cannot_validate_exempt_files(self, validator):
+        """Test validator rejects exempt files like README.md."""
+        assert not validator.can_validate(Path("README.md"))
+        assert not validator.can_validate(Path("CHANGELOG.md"))
+        assert not validator.can_validate(Path("CLAUDE.md"))
+
+    def test_valid_kebab_case_name_passes(self, validator, tmp_path):
+        """Test valid kebab-case filenames pass."""
+        md_file = tmp_path / "my-valid-file.md"
+        md_file.write_text("# Test")
+        result = validator.validate(md_file)
+        assert result.is_valid
+
+    def test_invalid_snake_case_fails(self, validator, tmp_path):
+        """Test snake_case filenames fail."""
+        md_file = tmp_path / "my_invalid_file.md"
+        md_file.write_text("# Test")
+        result = validator.validate(md_file)
+        assert not result.is_valid
+        assert any("kebab-case" in i.message for i in result.issues)
+
+    def test_invalid_camel_case_fails(self, validator, tmp_path):
+        """Test camelCase filenames fail."""
+        md_file = tmp_path / "myInvalidFile.md"
+        md_file.write_text("# Test")
+        result = validator.validate(md_file)
+        assert not result.is_valid
+        assert any("kebab-case" in i.message for i in result.issues)
+
+    def test_invalid_uppercase_fails(self, validator, tmp_path):
+        """Test uppercase filenames fail."""
+        md_file = tmp_path / "My-Invalid-File.md"
+        md_file.write_text("# Test")
+        result = validator.validate(md_file)
+        assert not result.is_valid
+
+
+class TestSkillPackageValidator:
+    """Tests for SkillPackageValidator."""
+
+    @pytest.fixture
+    def validator(self):
+        return SkillPackageValidator()
+
+    def test_can_validate_skill_packages(self, validator):
+        """Test validator recognizes .skill files."""
+        assert validator.can_validate(Path("output.skill"))
+        assert validator.can_validate(Path("dist/my-skill.skill"))
+
+    def test_cannot_validate_other_files(self, validator):
+        """Test validator rejects non-.skill files."""
+        assert not validator.can_validate(Path("README.md"))
+        assert not validator.can_validate(Path("script.py"))
+        assert not validator.can_validate(Path("my.skill.backup"))
+
+    def test_skill_package_file_fails(self, validator, tmp_path):
+        """Test that .skill files are rejected."""
+        skill_file = tmp_path / "my-skill.skill"
+        skill_file.write_text("package content")
+        result = validator.validate(skill_file)
+        assert not result.is_valid
+        assert any("Prohibited .skill package" in i.message for i in result.issues)
+
+    def test_skill_package_error_message(self, validator, tmp_path):
+        """Test error message contains helpful suggestion."""
+        skill_file = tmp_path / "output.skill"
+        skill_file.write_text("package content")
+        result = validator.validate(skill_file)
+        error = result.errors[0]
+        assert "build outputs" in error.suggestion.lower()

@@ -51,8 +51,6 @@ allowed-tools: Read, Grep, Glob
 category: testing
 tags: [validation, testing]
 version: 1.0.0
-context7_library: pytest
-context7_trust_score: 8
 ---
 
 # Valid Skill

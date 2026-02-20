@@ -39,11 +39,25 @@ AGENT_PATTERN = re.compile(r"(?:.*/)?agents/[^/]+\.md$")
 # Note: commands directory at plugin level (not .claude/commands)
 COMMAND_PATTERN = re.compile(r"(?:\.claude/commands/|commands/)[^/]+\.md$")
 
+# Pattern for all markdown files (for kebab-case validation)
+# Excludes files in node_modules, .git, etc.
+MARKDOWN_FILE_PATTERN = re.compile(r"^(.*/)?[^/]+\.md$")
+
+# Pattern for .skill package files (prohibited output files)
+SKILL_PACKAGE_PATTERN = re.compile(r".*\.skill$")
+
+# Pattern for plugin manifest files
+PLUGIN_PATTERN = re.compile(r"\.claude-plugin/plugin\.json$")
+
+# Pattern for marketplace manifest file
+MARKETPLACE_PATTERN = re.compile(r"\.claude-plugin/marketplace\.json$")
+
 # =============================================================================
 # Name Validation Pattern (kebab-case)
 # =============================================================================
 
-KEBAB_CASE_PATTERN = re.compile(r"^[a-z][a-z0-9]*(-[a-z0-9]+)*$")
+# Kebab-case pattern allowing dots for namespaced names (e.g., devkit.lra.add-feature)
+KEBAB_CASE_PATTERN = re.compile(r"^[a-z][a-z0-9]*([-.][a-z0-9]+)*$")
 
 # =============================================================================
 # Semantic Versioning Pattern
@@ -117,6 +131,38 @@ RESERVED_WORDS: FrozenSet[str] = frozenset({
 SKILL_PROHIBITED_FILES: FrozenSet[str] = frozenset({
     "README.md",
     "CHANGELOG.md",
+})
+
+# =============================================================================
+# Files exempt from kebab-case naming (standard documentation files)
+# =============================================================================
+
+KEBAB_CASE_EXEMPT_FILES: FrozenSet[str] = frozenset({
+    "README.md",
+    "CHANGELOG.md",
+    "CLAUDE.md",
+    "LICENSE.md",
+    "CONTRIBUTING.md",
+    "CODE_OF_CONDUCT.md",
+    "SECURITY.md",
+    "PRIVACY.md",
+    "NOTICE.md",
+    "AUTHORS.md",
+    "COPYING.md",
+    "INSTALL.md",
+    "BUILD.md",
+    "DEPLOY.md",
+    "RELEASE.md",
+    "VERSION.md",
+    "TODO.md",
+    "ROADMAP.md",
+    "FAQ.md",
+    "GUIDE.md",
+    "TUTORIAL.md",
+    "MANUAL.md",
+    "QUICKSTART.md",
+    "GETTING_STARTED.md",
+    "SKILL.md",  # SKILL.md is the main file, directory name matters
 })
 
 # =============================================================================
