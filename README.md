@@ -102,7 +102,11 @@ TypeScript/JavaScript full-stack development with NestJS, React, and React Nativ
 
 **Commands**: `/devkit.typescript.code-review`, `/devkit.react.code-review`, `/devkit.ts.security-review`
 
-**Skills**: `nestjs`, `react-patterns`, `shadcn-ui`, `tailwind-css-patterns`, `typescript-docs`, `clean-architecture`
+**Skills**:
+- **Backend**: `nestjs`, `clean-architecture`
+- **Frontend**: `react-patterns`, `shadcn-ui`, `tailwind-css-patterns`
+- **Monorepo**: `nx-monorepo`, `turborepo-monorepo`
+- **Core**: `typescript-docs`
 
 ---
 
@@ -134,7 +138,7 @@ AWS infrastructure and CloudFormation expertise for Infrastructure as Code.
 
 **Agents**: `aws-solution-architect-expert`, `aws-cloudformation-devops-expert`, `aws-architecture-review-expert`
 
-**Skills** (16 total):
+**Skills**:
 - **CloudFormation**: `vpc`, `ec2`, `lambda`, `iam`, `s3`, `rds`, `dynamodb`, `ecs`, `auto-scaling`, `cloudwatch`,
   `cloudfront`, `security`, `elasticache`, `bedrock`, `task-ecs-deploy-gh`
 - **AWS**: `aws-drawio-architecture-diagrams`

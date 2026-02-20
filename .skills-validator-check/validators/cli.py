@@ -218,6 +218,11 @@ class ValidationCLI:
                 if plugin_commands.exists():
                     files.extend(plugin_commands.glob("**/*.md"))
 
+                # Plugin.json files
+                plugin_json = plugin_dir / ".claude-plugin" / "plugin.json"
+                if plugin_json.exists():
+                    files.append(plugin_json)
+
         return sorted(files)
 
     def _filter_component_files(self, files: List[Path]) -> List[Path]:

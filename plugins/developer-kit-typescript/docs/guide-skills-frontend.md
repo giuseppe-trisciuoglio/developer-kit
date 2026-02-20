@@ -8,12 +8,13 @@ This guide provides comprehensive documentation for frontend development skills 
 
 1. [Overview](#overview)
 2. [React Development Skills](#react-development-skills)
-3. [UI Component Libraries](#ui-component-libraries)
-4. [Styling and CSS Frameworks](#styling-and-css-frameworks)
-5. [TypeScript Documentation](#typescript-documentation)
-6. [Best Practices](#best-practices)
-7. [Common Workflows](#common-workflows)
-8. [Integration with Backend](#integration-with-backend)
+3. [Next.js Development Skills](#nextjs-development-skills)
+4. [UI Component Libraries](#ui-component-libraries)
+5. [Styling and CSS Frameworks](#styling-and-css-frameworks)
+6. [TypeScript Documentation](#typescript-documentation)
+7. [Best Practices](#best-practices)
+8. [Common Workflows](#common-workflows)
+9. [Integration with Backend](#integration-with-backend)
 
 ---
 
@@ -22,10 +23,11 @@ This guide provides comprehensive documentation for frontend development skills 
 Frontend skills in the Developer Kit provide comprehensive patterns for modern web development, with focus on:
 
 - **React ecosystem** - Component patterns, hooks, state management
+- **Next.js full-stack** - App Router, Server Components, data fetching, deployment
 - **Modern UI libraries** - Component-driven development with Shadcn-UI
 - **Utility-first CSS** - Tailwind CSS for rapid styling
 - **TypeScript integration** - Type-safe frontend development
-- **Performance optimization** - Bundle optimization and rendering patterns
+- **Performance optimization** - Bundle optimization, Core Web Vitals, rendering patterns
 - **Testing strategies** - Unit and integration testing for frontend components
 
 ---
@@ -53,6 +55,123 @@ Frontend skills in the Developer Kit provide comprehensive patterns for modern w
 - Implementing complex state management
 - Optimizing React performance
 - Setting up testing frameworks for React components
+
+---
+
+## Next.js Development Skills
+
+### `nextjs-app-router`
+
+**Location**: `skills/nextjs-app-router/SKILL.md`
+
+**Purpose**: Next.js App Router patterns and fundamentals for building full-stack React applications.
+
+**Key Topics**:
+- App Router architecture and file-system routing
+- Server Components vs Client Components
+- Layouts, pages, and templates
+- Metadata API for SEO
+- Caching strategies (Data Cache, Full Route Cache)
+- Server Actions for form handling
+- Error handling and loading states
+
+**When to Use**:
+- Building new Next.js applications with App Router
+- Migrating from Pages Router to App Router
+- Implementing nested layouts
+- Optimizing for SEO with metadata
+
+---
+
+### `nextjs-authentication`
+
+**Location**: `skills/nextjs-authentication/SKILL.md`
+
+**Purpose**: Authentication implementation with Auth.js/NextAuth in Next.js applications.
+
+**Key Topics**:
+- Auth.js v5 setup with Next.js App Router
+- Credentials provider implementation
+- OAuth providers (Google, GitHub, etc.)
+- Database adapter configuration
+- Protected routes with middleware
+- Session management strategies
+- Testing authentication flows
+
+**When to Use**:
+- Implementing user authentication
+- Setting up OAuth providers
+- Creating protected routes
+- Managing user sessions
+
+---
+
+### `nextjs-data-fetching`
+
+**Location**: `skills/nextjs-data-fetching/SKILL.md`
+
+**Purpose**: Data fetching strategies with React Query/TanStack Query in Next.js.
+
+**Key Topics**:
+- Server-side data fetching patterns
+- Client-side data fetching with TanStack Query
+- SWR patterns for real-time data
+- Optimistic updates
+- Infinite scrolling
+- Prefetching strategies
+- Cache synchronization
+
+**When to Use**:
+- Fetching data from APIs
+- Implementing real-time updates
+- Optimizing data loading performance
+- Building data-heavy applications
+
+---
+
+### `nextjs-performance`
+
+**Location**: `skills/nextjs-performance/SKILL.md`
+
+**Purpose**: Performance optimization and Core Web Vitals for Next.js applications.
+
+**Key Topics**:
+- Core Web Vitals optimization (LCP, FID/INP, CLS)
+- Image optimization with next/image
+- Font optimization with next/font
+- Code splitting and lazy loading
+- Bundle analysis and optimization
+- Server Components for performance
+- Streaming and Suspense patterns
+
+**When to Use**:
+- Optimizing application performance
+- Improving Core Web Vitals scores
+- Reducing bundle size
+- Implementing progressive loading
+
+---
+
+### `nextjs-deployment`
+
+**Location**: `skills/nextjs-deployment/SKILL.md`
+
+**Purpose**: Deployment patterns, Docker, and CI/CD for Next.js applications.
+
+**Key Topics**:
+- Docker containerization patterns
+- Multi-stage builds for production
+- GitHub Actions CI/CD pipelines
+- Environment configuration
+- Platform-specific deployments (Vercel, AWS, etc.)
+- Monitoring and logging
+- Health checks and graceful shutdowns
+
+**When to Use**:
+- Deploying Next.js applications
+- Setting up Docker containers
+- Configuring CI/CD pipelines
+- Production environment setup
 
 ---
 
@@ -358,10 +477,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
 ## Related Skills
 
-- **[Backend Skills](guide-skills-spring-boot.md)** - For API development and integration
-- **[Testing Skills](guide-skills-junit-test.md)** - For backend testing patterns
-- **[AI Skills](guide-skills-langchain4j.md)** - For AI integration in frontend apps
-- **[TypeScript Security](typescript-security-expert.md)** - For security best practices
+- **[NestJS Skills](./guide-skills-nestjs.md)** - For API development and backend integration
+- **[Architecture Skills](./guide-skills-architecture.md)** - For Clean Architecture patterns
+- **[TypeScript Agents](./guide-agents.md)** - For specialized TypeScript and React agents
+- **[TypeScript Commands](./guide-commands.md)** - For code review and security assessment
 
 ---
 
@@ -369,10 +488,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
 To add new frontend skills:
 
-1. Create `skills/frontend/<skill-name>/SKILL.md`
+1. Create `skills/<skill-name>/SKILL.md`
 2. Include YAML frontmatter with proper metadata
 3. Add practical examples and TypeScript code
 4. Document dependencies and setup instructions
 5. Update this guide with the new skill
+6. Register the skill in `.claude-plugin/plugin.json`
 
-See [CONTRIBUTING.md](../CONTRIBUTING.md) for detailed guidelines.
+See [CONTRIBUTING.md](../../CONTRIBUTING.md) for detailed guidelines.

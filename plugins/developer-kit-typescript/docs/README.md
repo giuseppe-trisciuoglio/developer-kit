@@ -1,6 +1,6 @@
 # Developer Kit TypeScript Plugin Documentation
 
-Welcome to the Developer Kit TypeScript Plugin documentation. This plugin provides comprehensive tools for TypeScript, JavaScript, NestJS, React, and React Native development.
+Welcome to the Developer Kit TypeScript Plugin documentation. This plugin provides comprehensive tools for TypeScript, JavaScript, NestJS, React, React Native, and monorepo development.
 
 ---
 
@@ -9,8 +9,8 @@ Welcome to the Developer Kit TypeScript Plugin documentation. This plugin provid
 ### Skills Guides
 
 - **[NestJS Skills](./guide-skills-nestjs.md)** - NestJS framework skills
-- **[Frontend Skills](./guide-skills-frontend.md)** - React, TypeScript, UI framework skills
-- **[Architecture Skills](./guide-skills-architecture.md)** - Clean Architecture and DDD skills (1 skill)
+- **[Frontend Skills](./guide-skills-frontend.md)** - React, Next.js, TypeScript, UI framework skills
+- **[Architecture Skills](./guide-skills-architecture.md)** - Clean Architecture and DDD skills
 
 ### Component Guides
 
@@ -25,7 +25,7 @@ The Developer Kit TypeScript Plugin provides:
 
 - **TypeScript Agents**: 13 specialized agents for NestJS, React, TypeScript, and React Native development
 - **TypeScript Commands**: 3 commands for code review and security assessment
-- **TypeScript Skills**: 6 skills covering NestJS, React patterns, shadcn-ui, Tailwind CSS, TypeScript documentation, and Clean Architecture
+- **TypeScript Skills**: 11 skills covering NestJS, React patterns, Next.js, shadcn-ui, Tailwind CSS, TypeScript documentation, and Clean Architecture
 
 ---
 
@@ -38,9 +38,15 @@ developer-kit-typescript/
 ├── skills/              # TypeScript skills
 │   ├── nestjs/          # NestJS framework skill
 │   ├── react-patterns/  # React patterns skill
-│   ├── shadcn-ui/       # shadcn-ui component library skill
+│   ├── shadcn-ui/       # shadcn/ui component library skill
 │   ├── tailwind-css-patterns/  # Tailwind CSS skill
-│   └── typescript-docs/ # TypeScript documentation skill
+│   ├── typescript-docs/ # TypeScript documentation skill
+│   ├── clean-architecture/     # Clean Architecture patterns
+│   ├── nextjs-app-router/      # Next.js App Router
+│   ├── nextjs-authentication/  # Next.js Authentication
+│   ├── nextjs-data-fetching/   # Next.js Data Fetching
+│   ├── nextjs-performance/     # Next.js Performance
+│   └── nextjs-deployment/      # Next.js Deployment
 └── docs/               # This documentation
 ```
 
@@ -72,6 +78,15 @@ developer-kit-typescript/
 - State management (Context, Redux, Zustand)
 - Performance optimization
 - API integration
+
+### Next.js Full-Stack Development
+- App Router patterns and fundamentals
+- Server Components and Client Components
+- Authentication with Auth.js/NextAuth
+- Data fetching with React Query/TanStack Query
+- Performance optimization and Core Web Vitals
+- Deployment patterns (Docker, Vercel, AWS)
+- SEO and metadata optimization
 
 ### React Native Mobile
 - Expo development workflow

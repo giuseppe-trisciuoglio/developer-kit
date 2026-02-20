@@ -7,6 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **New Next.js Skills** (4 comprehensive skills for Next.js development):
+    - `nextjs-app-router`: Next.js App Router patterns, file-based routing, nested layouts, and server components (61e1e28)
+    - `nextjs-authentication`: Authentication implementation with NextAuth.js, JWT, OAuth providers, and session management (e933e13)
+    - `nextjs-data-fetching`: Data fetching patterns with Server Components, Client Components, caching strategies, and mutations (23e1d69)
+    - `nextjs-performance`: Performance optimization with image optimization, lazy loading, code splitting, and Core Web Vitals (2752ed0)
+
+### Changed
+- Moved `aws-drawio-architecture-diagrams` skill to generic AWS folder for better organization (07ef653, a2275e4)
+- Updated documentation and changelog for Next.js skills (c8cbfea)
+- **New Drizzle ORM patterns skill**:
+    - Complete Drizzle ORM patterns for NestJS
+    - Schema definitions, migrations, queries, and transactions
+- **New NestJS Drizzle CRUD Generator skill**:
+    - Automated CRUD generation for Drizzle ORM
+    - Integration with NestJS applications
+
+### Changed
+- Reorganized AWS drawio-architecture-diagrams skill to generic aws folder
+- **New Monorepo Skills** for developer-kit-typescript plugin:
+    - `nx-monorepo`: Complete Nx workspace patterns including configuration, generators, CI/CD integration, and framework-specific guides for NestJS, React, and TypeScript
+    - `turborepo-monorepo`: Complete Turborepo patterns including turbo.json configuration, package management, testing, CI/CD integration, and framework-specific configurations
+- **New Monorepo Documentation**: Comprehensive `guide-skills-monorepo.md` with best practices for both Nx and Turborepo monorepo architectures
+
+### Changed
+- Updated plugin manifests to include new monorepo skills
+- Enhanced README documentation to reflect new monorepo capabilities
+
+### Removed
+- Consolidated AWS drawio-architecture-diagrams skill into generic AWS folder
+
 ### Changed
 - **Refactored AWS skill directory structure**:
   - Moved `aws-drawio-architecture-diagrams` skill from `skills/aws-cloudformation/` to `skills/aws/` directory
