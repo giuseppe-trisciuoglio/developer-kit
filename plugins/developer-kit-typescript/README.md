@@ -39,10 +39,15 @@ The `developer-kit-typescript` plugin provides comprehensive support for TypeScr
 - **nestjs** - NestJS framework patterns
 - **clean-architecture** - Clean Architecture, Hexagonal Architecture, and DDD patterns for NestJS backend applications
 
-### Frontend (React)
+### Frontend (React & Next.js)
 - **react-patterns** - React 19 design patterns
 - **shadcn-ui** - shadcn/ui component library
 - **tailwind-css-patterns** - Tailwind CSS patterns
+- **nextjs-app-router** - Next.js App Router patterns and fundamentals
+- **nextjs-authentication** - Authentication implementation with Auth.js/NextAuth
+- **nextjs-data-fetching** - Data fetching strategies with React Query/TanStack Query
+- **nextjs-performance** - Performance optimization and Core Web Vitals
+- **nextjs-deployment** - Deployment patterns, Docker, and CI/CD
 
 ### Monorepo
 - **nx-monorepo** - Nx monorepo management with generators, affected commands, Module Federation, and CI/CD
