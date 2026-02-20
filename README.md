@@ -30,7 +30,7 @@ plugins/
 ├── developer-kit-typescript/      # NestJS/React/React Native
 ├── developer-kit-python/          # Python development
 ├── developer-kit-php/             # PHP/WordPress
-├── developer-kit-aws/             # AWS CloudFormation
+├── developer-kit-aws/             # AWS CloudFormation/AWS Architecture
 ├── developer-kit-ai/              # Prompt Engineering/RAG/Chunking
 ├── developer-kit-devops/          # Docker/GitHub Actions
 ├── developer-kit-project-management/  # LRA workflow/Meetings
@@ -54,9 +54,11 @@ Core agents and commands used by all other plugins.
 | `general-debugger`           | Root cause analysis and debugging      |
 | `document-generator-expert`  | Professional document generation       |
 
+**Skills**: `claude-md-management`
+
 **Commands**: `/devkit.brainstorm`, `/devkit.refactor`, `/devkit.feature-development`, `/devkit.fix-debugging`,
 `/devkit.generate-document`, `/devkit.generate-changelog`, `/devkit.github.create-pr`, `/devkit.github.review-pr`,
-`/devkit.lra.*`, `/devkit.verify-skill`, `/devkit.generate-security-assessment`
+`/devkit.lra.*` (7 LRA workflow commands), `/devkit.verify-skill`, `/devkit.generate-security-assessment`
 
 ---
 
@@ -71,7 +73,7 @@ Comprehensive Java development toolkit with Spring Boot, testing, LangChain4J, a
 **Commands**: `/devkit.java.code-review`, `/devkit.java.generate-crud`, `/devkit.java.refactor-class`,
 `/devkit.java.architect-review`, `/devkit.java.dependency-audit`, `/devkit.java.generate-docs`,
 `/devkit.java.security-review`, `/devkit.java.upgrade-dependencies`, `/devkit.java.write-unit-tests`,
-`/devkit.java.write-integration-tests`
+`/devkit.java.write-integration-tests`, `/devkit.java.generate-refactoring-tasks`
 
 **Skills**:
 
@@ -85,6 +87,7 @@ Comprehensive Java development toolkit with Spring Boot, testing, LangChain4J, a
 - **LangChain4J**: ai-services-patterns, mcp-server-patterns, rag-implementation-patterns, spring-boot-integration,
   testing-strategies, tool-function-calling-patterns, vector-stores-configuration, qdrant
 - **AWS SDK**: rds-spring-boot-integration, bedrock, core, dynamodb, kms, lambda, messaging, rds, s3, secrets-manager
+- **Clean Architecture**: clean-architecture
 
 ---
 
@@ -99,7 +102,7 @@ TypeScript/JavaScript full-stack development with NestJS, React, and React Nativ
 
 **Commands**: `/devkit.typescript.code-review`, `/devkit.react.code-review`, `/devkit.ts.security-review`
 
-**Skills**: `nestjs`, `react-patterns`, `shadcn-ui`, `tailwind-css-patterns`, `typescript-docs`
+**Skills**: `nestjs`, `react-patterns`, `shadcn-ui`, `tailwind-css-patterns`, `typescript-docs`, `clean-architecture`
 
 ---
 
@@ -110,6 +113,8 @@ Python development capabilities for Django, Flask, and FastAPI projects.
 **Agents**: `python-code-review-expert`, `python-refactor-expert`, `python-security-expert`,
 `python-software-architect-expert`
 
+**Skills**: `clean-architecture`
+
 ---
 
 ### developer-kit-php
@@ -119,7 +124,7 @@ PHP and WordPress development capabilities.
 **Agents**: `php-code-review-expert`, `php-refactor-expert`, `php-security-expert`, `php-software-architect-expert`,
 `wordpress-development-expert`
 
-**Skills**: `wordpress-sage-theme` (Sage theme development)
+**Skills**: `wordpress-sage-theme` (Sage theme development), `clean-architecture`
 
 ---
 
@@ -129,8 +134,10 @@ AWS infrastructure and CloudFormation expertise for Infrastructure as Code.
 
 **Agents**: `aws-solution-architect-expert`, `aws-cloudformation-devops-expert`, `aws-architecture-review-expert`
 
-**Skills** (15 total): `vpc`, `ec2`, `lambda`, `iam`, `s3`, `rds`, `dynamodb`, `ecs`, `auto-scaling`, `cloudwatch`,
-`cloudfront`, `security`, `elasticache`, `bedrock`, `task-ecs-deploy-gh`
+**Skills** (16 total):
+- **CloudFormation**: `vpc`, `ec2`, `lambda`, `iam`, `s3`, `rds`, `dynamodb`, `ecs`, `auto-scaling`, `cloudwatch`,
+  `cloudfront`, `security`, `elasticache`, `bedrock`, `task-ecs-deploy-gh`
+- **AWS**: `aws-drawio-architecture-diagrams`
 
 ---
 
@@ -186,7 +193,7 @@ GitHub specification integration and verification.
 |--------------------|----------------------------|--------------------------|
 | Java/Spring Boot   | `developer-kit-java`       | Skills, Agents, Commands |
 | TypeScript/Node.js | `developer-kit-typescript` | Skills, Agents, Commands |
-| Python             | `developer-kit-python`     | Agents                   |
+| Python             | `developer-kit-python`     | Skills, Agents           |
 | PHP/WordPress      | `developer-kit-php`        | Skills, Agents           |
 | AWS CloudFormation | `developer-kit-aws`        | Skills, Agents           |
 | AI/ML              | `developer-kit-ai`         | Skills, Agents, Commands |

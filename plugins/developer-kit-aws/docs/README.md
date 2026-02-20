@@ -8,7 +8,7 @@ Welcome to the Developer Kit AWS Plugin documentation. This plugin provides comp
 
 ### Skills Guides
 
-- **[CloudFormation Skills](./guide-skills-cloudformation.md)** - AWS CloudFormation IaC skills (14 skills)
+- **[CloudFormation Skills](./guide-skills-cloudformation.md)** - AWS CloudFormation IaC skills (15 skills)
 
 ### Component Guides
 
@@ -21,7 +21,7 @@ Welcome to the Developer Kit AWS Plugin documentation. This plugin provides comp
 The Developer Kit AWS Plugin provides:
 
 - **AWS Agents**: 3 specialized agents for AWS architecture, CloudFormation, and DevOps
-- **AWS Skills**: 14 skills covering AWS CloudFormation templates for various AWS services
+- **AWS Skills**: 16 skills covering AWS CloudFormation templates and AWS architecture diagrams
 
 ---
 
@@ -29,11 +29,11 @@ The Developer Kit AWS Plugin provides:
 
 ```
 developer-kit-aws/
-├── agents/              # AWS architecture and DevOps agents
-├── skills/              # AWS CloudFormation skills
-│   ├── aws-cloudformation-*/  # CloudFormation template skills
-│   └── ...
-└── docs/               # This documentation
+├── agents/                    # AWS architecture and DevOps agents
+├── skills/
+│   ├── aws-cloudformation/    # CloudFormation template skills (15 skills)
+│   └── aws/                   # General AWS skills (architecture diagrams)
+└── docs/                      # This documentation
 ```
 
 ---
@@ -72,7 +72,9 @@ developer-kit-aws/
 
 ---
 
-## CloudFormation Skills Coverage
+## Skills Coverage
+
+### CloudFormation Skills
 
 The AWS plugin includes CloudFormation skills for:
 
@@ -90,6 +92,11 @@ The AWS plugin includes CloudFormation skills for:
 - **Bedrock**: AI/ML services
 - **ElastiCache**: Caching
 - **Security**: Security best practices
+- **Task ECS Deploy GH**: ECS deployment with GitHub Actions
+
+### General AWS Skills
+
+- **AWS Architecture Diagrams**: Professional AWS architecture diagram creation in draw.io format
 
 ---
 

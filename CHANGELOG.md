@@ -7,8 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-- Features in development
+### Changed
+- **Refactored AWS skill directory structure**:
+  - Moved `aws-drawio-architecture-diagrams` skill from `skills/aws-cloudformation/` to `skills/aws/` directory
+  - Created new `skills/aws/` directory for general AWS skills (non-CloudFormation)
+  - Updated `plugin.json` path reference to `./skills/aws/aws-drawio-architecture-diagrams`
+  - Better separation between CloudFormation IaC skills and general AWS skills
+
+### Fixed
+- Updated documentation to reflect correct component counts across all plugins:
+  - developer-kit-core: added `claude-md-management` skill (1 skill), corrected commands count to 17
+  - developer-kit-java: added `clean-architecture` skill (48 skills), added `/devkit.java.generate-refactoring-tasks` command (11 commands)
+  - developer-kit-typescript: added `clean-architecture` skill (6 skills)
+  - developer-kit-python: added `clean-architecture` skill (1 skill)
+  - developer-kit-php: added `clean-architecture` skill (2 skills)
+  - developer-kit-aws: added `aws-drawio-architecture-diagrams` skill (16 skills)
+  - Total components updated: 77 skills, 43 agents, 37 commands
 
 ## [2.1.0] - 2026-02-14
 

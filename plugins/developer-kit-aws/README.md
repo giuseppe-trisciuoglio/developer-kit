@@ -14,12 +14,15 @@ The `developer-kit-aws` plugin provides expertise in AWS infrastructure design, 
 
 ## Skills
 
-All CloudFormation patterns for major AWS services:
+**CloudFormation patterns** for major AWS services:
 - VPC, EC2, Lambda, IAM, S3, RDS
 - DynamoDB, ECS, Auto Scaling
 - CloudWatch, CloudFront, Security
 - ElastiCache, Bedrock
 - ECS deployment with GitHub Actions
+
+**General AWS skills**:
+- AWS Architecture Diagrams (draw.io format)
 
 ## Dependencies
 
