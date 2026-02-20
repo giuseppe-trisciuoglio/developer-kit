@@ -1,6 +1,6 @@
 {
   "name": "developer-kit-typescript",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "TypeScript/JavaScript full-stack development with NestJS, React, and React Native",
   "author": {
     "name": "Giuseppe Trisciuoglio",
@@ -58,6 +58,7 @@
     "./skills/tailwind-css-patterns",
     "./skills/typescript-docs",
     "./skills/clean-architecture",
+    "./skills/better-auth",
     "./skills/nextjs-app-router",
     "./skills/nextjs-authentication",
     "./skills/nextjs-data-fetching",

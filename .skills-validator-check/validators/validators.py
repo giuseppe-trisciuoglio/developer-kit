@@ -13,6 +13,9 @@ from .config import (
     SKILL_PATTERN,
     AGENT_PATTERN,
     COMMAND_PATTERN,
+    MARKDOWN_FILE_PATTERN,
+    SKILL_PACKAGE_PATTERN,
+    PLUGIN_PATTERN,
     SKILL_SCHEMA,
     AGENT_SCHEMA,
     COMMAND_SCHEMA,
@@ -31,6 +34,7 @@ from .config import (
     AGENT_VALID_MODELS,
     RESERVED_WORDS,
     KEBAB_CASE_PATTERN,
+    KEBAB_CASE_EXEMPT_FILES,
     SEMVER_PATTERN,
     MAX_NAME_LENGTH,
     MAX_DESCRIPTION_LENGTH,
@@ -928,6 +932,231 @@ class CommandValidator(BaseValidator):
             )
 
 
+class KebabCaseValidator(BaseValidator):
+    """Validator for kebab-case naming convention in markdown files.
+
+    Ensures all .md files (except exempted standard files like README.md)
+    use kebab-case naming convention.
+    """
+
+    @property
+    def component_type(self) -> str:
+        return "naming"
+
+    @property
+    def file_pattern(self) -> re.Pattern:
+        return MARKDOWN_FILE_PATTERN
+
+    @property
+    def schema(self) -> Dict[str, Set[str]]:
+        # No schema needed for file naming validation
+        return {"required": set(), "optional": set()}
+
+    def can_validate(self, file_path: Path) -> bool:
+        """Check if this validator can handle the given file."""
+        # Only validate .md files
+        if not file_path.suffix.lower() == ".md":
+            return False
+        # Skip exempt files
+        if file_path.name in KEBAB_CASE_EXEMPT_FILES:
+            return False
+        # Check pattern
+        return bool(self.file_pattern.search(str(file_path)))
+
+    def validate(self, file_path: Path) -> ValidationResult:
+        """Validate that the filename follows kebab-case convention."""
+        result = ValidationResult(
+            file_path=file_path,
+            component_type=self.component_type
+        )
+
+        # Get the filename without extension
+        filename = file_path.stem
+
+        # Check if filename follows kebab-case
+        if not KEBAB_CASE_PATTERN.match(filename):
+            result.add_error(
+                message=f"Filename must use kebab-case: '{file_path.name}'",
+                suggestion=f"Rename to '{self._to_kebab_case(filename)}.md' or similar"
+            )
+
+        return result
+
+    def _to_kebab_case(self, name: str) -> str:
+        """Convert a string to kebab-case (best effort)."""
+        # Replace underscores with hyphens
+        result = name.replace("_", "-")
+        # Replace camelCase with kebab-case
+        result = re.sub(r'([a-z])([A-Z])', r'\1-\2', result).lower()
+        # Replace multiple hyphens with single
+        result = re.sub(r'-+', '-', result)
+        # Remove leading/trailing hyphens
+        result = result.strip('-')
+        return result
+
+    def _validate_specific(
+        self,
+        file_path: Path,
+        frontmatter: Dict[str, Any],
+        content: str,
+        result: ValidationResult
+    ) -> None:
+        """Not used for kebab-case validation."""
+        pass
+
+
+class SkillPackageValidator(BaseValidator):
+    """Validator to check for prohibited .skill package files.
+
+    Ensures that no .skill package files exist in the project as they
+    should not be committed (they are build outputs).
+    """
+
+    @property
+    def component_type(self) -> str:
+        return "prohibited"
+
+    @property
+    def file_pattern(self) -> re.Pattern:
+        # Only match .skill files directly
+        return SKILL_PACKAGE_PATTERN
+
+    @property
+    def schema(self) -> Dict[str, Set[str]]:
+        return {"required": set(), "optional": set()}
+
+    def validate(self, file_path: Path) -> ValidationResult:
+        """Validate that the file is not a .skill package."""
+        result = ValidationResult(
+            file_path=file_path,
+            component_type=self.component_type
+        )
+
+        # If this is a .skill file, it's an error
+        if file_path.suffix == ".skill":
+            result.add_error(
+                message=f"Prohibited .skill package found: '{file_path.name}'",
+                suggestion="Remove .skill files - they are build outputs and should not be committed"
+            )
+
+        return result
+
+    def _validate_specific(
+        self,
+        file_path: Path,
+        frontmatter: Dict[str, Any],
+        content: str,
+        result: ValidationResult
+    ) -> None:
+        """Not used for skill package validation."""
+        pass
+
+
+class PluginVersionValidator(BaseValidator):
+    """Validator for plugin manifest version alignment with marketplace.
+
+    Ensures that plugin.json version matches marketplace.json version.
+    """
+
+    @property
+    def component_type(self) -> str:
+        return "plugin"
+
+    @property
+    def file_pattern(self) -> re.Pattern:
+        return PLUGIN_PATTERN
+
+    @property
+    def schema(self) -> Dict[str, Set[str]]:
+        return {"required": set(), "optional": set()}
+
+    def validate(self, file_path: Path) -> ValidationResult:
+        """Validate that plugin version matches marketplace version."""
+        result = ValidationResult(
+            file_path=file_path,
+            component_type=self.component_type
+        )
+
+        # Find marketplace.json
+        marketplace_path = self._find_marketplace_json(file_path)
+        if not marketplace_path:
+            result.add_error(
+                message="Cannot find marketplace.json for version alignment check",
+                suggestion="Ensure marketplace.json exists in .claude-plugin/ directory"
+            )
+            return result
+
+        # Read marketplace version
+        marketplace_version = self._get_marketplace_version(marketplace_path)
+        if not marketplace_version:
+            result.add_error(
+                message="Cannot read version from marketplace.json",
+                suggestion="Ensure marketplace.json has a valid 'version' field"
+            )
+            return result
+
+        # Read plugin version
+        plugin_version = self._get_plugin_version(file_path)
+        if not plugin_version:
+            result.add_error(
+                message="Cannot read version from plugin.json",
+                suggestion="Ensure plugin.json has a valid 'version' field"
+            )
+            return result
+
+        # Compare versions
+        if plugin_version != marketplace_version:
+            result.add_error(
+                message=f"Version mismatch: plugin '{plugin_version}' != marketplace '{marketplace_version}'",
+                suggestion=f"Align plugin version with marketplace version '{marketplace_version}'"
+            )
+
+        return result
+
+    def _find_marketplace_json(self, file_path: Path) -> Optional[Path]:
+        """Find marketplace.json by traversing up to project root."""
+        current = file_path.parent
+        for _ in range(10):  # Limit search depth
+            marketplace = current / ".claude-plugin" / "marketplace.json"
+            if marketplace.exists():
+                return marketplace
+            parent = current.parent
+            if parent == current:
+                break
+            current = parent
+        return None
+
+    def _get_marketplace_version(self, marketplace_path: Path) -> Optional[str]:
+        """Read version from marketplace.json."""
+        try:
+            import json
+            with open(marketplace_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            return data.get('version')
+        except (json.JSONDecodeError, KeyError, FileNotFoundError, IOError):
+            return None
+
+    def _get_plugin_version(self, plugin_path: Path) -> Optional[str]:
+        """Read version from plugin.json."""
+        try:
+            import json
+            with open(plugin_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            return data.get('version')
+        except (json.JSONDecodeError, KeyError, FileNotFoundError, IOError):
+            return None
+
+    def _validate_specific(
+        self,
+        file_path: Path,
+        frontmatter: Dict[str, Any],
+        content: str,
+        result: ValidationResult
+    ) -> None:
+        """Not used for plugin version validation."""
+        pass
+
+
 class PluginJsonValidator:
     """Validator for plugin.json files - verifies component registration."""
 
@@ -1072,6 +1301,9 @@ class ValidatorFactory:
         SkillValidator(),
         AgentValidator(),
         CommandValidator(),
+        KebabCaseValidator(),
+        SkillPackageValidator(),
+        PluginVersionValidator(),
         PluginJsonValidator(),
     ]
 

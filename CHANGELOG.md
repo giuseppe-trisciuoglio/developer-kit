@@ -8,6 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **New Better Auth skill** (`developer-kit-typescript`):
+  - `better-auth`: Comprehensive Better Auth integration for NestJS backend and Next.js frontend with Drizzle ORM + PostgreSQL
+  - Complete authentication flow with email/password, OAuth providers, JWT tokens, and session management
+  - Backend patterns for NestJS with Better Auth integration, protected routes, and role-based access control
+  - Frontend patterns for Next.js App Router with Better Auth client, React hooks, and middleware
+  - Database schema with Drizzle ORM for users, sessions, accounts, and verification tokens
+
+- **Enhanced Validation System** (`.skills-validator-check`):
+  - Added `KebabCaseValidator`: Validates markdown filenames follow kebab-case naming convention
+  - Added `SkillPackageValidator`: Detects prohibited `.skill` package files that shouldn't be committed
+  - Added `PluginVersionValidator`: Ensures plugin.json version aligns with marketplace.json version
+  - Added `PluginJsonValidator`: Verifies all components (skills, agents, commands) are properly registered in plugin.json
+  - Added empty skill folder detection to identify malformed skill directories
+
 - **New Draw.io Logical Diagrams skill** (`developer-kit-core`):
   - `drawio-logical-diagrams`: Professional logical flow diagrams and system architecture diagrams in draw.io XML format
   - Supports flowcharts, BPMN, UML (class, sequence, activity), DFD, and system interaction diagrams
@@ -45,9 +59,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced frontend documentation (`guide-skills-frontend.md`) with Next.js Development Skills section
 - Updated all plugin manifests to include new skills
 - Updated documentation component counts across all plugins:
-  - Total components: **91 skills, 43 agents, 36 commands** (was 77 skills, 43 agents, 37 commands)
+  - Total components: **92 skills, 43 agents, 36 commands** (was 91 skills, 43 agents, 36 commands)
 
 ### Fixed
+- Resolved security issues in authentication patterns (better-auth skill)
+- Resolved review findings from component audit (naming conventions, schema compliance)
 - Corrected XML syntax error in draw.io decision diamond example
 - Minor bug fixes in TypeScript skill configurations
 
