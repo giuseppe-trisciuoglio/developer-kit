@@ -13,7 +13,9 @@
     "python",
     "django",
     "flask",
-    "fastapi"
+    "fastapi",
+    "aws",
+    "lambda"
   ],
   "agents": [
     "./agents/python-code-review-expert.md",
@@ -23,6 +25,7 @@
   ],
   "commands": [],
   "skills": [
-    "./skills/clean-architecture"
+    "./skills/clean-architecture",
+    "./skills/aws-lambda-python-integration"
   ]
 }

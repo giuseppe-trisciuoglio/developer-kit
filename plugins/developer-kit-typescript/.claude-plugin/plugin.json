@@ -17,7 +17,10 @@
     "react-native",
     "expo",
     "shadcn-ui",
-    "tailwindcss"
+    "tailwindcss",
+    "aws",
+    "lambda",
+    "serverless"
   ],
   "agents": [
     "./agents/nestjs-backend-development-expert.md",
@@ -45,6 +48,7 @@
     "./skills/shadcn-ui",
     "./skills/tailwind-css-patterns",
     "./skills/typescript-docs",
-    "./skills/clean-architecture"
+    "./skills/clean-architecture",
+    "./skills/aws-lambda-typescript-integration"
   ]
 }
