@@ -54,12 +54,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Refactored AWS skill directory structure** (`developer-kit-aws`):
   - Moved `aws-drawio-architecture-diagrams` skill from `skills/aws-cloudformation/` to `skills/aws/` directory
   - Better separation between CloudFormation IaC skills and general AWS skills
-- Updated `developer-kit-typescript` plugin.json with 10 new skills and 11 new keywords (nextjs, drizzle, monorepo, aws, lambda, serverless)
+- Updated `developer-kit-typescript` plugin.json with 11 new skills and 11 new keywords (nextjs, drizzle, monorepo, aws, lambda, serverless)
 - Updated `developer-kit-python` plugin.json with `aws` and `lambda` keywords
 - Enhanced frontend documentation (`guide-skills-frontend.md`) with Next.js Development Skills section
 - Updated all plugin manifests to include new skills
 - Updated documentation component counts across all plugins:
-  - Total components: **92 skills, 43 agents, 36 commands** (was 91 skills, 43 agents, 36 commands)
+  - Total components: **92 skills, 43 agents, 36 commands** (was 77 skills, 43 agents, 36 commands at v2.1.0)
 
 ### Fixed
 - Resolved security issues in authentication patterns (better-auth skill)

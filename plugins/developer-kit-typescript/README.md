@@ -37,8 +37,10 @@ The `developer-kit-typescript` plugin provides comprehensive support for TypeScr
 
 ### Backend (NestJS)
 - **nestjs** - NestJS framework patterns
-- **better-auth** - Comprehensive Better Auth integration for NestJS backend and Next.js frontend with Drizzle ORM + PostgreSQL
 - **clean-architecture** - Clean Architecture, Hexagonal Architecture, and DDD patterns for NestJS backend applications
+
+### Authentication
+- **better-auth** - Comprehensive Better Auth integration for NestJS backend and Next.js frontend with Drizzle ORM + PostgreSQL
 
 ### Frontend (React & Next.js)
 - **react-patterns** - React 19 design patterns

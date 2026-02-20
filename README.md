@@ -21,7 +21,7 @@ multiple languages and frameworks. Built as a modular marketplace, you can insta
 
 ## Architecture
 
-Developer Kit is organized as a **modular marketplace** with 10 independent plugins (**91 skills, 43 agents, 36 commands**):
+Developer Kit is organized as a **modular marketplace** with 10 independent plugins (**92 skills, 43 agents, 36 commands**):
 
 ```
 plugins/
@@ -104,6 +104,7 @@ TypeScript/JavaScript full-stack development with NestJS, React, React Native, N
 
 **Skills**:
 - **Backend**: `nestjs`, `clean-architecture`, `nestjs-drizzle-crud-generator`
+- **Authentication**: `better-auth`
 - **Frontend**: `react-patterns`, `shadcn-ui`, `tailwind-css-patterns`
 - **Next.js**: `nextjs-app-router`, `nextjs-authentication`, `nextjs-data-fetching`, `nextjs-performance`, `nextjs-deployment`
 - **Database & ORM**: `drizzle-orm-patterns`
@@ -199,7 +200,7 @@ GitHub specification integration and verification.
 | Language           | Plugin                     | Components               |
 |--------------------|----------------------------|--------------------------|
 | Java/Spring Boot   | `developer-kit-java`       | 49 Skills, 9 Agents, 11 Commands |
-| TypeScript/Node.js | `developer-kit-typescript` | 16 Skills, 13 Agents, 3 Commands |
+| TypeScript/Node.js | `developer-kit-typescript` | 17 Skills, 13 Agents, 3 Commands |
 | Python             | `developer-kit-python`     | 2 Skills, 4 Agents      |
 | PHP/WordPress      | `developer-kit-php`        | 3 Skills, 5 Agents      |
 | AWS CloudFormation | `developer-kit-aws`        | 16 Skills, 3 Agents     |
