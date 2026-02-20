@@ -37,6 +37,7 @@ The `developer-kit-typescript` plugin provides comprehensive support for TypeScr
 
 ### Backend (NestJS)
 - **nestjs** - NestJS framework patterns
+- **better-auth** - Comprehensive Better Auth integration for NestJS backend and Next.js frontend with Drizzle ORM + PostgreSQL
 - **clean-architecture** - Clean Architecture, Hexagonal Architecture, and DDD patterns for NestJS backend applications
 
 ### Frontend (React)
@@ -45,7 +46,8 @@ The `developer-kit-typescript` plugin provides comprehensive support for TypeScr
 - **tailwind-css-patterns** - Tailwind CSS patterns
 
 ### Core/Shared
-- **typescript-docs** - TypeScript documentation standards 
+- **typescript-docs** - TypeScript documentation standards
+- **nx-monorepo** - Nx monorepo patterns for workspace management, executors, and generators 
 
 ## Dependencies
 
