@@ -5,7 +5,7 @@
 ```json
 {
   "dependencies": {
-    "better-auth": "^1.1.0",
+    "better-auth": "^1.2.0",
     "next": "^15.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
@@ -34,7 +34,6 @@ import { betterAuth } from 'better-auth';
 import { nextCookies } from 'better-auth/next-js';
 
 export const auth = betterAuth({
-  baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL || 'http://localhost:3000',
   baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3000',
   plugins: [],
 });

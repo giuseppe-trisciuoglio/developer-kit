@@ -539,7 +539,7 @@ const { data: session } = useSession();
 ```json
 {
   "dependencies": {
-    "better-auth": "^1.1.0",
+    "better-auth": "^1.2.0",
     "@auth/drizzle-adapter": "^1.0.0",
     "drizzle-orm": "^0.35.0",
     "pg": "^8.12.0",
@@ -559,7 +559,7 @@ const { data: session } = useSession();
 ```json
 {
   "dependencies": {
-    "better-auth": "^1.1.0",
+    "better-auth": "^1.2.0",
     "next": "^15.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
@@ -642,10 +642,10 @@ const { data: session } = useSession();
 
 ### Reference Implementations
 
-- See `References/NESTJS_SETUP.md` for complete NestJS setup
-- See `References/NEXTJS_SETUP.md` for complete Next.js setup
-- See `References/PLUGINS.md` for plugin configuration
-- See `Assets/` for example code files
+- See `references/nestjs-setup.md` for complete NestJS setup
+- See `references/nextjs-setup.md` for complete Next.js setup
+- See `references/plugins.md` for plugin configuration
+- See `assets/` for example code files
 
 ### Environment Variables
 
