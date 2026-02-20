@@ -20,6 +20,9 @@
     "tailwindcss",
     "turborepo",
     "monorepo"
+    "aws",
+    "lambda",
+    "serverless"
   ],
   "agents": [
     "./agents/nestjs-backend-development-expert.md",
@@ -50,5 +53,6 @@
     "./skills/clean-architecture",
     "./skills/nx-monorepo",
     "./skills/turborepo-monorepo"
+    "./skills/aws-lambda-typescript-integration"
   ]
 }
