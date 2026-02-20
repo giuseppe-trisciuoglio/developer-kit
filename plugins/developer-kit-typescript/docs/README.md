@@ -1,6 +1,6 @@
 # Developer Kit TypeScript Plugin Documentation
 
-Welcome to the Developer Kit TypeScript Plugin documentation. This plugin provides comprehensive tools for TypeScript, JavaScript, NestJS, React, and React Native development.
+Welcome to the Developer Kit TypeScript Plugin documentation. This plugin provides comprehensive tools for TypeScript, JavaScript, NestJS, React, React Native, and monorepo development.
 
 ---
 
@@ -11,6 +11,7 @@ Welcome to the Developer Kit TypeScript Plugin documentation. This plugin provid
 - **[NestJS Skills](./guide-skills-nestjs.md)** - NestJS framework skills
 - **[Frontend Skills](./guide-skills-frontend.md)** - React, TypeScript, UI framework skills
 - **[Architecture Skills](./guide-skills-architecture.md)** - Clean Architecture and DDD skills (1 skill)
+- **[Monorepo Skills](./guide-skills-monorepo.md)** - Nx and Turborepo monorepo skills (2 skills)
 
 ### Component Guides
 
@@ -25,7 +26,7 @@ The Developer Kit TypeScript Plugin provides:
 
 - **TypeScript Agents**: 13 specialized agents for NestJS, React, TypeScript, and React Native development
 - **TypeScript Commands**: 3 commands for code review and security assessment
-- **TypeScript Skills**: 6 skills covering NestJS, React patterns, shadcn-ui, Tailwind CSS, TypeScript documentation, and Clean Architecture
+- **TypeScript Skills**: 8 skills covering NestJS, React patterns, shadcn-ui, Tailwind CSS, TypeScript documentation, Clean Architecture, Nx monorepo, and Turborepo monorepo
 
 ---
 
@@ -40,6 +41,9 @@ developer-kit-typescript/
 │   ├── react-patterns/  # React patterns skill
 │   ├── shadcn-ui/       # shadcn-ui component library skill
 │   ├── tailwind-css-patterns/  # Tailwind CSS skill
+│   ├── clean-architecture/  # Clean Architecture and DDD skill
+│   ├── nx-monorepo/     # Nx monorepo skill
+│   ├── turborepo-monorepo/  # Turborepo monorepo skill
 │   └── typescript-docs/ # TypeScript documentation skill
 └── docs/               # This documentation
 ```

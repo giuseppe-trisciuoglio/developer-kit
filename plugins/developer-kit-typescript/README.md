@@ -44,6 +44,10 @@ The `developer-kit-typescript` plugin provides comprehensive support for TypeScr
 - **shadcn-ui** - shadcn/ui component library
 - **tailwind-css-patterns** - Tailwind CSS patterns
 
+### Monorepo
+- **nx-monorepo** - Nx monorepo management with generators, affected commands, Module Federation, and CI/CD
+- **turborepo-monorepo** - Turborepo monorepo management with turbo.json, framework integration, and caching
+
 ### Core/Shared
 - **typescript-docs** - TypeScript documentation standards 
 

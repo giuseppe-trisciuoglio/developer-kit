@@ -46,6 +46,7 @@
     "./commands/devkit.generate-security-assessment.md"
   ],
   "skills": [
-    "./skills/claude-md-management"
+    "./skills/claude-md-management",
+    "./skills/drawio-logical-diagrams"
   ]
 }
