@@ -20,9 +20,9 @@
     "tailwindcss",
     "drizzle",
     "orm",
-    "database"
+    "database",
     "turborepo",
-    "monorepo"
+    "monorepo",
     "aws",
     "lambda",
     "serverless"
