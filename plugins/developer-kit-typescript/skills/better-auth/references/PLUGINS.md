@@ -15,47 +15,39 @@ Better Auth supports various plugins for extending authentication functionality.
 
 ## Two-Factor Authentication (2FA)
 
+> **Detailed Guide**: See [MFA_2FA.md](./MFA_2FA.md) for complete implementation guide.
+
 ### Installation
 
+The `twoFactor` plugin is included in the main `better-auth` package.
+
 ```bash
-npm install @otp-plugin/react
+npm install better-auth
 ```
 
 ### Backend Configuration
 
 ```typescript
-// src/auth/auth.instance.ts
 import { betterAuth } from 'better-auth';
 import { twoFactor } from 'better-auth/plugins';
 
 export const auth = betterAuth({
-  // ... other config
+  appName: 'My App',
   plugins: [
     twoFactor({
-      // 2FA configuration
-      totp: {
-        enabled: true,
-        issuer: 'YourApp',
-      },
-      sms: {
-        enabled: false, // Enable if using SMS
-      },
+      issuer: 'My App',
+      otpOptions: {
+        async sendOTP({ user, otp }, ctx) {
+          // Required: Send OTP to user via email, SMS, etc.
+          await sendEmail({
+            to: user.email,
+            subject: 'Your verification code',
+            body: `Your code is: ${otp}`
+          });
+        }
+      }
     }),
   ],
-});
-```
-
-### Database Schema Update
-
-```typescript
-// Add to schema.ts
-export const totp = pgTable('totp', {
-  id: text('id').notNull().primaryKey(),
-  userId: text('userId')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
-  secret: text('secret').notNull(),
-  createdAt: timestamp('createdAt').defaultNow(),
 });
 ```
 
@@ -67,24 +59,38 @@ export const totp = pgTable('totp', {
 import { authClient } from '@/lib/auth/client';
 
 export function TwoFactorSetup() {
-  const enable2FA = async () => {
-    const { data, error } = await authClient.twoFactor.enable();
-    // Show QR code to user from data.secret
+  const enable2FA = async (password: string) => {
+    const { data, error } = await authClient.twoFactor.enable({ password });
+    // data.totpURI - QR code for authenticator
+    // data.backupCodes - Single-use recovery codes
   };
 
-  const verify2FA = async (code: string) => {
-    const { data, error } = await authClient.twoFactor.verify({
+  const verifyTOTP = async (code: string) => {
+    const { data, error } = await authClient.twoFactor.verifyTotp({
       code,
+      trustDevice: true  // Trust device for 30 days
+    });
+  };
+
+  const recoverWithBackup = async (code: string) => {
+    const { data, error } = await authClient.twoFactor.verifyBackupCode({
+      code
     });
   };
 
   return (
     <div>
-      <button onClick={enable2FA}>Enable 2FA</button>
+      <button onClick={() => enable2FA('password')}>Enable 2FA</button>
     </div>
   );
 }
 ```
+
+### Features
+- **TOTP**: Time-based one-time passwords (Google Authenticator, Authy)
+- **OTP via Email/SMS**: Alternative verification method
+- **Backup Codes**: Single-use recovery codes for account recovery
+- **Trusted Devices**: Skip 2FA for 30 days on trusted devices
 
 ## Organization Plugin
 
@@ -256,18 +262,38 @@ export function MagicLinkSignIn() {
 
 ## Passkey Plugin
 
+> **Detailed Guide**: See [PASSKEY.md](./PASSKEY.md) for complete implementation guide.
+
+### Installation
+
+```bash
+npm install @better-auth/passkey
+```
+
 ### Backend Configuration
 
 ```typescript
 import { betterAuth } from 'better-auth';
-import { passkey } from 'better-auth/plugins';
+import { passkey } from '@better-auth/passkey';
 
 export const auth = betterAuth({
   plugins: [
     passkey({
-      // Passkey configuration
+      rpID: 'example.com',      // Your domain
+      rpName: 'My App',         // Display name
     }),
   ],
+});
+```
+
+### Client Configuration
+
+```typescript
+import { createAuthClient } from 'better-auth/client';
+import { passkeyClient } from '@better-auth/passkey/client';
+
+export const authClient = createAuthClient({
+  plugins: [passkeyClient()],
 });
 ```
 
@@ -280,11 +306,15 @@ import { authClient } from '@/lib/auth/client';
 
 export function PasskeyAuth() {
   const registerPasskey = async () => {
-    const { data, error } = await authClient.passkey.register();
+    const { data, error } = await authClient.passkey.register({
+      name: 'My Device'
+    });
   };
 
   const signInWithPasskey = async () => {
-    const { data, error } = await authClient.passkey.signIn();
+    await authClient.signIn.passkey({
+      autoFill: true,  // Enable conditional UI
+    });
   };
 
   return (
@@ -296,6 +326,12 @@ export function PasskeyAuth() {
   );
 }
 ```
+
+### Features
+- **WebAuthn**: Standard passkey authentication (biometric, PIN, security key)
+- **Conditional UI**: Browser autofill for passkeys
+- **Cross-Device**: Synced via iCloud Keychain, Google Password Manager
+- **Security Keys**: YubiKey and hardware authenticator support
 
 ## Email Verification Plugin
 

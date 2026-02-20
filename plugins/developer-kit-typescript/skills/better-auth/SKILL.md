@@ -18,6 +18,10 @@ Better Auth is a comprehensive authentication framework for TypeScript that prov
 - Integrating Next.js App Router frontend with Better Auth
 - Configuring Drizzle ORM schema with PostgreSQL for authentication
 - Implementing social login (GitHub, Google, Facebook, Microsoft, etc.)
+- Adding Multi-Factor Authentication (MFA/2FA) with TOTP
+- Implementing passkey (WebAuthn) passwordless authentication
+- Managing trusted devices for streamlined authentication
+- Using backup codes for 2FA account recovery
 - Adding authentication plugins (2FA, Organization, SSO, Magic Link, Passkey)
 - Email/password authentication with secure session management
 - Creating protected routes and authentication middleware
@@ -265,6 +269,180 @@ const { data, error } = await authClient.twoFactor.enable({
 ```
 
 **Output:** Users can enable TOTP-based 2FA and verify with authenticator apps.
+
+### Example 5: TOTP Verification with Trusted Device
+
+**Input:** User has enabled 2FA and wants to sign in, marking the device as trusted.
+
+**Process:**
+```typescript
+// Server-side: Configure 2FA with OTP sending
+export const auth = betterAuth({
+  plugins: [
+    twoFactor({
+      issuer: 'MyApp',
+      otpOptions: {
+        async sendOTP({ user, otp }, ctx) {
+          // Send OTP via email, SMS, or other method
+          await sendEmail({
+            to: user.email,
+            subject: 'Your verification code',
+            body: `Code: ${otp}`
+          });
+        }
+      }
+    })
+  ]
+});
+
+// Client-side: Verify TOTP and trust device
+const verify2FA = async (code: string) => {
+  const { data, error } = await authClient.twoFactor.verifyTotp({
+    code,
+    trustDevice: true  // Device trusted for 30 days
+  });
+
+  if (data) {
+    // Redirect to dashboard
+    router.push('/dashboard');
+  }
+};
+```
+
+**Output:** User is authenticated, device is trusted for 30 days (no 2FA prompt on next sign-ins).
+
+### Example 6: Passkey Authentication Setup
+
+**Input:** Enable passkey (WebAuthn) authentication for passwordless login.
+
+**Process:**
+```typescript
+// Server-side: Configure passkey plugin
+import { passkey } from '@better-auth/passkey';
+
+export const auth = betterAuth({
+  plugins: [
+    passkey({
+      rpID: 'example.com',      // Relying Party ID (your domain)
+      rpName: 'My App',         // Display name
+      advanced: {
+        webAuthnChallengeCookie: 'my-app-passkey'
+      }
+    })
+  ]
+});
+
+// Client-side: Register passkey
+const registerPasskey = async () => {
+  const { data, error } = await authClient.passkey.register({
+    name: 'My Device'
+  });
+
+  if (data) {
+    console.log('Passkey registered successfully');
+  }
+};
+
+// Client-side: Sign in with passkey
+const signInWithPasskey = async () => {
+  await authClient.signIn.passkey({
+    autoFill: true,  // Enable conditional UI
+    fetchOptions: {
+      onSuccess() {
+        router.push('/dashboard');
+      }
+    }
+  });
+};
+```
+
+**Output:** Users can register and authenticate with passkeys (biometric, PIN, or security key).
+
+### Example 7: Passkey Conditional UI (Autofill)
+
+**Input:** Implement passkey autofill in sign-in form for seamless authentication.
+
+**Process:**
+```tsx
+// Component with conditional UI support
+'use client';
+
+import { useEffect } from 'react';
+import { authClient } from '@/lib/auth/client';
+
+export default function SignInPage() {
+  useEffect(() => {
+    // Check for conditional mediation support
+    if (!PublicKeyCredential.isConditionalMediationAvailable ||
+        !PublicKeyCredential.isConditionalMediationAvailable()) {
+      return;
+    }
+
+    // Enable passkey autofill
+    void authClient.signIn.passkey({ autoFill: true });
+  }, []);
+
+  return (
+    <form>
+      <label htmlFor="email">Email:</label>
+      <input
+        type="email"
+        name="email"
+        autoComplete="username webauthn"
+      />
+      <label htmlFor="password">Password:</label>
+      <input
+        type="password"
+        name="password"
+        autoComplete="current-password webauthn"
+      />
+      <button type="submit">Sign In</button>
+    </form>
+  );
+}
+```
+
+**Output:** Browser automatically suggests passkeys when user focuses on input fields.
+
+### Example 8: Backup Codes for 2FA Recovery
+
+**Input:** User needs backup codes to recover account if authenticator app is lost.
+
+**Process:**
+```typescript
+// Enable 2FA - backup codes are generated automatically
+const enable2FA = async (password: string) => {
+  const { data, error } = await authClient.twoFactor.enable({
+    password
+  });
+
+  if (data) {
+    // IMPORTANT: Display backup codes to user immediately
+    console.log('Backup codes (save these securely):');
+    data.backupCodes.forEach((code: string) => {
+      console.log(code);
+    });
+
+    // Show TOTP URI as QR code
+    const qrCodeUrl = data.totpURI;
+    displayQRCode(qrCodeUrl);
+  }
+};
+
+// Recover with backup code
+const recoverWithBackupCode = async (code: string) => {
+  const { data, error } = await authClient.twoFactor.verifyBackupCode({
+    code
+  });
+
+  if (data) {
+    // Allow user to disable 2FA or set up new authenticator
+    router.push('/settings/2fa');
+  }
+};
+```
+
+**Output:** User receives single-use backup codes for account recovery.
 
 ## Common Patterns
 
