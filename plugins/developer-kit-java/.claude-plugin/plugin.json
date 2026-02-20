@@ -1,6 +1,6 @@
 {
   "name": "developer-kit-java",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Comprehensive Java development toolkit with Spring Boot, testing, LangChain4J, and AWS integration",
   "author": {
     "name": "Giuseppe Trisciuoglio",

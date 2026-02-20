@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-02-20
+
 ### Added
 - **New Better Auth skill** (`developer-kit-typescript`):
   - `better-auth`: Comprehensive Better Auth integration for NestJS backend and Next.js frontend with Drizzle ORM + PostgreSQL
@@ -660,7 +662,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.2.0...HEAD
+[2.2.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.25.1...v2.0.0
 [1.25.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.25.0...v1.25.1
