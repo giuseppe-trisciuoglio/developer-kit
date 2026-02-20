@@ -20,7 +20,15 @@
     "tailwindcss",
     "nextjs",
     "next.js",
-    "app-router"
+    "app-router",
+    "drizzle",
+    "orm",
+    "database",
+    "turborepo",
+    "monorepo",
+    "aws",
+    "lambda",
+    "serverless"
   ],
   "agents": [
     "./agents/nestjs-backend-development-expert.md",
@@ -44,6 +52,7 @@
   ],
   "skills": [
     "./skills/nestjs",
+    "./skills/nestjs-drizzle-crud-generator",
     "./skills/react-patterns",
     "./skills/shadcn-ui",
     "./skills/tailwind-css-patterns",
@@ -53,6 +62,10 @@
     "./skills/nextjs-authentication",
     "./skills/nextjs-data-fetching",
     "./skills/nextjs-performance",
-    "./skills/nextjs-deployment"
+    "./skills/nextjs-deployment",
+    "./skills/drizzle-orm-patterns",
+    "./skills/nx-monorepo",
+    "./skills/turborepo-monorepo",
+    "./skills/aws-lambda-typescript-integration"
   ]
 }

@@ -24,6 +24,7 @@
   ],
   "commands": [],
   "skills": [
+    "./skills/aws-lambda-php-integration",
     "./skills/wordpress/wordpress-sage-theme",
     "./skills/clean-architecture"
   ]

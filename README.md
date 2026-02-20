@@ -90,7 +90,7 @@ Comprehensive Java development toolkit with Spring Boot, testing, LangChain4J, a
 
 ### developer-kit-typescript
 
-TypeScript/JavaScript full-stack development with NestJS, React, and React Native.
+TypeScript/JavaScript full-stack development with NestJS, React, React Native, and monorepo support.
 
 **Agents**: `nestjs-backend-development-expert`, `nestjs-code-review-expert`, `nestjs-database-expert`,
 `nestjs-security-expert`, `nestjs-testing-expert`, `nestjs-unit-testing-expert`, `react-frontend-development-expert`,
@@ -99,7 +99,11 @@ TypeScript/JavaScript full-stack development with NestJS, React, and React Nativ
 
 **Commands**: `/devkit.typescript.code-review`, `/devkit.react.code-review`, `/devkit.ts.security-review`
 
-**Skills**: `nestjs`, `react-patterns`, `shadcn-ui`, `tailwind-css-patterns`, `typescript-docs`
+**Skills**:
+- **Backend**: `nestjs`, `clean-architecture`
+- **Frontend**: `react-patterns`, `shadcn-ui`, `tailwind-css-patterns`
+- **Monorepo**: `nx-monorepo`, `turborepo-monorepo`
+- **Core**: `typescript-docs`
 
 ---
 

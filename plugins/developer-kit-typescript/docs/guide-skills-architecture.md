@@ -1,6 +1,6 @@
 # Architecture Skills Guide
 
-Quick reference to Clean Architecture skill for TypeScript/Node.js applications.
+Quick reference to Clean Architecture and DDD skills for TypeScript/Node.js applications.
 
 ---
 
@@ -8,7 +8,7 @@ Quick reference to Clean Architecture skill for TypeScript/Node.js applications.
 
 | Skill                  | Purpose                                                                               |
 |------------------------|---------------------------------------------------------------------------------------|
-| **clean-architecture** | Clean Architecture, Hexagonal Architecture, and DDD patterns for NestJS or Typescript |
+| **clean-architecture** | Clean Architecture, Hexagonal Architecture, and DDD patterns for NestJS or TypeScript |
 
 ---
 

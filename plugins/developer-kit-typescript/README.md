@@ -49,6 +49,10 @@ The `developer-kit-typescript` plugin provides comprehensive support for TypeScr
 - **nextjs-performance** - Performance optimization and Core Web Vitals
 - **nextjs-deployment** - Deployment patterns, Docker, and CI/CD
 
+### Monorepo
+- **nx-monorepo** - Nx monorepo management with generators, affected commands, Module Federation, and CI/CD
+- **turborepo-monorepo** - Turborepo monorepo management with turbo.json, framework integration, and caching
+
 ### Core/Shared
 - **typescript-docs** - TypeScript documentation standards 
 

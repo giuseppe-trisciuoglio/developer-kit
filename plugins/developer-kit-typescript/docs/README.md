@@ -1,6 +1,6 @@
 # Developer Kit TypeScript Plugin Documentation
 
-Welcome to the Developer Kit TypeScript Plugin documentation. This plugin provides comprehensive tools for TypeScript, JavaScript, NestJS, React, and React Native development.
+Welcome to the Developer Kit TypeScript Plugin documentation. This plugin provides comprehensive tools for TypeScript, JavaScript, NestJS, React, React Native, and monorepo development.
 
 ---
 
