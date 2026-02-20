@@ -18,6 +18,8 @@
     "expo",
     "shadcn-ui",
     "tailwindcss",
+    "turborepo",
+    "monorepo"
     "aws",
     "lambda",
     "serverless"
@@ -49,6 +51,8 @@
     "./skills/tailwind-css-patterns",
     "./skills/typescript-docs",
     "./skills/clean-architecture",
+    "./skills/nx-monorepo",
+    "./skills/turborepo-monorepo"
     "./skills/aws-lambda-typescript-integration"
   ]
 }
