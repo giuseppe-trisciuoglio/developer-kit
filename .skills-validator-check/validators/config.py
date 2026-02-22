@@ -18,6 +18,11 @@ VERSION = "1.0.0"
 MAX_NAME_LENGTH = 64
 MAX_DESCRIPTION_LENGTH = 1024
 MIN_DESCRIPTION_LENGTH = 10
+MAX_COMPATIBILITY_LENGTH = 500
+
+# Progressive disclosure limits (per spec: < 5000 tokens recommended, ~500 lines)
+MAX_SKILL_LINES = 500
+MAX_SKILL_CHARACTERS = 20000
 
 # =============================================================================
 # File Patterns (Regex)
@@ -185,6 +190,7 @@ SKILL_PROHIBITED_FIELDS: FrozenSet[str] = frozenset({
     "license",
     "context7_library",
     "context7_trust_score",
+    "metadata",
 })
 
 # =============================================================================
