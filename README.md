@@ -21,7 +21,7 @@ multiple languages and frameworks. Built as a modular marketplace, you can insta
 
 ## Architecture
 
-Developer Kit is organized as a **modular marketplace** with 10 independent plugins (**92 skills, 43 agents, 36 commands**):
+Developer Kit is organized as a **modular marketplace** with 11 independent plugins (**93 skills, 43 agents, 46 commands**):
 
 ```
 plugins/
@@ -33,6 +33,7 @@ plugins/
 ├── developer-kit-aws/             # AWS CloudFormation/AWS Architecture
 ├── developer-kit-ai/              # Prompt Engineering/RAG/Chunking
 ├── developer-kit-devops/          # Docker/GitHub Actions
+├── developer-kit-jira/            # Jira/Atlassian MCP Server integration
 ├── developer-kit-project-management/  # LRA workflow/Meetings
 └── github-spec-kit/               # GitHub specification integration
 ```
@@ -169,6 +170,23 @@ DevOps and containerization expertise.
 
 ---
 
+### developer-kit-jira
+
+Jira integration with Atlassian MCP Server for automated SDLC workflows. Synchronizes Git operations with Jira ticket management.
+
+**Commands**:
+
+- **Ticket Management**: `/devkit.jira.ticket.view`, `/devkit.jira.ticket.comment`, `/devkit.jira.ticket.transition`
+- **Workflow**: `/devkit.jira.workflow.start`, `/devkit.jira.workflow.commit`, `/devkit.jira.workflow.push`,
+  `/devkit.jira.workflow.pr-create`, `/devkit.jira.workflow.pr-ready`, `/devkit.jira.workflow.pr-merge`,
+  `/devkit.jira.workflow.status`
+
+**Skills**: `jira-mcp-workflow`
+
+**Setup**: Requires Atlassian MCP Server configuration in `claude_mcp_settings.json`
+
+---
+
 ### developer-kit-project-management
 
 Project management and workflow commands.
@@ -205,6 +223,7 @@ GitHub specification integration and verification.
 | PHP/WordPress      | `developer-kit-php`        | 3 Skills, 5 Agents      |
 | AWS CloudFormation | `developer-kit-aws`        | 16 Skills, 3 Agents     |
 | AI/ML              | `developer-kit-ai`         | 3 Skills, 1 Agent, 1 Command |
+| Jira/Atlassian     | `developer-kit-jira`       | 1 Skill, 10 Commands    |
 
 ---
 
