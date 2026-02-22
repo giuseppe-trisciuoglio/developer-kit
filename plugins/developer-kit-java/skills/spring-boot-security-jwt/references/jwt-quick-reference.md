@@ -1,6 +1,6 @@
 # JWT Quick Reference Card
 
-Quick reference for common JWT patterns in Spring Boot 3.5.x applications.
+Quick reference for common JWT patterns in Spring Boot 3.4.x applications.
 
 ## Dependencies
 
@@ -40,10 +40,10 @@ public class JwtService {
 
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(Keys.hmacShaKeyFor(secret.getBytes()), SignatureAlgorithm.HS256)
+                .subject(userDetails.getUsername())
+                .issuedAt(Date.from(Instant.now()))
+                .expiration(Date.from(Instant.now().plusMillis(expiration)))
+                .signWith(Keys.hmacShaKeyFor(secret.getBytes()), Jwts.SIG.HS256)
                 .compact();
     }
 
@@ -65,11 +65,11 @@ public class JwtService {
     }
 
     private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
+        Claims claims = Jwts.parser()
+                .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
         return claimsResolver.apply(claims);
     }
 }
@@ -217,14 +217,14 @@ spring:
 ```java
 public String generateTokenWithClaims(UserDetails userDetails, Map<String, Object> claims) {
     return Jwts.builder()
-            .setClaims(claims)
-            .setSubject(userDetails.getUsername())
-            .setIssuedAt(new Date())
-            .setExpiration(new Date(System.currentTimeMillis() + expiration))
+            .claims(claims)
+            .subject(userDetails.getUsername())
+            .issuedAt(Date.from(Instant.now()))
+            .expiration(Date.from(Instant.now().plusMillis(expiration)))
             .claim("roles", userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList()))
-            .signWith(Keys.hmacShaKeyFor(secret.getBytes()), SignatureAlgorithm.HS256)
+            .signWith(Keys.hmacShaKeyFor(secret.getBytes()), Jwts.SIG.HS256)
             .compact();
 }
 ```
@@ -233,11 +233,11 @@ public String generateTokenWithClaims(UserDetails userDetails, Map<String, Objec
 ```java
 public boolean isTokenValidWithSkew(String token, UserDetails userDetails) {
     try {
-        Jwts.parserBuilder()
-            .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
-            .setAllowedClockSkewSeconds(60) // 1 minute tolerance
+        Jwts.parser()
+            .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))
+            .clockSkewSeconds(60) // 1 minute tolerance
             .build()
-            .parseClaimsJws(token);
+            .parseSignedClaims(token);
         return true;
     } catch (JwtException e) {
         return false;
@@ -248,11 +248,11 @@ public boolean isTokenValidWithSkew(String token, UserDetails userDetails) {
 ### Extract All Claims
 ```java
 public Claims extractAllClaims(String token) {
-    return Jwts.parserBuilder()
-            .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
+    return Jwts.parser()
+            .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))
             .build()
-            .parseClaimsJws(token)
-            .getBody();
+            .parseSignedClaims(token)
+            .getPayload();
 }
 ```
 
@@ -261,7 +261,7 @@ public Claims extractAllClaims(String token) {
 ### 1. Use Strong Keys
 ```java
 // Generate secure key
-SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+SecretKey key = Keys.secretKeyFor(Jwts.SIG.HS256);
 String base64Key = Encoders.BASE64.encode(key.getEncoded());
 ```
 
@@ -278,12 +278,12 @@ long refreshTokenExpiration = 7 * 24 * 60 * 60 * 1000; // 7 days
 ```java
 public boolean validateAllClaims(String token) {
     try {
-        Jwts.parserBuilder()
-            .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
+        Jwts.parser()
+            .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))
             .requireIssuer("your-app-name")
             .requireAudience("your-app-users")
             .build()
-            .parseClaimsJws(token);
+            .parseSignedClaims(token);
         return true;
     } catch (JwtException e) {
         return false;
@@ -389,10 +389,10 @@ public class JwtExceptionHandler {
 **Error**: JWT is expired or not yet valid
 **Solution**: Add clock skew tolerance.
 ```java
-Jwts.parserBuilder()
-    .setAllowedClockSkewSeconds(60)
+Jwts.parser()
+    .clockSkewSeconds(60)
     .build()
-    .parseClaimsJws(token);
+    .parseSignedClaims(token);
 ```
 
 ### Issue: CORS Issues

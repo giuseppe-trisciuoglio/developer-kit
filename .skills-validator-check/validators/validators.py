@@ -494,6 +494,10 @@ class SkillValidator(BaseValidator):
         # Validate version if present
         if "version" in frontmatter:
             self._validate_version(frontmatter["version"], result)
+            # Validate version matches marketplace version
+            self._validate_version_matches_marketplace(
+                frontmatter["version"], file_path, result
+            )
 
         # Validate allowed-tools if present
         if "allowed-tools" in frontmatter:
@@ -797,6 +801,72 @@ class SkillValidator(BaseValidator):
                     message=f"Non-standard file at skill root: '{name}'",
                     suggestion=f"Move '{name}' into scripts/, references/, or assets/"
                 )
+
+    def _validate_version_matches_marketplace(
+        self,
+        skill_version: Any,
+        file_path: Path,
+        result: ValidationResult
+    ) -> None:
+        """Validate that skill version matches marketplace.json version.
+
+        The skill version must match the main version in marketplace.json.
+        """
+        # First validate the skill_version is a string
+        if not isinstance(skill_version, str):
+            return  # Already handled by _validate_version
+
+        # Find marketplace.json
+        marketplace_path = self._find_marketplace_json(file_path)
+        if not marketplace_path:
+            result.add_warning(
+                message="Cannot find marketplace.json for version alignment check",
+                field_name="version",
+                suggestion="Ensure marketplace.json exists in .claude-plugin/ directory at project root"
+            )
+            return
+
+        # Read marketplace version
+        marketplace_version = self._get_marketplace_version(marketplace_path)
+        if not marketplace_version:
+            result.add_warning(
+                message="Cannot read version from marketplace.json",
+                field_name="version",
+                suggestion="Ensure marketplace.json has a valid 'version' field"
+            )
+            return
+
+        # Compare versions
+        if skill_version != marketplace_version:
+            result.add_error(
+                message=f"Version mismatch: skill '{skill_version}' != marketplace '{marketplace_version}'",
+                field_name="version",
+                suggestion=f"Update skill version to match marketplace version '{marketplace_version}'"
+            )
+
+    def _find_marketplace_json(self, file_path: Path) -> Optional[Path]:
+        """Find marketplace.json by traversing up to project root."""
+        current = file_path
+        for _ in range(15):  # Allow deeper traversal for plugin-based skills
+            # Check for .claude-plugin/marketplace.json
+            marketplace = current / ".claude-plugin" / "marketplace.json"
+            if marketplace.exists():
+                return marketplace
+            parent = current.parent
+            if parent == current:
+                break
+            current = parent
+        return None
+
+    def _get_marketplace_version(self, marketplace_path: Path) -> Optional[str]:
+        """Read version from marketplace.json."""
+        try:
+            import json
+            with open(marketplace_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            return data.get('version')
+        except (json.JSONDecodeError, KeyError, FileNotFoundError, IOError):
+            return None
 
 
 class AgentValidator(BaseValidator):

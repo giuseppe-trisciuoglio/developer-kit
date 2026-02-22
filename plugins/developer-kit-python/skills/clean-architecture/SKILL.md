@@ -4,7 +4,7 @@ description: Provides implementation patterns for Clean Architecture, Hexagonal 
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 category: backend
 tags: [clean-architecture, hexagonal-architecture, ddd, domain-driven-design, python, fastapi, flask, ports-adapters]
-version: 1.0.0
+version: 2.2.0
 ---
 
 # Clean Architecture, DDD & Hexagonal Architecture for Python

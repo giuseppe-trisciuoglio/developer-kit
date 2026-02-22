@@ -7,12 +7,9 @@ This document provides quick lookup for the most commonly used model IDs in Amaz
 ### Claude (Anthropic)
 | Model | Model ID | Description | Use Case |
 |-------|----------|-------------|----------|
-| Claude 4.5 Sonnet | `anthropic.claude-sonnet-4-5-20250929-v1:0` | Latest high-performance model | Complex reasoning, coding, creative tasks |
-| Claude 4.5 Haiku | `anthropic.claude-haiku-4-5-20251001-v1:0` | Latest fast model | Real-time applications, chatbots |
-| Claude 3.7 Sonnet | `anthropic.claude-3-7-sonnet-20250219-v1:0` | Most advanced reasoning | High-stakes decisions, complex analysis |
-| Claude Opus 4.1 | `anthropic.claude-opus-4-1-20250805-v1:0` | Most powerful creative | Advanced creative tasks |
-| Claude 3.5 Sonnet v2 | `anthropic.claude-3-5-sonnet-20241022-v2:0` | High-performance model | General use, coding |
-| Claude 3.5 Haiku | `anthropic.claude-3-5-haiku-20241022-v1:0` | Fast and affordable | Real-time applications |
+| Claude 3.5 Sonnet | `anthropic.claude-3-5-sonnet-20241022-v2:0` | High-performance model | Complex reasoning, coding, creative tasks |
+| Claude 3.5 Haiku | `anthropic.claude-3-5-haiku-20241022-v1:0` | Fast and affordable | Real-time applications, chatbots |
+| Claude 3 Opus | `anthropic.claude-3-opus-20240229-v1:0` | Most powerful model | Advanced reasoning, complex analysis |
 
 ### Llama (Meta)
 | Model | Model ID | Description | Use Case |
@@ -77,45 +74,45 @@ This document provides quick lookup for the most commonly used model IDs in Amaz
 ## Selection Guide
 
 ### By Speed
-1. **Fastest**: Llama 3.2 1B, Claude 4.5 Haiku, Titan Lite
+1. **Fastest**: Llama 3.2 1B, Claude 3.5 Haiku, Titan Lite
 2. **Fast**: Mistral 7B, Llama 3.2 3B
 3. **Medium**: Claude 3.5 Sonnet, Llama 3.2 11B
-4. **Slow**: Claude 4.5 Sonnet, Llama 3.3 70B
+4. **Slow**: Claude 3 Opus, Llama 3.3 70B
 
 ### By Quality
-1. **Highest**: Claude 4.5 Sonnet, Claude 3.7 Sonnet, Claude Opus 4.1
-2. **High**: Claude 3.5 Sonnet, Llama 3.3 70B
+1. **Highest**: Claude 3 Opus, Claude 3.5 Sonnet
+2. **High**: Llama 3.3 70B
 3. **Medium**: Mistral Large, Llama 3.2 11B
 4. **Basic**: Mistral 7B, Llama 3.2 3B
 
 ### By Cost
-1. **Most Affordable**: Claude 4.5 Haiku, Llama 3.2 1B
+1. **Most Affordable**: Claude 3.5 Haiku, Llama 3.2 1B
 2. **Affordable**: Mistral 7B, Titan Lite
-3. **Medium**: Claude 3.5 Haiku, Llama 3.2 3B
-4. **Expensive**: Claude 4.5 Sonnet, Llama 3.3 70B
+3. **Medium**: Llama 3.2 3B
+4. **Expensive**: Claude 3.5 Sonnet, Claude 3 Opus, Llama 3.3 70B
 
 ## Common Patterns
 
 ### Default Model Selection
 ```java
 // For most applications
-String DEFAULT_MODEL = "anthropic.claude-sonnet-4-5-20250929-v1:0";
+String DEFAULT_MODEL = "anthropic.claude-3-5-sonnet-20241022-v2:0";
 
 // For real-time applications
-String FAST_MODEL = "anthropic.claude-haiku-4-5-20251001-v1:0";
+String FAST_MODEL = "anthropic.claude-3-5-haiku-20241022-v1:0";
 
 // For budget-sensitive applications
 String CHEAP_MODEL = "amazon.titan-text-lite-v1";
 
 // For complex reasoning
-String POWERFUL_MODEL = "anthropic.claude-3-7-sonnet-20250219-v1:0";
+String POWERFUL_MODEL = "anthropic.claude-3-opus-20240229-v1:0";
 ```
 
 ### Model Fallback Chain
 ```java
 private static final String[] MODEL_CHAIN = {
-    "anthropic.claude-sonnet-4-5-20250929-v1:0",  // Primary
-    "anthropic.claude-haiku-4-5-20251001-v1:0",  // Fast fallback
+    "anthropic.claude-3-5-sonnet-20241022-v2:0",  // Primary
+    "anthropic.claude-3-5-haiku-20241022-v1:0",  // Fast fallback
     "amazon.titan-text-lite-v1"                 // Cheap fallback
 };
 ```

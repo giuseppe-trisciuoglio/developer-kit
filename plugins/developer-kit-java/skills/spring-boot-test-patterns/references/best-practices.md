@@ -18,19 +18,18 @@ public class UserControllerTest { }
 public class UserServiceFullIntegrationTest { }
 ```
 
-## Use @ServiceConnection for Container Management (Spring Boot 3.5+)
+## Use @ServiceConnection for Container Management (Spring Boot 3.1+)
 
 Prefer `@ServiceConnection` over manual `@DynamicPropertySource` for cleaner code:
 
 ```java
-// Good - Spring Boot 3.5+
-@TestConfiguration
-public class TestConfig {
-    @Bean
+// Good - Spring Boot 3.1+
+@SpringBootTest
+@Testcontainers
+class MyIntegrationTests {
+    @Container
     @ServiceConnection
-    public PostgreSQLContainer<?> postgres() {
-        return new PostgreSQLContainer<>(DockerImageName.parse("postgres:16-alpine"));
-    }
+    static PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:16");
 }
 
 // Avoid - Manual property registration
@@ -134,7 +133,7 @@ Mock external services but use real databases for integration tests:
 @TestContainerConfig.class
 public class OrderServiceTest {
 
-    @MockBean
+    @MockitoBean
     private EmailService emailService;
 
     @Autowired

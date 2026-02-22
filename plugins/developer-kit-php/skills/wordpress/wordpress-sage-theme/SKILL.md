@@ -4,7 +4,7 @@ description: 'Provides WordPress theme development patterns using Sage (roots/sa
 allowed-tools: Read, Write, Bash, Glob, Grep
 category: frontend
 tags: [wordpress, sage, theme, blade, acf, bud, vite, php]
-version: 1.0.0
+version: 2.2.0
 ---
 
 # WordPress Sage Theme Development

@@ -1,6 +1,6 @@
 # JWT Complete Configuration Guide
 
-This guide consolidates all JWT configuration patterns for Spring Boot 3.5.x with Spring Security 6.x, covering JJWT library integration, Spring Security OAuth2 resource server configuration, and production-ready security settings.
+This guide consolidates all JWT configuration patterns for Spring Boot 3.4.x with Spring Security 6.4.x, covering JJWT library integration, Spring Security OAuth2 resource server configuration, and production-ready security settings.
 
 ## Table of Contents
 
@@ -276,16 +276,16 @@ public class JwtService {
         SecretKey signingKey = getCurrentSigningKey();
 
         return Jwts.builder()
-                .setClaims(extraClaims)
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .setIssuer(issuer)
-                .setId(UUID.randomUUID().toString())
+                .claims(extraClaims)
+                .subject(userDetails.getUsername())
+                .issuedAt(Date.from(Instant.now()))
+                .expiration(Date.from(Instant.now().plusMillis(expiration)))
+                .issuer(issuer)
+                .id(UUID.randomUUID().toString())
                 .claim("authorities", userDetails.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority)
                     .collect(Collectors.toList()))
-                .signWith(signingKey, SignatureAlgorithm.HS256)
+                .signWith(signingKey, Jwts.SIG.HS256)
                 .compact();
     }
 
@@ -314,19 +314,19 @@ public class JwtService {
     private Claims extractAllClaims(String token) {
         SecretKey signingKey = getCurrentSigningKey();
 
-        return Jwts.parserBuilder()
-                .setSigningKey(signingKey)
+        return Jwts.parser()
+                .verifyWith(signingKey)
                 .requireIssuer(issuer)
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
     private SecretKey getCurrentSigningKey() {
         return secretKeyRepository.findCurrentKey()
                 .map(SecretKeyEntity::getKey)
                 .orElseGet(() -> {
-                    SecretKey newKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+                    SecretKey newKey = Keys.secretKeyFor(io.jsonwebtoken.Jwts.SIG.HS256);
                     secretKeyRepository.save(new SecretKeyEntity(newKey, LocalDateTime.now()));
                     return newKey;
                 });
@@ -360,7 +360,7 @@ public class JwtKeyRotationService {
         }
 
         try {
-            SecretKey newKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+            SecretKey newKey = Keys.secretKeyFor(io.jsonwebtoken.Jwts.SIG.HS256);
             SecretKeyEntity keyEntity = new SecretKeyEntity(newKey, LocalDateTime.now());
 
             keyRepository.save(keyEntity);
@@ -621,11 +621,11 @@ public class OptimizedJwtService {
     public Claims parseToken(String token) {
         SecretKey key = getCurrentSigningKey();
 
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
+        return Jwts.parser()
+                .verifyWith(key)
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
     @Cacheable(value = "signing-keys", key = "'current'")
@@ -686,19 +686,19 @@ spring:
 2. **Clock Skew Issues**
    ```java
    // Add clock skew tolerance
-   Jwts.parserBuilder()
-       .setAllowedClockSkewSeconds(60) // 60 seconds tolerance
+   Jwts.parser()
+       .clockSkewSeconds(60) // 60 seconds tolerance
        .build()
-       .parseClaimsJws(token);
+       .parseSignedClaims(token);
    ```
 
 3. **Issuer Mismatch**
    ```java
    // Always set and validate issuer
-   Jwts.parserBuilder()
+   Jwts.parser()
        .requireIssuer("your-app-name")
        .build()
-       .parseClaimsJws(token);
+       .parseSignedClaims(token);
    ```
 
 ### Debug Configuration

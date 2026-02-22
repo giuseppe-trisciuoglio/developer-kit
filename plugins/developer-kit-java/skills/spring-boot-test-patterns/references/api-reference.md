@@ -16,7 +16,7 @@
 - `@AutoConfigureTestDatabase`: Control test database configuration
 
 **Testcontainer Annotations:**
-- `@ServiceConnection`: Wire Testcontainer to Spring Boot test (Spring Boot 3.5+)
+- `@ServiceConnection`: Wire Testcontainer to Spring Boot test (Spring Boot 3.1+)
 - `@DynamicPropertySource`: Register dynamic properties at runtime
 - `@Container`: Mark field as Testcontainer (requires @Testcontainers)
 - `@Testcontainers`: Enable Testcontainers lifecycle management
@@ -69,6 +69,6 @@
 | `@DataJpaTest` | JPA components only | Repository and entity tests |
 | `@WebMvcTest` | MVC layer only | Controller tests |
 | `@WebFluxTest` | WebFlux layer only | Reactive controller tests |
-| `@ServiceConnection` | Container integration | Spring Boot 3.5+ with Testcontainers |
+| `@ServiceConnection` | Container integration | Spring Boot 3.1+ with Testcontainers |
 | `@DynamicPropertySource` | Dynamic properties | Pre-3.5 or custom configuration |
 | `@DirtiesContext` | Context cleanup | When absolutely necessary |

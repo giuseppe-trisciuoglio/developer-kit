@@ -4,7 +4,7 @@ description: Provides patterns to build Retrieval-Augmented Generation (RAG) sys
 allowed-tools: Read, Write, Bash
 category: ai-engineering
 tags: [rag, vector-databases, embeddings, retrieval, semantic-search]
-version: 1.0.0
+version: 2.2.0
 ---
 
 # RAG Implementation

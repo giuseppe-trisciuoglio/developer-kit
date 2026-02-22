@@ -3,7 +3,7 @@ name: aws-sdk-java-v2-dynamodb
 description: Provides Amazon DynamoDB patterns using AWS SDK for Java 2.x. Use when creating, querying, scanning, or performing CRUD operations on DynamoDB tables, working with indexes, batch operations, transactions, or integrating with Spring Boot applications.
 category: aws
 tags: [aws, dynamodb, java, sdk, nosql, database]
-version: 1.1.0
+version: 2.2.0
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
@@ -343,6 +343,23 @@ class DynamoDbIntegrationTest {
 
 For detailed testing strategies, see [Testing Strategies](references/testing-strategies.md).
 
+## Examples
+
+### Put and Get Item
+
+```java
+// Input: Save a user item to DynamoDB
+enhancedClient.table("users", TableSchema.fromBean(User.class))
+    .putItem(new User("user-123", "John Doe", "john@example.com"));
+
+// Output: Retrieve the saved item
+User user = enhancedClient.table("users", TableSchema.fromBean(User.class))
+    .getItem(Key.builder().partitionValue("user-123").build());
+// user.getName() -> "John Doe"
+```
+
+For advanced examples, see [Advanced Operations](references/advanced-operations.md).
+
 ## Best Practices
 
 1. **Use Enhanced Client**: Provides type-safe operations with less boilerplate
@@ -356,115 +373,9 @@ For detailed testing strategies, see [Testing Strategies](references/testing-str
 9. **Handle conditional writes**: Prevent race conditions
 10. **Use proper error handling**: Handle exceptions like `ProvisionedThroughputExceeded`
 
-## Examples
+## Additional Patterns
 
-### Example 1: Complete CRUD Repository
-
-```java
-@Repository
-public class UserRepository {
-
-    private final DynamoDbTable<User> userTable;
-
-    public UserRepository(DynamoDbEnhancedClient enhancedClient) {
-        this.userTable = enhancedClient.table("Users",
-            TableSchema.fromBean(User.class));
-    }
-
-    public User save(User user) {
-        userTable.putItem(user);
-        return user;
-    }
-
-    public Optional<User> findById(String userId) {
-        Key key = Key.builder().partitionValue(userId).build();
-        return Optional.ofNullable(userTable.getItem(key));
-    }
-
-    public List<User> findByEmail(String email) {
-        Expression filter = Expression.builder()
-            .expression("email = :email")
-            .putExpressionValue(":email",
-                AttributeValue.builder().s(email).build())
-            .build();
-
-        return userTable.scan(r -> r.filterExpression(filter))
-            .items().stream()
-            .collect(Collectors.toList());
-    }
-
-    public void deleteById(String userId) {
-        Key key = Key.builder().partitionValue(userId).build();
-        userTable.deleteItem(key);
-    }
-}
-```
-
-### Example 2: Conditional Write with Retry
-
-```java
-public boolean createIfNotExists(User user) {
-    PutItemEnhancedRequest<User> request = PutItemEnhancedRequest.builder(User.class)
-        .item(user)
-        .conditionExpression("attribute_not_exists(userId)")
-        .build();
-
-    try {
-        userTable.putItemWithRequest(request);
-        return true;
-    } catch (ConditionalCheckFailedException e) {
-        return false; // Item already exists
-    }
-}
-```
-
-### Example 3: Transaction Write
-
-```java
-public void placeOrder(Order order, Customer customer) {
-    enhancedClient.transactWriteItems(r -> r
-        .addPutItem(orderTable, order)
-        .addUpdateItem(customerTable,
-            UpdateItem.builder()
-                .key(Key.builder().partitionValue(customer.getId()).build())
-                .updateExpression("ADD orderCount :one")
-                .expressionValues(Map.of(":one",
-                    AttributeValue.builder().n("1").build()))
-                .build()));
-}
-```
-
-## Common Patterns
-
-### Conditional Operations
-```java
-PutItemEnhancedRequest request = PutItemEnhancedRequest.builder(table)
-    .item(customer)
-    .conditionExpression("attribute_not_exists(customerId)")
-    .build();
-
-table.putItemWithRequestBuilder(request);
-```
-
-### Pagination
-```java
-ScanEnhancedRequest request = ScanEnhancedRequest.builder()
-    .limit(100)
-    .build();
-
-PaginatedScanIterable<Customer> results = table.scan(request);
-results.stream().forEach(page -> {
-    // Process each page
-});
-```
-
-## Performance Considerations
-
-- Monitor read/write capacity units
-- Implement exponential backoff for retries
-- Use proper pagination for large datasets
-- Consider eventual consistency for reads
-- Use `ReturnConsumedCapacity` to monitor capacity usage
+For complete CRUD repositories, conditional writes, transaction examples, pagination, and performance optimization patterns, see [Advanced Operations Reference](references/advanced-operations.md).
 
 ## Related Skills
 

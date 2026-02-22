@@ -3,7 +3,7 @@ name: langchain4j-spring-boot-integration
 description: Provides integration patterns for LangChain4j with Spring Boot. Handles auto-configuration, dependency injection, and Spring ecosystem integration. Use when embedding LangChain4j into Spring Boot applications.
 category: ai-development
 tags: [langchain4j, spring-boot, ai, llm, rag, chatbot, integration, configuration, java]
-version: 1.1.0
+version: 2.2.0
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 

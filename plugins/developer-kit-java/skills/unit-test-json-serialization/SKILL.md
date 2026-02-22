@@ -3,7 +3,7 @@ name: unit-test-json-serialization
 description: Provides patterns for unit testing JSON serialization/deserialization with Jackson and @JsonTest. Use when validating JSON mapping, custom serializers, and date format handling.
 category: testing
 tags: [junit-5, json-test, jackson, serialization, deserialization]
-version: 1.0.1
+version: 2.2.0
 allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 

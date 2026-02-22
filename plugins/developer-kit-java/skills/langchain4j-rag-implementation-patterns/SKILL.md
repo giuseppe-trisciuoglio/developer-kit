@@ -4,7 +4,7 @@ description: Provides Retrieval-Augmented Generation (RAG) implementation patter
 allowed-tools: Read, Write, Bash
 category: ai-development
 tags: [langchain4j, rag, retrieval-augmented-generation, embedding, vector-search, document-ingestion, java]
-version: 1.1.0
+version: 2.2.0
 ---
 
 # LangChain4j RAG Implementation Patterns

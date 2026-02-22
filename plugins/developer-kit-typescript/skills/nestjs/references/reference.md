@@ -732,173 +732,105 @@ export class AppModule {}
 
 ## Database Integration
 
-### TypeORM Setup
+> **Note**: For database integration patterns, see the dedicated ORM references:
+> - **[drizzle-reference.md](drizzle-reference.md)** - Drizzle ORM (recommended for this skill)
+> - **[typeorm-reference.md](typeorm-reference.md)** - TypeORM patterns
+
+### Dependency Injection for Database Services
 
 ```typescript
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+@Injectable()
+export class CatsService {
+  constructor(
+    private readonly dogsService: DogsService,
+    private readonly configService: ConfigService,
+  ) {}
+
+  async findAll() {
+    const config = this.configService.get('database');
+    return this.catsRepository.find();
+  }
+}
+```
+
+### Custom Provider with Token
+
+```typescript
+const CONNECTION = 'DATABASE_CONNECTION';
 
 @Module({
- imports: [
- TypeOrmModule.forRoot({
- type: 'postgres',
- host: 'localhost',
- port: 5432,
- username: 'postgres',
- password: 'password',
- database: 'nest_db',
- entities: [__dirname + '/**/*.entity{.ts,.js}'],
- synchronize: true, // Don't use in production
- logging: true,
- }),
- ],
+  providers: [
+    {
+      provide: CONNECTION,
+      useValue: {
+        host: 'localhost',
+        port: 5432,
+        database: 'test',
+      },
+    },
+  ],
+})
+export class DatabaseModule {}
+
+// Inject custom provider
+@Injectable()
+export class CatsRepository {
+  constructor(@Inject(CONNECTION) private connection: any) {}
+}
+```
+
+### Factory Provider
+
+```typescript
+@Module({
+  providers: [
+    {
+      provide: 'DATABASE_CONNECTION',
+      useFactory: async (configService: ConfigService) => {
+        const config = configService.get('database');
+        const connection = await createConnection(config);
+        return connection;
+      },
+      inject: [ConfigService],
+    },
+  ],
+})
+export class DatabaseModule {}
+```
+
+### Async Provider
+
+```typescript
+@Module({
+  providers: [
+    {
+      provide: 'ASYNC_CONNECTION',
+      useFactory: async () => {
+        const connection = await createAsyncConnection();
+        return connection;
+      },
+    },
+  ],
 })
 export class AppModule {}
 ```
 
-### Entity Definition
+### Class Provider with Conditional Logic
 
 ```typescript
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
-import { Photo } from '../photos/photo.entity';
-
-@Entity('users')
-export class User {
- @PrimaryGeneratedColumn('uuid')
- id: string;
-
- @Column({ unique: true })
- email: string;
-
- @Column()
- firstName: string;
-
- @Column()
- lastName: string;
-
- @Column({ default: true })
- isActive: boolean;
-
- @CreateDateColumn()
- createdAt: Date;
-
- @UpdateDateColumn()
- updatedAt: Date;
-
- @OneToMany(() => Photo, photo => photo.user)
- photos: Photo[];
-}
-```
-
-### Repository Pattern
-
-```typescript
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from './user.entity';
-
-@Injectable()
-export class UsersService {
- constructor(
- @InjectRepository(User)
- private usersRepository: Repository,
- ) {}
-
- async findAll(): Promise {
- return this.usersRepository.find({ relations: ['photos'] });
- }
-
- async findOne(id: string): Promise {
- const user = await this.usersRepository.findOne({
- where: { id },
- relations: ['photos'],
- });
- if (!user) throw new NotFoundException('User not found');
- return user;
- }
-
- async create(userData: CreateUserDto): Promise {
- const user = this.usersRepository.create(userData);
- return this.usersRepository.save(user);
- }
-
- async update(id: string, updateData: UpdateUserDto): Promise {
- await this.usersRepository.update(id, updateData);
- return this.findOne(id);
- }
-
- async remove(id: string): Promise {
- const result = await this.usersRepository.delete(id);
- if (result.affected === 0) {
- throw new NotFoundException('User not found');
- }
- }
-}
+const configServiceProvider = {
+  provide: ConfigService,
+  useClass: process.env.NODE_ENV === 'development'
+    ? DevelopmentConfigService
+    : ProductionConfigService,
+};
 
 @Module({
- imports: [TypeOrmModule.forFeature([User])],
- providers: [UsersService],
- controllers: [UsersController],
- exports: [UsersService],
+  providers: [configServiceProvider],
 })
-export class UsersModule {}
+export class AppModule {}
 ```
 
-### Database Transactions
-
-```typescript
-import { DataSource } from 'typeorm';
-
-@Injectable()
-export class UsersService {
- constructor(
- @InjectRepository(User) private usersRepository: Repository,
- private dataSource: DataSource,
- ) {}
-
- async createUserWithPhotos(userData: CreateUserDto, photos: CreatePhotoDto[]) {
- const queryRunner = this.dataSource.createQueryRunner();
- await queryRunner.connect();
- await queryRunner.startTransaction();
-
- try {
- const user = await queryRunner.manager.save(User, userData);
-
- for (const photoData of photos) {
- await queryRunner.manager.save(Photo, { ...photoData, user });
- }
-
- await queryRunner.commitTransaction();
- return user;
- } catch (err) {
- await queryRunner.rollbackTransaction();
- throw err;
- } finally {
- await queryRunner.release();
- }
- }
-}
-```
-
-### Async Configuration
-
-```typescript
-TypeOrmModule.forRootAsync({
- imports: [ConfigModule],
- useFactory: (configService: ConfigService) => ({
- type: 'postgres',
- host: configService.get('DB_HOST'),
- port: configService.get('DB_PORT'),
- username: configService.get('DB_USERNAME'),
- password: configService.get('DB_PASSWORD'),
- database: configService.get('DB_NAME'),
- entities: [__dirname + '/**/*.entity{.ts,.js}'],
- synchronize: configService.get('DB_SYNC') === 'true',
- }),
- inject: [ConfigService],
-})
-```
 
 ## Testing
 
@@ -1030,44 +962,9 @@ describe('CatsController (e2e)', () => {
 
 ### Testing with Repository Mocks
 
-```typescript
-describe('UsersService', () => {
- let service: UsersService;
- let repository: Repository;
+For testing with TypeORM repository mocks, see [typeorm-reference.md](typeorm-reference.md).
 
- const mockRepository = {
- find: jest.fn(),
- findOne: jest.fn(),
- create: jest.fn(),
- save: jest.fn(),
- update: jest.fn(),
- delete: jest.fn(),
- };
-
- beforeEach(async () => {
- const module: TestingModule = await Test.createTestingModule({
- providers: [
- UsersService,
- {
- provide: getRepositoryToken(User),
- useValue: mockRepository,
- },
- ],
- }).compile();
-
- service = module.get(UsersService);
- repository = module.get>(getRepositoryToken(User));
- });
-
- it('should find all users', async () => {
- const users = [{ id: '1', email: 'test@example.com' }];
- mockRepository.find.mockResolvedValue(users);
-
- expect(await service.findAll()).toEqual(users);
- expect(repository.find).toHaveBeenCalled();
- });
-});
-```
+For Drizzle ORM testing patterns, see [drizzle-reference.md](drizzle-reference.md).
 
 ## Microservices
 

@@ -4,7 +4,7 @@ description: Provides implementation patterns for Clean Architecture, Hexagonal 
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 category: backend
 tags: [clean-architecture, hexagonal-architecture, ddd, domain-driven-design, spring-boot, java, ports-adapters, layered-architecture]
-version: 1.0.0
+version: 2.2.0
 ---
 
 # Clean Architecture, Hexagonal Architecture & DDD for Spring Boot

@@ -598,6 +598,211 @@ Example content without code blocks.
                             if "Non-standard" in i.message]
         assert len(structure_errors) == 3
 
+    # ---- Version alignment tests ----
+
+    def test_skill_version_matches_marketplace_passes(
+        self, validator, tmp_path
+    ):
+        """Test that skill version matching marketplace version passes."""
+        # Create marketplace.json
+        marketplace_dir = tmp_path / ".claude-plugin"
+        marketplace_dir.mkdir()
+        marketplace_file = marketplace_dir / "marketplace.json"
+        marketplace_file.write_text('''{
+  "name": "test-marketplace",
+  "version": "2.1.0",
+  "plugins": []
+}''')
+
+        # Create skill with matching version
+        content = """---
+name: test-skill
+description: Some description when using this skill
+allowed-tools: Read
+version: 2.1.0
+---
+
+# Test Skill
+
+## Overview
+
+Overview content.
+
+## When to Use
+
+Use this skill.
+
+## Instructions
+
+Step 1: Do something.
+
+## Examples
+
+Example content.
+"""
+        skill_dir = tmp_path / "skills" / "test-skill"
+        skill_dir.mkdir(parents=True)
+        skill_file = skill_dir / "SKILL.md"
+        skill_file.write_text(content)
+
+        result = validator.validate(skill_file)
+        version_errors = [i for i in result.issues
+                         if i.field_name == "version" and i.severity == Severity.ERROR]
+        assert len(version_errors) == 0, f"Unexpected version errors: {version_errors}"
+
+    def test_skill_version_mismatch_marketplace_fails(
+        self, validator, tmp_path
+    ):
+        """Test that skill version not matching marketplace version fails."""
+        # Create marketplace.json
+        marketplace_dir = tmp_path / ".claude-plugin"
+        marketplace_dir.mkdir()
+        marketplace_file = marketplace_dir / "marketplace.json"
+        marketplace_file.write_text('''{
+  "name": "test-marketplace",
+  "version": "2.1.0",
+  "plugins": []
+}''')
+
+        # Create skill with mismatched version
+        content = """---
+name: test-skill
+description: Some description when using this skill
+allowed-tools: Read
+version: 1.0.0
+---
+
+# Test Skill
+
+## Overview
+
+Overview content.
+
+## When to Use
+
+Use this skill.
+
+## Instructions
+
+Step 1: Do something.
+
+## Examples
+
+Example content.
+"""
+        skill_dir = tmp_path / "skills" / "test-skill"
+        skill_dir.mkdir(parents=True)
+        skill_file = skill_dir / "SKILL.md"
+        skill_file.write_text(content)
+
+        result = validator.validate(skill_file)
+        version_errors = [i for i in result.issues
+                         if i.field_name == "version" and i.severity == Severity.ERROR]
+        assert len(version_errors) > 0
+        assert any("Version mismatch" in i.message for i in version_errors)
+        assert any("2.1.0" in i.suggestion for i in version_errors)
+
+    def test_skill_version_matches_marketplace_plugin_path(
+        self, validator, tmp_path
+    ):
+        """Test that skill in plugin/ subdirectory finds marketplace.json."""
+        # Create marketplace.json at root
+        marketplace_dir = tmp_path / ".claude-plugin"
+        marketplace_dir.mkdir()
+        marketplace_file = marketplace_dir / "marketplace.json"
+        marketplace_file.write_text('''{
+  "name": "test-marketplace",
+  "version": "2.1.0",
+  "plugins": []
+}''')
+
+        # Create plugin skill with matching version
+        content = """---
+name: test-skill
+description: Some description when using this skill
+allowed-tools: Read
+version: 2.1.0
+---
+
+# Test Skill
+
+## Overview
+
+Overview content.
+
+## When to Use
+
+Use this skill.
+
+## Instructions
+
+Step 1: Do something.
+
+## Examples
+
+Example content.
+"""
+        skill_dir = tmp_path / "plugins" / "test-plugin" / "skills" / "test-skill"
+        skill_dir.mkdir(parents=True)
+        skill_file = skill_dir / "SKILL.md"
+        skill_file.write_text(content)
+
+        result = validator.validate(skill_file)
+        version_errors = [i for i in result.issues
+                         if i.field_name == "version" and i.severity == Severity.ERROR]
+        assert len(version_errors) == 0, f"Unexpected version errors: {version_errors}"
+
+    def test_skill_version_no_marketplace_warns(
+        self, validator, temp_skill_file
+    ):
+        """Test that missing marketplace.json generates a warning."""
+        content = """---
+name: test-skill
+description: Some description when using this skill
+allowed-tools: Read
+version: 2.1.0
+---
+
+# Test Skill
+
+## Overview
+
+Overview content.
+
+## When to Use
+
+Use this skill.
+
+## Instructions
+
+Step 1: Do something.
+
+## Examples
+
+Example content.
+"""
+        skill_file = temp_skill_file(content)
+        result = validator.validate(skill_file)
+
+        # Should have warning about missing marketplace.json
+        version_warnings = [i for i in result.issues
+                           if i.field_name == "version" and i.severity == Severity.WARNING]
+        assert any("marketplace.json" in i.message for i in version_warnings)
+
+    def test_skill_version_no_version_field_skips_check(
+        self, validator, temp_skill_file, valid_skill_content
+    ):
+        """Test that skills without version field skip the marketplace check."""
+        # Remove version from valid_skill_content
+        content = valid_skill_content.replace("version: 1.0.0\n", "")
+        skill_file = temp_skill_file(content)
+        result = validator.validate(skill_file)
+
+        # Should not have version mismatch errors
+        version_errors = [i for i in result.issues
+                         if "Version mismatch" in i.message]
+        assert len(version_errors) == 0
+
 
 class TestAgentValidator:
     """Tests for AgentValidator."""

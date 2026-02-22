@@ -490,10 +490,10 @@ class JwtSecurityTest {
     void shouldRejectTokenWithWrongSignature() throws Exception {
         // Given - Create token with different secret
         String maliciousToken = Jwts.builder()
-                .setSubject("user@example.com")
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 900000))
-                .signWith(Keys.secretKeyFor(SignatureAlgorithm.HS256))
+                .subject("user@example.com")
+                .issuedAt(Date.from(Instant.now()))
+                .expiration(Date.from(Instant.now().plusMillis(900000)))
+                .signWith(Keys.secretKeyFor(Jwts.SIG.HS256))
                 .compact();
 
         // When & Then
@@ -506,10 +506,10 @@ class JwtSecurityTest {
     void shouldRejectExpiredToken() throws Exception {
         // Given - Create expired token
         String expiredToken = Jwts.builder()
-                .setSubject("user@example.com")
-                .setIssuedAt(new Date(System.currentTimeMillis() - 3600000))
-                .setExpiration(new Date(System.currentTimeMillis() - 1800000))
-                .signWith(Keys.secretKeyFor(SignatureAlgorithm.HS256))
+                .subject("user@example.com")
+                .issuedAt(Date.from(Instant.now().minusMillis(3600000)))
+                .expiration(Date.from(Instant.now().minusMillis(1800000)))
+                .signWith(Keys.secretKeyFor(Jwts.SIG.HS256))
                 .compact();
 
         // When & Then
@@ -521,12 +521,12 @@ class JwtSecurityTest {
     @Test
     void shouldRejectTokenWithInvalidClaims() throws Exception {
         // Given - Create token with invalid issuer
-        SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+        SecretKey key = Keys.secretKeyFor(Jwts.SIG.HS256);
         String tokenWithInvalidIssuer = Jwts.builder()
-                .setSubject("user@example.com")
-                .setIssuer("invalid-issuer")
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 900000))
+                .subject("user@example.com")
+                .issuer("invalid-issuer")
+                .issuedAt(Date.from(Instant.now()))
+                .expiration(Date.from(Instant.now().plusMillis(900000)))
                 .signWith(key)
                 .compact();
 
@@ -754,10 +754,10 @@ public class TestDataFactory {
     public static String generateExpiredToken(JwtService jwtService, UserDetails user) {
         // Generate token with past expiration
         return Jwts.builder()
-                .setSubject(user.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis() - 3600000))
-                .setExpiration(new Date(System.currentTimeMillis() - 1800000))
-                .signWith(Keys.secretKeyFor(SignatureAlgorithm.HS256))
+                .subject(user.getUsername())
+                .issuedAt(Date.from(Instant.now().minusMillis(3600000)))
+                .expiration(Date.from(Instant.now().minusMillis(1800000)))
+                .signWith(Keys.secretKeyFor(Jwts.SIG.HS256))
                 .compact();
     }
 }

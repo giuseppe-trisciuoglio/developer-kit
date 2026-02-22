@@ -3,7 +3,7 @@ name: aws-sdk-java-v2-bedrock
 description: Provides Amazon Bedrock patterns using AWS SDK for Java 2.x. Use when working with foundation models (listing, invoking), text generation, image generation, embeddings, streaming responses, or integrating generative AI with Spring Boot applications.
 category: aws
 tags: [aws, bedrock, java, sdk, generative-ai, foundation-models]
-version: 2.0.0
+version: 2.2.0
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
@@ -212,7 +212,7 @@ public class BedrockAIService {
 
     private final BedrockRuntimeClient bedrockRuntimeClient;
 
-    @Value("${bedrock.default-model-id:anthropic.claude-sonnet-4-5-20250929-v1:0}")
+    @Value("${bedrock.default-model-id:anthropic.claude-3-5-sonnet-20241022-v2:0}")
     private String defaultModelId;
 
     public BedrockAIService(BedrockRuntimeClient bedrockRuntimeClient) {
@@ -237,7 +237,7 @@ public class BedrockAIService {
 }
 ```
 
-## Basic Usage Example
+## Examples
 
 ```java
 BedrockRuntimeClient client = BedrockRuntimeClient.builder()
@@ -245,16 +245,16 @@ BedrockRuntimeClient client = BedrockRuntimeClient.builder()
     .build();
 
 String prompt = "Explain quantum computing in simple terms";
-String response = invokeModel(client, "anthropic.claude-sonnet-4-5-20250929-v1:0", prompt);
+String response = invokeModel(client, "anthropic.claude-3-5-sonnet-20241022-v2:0", prompt);
 System.out.println(response);
 ```
 
 ## Best Practices
 
 ### Model Selection
-- **Claude 4.5 Sonnet**: Best for complex reasoning, analysis, and creative tasks
-- **Claude 4.5 Haiku**: Fast and affordable for real-time applications
-- **Claude 3.7 Sonnet**: Most advanced reasoning capabilities
+- **Claude 3.5 Sonnet**: Best for complex reasoning, analysis, and creative tasks
+- **Claude 3.5 Haiku**: Fast and affordable for real-time applications
+- **Claude 3 Opus**: Most advanced reasoning capabilities
 - **Llama 3.1**: Latest generation open-source alternative, good for general tasks
 - **Titan**: AWS native, cost-effective for simple text generation
 
@@ -284,155 +284,9 @@ System.out.println(response);
 
 ## Common Model IDs
 
-```java
-// Claude Models
-public static final String CLAUDE_SONNET_4_5 = "anthropic.claude-sonnet-4-5-20250929-v1:0";
-public static final String CLAUDE_HAIKU_4_5 = "anthropic.claude-haiku-4-5-20251001-v1:0";
-public static final String CLAUDE_OPUS_4_1 = "anthropic.claude-opus-4-1-20250805-v1:0";
-public static final String CLAUDE_3_7_SONNET = "anthropic.claude-3-7-sonnet-20250219-v1:0";
-public static final String CLAUDE_OPUS_4 = "anthropic.claude-opus-4-20250514-v1:0";
-public static final String CLAUDE_SONNET_4 = "anthropic.claude-sonnet-4-20250514-v1:0";
-public static final String CLAUDE_3_5_SONNET_V2 = "anthropic.claude-3-5-sonnet-20241022-v2:0";
-public static final String CLAUDE_3_5_HAIKU = "anthropic.claude-3-5-haiku-20241022-v1:0";
-public static final String CLAUDE_3_OPUS = "anthropic.claude-3-opus-20240229-v1:0";
+For complete model ID reference with Java constants, see [Model ID Lookup](references/models-lookup.md).
 
-// Llama Models
-public static final String LLAMA_3_3_70B = "meta.llama3-3-70b-instruct-v1:0";
-public static final String LLAMA_3_2_90B = "meta.llama3-2-90b-instruct-v1:0";
-public static final String LLAMA_3_2_11B = "meta.llama3-2-11b-instruct-v1:0";
-public static final String LLAMA_3_2_3B = "meta.llama3-2-3b-instruct-v1:0";
-public static final String LLAMA_3_2_1B = "meta.llama3-2-1b-instruct-v1:0";
-public static final String LLAMA_4_MAV_17B = "meta.llama4-maverick-17b-instruct-v1:0";
-public static final String LLAMA_4_SCOUT_17B = "meta.llama4-scout-17b-instruct-v1:0";
-public static final String LLAMA_3_1_405B = "meta.llama3-1-405b-instruct-v1:0";
-public static final String LLAMA_3_1_70B = "meta.llama3-1-70b-instruct-v1:0";
-public static final String LLAMA_3_1_8B = "meta.llama3-1-8b-instruct-v1:0";
-public static final String LLAMA_3_70B = "meta.llama3-70b-instruct-v1:0";
-public static final String LLAMA_3_8B = "meta.llama3-8b-instruct-v1:0";
-
-// Amazon Titan Models
-public static final String TITAN_TEXT_EXPRESS = "amazon.titan-text-express-v1";
-public static final String TITAN_TEXT_LITE = "amazon.titan-text-lite-v1";
-public static final String TITAN_EMBEDDINGS = "amazon.titan-embed-text-v1";
-public static final String TITAN_IMAGE_GENERATOR = "amazon.titan-image-generator-v1";
-
-// Stable Diffusion
-public static final String STABLE_DIFFUSION_XL = "stability.stable-diffusion-xl-v1";
-
-// Mistral AI Models
-public static final String MISTRAL_LARGE_2407 = "mistral.mistral-large-2407-v1:0";
-public static final String MISTRAL_LARGE_2402 = "mistral.mistral-large-2402-v1:0";
-public static final String MISTRAL_SMALL_2402 = "mistral.mistral-small-2402-v1:0";
-public static final String MISTRAL_PIXTRAL_2502 = "mistral.pixtral-large-2502-v1:0";
-public static final String MISTRAL_MIXTRAL_8X7B = "mistral.mixtral-8x7b-instruct-v0:1";
-public static final String MISTRAL_7B = "mistral.mistral-7b-instruct-v0:2";
-
-// Amazon Nova Models
-public static final String NOVA_PREMIER = "amazon.nova-premier-v1:0";
-public static final String NOVA_PRO = "amazon.nova-pro-v1:0";
-public static final String NOVA_LITE = "amazon.nova-lite-v1:0";
-public static final String NOVA_MICRO = "amazon.nova-micro-v1:0";
-public static final String NOVA_CANVAS = "amazon.nova-canvas-v1:0";
-public static final String NOVA_REEL = "amazon.nova-reel-v1:1";
-
-// Other Models
-public static final String COHERE_COMMAND = "cohere.command-text-v14";
-public static final String DEEPSEEK_R1 = "deepseek.r1-v1:0";
-public static final String DEEPSEEK_V3_1 = "deepseek.v3-v1:0";
-```
-
-## Examples
-
-### Example 1: Simple Text Generation with Claude
-
-```java
-public String generateWithClaude(BedrockRuntimeClient client, String prompt) {
-    JSONObject payload = new JSONObject()
-        .put("anthropic_version", "bedrock-2023-05-31")
-        .put("max_tokens", 1000)
-        .put("messages", new JSONObject[]{
-            new JSONObject().put("role", "user").put("content", prompt)
-        });
-
-    InvokeModelResponse response = client.invokeModel(InvokeModelRequest.builder()
-        .modelId("anthropic.claude-sonnet-4-5-20250929-v1:0")
-        .body(SdkBytes.fromUtf8String(payload.toString()))
-        .build());
-
-    JSONObject responseBody = new JSONObject(response.body().asUtf8String());
-    return responseBody.getJSONArray("content")
-        .getJSONObject(0)
-        .getString("text");
-}
-```
-
-### Example 2: Streaming Response
-
-```java
-public void streamResponse(BedrockRuntimeClient client, String modelId, String prompt) {
-    JSONObject payload = new JSONObject()
-        .put("anthropic_version", "bedrock-2023-05-31")
-        .put("max_tokens", 500)
-        .put("messages", new JSONObject[]{
-            new JSONObject().put("role", "user").put("content", prompt)
-        });
-
-    InvokeModelWithResponseStreamRequest request = InvokeModelWithResponseStreamRequest.builder()
-        .modelId(modelId)
-        .body(SdkBytes.fromUtf8String(payload.toString()))
-        .build();
-
-    client.invokeModelWithResponseStream(request,
-        InvokeModelWithResponseStreamResponseHandler.builder()
-            .onEventStream(stream -> stream.forEach(event -> {
-                if (event instanceof PayloadPart) {
-                    String chunk = ((PayloadPart) event).bytes().asUtf8String();
-                    System.out.print(chunk);
-                }
-            }))
-            .build());
-}
-```
-
-### Example 3: Spring Boot Service
-
-```java
-@Service
-public class BedrockService {
-
-    private final BedrockRuntimeClient client;
-    private final ObjectMapper mapper;
-
-    @Value("${bedrock.model:anthropic.claude-sonnet-4-5-20250929-v1:0}")
-    private String modelId;
-
-    public String generate(String prompt) {
-        try {
-            Map<String, Object> payload = Map.of(
-                "anthropic_version", "bedrock-2023-05-31",
-                "max_tokens", 1000,
-                "messages", List.of(Map.of(
-                    "role", "user",
-                    "content", prompt
-                ))
-            );
-
-            InvokeModelResponse response = client.invokeModel(
-                InvokeModelRequest.builder()
-                    .modelId(modelId)
-                    .body(SdkBytes.fromUtf8String(mapper.writeValueAsString(payload)))
-                    .build()
-            );
-
-            return extractText(response.body().asUtf8String());
-        } catch (Exception e) {
-            throw new RuntimeException("Bedrock invocation failed", e);
-        }
-    }
-}
-```
-
-See the [examples directory](examples/) for comprehensive usage patterns.
+Key models: `anthropic.claude-3-5-sonnet-20241022-v2:0` (Claude), `meta.llama3-3-70b-instruct-v1:0` (Llama), `amazon.titan-text-express-v1` (Titan), `amazon.nova-pro-v1:0` (Nova).
 
 ## Advanced Topics
 

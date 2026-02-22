@@ -3,7 +3,7 @@ name: aws-rds-spring-boot-integration
 description: Provides patterns to configure AWS RDS (Aurora, MySQL, PostgreSQL) with Spring Boot applications. Use when setting up datasources, connection pooling, security, and production-ready database configuration.
 category: aws
 tags: [aws, rds, aurora, spring-boot, spring-data-jpa, datasource, configuration, hikari, mysql, postgresql]
-version: 1.1.0
+version: 2.2.0
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
@@ -49,7 +49,7 @@ Follow these steps to configure AWS RDS with Spring Boot:
 6. **Add Migrations** - Create Flyway migration scripts for schema management
 7. **Test Connectivity** - Verify database connection and health check endpoint
 
-## Quick Start
+## Examples
 
 ### Step 1: Add Dependencies
 
@@ -331,61 +331,6 @@ For advanced configuration, see the reference documents:
 
 - [Multi-datasource, SSL, Secrets Manager integration](references/advanced-configuration.md)
 - [Common issues and solutions](references/troubleshooting.md)
-
-## Examples
-
-### Example 1: Basic Aurora MySQL Configuration
-
-```yaml
-spring:
-  datasource:
-    url: jdbc:mysql://myapp-aurora-cluster.cluster-abc123xyz.us-east-1.rds.amazonaws.com:3306/devops
-    username: admin
-    password: ${DB_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    hikari:
-      maximum-pool-size: 20
-      minimum-idle: 5
-      connection-timeout: 20000
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    open-in-view: false
-```
-
-### Example 2: Aurora PostgreSQL with SSL
-
-```properties
-spring.datasource.url=jdbc:postgresql://myapp-aurora-pg-cluster.cluster-abc123xyz.us-east-1.rds.amazonaws.com:5432/devops?ssl=true&sslmode=require
-spring.datasource.username=${DB_USERNAME}
-spring.datasource.password=${DB_PASSWORD}
-spring.datasource.hikari.maximum-pool-size=30
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
-```
-
-### Example 3: Read/Write Split Configuration
-
-```java
-@Configuration
-public class DataSourceConfiguration {
-
-    @Bean
-    @Primary
-    public DataSource dataSource(
-            @Qualifier("writerDataSource") DataSource writerDataSource,
-            @Qualifier("readerDataSource") DataSource readerDataSource) {
-        Map<Object, Object> targetDataSources = new HashMap<>();
-        targetDataSources.put("writer", writerDataSource);
-        targetDataSources.put("reader", readerDataSource);
-
-        RoutingDataSource routingDataSource = new RoutingDataSource();
-        routingDataSource.setTargetDataSources(targetDataSources);
-        routingDataSource.setDefaultTargetDataSource(writerDataSource);
-
-        return routingDataSource;
-    }
-}
-```
 
 ## Constraints and Warnings
 

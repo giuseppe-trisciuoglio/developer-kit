@@ -4,88 +4,104 @@ description: This skill should be used when implementing fault tolerance and res
 allowed-tools: Read, Write, Edit, Bash
 category: backend
 tags: [spring-boot, resilience4j, circuit-breaker, fault-tolerance, retry, bulkhead, rate-limiter]
-version: 1.1.0
+version: 2.2.0
 ---
 
 # Spring Boot Resilience4j Patterns
 
 ## Overview
 
-Resilience4j is a lightweight fault tolerance library designed for Java 8+ and functional programming. It provides patterns for handling failures in distributed systems including circuit breakers, rate limiters, retry mechanisms, bulkheads, and time limiters. This skill demonstrates how to integrate Resilience4j with Spring Boot 3.x to build resilient microservices that can gracefully handle external service failures and prevent cascading failures across the system.
+Resilience4j is a lightweight fault tolerance library for Java 8+ providing circuit breakers, rate limiters, retry mechanisms, bulkheads, and time limiters. This skill covers integrating Resilience4j with Spring Boot 3.x to build resilient microservices.
 
 ## When to Use
 
-To implement resilience patterns in Spring Boot applications, use this skill when:
-- Preventing cascading failures from external service unavailability with circuit breaker pattern
+- Preventing cascading failures with circuit breaker pattern
 - Retrying transient failures with exponential backoff
-- Rate limiting to protect services from overload or downstream service capacity constraints
-- Isolating resources with bulkhead pattern to prevent thread pool exhaustion
-- Adding timeout controls to async operations with time limiter
+- Rate limiting to protect from overload
+- Isolating resources with bulkhead pattern
+- Adding timeout controls with time limiter
 - Combining multiple patterns for comprehensive fault tolerance
-
-Resilience4j is a lightweight, composable library for adding fault tolerance without requiring external infrastructure. It provides annotation-based patterns that integrate seamlessly with Spring Boot's AOP and Actuator.
 
 ## Instructions
 
-### 1. Setup and Dependencies
-
-Add Resilience4j dependencies to your project. For Maven, add to `pom.xml`:
+### 1. Setup Dependencies
 
 ```xml
 <dependency>
     <groupId>io.github.resilience4j</groupId>
     <artifactId>resilience4j-spring-boot3</artifactId>
-    <version>2.2.0</version> // Use latest stable version
+    <version>2.2.0</version>
 </dependency>
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-aop</artifactId>
 </dependency>
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-actuator</artifactId>
-</dependency>
 ```
 
-For Gradle, add to `build.gradle`:
-
-```gradle
-implementation "io.github.resilience4j:resilience4j-spring-boot3:2.2.0"
-implementation "org.springframework.boot:spring-boot-starter-aop"
-implementation "org.springframework.boot:spring-boot-starter-actuator"
-```
-
-Enable AOP annotation processing with `@EnableAspectJAutoProxy` (auto-configured by Spring Boot).
-
-### 2. Circuit Breaker Pattern
-
-Apply `@CircuitBreaker` annotation to methods calling external services:
+### 2. Circuit Breaker
 
 ```java
-@Service
-public class PaymentService {
-    private final RestTemplate restTemplate;
+@CircuitBreaker(name = "paymentService", fallbackMethod = "paymentFallback")
+public PaymentResponse processPayment(PaymentRequest request) {
+    return restTemplate.postForObject("http://payment-api/process", request, PaymentResponse.class);
+}
 
-    public PaymentService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
-
-    @CircuitBreaker(name = "paymentService", fallbackMethod = "paymentFallback")
-    public PaymentResponse processPayment(PaymentRequest request) {
-        return restTemplate.postForObject("http://payment-api/process",
-            request, PaymentResponse.class);
-    }
-
-    private PaymentResponse paymentFallback(PaymentRequest request, Exception ex) {
-        return PaymentResponse.builder()
-            .status("PENDING")
-            .message("Service temporarily unavailable")
-            .build();
-    }
+private PaymentResponse paymentFallback(PaymentRequest request, Exception ex) {
+    return PaymentResponse.builder().status("PENDING").message("Service unavailable").build();
 }
 ```
 
-Configure in `application.yml`:
+### 3. Retry
+
+```java
+@Retry(name = "productService", fallbackMethod = "getProductFallback")
+public Product getProduct(Long productId) {
+    return restTemplate.getForObject("http://product-api/products/" + productId, Product.class);
+}
+```
+
+### 4. Rate Limiter
+
+```java
+@RateLimiter(name = "notificationService", fallbackMethod = "rateLimitFallback")
+public void sendEmail(EmailRequest request) { emailClient.send(request); }
+```
+
+### 5. Bulkhead
+
+```java
+@Bulkhead(name = "reportService", type = Bulkhead.Type.SEMAPHORE)
+public Report generateReport(ReportRequest request) {
+    return reportGenerator.generate(request);
+}
+```
+
+### 6. Time Limiter
+
+```java
+@TimeLimiter(name = "searchService", fallbackMethod = "searchFallback")
+public CompletableFuture<SearchResults> search(SearchQuery query) {
+    return CompletableFuture.supplyAsync(() -> searchEngine.executeSearch(query));
+}
+```
+
+### 7. Combining Patterns
+
+```java
+@CircuitBreaker(name = "orderService")
+@Retry(name = "orderService")
+@RateLimiter(name = "orderService")
+@Bulkhead(name = "orderService")
+public Order createOrder(OrderRequest request) {
+    return orderClient.createOrder(request);
+}
+```
+
+Execution order: Retry -> CircuitBreaker -> RateLimiter -> Bulkhead -> Method
+
+## Examples
+
+### Configuration
 
 ```yaml
 resilience4j:
@@ -97,47 +113,6 @@ resilience4j:
         minimumNumberOfCalls: 5
         failureRateThreshold: 50
         waitDurationInOpenState: 10s
-    instances:
-      paymentService:
-        baseConfig: default
-```
-
-See @references/configuration-reference.md for complete circuit breaker configuration options.
-
-### 3. Retry Pattern
-
-Apply `@Retry` annotation for transient failure recovery:
-
-```java
-@Service
-public class ProductService {
-    private final RestTemplate restTemplate;
-
-    public ProductService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
-
-    @Retry(name = "productService", fallbackMethod = "getProductFallback")
-    public Product getProduct(Long productId) {
-        return restTemplate.getForObject(
-            "http://product-api/products/" + productId,
-            Product.class);
-    }
-
-    private Product getProductFallback(Long productId, Exception ex) {
-        return Product.builder()
-            .id(productId)
-            .name("Unavailable")
-            .available(false)
-            .build();
-    }
-}
-```
-
-Configure retry in `application.yml`:
-
-```yaml
-resilience4j:
   retry:
     configs:
       default:
@@ -145,357 +120,58 @@ resilience4j:
         waitDuration: 500ms
         enableExponentialBackoff: true
         exponentialBackoffMultiplier: 2
-    instances:
-      productService:
-        baseConfig: default
-        maxAttempts: 5
-```
-
-See @references/configuration-reference.md for retry exception configuration.
-
-### 4. Rate Limiter Pattern
-
-Apply `@RateLimiter` to control request rates:
-
-```java
-@Service
-public class NotificationService {
-    private final EmailClient emailClient;
-
-    public NotificationService(EmailClient emailClient) {
-        this.emailClient = emailClient;
-    }
-
-    @RateLimiter(name = "notificationService",
-        fallbackMethod = "rateLimitFallback")
-    public void sendEmail(EmailRequest request) {
-        emailClient.send(request);
-    }
-
-    private void rateLimitFallback(EmailRequest request, Exception ex) {
-        throw new RateLimitExceededException(
-            "Too many requests. Please try again later.");
-    }
-}
-```
-
-Configure in `application.yml`:
-
-```yaml
-resilience4j:
   ratelimiter:
     configs:
       default:
-        registerHealthIndicator: true
         limitForPeriod: 10
         limitRefreshPeriod: 1s
         timeoutDuration: 500ms
-    instances:
-      notificationService:
-        baseConfig: default
-        limitForPeriod: 5
-```
-
-### 5. Bulkhead Pattern
-
-Apply `@Bulkhead` to isolate resources. Use `type = SEMAPHORE` for synchronous methods:
-
-```java
-@Service
-public class ReportService {
-    private final ReportGenerator reportGenerator;
-
-    public ReportService(ReportGenerator reportGenerator) {
-        this.reportGenerator = reportGenerator;
-    }
-
-    @Bulkhead(name = "reportService", type = Bulkhead.Type.SEMAPHORE)
-    public Report generateReport(ReportRequest request) {
-        return reportGenerator.generate(request);
-    }
-}
-```
-
-Use `type = THREADPOOL` for async/CompletableFuture methods:
-
-```java
-@Service
-public class AnalyticsService {
-    @Bulkhead(name = "analyticsService", type = Bulkhead.Type.THREADPOOL)
-    public CompletableFuture<AnalyticsResult> runAnalytics(
-            AnalyticsRequest request) {
-        return CompletableFuture.supplyAsync(() ->
-            analyticsEngine.analyze(request));
-    }
-}
-```
-
-Configure in `application.yml`:
-
-```yaml
-resilience4j:
-  bulkhead:
-    configs:
-      default:
-        maxConcurrentCalls: 10
-        maxWaitDuration: 100ms
-    instances:
-      reportService:
-        baseConfig: default
-        maxConcurrentCalls: 5
-
-  thread-pool-bulkhead:
-    instances:
-      analyticsService:
-        maxThreadPoolSize: 8
-```
-
-### 6. Time Limiter Pattern
-
-Apply `@TimeLimiter` to async methods to enforce timeout boundaries:
-
-```java
-@Service
-public class SearchService {
-    @TimeLimiter(name = "searchService", fallbackMethod = "searchFallback")
-    public CompletableFuture<SearchResults> search(SearchQuery query) {
-        return CompletableFuture.supplyAsync(() ->
-            searchEngine.executeSearch(query));
-    }
-
-    private CompletableFuture<SearchResults> searchFallback(
-            SearchQuery query, Exception ex) {
-        return CompletableFuture.completedFuture(
-            SearchResults.empty("Search timed out"));
-    }
-}
-```
-
-Configure in `application.yml`:
-
-```yaml
-resilience4j:
   timelimiter:
     configs:
       default:
         timeoutDuration: 2s
-        cancelRunningFuture: true
-    instances:
-      searchService:
-        baseConfig: default
-        timeoutDuration: 3s
 ```
 
-### 7. Combining Multiple Patterns
-
-Stack multiple patterns on a single method for comprehensive fault tolerance:
-
-```java
-@Service
-public class OrderService {
-    @CircuitBreaker(name = "orderService")
-    @Retry(name = "orderService")
-    @RateLimiter(name = "orderService")
-    @Bulkhead(name = "orderService")
-    public Order createOrder(OrderRequest request) {
-        return orderClient.createOrder(request);
-    }
-}
-```
-
-Execution order: Retry → CircuitBreaker → RateLimiter → Bulkhead → Method
-
-All patterns should reference the same named configuration instance for consistency.
-
-### 8. Exception Handling and Monitoring
-
-Create a global exception handler using `@RestControllerAdvice`:
+### Exception Handling
 
 ```java
 @RestControllerAdvice
 public class ResilienceExceptionHandler {
-
     @ExceptionHandler(CallNotPermittedException.class)
     @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
     public ErrorResponse handleCircuitOpen(CallNotPermittedException ex) {
-        return new ErrorResponse("SERVICE_UNAVAILABLE",
-            "Service currently unavailable");
+        return new ErrorResponse("SERVICE_UNAVAILABLE", "Service currently unavailable");
     }
 
     @ExceptionHandler(RequestNotPermitted.class)
     @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
     public ErrorResponse handleRateLimited(RequestNotPermitted ex) {
-        return new ErrorResponse("TOO_MANY_REQUESTS",
-            "Rate limit exceeded");
-    }
-
-    @ExceptionHandler(BulkheadFullException.class)
-    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
-    public ErrorResponse handleBulkheadFull(BulkheadFullException ex) {
-        return new ErrorResponse("CAPACITY_EXCEEDED",
-            "Service at capacity");
+        return new ErrorResponse("TOO_MANY_REQUESTS", "Rate limit exceeded");
     }
 }
 ```
-
-Enable Actuator endpoints for monitoring resilience patterns in `application.yml`:
-
-```yaml
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,metrics,circuitbreakers,retries,ratelimiters
-  endpoint:
-    health:
-      show-details: always
-  health:
-    circuitbreakers:
-      enabled: true
-    ratelimiters:
-      enabled: true
-```
-
-Access monitoring endpoints:
-- `GET /actuator/health` - Overall health including resilience patterns
-- `GET /actuator/circuitbreakers` - Circuit breaker states
-- `GET /actuator/metrics` - Custom resilience metrics
 
 ## Best Practices
 
-- **Always provide fallback methods**: Ensure graceful degradation with meaningful responses rather than exceptions
-- **Use exponential backoff for retries**: Prevent overwhelming recovering services with aggressive backoff (`exponentialBackoffMultiplier: 2`)
-- **Choose appropriate failure thresholds**: Set `failureRateThreshold` between 50-70% depending on acceptable error rates
-- **Use constructor injection exclusively**: Never use field injection for Resilience4j dependencies
-- **Enable health indicators**: Set `registerHealthIndicator: true` for all patterns to integrate with Spring Boot health
-- **Separate failure vs. client errors**: Retry only transient errors (network timeouts, 5xx); skip 4xx and business exceptions
-- **Size bulkheads based on load**: Calculate thread pool and semaphore sizes from expected concurrent load and latency
-- **Monitor and adjust**: Continuously review metrics and adjust timeouts/thresholds based on production behavior
-- **Document fallback behavior**: Make fallback logic clear and predictable to users and maintainers
+- **Always provide fallback methods** with meaningful responses
+- **Use exponential backoff** for retries (multiplier: 2)
+- **Set failure threshold** between 50-70%
+- **Use constructor injection** exclusively
+- **Enable health indicators** for all patterns
+- **Retry only transient errors** (5xx, network timeouts); skip 4xx
+- **Monitor and adjust** based on production behavior
 
 ## Constraints and Warnings
 
-- Fallback methods must have the same signature as the original method plus an optional exception parameter.
-- Circuit breaker state is maintained per-instance; ensure proper bean scoping in multi-tenant scenarios.
-- Retry operations should be idempotent as they may execute multiple times.
-- Do not use circuit breakers for operations that must always complete; use appropriate timeouts instead.
-- Rate limiters can cause thread blocking; configure appropriate wait durations.
-- Bulkhead isolation may lead to rejected requests under load; ensure proper fallback handling.
-- Be cautious with `@Retry` on non-idempotent operations like POST requests.
-- Monitor memory usage when using thread pool bulkheads with high concurrency settings.
+- Fallback methods must have the same signature plus optional Exception parameter
+- Retry operations should be idempotent (may execute multiple times)
+- Do not use circuit breakers for operations that must always complete
+- Rate limiters can cause thread blocking; configure appropriate wait durations
+- Be cautious with @Retry on non-idempotent POST requests
 
-## Examples
+## References
 
-### Input: External Service Call Without Resilience
-
-```java
-@Service
-public class PaymentService {
-    public PaymentResponse processPayment(PaymentRequest request) {
-        return restTemplate.postForObject("http://payment-api/process",
-            request, PaymentResponse.class);
-    }
-}
-```
-
-### Output: Circuit Breaker Protected Service
-
-```java
-@Service
-public class PaymentService {
-    @CircuitBreaker(name = "paymentService", fallbackMethod = "paymentFallback")
-    public PaymentResponse processPayment(PaymentRequest request) {
-        return restTemplate.postForObject("http://payment-api/process",
-            request, PaymentResponse.class);
-    }
-
-    private PaymentResponse paymentFallback(PaymentRequest request, Exception ex) {
-        return PaymentResponse.builder()
-            .status("PENDING")
-            .message("Service temporarily unavailable")
-            .build();
-    }
-}
-```
-
-### Input: Service Without Retry
-
-```java
-public Order getOrder(Long orderId) {
-    return orderRepository.findById(orderId)
-        .orElseThrow(() -> new OrderNotFoundException(orderId));
-}
-```
-
-### Output: Retry with Exponential Backoff
-
-```java
-@Retry(name = "orderService", fallbackMethod = "getOrderFallback")
-public Order getOrder(Long orderId) {
-    return orderRepository.findById(orderId)
-        .orElseThrow(() -> new OrderNotFoundException(orderId));
-}
-
-private Order getOrderFallback(Long orderId, Exception ex) {
-    return Order.cachedOrder(orderId);
-}
-```
-
-### Input: Unbounded Rate
-
-```java
-@RestController
-public class ApiController {
-    @GetMapping("/api/data")
-    public Data fetchData() {
-        return dataService.processLargeDataset();
-    }
-}
-```
-
-### Output: Rate Limited Endpoint
-
-```java
-@RestController
-public class ApiController {
-    @RateLimiter(name = "dataService", fallbackMethod = "rateLimitFallback")
-    @GetMapping("/api/data")
-    public Data fetchData() {
-        return dataService.processLargeDataset();
-    }
-
-    private ResponseEntity<ErrorResponse> rateLimitFallback(Exception ex) {
-        return ResponseEntity.status(429)
-            .body(new ErrorResponse("TOO_MANY_REQUESTS", "Rate limit exceeded"));
-    }
-}
-```
-
-### Input: Blocking Thread Pool Operation
-
-```java
-@Service
-public class ReportService {
-    public Report generateReport(ReportRequest request) {
-        return reportGenerator.generate(request);
-    }
-}
-```
-
-### Output: Bulkhead Protected Service
-
-```java
-@Service
-public class ReportService {
-    @Bulkhead(name = "reportService", type = Bulkhead.Type.SEMAPHORE)
-    public Report generateReport(ReportRequest request) {
-        return reportGenerator.generate(request);
-    }
-}
-```
-
-- [Complete property reference and configuration patterns](references/configuration-reference.md)
-- [Unit and integration testing strategies](references/testing-patterns.md)
-- [Real-world e-commerce service example using all patterns](references/examples.md)
+- [Configuration Reference](references/configuration-reference.md)
+- [Testing Patterns](references/testing-patterns.md)
+- [Examples](references/examples.md)
 - [Resilience4j Documentation](https://resilience4j.readme.io/)
-- [Spring Boot Actuator Skill](../spring-boot-actuator/SKILL.md) - Monitoring resilience patterns with Actuator

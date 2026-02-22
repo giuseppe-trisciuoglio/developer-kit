@@ -4,7 +4,7 @@ description: Provides patterns to implement persistence layers with Spring Data 
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 category: backend
 tags: [spring-data, jpa, database, hibernate, orm, persistence]
-version: 1.2.0
+version: 2.2.0
 ---
 
 # Spring Data JPA

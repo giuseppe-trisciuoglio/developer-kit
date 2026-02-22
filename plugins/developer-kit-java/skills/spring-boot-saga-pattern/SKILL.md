@@ -4,7 +4,7 @@ description: Provides distributed transaction patterns using the Saga Pattern in
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 category: backend
 tags: [spring-boot, saga, distributed-transactions, choreography, orchestration, microservices]
-version: 1.1.0
+version: 2.2.0
 ---
 
 # Spring Boot Saga Pattern

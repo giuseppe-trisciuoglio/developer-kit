@@ -4,7 +4,7 @@ description: Provides configuration patterns for LangChain4J vector stores in RA
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 category: backend
 tags: [langchain4j, vector-stores, embeddings, rag, semantic-search, ai, llm, java, databases]
-version: 1.1.0
+version: 2.2.0
 ---
 
 # LangChain4J Vector Stores Configuration

@@ -4,7 +4,7 @@ description: Provides patterns for enabling and operating the Spring Cache abstr
 allowed-tools: Read, Write, Bash
 category: backend
 tags: [spring-boot, caching, performance, cacheable, cache-managers]
-version: 1.1.0
+version: 2.2.0
 ---
 
 # Spring Boot Cache Abstraction

@@ -4,7 +4,7 @@ description: Provides repeatable CRUD workflows for Spring Boot 3 services with 
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 category: backend
 tags: [spring-boot, java, ddd, rest-api, crud, jpa, feature-architecture]
-version: 1.1.0
+version: 2.2.0
 ---
 
 # Spring Boot CRUD Patterns

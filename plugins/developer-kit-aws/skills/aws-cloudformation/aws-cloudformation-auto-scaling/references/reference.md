@@ -667,3 +667,194 @@ Resources:
           Value: "1.0.0"
           PropagateAtLaunch: true
 ```
+
+## Parameters Best Practices
+
+### AWS-Specific Parameter Types
+
+```yaml
+Parameters:
+  InstanceType:
+    Type: AWS::EC2::Instance::Type
+    Description: EC2 instance type
+  AmiId:
+    Type: AWS::EC2::Image::Id
+    Description: AMI ID for instances
+  SubnetIds:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: Subnets for Auto Scaling group
+  SecurityGroupIds:
+    Type: List<AWS::EC2::SecurityGroup::Id>
+    Description: Security groups for instances
+  LoadBalancerArn:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer::Arn
+    Description: Application Load Balancer ARN
+  TargetGroupArn:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup::Arn
+    Description: Target Group ARN for ALB
+```
+
+### Parameter Constraints
+
+```yaml
+Parameters:
+  MinSize:
+    Type: Number
+    Default: 1
+    MinValue: 0
+    MaxValue: 1000
+    ConstraintDescription: Must be between 0 and 1000
+  EnvironmentName:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - staging
+      - production
+    ConstraintDescription: Must be dev, staging, or production
+```
+
+### SSM Parameter References
+
+```yaml
+Parameters:
+  LatestAmiId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+  InstanceConfiguration:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /myapp/instance-configuration
+```
+
+## Outputs and Cross-Stack References
+
+### Export/Import Patterns
+
+```yaml
+# Stack A - Export
+Outputs:
+  AutoScalingGroupName:
+    Value: !Ref MyAutoScalingGroup
+    Export:
+      Name: !Sub "${AWS::StackName}-AutoScalingGroupName"
+  AutoScalingGroupArn:
+    Value: !Sub "arn:aws:autoscaling:${AWS::Region}:${AWS::AccountId}:autoScalingGroup:*:autoScalingGroupName/${MyAutoScalingGroup}"
+    Export:
+      Name: !Sub "${AWS::StackName}-AutoScalingGroupArn"
+```
+
+```yaml
+# Stack B - Import
+Resources:
+  ScalingPolicy:
+    Type: AWS::AutoScaling::ScalingPolicy
+    Properties:
+      AutoScalingGroupName: !ImportValue
+        !Sub "${InfraStackName}-AutoScalingGroupName"
+```
+
+### Nested Stacks for Modularity
+
+```yaml
+Resources:
+  EC2AutoScalingStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3.amazonaws.com/bucket/ec2-asg.yaml
+      Parameters:
+        Environment: !Ref Environment
+  ScalingPoliciesStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3.amazonaws.com/bucket/scaling-policies.yaml
+      Parameters:
+        AutoScalingGroupName: !GetAtt EC2AutoScalingStack.Outputs.AutoScalingGroupName
+```
+
+## Conditions for Environment-Specific Scaling
+
+```yaml
+Conditions:
+  IsProduction: !Equals [!Ref Environment, production]
+  IsStaging: !Equals [!Ref Environment, staging]
+  UseSpot: !Or [!Equals [!Ref Environment, dev], !Equals [!Ref Environment, staging]]
+  UseAlb: !Not [!Equals [!Ref Environment, dev]]
+
+Resources:
+  MyAutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      MinSize: !If [IsProduction, 3, !If [IsStaging, 2, 1]]
+      MaxSize: !If [IsProduction, 12, !If [IsStaging, 6, 3]]
+      HealthCheckType: !If [UseAlb, ELB, EC2]
+```
+
+## CloudFormation Stack Management
+
+### Stack Policies
+
+```yaml
+Metadata:
+  AWS::CloudFormation::StackPolicy:
+    Statement:
+      - Effect: Allow
+        Resource: "*"
+        Action: Update:Modify
+      - Effect: Deny
+        Resource: "*"
+        Action: Update:Delete
+        Condition:
+          StringEquals:
+            ResourceType:
+              - AWS::AutoScaling::AutoScalingGroup
+              - AWS::AutoScaling::LaunchConfiguration
+```
+
+### CLI Operations
+
+```bash
+# Termination protection
+aws cloudformation update-termination-protection \
+  --stack-name my-auto-scaling-stack \
+  --enable-termination-protection
+
+# Drift detection
+aws cloudformation detect-stack-drift --stack-name my-auto-scaling-stack
+aws cloudformation describe-stack-resource-drifts --stack-name my-auto-scaling-stack
+
+# Change sets
+aws cloudformation create-change-set \
+  --stack-name my-auto-scaling-stack \
+  --change-set-name my-changeset \
+  --template-body file://template.yaml
+aws cloudformation execute-change-set \
+  --stack-name my-auto-scaling-stack \
+  --change-set-name my-changeset
+```
+
+## Least Privilege IAM Examples
+
+```yaml
+ScalingAlarmRole:
+  Type: AWS::IAM::Role
+  Properties:
+    RoleName: !Sub "${AWS::StackName}-scaling-alarm-role"
+    AssumeRolePolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: Allow
+          Principal:
+            Service: autoscaling.amazonaws.com
+          Action: sts:AssumeRole
+    Policies:
+      - PolicyName: !Sub "${AWS::StackName}-cloudwatch-specific-policy"
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - cloudwatch:PutMetricAlarm
+                - cloudwatch:DescribeAlarms
+                - cloudwatch:DeleteAlarms
+              Resource: !Sub "arn:aws:cloudwatch:${AWS::Region}:${AWS::AccountId}:alarm:*"
+```

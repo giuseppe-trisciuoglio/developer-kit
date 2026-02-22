@@ -282,21 +282,15 @@ public class ReactiveUserControllerIntegrationTest {
 
 ## Testcontainers Configuration Patterns
 
-### @ServiceConnection Pattern (Spring Boot 3.5+)
+### @ServiceConnection Pattern (Spring Boot 3.1+)
 
 ```java
-@TestConfiguration
-public class TestContainerConfig {
-
-    @Bean
+@SpringBootTest
+@Testcontainers
+class MyIntegrationTests {
+    @Container
     @ServiceConnection
-    public PostgreSQLContainer<?> postgresContainer() {
-        return new PostgreSQLContainer<>(DockerImageName.parse("postgres:16-alpine"))
-            .withDatabaseName("testdb")
-            .withUsername("test")
-            .withPassword("test");
-        // Do not call start(); Spring Boot will manage lifecycle for @ServiceConnection beans
-    }
+    static PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:16");
 }
 ```
 

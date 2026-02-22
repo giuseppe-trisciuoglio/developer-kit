@@ -4,7 +4,7 @@ description: Provides optimal chunking strategies in RAG systems and document pr
 allowed-tools: Read, Write, Bash
 category: artificial-intelligence
 tags: [rag, chunking, vector-search, embeddings, document-processing]
-version: 1.0.0
+version: 2.2.0
 ---
 
 # Chunking Strategy for RAG Systems

@@ -4,7 +4,7 @@ description: Provides patterns to configure Spring Boot Actuator for production-
 allowed-tools: Read, Write, Bash
 category: backend
 tags: [spring-boot, actuator, monitoring, health-checks, metrics, production]
-version: 1.1.0
+version: 2.2.0
 ---
 
 # Spring Boot Actuator Skill

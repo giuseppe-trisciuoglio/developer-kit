@@ -21,7 +21,6 @@ Comprehensive examples for implementing MCP servers with Spring AI.
 
 ```java
 @SpringBootApplication
-@EnableMcpServer
 public class SimpleMcpApplication {
 
     public static void main(String[] args) {
@@ -32,22 +31,22 @@ public class SimpleMcpApplication {
 @Component
 class CalculatorTools {
 
-    @Tool(description = "Add two numbers")
+    @McpTool(description = "Add two numbers")
     public double add(
-            @ToolParam("First number") double a,
-            @ToolParam("Second number") double b) {
+            @McpToolParam(description = "First number") double a,
+            @McpToolParam(description = "Second number") double b) {
         return a + b;
     }
 
-    @Tool(description = "Multiply two numbers")
+    @McpTool(description = "Multiply two numbers")
     public double multiply(
-            @ToolParam("First number") double a,
-            @ToolParam("Second number") double b) {
+            @McpToolParam(description = "First number") double a,
+            @McpToolParam(description = "Second number") double b) {
         return a * b;
     }
 
-    @Tool(description = "Calculate the square root")
-    public double sqrt(@ToolParam("Number") double x) {
+    @McpTool(description = "Calculate the square root")
+    public double sqrt(@McpToolParam(description = "Number") double x) {
         if (x < 0) {
             throw new IllegalArgumentException("Cannot calculate square root of negative number");
         }
@@ -57,8 +56,8 @@ class CalculatorTools {
 
 // application.properties
 spring.ai.openai.api-key=${OPENAI_API_KEY}
-spring.ai.mcp.enabled=true
-spring.ai.mcp.transport.type=stdio
+spring.ai.mcp.server.type=SYNC
+spring.ai.mcp.server.transport=WEBMVC
 ```
 
 ### HTTP Transport Setup
@@ -136,10 +135,10 @@ public class PostgreSqlTools {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    @Tool(description = "Execute a read-only SQL query on PostgreSQL database")
+    @McpTool(description = "Execute a read-only SQL query on PostgreSQL database")
     public QueryResult executeReadOnlyQuery(
-            @ToolParam("SQL SELECT query") String query,
-            @ToolParam(value = "Query parameters as JSON object", required = false)
+            @McpToolParam(description = "SQL SELECT query") String query,
+            @McpToolParam(description = "Query parameters as JSON object", required = false)
             String paramsJson) {
 
         // Security: Only allow SELECT queries
@@ -170,9 +169,9 @@ public class PostgreSqlTools {
         }
     }
 
-    @Tool(description = "Get database schema information")
+    @McpTool(description = "Get database schema information")
     public SchemaInfo getDatabaseSchema(
-            @ToolParam(value = "Table name filter", required = false)
+            @McpToolParam(description = "Table name filter", required = false)
             String tableFilter) {
 
         String sql = """
@@ -189,9 +188,9 @@ public class PostgreSqlTools {
         return new SchemaInfo(jdbcTemplate.queryForList(sql));
     }
 
-    @Tool(description = "Get query execution plan")
+    @McpTool(description = "Get query execution plan")
     public ExecutionPlan explainQuery(
-            @ToolParam("SQL query to analyze") String query) {
+            @McpToolParam(description = "SQL query to analyze") String query) {
 
         String explainSql = "EXPLAIN (FORMAT JSON, ANALYZE) " + query;
         List<Map<String, Object>> plan = jdbcTemplate.queryForList(explainSql);
@@ -199,7 +198,7 @@ public class PostgreSqlTools {
         return new ExecutionPlan(query, plan);
     }
 
-    @Tool(description = "Get database statistics")
+    @McpTool(description = "Get database statistics")
     public DatabaseStats getDatabaseStats() {
         String sql = """
             SELECT schemaname, tablename, n_tup_ins, n_tup_upd, n_tup_del
@@ -230,12 +229,12 @@ public class MongoDbTools {
         this.mongoTemplate = mongoTemplate;
     }
 
-    @Tool(description = "Execute a MongoDB find query")
+    @McpTool(description = "Execute a MongoDB find query")
     public MongoResult findDocuments(
-            @ToolParam("Collection name") String collection,
-            @ToolParam(value = "Query filter as JSON", required = false)
+            @McpToolParam(description = "Collection name") String collection,
+            @McpToolParam(description = "Query filter as JSON", required = false)
             String filterJson,
-            @ToolParam(value = "Maximum documents to return", required = false)
+            @McpToolParam(description = "Maximum documents to return", required = false)
             Integer limit) {
 
         try {
@@ -259,9 +258,9 @@ public class MongoDbTools {
         }
     }
 
-    @Tool(description = "Get collection statistics")
+    @McpTool(description = "Get collection statistics")
     public CollectionStats getCollectionStats(
-            @ToolParam("Collection name") String collection) {
+            @McpToolParam(description = "Collection name") String collection) {
 
         MongoCollection<Document> coll = mongoTemplate.getCollection(collection);
         long count = coll.countDocuments();
@@ -269,16 +268,16 @@ public class MongoDbTools {
         return new CollectionStats(collection, count);
     }
 
-    @Tool(description = "List all collections")
+    @McpTool(description = "List all collections")
     public List<String> listCollections() {
         return mongoTemplate.getCollectionNames().stream()
                 .sorted()
                 .toList();
     }
 
-    @Tool(description = "Get collection indexes")
+    @McpTool(description = "Get collection indexes")
     public List<Document> getIndexes(
-            @ToolParam("Collection name") String collection) {
+            @McpToolParam(description = "Collection name") String collection) {
 
         return mongoTemplate.getCollection(collection)
                 .listIndexes()
@@ -302,9 +301,9 @@ public class RedisTools {
         this.redisTemplate = redisTemplate;
     }
 
-    @Tool(description = "Get value from Redis by key")
+    @McpTool(description = "Get value from Redis by key")
     public RedisValue getValue(
-            @ToolParam("Redis key") String key) {
+            @McpToolParam(description = "Redis key") String key) {
 
         Object value = redisTemplate.opsForValue().get(key);
 
@@ -316,9 +315,9 @@ public class RedisTools {
         return new RedisValue(key, value.toString(), type, true);
     }
 
-    @Tool(description = "Get Redis key information")
+    @McpTool(description = "Get Redis key information")
     public KeyInfo getKeyInfo(
-            @ToolParam("Redis key") String key) {
+            @McpToolParam(description = "Redis key") String key) {
 
         Long ttl = redisTemplate.getExpire(key);
         String type = redisTemplate.type(key).code();
@@ -333,9 +332,9 @@ public class RedisTools {
         return new KeyInfo(key, type, ttl, size);
     }
 
-    @Tool(description = "Search for keys by pattern")
+    @McpTool(description = "Search for keys by pattern")
     public List<String> findKeys(
-            @ToolParam("Key pattern (e.g., user:*)") String pattern) {
+            @McpToolParam(description = "Key pattern (e.g., user:*)") String pattern) {
 
         Set<String> keys = redisTemplate.keys(pattern);
         return keys != null ? new ArrayList<>(keys) : List.of();
@@ -374,12 +373,12 @@ public class RestApiTools {
         this.circuitBreakerRegistry = registry;
     }
 
-    @Tool(description = "Make HTTP GET request to a REST API")
+    @McpTool(description = "Make HTTP GET request to a REST API")
     public ApiResponse httpGet(
-            @ToolParam("URL to request") String url,
-            @ToolParam(value = "Headers as JSON object", required = false)
+            @McpToolParam(description = "URL to request") String url,
+            @McpToolParam(description = "Headers as JSON object", required = false)
             String headersJson,
-            @ToolParam(value = "Timeout in seconds", required = false)
+            @McpToolParam(description = "Timeout in seconds", required = false)
             Integer timeout) {
 
         // Validate URL
@@ -435,11 +434,11 @@ public class RestApiTools {
         });
     }
 
-    @Tool(description = "Make HTTP POST request to a REST API")
+    @McpTool(description = "Make HTTP POST request to a REST API")
     public ApiResponse httpPost(
-            @ToolParam("URL to request") String url,
-            @ToolParam("Request body as JSON string") String bodyJson,
-            @ToolParam(value = "Headers as JSON object", required = false)
+            @McpToolParam(description = "URL to request") String url,
+            @McpToolParam(description = "Request body as JSON string") String bodyJson,
+            @McpToolParam(description = "Headers as JSON object", required = false)
             String headersJson) {
 
         CircuitBreaker circuitBreaker = circuitBreakerRegistry.circuitBreaker("http-post");
@@ -484,9 +483,9 @@ public class RestApiTools {
         });
     }
 
-    @Tool(description = "Get API status and health")
+    @McpTool(description = "Get API status and health")
     public HealthCheckResult checkApiHealth(
-            @ToolParam("Base URL of the API") String baseUrl) {
+            @McpToolParam(description = "Base URL of the API") String baseUrl) {
 
         String healthUrl = baseUrl.endsWith("/") ? baseUrl + "health" : baseUrl + "/health";
 
@@ -565,11 +564,11 @@ public class GraphQlTools {
                 .build();
     }
 
-    @Tool(description = "Execute GraphQL query")
+    @McpTool(description = "Execute GraphQL query")
     public GraphQlResponse executeQuery(
-            @ToolParam("GraphQL endpoint URL") String endpoint,
-            @ToolParam("GraphQL query") String query,
-            @ToolParam(value = "Query variables as JSON", required = false)
+            @McpToolParam(description = "GraphQL endpoint URL") String endpoint,
+            @McpToolParam(description = "GraphQL query") String query,
+            @McpToolParam(description = "Query variables as JSON", required = false)
             String variablesJson) {
 
         try {
@@ -604,9 +603,9 @@ public class GraphQlTools {
         }
     }
 
-    @Tool(description = "Get GraphQL schema")
+    @McpTool(description = "Get GraphQL schema")
     public String getSchema(
-            @ToolParam("GraphQL endpoint URL") String endpoint) {
+            @McpToolParam(description = "GraphQL endpoint URL") String endpoint) {
 
         String introspectionQuery = """
             query IntrospectionQuery {
@@ -650,9 +649,9 @@ public class FileSystemTools {
         }
     }
 
-    @Tool(description = "Read file contents")
+    @McpTool(description = "Read file contents")
     public FileReadResult readFile(
-            @ToolParam("Path to file, relative to base directory") String filePath) {
+            @McpToolParam(description = "Path to file, relative to base directory") String filePath) {
 
         try {
             Path file = resolveSafePath(filePath);
@@ -681,10 +680,10 @@ public class FileSystemTools {
         }
     }
 
-    @Tool(description = "Write content to file")
+    @McpTool(description = "Write content to file")
     public FileWriteResult writeFile(
-            @ToolParam("Path to file, relative to base directory") String filePath,
-            @ToolParam("Content to write") String content) {
+            @McpToolParam(description = "Path to file, relative to base directory") String filePath,
+            @McpToolParam(description = "Content to write") String content) {
 
         try {
             Path file = resolveSafePath(filePath);
@@ -707,11 +706,11 @@ public class FileSystemTools {
         }
     }
 
-    @Tool(description = "List files in directory")
+    @McpTool(description = "List files in directory")
     public ListFilesResult listFiles(
-            @ToolParam(value = "Directory path, relative to base directory", required = false)
+            @McpToolParam(description = "Directory path, relative to base directory", required = false)
             String dirPath,
-            @ToolParam(value = "File pattern (e.g., *.txt)", required = false)
+            @McpToolParam(description = "File pattern (e.g., *.txt)", required = false)
             String pattern) {
 
         try {
@@ -751,9 +750,9 @@ public class FileSystemTools {
         }
     }
 
-    @Tool(description = "Get file information")
+    @McpTool(description = "Get file information")
     public FileInfo getFileInfo(
-            @ToolParam("Path to file or directory") String path) {
+            @McpToolParam(description = "Path to file or directory") String path) {
 
         try {
             Path file = resolveSafePath(path);
@@ -801,10 +800,10 @@ record FileInfo(String name, boolean isDirectory, long size, Instant lastModifie
 @Component
 public class CsvTools {
 
-    @Tool(description = "Read and analyze CSV file")
+    @McpTool(description = "Read and analyze CSV file")
     public CsvAnalysis analyzeCsv(
-            @ToolParam("Path to CSV file") String filePath,
-            @ToolParam(value = "Has header row", required = false)
+            @McpToolParam(description = "Path to CSV file") String filePath,
+            @McpToolParam(description = "Has header row", required = false)
             Boolean hasHeader) {
 
         boolean header = hasHeader != null ? hasHeader : true;
@@ -860,9 +859,9 @@ public class CsvTools {
         return "string";
     }
 
-    @Tool(description = "Convert CSV to JSON")
+    @McpTool(description = "Convert CSV to JSON")
     public List<Map<String, String>> csvToJson(
-            @ToolParam("Path to CSV file") String filePath) {
+            @McpToolParam(description = "Path to CSV file") String filePath) {
 
         try (Reader reader = new FileReader(filePath);
              CSVParser parser = new CSVParser(reader,
@@ -909,15 +908,15 @@ public class UserManagementTools {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Tool(description = "Search users by criteria")
+    @McpTool(description = "Search users by criteria")
     public List<UserInfo> searchUsers(
-            @ToolParam(value = "Email contains", required = false)
+            @McpToolParam(description = "Email contains", required = false)
             String email,
-            @ToolParam(value = "Name contains", required = false)
+            @McpToolParam(description = "Name contains", required = false)
             String name,
-            @ToolParam(value = "Role", required = false)
+            @McpToolParam(description = "Role", required = false)
             String role,
-            @ToolParam(value = "Active status", required = false)
+            @McpToolParam(description = "Active status", required = false)
             Boolean active) {
 
         List<User> users = userRepository.findAll((root, query, cb) -> {
@@ -951,12 +950,12 @@ public class UserManagementTools {
                 .toList();
     }
 
-    @Tool(description = "Create a new user account")
+    @McpTool(description = "Create a new user account")
     public UserCreationResult createUser(
-            @ToolParam("User email") String email,
-            @ToolParam("User name") String name,
-            @ToolParam("User password") String password,
-            @ToolParam(value = "User role", required = false)
+            @McpToolParam(description = "User email") String email,
+            @McpToolParam(description = "User name") String name,
+            @McpToolParam(description = "User password") String password,
+            @McpToolParam(description = "User role", required = false)
             String role) {
 
         // Validate input
@@ -1002,7 +1001,7 @@ public class UserManagementTools {
         }
     }
 
-    @Tool(description = "Get user statistics")
+    @McpTool(description = "Get user statistics")
     public UserStatistics getUserStatistics() {
         long totalUsers = userRepository.count();
         long activeUsers = userRepository.countByActive(true);
@@ -1043,10 +1042,10 @@ public class OrderManagementTools {
         this.productRepository = productRepository;
     }
 
-    @Tool(description = "Create a new order")
+    @McpTool(description = "Create a new order")
     public OrderCreationResult createOrder(
-            @ToolParam("Customer email") String customerEmail,
-            @ToolParam("Product IDs and quantities as JSON array")
+            @McpToolParam(description = "Customer email") String customerEmail,
+            @McpToolParam(description = "Product IDs and quantities as JSON array")
             String itemsJson) {
 
         try {
@@ -1097,15 +1096,15 @@ public class OrderManagementTools {
         }
     }
 
-    @Tool(description = "Search orders")
+    @McpTool(description = "Search orders")
     public List<OrderInfo> searchOrders(
-            @ToolParam(value = "Customer email", required = false)
+            @McpToolParam(description = "Customer email", required = false)
             String customerEmail,
-            @ToolParam(value = "Order status", required = false)
+            @McpToolParam(description = "Order status", required = false)
             String status,
-            @ToolParam(value = "Start date (YYYY-MM-DD)", required = false)
+            @McpToolParam(description = "Start date (YYYY-MM-DD)", required = false)
             String startDate,
-            @ToolParam(value = "End date (YYYY-MM-DD)", required = false)
+            @McpToolParam(description = "End date (YYYY-MM-DD)", required = false)
             String endDate) {
 
         return orderRepository.findAll((root, query, cb) -> {
@@ -1137,11 +1136,11 @@ public class OrderManagementTools {
         )).toList();
     }
 
-    @Tool(description = "Get order statistics")
+    @McpTool(description = "Get order statistics")
     public OrderStatistics getOrderStatistics(
-            @ToolParam(value = "Start date (YYYY-MM-DD)", required = false)
+            @McpToolParam(description = "Start date (YYYY-MM-DD)", required = false)
             String startDate,
-            @ToolParam(value = "End date (YYYY-MM-DD)", required = false)
+            @McpToolParam(description = "End date (YYYY-MM-DD)", required = false)
             String endDate) {
 
         LocalDateTime start = startDate != null ?
@@ -1196,8 +1195,8 @@ public class ImageTools {
         this.restTemplate = builder.build();
     }
 
-    @Tool(description = "Download and analyze image")
-    public ImageAnalysis analyzeImage(@ToolParam("Image URL") String imageUrl) {
+    @McpTool(description = "Download and analyze image")
+    public ImageAnalysis analyzeImage(@McpToolParam(description = "Image URL") String imageUrl) {
         try {
             // Download image
             ResponseEntity<byte[]> response = restTemplate.getForEntity(imageUrl, byte[].class);
@@ -1234,10 +1233,10 @@ public class ImageTools {
         }
     }
 
-    @Tool(description = "Convert image format")
+    @McpTool(description = "Convert image format")
     public ImageConversionResult convertImage(
-            @ToolParam("Source image URL") String sourceUrl,
-            @ToolParam("Target format (jpg, png, gif)") String targetFormat) {
+            @McpToolParam(description = "Source image URL") String sourceUrl,
+            @McpToolParam(description = "Target format (jpg, png, gif)") String targetFormat) {
 
         try {
             // Download source image
@@ -1270,10 +1269,10 @@ public class ImageTools {
         }
     }
 
-    @Tool(description = "Generate QR code")
+    @McpTool(description = "Generate QR code")
     public QrCodeResult generateQrCode(
-            @ToolParam("Text or URL to encode") String content,
-            @ToolParam(value = "QR code size", required = false)
+            @McpToolParam(description = "Text or URL to encode") String content,
+            @McpToolParam(description = "QR code size", required = false)
             Integer size) {
 
         int qrSize = size != null ? size : 200;
@@ -1315,12 +1314,12 @@ public class AudioTools {
 
     private final Logger log = LoggerFactory.getLogger(AudioTools.class);
 
-    @Tool(description = "Convert text to speech")
+    @McpTool(description = "Convert text to speech")
     public TextToSpeechResult textToSpeech(
-            @ToolParam("Text to convert to speech") String text,
-            @ToolParam(value = "Voice (alloy, echo, fable, onyx, nova, shimmer)", required = false)
+            @McpToolParam(description = "Text to convert to speech") String text,
+            @McpToolParam(description = "Voice (alloy, echo, fable, onyx, nova, shimmer)", required = false)
             String voice,
-            @ToolParam(value = "Response format (mp3, opus, aac, flac)", required = false)
+            @McpToolParam(description = "Response format (mp3, opus, aac, flac)", required = false)
             String responseFormat) {
 
         String selectedVoice = voice != null ? voice : "alloy";
@@ -1348,10 +1347,10 @@ public class AudioTools {
         }
     }
 
-    @Tool(description = "Transcribe audio to text")
+    @McpTool(description = "Transcribe audio to text")
     public SpeechToTextResult speechToText(
-            @ToolParam("Path to audio file") String audioFilePath,
-            @ToolParam(value = "Language (e.g., en, es, fr)", required = false)
+            @McpToolParam(description = "Path to audio file") String audioFilePath,
+            @McpToolParam(description = "Language (e.g., en, es, fr)", required = false)
             String language) {
 
         try {
@@ -1382,8 +1381,8 @@ public class AudioTools {
         }
     }
 
-    @Tool(description = "Analyze audio file")
-    public AudioAnalysis analyzeAudio(@ToolParam("Path to audio file") String audioFilePath) {
+    @McpTool(description = "Analyze audio file")
+    public AudioAnalysis analyzeAudio(@McpToolParam(description = "Path to audio file") String audioFilePath) {
         try {
             Path audioPath = Paths.get(audioFilePath);
 
@@ -1459,10 +1458,10 @@ public class SecureDatabaseTools {
     }
 
     @PreAuthorize("hasRole('ADMIN') or hasRole('DB_USER')")
-    @Tool(description = "Execute secure database query (requires authentication)")
+    @McpTool(description = "Execute secure database query (requires authentication)")
     public SecureQueryResult executeSecureQuery(
-            @ToolParam("SQL query") String query,
-            @ToolParam(value = "Query parameters", required = false)
+            @McpToolParam(description = "SQL query") String query,
+            @McpToolParam(description = "Query parameters", required = false)
             String paramsJson) {
 
         // Multi-factor authentication for sensitive operations
@@ -1544,10 +1543,10 @@ public class StreamingMcpServer {
         this.emitter = new SseEmitter(600000L); // 10 minutes
     }
 
-    @Tool(description = "Stream real-time data")
+    @McpTool(description = "Stream real-time data")
     public void streamData(
-            @ToolParam("Data source") String source,
-            @ToolParam(value = "Stream interval (seconds)", required = false)
+            @McpToolParam(description = "Data source") String source,
+            @McpToolParam(description = "Stream interval (seconds)", required = false)
             Integer interval) {
 
         int seconds = interval != null ? interval : 5;
@@ -1623,7 +1622,6 @@ public class StreamingMcpServer {
 
 ```java
 @SpringBootApplication
-@EnableMcpServer
 public class EnterpriseMcpApplication {
 
     public static void main(String[] args) {
@@ -1678,25 +1676,12 @@ spring:
           model: gpt-4o-mini
           temperature: 0.7
     mcp:
-      enabled: true
       server:
         name: enterprise-mcp-server
         version: 1.0.0
-      transport: stdio
-      security:
-        enabled: true
-        authorization:
-          mode: role-based
-        audit:
-          enabled: true
-      logging:
-        enabled: true
-        level: DEBUG
-      metrics:
-        enabled: true
-        export:
-          prometheus:
-            enabled: true
+        type: SYNC
+        transport: WEBMVC
+        protocol: STREAMABLE
 
 management:
   endpoints:

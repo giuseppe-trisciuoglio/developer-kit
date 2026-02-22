@@ -1,7 +1,7 @@
 package com.example.mcp.tools;
 
-import org.springframework.ai.tool.annotation.Tool;
-import org.springframework.ai.tool.annotation.ToolParam;
+import org.springframework.ai.mcp.server.annotation.McpTool;
+import org.springframework.ai.mcp.server.annotation.McpToolParam;
 import org.springframework.stereotype.Component;
 
 /**
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
  *
  * Follow these best practices when creating tools:
  * 1. Use descriptive names and clear descriptions
- * 2. Document all parameters with @ToolParam
+ * 2. Document all parameters with @McpToolParam
  * 3. Implement proper validation
  * 4. Handle errors gracefully
  * 5. Return structured results
@@ -30,16 +30,16 @@ public class ToolTemplate {
      * Include: What the tool does, expected inputs, return value
      * Example: "Calculate the square root of a positive number"
      */
-    @Tool(
+    @McpTool(
         description = "DESCRIPTION: Clear explanation of what this tool does and when to use it"
     )
     public ToolResult exampleTool(
-            // Always document parameters with @ToolParam
-            @ToolParam("Clear description of what this parameter represents")
+            // Always document parameters with @McpToolParam
+            @McpToolParam(description = "Clear description of what this parameter represents", required = true)
             String requiredParam,
 
             // Use required = false for optional parameters
-            @ToolParam(value = "Description of optional parameter", required = false)
+            @McpToolParam(description = "Description of optional parameter", required = false)
             String optionalParam) {
 
         try {
@@ -69,7 +69,7 @@ public class ToolTemplate {
      * Tool with complex input/output.
      * Shows how to handle structured data.
      */
-    @Tool(
+    @McpTool(
         description = """
             Process user data with validation and enrichment.
             Takes user information, validates it, enriches with additional data,
@@ -78,10 +78,10 @@ public class ToolTemplate {
             """
     )
     public ProcessResult processUserData(
-            @ToolParam("User data as JSON string")
+            @McpToolParam(description = "User data as JSON string", required = true)
             String userDataJson,
 
-            @ToolParam(value = "Perform validation", required = false)
+            @McpToolParam(description = "Perform validation", required = false)
             Boolean validate) {
 
         try {
@@ -115,18 +115,18 @@ public class ToolTemplate {
      * Tool that performs expensive operation.
      * Shows caching pattern.
      */
-    @Tool(
+    @McpTool(
         description = "Get data from external API with caching"
     )
     @Cacheable(value = "api-data", key = "#cacheKey")
     public ApiData getCachedApiData(
-            @ToolParam("API endpoint URL")
+            @McpToolParam(description = "API endpoint URL", required = true)
             String endpoint,
 
-            @ToolParam("Cache key for storing result")
+            @McpToolParam(description = "Cache key for storing result", required = true)
             String cacheKey,
 
-            @ToolParam(value = "Force refresh cache", required = false)
+            @McpToolParam(description = "Force refresh cache", required = false)
             Boolean forceRefresh) {
 
         // If force refresh, evict cache first
@@ -145,12 +145,12 @@ public class ToolTemplate {
      * Tool with rate limiting.
      * Shows how to protect against abuse.
      */
-    @Tool(
+    @McpTool(
         description = "Perform rate-limited operation"
     )
     @RateLimited(requests = 10, duration = "1m") // 10 requests per minute
     public RateLimitedResult performRateLimitedOperation(
-            @ToolParam("Operation type")
+            @McpToolParam(description = "Operation type", required = true)
             String operation) {
 
         // Check rate limit first (handled by annotation)
@@ -168,14 +168,14 @@ public class ToolTemplate {
     /**
      * Async tool execution.
      */
-    @Tool(
+    @McpTool(
         description = "Execute long-running task asynchronously"
     )
     public AsyncResult executeAsyncTask(
-            @ToolParam("Task name")
+            @McpToolParam(description = "Task name", required = true)
             String taskName,
 
-            @ToolParam(value = "Task parameters", required = false)
+            @McpToolParam(description = "Task parameters", required = false)
             String paramsJson) {
 
         // Generate task ID
@@ -201,15 +201,15 @@ public class ToolTemplate {
     /**
      * Tool with security check.
      */
-    @Tool(
+    @McpTool(
         description = "Perform sensitive operation requiring admin access"
     )
     @PreAuthorize("hasRole('ADMIN')")
     public AdminResult performAdminOperation(
-            @ToolParam("Admin command")
+            @McpToolParam(description = "Admin command", required = true)
             String command,
 
-            @ToolParam("MFA token")
+            @McpToolParam(description = "MFA token", required = true)
             String mfaToken) {
 
         // Verify MFA token
