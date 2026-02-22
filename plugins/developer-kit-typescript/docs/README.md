@@ -26,7 +26,7 @@ The Developer Kit TypeScript Plugin provides:
 
 - **TypeScript Agents**: 13 specialized agents for NestJS, React, TypeScript, and React Native development
 - **TypeScript Commands**: 3 commands for code review and security assessment
-- **TypeScript Skills**: 16 skills covering NestJS, React patterns, Next.js, Drizzle ORM, Monorepo (Nx/Turborepo), shadcn-ui, Tailwind CSS, AWS Lambda, TypeScript documentation, and Clean Architecture
+- **TypeScript Skills**: 17 skills covering NestJS, React patterns, Next.js, Better Auth, Drizzle ORM, Monorepo (Nx/Turborepo), shadcn-ui, Tailwind CSS, AWS Lambda, TypeScript documentation, and Clean Architecture
 
 ---
 
@@ -43,6 +43,7 @@ developer-kit-typescript/
 │   ├── tailwind-css-patterns/  # Tailwind CSS skill
 │   ├── typescript-docs/ # TypeScript documentation skill
 │   ├── clean-architecture/     # Clean Architecture patterns
+│   ├── better-auth/            # Better Auth integration (NestJS + Next.js)
 │   ├── nextjs-app-router/      # Next.js App Router
 │   ├── nextjs-authentication/  # Next.js Authentication
 │   ├── nextjs-data-fetching/   # Next.js Data Fetching
@@ -84,6 +85,13 @@ developer-kit-typescript/
 - State management (Context, Redux, Zustand)
 - Performance optimization
 - API integration
+
+### Authentication
+- Better Auth integration for NestJS backend and Next.js frontend
+- Email/password, OAuth providers, JWT tokens, session management
+- MFA/2FA, passkeys, social providers
+- Drizzle ORM + PostgreSQL database schema
+- Role-based access control (RBAC)
 
 ### Next.js Full-Stack Development
 - App Router patterns and fundamentals
