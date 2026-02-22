@@ -39,6 +39,117 @@ plugins/
 
 ---
 
+## Workflow
+
+The Developer Kit follows a systematic development workflow that ensures high-quality, well-documented features from idea to implementation:
+
+### 1. Brainstorming Phase
+
+**Command:** `/devkit.brainstorm [idea-description]`
+
+Start here when you have a new feature idea or need to explore design alternatives. This command guides you through a systematic 9-phase process:
+
+- **Context Discovery**: Understand project state and initial idea
+- **Idea Refinement**: Deep exploration through structured dialogue
+- **Approach Exploration**: Present 2-3 approaches with trade-offs
+- **Codebase Exploration**: Analyze existing code for design constraints
+- **Design Presentation**: Present design incrementally with validation
+- **Documentation Generation**: Create professional design documents
+- **Document Review**: Quality review by specialist agent
+- **Next Steps Recommendation**: Suggest appropriate follow-up command
+
+**Output**: A comprehensive design document saved to `docs/plans/YYYY-MM-DD--design.md`
+
+**Example:**
+```bash
+/devkit.brainstorm Add user authentication with JWT tokens
+```
+
+### 2. Feature Development Phase
+
+**Command:** `/devkit.feature-development [--lang=spring|typescript|nestjs|react|python|general] [feature-description]`
+
+Use this command to implement the design created during brainstorming. It follows a systematic 7-phase approach:
+
+- **Discovery**: Understand what needs to be built
+- **Codebase Exploration**: Deep understanding of existing code patterns
+- **Clarifying Questions**: Fill gaps and resolve ambiguities
+- **Architecture Design**: Design implementation with trade-offs
+- **Implementation**: Build the feature following conventions
+- **Quality Review**: Ensure code quality and correctness
+- **Summary**: Document what was accomplished
+
+**Language/Framework Support:**
+- `--lang=spring` or `--lang=java`: Java/Spring Boot development
+- `--lang=typescript` or `--lang=ts`: TypeScript/Node.js development
+- `--lang=nestjs`: NestJS backend development
+- `--lang=react`: React frontend development
+- `--lang=python` or `--lang=py`: Python development
+- `--lang=aws`: AWS infrastructure and CloudFormation
+- `--lang=general` or no flag: General-purpose development
+
+**Example:**
+```bash
+/devkit.feature-development --lang=spring Add REST API for user management
+```
+
+### 3. Code Review & Debug Phase
+
+After implementation, use these specialized commands for quality assurance:
+
+**Code Review:** `/devkit.refactor [--lang=...] [refactoring-description]`
+- Improve code structure, maintainability, and design
+- Reduce technical debt
+- Apply best practices and patterns
+
+**Fix & Debug:** `/devkit.fix-debugging [--lang=...] [issue-description]`
+- Systematic root cause analysis
+- Minimal, focused fixes
+- Verification and regression prevention
+
+**Example:**
+```bash
+/devkit.fix-debugging --lang=spring Bean injection failing in OrderService
+/devkit.refactor --lang=typescript Simplify the authentication flow
+```
+
+### Typical Development Flow
+
+```
+1. Idea
+   ↓
+2. /devkit.brainstorm
+   ↓ (creates design document)
+3. /devkit.feature-development
+   ↓ (implements feature)
+4. Code Review & Testing
+   ↓
+5. /devkit.fix-debugging (if issues found)
+   ↓
+6. /devkit.refactor (for improvements)
+   ↓
+7. Ready for deployment
+```
+
+### Alternative Paths
+
+**For Bug Fixes:**
+```
+Bug Report → /devkit.fix-debugging → Fix implemented → Verification
+```
+
+**For Refactoring:**
+```
+Code Issue → /devkit.brainstorm (optional) → /devkit.refactor → Improved code
+```
+
+**For Quick Features:**
+```
+Simple Feature → /devkit.feature-development → Implemented directly
+```
+
+---
+
 ## Available Plugins
 
 ### developer-kit-core (Required)
