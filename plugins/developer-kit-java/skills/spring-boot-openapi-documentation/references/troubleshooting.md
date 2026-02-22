@@ -94,13 +94,13 @@ public class SecurityConfig {
 
 **Problem**: Build fails due to conflicting SpringDoc dependencies.
 
-**Solution**: Ensure correct version compatibility:
+**Solution**: Ensure correct version compatibility and use the latest compatible starter:
 
 ```xml
 <dependency>
     <groupId>org.springdoc</groupId>
     <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-    <version>2.8.13</version>
+    <version>last-release-version</version>
 </dependency>
 ```
 
@@ -109,9 +109,11 @@ For WebFlux applications:
 <dependency>
     <groupId>org.springdoc</groupId>
     <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
-    <version>2.8.13</version>
+    <version>last-release-version</version>
 </dependency>
 ```
+
+Check the SpringDoc README/release notes for the latest Spring Boot compatibility mapping.
 
 ### JavaDoc Integration Issues
 
@@ -123,7 +125,7 @@ For WebFlux applications:
 <dependency>
     <groupId>com.github.therapi</groupId>
     <artifactId>therapi-runtime-javadoc</artifactId>
-    <version>0.15.0</version>
+    <version>latest-compatible</version>
     <scope>provided</scope>
 </dependency>
 ```

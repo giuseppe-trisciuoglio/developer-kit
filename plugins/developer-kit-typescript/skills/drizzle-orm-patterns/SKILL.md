@@ -26,7 +26,7 @@ Expert guide for building type-safe database applications with Drizzle ORM. Cove
 
 1. **Identify your database dialect** - Choose PostgreSQL, MySQL, SQLite, MSSQL, or CockroachDB
 2. **Define your schema** - Use the appropriate table function (pgTable, mysqlTable, etc.)
-3. **Set up relations** - Define relations using `relations()` or `defineRelations()`
+3. **Set up relations** - Define relations using `relations()` (classic API) or `defineRelations()` (Relational Queries v2)
 4. **Initialize the database client** - Create your Drizzle client with proper credentials
 5. **Write queries** - Use the query builder for type-safe CRUD operations
 6. **Handle transactions** - Wrap multi-step operations in transactions
@@ -86,6 +86,7 @@ await db.delete(users).where(eq(users.id, 1));
 npx drizzle-kit generate   # Generate migration files
 npx drizzle-kit migrate    # Apply migrations
 npx drizzle-kit push       # Push schema directly (dev)
+npx drizzle-kit pull       # Introspect schema from database
 ```
 
 ## Constraints and Warnings
@@ -104,6 +105,7 @@ npx drizzle-kit push       # Push schema directly (dev)
 4. Use `generate` + `migrate` in production, `push` for development
 5. Add indexes on frequently queried columns and foreign keys
 6. Use cursor-based pagination for large datasets
+7. Use `onConflictDoUpdate()` / `onDuplicateKeyUpdate()` for upserts (dialect-specific)
 
 ## References
 

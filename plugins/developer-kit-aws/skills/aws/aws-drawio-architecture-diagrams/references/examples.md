@@ -72,4 +72,4 @@ https://app.diagrams.net/?libs=aws4
 **User Request:**
 "Create a serverless architecture diagram with API Gateway, Lambda functions, DynamoDB, and S3 for a REST API."
 
-**Generated Output:** XML file with API Gateway (violet #E7157B), Lambda functions (orange #ED7100), DynamoDB (pink #C925D1), S3 (green #3F8624). See `aws-architecture-templates.md` for the complete serverless template.
+**Generated Output:** XML file with API Gateway (`fillColor=#5A30B5`, `gradientColor=#945DF2`), Lambda functions (`fillColor=#ED7100`, dedicated shape), DynamoDB (`fillColor=#3334B9`, `gradientColor=#4D72F3`), and S3 (`fillColor=#277116`, `gradientColor=#60A337`). See [aws-architecture-templates.md](aws-architecture-templates.md) for the complete serverless template.

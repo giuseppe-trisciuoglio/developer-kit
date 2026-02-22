@@ -11,7 +11,7 @@ version: 2.2.0
 
 ## Overview
 
-Comprehensive guidance for implementing Clean Architecture, DDD, and Hexagonal Architecture in NestJS/TypeScript. Covers architectural layers, tactical patterns, and practical implementation.
+Comprehensive guidance for implementing Clean Architecture, DDD, and Hexagonal Architecture in NestJS/TypeScript. Use this skill when you need clear layer boundaries, rich domain models, and swappable adapters.
 
 ## When to Use
 
@@ -20,16 +20,27 @@ Comprehensive guidance for implementing Clean Architecture, DDD, and Hexagonal A
 - Implementing rich domain models with business logic encapsulation
 - Designing testable systems with swappable infrastructure
 - Creating microservices with clear bounded contexts
+- Introducing domain events and explicit aggregate boundaries
+- Enforcing dependency inversion with ports/adapters
+
+Trigger phrases:
+- "clean architecture", "hexagonal architecture", "ports and adapters"
+- "domain entities/value objects/aggregates"
+- "separate business logic from NestJS/ORM"
+- "refactor anemic domain model"
 
 ## Instructions
 
-1. **Understand Layers**: Domain (inner) -> Application (use cases) -> Adapters -> Infrastructure (outer)
-2. **Implement Domain Layer**: Create pure entities, value objects, aggregates with no external deps
-3. **Define Ports**: Repository interfaces in domain layer
-4. **Create Use Cases**: Application layer orchestrates business logic
-5. **Implement Adapters**: Controllers (HTTP) and repositories (persistence)
-6. **Configure DI**: Wire dependencies in NestJS modules with Symbol tokens
-7. **Follow Dependency Rule**: Dependencies only point inward
+1. **Define Layer Boundaries**: Domain (inner) -> Application -> Adapters -> Infrastructure (outer), and enforce inward-only dependencies.
+2. **Design the Domain**: Model entities, value objects, and aggregates with invariants in constructors/methods.
+3. **Create Domain Ports**: Put repository interfaces in `domain/repositories`; keep them technology-agnostic.
+4. **Implement Use Cases**: Orchestrate business rules in application services with explicit input/output DTOs.
+5. **Implement Adapters**: Build HTTP controllers and persistence adapters that translate data across boundaries.
+6. **Configure NestJS DI**: Bind ports to adapters in modules using `Symbol` tokens.
+7. **Map at the Edges**: Avoid leaking ORM entities into domain objects; keep mappers in adapters.
+8. **Validate in Two Places**: DTO validation at boundaries; invariant validation inside domain model methods.
+9. **Test by Layer**: Pure unit tests for domain/application; integration tests for adapters and infrastructure.
+10. **Use References for Depth**: Load `references/` files when implementing concrete module/database patterns.
 
 ## Examples
 
@@ -41,6 +52,7 @@ src/
 |   +-- entities/     # Domain entities with business logic
 |   +-- value-objects/ # Immutable value objects
 |   +-- aggregates/   # Aggregate roots
+|   +-- events/       # Domain events
 |   +-- repositories/ # Repository interfaces (ports)
 +-- application/      # Use cases - orchestration
 |   +-- use-cases/    # Individual use cases
@@ -50,6 +62,7 @@ src/
 |   +-- persistence/  # Repository implementations
 +-- infrastructure/   # External concerns
     +-- database/     # ORM config, migrations
+    +-- messaging/    # Brokers, queues, event bus clients
 ```
 
 ### Value Object
@@ -66,9 +79,31 @@ export class Email {
 }
 ```
 
-### Use Case
+### Repository Port
 
 ```typescript
+export interface OrderRepositoryPort {
+  findById(id: string): Promise<Order | null>;
+  save(order: Order): Promise<void>;
+}
+
+export const ORDER_REPOSITORY = Symbol('ORDER_REPOSITORY');
+```
+
+### Use Case with Input/Output
+
+```typescript
+export interface CreateOrderInput {
+  customerId: string;
+  items: Array<{ productId: string; quantity: number; unitPrice: number; currency: string }>;
+}
+
+export interface CreateOrderOutput {
+  orderId: string;
+  total: number;
+  currency: string;
+}
+
 @Injectable()
 export class CreateOrderUseCase {
   constructor(@Inject(ORDER_REPOSITORY) private readonly orderRepo: OrderRepositoryPort) {}
@@ -84,6 +119,51 @@ export class CreateOrderUseCase {
     return { orderId: order.getId(), total: total.getAmount(), currency: total.getCurrency() };
   }
 }
+```
+
+```json
+// Input
+{
+  "customerId": "cust-123",
+  "items": [
+    { "productId": "p-1", "quantity": 2, "unitPrice": 10, "currency": "EUR" }
+  ]
+}
+```
+
+```json
+// Output
+{
+  "orderId": "ord-9fd2...",
+  "total": 20,
+  "currency": "EUR"
+}
+```
+
+### Adapter + Module Wiring
+
+```typescript
+@Injectable()
+export class TypeOrmOrderRepository implements OrderRepositoryPort {
+  constructor(@InjectRepository(OrderEntity) private readonly repo: Repository<OrderEntity>) {}
+
+  async findById(id: string): Promise<Order | null> {
+    const row = await this.repo.findOne({ where: { id }, relations: ['items'] });
+    return row ? toDomain(row) : null;
+  }
+
+  async save(order: Order): Promise<void> {
+    await this.repo.save(toEntity(order));
+  }
+}
+
+@Module({
+  providers: [
+    CreateOrderUseCase,
+    { provide: ORDER_REPOSITORY, useClass: TypeOrmOrderRepository },
+  ],
+})
+export class OrdersModule {}
 ```
 
 ## Constraints and Warnings

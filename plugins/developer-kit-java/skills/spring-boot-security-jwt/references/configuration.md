@@ -175,7 +175,7 @@ public class JwtConfig {
         return Jwts.parser()
                 .verifyWith(getSigningKey())
                 .requireIssuer(issuer)
-                .setAllowedClockSkewSeconds(clockSkewSeconds)
+                .clockSkewSeconds(clockSkewSeconds)
                 .build();
     }
 
@@ -208,7 +208,7 @@ public class JwtParserConfig {
     public JwtParser jwtParser(SecretKey signingKey, JwtProperties jwtProperties) {
         JwtParserBuilder parser = Jwts.parser()
                 .verifyWith(signingKey)
-                .setAllowedClockSkewSeconds(jwtProperties.getClockSkewSeconds());
+                .clockSkewSeconds(jwtProperties.getClockSkewSeconds());
 
         // Add required claims
         if (jwtProperties.isValidateIssuer()) {
@@ -470,7 +470,7 @@ public class AdvancedSecurityConfig {
     @Bean
     public JwtDecoder jwtDecoder() {
         return NimbusJwtDecoder.withSecretKey(getSigningKey())
-                .signatureAlgorithm(SignatureAlgorithm.HS256)
+                .macAlgorithm(MacAlgorithm.HS256)
                 .build();
     }
 

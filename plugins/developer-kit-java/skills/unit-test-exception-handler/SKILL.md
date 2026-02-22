@@ -22,6 +22,12 @@ Use this skill when:
 - Testing error message formatting and localization
 - Want fast exception handler tests without full integration tests
 
+Trigger phrases:
+- "test controller advice"
+- "test exception handler"
+- "mockmvc exception tests"
+- "validate error response format"
+
 ## Instructions
 
 1. **Create test controllers**: Create simple test controllers that throw exceptions to test handler behavior

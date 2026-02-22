@@ -22,7 +22,7 @@ export const users = pgTable('users', {
 ### MySQL Table
 
 ```typescript
-import { mysqlTable, serial, text, int, tinyint, datetime } from 'drizzle-orm/mysql-core';
+import { mysqlTable, serial, text, tinyint, datetime } from 'drizzle-orm/mysql-core';
 
 export const users = mysqlTable('users', {
   id: serial('id').primaryKey(),
@@ -106,14 +106,18 @@ export const profilesRelations = relations(profiles, ({ one }) => ({
 ### Many-to-Many (v2 syntax)
 
 ```typescript
+import * as schema from './schema';
 import { defineRelations } from 'drizzle-orm';
 
-export const relations = defineRelations({ users, groups, usersToGroups }, (r) => ({
+export const relations = defineRelations(schema, (r) => ({
   users: {
     groups: r.many.groups({
       from: r.users.id.through(r.usersToGroups.userId),
       to: r.groups.id.through(r.usersToGroups.groupId),
     }),
+  },
+  groups: {
+    participants: r.many.users(),
   },
 }));
 ```
@@ -121,6 +125,8 @@ export const relations = defineRelations({ users, groups, usersToGroups }, (r) =
 ### Self-Referential
 
 ```typescript
+import { type AnyPgColumn, integer, pgTable, serial, text } from 'drizzle-orm/pg-core';
+
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
   name: text('name').notNull(),
@@ -191,21 +197,25 @@ or(eq(users.role, 'admin'), eq(users.role, 'moderator'))
 ## Pagination
 
 ```typescript
+import { asc, gt } from 'drizzle-orm';
+
 // Offset-based
-const users = await db.select().from(users).orderBy(asc(users.id)).limit(10).offset(20);
+const usersPage = await db.select().from(users).orderBy(asc(users.id)).limit(10).offset(20);
 
 // Cursor-based (more efficient)
-const users = await db.select().from(users).where(gt(users.id, lastId)).orderBy(asc(users.id)).limit(10);
+const nextUsersPage = await db.select().from(users).where(gt(users.id, lastId)).orderBy(asc(users.id)).limit(10);
 ```
 
 ## Joins
 
 ```typescript
+import { alias, eq } from 'drizzle-orm';
+
 // Left join
-const result = await db.select().from(users).leftJoin(posts, eq(users.id, posts.authorId));
+const leftJoinRows = await db.select().from(users).leftJoin(posts, eq(users.id, posts.authorId));
 
 // Inner join
-const result = await db.select().from(users).innerJoin(posts, eq(users.id, posts.authorId));
+const innerJoinRows = await db.select().from(users).innerJoin(posts, eq(users.id, posts.authorId));
 
 // Partial select with join
 const usersWithPosts = await db.select({
@@ -213,9 +223,8 @@ const usersWithPosts = await db.select({
 }).from(users).leftJoin(posts, eq(users.id, posts.authorId));
 
 // Self-join with alias
-import { alias } from 'drizzle-orm';
 const parent = alias(users, 'parent');
-const result = await db.select().from(users).leftJoin(parent, eq(parent.id, users.parentId));
+const selfJoinRows = await db.select().from(users).leftJoin(parent, eq(parent.id, users.parentId));
 ```
 
 ## Aggregations
@@ -236,6 +245,8 @@ const ageGroups = await db.select({
 ## Transactions
 
 ```typescript
+import { eq, sql } from 'drizzle-orm';
+
 // Basic
 await db.transaction(async (tx) => {
   await tx.update(accounts).set({ balance: sql`${accounts.balance} - 100` }).where(eq(accounts.userId, 1));
@@ -272,7 +283,7 @@ export default defineConfig({
 ```
 
 ```json
-{ "scripts": { "generate": "drizzle-kit generate", "migrate": "drizzle-kit migrate", "push": "drizzle-kit push" } }
+{ "scripts": { "generate": "drizzle-kit generate", "migrate": "drizzle-kit migrate", "push": "drizzle-kit push", "pull": "drizzle-kit pull" } }
 ```
 
 ### Programmatic Migration
@@ -308,6 +319,18 @@ await db.update(users).set({ deletedAt: new Date() }).where(eq(users.id, id));
 ### Upsert
 
 ```typescript
+import { sql } from 'drizzle-orm';
+
 await db.insert(users).values({ id: 1, name: 'John', email: 'john@example.com' })
-  .onConflict(onConflict(users.email).doUpdateSet({ name: excluded.name }));
+  .onConflictDoUpdate({
+    target: users.id,
+    set: {
+      name: sql.raw(`excluded.${users.name.name}`),
+      email: sql.raw(`excluded.${users.email.name}`),
+    },
+  });
+
+// MySQL alternative
+await db.insert(users).values({ id: 1, name: 'John', email: 'john@example.com' })
+  .onDuplicateKeyUpdate({ set: { name: 'John' } });
 ```

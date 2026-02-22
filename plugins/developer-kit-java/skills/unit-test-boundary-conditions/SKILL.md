@@ -24,6 +24,12 @@ Use this skill when:
 - Verifying behavior at API boundaries
 - Want comprehensive edge case coverage
 
+Trigger phrases:
+- "test boundary conditions"
+- "test edge cases"
+- "boundary value analysis"
+- "min max unit tests"
+
 ## Instructions
 
 1. **Identify boundaries**: List all numeric limits (MIN_VALUE, MAX_VALUE, zero), string states (null, empty, whitespace), and collection sizes (empty, single, many)

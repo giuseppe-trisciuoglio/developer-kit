@@ -130,7 +130,7 @@ Mock external services but use real databases for integration tests:
 ```java
 // Good - Mock external services, use real DB
 @SpringBootTest
-@TestContainerConfig.class
+@TestContainerConfig
 public class OrderServiceTest {
 
     @MockitoBean

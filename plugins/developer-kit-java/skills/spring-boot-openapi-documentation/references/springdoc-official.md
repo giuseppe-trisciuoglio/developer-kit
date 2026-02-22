@@ -20,13 +20,13 @@ SpringDoc OpenAPI is a Java library that automates API documentation generation 
 <dependency>
     <groupId>org.springdoc</groupId>
     <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-    <version>2.8.13</version>
+    <version>last-release-version</version>
 </dependency>
 ```
 
 ### Gradle (Spring Boot 3.x)
 ```gradle
-implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13'
+implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:latest.release'
 ```
 
 ### WebFlux Support
@@ -34,7 +34,7 @@ implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13'
 <dependency>
     <groupId>org.springdoc</groupId>
     <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
-    <version>2.8.13</version>
+    <version>last-release-version</version>
 </dependency>
 ```
 
@@ -43,17 +43,13 @@ implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13'
 After adding the dependency:
 - **OpenAPI JSON**: `http://localhost:8080/v3/api-docs`
 - **OpenAPI YAML**: `http://localhost:8080/v3/api-docs.yaml`
-- **Swagger UI**: `http://localhost:8080/swagger-ui/index.html`
+- **Swagger UI**: `http://localhost:8080/swagger-ui.html` (redirects to `/swagger-ui/index.html`)
 
-## Compatibility Matrix
+## Compatibility Guidance
 
-| Spring Boot Version | SpringDoc OpenAPI Version |
-|---------------------|---------------------------|
-| 3.4.x               | 2.7.x - 2.8.x            |
-| 3.3.x               | 2.6.x                    |
-| 3.2.x               | 2.3.x - 2.5.x            |
-| 3.1.x               | 2.2.x                    |
-| 3.0.x               | 2.0.x - 2.1.x            |
+- For Spring Boot 3.x, use the SpringDoc 2.x starter artifacts.
+- Keep Spring Boot and SpringDoc on compatible minors based on SpringDoc release notes.
+- Prefer `last-release-version` examples in internal documentation to reduce staleness.
 
 ## Basic Configuration
 

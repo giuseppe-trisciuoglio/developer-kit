@@ -326,8 +326,8 @@ public AuthenticationManager authenticationManager(
 ```xml
 <!-- pom.xml -->
 <properties>
-    <spring-boot.version>3.4.x</spring-boot.version>
-    <spring-security.version>6.4.x</spring-security.version>
+    <spring-boot.version>3.5.x</spring-boot.version>
+    <spring-security.version>6.5.x</spring-security.version>
 </properties>
 ```
 

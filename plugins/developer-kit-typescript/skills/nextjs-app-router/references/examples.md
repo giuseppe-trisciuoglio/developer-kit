@@ -69,6 +69,7 @@ export default function NewPostPage() {
 "use cache";
 
 import { cacheLife, cacheTag } from "next/cache";
+import { notFound } from "next/navigation";
 
 export default async function ProductPage({
   params,

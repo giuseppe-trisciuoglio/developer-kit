@@ -15,11 +15,18 @@ Patterns for unit testing Spring Security authorization logic using @PreAuthoriz
 
 ## When to Use
 
+Use this skill when:
 - Testing @PreAuthorize and @Secured method-level security
 - Testing role-based access control (RBAC)
 - Testing custom permission evaluators
 - Verifying access denied scenarios
 - Want fast authorization tests without full Spring Security context
+
+Trigger phrases:
+- "test spring security authorization"
+- "test preauthorize"
+- "test secured annotation"
+- "test permission evaluator"
 
 ## Instructions
 
@@ -97,6 +104,8 @@ void shouldDenyPermissionToNonOwner() {
     assertThat(evaluator.hasPermission(otherUser, document, "WRITE")).isFalse();
 }
 ```
+
+For detailed examples covering dependency setup, @Secured testing, expression-based authorization, and parameterized multi-role tests, see [Examples](references/examples.md).
 
 ## Best Practices
 

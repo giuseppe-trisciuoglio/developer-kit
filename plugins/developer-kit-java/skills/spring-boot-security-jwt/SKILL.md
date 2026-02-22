@@ -1,6 +1,6 @@
 ---
 name: spring-boot-security-jwt
-description: Provides JWT authentication and authorization patterns for Spring Boot 3.4.x covering token generation with JJWT, Bearer/cookie authentication, database/OAuth2 integration, and RBAC/permission-based access control using Spring Security 6.x. Use when implementing authentication or authorization in Spring Boot applications.
+description: Provides JWT authentication and authorization patterns for Spring Boot 3.5.x covering token generation with JJWT, Bearer/cookie authentication, database/OAuth2 integration, and RBAC/permission-based access control using Spring Security 6.x. Use when implementing authentication or authorization in Spring Boot applications.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 category: backend
 tags: [spring-boot, spring-security, jwt, authentication, authorization, rbac, oauth2, jjwt]
@@ -9,7 +9,7 @@ version: 2.2.0
 
 # Spring Boot JWT Security
 
-Comprehensive JWT authentication and authorization patterns for Spring Boot 3.4.x applications using Spring Security 6.x and the JJWT library.
+Comprehensive JWT authentication and authorization patterns for Spring Boot 3.5.x applications using Spring Security 6.x and the JJWT library.
 
 ## Overview
 

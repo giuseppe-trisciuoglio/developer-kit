@@ -132,7 +132,7 @@ Always include: `Open in draw.io with AWS libraries: https://app.diagrams.net/?l
     <mxCell id="2" value="AWS Cloud" style="points=[];outlineConnect=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_aws_cloud;strokeColor=#AAB7B8;fillColor=none;verticalAlign=top;fontStyle=1;fontSize=14;" vertex="1" parent="1">
       <mxGeometry x="20" y="20" width="200" height="150" as="geometry"/>
     </mxCell>
-    <mxCell id="3" value="EC2" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#ED7100;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ec2;" vertex="1" parent="2">
+    <mxCell id="3" value="EC2" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ec2;" vertex="1" parent="2">
       <mxGeometry x="70" y="40" width="60" height="60" as="geometry"/>
     </mxCell>
   </root>

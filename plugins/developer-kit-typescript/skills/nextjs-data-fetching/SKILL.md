@@ -15,7 +15,7 @@ Comprehensive patterns for data fetching in Next.js App Router applications. Cov
 ## When to Use
 
 - Implementing data fetching in Next.js App Router
-- Choosing between Server Components and Client Components for data
+- Choosing between Server Components and Client Components for data fetching
 - Setting up SWR or React Query integration
 - Implementing parallel data fetching patterns
 - Configuring ISR and revalidation strategies
@@ -52,11 +52,13 @@ export default async function PostsPage() {
 ### Parallel Data Fetching
 
 ```tsx
+import { getUser, getPosts, getAnalytics } from '@/lib/data';
+
 export default async function DashboardPage() {
   const [user, posts, analytics] = await Promise.all([
-    fetch('/api/user').then(r => r.json()),
-    fetch('/api/posts').then(r => r.json()),
-    fetch('/api/analytics').then(r => r.json()),
+    getUser(),
+    getPosts(),
+    getAnalytics(),
   ]);
   return <Dashboard user={user} posts={posts} analytics={analytics} />;
 }
@@ -74,6 +76,7 @@ export default async function DashboardPage() {
 ## Constraints and Warnings
 
 - Server Components cannot use hooks (useState, useEffect) or data fetching libraries
+- In Server Components, fetch directly from the data source instead of your own Route Handlers (`/api/*`)
 - Client Components must include `'use client'` directive
 - Server Actions require `'use server'` directive
 - Avoid fetching data inside loops in Server Components

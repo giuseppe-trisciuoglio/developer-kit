@@ -23,6 +23,12 @@ Use this skill when:
 - Testing nested property structures
 - Want fast configuration tests without Spring context
 
+Trigger phrases:
+- "test configuration properties"
+- "test applicationcontextrunner"
+- "validate spring boot property binding"
+- "test profile-specific configuration"
+
 ## Instructions
 
 1. **Use ApplicationContextRunner**: Test property bindings without starting full Spring context

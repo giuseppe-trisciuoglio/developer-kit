@@ -27,7 +27,11 @@ SpringDoc OpenAPI automates generation of OpenAPI 3.0 documentation for Spring B
 
 ### 1. Add Dependencies and Configure
 
-Add `springdoc-openapi-starter-webmvc-ui` dependency. Configure basic settings in application.yml.
+Add the correct starter dependency for your stack:
+- `springdoc-openapi-starter-webmvc-ui` for Spring MVC
+- `springdoc-openapi-starter-webflux-ui` for Spring WebFlux
+
+Configure basic settings in application.yml.
 
 ### 2. Document Controllers
 
@@ -57,7 +61,7 @@ Configure API grouping, versioning, and UI appearance.
 <dependency>
     <groupId>org.springdoc</groupId>
     <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-    <version>2.8.13</version>
+    <version>last-release-version</version>
 </dependency>
 ```
 
@@ -76,7 +80,7 @@ springdoc:
   paths-to-match: /api/**
 ```
 
-Access: Swagger UI at `/swagger-ui/index.html`, OpenAPI JSON at `/v3/api-docs`
+Access: Swagger UI at `/swagger-ui.html` (redirects to `/swagger-ui/index.html`), OpenAPI JSON at `/v3/api-docs`
 
 ### Controller Documentation
 

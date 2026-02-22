@@ -1,6 +1,6 @@
 # JWT Complete Configuration Guide
 
-This guide consolidates all JWT configuration patterns for Spring Boot 3.4.x with Spring Security 6.4.x, covering JJWT library integration, Spring Security OAuth2 resource server configuration, and production-ready security settings.
+This guide consolidates all JWT configuration patterns for Spring Boot 3.5.x with Spring Security 6.5.x, covering JJWT library integration, Spring Security OAuth2 resource server configuration, and production-ready security settings.
 
 ## Table of Contents
 

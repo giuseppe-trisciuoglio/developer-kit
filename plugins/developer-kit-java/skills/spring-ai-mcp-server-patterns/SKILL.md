@@ -13,14 +13,14 @@ Implement Model Context Protocol (MCP) servers with Spring AI to extend AI capab
 
 ## Overview
 
-The Model Context Protocol (MCP) is a standardized protocol for connecting AI applications to external data sources and tools. Spring AI provides native support for building MCP servers that expose Spring components as callable tools, resources, and prompt templates for AI models. This skill covers tools (`@McpTool`), resources, prompts (`@PromptTemplate`), transport (stdio, HTTP, SSE), security, and testing.
+The Model Context Protocol (MCP) is a standardized protocol for connecting AI applications to external data sources and tools. Spring AI provides native support for MCP servers that expose Spring components as callable capabilities for AI models. This skill covers tools (`@McpTool`), prompts (`@McpPrompt`), transport (STDIO, SSE, Streamable HTTP), security, and testing.
 
 ## When to Use
 
 - AI applications requiring external tool integration with Spring AI
 - Enterprise MCP servers with Spring ecosystem integration
 - Function calling servers with Spring AI's declarative patterns
-- Prompt template servers for standardized AI interactions
+- Prompt providers for standardized AI interactions
 - Production-ready MCP servers with Spring Security and monitoring
 - Microservices that expose AI capabilities via MCP protocol
 
@@ -28,39 +28,40 @@ The Model Context Protocol (MCP) is a standardized protocol for connecting AI ap
 
 ### 1. Project Setup
 
-1. Add Spring AI MCP dependencies to your `pom.xml` or `build.gradle`
-2. Configure the AI model (OpenAI, Anthropic, etc.) in `application.properties`
-3. Enable MCP server with `@EnableMcpServer` annotation
+1. Add Spring AI MCP starter dependencies to your `pom.xml` or `build.gradle`
+2. Add the model starter (OpenAI, Anthropic, etc.)
+3. Configure server properties under `spring.ai.mcp.server.*`
 
 ### 2. Define Tools
 
-1. Create a Spring component class (`@Component`)
+1. Create a Spring component class (`@Component` or `@Service`)
 2. Annotate methods with `@McpTool(description = "...")`
-3. Use `@McpToolParam` to document parameters for AI understanding
-4. Implement business logic with proper error handling
+3. Use `@McpToolParam` to document parameters for model understanding
+4. Implement business logic with input validation and explicit errors
 
-### 3. Create Prompt Templates
+### 3. Define Prompts
 
-1. Create prompt template components with `@PromptTemplate`
-2. Define parameters with `@PromptParam`
-3. Return `Prompt` objects with system and user messages
+1. Create prompt provider components
+2. Annotate methods with `@McpPrompt`
+3. Define arguments with `@McpArg`
+4. Return prompt messages using MCP prompt result types
 
 ### 4. Configure Transport
 
-1. Choose transport type: `stdio`, `http`, or `sse`
+1. Choose transport type: `STDIO`, `SSE`, `STREAMABLE`, or `STATELESS`
 2. Configure transport properties in `application.yml`
-3. Set up CORS if using HTTP/SSE
+3. Set network/security constraints if exposing HTTP transport
 
 ### 5. Add Security
 
 1. Implement Spring Security configuration
-2. Create tool filters for role-based access control
-3. Add input validation to prevent injection attacks
+2. Apply authorization policies (for example with `@PreAuthorize`)
+3. Add validation/sanitization to prevent injection attacks
 
 ### 6. Testing
 
-1. Write unit tests for individual tools
-2. Create integration tests for MCP endpoints
+1. Write unit tests for individual tools and prompt providers
+2. Add integration tests for Spring context and MCP wiring
 3. Use Testcontainers for database-dependent tools
 
 ## Examples
@@ -88,7 +89,7 @@ public class WeatherTools {
 
 ### Build Configuration
 
-**Maven:**
+**Maven (WebMVC transport):**
 ```xml
 <dependency>
     <groupId>org.springframework.ai</groupId>
@@ -100,20 +101,15 @@ public class WeatherTools {
 </dependency>
 ```
 
-**Note:** Use the Spring AI BOM to manage versions:
+**Maven (STDIO transport):**
 ```xml
-<dependencyManagement>
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-bom</artifactId>
-            <version>1.0.0</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
-    </dependencies>
-</dependencyManagement>
+<dependency>
+    <groupId>org.springframework.ai</groupId>
+    <artifactId>spring-ai-starter-mcp-server</artifactId>
+</dependency>
 ```
+
+**Note:** Use the Spring AI BOM and pin a tested version for production.
 
 ### MCP Architecture
 
@@ -121,65 +117,61 @@ public class WeatherTools {
 AI Application <-> MCP Client <-> Spring AI <-> MCP Server <-> Spring Services
 ```
 
-Key Spring AI Components:
-- **@McpTool**: Declares methods as callable functions for AI models
-- **@McpToolParam**: Documents parameter purposes for AI understanding
-- **@PromptTemplate**: Defines reusable prompt patterns
-- **FunctionCallback**: Low-level function calling integration
+Key Spring AI components:
+- **@McpTool**: Declares methods as callable tools
+- **@McpToolParam**: Documents tool parameters
+- **@McpPrompt**: Declares prompt providers
+- **@McpArg**: Documents prompt arguments
 
 ## Best Practices
 
-1. **Use Declarative Annotations**: Prefer `@McpTool` and `@PromptTemplate` over manual registration
+1. **Prefer Declarative MCP Annotations**: Use Spring AI MCP annotations over manual wiring where possible
 2. **Keep Tools Focused**: Each tool should do one thing well
-3. **Document Parameters**: Use `@McpToolParam` with clear descriptions
+3. **Document Parameters**: Use clear descriptions and required flags
 4. **Return Structured Data**: Use records or DTOs for return values
-5. **Implement Input Validation**: Never trust AI-generated parameters without validation
-6. **Use Authorization**: Implement role-based access control with Spring Security
-7. **Rate Limiting**: Implement rate limiting for expensive operations
-8. **Use Caching**: Cache results of expensive operations with `@Cacheable`
-9. **Design for Idempotency**: Tools should be idempotent when possible
-10. **Handle Large Responses**: Consider pagination or summary options
+5. **Validate Inputs**: Never trust model-generated arguments directly
+6. **Apply Authorization**: Enforce role or permission checks for sensitive tools
+7. **Add Timeouts and Limits**: Protect expensive operations
+8. **Use Caching for Stable Reads**: Cache expensive deterministic lookups
+9. **Design for Idempotency**: Especially for retried tool calls
+10. **Keep Responses Compact**: Respect model context windows
 
-## Migration from LangChain4j
+## Migration from Legacy Tool Annotations
 
-- Replace `@ToolMethod` with Spring AI `@McpTool`
-- Migrate tool providers to Spring components with `@Component`
-- Update configuration to Spring AI properties
-- Replace LangChain4j-specific types with Spring AI equivalents
+- Replace generic tool annotations with Spring AI MCP annotations:
+  - `@Tool` -> `@McpTool`
+  - `@ToolParam` -> `@McpToolParam`
+- For prompt providers, use `@McpPrompt` with `@McpArg`
+- Move configuration to `spring.ai.mcp.server.*` keys
 
 ```java
-// Before: LangChain4j
-@ToolMethod("Get weather information")
-public String getWeather(@P("city name") String city) { ... }
+// Before
+@Tool(description = "Get weather information")
+public String getWeather(@ToolParam("city name") String city) { ... }
 
-// After: Spring AI
-@Component
-public class WeatherTools {
-    @McpTool(description = "Get weather information")
-    public String getWeather(
-            @McpToolParam(description = "City name", required = true) String city) { ... }
-}
+// After
+@McpTool(description = "Get weather information")
+public String getWeather(
+        @McpToolParam(description = "City name", required = true) String city) { ... }
 ```
 
 ## Constraints and Warnings
 
 - **Never Expose Sensitive Data** in tool descriptions, parameter names, or error messages
-- **Input Validation is Mandatory**: AI models may generate malicious parameters
-- **SQL Injection Prevention**: Use parameterized queries exclusively
-- **Path Traversal Prevention**: Validate and normalize all file paths
-- **Authorization Required**: Every tool should verify user permissions
-- **Timeout Handling**: All tools must implement proper timeout handling
-- **Context Window Limits**: Tool responses should be concise
-- **Version Compatibility**: Spring AI API may change between versions; pin versions in production
-- **Idempotency**: Non-idempotent operations should clearly document this behavior
+- **Input Validation is Mandatory**: Models may generate malformed or malicious arguments
+- **Prevent Injection**: Use parameterized queries and strict path validation
+- **Authorization Required**: Sensitive tools must verify caller permissions
+- **Timeout Handling**: External calls need bounded latency
+- **Version Compatibility**: Spring AI APIs evolve; pin versions and validate before upgrade
+- **Non-Idempotent Tools**: Clearly document side effects and guard retries
 
 ## References
 
-- [Implementation Patterns](./references/patterns.md) - Tool, prompt template, function callback, dynamic registration, multi-model, caching patterns
-- [Configuration Reference](./references/configuration.md) - Auto-configuration, properties, custom server config
-- [Security Patterns](./references/security.md) - Tool security, input validation, error handling
-- [Testing Patterns](./references/testing.md) - Unit tests, integration tests, Testcontainers, security tests
-- [Examples](./references/examples.md) - Complete server implementations
-- [API Reference](./references/api-reference.md) - Core annotations and interfaces
+- [Implementation Patterns](./references/patterns.md) - MCP tool/prompt and callback patterns
+- [Configuration Reference](./references/configuration.md) - Starter selection and property patterns
+- [Security Patterns](./references/security.md) - Tool authorization and input hardening
+- [Testing Patterns](./references/testing.md) - Unit and integration testing patterns
+- [Examples](./references/examples.md) - End-to-end MCP server examples
+- [API Reference](./references/api-reference.md) - Core annotations and properties
 - [Spring AI Documentation](https://docs.spring.io/spring-ai/reference/)
 - [Model Context Protocol Specification](https://modelcontextprotocol.org/)

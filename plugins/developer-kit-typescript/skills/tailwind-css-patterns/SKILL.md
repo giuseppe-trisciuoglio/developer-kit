@@ -83,7 +83,7 @@ function ProductCard({ product }: { product: Product }) {
 - **Purge Configuration**: Must configure content paths correctly for production builds
 - **Arbitrary Values**: Use sparingly; prefer design tokens for consistency
 - **Dark Mode**: Requires proper configuration (class or media strategy)
-- **JIT Mode**: Some dynamic patterns may not be detected; use safelist if needed
+- **Class Detection**: Dynamically constructed class names may not be detected; map props to full class names or safelist them
 
 ## Best Practices
 

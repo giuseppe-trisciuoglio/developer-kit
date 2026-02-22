@@ -160,7 +160,7 @@ class RateLimiterTest {
     }
 
     @Test
-    void shouldAlowRequestsAfterWindowReset() throws InterruptedException {
+    void shouldAllowRequestsAfterWindowReset() throws InterruptedException {
         // First batch of requests
         for (int i = 0; i < 5; i++) {
             notificationService.sendEmail(createEmailRequest(i));

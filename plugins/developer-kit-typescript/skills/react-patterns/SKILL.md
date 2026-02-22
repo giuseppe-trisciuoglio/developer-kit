@@ -51,6 +51,8 @@ async function ProductPage({ id }: { id: string }) {
 
 // Client Component
 'use client';
+import { useTransition } from 'react';
+
 function AddToCartButton({ productId }: { productId: string }) {
   const [isPending, startTransition] = useTransition();
   const handleAdd = () => {

@@ -6,7 +6,6 @@
 {
   "dependencies": {
     "better-auth": "^1.1.0",
-    "@auth/drizzle-adapter": "^1.0.0",
     "drizzle-orm": "^0.35.0",
     "pg": "^8.12.0",
     "@nestjs/common": "^10.0.0",
@@ -25,7 +24,7 @@
 ## Installation
 
 ```bash
-npm install better-auth @auth/drizzle-adapter drizzle-orm pg
+npm install better-auth drizzle-orm pg
 npm install @nestjs/common @nestjs/core @nestjs/config @nestjs/platform-express
 npm install -D drizzle-kit @types/pg
 ```
@@ -103,7 +102,6 @@ import {
   primaryKey,
   integer,
 } from 'drizzle-orm/pg-core';
-import type { AdapterAccount } from '@auth/drizzle-adapter';
 
 export const users = pgTable('user', {
   id: text('id').notNull().primaryKey(),
@@ -121,7 +119,7 @@ export const accounts = pgTable(
     userId: text('userId')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
-    type: text('type').$type<AdapterAccount['type']>().notNull(),
+    type: text('type').notNull(),
     provider: text('provider').notNull(),
     providerAccountId: text('providerAccountId').notNull(),
     refresh_token: text('refresh_token'),
@@ -186,12 +184,14 @@ export const authenticators = pgTable(
 ```typescript
 // src/auth/auth.instance.ts
 import { betterAuth } from 'better-auth';
-import { drizzleAdapter } from '@auth/drizzle-adapter';
+import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { db } from '../database/db';
 import * as schema from './schema';
 
 export const auth = betterAuth({
-  database: drizzleAdapter(schema, {
-    provider: 'postgresql',
+  database: drizzleAdapter(db, {
+    provider: 'pg',
+    schema: { ...schema },
   }),
   emailAndPassword: {
     enabled: true,
@@ -229,7 +229,6 @@ export const auth = betterAuth({
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import { auth } from './auth.instance';
-import { headers } from 'next/headers';
 
 @Injectable()
 export class AuthService {

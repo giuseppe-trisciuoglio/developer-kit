@@ -1,6 +1,6 @@
 # Scheduled and Async Testing - Detailed Examples
 
-## Testing Async with Awaility
+## Testing Async with Awaitility
 
 ### Wait for Async Completion
 

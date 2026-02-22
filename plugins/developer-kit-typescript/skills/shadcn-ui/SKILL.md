@@ -2,6 +2,8 @@
 name: shadcn-ui
 description: Provides complete shadcn/ui component library patterns including installation, configuration, and implementation of accessible React components. Use when setting up shadcn/ui, installing components, building forms with React Hook Form and Zod, customizing themes with Tailwind CSS, or implementing UI patterns like buttons, dialogs, dropdowns, tables, and complex form layouts.
 allowed-tools: Read, Write, Bash, Edit, Glob
+category: frontend
+tags: [shadcn-ui, react, tailwind, radix-ui, forms, accessibility]
 ---
 
 # shadcn/ui Component Patterns
@@ -74,10 +76,17 @@ export function LoginForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(console.log)} className="space-y-4">
-        <FormField name="email" render={({ field }) => (
+        <FormField control={form.control} name="email" render={({ field }) => (
           <FormItem>
             <FormLabel>Email</FormLabel>
             <FormControl><Input type="email" {...field} /></FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
+        <FormField control={form.control} name="password" render={({ field }) => (
+          <FormItem>
+            <FormLabel>Password</FormLabel>
+            <FormControl><Input type="password" {...field} /></FormControl>
             <FormMessage />
           </FormItem>
         )} />

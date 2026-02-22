@@ -23,6 +23,12 @@ Use this skill when:
 - Want fast tests without actual scheduling
 - Testing background task logic in isolation
 
+Trigger phrases:
+- "test scheduled method"
+- "test async method"
+- "awaitility async test"
+- "test completablefuture"
+
 ## Instructions
 
 1. **Test async methods directly**: Call @Async methods directly instead of relying on Spring's async executor

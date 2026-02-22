@@ -15,10 +15,17 @@ Patterns for testing utility classes and static methods using JUnit 5. Covers pu
 
 ## When to Use
 
+Use this skill when:
 - Testing utility classes with static helper methods
 - Testing pure functions with no state or side effects
 - Testing string manipulation, calculation, and collection utilities
 - Testing data transformation and validation helpers
+
+Trigger phrases:
+- "test utility methods"
+- "test static helper methods"
+- "test pure functions"
+- "test string math collection utils"
 
 ## Instructions
 
@@ -109,6 +116,8 @@ void shouldHandleVeryLargeNumbers() {
     assertThat(result).isEqualTo(new BigDecimal("1000000000000.00"));
 }
 ```
+
+For detailed examples covering null-safe helpers, format/parse utilities, validator utilities, and dependency-based utility testing, see [Examples](references/examples.md).
 
 ## Best Practices
 

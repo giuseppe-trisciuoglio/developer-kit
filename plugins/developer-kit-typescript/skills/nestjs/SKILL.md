@@ -1,7 +1,7 @@
 ---
 name: nestjs
 version: 2.2.0
-description: Provides comprehensive NestJS framework patterns with Drizzle ORM integration. Use when building NestJS applications, setting up APIs, implementing authentication, working with databases, or integrating Drizzle ORM. Covers controllers, providers, modules, middleware, guards, interceptors, testing, microservices, GraphQL, and database patterns.
+description: Provides comprehensive NestJS framework patterns with Drizzle ORM integration. Use when building NestJS applications, setting up APIs, implementing authentication, working with databases, or integrating Drizzle ORM. Covers controllers, providers, modules, middleware, guards, interceptors, testing, microservices, GraphQL, OpenAPI, and database patterns.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 category: backend
 tags: [nestjs, typescript, backend, api, orm, drizzle, typeorm]
@@ -18,19 +18,21 @@ Comprehensive guidance for building NestJS applications with TypeScript, includi
 - Building REST APIs or GraphQL servers with NestJS
 - Setting up authentication and authorization
 - Implementing middleware, guards, or interceptors
-- Working with databases (Drizzle ORM)
+- Working with databases (Drizzle ORM or TypeORM legacy codebases)
 - Creating microservices architecture
 - Writing unit and integration tests
+- Setting up OpenAPI/Swagger documentation for REST APIs
 
 ## Instructions
 
 1. **Start with Module Structure**: Define feature modules with clear boundaries
 2. **Implement Controllers**: Create controllers for HTTP requests and routes
 3. **Create Services**: Build business logic in injectable service classes
-4. **Configure Database**: Set up Drizzle ORM with proper schema definitions
+4. **Configure Database**: Set up Drizzle ORM with proper schema definitions (or TypeORM for legacy projects)
 5. **Add Validation**: Implement DTOs with class-validator for input validation
 6. **Implement Guards**: Add authentication and authorization guards
 7. **Write Tests**: Create unit and e2e tests for all components
+8. **Document APIs**: Add OpenAPI/Swagger decorators for REST endpoints when needed
 
 ## Examples
 
@@ -100,7 +102,7 @@ export class JwtAuthGuard implements CanActivate {
 ## Best Practices
 
 1. Always use constructor injection
-2. Use DTOs for data transfer - define interfaces for request/response
+2. Use DTO classes for request validation/serialization and mapped types for reusable API contracts
 3. Implement proper error handling with exception filters
 4. Validate all inputs with validation pipes
 5. Keep modules focused - single responsibility

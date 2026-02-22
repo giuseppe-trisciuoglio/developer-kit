@@ -1,6 +1,6 @@
 # JWT Quick Reference Card
 
-Quick reference for common JWT patterns in Spring Boot 3.4.x applications.
+Quick reference for common JWT patterns in Spring Boot 3.5.x applications.
 
 ## Dependencies
 

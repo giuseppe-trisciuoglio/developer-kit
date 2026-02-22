@@ -23,6 +23,12 @@ Use this skill when:
 - Testing type conversions and transformations
 - Want comprehensive mapping test coverage before integration tests
 
+Trigger phrases:
+- "test mapper"
+- "test mapstruct converter"
+- "verify dto entity mapping"
+- "test mapping target update"
+
 ## Instructions
 
 1. **Use Mappers.getMapper()**: Get mapper instances for non-Spring standalone tests

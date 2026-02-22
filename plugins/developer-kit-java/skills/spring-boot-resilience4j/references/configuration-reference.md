@@ -346,12 +346,10 @@ Resilience4j exposes the following metrics:
 
 ## Version Compatibility
 
-| Resilience4j | Spring Boot | Java | Spring Framework |
-|--------------|-------------|------|------------------|
-| 2.2.x        | 3.x         | 17+  | 6.x              |
-| 2.1.x        | 3.x         | 17+  | 6.x              |
-| 2.0.x        | 2.7.x       | 8+   | 5.3.x            |
-| 1.7.x        | 2.x         | 8+   | 5.x              |
+| Resilience4j | Java | Spring Boot Starter |
+|--------------|------|---------------------|
+| 2.x          | 17+  | `resilience4j-spring-boot3` for Boot 3.x, `resilience4j-spring-boot2` for Boot 2.x |
+| 1.7.x        | 8+   | `resilience4j-spring-boot2` |
 
 ## References
 

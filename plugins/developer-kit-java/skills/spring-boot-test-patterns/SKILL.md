@@ -36,6 +36,9 @@ class UserServiceTest {
 
     @Test
     void shouldFindUserByIdWhenExists() {
+        User user = new User();
+        user.setId(1L);
+        user.setEmail("test@example.com");
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         Optional<User> result = userService.findById(1L);
         assertThat(result).isPresent();
@@ -72,6 +75,9 @@ public class UserControllerIntegrationTest {
 
     @Test
     void shouldCreateUserAndReturn201() throws Exception {
+        User user = new User();
+        user.setEmail("newuser@example.com");
+        user.setName("New User");
         mockMvc.perform(post("/api/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(user)))
@@ -133,7 +139,7 @@ For complete production-ready examples, see [API Reference](./references/api-ref
 ## Constraints and Warnings
 
 - Never use `@DirtiesContext` unless absolutely necessary (forces context rebuild)
-- Avoid mixing `@MockitoBean` configurations (creates separate contexts)
+- Avoid mixing `@MockBean` / `@MockitoBean` configurations (creates separate contexts)
 - Testcontainers require Docker; ensure CI/CD pipelines have Docker support
 - Do not rely on test execution order
 - Do not use `@SpringBootTest` for unit tests; use plain Mockito
