@@ -66,6 +66,12 @@
       "description": "GitHub specification integration and verification",
       "source": "./plugins/github-spec-kit",
       "version": "2.2.0"
+    },
+    {
+      "name": "developer-kit-jira",
+      "description": "Jira integration with Atlassian MCP Server for automated SDLC workflows",
+      "source": "./plugins/developer-kit-jira",
+      "version": "2.2.0"
     }
   ]
 }
