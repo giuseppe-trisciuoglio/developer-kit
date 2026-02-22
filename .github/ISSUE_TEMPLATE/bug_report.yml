@@ -1,0 +1,112 @@
+name: Bug Report
+description: Report a problem with an existing skill, agent, or command
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill in as much detail as possible.
+
+  - type: dropdown
+    id: plugin
+    attributes:
+      label: Plugin
+      description: Which plugin is affected?
+      options:
+        - developer-kit-core
+        - developer-kit-java
+        - developer-kit-typescript
+        - developer-kit-python
+        - developer-kit-php
+        - developer-kit-aws
+        - developer-kit-ai
+        - developer-kit-devops
+        - developer-kit-project-management
+        - github-spec-kit
+        - developer-kit-jira
+        - Other / Unknown
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component_type
+    attributes:
+      label: Component type
+      description: What type of component is affected?
+      options:
+        - Skill
+        - Agent
+        - Command
+        - Installer / Makefile
+        - Validator
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: component_name
+    attributes:
+      label: Component name
+      description: Name of the specific skill, agent, or command (e.g. `spring-boot-backend-development-expert`)
+      placeholder: e.g. spring-boot-backend-development-expert
+    validations:
+      required: false
+
+  - type: dropdown
+    id: cli
+    attributes:
+      label: CLI used
+      description: Which CLI were you using when the problem occurred?
+      options:
+        - Claude Code
+        - GitHub Copilot CLI
+        - OpenCode CLI
+        - Codex CLI
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear and concise description of the bug.
+      placeholder: What went wrong?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: How can we reproduce the issue?
+      placeholder: |
+        1. Invoked skill/agent/command with prompt '...'
+        2. Expected output was '...'
+        3. Actual output was '...'
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What actually happened? Include any error messages or unexpected output.
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Any other information that might help (OS, model version, relevant config, etc.)
+    validations:
+      required: false

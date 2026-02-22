@@ -1,0 +1,80 @@
+name: Feature Request
+description: Propose a new skill, agent, command, or improvement to the Developer Kit
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a new feature! The more detail you provide, the easier it is to evaluate and implement your idea.
+
+  - type: dropdown
+    id: feature_type
+    attributes:
+      label: Feature type
+      description: What kind of feature are you proposing?
+      options:
+        - New Skill
+        - New Agent
+        - New Command
+        - New Plugin
+        - Improvement to existing component
+        - Installer / Makefile improvement
+        - Validator improvement
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: plugin
+    attributes:
+      label: Target plugin
+      description: Which plugin should this feature belong to? (select "New plugin" if proposing a brand-new one)
+      options:
+        - developer-kit-core
+        - developer-kit-java
+        - developer-kit-typescript
+        - developer-kit-python
+        - developer-kit-php
+        - developer-kit-aws
+        - developer-kit-ai
+        - developer-kit-devops
+        - developer-kit-project-management
+        - github-spec-kit
+        - developer-kit-jira
+        - New plugin
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / motivation
+      description: What problem does this feature solve? What is the use case that motivated this request?
+      placeholder: "As a developer, I want to... so that I can..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: Describe the feature you'd like. Be as specific as possible (e.g. suggested skill name, expected behavior, example prompts that should trigger it).
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Have you considered any alternative approaches or workarounds?
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Any other information, references, or examples that might help (links, screenshots, related issues, etc.)
+    validations:
+      required: false
