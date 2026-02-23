@@ -1,10 +1,7 @@
 ---
 name: spring-data-neo4j
 description: Provides Spring Data Neo4j integration patterns for graph database development. Use when working with Neo4j graph databases, node entities, relationships, Cypher queries, reactive Neo4j operations, or Spring Data Neo4j repositories.
-version: 2.2.0
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
-category: backend
-tags: [spring-data, neo4j, graph-database, database, java, spring-boot]
 ---
 
 # Spring Data Neo4j Integration Patterns

@@ -1,9 +1,6 @@
 ---
 name: unit-test-mapper-converter
 description: Provides patterns for unit testing mappers and converters (MapStruct, custom mappers). Validates object transformation logic in isolation. Use when ensuring correct data transformation between DTOs and domain objects.
-category: testing
-tags: [junit-5, mapstruct, mapper, dto, entity, converter]
-version: 2.2.0
 allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 

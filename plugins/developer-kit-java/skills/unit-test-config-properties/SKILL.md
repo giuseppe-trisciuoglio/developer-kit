@@ -1,9 +1,6 @@
 ---
 name: unit-test-config-properties
 description: Provides patterns for unit testing @ConfigurationProperties classes using ApplicationContextRunner. Use when testing Spring Boot configuration property binding, validation, and profile-specific configurations without full context startup.
-category: testing
-tags: [junit-5, configuration-properties, spring-profiles, property-binding]
-version: 2.2.0
 allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 

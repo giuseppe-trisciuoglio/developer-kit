@@ -1,9 +1,6 @@
 ---
 name: aws-sdk-java-v2-s3
 description: Provides Amazon S3 patterns and examples using AWS SDK for Java 2.x. Use when working with S3 buckets, uploading/downloading objects, multipart uploads, presigned URLs, S3 Transfer Manager, object operations, or S3-specific configurations.
-category: aws
-tags: [aws, s3, java, sdk, storage, objects, transfer-manager, presigned-urls]
-version: 2.2.0
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 

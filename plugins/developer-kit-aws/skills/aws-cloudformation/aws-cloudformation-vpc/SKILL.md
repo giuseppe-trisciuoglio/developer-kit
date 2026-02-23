@@ -1,9 +1,6 @@
 ---
 name: aws-cloudformation-vpc
 description: Provides AWS CloudFormation patterns for VPC infrastructure. Use when creating VPCs, Subnets, Route Tables, NAT Gateways, Internet Gateways, and implementing template structure with Parameters, Outputs, Mappings, Conditions, and cross-stack references.
-category: aws
-tags: [aws, cloudformation, vpc, networking, infrastructure, terraform, iaac]
-version: 2.2.0
 allowed-tools: Read, Write, Bash
 ---
 

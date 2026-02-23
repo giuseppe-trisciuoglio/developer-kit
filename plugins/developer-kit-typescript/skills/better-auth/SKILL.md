@@ -2,8 +2,6 @@
 name: better-auth
 description: This skill should be used when the user asks to "set up Better Auth", "integrate Better Auth with NestJS", "configure Better Auth in Next.js App Router", "add 2FA/passkeys/SSO with Better Auth", or "build Drizzle/PostgreSQL auth schema and protected routes" for a TypeScript stack.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
-category: backend
-tags: [authentication, better-auth, nestjs, nextjs, drizzle, postgresql, oauth, sso, 2fa]
 ---
 
 # Better Auth Integration Guide

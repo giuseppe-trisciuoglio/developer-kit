@@ -194,14 +194,15 @@ class TestSchemas:
         """Test skill schema prohibited fields."""
         assert "language" in SKILL_SCHEMA["prohibited"]
         assert "framework" in SKILL_SCHEMA["prohibited"]
-        assert "license" in SKILL_SCHEMA["prohibited"]
+        assert "context7_library" in SKILL_SCHEMA["prohibited"]
+        assert "context7_trust_score" in SKILL_SCHEMA["prohibited"]
 
     def test_skill_schema_optional(self):
-        """Test skill schema optional fields."""
-        # allowed-tools is now required (moved from optional)
-        assert "version" in SKILL_SCHEMA["optional"]
-        assert "category" in SKILL_SCHEMA["optional"]
-        assert "tags" in SKILL_SCHEMA["optional"]
+        """Test skill schema optional fields per agentskills.io specification."""
+        # Per spec: license, compatibility, metadata are optional
+        assert "license" in SKILL_SCHEMA["optional"]
+        assert "compatibility" in SKILL_SCHEMA["optional"]
+        assert "metadata" in SKILL_SCHEMA["optional"]
 
     def test_agent_schema_required(self):
         """Test agent schema required fields."""

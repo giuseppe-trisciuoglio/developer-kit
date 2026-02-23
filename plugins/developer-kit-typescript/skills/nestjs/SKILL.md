@@ -1,10 +1,7 @@
 ---
 name: nestjs
-version: 2.2.0
 description: Provides comprehensive NestJS framework patterns with Drizzle ORM integration. Use when building NestJS applications, setting up APIs, implementing authentication, working with databases, or integrating Drizzle ORM. Covers controllers, providers, modules, middleware, guards, interceptors, testing, microservices, GraphQL, OpenAPI, and database patterns.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
-category: backend
-tags: [nestjs, typescript, backend, api, orm, drizzle, typeorm]
 ---
 
 # NestJS Framework with Drizzle ORM

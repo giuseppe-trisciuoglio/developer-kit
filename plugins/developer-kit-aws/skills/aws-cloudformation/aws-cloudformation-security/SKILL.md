@@ -1,9 +1,6 @@
 ---
 name: aws-cloudformation-security
 description: Provides AWS CloudFormation patterns for infrastructure security, secrets management, encryption, and secure data handling. Use when creating secure CloudFormation templates with AWS Secrets Manager, KMS encryption, secure parameters, IAM policies, VPC security groups, TLS/SSL certificates, and encrypted traffic configurations. Covers template structure, parameter best practices, cross-stack references, and defense-in-depth strategies.
-category: aws
-tags: [aws, cloudformation, security, kms, secrets-manager, iam, encryption, tls, ssl, vpc, infrastructure, iaac]
-version: 2.2.0
 allowed-tools: Read, Write, Bash
 ---
 

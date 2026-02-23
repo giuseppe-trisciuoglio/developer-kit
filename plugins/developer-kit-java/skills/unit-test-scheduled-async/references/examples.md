@@ -6,7 +6,12 @@
 
 ```java
 import org.awaitility.Awaitility;
+import org.awaitility.core.ConditionTimeoutException;
+import org.junit.jupiter.api.Test;
+import java.time.Duration;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import static org.assertj.core.api.Assertions.*;
 
 @Service
 public class BackgroundWorker {
@@ -88,6 +93,11 @@ public class DataProcessingService {
   }
 }
 
+import org.junit.jupiter.api.Test;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import static org.assertj.core.api.Assertions.*;
+
 class AsyncErrorHandlingTest {
 
   @Test
@@ -139,6 +149,10 @@ public class HealthCheckTask {
     return executionCount;
   }
 }
+
+import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class ScheduledTaskTimingTest {
 

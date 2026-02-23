@@ -187,10 +187,8 @@ SKILL_ALLOWED_SUBDIRS: FrozenSet[str] = frozenset({
 SKILL_PROHIBITED_FIELDS: FrozenSet[str] = frozenset({
     "language",
     "framework",
-    "license",
     "context7_library",
     "context7_trust_score",
-    "metadata",
 })
 
 # =============================================================================
@@ -218,9 +216,9 @@ SKILL_RECOMMENDED_SECTIONS: FrozenSet[str] = frozenset({
 SKILL_SCHEMA: Dict[str, Set[str]] = {
     "required": {"name", "description", "allowed-tools"},
     "optional": {
-        "category",
-        "tags",
-        "version"
+        "license",
+        "compatibility",
+        "metadata",
     },
     "prohibited": SKILL_PROHIBITED_FIELDS,
 }

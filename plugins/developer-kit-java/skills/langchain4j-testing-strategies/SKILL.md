@@ -1,9 +1,6 @@
 ---
 name: langchain4j-testing-strategies
 description: Provides testing strategies for LangChain4j-powered applications. Handles mocking LLM responses, testing retrieval chains, and validating AI workflows. Use when testing AI-powered features reliably.
-category: backend
-tags: [langchain4j, testing, unit-tests, integration-tests, testcontainers, java, ai, llm, mock]
-version: 2.2.0
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
@@ -38,8 +35,8 @@ Use mock models for fast, isolated testing of business logic. See `references/un
 ```java
 // Example: Mock ChatModel for unit tests
 ChatModel mockModel = mock(ChatModel.class);
-when(mockModel.generate(any(String.class)))
-    .thenReturn(Response.from(AiMessage.from("Mocked response")));
+when(mockModel.chat(any(String.class)))
+    .thenReturn("Mocked response");
 
 var service = AiServices.builder(AiService.class)
         .chatModel(mockModel)
@@ -99,8 +96,8 @@ Follow testing pyramid patterns and best practices from `references/workflow-pat
 @Test
 void shouldProcessQueryWithMock() {
     ChatModel mockModel = mock(ChatModel.class);
-    when(mockModel.generate(any(String.class)))
-        .thenReturn(Response.from(AiMessage.from("Test response")));
+    when(mockModel.chat(any(String.class)))
+        .thenReturn("Test response");
 
     var service = AiServices.builder(AiService.class)
             .chatModel(mockModel)
@@ -190,11 +187,11 @@ For comprehensive testing guides and API references, see the included reference 
 ```java
 // For fast unit tests
 ChatModel mockModel = mock(ChatModel.class);
-when(mockModel.generate(anyString())).thenReturn(Response.from(AiMessage.from("Mocked")));
+when(mockModel.chat(anyString())).thenReturn("Mocked");
 
 // For specific responses
-when(mockModel.generate(eq("Hello"))).thenReturn(Response.from(AiMessage.from("Hi")));
-when(mockModel.generate(contains("Java"))).thenReturn(Response.from(AiMessage.from("Java response")));
+when(mockModel.chat(eq("Hello"))).thenReturn("Hi");
+when(mockModel.chat(contains("Java"))).thenReturn("Java response");
 ```
 
 ### Test Configuration

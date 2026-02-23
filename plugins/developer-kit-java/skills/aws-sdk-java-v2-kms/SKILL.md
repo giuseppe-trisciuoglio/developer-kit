@@ -1,9 +1,6 @@
 ---
 name: aws-sdk-java-v2-kms
 description: Provides AWS Key Management Service (KMS) patterns using AWS SDK for Java 2.x. Use when creating/managing encryption keys, encrypting/decrypting data, generating data keys, digital signing, key rotation, or integrating encryption into Spring Boot applications.
-category: aws
-tags: [aws, kms, java, sdk, encryption, security]
-version: 2.2.0
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
@@ -410,17 +407,17 @@ public class EnvelopeEncryptionExample {
 
 For detailed implementation patterns, advanced techniques, and comprehensive examples:
 
-- @references/technical-guide.md - Complete technical implementation patterns
-- @references/spring-boot-integration.md - Spring Boot integration patterns
-- @references/testing.md - Testing strategies and examples
-- @references/best-practices.md - Security and operational best practices
+- [Technical Guide](references/technical-guide.md) - Complete technical implementation patterns
+- [Spring Boot Integration](references/spring-boot-integration.md) - Spring Boot integration patterns
+- [Testing](references/testing.md) - Testing strategies and examples
+- [Best Practices](references/best-practices.md) - Security and operational best practices
 
 ## Related Skills
 
-- @aws-sdk-java-v2-core - Core AWS SDK patterns and configuration
-- @aws-sdk-java-v2-dynamodb - DynamoDB integration patterns
-- @aws-sdk-java-v2-secrets-manager - Secrets management patterns
-- @spring-boot-dependency-injection - Spring dependency injection patterns
+- `aws-sdk-java-v2-core` - Core AWS SDK patterns and configuration
+- `aws-sdk-java-v2-dynamodb` - DynamoDB integration patterns
+- `aws-sdk-java-v2-secrets-manager` - Secrets management patterns
+- `spring-boot-dependency-injection` - Spring dependency injection patterns
 
 ## External References
 

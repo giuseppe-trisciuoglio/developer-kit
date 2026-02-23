@@ -483,22 +483,6 @@ class SkillValidator(BaseValidator):
                     suggestion=f"Rename directory to '{skill_name}' or change name to '{parent_dir_name}'"
                 )
 
-        # Validate allowed-tools is present (now required)
-        if "allowed-tools" not in frontmatter:
-            result.add_error(
-                message="Missing required field: 'allowed-tools'",
-                field_name="allowed-tools",
-                suggestion="Add 'allowed-tools' to specify which tools this skill requires"
-            )
-
-        # Validate version if present
-        if "version" in frontmatter:
-            self._validate_version(frontmatter["version"], result)
-            # Validate version matches marketplace version
-            self._validate_version_matches_marketplace(
-                frontmatter["version"], file_path, result
-            )
-
         # Validate allowed-tools if present
         if "allowed-tools" in frontmatter:
             self._validate_tools_field(frontmatter["allowed-tools"], "allowed-tools", result)

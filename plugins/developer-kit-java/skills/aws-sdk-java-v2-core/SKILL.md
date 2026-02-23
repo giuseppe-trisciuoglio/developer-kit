@@ -1,9 +1,6 @@
 ---
 name: aws-sdk-java-v2-core
 description: Provides core patterns and best practices for AWS SDK for Java 2.x. Use when configuring AWS service clients, setting up authentication, managing credentials, configuring timeouts, HTTP clients, or following AWS SDK best practices.
-category: aws
-tags: [aws, java, sdk, core, authentication, configuration]
-version: 2.2.0
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 

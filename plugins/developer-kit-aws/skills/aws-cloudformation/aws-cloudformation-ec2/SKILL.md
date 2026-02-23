@@ -1,9 +1,6 @@
 ---
 name: aws-cloudformation-ec2
 description: Provides AWS CloudFormation patterns for EC2 instances, Security Groups, IAM roles, and load balancers. Use when creating EC2 instances, SPOT instances, Security Groups, IAM roles for EC2, Application Load Balancers (ALB), Target Groups, and implementing template structure with Parameters, Outputs, Mappings, Conditions, and cross-stack references.
-category: aws
-tags: [aws, cloudformation, ec2, security-group, iam-role, alb, load-balancer, target-group, spot, infrastructure, iaac]
-version: 2.2.0
 allowed-tools: Read, Write, Bash
 ---
 

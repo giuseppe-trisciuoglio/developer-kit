@@ -1,9 +1,6 @@
 ---
 name: aws-cloudformation-bedrock
 description: Provides AWS CloudFormation patterns for Amazon Bedrock resources including agents, knowledge bases, data sources, guardrails, prompts, flows, and inference profiles. Use when creating Bedrock agents with action groups, implementing RAG with knowledge bases, configuring vector stores, setting up content moderation guardrails, managing prompts, orchestrating workflows with flows, and configuring inference profiles for model optimization.
-category: aws
-tags: [aws, cloudformation, bedrock, ai, ml, agents, knowledge-base, rag, guardrail, inference, infrastructure, iaac]
-version: 2.2.0
 allowed-tools: Read, Write, Bash
 ---
 

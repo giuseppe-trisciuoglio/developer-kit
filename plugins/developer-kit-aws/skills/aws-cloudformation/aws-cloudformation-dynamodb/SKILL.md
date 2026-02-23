@@ -1,9 +1,6 @@
 ---
 name: aws-cloudformation-dynamodb
 description: Provides AWS CloudFormation patterns for DynamoDB tables, GSIs, LSIs, auto-scaling, and streams. Use when creating DynamoDB tables with CloudFormation, configuring primary keys, local/global secondary indexes, capacity modes (on-demand/provisioned), point-in-time recovery, encryption, TTL, and implementing template structure with Parameters, Outputs, Mappings, Conditions, cross-stack references.
-category: aws
-tags: [aws, cloudformation, dynamodb, nosql, database, serverless, tables, indexes, scaling, infrastructure, iaac]
-version: 2.2.0
 allowed-tools: Read, Write, Bash
 ---
 

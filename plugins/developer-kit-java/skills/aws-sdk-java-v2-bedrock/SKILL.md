@@ -1,9 +1,6 @@
 ---
 name: aws-sdk-java-v2-bedrock
 description: Provides Amazon Bedrock patterns using AWS SDK for Java 2.x. Use when working with foundation models (listing, invoking), text generation, image generation, embeddings, streaming responses, or integrating generative AI with Spring Boot applications.
-category: aws
-tags: [aws, bedrock, java, sdk, generative-ai, foundation-models]
-version: 2.2.0
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 

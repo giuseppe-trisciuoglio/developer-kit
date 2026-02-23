@@ -1,9 +1,6 @@
 ---
 name: langchain4j-spring-boot-integration
 description: Provides integration patterns for LangChain4j with Spring Boot. Handles auto-configuration, dependency injection, and Spring ecosystem integration. Use when embedding LangChain4j into Spring Boot applications.
-category: ai-development
-tags: [langchain4j, spring-boot, ai, llm, rag, chatbot, integration, configuration, java]
-version: 2.2.0
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
@@ -37,14 +34,14 @@ To accomplish basic setup of LangChain4j with Spring Boot:
 <dependency>
     <groupId>dev.langchain4j</groupId>
     <artifactId>langchain4j-spring-boot-starter</artifactId>
-    <version>1.8.0</version> // Use latest version
+    <version>1.11.0-beta19</version> // Check for latest version
 </dependency>
 
 <!-- OpenAI Integration -->
 <dependency>
     <groupId>dev.langchain4j</groupId>
     <artifactId>langchain4j-open-ai-spring-boot-starter</artifactId>
-    <version>1.8.0</version>
+    <version>1.11.0-beta19</version>
 </dependency>
 ```
 
@@ -78,14 +75,14 @@ Include the necessary Spring Boot starters in your `pom.xml` or `build.gradle`:
 <dependency>
     <groupId>dev.langchain4j</groupId>
     <artifactId>langchain4j-spring-boot-starter</artifactId>
-    <version>1.8.0</version>
+    <version>1.11.0-beta19</version>
 </dependency>
 
 <!-- OpenAI Spring Boot Starter -->
 <dependency>
     <groupId>dev.langchain4j</groupId>
     <artifactId>langchain4j-open-ai-spring-boot-starter</artifactId>
-    <version>1.8.0</version>
+    <version>1.11.0-beta19</version>
 </dependency>
 ```
 
@@ -133,24 +130,7 @@ public interface CustomerSupportAssistant {
 }
 ```
 
-### 4. Enable Component Scanning
-
-Ensure the AI service is in a package scanned by Spring:
-
-```java
-@SpringBootApplication
-@ComponentScan(basePackages = {
-    "com.yourcompany",
-    "dev.langchain4j.service.spring"  // For AiService scanning
-})
-public class Application {
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
-}
-```
-
-### 5. Inject and Use the AI Service
+### 4. Inject and Use the AI Service
 
 ```java
 @Service

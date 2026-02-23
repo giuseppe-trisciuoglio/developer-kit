@@ -1,9 +1,6 @@
 ---
 name: spring-ai-mcp-server-patterns
 description: Provides Model Context Protocol (MCP) server implementation patterns with Spring AI. Use when building MCP servers to extend AI capabilities with custom tools, resources, and prompt templates using Spring's official AI framework.
-category: ai-integration
-tags: [spring-ai, mcp, model-context-protocol, tools, function-calling, prompts, java, spring-boot, enterprise]
-version: 2.2.0
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 

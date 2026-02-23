@@ -268,11 +268,11 @@ class ExceptionHandlerWithContextTest {
   @Test
   void shouldLocalizeErrorMessage() throws Exception {
     when(messageService.getMessage("USER_NOT_FOUND"))
-      .thenReturn("L'utilisateur n'a pas ete trouve");
+      .thenReturn("L'utilisateur n'a pas été trouvé");
 
     mockMvc.perform(get("/api/users/999"))
       .andExpect(status().isBadRequest())
-      .andExpect(jsonPath("$.message").value("L'utilisateur n'a pas ete trouve"));
+      .andExpect(jsonPath("$.message").value("L'utilisateur n'a pas été trouvé"));
 
     verify(messageService).getMessage("USER_NOT_FOUND");
   }

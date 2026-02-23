@@ -2,9 +2,6 @@
 name: spring-boot-actuator
 description: Provides patterns to configure Spring Boot Actuator for production-grade monitoring, health probes, secured management endpoints, and Micrometer metrics across JVM services. Use when setting up monitoring, health checks, or metrics for Spring Boot applications.
 allowed-tools: Read, Write, Bash
-category: backend
-tags: [spring-boot, actuator, monitoring, health-checks, metrics, production]
-version: 2.2.0
 ---
 
 # Spring Boot Actuator Skill
@@ -201,7 +198,7 @@ More end-to-end samples are available in `references/examples.md`.
 ## Reference Materials
 - [Endpoint quick reference](references/endpoint-reference.md)
 - [Implementation examples](references/examples.md)
-- [Official documentation extract](references/official-actuator-docs.md)
+- [Official documentation extract](references/endpoints.md)
 - [Auditing with Actuator](references/auditing.md)
 - [Cloud Foundry integration](references/cloud-foundry.md)
 - [Enabling Actuator features](references/enabling.md)

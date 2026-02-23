@@ -1,9 +1,6 @@
 ---
 name: aws-cloudformation-iam
 description: Provides AWS CloudFormation patterns for IAM users, roles, policies, and managed policies. Use when creating IAM resources with CloudFormation, implementing least privilege access, configuring cross-account access, setting up identity centers, managing permissions boundaries, and organizing template structure with Parameters, Outputs, Mappings, Conditions for secure infrastructure deployments.
-category: aws
-tags: [aws, cloudformation, iam, security, authentication, authorization, roles, policies, infrastructure, iaac]
-version: 2.2.0
 allowed-tools: Read, Write, Bash
 ---
 

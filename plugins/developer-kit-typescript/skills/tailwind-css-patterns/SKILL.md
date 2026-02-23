@@ -1,10 +1,7 @@
 ---
 name: tailwind-css-patterns
-version: 2.2.0
 description: Provides comprehensive Tailwind CSS utility-first styling patterns including responsive design, layout utilities, flexbox, grid, spacing, typography, colors, and modern CSS best practices. Use when styling React/Vue/Svelte components, building responsive layouts, implementing design systems, or optimizing CSS workflow.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
-category: frontend
-tags: [tailwind, css, responsive, design-system, react, nextjs]
 ---
 
 # Tailwind CSS Development Patterns

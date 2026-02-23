@@ -1,9 +1,6 @@
 ---
 name: aws-drawio-architecture-diagrams
 description: Provides professional AWS architecture diagram creation in draw.io XML format (.drawio files) using official AWS Architecture Icons (aws4 library). Use when creating AWS cloud architecture diagrams, infrastructure diagrams, network topology diagrams, serverless architectures, multi-tier application diagrams, VPC layouts, or any AWS visual diagram in draw.io format.
-category: aws
-tags: [aws, drawio, architecture, diagrams, infrastructure, cloud, visualization]
-version: 2.2.0
 allowed-tools: Read, Write, Bash
 ---
 

@@ -1,9 +1,6 @@
 ---
 name: unit-test-parameterized
 description: Provides parameterized testing patterns with @ParameterizedTest, @ValueSource, @CsvSource. Enables running a single test method with multiple input combinations. Use when testing multiple scenarios with similar logic.
-category: testing
-tags: [junit-5, parameterized-test, value-source, csv-source, method-source]
-version: 2.2.0
 allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
@@ -98,12 +95,13 @@ class StringUtilsTest {
 
 ```java
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import java.util.stream.Stream;
 
 class CalculatorTest {
 
-  static Stream<org.junit.jupiter.params.provider.Arguments> additionTestCases() {
+  static Stream<Arguments> additionTestCases() {
     return Stream.of(
       Arguments.of(1, 2, 3),
       Arguments.of(0, 0, 0),

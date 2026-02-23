@@ -1,9 +1,6 @@
 ---
 name: aws-cloudformation-lambda
 description: Provides AWS CloudFormation patterns for Lambda functions, layers, event sources, and integrations. Use when creating Lambda functions with CloudFormation, configuring API Gateway, Step Functions, EventBridge, SQS, SNS triggers, and implementing template structure with Parameters, Outputs, Mappings, Conditions, cross-stack references, and best practices for cold start optimization.
-category: aws
-tags: [aws, cloudformation, lambda, serverless, functions, api-gateway, step-functions, events, infrastructure, iaac]
-version: 2.2.0
 allowed-tools: Read, Write, Bash
 ---
 

@@ -1,10 +1,7 @@
 ---
 name: nextjs-authentication
-version: 2.2.0
 description: Provides authentication implementation patterns for Next.js 15+ App Router using Auth.js 5 (NextAuth.js). Use when setting up authentication flows, implementing protected routes, managing sessions in Server Components and Server Actions, configuring OAuth providers, implementing role-based access control, or handling sign-in/sign-out flows in Next.js applications.
 allowed-tools: Read, Write, Edit, Bash
-category: frontend
-tags: [nextjs, auth.js, nextauth, authentication, oauth, rbac]
 ---
 
 # Next.js Authentication

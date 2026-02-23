@@ -2,9 +2,6 @@
 name: spring-boot-resilience4j
 description: This skill should be used when implementing fault tolerance and resilience patterns in Spring Boot applications using the Resilience4j library. Apply this skill to add circuit breaker, retry, rate limiter, bulkhead, time limiter, and fallback mechanisms to prevent cascading failures, handle transient errors, and manage external service dependencies gracefully in microservices architectures.
 allowed-tools: Read, Write, Edit, Bash
-category: backend
-tags: [spring-boot, resilience4j, circuit-breaker, fault-tolerance, retry, bulkhead, rate-limiter]
-version: 2.2.0
 ---
 
 # Spring Boot Resilience4j Patterns

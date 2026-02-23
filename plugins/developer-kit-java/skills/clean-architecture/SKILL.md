@@ -2,9 +2,6 @@
 name: clean-architecture
 description: Provides implementation patterns for Clean Architecture, Hexagonal Architecture (Ports & Adapters), and Domain-Driven Design in Java 21+ Spring Boot 3.5+ applications. Use when structuring layered architectures, separating domain logic from frameworks, implementing ports and adapters, creating entities/value objects/aggregates, or refactoring monolithic codebases for testability and maintainability.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
-category: backend
-tags: [clean-architecture, hexagonal-architecture, ddd, domain-driven-design, spring-boot, java, ports-adapters, layered-architecture]
-version: 2.2.0
 ---
 
 # Clean Architecture, Hexagonal Architecture & DDD for Spring Boot

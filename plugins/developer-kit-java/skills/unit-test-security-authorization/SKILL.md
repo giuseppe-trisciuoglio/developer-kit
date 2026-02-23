@@ -1,9 +1,6 @@
 ---
 name: unit-test-security-authorization
 description: Provides patterns for unit testing Spring Security with @PreAuthorize, @Secured, @RolesAllowed. Validates role-based access control and authorization policies. Use when testing security configurations and access control logic.
-category: testing
-tags: [junit-5, spring-security, spring-security-6, authorization, roles, preauthorize, mockmvc]
-version: 2.2.0
 allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
@@ -32,8 +29,8 @@ Trigger phrases:
 
 1. **Add spring-security-test** to test dependencies
 2. **Enable method security** with @EnableMethodSecurity
-   > **Note**: `@EnableGlobalMethodSecurity` è deprecato in Spring Security 6+.
-   > Usa `@EnableMethodSecurity` che abilita `@PreAuthorize` di default.
+   > **Note**: `@EnableGlobalMethodSecurity` is deprecated in Spring Security 6+.
+   > Use `@EnableMethodSecurity` which enables `@PreAuthorize` by default.
 3. **Use @WithMockUser** to simulate authenticated users with specific roles
 4. **Test both allow and deny** for each security rule
 5. **Test expression-based authorization** (e.g., `authentication.principal.username == #owner`)
@@ -117,7 +114,7 @@ For detailed examples covering dependency setup, @Secured testing, expression-ba
 ## Constraints and Warnings
 
 - @PreAuthorize works via proxies; direct method calls bypass security
-- @EnableMethodSecurity (o @EnableGlobalMethodSecurity deprecato) deve essere abilitato per @PreAuthorize/@Secured
+- @EnableMethodSecurity (or @EnableGlobalMethodSecurity deprecated) must be enabled for @PreAuthorize/@Secured
 - Spring adds "ROLE_" prefix automatically; use hasRole('ADMIN') not hasRole('ROLE_ADMIN')
 - Security context is thread-local; be careful with async tests
 - @WithMockUser creates simple Authentication; complex auth needs custom setup

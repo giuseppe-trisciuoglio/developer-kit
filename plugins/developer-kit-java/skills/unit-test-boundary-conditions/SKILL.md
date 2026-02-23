@@ -1,9 +1,6 @@
 ---
 name: unit-test-boundary-conditions
 description: Edge case and boundary testing patterns for unit tests. Testing minimum/maximum values, null cases, empty collections, and numeric precision. Pure JUnit 5 unit tests. Use when ensuring code handles limits and special cases correctly.
-category: testing
-tags: [junit-5, boundary-testing, edge-cases, parameterized-test]
-version: 2.2.0
 allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 

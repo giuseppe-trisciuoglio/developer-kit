@@ -1,9 +1,6 @@
 ---
 name: unit-test-application-events
 description: Provides patterns for testing Spring application events (ApplicationEvent) with @EventListener and ApplicationEventPublisher. Handles event publishing, listening, and async event handling in Spring Boot applications. Use when validating event-driven workflows in your Spring Boot services.
-category: testing
-tags: [junit-5, application-events, event-driven, listeners, publishers]
-version: 2.2.0
 allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
@@ -343,7 +340,7 @@ class AsyncEventListenerTest {
 - **Test event serialization**: If events are sent across JVM boundaries, test serialization/deserialization
 - **Memory considerations**: Be cautious with event-driven architecture in long-running processes; events can accumulate
 
-## Best Practices
+## Troubleshooting
 
 **Event not being captured**: Verify ArgumentCaptor type matches event class.
 

@@ -2,9 +2,6 @@
 name: nextjs-deployment
 description: Provides comprehensive patterns for deploying Next.js applications to production. Use when configuring Docker containers, setting up GitHub Actions CI/CD pipelines, managing environment variables, implementing preview deployments, or setting up monitoring and logging for Next.js applications. Covers standalone output, multi-stage Docker builds, health checks, OpenTelemetry instrumentation, and production best practices.
 allowed-tools: Read, Write, Edit, Bash
-category: frontend
-tags: [nextjs, next.js, deployment, docker, github-actions, ci-cd, production, environment-variables, monitoring, logging]
-version: 2.2.0
 ---
 
 # Next.js Deployment

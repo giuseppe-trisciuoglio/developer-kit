@@ -1,9 +1,6 @@
 ---
 name: unit-test-controller-layer
 description: Provides patterns for unit testing REST controllers using MockMvc and @WebMvcTest. Validates request/response mapping, validation, and exception handling. Use when testing web layer endpoints in isolation.
-category: testing
-tags: [junit-5, mockito, unit-testing, controller, rest, mockmvc]
-version: 2.2.0
 allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
@@ -65,6 +62,7 @@ dependencies {
 ### Simple GET Endpoint Test
 
 ```java
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -87,6 +85,7 @@ class UserControllerTest {
 
   private MockMvc mockMvc;
 
+  @BeforeEach
   void setUp() {
     mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
   }

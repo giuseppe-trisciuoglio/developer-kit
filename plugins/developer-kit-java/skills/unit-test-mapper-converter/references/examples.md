@@ -17,6 +17,10 @@ public interface ProductMapper {
   Product toEntity(ProductDto dto);
 }
 
+import org.mapstruct.factory.Mappers;
+import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.*;
+
 class CustomMappingTest {
 
   private final ProductMapper mapper = Mappers.getMapper(ProductMapper.class);
@@ -64,6 +68,10 @@ public interface UserMapper {
   UserStatusDto toStatusDto(UserStatus status);
 }
 
+import org.mapstruct.factory.Mappers;
+import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.*;
+
 class EnumMapperTest {
 
   private final UserMapper mapper = Mappers.getMapper(UserMapper.class);
@@ -98,6 +106,10 @@ public class DateFormatter {
     return dateString != null ? LocalDate.parse(dateString, formatter) : null;
   }
 }
+
+import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.*;
+import java.time.format.DateTimeParseException;
 
 class DateFormatterTest {
 
@@ -134,6 +146,10 @@ class DateFormatterTest {
 ### Entity to DTO Round Trip
 
 ```java
+import org.mapstruct.factory.Mappers;
+import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.*;
+
 class BidirectionalMapperTest {
 
   private final UserMapper mapper = Mappers.getMapper(UserMapper.class);
@@ -170,6 +186,10 @@ class BidirectionalMapperTest {
 public interface UserMapper {
   void updateEntity(@MappingTarget User entity, UserDto dto);
 }
+
+import org.mapstruct.factory.Mappers;
+import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.*;
 
 class PartialMapperTest {
 

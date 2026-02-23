@@ -1,9 +1,6 @@
 ---
 name: unit-test-json-serialization
 description: Provides patterns for unit testing JSON serialization/deserialization with Jackson and @JsonTest. Use when validating JSON mapping, custom serializers, and date format handling.
-category: testing
-tags: [junit-5, json-test, jackson, serialization, deserialization]
-version: 2.2.0
 allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
@@ -71,6 +68,7 @@ dependencies {
 ```java
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
+import org.springframework.boot.test.json.JsonContent;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.*;
 
@@ -84,7 +82,7 @@ class UserDtoJsonTest {
   void shouldSerializeUserToJson() throws Exception {
     UserDto user = new UserDto(1L, "Alice", "alice@example.com", 25);
 
-    org.assertj.core.data.Offset result = json.write(user);
+    JsonContent<UserDto> result = json.write(user);
 
     result
       .extractingJsonPathNumberValue("$.id").isEqualTo(1)

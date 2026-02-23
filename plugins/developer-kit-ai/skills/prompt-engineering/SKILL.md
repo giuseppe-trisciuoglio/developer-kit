@@ -1,8 +1,5 @@
 ---
 name: prompt-engineering
-category: backend
-tags: [prompt-engineering, few-shot-learning, chain-of-thought, optimization, templates, system-prompts, llm-performance, ai-patterns]
-version: 2.2.0
 description: This skill should be used when creating, optimizing, or implementing advanced prompt patterns including few-shot learning, chain-of-thought reasoning, prompt optimization workflows, template systems, and system prompt design. It provides comprehensive frameworks for building production-ready prompts with measurable performance improvements.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 ---

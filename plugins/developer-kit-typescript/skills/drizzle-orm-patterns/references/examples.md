@@ -319,18 +319,21 @@ await db.update(users).set({ deletedAt: new Date() }).where(eq(users.id, id));
 ### Upsert
 
 ```typescript
-import { sql } from 'drizzle-orm';
-
-await db.insert(users).values({ id: 1, name: 'John', email: 'john@example.com' })
+// PostgreSQL / SQLite - onConflictDoUpdate
+await db.insert(users)
+  .values({ id: 1, name: 'John', email: 'john@example.com' })
   .onConflictDoUpdate({
     target: users.id,
-    set: {
-      name: sql.raw(`excluded.${users.name.name}`),
-      email: sql.raw(`excluded.${users.email.name}`),
-    },
+    set: { name: 'John', email: 'john@example.com' }
   });
 
-// MySQL alternative
-await db.insert(users).values({ id: 1, name: 'John', email: 'john@example.com' })
+// On conflict do nothing
+await db.insert(users)
+  .values({ id: 1, name: 'John', email: 'john@example.com' })
+  .onConflictDoNothing({ target: users.id });
+
+// MySQL - onDuplicateKeyUpdate
+await db.insert(users)
+  .values({ id: 1, name: 'John', email: 'john@example.com' })
   .onDuplicateKeyUpdate({ set: { name: 'John' } });
 ```

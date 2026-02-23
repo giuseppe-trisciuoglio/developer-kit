@@ -2,9 +2,6 @@
 name: clean-architecture
 description: Provides implementation patterns for Clean Architecture, Domain-Driven Design (DDD), and Hexagonal Architecture (Ports & Adapters) in NestJS/TypeScript applications. Use when structuring complex backend systems, designing domain layers with entities/value objects/aggregates, implementing ports and adapters, creating use cases, or refactoring from anemic models to rich domain models with dependency inversion.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
-category: backend
-tags: [clean-architecture, hexagonal-architecture, ddd, domain-driven-design, nestjs, typescript, ports-adapters]
-version: 2.2.0
 ---
 
 # Clean Architecture, DDD & Hexagonal Architecture for NestJS

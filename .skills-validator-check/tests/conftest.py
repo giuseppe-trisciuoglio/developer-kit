@@ -48,9 +48,6 @@ def valid_skill_content() -> str:
 name: test-skill
 description: Validates files when committing code changes. Use when ensuring code quality.
 allowed-tools: Read, Grep, Glob
-category: testing
-tags: [validation, testing]
-version: 1.0.0
 ---
 
 # Test Skill

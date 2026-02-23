@@ -2,9 +2,6 @@
 name: spring-boot-openapi-documentation
 description: Provides patterns to generate comprehensive REST API documentation using SpringDoc OpenAPI 3.0 and Swagger UI in Spring Boot 3.x applications. Use when setting up API documentation, configuring Swagger UI, adding OpenAPI annotations, implementing security documentation, or enhancing REST endpoints with examples and schemas.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
-category: backend
-tags: [spring-boot, openapi, swagger, api-documentation, springdoc]
-version: 2.2.0
 ---
 
 # Spring Boot OpenAPI Documentation with SpringDoc

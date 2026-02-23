@@ -2,8 +2,6 @@
 name: nextjs-data-fetching
 description: Provides Next.js App Router data fetching patterns including SWR and React Query integration, parallel data fetching, Incremental Static Regeneration (ISR), revalidation strategies, and error boundaries. Use when implementing data fetching in Next.js applications, choosing between server and client fetching, setting up caching strategies, or handling loading and error states.
 allowed-tools: Read, Write, Edit, Bash
-category: frontend
-tags: [nextjs, data-fetching, server-components, ssg, ssr, isr]
 ---
 
 # Next.js Data Fetching

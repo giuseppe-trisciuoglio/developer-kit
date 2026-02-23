@@ -1,9 +1,6 @@
 ---
 name: aws-cloudformation-s3
 description: Provides AWS CloudFormation patterns for Amazon S3. Use when creating S3 buckets, policies, versioning, lifecycle rules, and implementing template structure with Parameters, Outputs, Mappings, Conditions, and cross-stack references.
-category: aws
-tags: [aws, cloudformation, s3, storage, infrastructure, iaac]
-version: 2.2.0
 allowed-tools: Read, Write, Bash
 ---
 

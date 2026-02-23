@@ -2,9 +2,6 @@
 name: chunking-strategy
 description: Provides optimal chunking strategies in RAG systems and document processing pipelines. Use when building retrieval-augmented generation systems, vector databases, or processing large documents that require breaking into semantically meaningful segments for embeddings and search.
 allowed-tools: Read, Write, Bash
-category: artificial-intelligence
-tags: [rag, chunking, vector-search, embeddings, document-processing]
-version: 2.2.0
 ---
 
 # Chunking Strategy for RAG Systems

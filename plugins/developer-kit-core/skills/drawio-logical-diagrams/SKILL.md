@@ -1,8 +1,6 @@
 ---
 name: drawio-logical-diagrams
 description: 'Creates professional logical flow diagrams and logical system architecture diagrams using draw.io XML format (.drawio files). Use when creating: (1) logical flow diagrams showing data/process flow between system components, (2) logical architecture diagrams representing system structure without cloud provider specifics, (3) BPMN process diagrams, (4) UML diagrams (class, sequence, activity), (5) data flow diagrams (DFD), (6) decision flowcharts, or (7) system interaction diagrams. This skill focuses on generic/abstract representations, not AWS/Azure-specific architectures (use aws-drawio-architecture-diagrams for cloud diagrams).'
-category: core
-tags: [drawio, diagrams, flowchart, uml, bpmn, architecture, visualization]
 allowed-tools: Read, Write, Bash
 ---
 

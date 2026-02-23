@@ -2,9 +2,6 @@
 name: langchain4j-vector-stores-configuration
 description: Provides configuration patterns for LangChain4J vector stores in RAG applications. Use when building semantic search, integrating vector databases (PostgreSQL/pgvector, Pinecone, MongoDB, Milvus, Neo4j), implementing embedding storage/retrieval, setting up hybrid search, or optimizing vector database performance for production AI applications.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
-category: backend
-tags: [langchain4j, vector-stores, embeddings, rag, semantic-search, ai, llm, java, databases]
-version: 2.2.0
 ---
 
 # LangChain4J Vector Stores Configuration
@@ -93,8 +90,7 @@ public EmbeddingStoreIngestor embeddingStoreIngestor(
     return EmbeddingStoreIngestor.builder()
         .documentSplitter(DocumentSplitters.recursive(
             300,  // maxSegmentSizeInTokens
-            20,   // maxOverlapSizeInTokens
-            new OpenAiTokenizer(GPT_3_5_TURBO)
+            20    // maxOverlapSizeInTokens
         ))
         .embeddingModel(embeddingModel)
         .embeddingStore(embeddingStore)
@@ -199,8 +195,11 @@ public class SimpleRagConfig {
     }
 
     @Bean
-    public ChatLanguageModel chatModel() {
-        return OpenAiChatModel.withApiKey(System.getenv("OPENAI_API_KEY"));
+    public ChatModel chatModel() {
+        return OpenAiChatModel.builder()
+            .apiKey(System.getenv("OPENAI_API_KEY"))
+            .modelName("gpt-4o-mini")
+            .build();
     }
 }
 ```

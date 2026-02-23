@@ -37,7 +37,19 @@ python scripts/generate_crud.py --feature <name> --fields '<json-array>' --outpu
 
 ### Step 3: Field Definition Format
 
-Fields must be defined as JSON array with name, type, and required properties.
+Fields must be defined as JSON array with name, type, and required properties:
+
+```json
+[
+  {"name": "name", "type": "string", "required": true},
+  {"name": "email", "type": "string", "required": true},
+  {"name": "age", "type": "integer", "required": false},
+  {"name": "isActive", "type": "boolean", "required": false, "default": true},
+  {"name": "price", "type": "number", "required": true},
+  {"name": "description", "type": "text", "required": false},
+  {"name": "uuid", "type": "uuid", "required": false}
+]
+```
 
 ### Step 4: Integrate Module
 
@@ -63,54 +75,12 @@ python scripts/generate_crud.py \
   --output ./libs/server
 ```
 
-## Quick Start
+### Example 3: Generate an Order module with timestamps
 
-### Step 1: Identify Feature Requirements
-
-Before generating, gather:
-- Entity name (e.g., `user`, `product`, `order`)
-- List of fields with types
-- Required fields vs optional fields
-
-### Step 2: Run the Generator
-
-Execute the generation script:
-
-```bash
-python scripts/generate_crud.py --feature <name> --fields '<json-array>' --output <path>
-```
-
-### Step 3: Field Definition Format
-
-Fields must be defined as JSON array:
-
-```json
-[
-  {"name": "name", "type": "string", "required": true},
-  {"name": "email", "type": "string", "required": true},
-  {"name": "age", "type": "integer", "required": false},
-  {"name": "isActive", "type": "boolean", "required": false, "default": true},
-  {"name": "price", "type": "number", "required": true},
-  {"name": "description", "type": "text", "required": false},
-  {"name": "uuid", "type": "uuid", "required": false}
-]
-```
-
-### Step 4: Example Commands
-
-Generate a User module:
 ```bash
 python scripts/generate_crud.py \
-  --feature user \
-  --fields '[{"name": "name", "type": "string", "required": true}, {"name": "email", "type": "string", "required": true}, {"name": "password", "type": "string", "required": true}]' \
-  --output ./libs/server
-```
-
-Generate a Product module:
-```bash
-python scripts/generate_crud.py \
-  --feature product \
-  --fields '[{"name": "title", "type": "string", "required": true}, {"name": "price", "type": "number", "required": true}, {"name": "description", "type": "text", "required": false}, {"name": "inStock", "type": "boolean", "required": false, "default": true}]' \
+  --feature order \
+  --fields '[{"name": "orderNumber", "type": "string", "required": true}, {"name": "total", "type": "number", "required": true}, {"name": "status", "type": "string", "required": false, "default": "pending"}, {"name": "orderDate", "type": "date", "required": true}]' \
   --output ./libs/server
 ```
 
