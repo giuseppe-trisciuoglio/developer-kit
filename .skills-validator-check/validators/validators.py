@@ -38,6 +38,9 @@ from .config import (
     SEMVER_PATTERN,
     MAX_NAME_LENGTH,
     MAX_DESCRIPTION_LENGTH,
+    MAX_COMPATIBILITY_LENGTH,
+    MAX_SKILL_LINES,
+    MAX_SKILL_CHARACTERS,
     WHAT_KEYWORDS,
     WHEN_KEYWORDS,
 )
@@ -278,6 +281,10 @@ class BaseValidator(ABC):
         if "description" in frontmatter:
             self._validate_description(frontmatter["description"], result)
 
+        # Validate compatibility if present
+        if "compatibility" in frontmatter:
+            self._validate_compatibility(frontmatter["compatibility"], result)
+
     def _validate_name(self, name: Any, result: ValidationResult) -> None:
         """Validate the name field."""
         if not isinstance(name, str):
@@ -345,6 +352,24 @@ class BaseValidator(ABC):
                 message=f"Description may be missing: {', '.join(missing)} information",
                 field_name="description",
                 suggestion="Include what the component does AND when to use it"
+            )
+
+    def _validate_compatibility(self, compatibility: Any, result: ValidationResult) -> None:
+        """Validate the compatibility field."""
+        if not isinstance(compatibility, str):
+            result.add_error(
+                message=f"Compatibility must be a string, got {type(compatibility).__name__}",
+                field_name="compatibility",
+                suggestion="Ensure compatibility is a plain string value"
+            )
+            return
+
+        # Check length (per spec: max 500 characters)
+        if len(compatibility) > MAX_COMPATIBILITY_LENGTH:
+            result.add_error(
+                message=f"Compatibility too long: {len(compatibility)} characters (max {MAX_COMPATIBILITY_LENGTH})",
+                field_name="compatibility",
+                suggestion=f"Shorten compatibility to {MAX_COMPATIBILITY_LENGTH} characters or less"
             )
 
     def _validate_tools_field(
@@ -447,17 +472,16 @@ class SkillValidator(BaseValidator):
         result: ValidationResult
     ) -> None:
         """Skill-specific validation."""
-        # Validate allowed-tools is present (now required)
-        if "allowed-tools" not in frontmatter:
-            result.add_error(
-                message="Missing required field: 'allowed-tools'",
-                field_name="allowed-tools",
-                suggestion="Add 'allowed-tools' to specify which tools this skill requires"
-            )
-
-        # Validate version if present
-        if "version" in frontmatter:
-            self._validate_version(frontmatter["version"], result)
+        # Validate name matches parent directory
+        if "name" in frontmatter:
+            skill_name = frontmatter["name"]
+            parent_dir_name = file_path.parent.name
+            if skill_name != parent_dir_name:
+                result.add_error(
+                    message=f"Name mismatch: frontmatter has '{skill_name}' but directory is '{parent_dir_name}'",
+                    field_name="name",
+                    suggestion=f"Rename directory to '{skill_name}' or change name to '{parent_dir_name}'"
+                )
 
         # Validate allowed-tools if present
         if "allowed-tools" in frontmatter:
@@ -478,6 +502,38 @@ class SkillValidator(BaseValidator):
 
         # Validate directory structure (Anthropic convention)
         self._validate_directory_structure(file_path.parent, result)
+
+        # Validate file references are max one level deep
+        self._validate_file_references(content, result)
+
+        # Validate progressive disclosure limits (file size)
+        self._validate_progressive_disclosure(content, result)
+
+    def _validate_progressive_disclosure(
+        self,
+        content: str,
+        result: ValidationResult
+    ) -> None:
+        """Validate SKILL.md follows progressive disclosure limits.
+
+        Per spec: Keep SKILL.md under 500 lines and ~5000 tokens
+        (~20000 characters estimated).
+        """
+        # Count lines
+        line_count = content.count('\n') + 1
+        if line_count > MAX_SKILL_LINES:
+            result.add_warning(
+                message=f"SKILL.md is too long: {line_count} lines (max {MAX_SKILL_LINES})",
+                suggestion="Move detailed content to separate files in references/"
+            )
+
+        # Count characters
+        char_count = len(content)
+        if char_count > MAX_SKILL_CHARACTERS:
+            result.add_warning(
+                message=f"SKILL.md is too large: {char_count} characters (max {MAX_SKILL_CHARACTERS}, ~5000 tokens)",
+                suggestion="Move detailed content to separate files in references/"
+            )
 
     def _validate_markdown_structure(
         self,
@@ -557,6 +613,96 @@ class SkillValidator(BaseValidator):
                     message="Missing Input/Output examples in Examples section",
                     suggestion="Add concrete Input/Output examples with code blocks to demonstrate usage"
                 )
+
+    def _validate_file_references(
+        self,
+        content: str,
+        result: ValidationResult
+    ) -> None:
+        """Validate that file references are at most one level deep.
+
+        Per spec: "Keep file references one level deep from SKILL.md.
+        Avoid deeply nested reference chains."
+
+        Valid:   scripts/extract.py, references/REFERENCE.md
+        Invalid: references/subfolder/file.md, ../outside/file.md
+        """
+        # Find content after frontmatter
+        match = re.search(r"\n---\s*\n", content)
+        if not match:
+            return
+
+        body = content[match.end():]
+
+        # Pattern 1: Markdown links [text](path)
+        md_link_pattern = re.compile(
+            r'\[([^\]]+)\]\(([^)]+)\)',
+            re.MULTILINE
+        )
+
+        # Pattern 2: Bare file paths (lines referencing files)
+        # Match lines that look like file references
+        bare_path_pattern = re.compile(
+            r'^(?:[\s]*[-*]?[\s]*)?(?:See|Run|Use|Check|Load|Read|Execute)?[\s:]*'
+            r'(scripts/|references/|assets/)(\S+)',
+            re.MULTILINE | re.IGNORECASE
+        )
+
+        checked_paths = set()
+
+        # Check markdown links
+        for match in md_link_pattern.finditer(body):
+            path = match.group(2).strip()
+            # Skip URLs
+            if path.startswith(('http://', 'https://', '#', 'mailto:')):
+                continue
+            # Skip absolute paths
+            if path.startswith('/'):
+                continue
+            self._check_path_depth(path, checked_paths, result)
+
+        # Check bare paths
+        for match in bare_path_pattern.finditer(body):
+            full_path = match.group(1) + match.group(2)
+            self._check_path_depth(full_path, checked_paths, result)
+
+    def _check_path_depth(
+        self,
+        path: str,
+        checked_paths: set,
+        result: ValidationResult
+    ) -> None:
+        """Check if a path exceeds one level of depth."""
+        # Normalize path (remove leading ./)
+        path = path.lstrip('./')
+
+        if path in checked_paths:
+            return
+        checked_paths.add(path)
+
+        # Split path into parts
+        parts = path.split('/')
+
+        # Path must start with allowed subdirs
+        allowed_roots = {'scripts', 'references', 'assets'}
+        if parts[0] not in allowed_roots:
+            # Not a bundled resource path, skip
+            return
+
+        # Check depth: more than 2 parts means nested (subdir/file = 2 parts)
+        if len(parts) > 2:
+            result.add_warning(
+                message=f"Deep file reference: '{path}' ({len(parts)-1} levels deep)",
+                suggestion="Keep references one level deep (e.g., 'references/FILE.md', not 'references/subdir/file.md')"
+            )
+
+        # Check for parent directory traversal
+        if '..' in parts:
+            result.add_error(
+                message=f"Invalid file reference: '{path}' references parent directory",
+                field_name=None,
+                suggestion="Use relative paths within the skill directory only"
+            )
 
     def _validate_version(self, version: Any, result: ValidationResult) -> None:
         """Validate semantic versioning format."""
@@ -639,6 +785,72 @@ class SkillValidator(BaseValidator):
                     message=f"Non-standard file at skill root: '{name}'",
                     suggestion=f"Move '{name}' into scripts/, references/, or assets/"
                 )
+
+    def _validate_version_matches_marketplace(
+        self,
+        skill_version: Any,
+        file_path: Path,
+        result: ValidationResult
+    ) -> None:
+        """Validate that skill version matches marketplace.json version.
+
+        The skill version must match the main version in marketplace.json.
+        """
+        # First validate the skill_version is a string
+        if not isinstance(skill_version, str):
+            return  # Already handled by _validate_version
+
+        # Find marketplace.json
+        marketplace_path = self._find_marketplace_json(file_path)
+        if not marketplace_path:
+            result.add_warning(
+                message="Cannot find marketplace.json for version alignment check",
+                field_name="version",
+                suggestion="Ensure marketplace.json exists in .claude-plugin/ directory at project root"
+            )
+            return
+
+        # Read marketplace version
+        marketplace_version = self._get_marketplace_version(marketplace_path)
+        if not marketplace_version:
+            result.add_warning(
+                message="Cannot read version from marketplace.json",
+                field_name="version",
+                suggestion="Ensure marketplace.json has a valid 'version' field"
+            )
+            return
+
+        # Compare versions
+        if skill_version != marketplace_version:
+            result.add_error(
+                message=f"Version mismatch: skill '{skill_version}' != marketplace '{marketplace_version}'",
+                field_name="version",
+                suggestion=f"Update skill version to match marketplace version '{marketplace_version}'"
+            )
+
+    def _find_marketplace_json(self, file_path: Path) -> Optional[Path]:
+        """Find marketplace.json by traversing up to project root."""
+        current = file_path
+        for _ in range(15):  # Allow deeper traversal for plugin-based skills
+            # Check for .claude-plugin/marketplace.json
+            marketplace = current / ".claude-plugin" / "marketplace.json"
+            if marketplace.exists():
+                return marketplace
+            parent = current.parent
+            if parent == current:
+                break
+            current = parent
+        return None
+
+    def _get_marketplace_version(self, marketplace_path: Path) -> Optional[str]:
+        """Read version from marketplace.json."""
+        try:
+            import json
+            with open(marketplace_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            return data.get('version')
+        except (json.JSONDecodeError, KeyError, FileNotFoundError, IOError):
+            return None
 
 
 class AgentValidator(BaseValidator):

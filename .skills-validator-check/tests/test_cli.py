@@ -49,11 +49,11 @@ class TestValidationCLI:
     def test_run_with_specific_files(self, cli, tmp_path):
         """Test CLI with specific files argument."""
         # Create a valid skill with new structure
-        skill_dir = tmp_path / "skills" / "test"
+        skill_dir = tmp_path / "skills" / "sample-skill"
         skill_dir.mkdir(parents=True)
         skill_file = skill_dir / "SKILL.md"
         skill_file.write_text("""---
-name: test-skill
+name: sample-skill
 description: Test skill that helps when testing features. Use when testing new functionality.
 allowed-tools: Read, Write, Bash
 ---
@@ -175,11 +175,11 @@ Use when testing JSON output.
     def test_run_all_flag(self, cli, tmp_path):
         """Test CLI with --all flag."""
         # Mock find_all_component_files
-        skill_dir = tmp_path / "skills" / "test"
+        skill_dir = tmp_path / "skills" / "sample-skill"
         skill_dir.mkdir(parents=True)
         skill_file = skill_dir / "SKILL.md"
         skill_file.write_text("""---
-name: test-skill
+name: sample-skill
 description: Test skill that helps when testing. Use when testing the --all flag.
 allowed-tools: Read
 ---

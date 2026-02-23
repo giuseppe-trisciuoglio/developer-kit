@@ -18,6 +18,11 @@ VERSION = "1.0.0"
 MAX_NAME_LENGTH = 64
 MAX_DESCRIPTION_LENGTH = 1024
 MIN_DESCRIPTION_LENGTH = 10
+MAX_COMPATIBILITY_LENGTH = 500
+
+# Progressive disclosure limits (per spec: < 5000 tokens recommended, ~500 lines)
+MAX_SKILL_LINES = 500
+MAX_SKILL_CHARACTERS = 20000
 
 # =============================================================================
 # File Patterns (Regex)
@@ -182,7 +187,6 @@ SKILL_ALLOWED_SUBDIRS: FrozenSet[str] = frozenset({
 SKILL_PROHIBITED_FIELDS: FrozenSet[str] = frozenset({
     "language",
     "framework",
-    "license",
     "context7_library",
     "context7_trust_score",
 })
@@ -212,9 +216,9 @@ SKILL_RECOMMENDED_SECTIONS: FrozenSet[str] = frozenset({
 SKILL_SCHEMA: Dict[str, Set[str]] = {
     "required": {"name", "description", "allowed-tools"},
     "optional": {
-        "category",
-        "tags",
-        "version"
+        "license",
+        "compatibility",
+        "metadata",
     },
     "prohibited": SKILL_PROHIBITED_FIELDS,
 }

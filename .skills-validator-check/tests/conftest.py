@@ -45,15 +45,12 @@ def temp_command_file(tmp_path: Path) -> Callable[[str], Path]:
 def valid_skill_content() -> str:
     """Return valid skill content with all required sections."""
     return """---
-name: valid-skill
+name: test-skill
 description: Validates files when committing code changes. Use when ensuring code quality.
 allowed-tools: Read, Grep, Glob
-category: testing
-tags: [validation, testing]
-version: 1.0.0
 ---
 
-# Valid Skill
+# Test Skill
 
 ## Overview
 
