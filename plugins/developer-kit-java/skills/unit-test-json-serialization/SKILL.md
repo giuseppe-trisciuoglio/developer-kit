@@ -4,419 +4,72 @@ description: Provides patterns for unit testing JSON serialization/deserializati
 allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
-# Unit Testing JSON Serialization with @JsonTest
+# Unit Testing JSON Serialization with `@JsonTest`
 
 ## Overview
 
-This skill provides patterns for unit testing JSON serialization and deserialization using Spring's @JsonTest and Jackson. It covers testing POJO mapping, custom serializers/deserializers, field name mappings, nested objects, date/time formatting, polymorphic types, and null handling without full Spring context.
+This skill defines focused JSON mapping tests for Spring Boot 3.x using Jackson.
+It validates serialization, deserialization, custom formats, and contract stability.
 
 ## When to Use
 
 Use this skill when:
-- Testing JSON serialization of DTOs
-- Testing JSON deserialization to objects
-- Testing custom Jackson serializers/deserializers
-- Verifying JSON field names and formats
-- Testing null handling in JSON
-- Want fast JSON mapping tests without full Spring context
+- Testing DTO to JSON serialization rules
+- Testing JSON to DTO deserialization behavior
+- Verifying custom serializer/deserializer logic
+- Validating date/time, enum, and null-field handling
+
+Trigger phrases:
+- "json test with jacksontester"
+- "test jackson serializer"
+- "verify json contract"
+- "deserialize dto test"
 
 ## Instructions
 
-1. **Use @JsonTest annotation**: Configure test context with @JsonTest for JacksonTester auto-configuration
-2. **Test both serialization and deserialization**: Verify objects serialize to JSON and JSON deserializes to objects
-3. **Use JacksonTester**: Autowire JacksonTester for type-safe JSON assertions
-4. **Test null handling**: Verify null fields are handled correctly (included or excluded)
-5. **Test nested objects**: Verify complex nested structures serialize/deserialize properly
-6. **Test date/time formats**: Verify LocalDateTime, Date, and other temporal types format correctly
-7. **Test custom serializers**: Verify @JsonSerialize and custom JsonSerializer implementations work
-8. **Use JsonPath assertions**: Extract and verify specific JSON paths with JsonPath matchers
+1. Use `@JsonTest` for Jackson-focused test slices.
+2. Inject `JacksonTester<T>` for type-safe JSON assertions.
+3. Test both serialization and deserialization for each DTO.
+4. Assert exact field names, formats, and null behavior.
+5. Register custom modules or serializers when needed.
+6. Add negative-path tests for malformed payloads.
 
 ## Examples
 
-## Setup: JSON Testing
-
-### Maven
-```xml
-<dependency>
-  <groupId>org.springframework.boot</groupId>
-  <artifactId>spring-boot-starter-json</artifactId>
-</dependency>
-<dependency>
-  <groupId>org.springframework.boot</groupId>
-  <artifactId>spring-boot-starter-test</artifactId>
-  <scope>test</scope>
-</dependency>
-<dependency>
-  <groupId>com.fasterxml.jackson.core</groupId>
-  <artifactId>jackson-databind</artifactId>
-</dependency>
-```
-
-### Gradle
-```kotlin
-dependencies {
-  implementation("org.springframework.boot:spring-boot-starter-json")
-  implementation("com.fasterxml.jackson.core:jackson-databind")
-  testImplementation("org.springframework.boot:spring-boot-starter-test")
-}
-```
-
-## Basic Pattern: @JsonTest
-
-### Test JSON Serialization
-
-```java
-import org.springframework.boot.test.autoconfigure.json.JsonTest;
-import org.springframework.boot.test.json.JacksonTester;
-import org.springframework.boot.test.json.JsonContent;
-import org.junit.jupiter.api.Test;
-import static org.assertj.core.api.Assertions.*;
-
-@JsonTest
-class UserDtoJsonTest {
-
-  @Autowired
-  private JacksonTester<UserDto> json;
-
-  @Test
-  void shouldSerializeUserToJson() throws Exception {
-    UserDto user = new UserDto(1L, "Alice", "alice@example.com", 25);
-
-    JsonContent<UserDto> result = json.write(user);
-
-    result
-      .extractingJsonPathNumberValue("$.id").isEqualTo(1)
-      .extractingJsonPathStringValue("$.name").isEqualTo("Alice")
-      .extractingJsonPathStringValue("$.email").isEqualTo("alice@example.com")
-      .extractingJsonPathNumberValue("$.age").isEqualTo(25);
-  }
-
-  @Test
-  void shouldDeserializeJsonToUser() throws Exception {
-    String json_content = "{\"id\":1,\"name\":\"Alice\",\"email\":\"alice@example.com\",\"age\":25}";
-
-    UserDto user = json.parse(json_content).getObject();
-
-    assertThat(user)
-      .isNotNull()
-      .hasFieldOrPropertyWithValue("id", 1L)
-      .hasFieldOrPropertyWithValue("name", "Alice")
-      .hasFieldOrPropertyWithValue("email", "alice@example.com")
-      .hasFieldOrPropertyWithValue("age", 25);
-  }
-
-  @Test
-  void shouldHandleNullFields() throws Exception {
-    String json_content = "{\"id\":1,\"name\":null,\"email\":\"alice@example.com\",\"age\":null}";
-
-    UserDto user = json.parse(json_content).getObject();
-
-    assertThat(user.getName()).isNull();
-    assertThat(user.getAge()).isNull();
-  }
-}
-```
-
-## Testing Custom JSON Properties
-
-### @JsonProperty and @JsonIgnore
-
-```java
-public class Order {
-  @JsonProperty("order_id")
-  private Long id;
-
-  @JsonProperty("total_amount")
-  private BigDecimal amount;
-
-  @JsonIgnore
-  private String internalNote;
-
-  private LocalDateTime createdAt;
-}
-
-@JsonTest
-class OrderJsonTest {
-
-  @Autowired
-  private JacksonTester<Order> json;
-
-  @Test
-  void shouldMapJsonPropertyNames() throws Exception {
-    String json_content = "{\"order_id\":123,\"total_amount\":99.99,\"createdAt\":\"2024-01-15T10:30:00\"}";
-
-    Order order = json.parse(json_content).getObject();
-
-    assertThat(order.getId()).isEqualTo(123L);
-    assertThat(order.getAmount()).isEqualByComparingTo(new BigDecimal("99.99"));
-  }
-
-  @Test
-  void shouldIgnoreJsonIgnoreAnnotatedFields() throws Exception {
-    Order order = new Order(123L, new BigDecimal("99.99"));
-    order.setInternalNote("Secret note");
-
-    JsonContent<Order> result = json.write(order);
-
-    assertThat(result.json).doesNotContain("internalNote");
-  }
-}
-```
-
-## Testing List Deserialization
-
-### JSON Arrays
-
 ```java
 @JsonTest
-class UserListJsonTest {
-
-  @Autowired
-  private JacksonTester<List<UserDto>> json;
+class InvoiceJsonTest {
+  @Autowired JacksonTester<InvoiceDto> json;
 
   @Test
-  void shouldDeserializeUserList() throws Exception {
-    String jsonArray = "[{\"id\":1,\"name\":\"Alice\"},{\"id\":2,\"name\":\"Bob\"}]";
-
-    List<UserDto> users = json.parseObject(jsonArray);
-
-    assertThat(users)
-      .hasSize(2)
-      .extracting(UserDto::getName)
-      .containsExactly("Alice", "Bob");
-  }
-
-  @Test
-  void shouldSerializeUserListToJson() throws Exception {
-    List<UserDto> users = List.of(
-      new UserDto(1L, "Alice"),
-      new UserDto(2L, "Bob")
-    );
-
-    JsonContent<List<UserDto>> result = json.write(users);
-
-    result.json.contains("Alice").contains("Bob");
+  void shouldSerialize() throws Exception {
+    InvoiceDto dto = new InvoiceDto("INV-1", LocalDate.parse("2026-02-23"));
+    assertThat(json.write(dto)).extractingJsonPathStringValue("@.id").isEqualTo("INV-1");
   }
 }
 ```
 
-## Testing Nested Objects
-
-### Complex JSON Structures
-
-```java
-public class Product {
-  private Long id;
-  private String name;
-  private Category category;
-  private List<Review> reviews;
-}
-
-public class Category {
-  private Long id;
-  private String name;
-}
-
-public class Review {
-  private String reviewer;
-  private int rating;
-  private String comment;
-}
-
-@JsonTest
-class ProductJsonTest {
-
-  @Autowired
-  private JacksonTester<Product> json;
-
-  @Test
-  void shouldSerializeNestedObjects() throws Exception {
-    Category category = new Category(1L, "Electronics");
-    Product product = new Product(1L, "Laptop", category);
-
-    JsonContent<Product> result = json.write(product);
-
-    result
-      .extractingJsonPathNumberValue("$.id").isEqualTo(1)
-      .extractingJsonPathStringValue("$.name").isEqualTo("Laptop")
-      .extractingJsonPathNumberValue("$.category.id").isEqualTo(1)
-      .extractingJsonPathStringValue("$.category.name").isEqualTo("Electronics");
-  }
-
-  @Test
-  void shouldDeserializeNestedObjects() throws Exception {
-    String json_content = "{\"id\":1,\"name\":\"Laptop\",\"category\":{\"id\":1,\"name\":\"Electronics\"}}";
-
-    Product product = json.parse(json_content).getObject();
-
-    assertThat(product.getCategory())
-      .isNotNull()
-      .hasFieldOrPropertyWithValue("name", "Electronics");
-  }
-
-  @Test
-  void shouldHandleListOfNestedObjects() throws Exception {
-    String json_content = "{\"id\":1,\"name\":\"Laptop\",\"reviews\":[{\"reviewer\":\"John\",\"rating\":5},{\"reviewer\":\"Jane\",\"rating\":4}]}";
-
-    Product product = json.parse(json_content).getObject();
-
-    assertThat(product.getReviews())
-      .hasSize(2)
-      .extracting(Review::getRating)
-      .containsExactly(5, 4);
-  }
-}
-```
-
-## Testing Date/Time Formatting
-
-### LocalDateTime and Other Temporal Types
-
-```java
-@JsonTest
-class DateTimeJsonTest {
-
-  @Autowired
-  private JacksonTester<Event> json;
-
-  @Test
-  void shouldFormatDateTimeCorrectly() throws Exception {
-    LocalDateTime dateTime = LocalDateTime.of(2024, 1, 15, 10, 30, 0);
-    Event event = new Event("Conference", dateTime);
-
-    JsonContent<Event> result = json.write(event);
-
-    result.extractingJsonPathStringValue("$.scheduledAt").isEqualTo("2024-01-15T10:30:00");
-  }
-
-  @Test
-  void shouldDeserializeDateTimeFromJson() throws Exception {
-    String json_content = "{\"name\":\"Conference\",\"scheduledAt\":\"2024-01-15T10:30:00\"}";
-
-    Event event = json.parse(json_content).getObject();
-
-    assertThat(event.getScheduledAt())
-      .isEqualTo(LocalDateTime.of(2024, 1, 15, 10, 30, 0));
-  }
-}
-```
-
-## Testing Custom Serializers
-
-### Custom JsonSerializer Implementation
-
-```java
-public class CustomMoneySerializer extends JsonSerializer<BigDecimal> {
-  @Override
-  public void serialize(BigDecimal value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-    if (value == null) {
-      gen.writeNull();
-    } else {
-      gen.writeString(String.format("$%.2f", value));
-    }
-  }
-}
-
-public class Price {
-  @JsonSerialize(using = CustomMoneySerializer.class)
-  private BigDecimal amount;
-}
-
-@JsonTest
-class CustomSerializerTest {
-
-  @Autowired
-  private JacksonTester<Price> json;
-
-  @Test
-  void shouldUseCustomSerializer() throws Exception {
-    Price price = new Price(new BigDecimal("99.99"));
-
-    JsonContent<Price> result = json.write(price);
-
-    result.extractingJsonPathStringValue("$.amount").isEqualTo("$99.99");
-  }
-}
-```
-
-## Testing Polymorphic Deserialization
-
-### Type Information in JSON
-
-```java
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
-@JsonSubTypes({
-  @JsonSubTypes.Type(value = CreditCard.class, name = "credit_card"),
-  @JsonSubTypes.Type(value = PayPal.class, name = "paypal")
-})
-public abstract class PaymentMethod {
-  private String id;
-}
-
-@JsonTest
-class PolymorphicJsonTest {
-
-  @Autowired
-  private JacksonTester<PaymentMethod> json;
-
-  @Test
-  void shouldDeserializeCreditCard() throws Exception {
-    String json_content = "{\"type\":\"credit_card\",\"id\":\"card123\",\"cardNumber\":\"****1234\"}";
-
-    PaymentMethod method = json.parse(json_content).getObject();
-
-    assertThat(method).isInstanceOf(CreditCard.class);
-  }
-
-  @Test
-  void shouldDeserializePayPal() throws Exception {
-    String json_content = "{\"type\":\"paypal\",\"id\":\"pp123\",\"email\":\"user@paypal.com\"}";
-
-    PaymentMethod method = json.parse(json_content).getObject();
-
-    assertThat(method).isInstanceOf(PayPal.class);
-  }
-}
-```
+For complete runnable examples, see [examples.md](references/examples.md)
 
 ## Best Practices
 
-- **Use @JsonTest** for focused JSON testing
-- **Test both serialization and deserialization**
-- **Test null handling** and missing fields
-- **Test nested and complex structures**
-- **Verify field name mapping** with @JsonProperty
-- **Test date/time formatting** thoroughly
-- **Test edge cases** (empty strings, empty collections)
-
-## Common Pitfalls
-
-- Not testing null values
-- Not testing nested objects
-- Forgetting to test field name mappings
-- Not verifying JSON property presence/absence
-- Not testing deserialization of invalid JSON
+- Prefer field-level assertions over full JSON string comparisons.
+- Keep DTOs immutable where possible for stable mapping behavior.
+- Include backward-compatible parsing cases for evolving payloads.
 
 ## Constraints and Warnings
 
-- **@JsonTest loads limited context**: Only JSON-related beans are available; use @SpringBootTest for full context
-- **Jackson version compatibility**: Ensure Jackson annotations match the Jackson version in use
-- **Date format standards**: ISO-8601 is the default format; custom formats require @JsonFormat annotation
-- **Null handling**: Use JsonInclude.Include.NON_NULL to exclude null fields from serialization
-- **Circular references**: Be aware of circular references; use @JsonManagedReference/@JsonBackReference
-- **Polymorphic type handling**: @JsonTypeInfo must be correctly configured for polymorphic deserialization
-- **Immutable objects**: Use @JsonCreator and @JsonProperty for constructor-based deserialization
+- Jackson default settings may differ from production custom ObjectMapper configuration.
+- `@JsonTest` does not validate controller binding or endpoint content negotiation.
+- Date/time assertions must use explicit format expectations to avoid timezone drift.
+- Unknown property behavior depends on mapper features and annotations.
 
-## Troubleshooting
+## Constraints
 
-**JacksonTester not available**: Ensure class is annotated with `@JsonTest`.
-
-**Field name doesn't match**: Check @JsonProperty annotation and Jackson configuration.
-
-**DateTime parsing fails**: Verify date format matches Jackson's expected format.
+- Do not mix business logic validation into serialization tests.
+- Do not rely on endpoint tests to validate low-level JSON contracts.
+- Keep examples compatible with Spring Boot 3.x and Jackson.
 
 ## References
 
-- [Spring @JsonTest Documentation](https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/test/autoconfigure/json/JsonTest.html)
-- [Jackson ObjectMapper](https://fasterxml.github.io/jackson-databind/javadoc/2.15/com/fasterxml/jackson/databind/ObjectMapper.html)
-- [JSON Annotations](https://fasterxml.github.io/jackson-annotations/javadoc/2.15/)
+- [Examples](references/examples.md) - Complete runnable test examples
