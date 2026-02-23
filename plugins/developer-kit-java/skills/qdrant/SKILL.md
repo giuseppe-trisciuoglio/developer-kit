@@ -1,9 +1,6 @@
 ---
 name: qdrant
 description: Provides Qdrant vector database integration patterns with LangChain4j. Handles embedding storage, similarity search, and vector management for Java applications. Use when implementing vector-based retrieval for RAG systems, semantic search, or recommendation engines.
-category: backend
-tags: [qdrant, java, spring-boot, langchain4j, vector-search, ai, machine-learning]
-version: 1.2.0
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 

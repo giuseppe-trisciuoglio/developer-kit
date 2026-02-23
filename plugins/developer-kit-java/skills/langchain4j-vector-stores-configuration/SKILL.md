@@ -2,9 +2,6 @@
 name: langchain4j-vector-stores-configuration
 description: Provides configuration patterns for LangChain4J vector stores in RAG applications. Use when building semantic search, integrating vector databases (PostgreSQL/pgvector, Pinecone, MongoDB, Milvus, Neo4j), implementing embedding storage/retrieval, setting up hybrid search, or optimizing vector database performance for production AI applications.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
-category: backend
-tags: [langchain4j, vector-stores, embeddings, rag, semantic-search, ai, llm, java, databases]
-version: 1.1.0
 ---
 
 # LangChain4J Vector Stores Configuration

@@ -1,9 +1,6 @@
 ---
 name: aws-cloudformation-cloudfront
 description: Provides AWS CloudFormation patterns for CloudFront distributions, origins (ALB, S3, Lambda@Edge, VPC Origins), CacheBehaviors, Functions, SecurityHeaders, parameters, Outputs and cross-stack references. Use when creating CloudFront distributions with CloudFormation, configuring multiple origins, implementing caching strategies, managing custom domains with ACM, configuring WAF, and optimizing performance.
-category: aws
-tags: [aws, cloudformation, cloudfront, cdn, content-delivery, distributions, origins, cache, waf, security]
-version: 1.0.0
 allowed-tools: Read, Write, Bash
 ---
 

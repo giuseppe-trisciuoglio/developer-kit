@@ -2,8 +2,6 @@
 name: nx-monorepo
 description: Provides comprehensive Nx monorepo management guidance for TypeScript/JavaScript projects. Use when creating Nx workspaces, generating apps/libraries/components, running affected commands, setting up CI/CD, configuring Module Federation, or implementing NestJS backends within Nx
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
-category: backend
-tags: [nx, monorepo, typescript, javascript, workspace, ci-cd]
 ---
 
 # Nx Monorepo
