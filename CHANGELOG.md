@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **New Plugin: developer-kit-jira** - Jira integration with Atlassian MCP Server for automated SDLC workflows
+  - `jira-mcp-workflow` skill for comprehensive workflow management
+  - 10 commands for complete Git-Jira integration:
+    - Ticket management: `devkit.jira.ticket.view`, `devkit.jira.ticket.comment`, `devkit.jira.ticket.transition`
+    - Workflow automation: `devkit.jira.workflow.start`, `devkit.jira.workflow.commit`, `devkit.jira.workflow.push`,
+      `devkit.jira.workflow.pr-create`, `devkit.jira.workflow.pr-ready`, `devkit.jira.workflow.pr-merge`, `devkit.jira.workflow.status`
+  - Automatic ticket inference from branch names (feature/PROJECT-123)
+  - User confirmations before all state changes
+  - MCP Server configuration via `.mcp.json`
+
 ## [2.2.0] - 2026-02-20
 
 ### Added
