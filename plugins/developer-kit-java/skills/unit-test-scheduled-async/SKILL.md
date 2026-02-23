@@ -1,9 +1,6 @@
 ---
 name: unit-test-scheduled-async
 description: Provides patterns for unit testing scheduled and async tasks using @Scheduled and @Async. Handles mocking task execution and timing. Use when validating asynchronous operations and scheduling behavior.
-category: testing
-tags: [junit-5, scheduled, async, concurrency, completablefuture]
-version: 1.0.1
 allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 

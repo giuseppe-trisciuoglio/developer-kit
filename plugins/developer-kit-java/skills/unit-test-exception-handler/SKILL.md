@@ -1,9 +1,6 @@
 ---
 name: unit-test-exception-handler
 description: Provides patterns for unit testing @ExceptionHandler and @ControllerAdvice for global exception handling. Use when validating error response formatting and HTTP status codes.
-category: testing
-tags: [junit-5, exception-handler, controller-advice, error-handling, mockmvc]
-version: 1.0.1
 allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 

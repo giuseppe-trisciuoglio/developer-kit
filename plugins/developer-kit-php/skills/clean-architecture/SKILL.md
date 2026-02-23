@@ -2,9 +2,6 @@
 name: clean-architecture
 description: Provides implementation patterns for Clean Architecture, Hexagonal Architecture (Ports & Adapters), and Domain-Driven Design in PHP 8.3+ with Symfony 7.x. Use when architecting enterprise PHP applications with entities/value objects/aggregates, refactoring legacy code to modern patterns, implementing domain-driven design with Symfony, or creating testable backends with clear separation of concerns.
 allowed-tools: Read, Write, Bash, Edit, Glob, Grep
-category: backend
-tags: [clean-architecture, hexagonal-architecture, ddd, domain-driven-design, php, symfony, ports-adapters]
-version: 1.0.0
 ---
 
 # Clean Architecture, Hexagonal Architecture & DDD for PHP/Symfony

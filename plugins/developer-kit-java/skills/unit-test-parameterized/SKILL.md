@@ -1,9 +1,6 @@
 ---
 name: unit-test-parameterized
 description: Provides parameterized testing patterns with @ParameterizedTest, @ValueSource, @CsvSource. Enables running a single test method with multiple input combinations. Use when testing multiple scenarios with similar logic.
-category: testing
-tags: [junit-5, parameterized-test, value-source, csv-source, method-source]
-version: 1.0.1
 allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 

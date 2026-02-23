@@ -1,8 +1,6 @@
 ---
 name: aws-lambda-php-integration
 description: Provides AWS Lambda integration patterns for PHP with Symfony using the Bref framework. Use when deploying PHP/Symfony applications to AWS Lambda, optimizing cold starts, configuring API Gateway integration, or implementing serverless PHP applications with Bref. Triggers include "create lambda php", "deploy symfony lambda", "bref lambda aws", "php lambda cold start", "aws lambda php performance", "symfony serverless", "php serverless framework".
-category: backend
-tags: [aws, lambda, php, symfony, bref, serverless, cold-start]
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 

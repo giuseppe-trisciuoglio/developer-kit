@@ -1,8 +1,6 @@
 ---
 name: aws-lambda-typescript-integration
 description: Provides AWS Lambda integration patterns for TypeScript with cold start optimization. Use when deploying TypeScript functions to AWS Lambda, choosing between NestJS framework and raw TypeScript approaches, optimizing cold starts, configuring API Gateway or ALB integration, or implementing serverless TypeScript applications. Triggers include "create lambda typescript", "deploy typescript lambda", "nestjs lambda aws", "raw typescript lambda", "aws lambda typescript performance".
-category: backend
-tags: [aws, lambda, typescript, nestjs, serverless, cold-start]
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 

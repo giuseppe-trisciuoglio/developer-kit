@@ -2,8 +2,6 @@
 name: better-auth
 description: Provides Better Auth authentication integration patterns for NestJS backend and Next.js frontend with Drizzle ORM and PostgreSQL. Use when implementing authentication - Setting up Better Auth with NestJS backend, Integrating Next.js App Router frontend, Configuring Drizzle ORM schema with PostgreSQL, Implementing social login (GitHub, Google, etc.), Adding plugins (2FA, Organization, SSO, Magic Link, Passkey), Email/password authentication with session management, Creating protected routes and middleware
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
-category: backend
-tags: [authentication, better-auth, nestjs, nextjs, drizzle, postgresql, oauth, sso, 2fa]
 ---
 
 # Better Auth Integration Guide

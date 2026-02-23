@@ -1,10 +1,7 @@
 ---
 name: react-patterns
-version: 2.0.0
 description: Provides comprehensive React 19 patterns covering Server Components, Actions, use() hook, useOptimistic, useFormStatus, useFormState, React Compiler, concurrent features, Suspense, and modern TypeScript development. Proactively use for any React development, component architecture, state management, performance optimization, or when implementing React 19's latest features.
 allowed-tools: Read, Write, Edit, Bash, Grep, Glob
-tags: [react, react-19, typescript, javascript, jsx, tsx, hooks, server-components, actions, suspense, concurrent-rendering, react-compiler, use-optimistic, form-actions]
-category: frontend
 ---
 
 # React Development Patterns
