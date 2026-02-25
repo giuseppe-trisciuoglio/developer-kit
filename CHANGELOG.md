@@ -16,6 +16,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Includes reference guides: compute-mastery, data-ops-beast, networking-security-hardened, automation-patterns
   - Provides shell aliases and helper scripts for daily AWS operations
 
+- **Enhanced Skill Validation System** (`.skills-validator-check`):
+  - Added support for agentskills.io/specification validation
+  - New skill validator with improved compliance checking
+
+- **CI/CD Security Integration**:
+  - Added Gen Agent Trust Hub security check for affected skills
+  - Automated security validation in CI pipeline
+
+- **GitHub Repository Improvements**:
+  - Added GitHub issue templates for standardized bug reports and feature requests
+  - Updated README.md with comprehensive Developer Kit workflows documentation
+
+### Fixed
+
+- **Skill Metadata Corrections**:
+  - Removed invalid frontmatter fields from SKILL.md files across plugins
+  - Corrected name mismatch in `developer-kit-php` clean-architecture skill
+
 ## [2.2.0] - 2026-02-20
 
 ### Added
