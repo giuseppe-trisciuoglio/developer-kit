@@ -23,6 +23,7 @@ The `developer-kit-aws` plugin provides expertise in AWS infrastructure design, 
 
 **General AWS skills**:
 - AWS Architecture Diagrams (draw.io format)
+- AWS Cost Optimization strategies
 
 ## Dependencies
 
