@@ -38,6 +38,7 @@
     "./skills/aws-cloudformation/aws-cloudformation-bedrock",
     "./skills/aws-cloudformation/aws-cloudformation-task-ecs-deploy-gh",
     "./skills/aws/aws-drawio-architecture-diagrams",
+    "./skills/aws/aws-cli-beast",
     "./skills/aws/aws-cost-optimization"
   ]
 }

@@ -131,6 +131,7 @@ Agents can be invoked in several ways:
 ## See Also
 
 - [CloudFormation Skills Guide](./guide-skills-cloudformation.md) - AWS CloudFormation skills
+- [AWS CLI Skills Guide](./guide-skills-aws-cli.md) - AWS CLI Beast Mode for advanced operations
 - [Core Agent Guide](../developer-kit-core/docs/guide-agents.md) - All agents across plugins
 - [Java AWS Skills Guide](../developer-kit-java/docs/guide-skills-aws-java.md) - AWS Java SDK skills
 
