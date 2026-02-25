@@ -9,6 +9,7 @@ Welcome to the Developer Kit AWS Plugin documentation. This plugin provides comp
 ### Skills Guides
 
 - **[CloudFormation Skills](./guide-skills-cloudformation.md)** - AWS CloudFormation IaC skills (15 skills)
+- **[AWS Cost Optimization](./guide-skills-cost-optimization.md)** - AWS cost optimization strategies
 
 ### Component Guides
 
@@ -21,7 +22,7 @@ Welcome to the Developer Kit AWS Plugin documentation. This plugin provides comp
 The Developer Kit AWS Plugin provides:
 
 - **AWS Agents**: 3 specialized agents for AWS architecture, CloudFormation, and DevOps
-- **AWS Skills**: 16 skills covering AWS CloudFormation templates and AWS architecture diagrams
+- **AWS Skills**: 17 skills covering AWS CloudFormation templates, AWS architecture diagrams, and cost optimization
 
 ---
 
@@ -32,7 +33,7 @@ developer-kit-aws/
 ├── agents/                    # AWS architecture and DevOps agents
 ├── skills/
 │   ├── aws-cloudformation/    # CloudFormation template skills (15 skills)
-│   └── aws/                   # General AWS skills (architecture diagrams)
+│   └── aws/                   # General AWS skills (architecture diagrams, cost optimization)
 └── docs/                      # This documentation
 ```
 
@@ -97,6 +98,7 @@ The AWS plugin includes CloudFormation skills for:
 ### General AWS Skills
 
 - **AWS Architecture Diagrams**: Professional AWS architecture diagram creation in draw.io format
+- **AWS Cost Optimization**: Structured cost optimization guidance using five pillars (right-sizing, elasticity, pricing models, storage optimization, monitoring) and twelve actionable best practices
 
 ---
 
