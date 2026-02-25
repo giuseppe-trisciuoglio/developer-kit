@@ -33,6 +33,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Skill Metadata Corrections**:
   - Removed invalid frontmatter fields from SKILL.md files across plugins
   - Corrected name mismatch in `developer-kit-php` clean-architecture skill
+- **New AWS Cost Optimization skill** (`developer-kit-aws`):
+  - `aws-cost-optimization`: Structured AWS cost optimization guidance using five pillars (right-sizing, elasticity, pricing models, storage optimization, monitoring) and twelve actionable best practices
+  - Covers AWS native tools: Cost Explorer, Budgets, Compute Optimizer, Trusted Advisor, Cost Anomaly Detection
+  - Includes FinOps practices, EC2/EBS/S3 optimization, Savings Plans evaluation
+
+- **New agent specification support**:
+  - Added new skill validator supporting agentskills.io/specification
+  - Enhanced validation system for skill definitions
+
+- Removed invalid frontmatter fields from SKILL.md files
+- Corrected name mismatch in PHP clean-architecture skill
+
+### Changed
+
+- Added GitHub issue template for community contributions
+- Updated README.md with Developer Kit workflows
 
 ## [2.2.0] - 2026-02-20
 
