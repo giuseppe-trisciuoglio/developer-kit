@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **New AWS CLI Beast Mode skill** (`developer-kit-aws`):
+  - `aws-cli-beast`: Comprehensive AWS CLI mastery for advanced cloud engineers
+  - Covers EC2, Lambda, S3, DynamoDB, RDS, VPC, IAM, Bedrock, and CloudWatch
+  - Features advanced JMESPath queries, bulk operations, waiters, and security-first patterns
+  - Includes reference guides: compute-mastery, data-ops-beast, networking-security-hardened, automation-patterns
+  - Provides shell aliases and helper scripts for daily AWS operations
+
 ## [2.2.0] - 2026-02-20
 
 ### Added
