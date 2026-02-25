@@ -21,7 +21,7 @@ multiple languages and frameworks. Built as a modular marketplace, you can insta
 
 ## Architecture
 
-Developer Kit is organized as a **modular marketplace** with 10 independent plugins (**92 skills, 43 agents, 36 commands**):
+Developer Kit is organized as a **modular marketplace** with 10 independent plugins (**95 skills, 43 agents, 36 commands**):
 
 ```
 plugins/

@@ -9,6 +9,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Features in development
+
+### Changed
+
+- Changes in existing functionality
+
+### Deprecated
+
+- Soon-to-be removed features
+
+### Removed
+
+- Removed features
+
+### Fixed
+
+- Bug fixes
+
+### Security
+
+- Security improvements
+
+## [2.3.0] - 2026-02-25
+
+### Added
+
 - **New AWS CLI Beast Mode skill** (`developer-kit-aws`):
   - `aws-cli-beast`: Comprehensive AWS CLI mastery for advanced cloud engineers
   - Covers EC2, Lambda, S3, DynamoDB, RDS, VPC, IAM, Bedrock, and CloudWatch
@@ -16,7 +42,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Includes reference guides: compute-mastery, data-ops-beast, networking-security-hardened, automation-patterns
   - Provides shell aliases and helper scripts for daily AWS operations
 
-- **Enhanced Skill Validation System** (`.skills-validator-check`):
+- **New AWS Cost Optimization skill** (`developer-kit-aws`):
+  - `aws-cost-optimization`: Structured AWS cost optimization guidance using five pillars (right-sizing, elasticity, pricing models, storage optimization, monitoring) and twelve actionable best practices
+  - Covers AWS native tools: Cost Explorer, Budgets, Compute Optimizer, Trusted Advisor, Cost Anomaly Detection
+  - Includes FinOps practices, EC2/EBS/S3 optimization, Savings Plans evaluation
+
+- **Enhanced Skill Validation System**:
   - Added support for agentskills.io/specification validation
   - New skill validator with improved compliance checking
 
@@ -33,22 +64,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Skill Metadata Corrections**:
   - Removed invalid frontmatter fields from SKILL.md files across plugins
   - Corrected name mismatch in `developer-kit-php` clean-architecture skill
-- **New AWS Cost Optimization skill** (`developer-kit-aws`):
-  - `aws-cost-optimization`: Structured AWS cost optimization guidance using five pillars (right-sizing, elasticity, pricing models, storage optimization, monitoring) and twelve actionable best practices
-  - Covers AWS native tools: Cost Explorer, Budgets, Compute Optimizer, Trusted Advisor, Cost Anomaly Detection
-  - Includes FinOps practices, EC2/EBS/S3 optimization, Savings Plans evaluation
-
-- **New agent specification support**:
-  - Added new skill validator supporting agentskills.io/specification
-  - Enhanced validation system for skill definitions
-
-- Removed invalid frontmatter fields from SKILL.md files
-- Corrected name mismatch in PHP clean-architecture skill
-
-### Changed
-
-- Added GitHub issue template for community contributions
-- Updated README.md with Developer Kit workflows
 
 ## [2.2.0] - 2026-02-20
 
@@ -705,7 +720,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.2.0...HEAD
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.3.0...HEAD
+[2.3.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v1.25.1...v2.0.0
