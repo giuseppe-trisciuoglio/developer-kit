@@ -22,7 +22,9 @@ The `developer-kit-aws` plugin provides expertise in AWS infrastructure design, 
 - ECS deployment with GitHub Actions
 
 **General AWS skills**:
+- `aws-cli-beast` - AWS CLI Beast Mode for advanced cloud operations
 - AWS Architecture Diagrams (draw.io format)
+- AWS Cost Optimization strategies
 
 ## Dependencies
 
