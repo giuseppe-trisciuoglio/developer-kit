@@ -35,3 +35,25 @@ jobs:
         run: |
           echo "Running plugin validation for all components..."
           python .skills-validator-check/validators/cli.py --all
+
+  security-check-skills:
+    name: Security Check Affected Skills
+    runs-on: ubuntu-latest
+    needs: validate-plugins
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Gen Agent Trust Hub security check
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_HEAD_REF: ${{ github.head_ref }}
+          GITHUB_BASE_REF: ${{ github.base_ref }}
+        run: python .skills-validator-check/validators/security_checker.py
