@@ -9,7 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Features in development
+- **New GitHub Issue Workflow skill** (`developer-kit-core`):
+  - `github-issue-workflow`: Skill for creating and managing GitHub issues with workflow automation
+  - Plugin manifest updated to integrate new skill
 
 ### Changed
 
