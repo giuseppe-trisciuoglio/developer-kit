@@ -13,25 +13,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `github-issue-workflow`: Skill for creating and managing GitHub issues with workflow automation
   - Plugin manifest updated to integrate new skill
 
-### Changed
+- **MCP-Scan Security Integration** (`.skills-validator-check`):
+  - New `mcp_scan_checker.py` script for security scanning of skills
+  - Integrates with [mcp-scan](https://github.com/invariantlabs-ai/mcp-scan) from Invariant Labs
+  - Detects prompt injection attacks, malware payloads, sensitive data handling issues, and hard-coded secrets
+  - Supports scanning all skills (`--all`), specific plugins (`--plugin`), specific paths (`--path`), or changed skills only (`--changed`)
+  - Per-skill scanning with clear output and summary statistics
+  - JSON output parsing with structured results
+  - Classifies W004 "not in registry" as informational (expected for custom skills)
 
-- Changes in existing functionality
+- **GitHub Actions Security Scan Workflow** (`.github/workflows/security-scan.yml`):
+  - Automated security scanning on push to main/develop and pull requests
+  - PRs scan only changed skills for efficiency
+  - Push events scan all skills
+  - Uses `uvx` runner for mcp-scan execution
 
-### Deprecated
-
-- Soon-to-be removed features
-
-### Removed
-
-- Removed features
+- **Makefile Security Targets**:
+  - `make security-scan`: Run MCP-Scan on all skills
+  - `make security-scan-changed`: Run MCP-Scan only on changed skills
 
 ### Fixed
 
-- Bug fixes
+- **Disabled Trust Hub Security Check**:
+  - Commented out `security-check-skills` job in `plugin-validation.yml`
+  - Trust Hub API only accepts ClawHub URLs, not raw GitHub content URLs
+  - Returns HTTP 400 "Invalid skill URL" - addressed in issue #100
+  - Integration re-enabled via new mcp-scan approach
 
-### Security
+### Changed
 
-- Security improvements
+- **Enhanced Security Scanning**:
+  - Replaced Trust Hub API with mcp-scan for skill security validation
+  - Improved PR scanning with `--changed` flag using git diff
+  - Added `--base` flag for custom base ref comparison
+  - Auto-detect base ref (origin/main, origin/develop, HEAD~1)
 
 ## [2.3.0] - 2026-02-25
 
