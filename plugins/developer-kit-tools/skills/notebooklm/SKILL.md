@@ -236,10 +236,33 @@ Aliases can be used in place of notebook IDs in any command.
 ```bash
 # 1. Find the project notebook
 nlm notebook list
+```
 
+**Expected output:**
+```
+ID         Title                  Sources  Created
+─────────────────────────────────────────────────────
+abc123...  Project X Docs         12       2026-01-15
+def456...  API Reference          5        2026-02-01
+```
+
+```bash
 # 2. Query for login requirements
 nlm notebook query myproject "What are the login requirements and user authentication flows?"
+```
 
+**Expected output:**
+```
+Based on the sources in this notebook:
+
+The login flow requires email/password authentication with the following steps:
+1. User submits credentials via POST /api/auth/login
+2. Server validates against stored bcrypt hash
+3. JWT access token (15min) and refresh token (7d) are returned
+...
+```
+
+```bash
 # 3. Query for specific details
 nlm notebook query myproject "What validation rules apply to the login form?"
 
@@ -253,7 +276,16 @@ nlm notebook query myproject "What validation rules apply to the login form?"
 ```bash
 # 1. Create notebook
 nlm notebook create "API Documentation"
-nlm alias set api-docs <returned-id>
+```
+
+**Expected output:**
+```
+Created notebook: API Documentation
+ID: ghi789...
+```
+
+```bash
+nlm alias set api-docs ghi789
 
 # 2. Add sources
 nlm source add api-docs --url "https://api.example.com/docs" --wait
@@ -264,7 +296,17 @@ nlm report create api-docs --format "Briefing Doc" --confirm
 
 # 4. Wait and download
 nlm studio status api-docs
-nlm download report api-docs <artifact-id> --output api-summary.md
+```
+
+**Expected output:**
+```
+Artifact ID     Type    Status      Created
+──────────────────────────────────────────────────
+art123...       Report  completed   2026-02-27
+```
+
+```bash
+nlm download report api-docs art123 --output api-summary.md
 ```
 
 ### Example 3: Generate a Podcast from Project Docs
