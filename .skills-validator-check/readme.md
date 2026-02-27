@@ -98,3 +98,54 @@ black .
 # Type checking
 mypy .
 ```
+
+## Security Scanning
+
+The validation system includes a security scanner powered by [mcp-scan](https://github.com/invariantlabs-ai/mcp-scan) from Invariant Labs. It detects prompt injection attacks, malware payloads, sensitive data handling issues, and hard-coded secrets in skill definitions.
+
+### Prerequisites
+
+Install [uv](https://github.com/astral-sh/uv) (provides `uvx` runner):
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+### Usage
+
+```bash
+# Scan all skills in all plugins
+python3 .skills-validator-check/validators/mcp_scan_checker.py --all
+
+# Scan a specific plugin
+python3 .skills-validator-check/validators/mcp_scan_checker.py --plugin developer-kit-java
+
+# Scan a specific skill directory
+python3 .skills-validator-check/validators/mcp_scan_checker.py --path plugins/developer-kit-java/skills/spring-boot-actuator
+
+# Verbose output
+python3 .skills-validator-check/validators/mcp_scan_checker.py --all -v
+
+# Via Makefile
+make security-scan
+```
+
+### CI/CD Integration
+
+Security scans run automatically via GitHub Actions (`.github/workflows/security-scan.yml`) on:
+- Every push to `main` and `develop` branches
+- Every pull request targeting `main` or `develop`
+
+### Exit Codes
+
+| Code | Meaning |
+|------|---------|
+| 0 | No security issues (or only warnings) |
+| 1 | Critical security issues found |
+| 2 | System error (mcp-scan unavailable) |
+
+### Known Limitations
+
+- Requires `uvx` or `pipx` to run mcp-scan
+- Scan timeout is set to 5 minutes
+- False positives should be documented in issue tracker
