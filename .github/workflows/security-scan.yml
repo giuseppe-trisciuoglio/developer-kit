@@ -1,0 +1,35 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+
+jobs:
+  security-scan:
+    name: MCP-Scan Security Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Run MCP-Scan on all skills
+        run: |
+          echo "🔍 Running MCP-Scan security check on all skills..."
+          python .skills-validator-check/validators/mcp_scan_checker.py --all -v

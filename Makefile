@@ -22,7 +22,7 @@
 SHELL := /bin/bash
 .PHONY: all help check-deps list-plugins list-components list-agents list-commands list-skills \
         install install-claude install-opencode install-copilot install-codex \
-        uninstall status backup clean
+        uninstall status backup clean security-scan
 
 # ═══════════════════════════════════════════════════════════════
 # COLORS & OUTPUT FORMATTING
@@ -164,6 +164,9 @@ help:
 	@echo "  make list-agents          List all available agents"
 	@echo "  make list-commands        List all available commands"
 	@echo "  make list-skills          List all available skills"
+	@echo ""
+	@echo -e "$(GREEN)Quality:$(NC)"
+	@echo "  make security-scan        Run MCP-Scan security check on all skills"
 	@echo ""
 
 # ═══════════════════════════════════════════════════════════════
@@ -771,6 +774,17 @@ install-claude: check-deps
 	@echo -e "$(YELLOW)⚠ This installer is designed for Claude Code only.$(NC)"
 	@echo ""
 	@bash $(DEVKIT_DIR)/scripts/install-claude.sh "$(PLUGIN_JSON_FILES)"
+
+# ═══════════════════════════════════════════════════════════════
+# CLEAN
+# ═══════════════════════════════════════════════════════════════
+
+# ═══════════════════════════════════════════════════════════════
+# SECURITY SCANNING
+# ═══════════════════════════════════════════════════════════════
+
+security-scan:
+	@python3 .skills-validator-check/validators/mcp_scan_checker.py --all -v
 
 # ═══════════════════════════════════════════════════════════════
 # CLEAN
