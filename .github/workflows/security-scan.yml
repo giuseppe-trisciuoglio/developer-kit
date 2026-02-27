@@ -29,7 +29,14 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v4
 
-      - name: Run MCP-Scan on all skills
+      - name: Run MCP-Scan (changed skills only on PRs)
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "🔍 Running MCP-Scan on changed skills..."
+          python .skills-validator-check/validators/mcp_scan_checker.py --changed --base origin/${{ github.base_ref }} -v
+
+      - name: Run MCP-Scan (all skills on push)
+        if: github.event_name == 'push'
         run: |
           echo "🔍 Running MCP-Scan security check on all skills..."
           python .skills-validator-check/validators/mcp_scan_checker.py --all -v

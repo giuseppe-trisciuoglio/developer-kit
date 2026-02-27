@@ -12,6 +12,12 @@ Usage:
     # Scan all skills (one at a time)
     python mcp_scan_checker.py --all
 
+    # Scan only skills changed vs main
+    python mcp_scan_checker.py --changed
+
+    # Scan only skills changed vs a specific base ref
+    python mcp_scan_checker.py --changed --base origin/develop
+
     # Scan a specific plugin's skills
     python mcp_scan_checker.py --plugin developer-kit-java
 
@@ -96,6 +102,49 @@ def check_mcp_scan_available() -> Tuple[bool, str]:
     if shutil.which("pipx"):
         return True, "pipx"
     return False, ""
+
+
+def find_changed_skill_directories(repo_root: Path,
+                                   base_ref: Optional[str] = None) -> List[Path]:
+    """Find skill directories that contain files modified compared to a base ref."""
+    if base_ref is None:
+        # Auto-detect: use merge-base with origin/main or HEAD~1
+        for candidate in ["origin/main", "origin/develop", "HEAD~1"]:
+            try:
+                result = subprocess.run(
+                    ["git", "merge-base", "HEAD", candidate],
+                    capture_output=True, text=True, check=True, cwd=repo_root,
+                )
+                base_ref = result.stdout.strip()
+                break
+            except subprocess.CalledProcessError:
+                continue
+        if base_ref is None:
+            print(f"{YELLOW}Warning: Could not detect base ref, falling back to HEAD~1{NC}")
+            base_ref = "HEAD~1"
+
+    try:
+        result = subprocess.run(
+            ["git", "diff", "--name-only", base_ref, "HEAD"],
+            capture_output=True, text=True, check=True, cwd=repo_root,
+        )
+    except subprocess.CalledProcessError:
+        print(f"{RED}Error: git diff failed against {base_ref}{NC}")
+        return []
+
+    changed_files = result.stdout.strip().splitlines()
+    skill_dirs: set[Path] = set()
+
+    for changed_file in changed_files:
+        file_path = repo_root / changed_file
+        # Walk up to find containing skill dir (has SKILL.md)
+        for parent in file_path.parents:
+            skill_md = parent / "SKILL.md"
+            if skill_md.exists() and "plugins" in str(parent):
+                skill_dirs.add(parent)
+                break
+
+    return sorted(skill_dirs)
 
 
 def find_skill_directories(repo_root: Path, plugin: Optional[str] = None,
@@ -270,6 +319,17 @@ def main() -> int:
         help="Scan a specific skill directory path",
     )
     parser.add_argument(
+        "--changed",
+        action="store_true",
+        help="Only scan skills modified in the current PR/commit (uses git diff)",
+    )
+    parser.add_argument(
+        "--base",
+        type=str,
+        default=None,
+        help="Base branch/ref for --changed comparison (default: auto-detect)",
+    )
+    parser.add_argument(
         "-v", "--verbose",
         action="store_true",
         help="Show verbose output including info-level issues",
@@ -277,7 +337,7 @@ def main() -> int:
 
     args = parser.parse_args()
 
-    if not args.all and not args.plugin and not args.path:
+    if not args.all and not args.plugin and not args.path and not args.changed:
         parser.print_help()
         return 0
 
@@ -301,7 +361,13 @@ def main() -> int:
     print(f"Repository: {repo_root}\n")
 
     # Find skill directories
-    skill_dirs = find_skill_directories(repo_root, args.plugin, args.path)
+    if args.changed:
+        skill_dirs = find_changed_skill_directories(repo_root, args.base)
+        if not skill_dirs:
+            print(f"{GREEN}✅ No skill changes detected — nothing to scan.{NC}")
+            return 0
+    else:
+        skill_dirs = find_skill_directories(repo_root, args.plugin, args.path)
 
     if not skill_dirs:
         print(f"{YELLOW}No skills found to scan.{NC}")
