@@ -34,11 +34,11 @@ nlm add url <notebook> <url>
 | Command | Description |
 |---------|-------------|
 | `nlm source list <notebook>` | List sources |
-| `nlm source add <notebook> --url "URL"` | Add URL |
-| `nlm source add <notebook> --url "URL" --wait` | Add URL and wait until ready |
+| `nlm source add <notebook> --url "<user-provided-url>"` | Add URL |
+| `nlm source add <notebook> --url "<user-provided-url>" --wait` | Add URL and wait until ready |
 | `nlm source add <notebook> --text "content" --title "Notes"` | Add text |
 | `nlm source add <notebook> --file document.pdf --wait` | Upload file |
-| `nlm source add <notebook> --youtube "URL"` | Add YouTube video |
+| `nlm source add <notebook> --youtube "<user-provided-url>"` | Add YouTube video |
 | `nlm source add <notebook> --drive <doc-id>` | Add Google Drive doc |
 | `nlm source get <source-id>` | Get content |
 | `nlm source describe <source-id>` | AI summary |
