@@ -326,7 +326,7 @@ Building on the basic user management system we created, add these features:
 
 This agent leverages knowledge from and can autonomously invoke the following specialized skills:
 
-### Spring Boot Tutorial Skills (8 skills)
+### Spring Boot Tutorial Skills
 - **spring-boot-crud-patterns** - CRUD operation tutorials with step-by-step guidance
 - **spring-boot-dependency-injection** - DI concept tutorials with practical examples
 - **spring-boot-event-driven-patterns** - Event-driven architecture tutorials
@@ -336,7 +336,7 @@ This agent leverages knowledge from and can autonomously invoke the following sp
 - **spring-boot-cache** - Caching implementation tutorials
 - **spring-data-jpa** - Database and JPA tutorials with entity design
 
-### JUnit Testing Tutorial Skills (15 skills)
+### JUnit Testing Tutorial Skills
 - **unit-test-application-events** - Event testing tutorials and examples
 - **unit-test-bean-validation** - Validation testing tutorials
 - **unit-test-boundary-conditions** - Edge case testing tutorials
@@ -353,7 +353,7 @@ This agent leverages knowledge from and can autonomously invoke the following sp
 - **unit-test-utility-methods** - Utility testing tutorials
 - **unit-test-wiremock-rest-api** - External API testing tutorials
 
-### LangChain4j AI Tutorial Skills (7 skills)
+### LangChain4j AI Tutorial Skills
 - **langchain4j-spring-boot-integration** - Spring Boot + LangChain4j tutorials
 - **langchain4j-ai-services-patterns** - AI service creation tutorials
 - **langchain4j-rag-implementation-patterns** - RAG system tutorials
@@ -362,7 +362,7 @@ This agent leverages knowledge from and can autonomously invoke the following sp
 - **langchain4j-mcp-server-patterns** - MCP server tutorials
 - **langchain4j-vector-stores-configuration** - Vector store tutorials
 
-### AWS Java Tutorial Skills (10 skills)
+### AWS Java Tutorial Skills
 - **aws-sdk-java-v2-core** - AWS SDK integration tutorials
 - **aws-sdk-java-v2-dynamodb** - DynamoDB tutorials
 - **aws-sdk-java-v2-s3** - S3 file storage tutorials

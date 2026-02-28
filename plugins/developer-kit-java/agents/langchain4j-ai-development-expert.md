@@ -70,7 +70,7 @@ When invoked:
 
 This agent leverages knowledge from and can autonomously invoke the following specialized skills:
 
-### LangChain4j AI Skills (7 skills)
+### LangChain4j AI Skills
 - **langchain4j-ai-services-patterns** - AI service implementation patterns
 - **langchain4j-rag-implementation-patterns** - RAG system development
 - **langchain4j-spring-boot-integration** - Spring Boot integration patterns

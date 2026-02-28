@@ -67,7 +67,7 @@ When invoked:
 
 This agent leverages knowledge from and can autonomously invoke the following specialized skills:
 
-### Spring Boot Architecture Skills (8 skills)
+### Spring Boot Architecture Skills
 - **spring-boot-crud-patterns** - CRUD implementation patterns review
 - **spring-boot-dependency-injection** - Constructor injection and DI best practices
 - **spring-boot-event-driven-patterns** - Event-driven architecture review (transactional events phases)
@@ -77,7 +77,7 @@ This agent leverages knowledge from and can autonomously invoke the following sp
 - **spring-boot-cache** - Caching strategy and performance review
 - **spring-data-jpa** - JPA/Hibernate usage and entity design review
 
-### JUnit Testing Skills (15 skills)
+### JUnit Testing Skills
 - **unit-test-service-layer** - Service layer testing review
 - **unit-test-controller-layer** - Controller testing review
 - **unit-test-bean-validation** - Validation testing review

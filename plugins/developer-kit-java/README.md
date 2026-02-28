@@ -38,6 +38,7 @@ The `developer-kit-java` plugin provides extensive support for Java development,
 - Spring Boot Actuator, Cache, CRUD Patterns, Dependency Injection
 - Event-Driven Patterns, OpenAPI Documentation, REST API Standards
 - Saga Pattern, Security JWT, Test Patterns, Resilience4j
+- **spring-boot-project-creator** - Project generation from specification
 
 ### Architecture
 - **clean-architecture** - Clean Architecture, Hexagonal Architecture, and DDD patterns for Java 21+ Spring Boot 3.5+
@@ -45,12 +46,16 @@ The `developer-kit-java` plugin provides extensive support for Java development,
 ### Spring Data
 - Spring Data JPA, Spring Data Neo4j
 
+### Spring AI
+- **spring-ai-mcp-server-patterns** - Model Context Protocol server implementation
+
 ### JUnit Testing
 - Unit test patterns for all layers and scenarios
 
 ### LangChain4J
 - AI Services, MCP Server, RAG Implementation, Spring Boot Integration
 - Testing Strategies, Tool Function Calling, Vector Stores Configuration
+- **qdrant** - Qdrant vector database integration
 
 ### AWS Java SDK
 - RDS, Bedrock, DynamoDB, KMS, Lambda, Messaging, S3, Secrets Manager

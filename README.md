@@ -28,7 +28,7 @@ multiple languages and frameworks. Built as a modular marketplace, you can insta
 
 ## Architecture
 
-Developer Kit is organized as a **modular marketplace** with 10 independent plugins (**95 skills, 43 agents, 36 commands**):
+Developer Kit is organized as a **modular marketplace** with 10 independent plugins (**97 skills, 43 agents, 36 commands**):
 
 ```
 plugins/
@@ -196,7 +196,7 @@ Comprehensive Java development toolkit with Spring Boot, testing, LangChain4J, a
 **Skills**:
 
 - **Spring Boot**: actuator, cache, crud-patterns, dependency-injection, event-driven-patterns, openapi-documentation,
-  rest-api-standards, saga-pattern, security-jwt, test-patterns, resilience4j
+  rest-api-standards, saga-pattern, security-jwt, test-patterns, resilience4j, project-creator
 - **Spring Data**: jpa, neo4j
 - **Spring AI**: mcp-server-patterns
 - **JUnit Testing**: application-events, bean-validation, boundary-conditions, caching, config-properties,
@@ -317,7 +317,7 @@ GitHub specification integration and verification.
 
 | Language           | Plugin                     | Components               |
 |--------------------|----------------------------|--------------------------|
-| Java/Spring Boot   | `developer-kit-java`       | 49 Skills, 9 Agents, 11 Commands |
+| Java/Spring Boot   | `developer-kit-java`       | 51 Skills, 9 Agents, 11 Commands |
 | TypeScript/Node.js | `developer-kit-typescript` | 17 Skills, 13 Agents, 3 Commands |
 | Python             | `developer-kit-python`     | 2 Skills, 4 Agents      |
 | PHP/WordPress      | `developer-kit-php`        | 3 Skills, 5 Agents      |

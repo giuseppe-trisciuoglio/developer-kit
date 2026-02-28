@@ -8,11 +8,11 @@ Welcome to the Developer Kit Java Plugin documentation. This plugin provides com
 
 ### Skills Guides
 
-- **[Spring Boot Skills](./guide-skills-spring-boot.md)** - Spring Boot framework skills (13 skills)
-- **[JUnit Test Skills](./guide-skills-junit-test.md)** - JUnit testing skills (15 skills)
-- **[LangChain4J Skills](./guide-skills-langchain4j.md)** - LangChain4J AI framework skills (8 skills)
-- **[AWS Java Skills](./guide-skills-aws-java.md)** - AWS SDK for Java skills (10 skills)
-- **[Architecture Skills](./guide-skills-architecture.md)** - Clean Architecture and DDD skills (1 skill)
+- **[Spring Boot Skills](./guide-skills-spring-boot.md)** - Spring Boot framework skills
+- **[JUnit Test Skills](./guide-skills-junit-test.md)** - JUnit testing skills
+- **[LangChain4J Skills](./guide-skills-langchain4j.md)** - LangChain4J AI framework skills
+- **[AWS Java Skills](./guide-skills-aws-java.md)** - AWS SDK for Java skills
+- **[Architecture Skills](./guide-skills-architecture.md)** - Clean Architecture and DDD skills
 
 ### Component Guides
 
@@ -27,7 +27,7 @@ The Developer Kit Java Plugin provides:
 
 - **Java Agents**: 9 specialized agents for Spring Boot, general Java, and LangChain4J development
 - **Java Commands**: 11 commands for code review, testing, generation, refactoring, security, and dependency management
-- **Java Skills**: 48 skills covering Spring Boot, JUnit testing, LangChain4J, AWS SDK, Spring AI, Qdrant, Clean Architecture, and more
+- **Java Skills**: 51 skills covering Spring Boot, JUnit testing, LangChain4J, AWS SDK, Spring AI, Qdrant, Clean Architecture, and more
 
 ---
 
