@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **GraalVM Native Image Skill** (`developer-kit-java`):
+  - `graalvm-native-image`: Comprehensive skill for building GraalVM native executables from Java applications
+  - Covers: Maven/Gradle project analysis, Native Build Tools configuration, framework-specific patterns (Spring Boot AOT, Quarkus, Micronaut)
+  - GraalVM reachability metadata (reflect-config, resource-config)
+  - Iterative fix engine for resolving native build failures
+  - Tracing agent for automatic metadata collection
+  - Docker integration with multi-stage builds
+
+- **Context7 Integration**: Added `context7.json` for claim skills repository
+
+- **Enhanced Security Scanning**:
+  - MCP-scan security check integration for skills (detects prompt injection, malware, sensitive data)
+  - Per-skill scanning in PRs with `--changed` flag
+  - Security scan workflow GitHub Actions (PRs + push to main/develop)
+  - Makefile target: `make security-scan`
+
+### Changed
+
+- **Enhanced README Badges**: Added security scan and plugin-validation badges
+- **Added Marketplace Links**: Added 'Listed on' marketplace links to README
+
 ### Security
 
 - **Resolved 14 MCP-Scan Security Failures**:
@@ -14,14 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - W012 - External URL/code execution risks: Pinned Docker images (LocalStack 3.8.1, ollama 0.5.4, qdrant v1.13.2), npm packages (@modelcontextprotocol 0.6.2), and GitHub Actions (trivy-action, snyk/actions)
   - W011 - Third-party content exposure: Added content validation/filtering warnings across skills (RAG, Bedrock, Messaging, MCP patterns, Qdrant, Spring AI MCP, TS Lambda, Next.js, shadcn-ui)
 
-### Changed
-
-- **Enhanced README Badges**: Added security scan and plugin-validation badges
-- **Added Marketplace Links**: Added 'Listed on' marketplace links to README
-
-### Added
-
-- **Context7 Integration**: Added `context7.json` for claim skills repository
+- **Fixed Trust Hub Security Check**: Disabled Trust Hub API check returning HTTP 400 (incompatible with raw GitHub URLs)
 
 ## [2.3.0] - 2026-02-25
 
