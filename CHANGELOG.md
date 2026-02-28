@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **New TypeScript Code Review Skills** (`developer-kit-typescript`):
+  - `nestjs-code-review`: NestJS code review with controller, service, module, guard, and DI pattern analysis
+  - `nextjs-code-review`: Next.js App Router review covering Server/Client Components, Server Actions, caching, and performance
+  - `react-code-review`: React 19 component review with hooks, accessibility, state management, and TypeScript integration
+  - `typescript-security-review`: Security audit for TypeScript/Node.js covering OWASP Top 10, XSS, injection, JWT, and dependency scanning
+  - Each skill includes reference documentation (patterns, anti-patterns, checklists)
+
 - **Standardized Coding Rules for Language Plugins** (PR #112, closes #109):
   - Added `rules/` directory with path-scoped coding rules to 4 language plugins
   - **Java** (`developer-kit-java`): 4 rules — naming-conventions, project-structure, language-best-practices, error-handling (Java 17+, Spring Boot, constructor DI, Records)
@@ -51,6 +58,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **New GitHub Issue Workflow skill** (`developer-kit-core`):
   - `github-issue-workflow`: Skill for creating and managing GitHub issues with workflow automation
   - Plugin manifest updated to integrate new skill
+  - Security hardening: treats issue bodies as untrusted input with content-isolation, mandatory user confirmation, and prompt injection prevention
+
+- **New `developer-kit-tools` plugin** (PR #106):
+  - New plugin for external tools integration (CLI utilities, APIs, third-party services)
+  - `notebooklm`: Google NotebookLM integration skill for generating audio summaries, podcasts, and study guides from source documents
+  - Enforces user-provided sources and includes security guidance for content handling
 
 - **Context7 Integration**: Added `context7.json` for claim skills repository
 
@@ -78,6 +91,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Makefile Security Targets**:
   - `make security-scan`: Run MCP-Scan on all skills
   - `make security-scan-changed`: Run MCP-Scan only on changed skills
+- **Resolved 14 MCP-Scan Security Failures**:
+  - W007 - Insecure credential handling: Replaced hardcoded apiKey/password with env var references in RAG
+  - W012 - External URL/code execution risks: Pinned Docker images (LocalStack 3.8.1, ollama 0.5.4, qdrant v1.13.2), npm packages (@modelcontextprotocol 0.6.2), and GitHub Actions (trivy-action, snyk/actions)
+  - W011 - Third-party content exposure: Added content validation/filtering warnings across skills (RAG, Bedrock, Messaging, MCP patterns, Qdrant, Spring AI MCP, TS Lambda, Next.js, shadcn-ui)
+- Disabled Trust Hub security check returning HTTP 400
+- Replaced hardcoded credentials with environment variable references
 
 ### Changed
 

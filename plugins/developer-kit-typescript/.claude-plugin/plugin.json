@@ -68,7 +68,12 @@
     "./skills/drizzle-orm-patterns",
     "./skills/nx-monorepo",
     "./skills/turborepo-monorepo",
-    "./skills/aws-lambda-typescript-integration"
+    "./skills/aws-lambda-typescript-integration",
+    "./skills/nestjs-code-review",
+    "./skills/nextjs-code-review",
+    "./skills/react-code-review",
+    "./skills/typescript-security-review",
+    "./skills/nestjs-best-practices"
   ],
   "rules": [
     "./rules/naming-conventions.md",

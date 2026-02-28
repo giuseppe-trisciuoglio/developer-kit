@@ -37,6 +37,7 @@ The `developer-kit-typescript` plugin provides comprehensive support for TypeScr
 
 ### Backend (NestJS)
 - **nestjs** - NestJS framework patterns
+- **nestjs-best-practices** - Comprehensive NestJS best practices including modular architecture, dependency injection scoping, exception filters, DTO validation, and Drizzle ORM integration
 - **clean-architecture** - Clean Architecture, Hexagonal Architecture, and DDD patterns for NestJS backend applications
 
 ### Authentication
