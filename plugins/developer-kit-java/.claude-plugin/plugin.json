@@ -93,5 +93,11 @@
     "./skills/aws-lambda-java-integration",
     "./skills/clean-architecture",
     "./skills/graalvm-native-image"
+  ],
+  "rules": [
+    "./rules/naming-conventions.md",
+    "./rules/project-structure.md",
+    "./rules/language-best-practices.md",
+    "./rules/error-handling.md"
   ]
 }

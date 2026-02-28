@@ -47,6 +47,7 @@ TARGET_DIR="$TARGET_PROJECT/.claude"
 mkdir -p "$TARGET_DIR/agents"
 mkdir -p "$TARGET_DIR/commands"
 mkdir -p "$TARGET_DIR/skills"
+mkdir -p "$TARGET_DIR/rules"
 
 echo "  → Target: $TARGET_PROJECT"
 echo ""
@@ -69,6 +70,7 @@ for plugin_json in $PLUGIN_JSON_FILES; do
         num_agents=$(jq -r '.agents | length' "$plugin_json" 2>/dev/null || echo "0")
         num_commands=$(jq -r '.commands | length' "$plugin_json" 2>/dev/null || echo "0")
         num_skills=$(jq -r '.skills | length' "$plugin_json" 2>/dev/null || echo "0")
+        num_rules=$(jq -r '.rules | length' "$plugin_json" 2>/dev/null || echo "0")
 
         PLUGIN_NAMES[$plugin_num]="$plugin_name"
         PLUGIN_PATHS[$plugin_num]="$plugin_json"
@@ -77,7 +79,7 @@ for plugin_json in $PLUGIN_JSON_FILES; do
 
         printf "  %2d) ${GREEN}%s${NC}\n" "$plugin_num" "$plugin_name"
         echo "      $plugin_desc"
-        echo "      Components: $num_agents agents, $num_commands commands, $num_skills skills"
+        echo "      Components: $num_agents agents, $num_commands commands, $num_skills skills, $num_rules rules"
         echo ""
     fi
 done
@@ -257,6 +259,41 @@ for ((i=1; i<=plugin_num; i++)); do
                 done
             done
         fi
+
+        # Install rules
+        rules=$(jq -r '.rules[]? // empty' "$plugin_json" 2>/dev/null)
+        if [[ -n "$rules" ]]; then
+            rules_target_dir="$TARGET_DIR/rules/$plugin_name"
+            mkdir -p "$rules_target_dir"
+            for rule in $rules; do
+                rule_path="$base_dir/$rule"
+                if [[ -f "$rule_path" ]]; then
+                    rule_name=$(basename "$rule")
+                    target_file="$rules_target_dir/$rule_name"
+
+                    if [[ -f "$target_file" ]]; then
+                        echo -n "  ⚠ Rule $rule_name already exists. [O]verwrite, [S]kip? "
+                        read -n 1 conflict_action
+                        echo ""
+                        case $conflict_action in
+                            O|o)
+                                cp "$rule_path" "$target_file"
+                                echo "    ✓ Overwritten: $rule_name"
+                                installed_count=$((installed_count + 1))
+                                ;;
+                            *)
+                                echo "    ○ Skipped: $rule_name"
+                                skipped_count=$((skipped_count + 1))
+                                ;;
+                        esac
+                    else
+                        cp "$rule_path" "$target_file"
+                        echo "  ✓ Rule: $plugin_name/$rule_name"
+                        installed_count=$((installed_count + 1))
+                    fi
+                fi
+            done
+        fi
     fi
 done
 
@@ -276,6 +313,7 @@ echo "  3. Your skills, agents, and commands are now available!"
 echo ""
 echo -e "${YELLOW}Usage:${NC}"
 echo "  - Skills are automatically discovered by Claude"
+echo "  - Rules are loaded from .claude/rules/ to enforce coding standards"
 echo "  - Use @agent-name to invoke agents"
 echo "  - Use /command-name to run commands"
 echo ""

@@ -129,6 +129,55 @@ You are an expert testing agent specializing in test automation.
 
 
 @pytest.fixture
+def temp_rule_file(tmp_path: Path) -> Callable[[str], Path]:
+    """Create a temporary rule file with given content."""
+    def _create(content: str, rule_name: str = "naming-conventions") -> Path:
+        rules_dir = tmp_path / "rules"
+        rules_dir.mkdir(parents=True, exist_ok=True)
+        rule_file = rules_dir / f"{rule_name}.md"
+        rule_file.write_text(content)
+        return rule_file
+    return _create
+
+
+@pytest.fixture
+def valid_rule_content() -> str:
+    """Return valid rule content with all required and recommended sections."""
+    return """---
+globs: "**/*.java"
+---
+# Rule: Java Naming Conventions
+
+## Context
+Standardize naming across Java projects.
+
+## Guidelines
+
+### Classes
+- Use PascalCase for class names
+
+### Methods
+- Use camelCase for method names
+
+## Examples
+
+### ✅ Good
+```java
+public class OrderService {
+    public Order findById(Long id) { }
+}
+```
+
+### ❌ Bad
+```java
+public class order_service {
+    public Order GetById(Long id) { }
+}
+```
+"""
+
+
+@pytest.fixture
 def valid_command_content() -> str:
     """Return valid command content with all required sections."""
     return """---

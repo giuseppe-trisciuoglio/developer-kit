@@ -1,28 +1,29 @@
 #!/usr/bin/env python3
 """
-MCP-Scan security checker for skill definitions.
+MCP-Scan security checker for skill definitions and rule files.
 
-Scans skills one at a time using mcp-scan (from Invariant Labs) to detect:
+Scans skills and rules one at a time using mcp-scan (from Invariant Labs) to detect:
 - Prompt injection attacks
 - Malware payloads
 - Sensitive data handling issues
 - Hard-coded secrets
 
 Usage:
-    # Scan all skills (one at a time)
+    # Scan all skills and rules (one at a time)
     python mcp_scan_checker.py --all
 
-    # Scan only skills changed vs main
+    # Scan only components changed vs main
     python mcp_scan_checker.py --changed
 
-    # Scan only skills changed vs a specific base ref
+    # Scan only components changed vs a specific base ref
     python mcp_scan_checker.py --changed --base origin/develop
 
-    # Scan a specific plugin's skills
+    # Scan a specific plugin's skills and rules
     python mcp_scan_checker.py --plugin developer-kit-java
 
-    # Scan a specific skill directory
+    # Scan a specific skill directory or rule file
     python mcp_scan_checker.py --path plugins/developer-kit-java/skills/spring-boot-actuator
+    python mcp_scan_checker.py --path plugins/developer-kit-java/rules/naming-conventions.md
 
 Exit Codes:
     0 = All scans passed (no security issues found)
@@ -56,10 +57,11 @@ INFORMATIONAL_CODES = frozenset({
 
 
 @dataclass
-class SkillScanResult:
-    """Result of scanning a single skill."""
-    skill_path: str
-    skill_name: str
+class ScanResult:
+    """Result of scanning a single component (skill or rule)."""
+    scan_path: str
+    component_name: str
+    component_type: str  # "skill" or "rule"
     issues: List[dict] = field(default_factory=list)
     labels: List[dict] = field(default_factory=list)
     error: Optional[dict] = None
@@ -187,21 +189,97 @@ def find_skill_directories(repo_root: Path, plugin: Optional[str] = None,
     return skill_dirs
 
 
-def scan_single_skill(skill_dir: Path, runner: str,
-                      verbose: bool = False) -> SkillScanResult:
+def find_changed_rule_files(repo_root: Path,
+                            base_ref: Optional[str] = None) -> List[Path]:
+    """Find rule files that have been modified compared to a base ref."""
+    if base_ref is None:
+        for candidate in ["origin/main", "origin/develop", "HEAD~1"]:
+            try:
+                result = subprocess.run(
+                    ["git", "merge-base", "HEAD", candidate],
+                    capture_output=True, text=True, check=True, cwd=repo_root,
+                )
+                base_ref = result.stdout.strip()
+                break
+            except subprocess.CalledProcessError:
+                continue
+        if base_ref is None:
+            base_ref = "HEAD~1"
+
+    try:
+        result = subprocess.run(
+            ["git", "diff", "--name-only", base_ref, "HEAD"],
+            capture_output=True, text=True, check=True, cwd=repo_root,
+        )
+    except subprocess.CalledProcessError:
+        return []
+
+    changed_files = result.stdout.strip().splitlines()
+    rule_files: List[Path] = []
+
+    for changed_file in changed_files:
+        file_path = repo_root / changed_file
+        if "/rules/" in changed_file and changed_file.endswith(".md"):
+            if file_path.exists():
+                rule_files.append(file_path)
+
+    return sorted(rule_files)
+
+
+def find_rule_files(repo_root: Path, plugin: Optional[str] = None,
+                    path: Optional[str] = None) -> List[Path]:
+    """Find rule files to scan."""
+    if path:
+        target = Path(path)
+        if not target.is_absolute():
+            target = repo_root / target
+        if target.exists() and target.is_file():
+            return [target]
+        return []
+
+    plugins_dir = repo_root / "plugins"
+    if not plugins_dir.exists():
+        return []
+
+    rule_files: List[Path] = []
+
+    if plugin:
+        plugin_dir = plugins_dir / plugin
+        if not plugin_dir.exists():
+            return []
+        rules_dir = plugin_dir / "rules"
+        if rules_dir.exists():
+            rule_files.extend(sorted(rules_dir.glob("*.md")))
+    else:
+        for plugin_dir in sorted(plugins_dir.iterdir()):
+            if not plugin_dir.is_dir():
+                continue
+            rules_dir = plugin_dir / "rules"
+            if rules_dir.exists():
+                rule_files.extend(sorted(rules_dir.glob("*.md")))
+
+    return rule_files
+
+
+def scan_single_component(scan_path: Path, component_type: str, runner: str,
+                          verbose: bool = False) -> ScanResult:
     """
-    Run mcp-scan on a single skill directory and return structured result.
+    Run mcp-scan on a single skill directory or rule file and return structured result.
     """
-    skill_name = skill_dir.name
-    result = SkillScanResult(
-        skill_path=str(skill_dir),
-        skill_name=skill_name,
+    component_name = scan_path.stem if scan_path.is_file() else scan_path.name
+    result = ScanResult(
+        scan_path=str(scan_path),
+        component_name=component_name,
+        component_type=component_type,
     )
 
+    # For rules (individual files), scan the parent directory
+    target_path = str(scan_path.parent) if scan_path.is_file() else str(scan_path)
+
     if runner == "uvx":
-        cmd = ["uvx", "mcp-scan@latest", "scan", "--json", "--skills", str(skill_dir)]
+        cmd = ["uvx", "mcp-scan@latest", "scan", "--json", "--skills", target_path]
     elif runner == "pipx":
-        cmd = ["pipx", "run", "mcp-scan", "scan", "--json", "--skills", str(skill_dir)]
+        cmd = ["pipx", "run", "mcp-scan", "scan", "--json", "--skills", target_path]
     else:
         result.error = {"message": f"Unsupported runner: {runner}"}
         return result
@@ -270,8 +348,8 @@ def scan_single_skill(skill_dir: Path, runner: str,
     return result
 
 
-def print_skill_result(result: SkillScanResult, verbose: bool = False) -> None:
-    """Print the result for a single skill scan."""
+def print_scan_result(result: ScanResult, verbose: bool = False) -> None:
+    """Print the result for a single component scan."""
     security_issues = result.security_issues
     info_issues = result.info_issues
 
@@ -300,28 +378,28 @@ def main() -> int:
     """Main entry point."""
     parser = argparse.ArgumentParser(
         prog="mcp-scan-checker",
-        description="Security scan skills using mcp-scan (Invariant Labs)",
+        description="Security scan skills and rules using mcp-scan (Invariant Labs)",
     )
 
     parser.add_argument(
         "--all",
         action="store_true",
-        help="Scan all skills in all plugins",
+        help="Scan all skills and rules in all plugins",
     )
     parser.add_argument(
         "--plugin",
         type=str,
-        help="Scan skills in a specific plugin (e.g., developer-kit-java)",
+        help="Scan skills and rules in a specific plugin (e.g., developer-kit-java)",
     )
     parser.add_argument(
         "--path",
         type=str,
-        help="Scan a specific skill directory path",
+        help="Scan a specific skill directory or rule file path",
     )
     parser.add_argument(
         "--changed",
         action="store_true",
-        help="Only scan skills modified in the current PR/commit (uses git diff)",
+        help="Only scan skills/rules modified in the current PR/commit (uses git diff)",
     )
     parser.add_argument(
         "--base",
@@ -343,7 +421,7 @@ def main() -> int:
 
     # Banner
     print(f"\n{BLUE}╔═══════════════════════════════════════════════════════════════╗{NC}")
-    print(f"{BLUE}║     MCP-Scan Security Checker for Skills                     ║{NC}")
+    print(f"{BLUE}║     MCP-Scan Security Checker for Skills & Rules             ║{NC}")
     print(f"{BLUE}╚═══════════════════════════════════════════════════════════════╝{NC}\n")
 
     # Check prerequisites
@@ -360,37 +438,60 @@ def main() -> int:
     repo_root = find_repo_root()
     print(f"Repository: {repo_root}\n")
 
-    # Find skill directories
+    # Find skill directories and rule files
     if args.changed:
         skill_dirs = find_changed_skill_directories(repo_root, args.base)
-        if not skill_dirs:
-            print(f"{GREEN}✅ No skill changes detected — nothing to scan.{NC}")
+        rule_files = find_changed_rule_files(repo_root, args.base)
+        if not skill_dirs and not rule_files:
+            print(f"{GREEN}✅ No skill/rule changes detected — nothing to scan.{NC}")
             return 0
     else:
         skill_dirs = find_skill_directories(repo_root, args.plugin, args.path)
+        rule_files = find_rule_files(repo_root, args.plugin, args.path)
 
-    if not skill_dirs:
-        print(f"{YELLOW}No skills found to scan.{NC}")
+    if not skill_dirs and not rule_files:
+        print(f"{YELLOW}No skills or rules found to scan.{NC}")
         return 0
 
-    print(f"📋 Found {BOLD}{len(skill_dirs)}{NC} skill(s) to scan\n")
+    # Build scan items: list of (path, component_type)
+    scan_items: List[Tuple[Path, str]] = []
+    for sd in skill_dirs:
+        scan_items.append((sd, "skill"))
+    for rf in rule_files:
+        scan_items.append((rf, "rule"))
 
-    # Scan each skill individually
-    results: List[SkillScanResult] = []
+    print(f"📋 Found {BOLD}{len(scan_items)}{NC} component(s) to scan "
+          f"({len(skill_dirs)} skill(s), {len(rule_files)} rule(s))\n")
+
+    # Scan each component individually
+    results: List[ScanResult] = []
     passed = 0
     failed = 0
     errors = 0
     skipped = 0
 
-    for i, skill_dir in enumerate(skill_dirs, 1):
-        rel_path = skill_dir.relative_to(repo_root) if skill_dir.is_relative_to(repo_root) else skill_dir
-        skill_name = skill_dir.name
-        print(f"[{i}/{len(skill_dirs)}] {BOLD}{skill_name}{NC} ({rel_path})")
+    # Track already-scanned rule directories to avoid redundant scans
+    scanned_rule_dirs: set = set()
 
-        scan_result = scan_single_skill(skill_dir, runner, args.verbose)
+    for i, (scan_path, comp_type) in enumerate(scan_items, 1):
+        rel_path = scan_path.relative_to(repo_root) if scan_path.is_relative_to(repo_root) else scan_path
+        component_name = scan_path.stem if scan_path.is_file() else scan_path.name
+        type_label = f"[{comp_type}]"
+        print(f"[{i}/{len(scan_items)}] {BOLD}{component_name}{NC} {type_label} ({rel_path})")
+
+        # For rule files, scan parent directory but only once
+        if comp_type == "rule":
+            rule_dir = scan_path.parent
+            if rule_dir in scanned_rule_dirs:
+                print(f"  {GREEN}✓ PASS{NC} (directory already scanned)")
+                passed += 1
+                continue
+            scanned_rule_dirs.add(rule_dir)
+
+        scan_result = scan_single_component(scan_path, comp_type, runner, args.verbose)
         results.append(scan_result)
 
-        print_skill_result(scan_result, args.verbose)
+        print_scan_result(scan_result, args.verbose)
 
         if scan_result.error:
             category = scan_result.error.get("category", "")
@@ -419,14 +520,14 @@ def main() -> int:
     print(f"Results: {', '.join(parts)} ({total} total)")
 
     if failed:
-        print(f"\n{RED}❌ Security scan FAILED: {failed} skill(s) with security issues.{NC}")
+        print(f"\n{RED}❌ Security scan FAILED: {failed} component(s) with security issues.{NC}")
         return 1
 
     if errors:
         print(f"\n{YELLOW}⚠️  Security scan completed with {errors} error(s).{NC}")
         return 0
 
-    print(f"\n{GREEN}✅ Security scan passed: all {passed} skill(s) are clean.{NC}")
+    print(f"\n{GREEN}✅ Security scan passed: all {passed} component(s) are clean.{NC}")
     return 0
 
 
