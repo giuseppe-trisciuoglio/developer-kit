@@ -63,6 +63,9 @@ The `developer-kit-java` plugin provides extensive support for Java development,
 ### AWS Lambda Integration
 - **aws-lambda-java-integration** - AWS Lambda integration patterns for Java with Micronaut Framework and Raw Java handlers
 
+### GraalVM Native Image
+- **graalvm-native-image** - Build native executables from Java applications, optimize cold start times, configure Maven/Gradle native build tools, resolve reflection and resource issues
+
 ## Dependencies
 
 - `developer-kit` (required)
