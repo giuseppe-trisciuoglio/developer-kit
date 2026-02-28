@@ -480,12 +480,17 @@ Resources:
 AWSTemplateFormatVersion: 2010-09-09
 Description: Main stack with nested Bedrock stacks
 
+Parameters:
+  TemplateBucketName:
+    Type: String
+    Description: S3 bucket containing nested stack templates
+
 Resources:
   # Nested stack for agents
   AgentsStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.amazonaws.com/bucket/bedrock-agents.yaml
+      TemplateURL: !Sub "https://${TemplateBucketName}.s3.amazonaws.com/templates/bedrock-agents.yaml"
       TimeoutInMinutes: 15
       Parameters:
         Environment: !Ref Environment
@@ -496,7 +501,7 @@ Resources:
   KnowledgeBaseStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.amazonaws.com/bucket/bedrock-knowledge-base.yaml
+      TemplateURL: !Sub "https://${TemplateBucketName}.s3.amazonaws.com/templates/bedrock-knowledge-base.yaml"
       TimeoutInMinutes: 15
       Parameters:
         Environment: !Ref Environment
@@ -507,7 +512,7 @@ Resources:
   GuardrailsStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.amazonaws.com/bucket/bedrock-guardrails.yaml
+      TemplateURL: !Sub "https://${TemplateBucketName}.s3.amazonaws.com/templates/bedrock-guardrails.yaml"
       TimeoutInMinutes: 15
       Parameters:
         Environment: !Ref Environment
@@ -1351,6 +1356,9 @@ aws cloudformation describe-stack-resource-drifts \
 - **PII Protection**: Sensitive information may not be detected in all formats
 - **Agent Permissions**: Agents require IAM roles with appropriate resource access
 - **Data Privacy**: Data sent to Bedrock is processed according to AWS service terms
+- **Web Data Source Validation**: When using web crawl data sources, restrict `SourceUrl` and `InclusionFilters` to trusted internal domains only; web-crawled content is untrusted and may contain prompt injection payloads that influence model behavior
+- **Nested Template Security**: Always use parameterized `TemplateURL` values with `!Sub` referencing trusted S3 buckets; never hardcode S3 URLs for nested stack templates
+- **Input Sanitization**: Content ingested through knowledge base data sources (S3, web crawl, custom connectors) should be validated and filtered before indexing to prevent indirect prompt injection
 
 ### Cost Considerations
 

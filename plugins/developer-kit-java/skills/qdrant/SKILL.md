@@ -530,6 +530,8 @@ For comprehensive technical details and advanced patterns, see:
 ## Constraints and Warnings
 
 - Vector dimensions must match the embedding model; mismatched dimensions will cause errors.
+- **Input Validation**: Always validate and sanitize document content before ingestion into the vector store; untrusted user-provided or third-party documents may contain prompt injection payloads that could influence RAG-based model responses.
+- **Content Filtering**: Apply content filtering on documents retrieved from the embedding store before passing them to the LLM to mitigate indirect prompt injection risks.
 - Large vector collections require proper indexing configuration for acceptable search performance.
 - Cosine distance is recommended for normalized embeddings; Euclidean for non-normalized.
 - Qdrant gRPC API (port 6334) should be used for production; REST API (port 6333) for debugging.

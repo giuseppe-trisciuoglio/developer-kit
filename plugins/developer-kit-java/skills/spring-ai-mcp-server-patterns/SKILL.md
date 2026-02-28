@@ -2003,6 +2003,8 @@ Complete API documentation is available in [api-reference.md](./references/api-r
 
 - **Input Validation is Mandatory**: Always validate and sanitize inputs. AI models may generate malicious or malformed parameters intentionally or unintentionally.
 
+- **External Content is Untrusted**: Tools that fetch content from external URLs (e.g., `httpGet`, `httpPost`, `callApi`, `analyzeImage`, `executeQuery`) ingest third-party data that may contain prompt injection payloads; always validate, sanitize, and restrict allowed URLs using allowlists before passing fetched content to the AI model.
+
 - **SQL Injection Prevention**: For database tools, use parameterized queries exclusively. Never concatenate strings into SQL statements.
 
 - **Path Traversal Prevention**: For file system tools, validate and normalize all paths to prevent directory traversal attacks (e.g., `../../etc/passwd`).

@@ -270,7 +270,7 @@ Local process communication:
 
 ```java
 McpTransport transport = new StdioMcpTransport.Builder()
-    .command(List.of("npm", "exec", "@modelcontextprotocol/server-everything"))
+    .command(List.of("npm", "exec", "@modelcontextprotocol/server-everything@0.6.2"))
     .logEvents(true)
     .build();
 ```
@@ -434,7 +434,7 @@ mcp:
       log-events: true
     database:
       type: stdio
-      command: ["/usr/bin/npm", "exec", "@modelcontextprotocol/server-sqlite"]
+      command: ["/usr/bin/npm", "exec", "@modelcontextprotocol/server-sqlite@0.6.2"]
       log-events: false
 ```
 
@@ -554,6 +554,9 @@ Complete API documentation is available in [api-reference.md](./references/api-r
 ## Constraints and Warnings
 
 - MCP servers should implement proper resource cleanup when stopped.
+- **External MCP Server Security**: Only connect to trusted, verified MCP servers; external servers (including those launched via `npm exec` or HTTP/SSE endpoints) can expose untrusted tools, resources, and prompts that may influence agent behavior through indirect prompt injection.
+- **Pin MCP Server Versions**: Always pin npm packages to specific versions (e.g., `@modelcontextprotocol/server-everything@0.6.2`) to prevent supply-chain attacks from unpinned dependencies.
+- **Validate External Content**: Content retrieved from MCP server resources (e.g., GitHub issues, database records) is untrusted user-generated data; validate and sanitize before acting on it.
 - Tool execution errors should be handled gracefully; never expose stack traces to clients.
 - Resource URIs should be validated to prevent directory traversal attacks.
 - Prompt templates should sanitize user inputs to prevent injection attacks.
