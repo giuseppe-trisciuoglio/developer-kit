@@ -33,7 +33,7 @@ Developer Kit is organized as a **modular marketplace** with 10 independent plug
 ```
 plugins/
 ├── developer-kit-core/            # Core agents/commands/skills (required)
-├── developer-kit-java/            # Java/Spring Boot/LangChain4J/AWS SDK/Lambda
+├── developer-kit-java/            # Java/Spring Boot/LangChain4J/AWS SDK/GraalVM Native Image
 ├── developer-kit-typescript/      # NestJS/React/React Native/Next.js/Drizzle/Monorepo
 ├── developer-kit-python/          # Python development/AWS Lambda
 ├── developer-kit-php/             # PHP/WordPress/AWS Lambda
@@ -182,7 +182,7 @@ Core agents, commands, and skills used by all other plugins.
 
 ### developer-kit-java
 
-Comprehensive Java development toolkit with Spring Boot, testing, LangChain4J, and AWS SDK integration.
+Comprehensive Java development toolkit with Spring Boot, testing, LangChain4J, AWS SDK, and GraalVM Native Image.
 
 **Agents**: `spring-boot-backend-development-expert`, `spring-boot-code-review-expert`,
 `spring-boot-unit-testing-expert`, `java-refactor-expert`, `java-security-expert`, `java-software-architect-review`,
@@ -206,6 +206,7 @@ Comprehensive Java development toolkit with Spring Boot, testing, LangChain4J, a
   testing-strategies, tool-function-calling-patterns, vector-stores-configuration, qdrant
 - **AWS SDK**: rds-spring-boot-integration, bedrock, core, dynamodb, kms, lambda, messaging, rds, s3, secrets-manager
 - **Clean Architecture**: clean-architecture
+- **GraalVM**: graalvm-native-image
 
 ---
 
@@ -318,7 +319,7 @@ GitHub specification integration and verification.
 | Language           | Plugin                     | Components               |
 |--------------------|----------------------------|--------------------------|
 | Core               | `developer-kit-core`       | 3 Skills, 6 Agents, 9 Commands |
-| Java/Spring Boot   | `developer-kit-java`       | 49 Skills, 9 Agents, 11 Commands |
+| Java/Spring Boot   | `developer-kit-java`       | 50 Skills, 9 Agents, 11 Commands |
 | TypeScript/Node.js | `developer-kit-typescript` | 17 Skills, 13 Agents, 3 Commands |
 | Python             | `developer-kit-python`     | 2 Skills, 4 Agents      |
 | PHP/WordPress      | `developer-kit-php`        | 3 Skills, 5 Agents      |

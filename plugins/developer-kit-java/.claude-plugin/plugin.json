@@ -90,6 +90,7 @@
     "./skills/aws-sdk-java-v2-s3",
     "./skills/aws-sdk-java-v2-secrets-manager",
     "./skills/aws-lambda-java-integration",
-    "./skills/clean-architecture"
+    "./skills/clean-architecture",
+    "./skills/graalvm-native-image"
   ]
 }
