@@ -32,7 +32,7 @@ export class FeatureService {
   }
 
   async create(dto: CreateFeatureDto): Promise<Feature> {
-    this.logger.log(`Creating feature: ${JSON.stringify(dto)}`);
+    this.logger.log(`Creating feature with id: ${dto.constructor.name}`); // Avoid logging full DTOs — may contain PII
     return this.featureRepository.save(dto);
   }
 

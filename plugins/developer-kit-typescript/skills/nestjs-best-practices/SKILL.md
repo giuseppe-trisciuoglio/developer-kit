@@ -99,7 +99,7 @@ Integrate Drizzle ORM following NestJS provider conventions:
 
 See `references/db-drizzle-patterns.md` for enforcement rules.
 
-## Best Practices Summary
+## Best Practices
 
 | Area               | Do                                      | Don't                                    |
 |--------------------|------------------------------------------|------------------------------------------|
@@ -110,12 +110,6 @@ See `references/db-drizzle-patterns.md` for enforcement rules.
 | Database           | Repository pattern with injected client  | Direct DB queries in controllers         |
 | Testing            | Unit test services, e2e test controllers | Skip tests or test implementation details|
 | Configuration      | `@nestjs/config` with typed schemas      | Hardcode values or use `process.env`     |
-
-## References
-
-- `references/architecture.md` — Deep-dive into NestJS architectural patterns
-- `references/` — Individual enforcement rules with correct/incorrect examples
-- `assets/templates/` — Starter templates for common NestJS components
 
 ## Examples
 
@@ -176,3 +170,9 @@ export class ProductService {
 4. **Do not skip `ValidationPipe`** — always validate at the API boundary with DTOs
 5. **Never hardcode secrets** — use `@nestjs/config` with environment variables
 6. **Keep modules focused** — one domain feature per module, avoid "god modules"
+
+## References
+
+- `references/architecture.md` — Deep-dive into NestJS architectural patterns
+- `references/` — Individual enforcement rules with correct/incorrect examples
+- `assets/templates/` — Starter templates for common NestJS components
