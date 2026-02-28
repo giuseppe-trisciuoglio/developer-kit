@@ -28,7 +28,7 @@ multiple languages and frameworks. Built as a modular marketplace, you can insta
 
 ## Architecture
 
-Developer Kit is organized as a **modular marketplace** with 10 independent plugins (**95 skills, 43 agents, 36 commands**):
+Developer Kit is organized as a **modular marketplace** with 10 independent plugins (**96 skills, 43 agents, 36 commands**):
 
 ```
 plugins/
@@ -172,7 +172,7 @@ Core agents, commands, and skills used by all other plugins.
 | `general-debugger`           | Root cause analysis and debugging      |
 | `document-generator-expert`  | Professional document generation       |
 
-**Skills**: `claude-md-management`, `drawio-logical-diagrams`
+**Skills**: `claude-md-management`, `drawio-logical-diagrams`, `github-issue-workflow`
 
 **Commands**: `/devkit.brainstorm`, `/devkit.refactor`, `/devkit.feature-development`, `/devkit.fix-debugging`,
 `/devkit.generate-document`, `/devkit.generate-changelog`, `/devkit.github.create-pr`, `/devkit.github.review-pr`,
@@ -317,6 +317,7 @@ GitHub specification integration and verification.
 
 | Language           | Plugin                     | Components               |
 |--------------------|----------------------------|--------------------------|
+| Core               | `developer-kit-core`       | 3 Skills, 6 Agents, 9 Commands |
 | Java/Spring Boot   | `developer-kit-java`       | 49 Skills, 9 Agents, 11 Commands |
 | TypeScript/Node.js | `developer-kit-typescript` | 17 Skills, 13 Agents, 3 Commands |
 | Python             | `developer-kit-python`     | 2 Skills, 4 Agents      |
