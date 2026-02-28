@@ -48,6 +48,7 @@ The `developer-kit` plugin provides foundational agents and commands used across
 
 - **claude-md-management** - CLAUDE.md file management and optimization
 - **drawio-logical-diagrams** - Professional logical flow diagrams and system architecture diagrams in draw.io XML format
+- **github-issue-workflow** - GitHub issue creation and management with workflow automation
 
 ## Dependencies
 
