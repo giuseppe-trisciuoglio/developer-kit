@@ -53,6 +53,7 @@
     "./skills/spring-boot-security-jwt",
     "./skills/spring-boot-test-patterns",
     "./skills/spring-boot-resilience4j",
+    "./skills/spring-boot-project-creator",
     "./skills/spring-data-jpa",
     "./skills/spring-data-neo4j",
     "./skills/spring-ai-mcp-server-patterns",

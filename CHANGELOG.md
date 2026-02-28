@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **New Spring Boot Project Creator skill** (`developer-kit-java`):
+  - `spring-boot-project-creator`: Automated Spring Boot project generation with customizable dependencies
+  - Supports Spring Boot 3.x with Java 17+
+  - Interactive dependency selection (Web, Data JPA, Security, Actuator, etc.)
+  - Best practices enforcement and project structure templates
+
+- **Enhanced Security Scanning**:
+  - Added MCP scan checker for per-skill security analysis
+  - Implemented PR-level security scanning (only changed skills)
+  - Added Gen Agent Trust Hub security check
+  - New security scan workflow for CI integration
+
+- **Context7 Integration**: Added `context7.json` for claim skills repository
+
+### Security
+
 - **GraalVM Native Image Skill** (`developer-kit-java`):
   - `graalvm-native-image`: Comprehensive skill for building GraalVM native executables from Java applications
   - Covers: Maven/Gradle project analysis, Native Build Tools configuration, framework-specific patterns (Spring Boot AOT, Quarkus, Micronaut)
@@ -50,6 +66,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - W007 - Insecure credential handling: Replaced hardcoded apiKey/password with env var references in RAG
   - W012 - External URL/code execution risks: Pinned Docker images (LocalStack 3.8.1, ollama 0.5.4, qdrant v1.13.2), npm packages (@modelcontextprotocol 0.6.2), and GitHub Actions (trivy-action, snyk/actions)
   - W011 - Third-party content exposure: Added content validation/filtering warnings across skills (RAG, Bedrock, Messaging, MCP patterns, Qdrant, Spring AI MCP, TS Lambda, Next.js, shadcn-ui)
+- Disabled Trust Hub security check returning HTTP 400
+- Replaced hardcoded credentials with environment variable references
 
 ### Changed
 

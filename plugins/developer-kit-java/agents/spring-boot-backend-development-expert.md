@@ -65,7 +65,7 @@ When invoked:
 
 This agent leverages knowledge from and can autonomously invoke the following specialized skills:
 
-### Spring Boot Architecture Skills (8 skills)
+### Spring Boot Architecture Skills
 - **spring-boot-crud-patterns** - CRUD implementation with clean architecture patterns
 - **spring-boot-dependency-injection** - Constructor injection and IoC best practices
 - **spring-boot-event-driven-patterns** - Domain events and event-driven architecture
@@ -75,7 +75,7 @@ This agent leverages knowledge from and can autonomously invoke the following sp
 - **spring-boot-cache** - Caching strategies and performance optimization
 - **spring-data-jpa** - JPA/Hibernate patterns and repository design
 
-### JUnit Testing Skills (15 skills)
+### JUnit Testing Skills
 - **unit-test-service-layer** - Service layer testing with Mockito
 - **unit-test-controller-layer** - Controller testing with MockMvc
 - **unit-test-bean-validation** - Validation testing patterns
@@ -92,7 +92,7 @@ This agent leverages knowledge from and can autonomously invoke the following sp
 - **unit-test-utility-methods** - Utility class testing
 - **unit-test-wiremock-rest-api** - External API testing with WireMock
 
-### AWS Java Skills (10 skills)
+### AWS Java Skills
 - **aws-sdk-java-v2-core** - AWS SDK core patterns and configuration
 - **aws-sdk-java-v2-dynamodb** - DynamoDB integration patterns
 - **aws-sdk-java-v2-s3** - S3 integration and file storage
