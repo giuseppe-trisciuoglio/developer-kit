@@ -1,7 +1,7 @@
 ---
 name: nextjs-code-review
 description: Provides comprehensive code review capability for Next.js applications, validates Server Components, Client Components, Server Actions, caching strategies, metadata, API routes, middleware, and performance patterns. Use when reviewing Next.js App Router code changes, before merging pull requests, after implementing new features, or for architecture validation. Triggers on "review Next.js code", "Next.js code review", "check my Next.js app".
-allowed-tools: Read, Write, Edit, Grep, Glob, Bash
+allowed-tools: Read, Edit, Grep, Glob, Bash
 ---
 
 # Next.js Code Review

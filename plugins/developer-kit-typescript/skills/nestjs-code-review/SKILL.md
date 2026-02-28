@@ -1,7 +1,7 @@
 ---
 name: nestjs-code-review
 description: Provides comprehensive code review capability for NestJS applications, analyzing controllers, services, modules, guards, interceptors, pipes, dependency injection, and database integration patterns. Use when reviewing NestJS code changes, before merging pull requests, after implementing new features, or for architecture validation. Triggers on "review NestJS code", "NestJS code review", "check my NestJS controller/service".
-allowed-tools: Read, Write, Edit, Grep, Glob, Bash
+allowed-tools: Read, Edit, Grep, Glob, Bash
 ---
 
 # NestJS Code Review

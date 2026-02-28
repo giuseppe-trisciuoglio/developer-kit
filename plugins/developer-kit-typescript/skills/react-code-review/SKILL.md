@@ -1,7 +1,7 @@
 ---
 name: react-code-review
 description: Provides comprehensive code review capability for React applications, validates component architecture, hooks usage, React 19 patterns, state management, performance optimization, accessibility compliance, and TypeScript integration. Use when reviewing React code changes, before merging pull requests, after implementing new features, or for component architecture validation. Triggers on "review React code", "React code review", "check my React components".
-allowed-tools: Read, Write, Edit, Grep, Glob, Bash
+allowed-tools: Read, Edit, Grep, Glob, Bash
 ---
 
 # React Code Review
@@ -89,26 +89,12 @@ function UserProfile({ userId }: { userId: string }) {
 ### Example 2: Component Composition
 
 ```tsx
-// ❌ Bad: Monolithic component with mixed concerns
+// ❌ Bad: Monolithic component mixing data fetching, filtering, and rendering
 function Dashboard() {
   const [users, setUsers] = useState([]);
   const [filter, setFilter] = useState('');
-  const [sort, setSort] = useState('name');
-  const [page, setPage] = useState(1);
-
-  useEffect(() => { /* fetch users */ }, [filter, sort, page]);
-
-  const filteredUsers = users.filter(u => u.name.includes(filter));
-  const sortedUsers = filteredUsers.sort((a, b) => /* sort logic */);
-
-  return (
-    <div>
-      <input value={filter} onChange={e => setFilter(e.target.value)} />
-      <select value={sort} onChange={e => setSort(e.target.value)}>...</select>
-      <table>{sortedUsers.map(u => <tr key={u.id}>...</tr>)}</table>
-      <Pagination page={page} onChange={setPage} />
-    </div>
-  );
+  useEffect(() => { /* fetch + filter + sort all in one */ }, [filter]);
+  return <div>{/* 200+ lines of mixed concerns */}</div>;
 }
 
 // ✅ Good: Composed from focused components with custom hooks
@@ -121,22 +107,6 @@ function Dashboard() {
       </Suspense>
       <UserPagination />
     </div>
-  );
-}
-
-function UserTable() {
-  const { filter, sort, page } = useUserFilters();
-  const { data: users } = useUsers({ filter, sort, page });
-
-  return (
-    <table>
-      <thead><tr><th>Name</th><th>Email</th></tr></thead>
-      <tbody>
-        {users.map(user => (
-          <UserRow key={user.id} user={user} />
-        ))}
-      </tbody>
-    </table>
   );
 }
 ```
@@ -192,70 +162,31 @@ function Menu({ items }: { items: MenuItem[] }) {
 ### Example 4: Performance Optimization
 
 ```tsx
-// ❌ Bad: Unnecessary re-renders from unstable references
-function ProductList({ products }: { products: Product[] }) {
-  const [search, setSearch] = useState('');
+// ❌ Bad: Unstable callback recreated every render causes child re-renders
+{filtered.map(product => (
+  <ProductCard
+    key={product.id}
+    product={product}
+    onSelect={() => console.log(product.id)} // New function each render
+  />
+))}
 
-  const filtered = products.filter(p =>
-    p.name.toLowerCase().includes(search.toLowerCase())
-  );
+// ✅ Good: Stable callback + memoized child
+const handleSelect = useCallback((id: string) => {
+  console.log(id);
+}, []);
 
-  return (
-    <div>
-      <input value={search} onChange={e => setSearch(e.target.value)} />
-      {filtered.map(product => (
-        <ProductCard
-          key={product.id}
-          product={product}
-          onSelect={() => console.log(product.id)}
-        />
-      ))}
-    </div>
-  );
-}
+const filtered = useMemo(
+  () => products.filter(p => p.name.toLowerCase().includes(search.toLowerCase())),
+  [products, search]
+);
 
-// ✅ Good: Memoized filtering and stable callbacks
-function ProductList({ products }: { products: Product[] }) {
-  const [search, setSearch] = useState('');
+{filtered.map(product => (
+  <ProductCard key={product.id} product={product} onSelect={handleSelect} />
+))}
 
-  const filtered = useMemo(
-    () => products.filter(p =>
-      p.name.toLowerCase().includes(search.toLowerCase())
-    ),
-    [products, search]
-  );
-
-  const handleSelect = useCallback((id: string) => {
-    console.log(id);
-  }, []);
-
-  return (
-    <div>
-      <input value={search} onChange={e => setSearch(e.target.value)} />
-      {filtered.map(product => (
-        <ProductCard
-          key={product.id}
-          product={product}
-          onSelect={handleSelect}
-        />
-      ))}
-    </div>
-  );
-}
-
-const ProductCard = memo(function ProductCard({
-  product,
-  onSelect,
-}: {
-  product: Product;
-  onSelect: (id: string) => void;
-}) {
-  return (
-    <div onClick={() => onSelect(product.id)}>
-      <h3>{product.name}</h3>
-      <p>{product.price}</p>
-    </div>
-  );
+const ProductCard = memo(function ProductCard({ product, onSelect }: Props) {
+  return <div onClick={() => onSelect(product.id)}>{product.name}</div>;
 });
 ```
 

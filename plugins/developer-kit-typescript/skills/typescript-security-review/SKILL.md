@@ -1,7 +1,7 @@
 ---
 name: typescript-security-review
 description: Provides comprehensive security review capability for TypeScript and Node.js applications, validates code against XSS, injection, CSRF, JWT/OAuth2 flaws, dependency CVEs, and secrets exposure. Use when performing security audits, before deployment, reviewing authentication/authorization implementations, or ensuring OWASP compliance for Express, NestJS, and Next.js. Triggers on "security review", "check for security issues", "TypeScript security audit".
-allowed-tools: Read, Write, Edit, Grep, Glob, Bash
+allowed-tools: Read, Edit, Grep, Glob, Bash
 ---
 
 # TypeScript Security Review
