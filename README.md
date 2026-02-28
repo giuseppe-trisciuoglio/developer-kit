@@ -320,7 +320,7 @@ GitHub specification integration and verification.
 |--------------------|----------------------------|--------------------------|
 | Core               | `developer-kit-core`       | 3 Skills, 6 Agents, 9 Commands |
 | Java/Spring Boot   | `developer-kit-java`       | 51 Skills, 9 Agents, 11 Commands |
-| TypeScript/Node.js | `developer-kit-typescript` | 17 Skills, 13 Agents, 3 Commands |
+| TypeScript/Node.js | `developer-kit-typescript` | 22 Skills, 13 Agents, 3 Commands |
 | Python             | `developer-kit-python`     | 2 Skills, 4 Agents      |
 | PHP/WordPress      | `developer-kit-php`        | 3 Skills, 5 Agents      |
 | AWS CloudFormation | `developer-kit-aws`        | 16 Skills, 3 Agents     |
