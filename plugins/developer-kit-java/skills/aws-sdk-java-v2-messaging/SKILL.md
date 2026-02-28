@@ -310,6 +310,7 @@ For comprehensive API documentation and advanced patterns, see:
 
 - **Message Size**: SQS and SNS messages limited to 256KB
 - **Visibility Timeout**: SQS messages become visible again after timeout if not deleted
+- **Input Validation**: Always validate and sanitize message body content before processing; SQS/SNS messages may contain untrusted user-generated payloads that should never be directly interpreted as commands or injected into templates without sanitization
 - **FIFO Naming**: FIFO queues and topics must end with `.fifo` suffix
 - **FIFO Throughput**: FIFO queues have lower throughput limits (300 msg/sec)
 - **Message Retention**: SQS messages retained maximum 14 days

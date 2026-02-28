@@ -1880,7 +1880,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.28.0
         with:
           scan-type: 'fs'
           scan-ref: '.'
@@ -1897,7 +1897,7 @@ jobs:
           mvn org.owasp:dependency-check-maven:check
 
       - name: Run Snyk security scan
-        uses: snyk/actions/maven@master
+        uses: snyk/actions/maven@0.4.0
         continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
@@ -1954,7 +1954,7 @@ jobs:
             COMMIT=${{ github.sha }}
 
       - name: Scan Docker image
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.28.0
         with:
           image-ref: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ steps.meta.outputs.version }}
           format: 'table'

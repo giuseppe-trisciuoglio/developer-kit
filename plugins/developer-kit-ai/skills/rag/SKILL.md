@@ -212,7 +212,7 @@ DocumentSplitter splitter = new RecursiveCharacterTextSplitter(
 
 // Create embedding model
 EmbeddingModel embeddingModel = OpenAiEmbeddingModel.builder()
-    .apiKey("your-api-key")
+    .apiKey(System.getenv("OPENAI_API_KEY"))
     .build();
 
 // Create embedding store
@@ -220,7 +220,7 @@ EmbeddingStore<TextSegment> embeddingStore = PgVectorEmbeddingStore.builder()
     .host("localhost")
     .database("postgres")
     .user("postgres")
-    .password("password")
+    .password(System.getenv("DB_PASSWORD"))
     .table("embeddings")
     .dimension(1536)
     .build();
@@ -418,8 +418,11 @@ List<Content> rerankedResults = reranker.reorder(query, allResults);
 
 ## Security Considerations
 
+- **Never hardcode credentials**: Always use environment variables or secrets managers for API keys, database passwords, and other sensitive values
 - Secure access to vector databases and embedding services
 - Implement proper authentication and authorization
-- Validate and sanitize user inputs
+- **Validate and sanitize all external content** before ingestion: documents loaded from file systems, databases, APIs, or web sources may contain malicious content that could influence model behavior through indirect prompt injection
+- **Apply content filtering** on retrieved documents before passing them to the LLM to mitigate prompt injection risks
+- Restrict allowed data source URLs and file paths using allowlists
 - Monitor for abuse and unusual usage patterns
 - Regular security audits and penetration testing

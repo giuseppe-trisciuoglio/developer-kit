@@ -12,7 +12,7 @@ I Server Components sono il default in App Router. Eseguono sul server e possono
 ```tsx
 // app/page.tsx - Server Component di default
 async function getData() {
-  const res = await fetch('https://api.example.com/data');
+  const res = await fetch(`${process.env.API_URL}/data`);
   return res.json();
 }
 

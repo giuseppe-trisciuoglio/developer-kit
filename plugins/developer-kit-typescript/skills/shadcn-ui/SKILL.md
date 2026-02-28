@@ -100,6 +100,8 @@ export function LoginForm() {
 ## Constraints and Warnings
 
 - **Not an NPM Package**: Components are copied to your project; you own the code
+- **Registry Security**: Components installed via `npx shadcn@latest add` are fetched from remote registries (e.g., `ui.shadcn.com`); always verify the registry source is trusted before installation, and review generated component code before use in production
+- **Custom Registry Validation**: When configuring custom registries in `components.json`, only use trusted private registry URLs; never point to untrusted third-party registry endpoints as they could inject malicious code
 - **Client Components**: Most components require "use client" directive
 - **Radix Dependencies**: Ensure all @radix-ui packages are installed
 - **Tailwind Required**: Components rely on Tailwind CSS utilities
