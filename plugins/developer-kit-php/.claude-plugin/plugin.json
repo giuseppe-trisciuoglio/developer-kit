@@ -27,5 +27,11 @@
     "./skills/aws-lambda-php-integration",
     "./skills/wordpress/wordpress-sage-theme",
     "./skills/clean-architecture"
+  ],
+  "rules": [
+    "./rules/naming-conventions.md",
+    "./rules/project-structure.md",
+    "./rules/language-best-practices.md",
+    "./rules/error-handling.md"
   ]
 }

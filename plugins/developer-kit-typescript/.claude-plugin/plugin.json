@@ -69,5 +69,23 @@
     "./skills/nx-monorepo",
     "./skills/turborepo-monorepo",
     "./skills/aws-lambda-typescript-integration"
+  ],
+  "rules": [
+    "./rules/naming-conventions.md",
+    "./rules/project-structure.md",
+    "./rules/language-best-practices.md",
+    "./rules/error-handling.md",
+    "./rules/nestjs-architecture.md",
+    "./rules/nestjs-api-design.md",
+    "./rules/nestjs-security.md",
+    "./rules/nestjs-testing.md",
+    "./rules/nx-monorepo-conventions.md",
+    "./rules/drizzle-orm-conventions.md",
+    "./rules/react-data-fetching.md",
+    "./rules/react-component-conventions.md",
+    "./rules/react-routing-conventions.md",
+    "./rules/tailwind-styling-conventions.md",
+    "./rules/i18n-conventions.md",
+    "./rules/shared-dto-conventions.md"
   ]
 }

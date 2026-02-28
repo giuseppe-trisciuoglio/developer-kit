@@ -10,6 +10,7 @@ from validators.validators import (
     SkillValidator,
     AgentValidator,
     CommandValidator,
+    RuleValidator,
     ValidatorFactory,
     KebabCaseValidator,
     SkillPackageValidator,
@@ -849,7 +850,7 @@ class TestValidatorFactory:
     def test_get_all_patterns(self):
         """Test factory returns all patterns."""
         patterns = ValidatorFactory.get_all_patterns()
-        assert len(patterns) == 6  # Skill, Agent, Command, KebabCase, SkillPackage, PluginVersion
+        assert len(patterns) == 7  # Skill, Agent, Command, Rule, KebabCase, SkillPackage, PluginVersion
 
 
 class TestPluginVersionValidator:
@@ -1104,3 +1105,175 @@ class TestSkillPackageValidator:
         result = validator.validate(skill_file)
         error = result.errors[0]
         assert "build outputs" in error.suggestion.lower()
+
+
+class TestRuleValidator:
+    """Tests for RuleValidator."""
+
+    @pytest.fixture
+    def validator(self):
+        return RuleValidator()
+
+    def test_can_validate_rule_file(self, validator):
+        """Test validator recognizes rule files."""
+        assert validator.can_validate(Path("rules/naming-conventions.md"))
+        assert validator.can_validate(Path("plugins/dev-kit/rules/error-handling.md"))
+
+    def test_cannot_validate_non_rule(self, validator):
+        """Test validator rejects non-rule files."""
+        assert not validator.can_validate(Path("skills/test/SKILL.md"))
+        assert not validator.can_validate(Path("agents/test.md"))
+
+    def test_valid_rule_passes(self, validator, temp_rule_file, valid_rule_content):
+        """Test that a valid rule passes validation."""
+        rule_file = temp_rule_file(valid_rule_content)
+        result = validator.validate(rule_file)
+
+        assert result.is_valid, f"Errors: {[str(e) for e in result.errors]}"
+        assert len(result.errors) == 0
+
+    def test_missing_globs_fails(self, validator, temp_rule_file):
+        """Test missing globs field is reported as error."""
+        content = """---
+---
+# Rule
+
+## Guidelines
+- Some guideline
+"""
+        rule_file = temp_rule_file(content)
+        result = validator.validate(rule_file)
+
+        assert not result.is_valid
+        assert any(i.field_name == "globs" and i.severity == Severity.ERROR
+                   for i in result.issues)
+
+    def test_empty_globs_fails(self, validator, temp_rule_file):
+        """Test empty globs value is reported as error."""
+        content = """---
+globs: ""
+---
+# Rule
+
+## Guidelines
+- Some guideline
+"""
+        rule_file = temp_rule_file(content)
+        result = validator.validate(rule_file)
+
+        assert not result.is_valid
+        assert any("Empty globs" in i.message for i in result.issues)
+
+    def test_list_globs_fails(self, validator, temp_rule_file):
+        """Test list globs value is reported as error."""
+        content = """---
+globs:
+  - "**/*.java"
+  - "**/*.kt"
+---
+# Rule
+
+## Guidelines
+- Some guideline
+"""
+        rule_file = temp_rule_file(content)
+        result = validator.validate(rule_file)
+
+        assert not result.is_valid
+        assert any("not a list" in i.message for i in result.issues)
+
+    def test_missing_guidelines_section(self, validator, temp_rule_file):
+        """Test missing required Guidelines section is reported."""
+        content = """---
+globs: "**/*.java"
+---
+# Rule
+
+## Context
+Some context here.
+"""
+        rule_file = temp_rule_file(content)
+        result = validator.validate(rule_file)
+
+        assert not result.is_valid
+        assert any("Guidelines" in i.message for i in result.issues)
+
+    def test_missing_recommended_sections_warns(self, validator, temp_rule_file):
+        """Test missing recommended sections generate warnings."""
+        content = """---
+globs: "**/*.java"
+---
+# Rule
+
+## Guidelines
+- Follow naming conventions
+"""
+        rule_file = temp_rule_file(content)
+        result = validator.validate(rule_file)
+
+        assert result.is_valid  # Warnings only, no errors
+        assert result.has_warnings
+        warning_messages = [w.message for w in result.warnings]
+        assert any("Context" in msg for msg in warning_messages)
+        assert any("Examples" in msg for msg in warning_messages)
+
+    def test_non_kebab_case_filename(self, validator, temp_rule_file):
+        """Test non-kebab-case filename is reported."""
+        content = """---
+globs: "**/*.java"
+---
+# Rule
+
+## Guidelines
+- Follow conventions
+"""
+        rule_file = temp_rule_file(content, rule_name="Invalid_Name")
+        result = validator.validate(rule_file)
+
+        assert not result.is_valid
+        assert any("kebab-case" in i.message for i in result.issues)
+
+    def test_globs_no_wildcard_warns(self, validator, temp_rule_file):
+        """Test globs without wildcards generates warning."""
+        content = """---
+globs: "src/main.java"
+---
+# Rule
+
+## Guidelines
+- Follow conventions
+"""
+        rule_file = temp_rule_file(content)
+        result = validator.validate(rule_file)
+
+        assert result.is_valid  # Warning only
+        assert any("wildcard" in w.message for w in result.warnings)
+
+    def test_unknown_frontmatter_field_warns(self, validator, temp_rule_file):
+        """Test unknown frontmatter fields generate warnings."""
+        content = """---
+globs: "**/*.java"
+name: some-rule
+---
+# Rule
+
+## Guidelines
+- Follow conventions
+"""
+        rule_file = temp_rule_file(content)
+        result = validator.validate(rule_file)
+
+        assert result.is_valid  # Warning only
+        assert any("Unknown field" in w.message and w.field_name == "name"
+                   for w in result.warnings)
+
+    def test_component_type(self, validator):
+        """Test component type is 'rule'."""
+        assert validator.component_type == "rule"
+
+    def test_factory_returns_rule_validator(self):
+        """Test ValidatorFactory returns RuleValidator for rule files."""
+        validator = ValidatorFactory.get_validator(
+            Path("plugins/dev-kit/rules/naming-conventions.md")
+        )
+        assert isinstance(validator, RuleValidator)
