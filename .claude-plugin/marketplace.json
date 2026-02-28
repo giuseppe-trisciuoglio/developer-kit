@@ -1,6 +1,6 @@
 {
   "name": "developer-kit",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Modular marketplace for developer kit plugins",
   "owner": {
     "name": "Giuseppe Trisciuoglio",
@@ -11,61 +11,61 @@
       "name": "developer-kit",
       "description": "Core agents and commands required by all plugins",
       "source": "./plugins/developer-kit-core",
-      "version": "2.3.0"
+      "version": "2.4.0"
     },
     {
       "name": "developer-kit-ai",
       "description": "AI/ML skills including prompt engineering, RAG, and chunking strategies",
       "source": "./plugins/developer-kit-ai",
-      "version": "2.3.0"
+      "version": "2.4.0"
     },
     {
       "name": "developer-kit-java",
       "description": "Comprehensive Java development toolkit with Spring Boot, testing, and AWS integration",
       "source": "./plugins/developer-kit-java",
-      "version": "2.3.0"
+      "version": "2.4.0"
     },
     {
       "name": "developer-kit-aws",
       "description": "AWS infrastructure and CloudFormation expertise",
       "source": "./plugins/developer-kit-aws",
-      "version": "2.3.0"
+      "version": "2.4.0"
     },
     {
       "name": "developer-kit-typescript",
       "description": "TypeScript/JavaScript full-stack development with NestJS, React, and React Native",
       "source": "./plugins/developer-kit-typescript",
-      "version": "2.3.0"
+      "version": "2.4.0"
     },
     {
       "name": "developer-kit-php",
       "description": "PHP and WordPress development capabilities",
       "source": "./plugins/developer-kit-php",
-      "version": "2.3.0"
+      "version": "2.4.0"
     },
     {
       "name": "developer-kit-python",
       "description": "Python development capabilities",
       "source": "./plugins/developer-kit-python",
-      "version": "2.3.0"
+      "version": "2.4.0"
     },
     {
       "name": "developer-kit-devops",
       "description": "DevOps and containerization expertise",
       "source": "./plugins/developer-kit-devops",
-      "version": "2.3.0"
+      "version": "2.4.0"
     },
     {
       "name": "developer-kit-project-management",
       "description": "Project management and workflow commands",
       "source": "./plugins/developer-kit-project-management",
-      "version": "2.3.0"
+      "version": "2.4.0"
     },
     {
       "name": "github-spec-kit",
       "description": "GitHub specification integration and verification",
       "source": "./plugins/github-spec-kit",
-      "version": "2.3.0"
+      "version": "2.4.0"
     }
   ]
 }

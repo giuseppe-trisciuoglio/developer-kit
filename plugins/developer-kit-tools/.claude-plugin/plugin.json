@@ -1,6 +1,6 @@
 {
   "name": "developer-kit-tools",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "External tools integration skills for CLI utilities, APIs, and third-party services",
   "author": {
     "name": "Giuseppe Trisciuoglio",
