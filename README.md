@@ -44,6 +44,8 @@ plugins/
 └── github-spec-kit/               # GitHub specification integration
 ```
 
+Language plugins (Java, TypeScript, Python, PHP) include **coding rules** (`rules/` directory) that auto-activate via `globs:` path-scoped matching to enforce naming conventions, project structure, language best practices, and error handling patterns.
+
 ---
 
 ## Workflow
@@ -208,6 +210,8 @@ Comprehensive Java development toolkit with Spring Boot, testing, LangChain4J, A
 - **Clean Architecture**: clean-architecture
 - **GraalVM**: graalvm-native-image
 
+**Rules** (4): `naming-conventions`, `project-structure`, `language-best-practices`, `error-handling`
+
 ---
 
 ### developer-kit-typescript
@@ -224,12 +228,17 @@ TypeScript/JavaScript full-stack development with NestJS, React, React Native, N
 **Skills**:
 - **Backend**: `nestjs`, `clean-architecture`, `nestjs-drizzle-crud-generator`
 - **Authentication**: `better-auth`
-- **Frontend**: `react-patterns`, `shadcn-ui`, `tailwind-css-patterns`
+- **Frontend**: `react-patterns`, `shadcn-ui`, `tailwind-css-patterns`, `tailwind-design-system`
 - **Next.js**: `nextjs-app-router`, `nextjs-authentication`, `nextjs-data-fetching`, `nextjs-performance`, `nextjs-deployment`
 - **Database & ORM**: `drizzle-orm-patterns`
 - **Monorepo**: `nx-monorepo`, `turborepo-monorepo`
 - **AWS Lambda**: `aws-lambda-typescript-integration`
 - **Core**: `typescript-docs`
+
+**Rules** (16): `naming-conventions`, `project-structure`, `language-best-practices`, `error-handling`,
+`nestjs-architecture`, `nestjs-api-design`, `nestjs-security`, `nestjs-testing`,
+`react-component-conventions`, `react-data-fetching`, `react-routing-conventions`, `tailwind-styling-conventions`,
+`drizzle-orm-conventions`, `shared-dto-conventions`, `nx-monorepo-conventions`, `i18n-conventions`
 
 ---
 
@@ -242,6 +251,8 @@ Python development capabilities for Django, Flask, and FastAPI projects.
 
 **Skills**: `clean-architecture`, `aws-lambda-python-integration`
 
+**Rules** (4): `naming-conventions`, `project-structure`, `language-best-practices`, `error-handling`
+
 ---
 
 ### developer-kit-php
@@ -252,6 +263,8 @@ PHP and WordPress development capabilities.
 `wordpress-development-expert`
 
 **Skills**: `wordpress-sage-theme` (Sage theme development), `clean-architecture`, `aws-lambda-php-integration`
+
+**Rules** (4): `naming-conventions`, `project-structure`, `language-best-practices`, `error-handling`
 
 ---
 
@@ -319,10 +332,10 @@ GitHub specification integration and verification.
 | Language           | Plugin                     | Components               |
 |--------------------|----------------------------|--------------------------|
 | Core               | `developer-kit-core`       | 3 Skills, 6 Agents, 9 Commands |
-| Java/Spring Boot   | `developer-kit-java`       | 51 Skills, 9 Agents, 11 Commands |
-| TypeScript/Node.js | `developer-kit-typescript` | 17 Skills, 13 Agents, 3 Commands |
-| Python             | `developer-kit-python`     | 2 Skills, 4 Agents      |
-| PHP/WordPress      | `developer-kit-php`        | 3 Skills, 5 Agents      |
+| Java/Spring Boot   | `developer-kit-java`       | 51 Skills, 9 Agents, 11 Commands, 4 Rules |
+| TypeScript/Node.js | `developer-kit-typescript` | 18 Skills, 13 Agents, 3 Commands, 16 Rules |
+| Python             | `developer-kit-python`     | 2 Skills, 4 Agents, 4 Rules |
+| PHP/WordPress      | `developer-kit-php`        | 3 Skills, 5 Agents, 4 Rules |
 | AWS CloudFormation | `developer-kit-aws`        | 16 Skills, 3 Agents     |
 | AI/ML              | `developer-kit-ai`         | 3 Skills, 1 Agent, 1 Command |
 

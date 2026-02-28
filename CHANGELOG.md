@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Standardized Coding Rules for Language Plugins** (PR #112, closes #109):
+  - Added `rules/` directory with path-scoped coding rules to 4 language plugins
+  - **Java** (`developer-kit-java`): 4 rules — naming-conventions, project-structure, language-best-practices, error-handling (Java 17+, Spring Boot, constructor DI, Records)
+  - **Python** (`developer-kit-python`): 4 rules — naming-conventions, project-structure, language-best-practices, error-handling (PEP 8, type hints, Pydantic, async patterns)
+  - **PHP** (`developer-kit-php`): 4 rules — naming-conventions, project-structure, language-best-practices, error-handling (PSR-12, PSR-4, PHP 8.1+, readonly properties)
+  - **TypeScript** (`developer-kit-typescript`): 16 rules — core (naming-conventions, project-structure, language-best-practices, error-handling), NestJS (architecture, api-design, security, testing), React (component-conventions, data-fetching, routing-conventions), Tailwind (styling-conventions), Data (drizzle-orm-conventions, shared-dto-conventions), Infra (nx-monorepo-conventions, i18n-conventions)
+  - Rules use Claude Code `.claude/rules/` compatible format with `globs:` frontmatter for automatic path-scoped activation
+
+- **New RuleValidator** (`.skills-validator-check`):
+  - Added `RuleValidator` for validating rule files structure and content
+  - Validates `globs:` frontmatter, required sections (Guidelines, Examples), and formatting
+  - Extended `ValidatorFactory` to include rule validation pattern
+  - Added comprehensive test suite for rule validation
+
+### Changed
+
+- **Updated plugin.json manifests**: All 4 language plugin manifests now include `rules` array with component references
+- **Updated install-claude.sh**: Rules are deployed to `.claude/rules/[plugin-name]/` with conflict resolution
+- **Updated Makefile**: `list-plugins` and `list-components` targets now display rules count
+- **Extended MCP scan checker**: Security scanning now covers rule files
+
 ## [2.4.0] - 2026-02-28
 
 ### Added
