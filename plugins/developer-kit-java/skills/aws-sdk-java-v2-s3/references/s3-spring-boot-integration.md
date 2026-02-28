@@ -413,7 +413,7 @@ public class S3TestConfig {
 
     @Container
     static LocalStackContainer localstack = new LocalStackContainer(
-        DockerImageName.parse("localstack/localstack:3.0"))
+        DockerImageName.parse("localstack/localstack:3.8.1"))
         .withServices(LocalStackContainer.Service.S3)
         .withEnv("DEFAULT_REGION", "us-east-1");
 

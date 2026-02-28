@@ -18,7 +18,7 @@ class OllamaIntegrationTest {
 
     @Container
     static GenericContainer<?> ollama = new GenericContainer<>(
-        DockerImageName.parse("ollama/ollama:latest")
+        DockerImageName.parse("ollama/ollama:0.5.4")
     ).withExposedPorts(11434);
 
     private static ChatModel chatModel;
@@ -288,7 +288,7 @@ class QdrantIntegrationTest {
 
     @Container
     static GenericContainer<?> qdrant = new GenericContainer<>(
-        DockerImageName.parse("qdrant/qdrant:latest")
+        DockerImageName.parse("qdrant/qdrant:v1.13.2")
     ).withExposedPorts(6333);
 
     private EmbeddingStore<TextSegment> embeddingStore;

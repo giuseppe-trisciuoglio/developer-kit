@@ -7,42 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+### Security
 
-- **MCP-Scan Security Integration** (`.skills-validator-check`):
-  - New `mcp_scan_checker.py` script for security scanning of skills
-  - Integrates with [mcp-scan](https://github.com/invariantlabs-ai/mcp-scan) from Invariant Labs
-  - Detects prompt injection attacks, malware payloads, sensitive data handling issues, and hard-coded secrets
-  - Supports scanning all skills (`--all`), specific plugins (`--plugin`), specific paths (`--path`), or changed skills only (`--changed`)
-  - Per-skill scanning with clear output and summary statistics
-  - JSON output parsing with structured results
-  - Classifies W004 "not in registry" as informational (expected for custom skills)
-
-- **GitHub Actions Security Scan Workflow** (`.github/workflows/security-scan.yml`):
-  - Automated security scanning on push to main/develop and pull requests
-  - PRs scan only changed skills for efficiency
-  - Push events scan all skills
-  - Uses `uvx` runner for mcp-scan execution
-
-- **Makefile Security Targets**:
-  - `make security-scan`: Run MCP-Scan on all skills
-  - `make security-scan-changed`: Run MCP-Scan only on changed skills
-
-### Fixed
-
-- **Disabled Trust Hub Security Check**:
-  - Commented out `security-check-skills` job in `plugin-validation.yml`
-  - Trust Hub API only accepts ClawHub URLs, not raw GitHub content URLs
-  - Returns HTTP 400 "Invalid skill URL" - addressed in issue #100
-  - Integration re-enabled via new mcp-scan approach
+- **Resolved 14 MCP-Scan Security Failures**:
+  - W007 - Insecure credential handling: Replaced hardcoded apiKey/password with env var references in RAG
+  - W012 - External URL/code execution risks: Pinned Docker images (LocalStack 3.8.1, ollama 0.5.4, qdrant v1.13.2), npm packages (@modelcontextprotocol 0.6.2), and GitHub Actions (trivy-action, snyk/actions)
+  - W011 - Third-party content exposure: Added content validation/filtering warnings across skills (RAG, Bedrock, Messaging, MCP patterns, Qdrant, Spring AI MCP, TS Lambda, Next.js, shadcn-ui)
 
 ### Changed
 
-- **Enhanced Security Scanning**:
-  - Replaced Trust Hub API with mcp-scan for skill security validation
-  - Improved PR scanning with `--changed` flag using git diff
-  - Added `--base` flag for custom base ref comparison
-  - Auto-detect base ref (origin/main, origin/develop, HEAD~1)
+- **Enhanced README Badges**: Added security scan and plugin-validation badges
+- **Added Marketplace Links**: Added 'Listed on' marketplace links to README
+
+### Added
+
+- **Context7 Integration**: Added `context7.json` for claim skills repository
 
 ## [2.3.0] - 2026-02-25
 
@@ -355,23 +334,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `aws-cloudformation-devops-expert`: Expert AWS DevOps engineer specializing in CloudFormation templates, Infrastructure as Code (IaC), and AWS deployment automation. Masters nested stacks, cross-stack references, custom resources, and CI/CD pipeline integration
   - `aws-solution-architect-expert`: Expert AWS Solution Architect specializing in scalable cloud architectures, Well-Architected Framework, and enterprise-grade AWS solutions. Masters multi-region deployments, high availability patterns, cost optimization, and security best practices
   - `general-refactor-expert`: Expert code refactoring specialist. Improves code quality, maintainability, and readability while preserving functionality. Applies clean code principles, SOLID patterns, and language-specific best practices
-### Added
-- Features in development
-
-### Changed
-- Changes in existing functionality
-
-### Deprecated
-- Soon-to-be removed features
-
-### Removed
-- Removed features
-
-### Fixed
-- Bug fixes
-
-### Security
-- Security improvements
 
 ## [1.21.0] - 2026-01-12
 

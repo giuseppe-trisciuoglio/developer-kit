@@ -379,12 +379,20 @@ Resources:
 AWSTemplateFormatVersion: 2010-09-09
 Description: Main stack with nested Lambda stacks
 
+Parameters:
+  TemplateBucketName:
+    Type: String
+    Description: S3 bucket containing nested stack templates
+  DeploymentBucketName:
+    Type: String
+    Description: S3 bucket containing Lambda deployment artifacts
+
 Resources:
   # Nested stack for Lambda functions
   LambdaFunctionsStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.amazonaws.com/bucket/lambda-functions.yaml
+      TemplateURL: !Sub "https://${TemplateBucketName}.s3.amazonaws.com/templates/lambda-functions.yaml"
       TimeoutInMinutes: 15
       Parameters:
         Environment: !Ref Environment
@@ -394,7 +402,7 @@ Resources:
   ApiGatewayStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.amazonaws.com/bucket/api-gateway.yaml
+      TemplateURL: !Sub "https://${TemplateBucketName}.s3.amazonaws.com/templates/api-gateway.yaml"
       TimeoutInMinutes: 15
       Parameters:
         Environment: !Ref Environment
@@ -1101,6 +1109,9 @@ Parameters:
       - dev
       - staging
       - production
+  DeploymentBucketName:
+    Type: String
+    Description: S3 bucket containing Lambda deployment artifacts
 
 Resources:
   # Use AWS::Serverless::Function for better cold start
@@ -1108,7 +1119,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: !Sub "${AWS::StackName}-optimized"
-      CodeUri: s3://bucket/function.zip
+      CodeUri: !Sub "s3://${DeploymentBucketName}/function.zip"
       Handler: app.handler
       Runtime: python3.11
       MemorySize: 512
@@ -1141,7 +1152,7 @@ Resources:
     Properties:
       LayerName: !Sub "${AWS::StackName}-dependencies"
       Description: Pre-installed Python dependencies for Lambda
-      ContentUri: s3://bucket/layers/dependencies.zip
+      ContentUri: !Sub "s3://${DeploymentBucketName}/layers/dependencies.zip"
       CompatibleRuntimes:
         - python3.11
       CompatibleArchitectures:

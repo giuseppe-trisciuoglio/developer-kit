@@ -33,7 +33,7 @@ void shouldDetectInvalidInput() {
 @Testcontainers
 class AiServiceIntegrationTest {
     @Container
-    static OllamaContainer ollama = new OllamaContainer("ollama/ollama:latest");
+    static OllamaContainer ollama = new OllamaContainer("ollama/ollama:0.5.4");
 
     @Test
     void shouldProcessEndToEndRequest() {
@@ -134,7 +134,7 @@ void shouldHandleEdgeCases() {
 @Testcontainers
 void shouldIntegrateWithRealModel() {
     @Container
-    OllamaContainer ollama = new OllamaContainer();
+    OllamaContainer ollama = new OllamaContainer("ollama/ollama:0.5.4");
 
     ChatModel model = OllamaChatModel.builder()
             .baseUrl(ollama.getEndpoint())
