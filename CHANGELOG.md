@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **New NestJS Best Practices skill** (`developer-kit-typescript`):
+  - `nestjs-best-practices`: Comprehensive guide for building scalable NestJS applications
+  - Modular architecture with `@Module()` encapsulation and circular dependency prevention
+  - Dependency injection scoping (DEFAULT, REQUEST, TRANSIENT) with best practices
+  - Error handling with custom exception filters and domain-specific exceptions
+  - DTO validation with `class-validator` and global `ValidationPipe`
+  - Drizzle ORM integration patterns (provider, repository, schema, transactions)
+  - Architecture deep-dive reference and component templates (module, service, controller)
+
 - **New Spring Boot Project Creator skill** (`developer-kit-java`):
   - `spring-boot-project-creator`: Automated Spring Boot project generation with customizable dependencies
   - Supports Spring Boot 3.x with Java 17+

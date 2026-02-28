@@ -222,7 +222,7 @@ TypeScript/JavaScript full-stack development with NestJS, React, React Native, N
 **Commands**: `/devkit.typescript.code-review`, `/devkit.react.code-review`, `/devkit.ts.security-review`
 
 **Skills**:
-- **Backend**: `nestjs`, `clean-architecture`, `nestjs-drizzle-crud-generator`
+- **Backend**: `nestjs`, `nestjs-best-practices`, `clean-architecture`, `nestjs-drizzle-crud-generator`
 - **Authentication**: `better-auth`
 - **Frontend**: `react-patterns`, `shadcn-ui`, `tailwind-css-patterns`
 - **Next.js**: `nextjs-app-router`, `nextjs-authentication`, `nextjs-data-fetching`, `nextjs-performance`, `nextjs-deployment`
@@ -320,7 +320,7 @@ GitHub specification integration and verification.
 |--------------------|----------------------------|--------------------------|
 | Core               | `developer-kit-core`       | 3 Skills, 6 Agents, 9 Commands |
 | Java/Spring Boot   | `developer-kit-java`       | 51 Skills, 9 Agents, 11 Commands |
-| TypeScript/Node.js | `developer-kit-typescript` | 17 Skills, 13 Agents, 3 Commands |
+| TypeScript/Node.js | `developer-kit-typescript` | 18 Skills, 13 Agents, 3 Commands |
 | Python             | `developer-kit-python`     | 2 Skills, 4 Agents      |
 | PHP/WordPress      | `developer-kit-php`        | 3 Skills, 5 Agents      |
 | AWS CloudFormation | `developer-kit-aws`        | 16 Skills, 3 Agents     |
