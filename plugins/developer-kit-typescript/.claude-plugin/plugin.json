@@ -72,6 +72,25 @@
     "./skills/nestjs-code-review",
     "./skills/nextjs-code-review",
     "./skills/react-code-review",
-    "./skills/typescript-security-review"
+    "./skills/typescript-security-review",
+    "./skills/nestjs-best-practices"
+  ],
+  "rules": [
+    "./rules/naming-conventions.md",
+    "./rules/project-structure.md",
+    "./rules/language-best-practices.md",
+    "./rules/error-handling.md",
+    "./rules/nestjs-architecture.md",
+    "./rules/nestjs-api-design.md",
+    "./rules/nestjs-security.md",
+    "./rules/nestjs-testing.md",
+    "./rules/nx-monorepo-conventions.md",
+    "./rules/drizzle-orm-conventions.md",
+    "./rules/react-data-fetching.md",
+    "./rules/react-component-conventions.md",
+    "./rules/react-routing-conventions.md",
+    "./rules/tailwind-styling-conventions.md",
+    "./rules/i18n-conventions.md",
+    "./rules/shared-dto-conventions.md"
   ]
 }

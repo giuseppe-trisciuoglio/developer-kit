@@ -222,7 +222,7 @@ TypeScript/JavaScript full-stack development with NestJS, React, React Native, N
 **Commands**: `/devkit.typescript.code-review`, `/devkit.react.code-review`, `/devkit.ts.security-review`
 
 **Skills**:
-- **Backend**: `nestjs`, `clean-architecture`, `nestjs-drizzle-crud-generator`
+- **Backend**: `nestjs`, `nestjs-best-practices`, `clean-architecture`, `nestjs-drizzle-crud-generator`
 - **Authentication**: `better-auth`
 - **Frontend**: `react-patterns`, `shadcn-ui`, `tailwind-css-patterns`
 - **Next.js**: `nextjs-app-router`, `nextjs-authentication`, `nextjs-data-fetching`, `nextjs-performance`, `nextjs-deployment`

@@ -113,6 +113,11 @@ define get_plugin_skills
 	$(shell jq -r '.skills[]?' $(1) 2>/dev/null)
 endef
 
+# Extract rules array from plugin.json
+define get_plugin_rules
+	$(shell jq -r '.rules[]?' $(1) 2>/dev/null)
+endef
+
 # Conflict resolution handler
 define handle_conflict
 	@echo -n "  ⚠ $(1) already exists. [O]verwrite, [S]kip, [R]ename? "
@@ -197,9 +202,10 @@ list-plugins: check-deps
 			num_agents=$$(jq -r '.agents | length' "$$plugin_json" 2>/dev/null); \
 			num_commands=$$(jq -r '.commands | length' "$$plugin_json" 2>/dev/null); \
 			num_skills=$$(jq -r '.skills | length' "$$plugin_json" 2>/dev/null); \
+			num_rules=$$(jq -r 'if .rules then .rules | length else 0 end' "$$plugin_json" 2>/dev/null); \
 			echo -e "$(GREEN)$$plugin_name$(NC) (v$$plugin_version)"; \
 			echo "  $$plugin_desc"; \
-			echo "  Components: $$num_agents agents, $$num_commands commands, $$num_skills skills"; \
+			echo "  Components: $$num_agents agents, $$num_commands commands, $$num_skills skills, $$num_rules rules"; \
 			echo ""; \
 		done; \
 	fi
@@ -230,6 +236,11 @@ list-components: check-deps
 	echo -e "$(CYAN)Skills:$(NC)"; \
 	jq -r '.skills[]? // empty' "$$plugin_json" 2>/dev/null | while read skill; do \
 		echo "  - $$skill"; \
+	done; \
+	echo ""; \
+	echo -e "$(CYAN)Rules:$(NC)"; \
+	jq -r '.rules[]? // empty' "$$plugin_json" 2>/dev/null | while read rule; do \
+		echo "  - $$rule"; \
 	done; \
 	echo ""
 
