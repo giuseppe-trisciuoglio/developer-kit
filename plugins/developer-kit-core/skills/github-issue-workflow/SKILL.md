@@ -357,13 +357,24 @@ git status --porcelain
 git diff --stat
 ```
 
-2. Create a feature branch from the current branch:
+2. Create a branch from the current branch using the **mandatory naming convention**:
+
+**Branch Naming Convention**:
+- **Features**: `feature/<issue-id>-<feature-description>` (e.g., `feature/42-add-email-validation`)
+- **Bug fixes**: `fix/<issue-id>-<fix-description>` (e.g., `fix/15-login-timeout`)
+- **Refactors**: `refactor/<issue-id>-<refactor-description>` (e.g., `refactor/78-improve-search-performance`)
+
+The prefix is determined by the issue type identified in Phase 2:
+- `feat` / enhancement label → `feature/`
+- `fix` / bug label → `fix/`
+- `refactor` → `refactor/`
 
 ```bash
-# Generate branch name from issue
+# Determine branch prefix from issue type
+# BRANCH_PREFIX is one of: feature, fix, refactor
 ISSUE_NUMBER=<number>
-ISSUE_TITLE_SLUG=$(echo "<issue-title>" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//;s/-$//' | cut -c1-50)
-BRANCH_NAME="issue-${ISSUE_NUMBER}/${ISSUE_TITLE_SLUG}"
+DESCRIPTION_SLUG=$(echo "<short-description>" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//;s/-$//' | cut -c1-50)
+BRANCH_NAME="${BRANCH_PREFIX}/${ISSUE_NUMBER}-${DESCRIPTION_SLUG}"
 
 git checkout -b "$BRANCH_NAME"
 ```
@@ -487,7 +498,7 @@ gh issue view 42
 
 **Phase 7–8 — Commit and PR:**
 ```bash
-git checkout -b "issue-42/add-email-validation"
+git checkout -b "feature/42-add-email-validation"
 git add -A
 git commit -m "feat(validation): add email validation to registration
 
@@ -496,7 +507,7 @@ git commit -m "feat(validation): add email validation to registration
 - Add unit tests for edge cases
 
 Closes #42"
-git push -u origin "issue-42/add-email-validation"
+git push -u origin "feature/42-add-email-validation"
 gh pr create --base main --title "feat(validation): add email validation" \
     --body "## Description
 Adds email validation to the registration endpoint.
@@ -528,7 +539,7 @@ gh issue view 15
 
 **Phase 7–8 — Commit and PR:**
 ```bash
-git checkout -b "issue-15/fix-login-timeout-bug"
+git checkout -b "fix/15-login-timeout"
 git add -A
 git commit -m "fix(auth): resolve login timeout issue
 
@@ -536,7 +547,7 @@ JWT token verification was using a 5s timeout instead of 30s
 due to config value being read in seconds instead of milliseconds.
 
 Closes #15"
-git push -u origin "issue-15/fix-login-timeout-bug"
+git push -u origin "fix/15-login-timeout"
 gh pr create --base main --title "fix(auth): resolve login timeout issue" \
     --body "## Description
 Fixes login timeout caused by incorrect timeout unit in JWT verification.
@@ -573,10 +584,11 @@ gh issue view 78
 1. **Always confirm understanding**: Present issue summary to user before implementing
 2. **Ask early, ask specific**: Identify ambiguities in Phase 2, not during implementation
 3. **Keep changes focused**: Only modify what's necessary to resolve the issue
-4. **Reference the issue**: Every commit and PR must reference the issue number
-5. **Run existing tests**: Never skip verification — catch regressions early
-6. **Review before committing**: Code review prevents shipping bugs
-7. **Use conventional commits**: Maintain consistent commit history
+4. **Follow branch naming convention**: Use `feature/`, `fix/`, or `refactor/` prefix with issue ID and description
+5. **Reference the issue**: Every commit and PR must reference the issue number
+6. **Run existing tests**: Never skip verification — catch regressions early
+7. **Review before committing**: Code review prevents shipping bugs
+8. **Use conventional commits**: Maintain consistent commit history
 
 ## Constraints and Warnings
 
