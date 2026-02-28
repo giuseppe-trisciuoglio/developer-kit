@@ -319,12 +319,17 @@ Resources:
 AWSTemplateFormatVersion: 2010-09-09
 Description: Main stack with nested Auto Scaling stacks
 
+Parameters:
+  TemplateBucketName:
+    Type: String
+    Description: S3 bucket containing nested stack templates
+
 Resources:
   # Nested stack for EC2 Auto Scaling
   EC2AutoScalingStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.amazonaws.com/bucket/ec2-asg.yaml
+      TemplateURL: !Sub "https://${TemplateBucketName}.s3.amazonaws.com/templates/ec2-asg.yaml"
       TimeoutInMinutes: 15
       Parameters:
         Environment: !Ref Environment
@@ -336,7 +341,7 @@ Resources:
   ScalingPoliciesStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.amazonaws.com/bucket/scaling-policies.yaml
+      TemplateURL: !Sub "https://${TemplateBucketName}.s3.amazonaws.com/templates/scaling-policies.yaml"
       TimeoutInMinutes: 15
       Parameters:
         AutoScalingGroupName: !GetAtt EC2AutoScalingStack.Outputs.AutoScalingGroupName

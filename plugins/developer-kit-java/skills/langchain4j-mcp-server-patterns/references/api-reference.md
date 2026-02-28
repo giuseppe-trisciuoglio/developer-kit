@@ -151,7 +151,7 @@ mcp:
       log-events: true
     database:
       type: stdio
-      command: ["/usr/bin/npm", "exec", "@modelcontextprotocol/server-sqlite"]
+      command: ["/usr/bin/npm", "exec", "@modelcontextprotocol/server-sqlite@0.6.2"]
       log-events: false
 ```
 

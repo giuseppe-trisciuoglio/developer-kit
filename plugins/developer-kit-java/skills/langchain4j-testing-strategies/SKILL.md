@@ -62,7 +62,7 @@ Test with real services using Testcontainers. See `references/integration-testin
 class OllamaIntegrationTest {
     @Container
     static GenericContainer<?> ollama = new GenericContainer<>(
-        DockerImageName.parse("ollama/ollama:latest")
+        DockerImageName.parse("ollama/ollama:0.5.4")
     ).withExposedPorts(11434);
 
     @Test
@@ -115,7 +115,7 @@ void shouldProcessQueryWithMock() {
 class RAGIntegrationTest {
     @Container
     static GenericContainer<?> ollama = new GenericContainer<>(
-        DockerImageName.parse("ollama/ollama:latest")
+        DockerImageName.parse("ollama/ollama:0.5.4")
     );
 
     @Test

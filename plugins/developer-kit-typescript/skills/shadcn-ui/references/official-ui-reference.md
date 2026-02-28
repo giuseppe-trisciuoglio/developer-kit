@@ -1,3 +1,7 @@
+# shadcn/ui Official Reference
+
+> **Security Note**: Components installed via `npx shadcn@latest add` are fetched from the official shadcn registry (`ui.shadcn.com`). When configuring custom registries, only use trusted registry URLs. Always review component source code after installation. Registry URLs in examples below (e.g., `example.com`) are placeholders — replace with your verified private registry URLs.
+
 ### Create TanStack Start Project with shadcn/ui
 
 Source: https://ui.shadcn.com/docs/installation/tanstack

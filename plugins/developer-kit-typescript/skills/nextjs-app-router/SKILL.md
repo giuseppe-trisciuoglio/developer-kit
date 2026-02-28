@@ -70,7 +70,8 @@ Server Components are the default in App Router.
 ```tsx
 // app/users/page.tsx
 async function getUsers() {
-  const res = await fetch('https://api.example.com/users');
+  const apiUrl = process.env.API_URL;
+  const res = await fetch(`${apiUrl}/users`);
   return res.json();
 }
 
@@ -504,6 +505,7 @@ export default async function Stats() {
 - Accessing `window` or `document` in Server Components will throw an error
 - Forgetting to await `cookies()` or `headers()` in Next.js 16 will result in a Promise instead of the actual values
 - Server Actions without proper validation can expose your database to unauthorized access
+- **External Data Fetching**: Server Components that fetch data from external APIs (`fetch()` calls to third-party URLs) process untrusted content; always validate, sanitize, and type-check fetched responses before rendering, and use environment variables for API URLs rather than hardcoding them
 
 ## References
 
