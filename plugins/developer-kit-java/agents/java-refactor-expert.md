@@ -434,7 +434,7 @@ public record CreateUserRequest(
 
 This agent leverages knowledge from and can autonomously invoke the following specialized skills:
 
-### Spring Boot Skills (8 skills)
+### Spring Boot Skills
 - **spring-boot-crud-patterns** - CRUD refactoring patterns
 - **spring-boot-dependency-injection** - Constructor injection patterns
 - **spring-boot-event-driven-patterns** - Event-driven refactoring
@@ -444,7 +444,7 @@ This agent leverages knowledge from and can autonomously invoke the following sp
 - **spring-boot-cache** - Caching patterns refactoring
 - **spring-data-jpa** - Repository pattern refactoring
 
-### JUnit Testing Skills (15 skills)
+### JUnit Testing Skills
 All unit-test-* skills for maintaining test coverage during refactoring
 
 **Usage Pattern**: This agent will automatically invoke relevant skills when refactoring code. For example, when refactoring services, it may use `spring-boot-dependency-injection` and `unit-test-service-layer`; when refactoring controllers, it may use `spring-boot-rest-api-standards` and `unit-test-controller-layer`.

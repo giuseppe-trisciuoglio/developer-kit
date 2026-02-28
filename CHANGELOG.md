@@ -7,6 +7,73 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **New Spring Boot Project Creator skill** (`developer-kit-java`):
+  - `spring-boot-project-creator`: Automated Spring Boot project generation with customizable dependencies
+  - Supports Spring Boot 3.x with Java 17+
+  - Interactive dependency selection (Web, Data JPA, Security, Actuator, etc.)
+  - Best practices enforcement and project structure templates
+
+- **Enhanced Security Scanning**:
+  - Added MCP scan checker for per-skill security analysis
+  - Implemented PR-level security scanning (only changed skills)
+  - Added Gen Agent Trust Hub security check
+  - New security scan workflow for CI integration
+
+- **Context7 Integration**: Added `context7.json` for claim skills repository
+
+### Security
+
+- **GraalVM Native Image Skill** (`developer-kit-java`):
+  - `graalvm-native-image`: Comprehensive skill for building GraalVM native executables from Java applications
+  - Covers: Maven/Gradle project analysis, Native Build Tools configuration, framework-specific patterns (Spring Boot AOT, Quarkus, Micronaut)
+  - GraalVM reachability metadata (reflect-config, resource-config)
+  - Iterative fix engine for resolving native build failures
+  - Tracing agent for automatic metadata collection
+  - Docker integration with multi-stage builds
+
+- **Context7 Integration**: Added `context7.json` for claim skills repository
+
+- **Enhanced Security Scanning**:
+  - MCP-scan security check integration for skills (detects prompt injection, malware, sensitive data)
+  - Per-skill scanning in PRs with `--changed` flag
+  - Security scan workflow GitHub Actions (PRs + push to main/develop)
+  - Makefile target: `make security-scan`
+- **New GitHub Issue Workflow skill** (`developer-kit-core`):
+  - `github-issue-workflow`: Skill for creating and managing GitHub issues with workflow automation
+  - Plugin manifest updated to integrate new skill
+
+- **MCP-Scan Security Integration** (`.skills-validator-check`):
+  - New `mcp_scan_checker.py` script for security scanning of skills
+  - Integrates with [mcp-scan](https://github.com/invariantlabs-ai/mcp-scan) from Invariant Labs
+  - Detects prompt injection attacks, malware payloads, sensitive data handling issues, and hard-coded secrets
+  - Supports scanning all skills (`--all`), specific plugins (`--plugin`), specific paths (`--path`), or changed skills only (`--changed`)
+  - Per-skill scanning with clear output and summary statistics
+  - JSON output parsing with structured results
+  - Classifies W004 "not in registry" as informational (expected for custom skills)
+
+- **GitHub Actions Security Scan Workflow** (`.github/workflows/security-scan.yml`):
+  - Automated security scanning on push to main/develop and pull requests
+  - PRs scan only changed skills for efficiency
+  - Push events scan all skills
+  - Uses `uvx` runner for mcp-scan execution
+
+- **Makefile Security Targets**:
+  - `make security-scan`: Run MCP-Scan on all skills
+  - `make security-scan-changed`: Run MCP-Scan only on changed skills
+- **Resolved 14 MCP-Scan Security Failures**:
+  - W007 - Insecure credential handling: Replaced hardcoded apiKey/password with env var references in RAG
+  - W012 - External URL/code execution risks: Pinned Docker images (LocalStack 3.8.1, ollama 0.5.4, qdrant v1.13.2), npm packages (@modelcontextprotocol 0.6.2), and GitHub Actions (trivy-action, snyk/actions)
+  - W011 - Third-party content exposure: Added content validation/filtering warnings across skills (RAG, Bedrock, Messaging, MCP patterns, Qdrant, Spring AI MCP, TS Lambda, Next.js, shadcn-ui)
+- Disabled Trust Hub security check returning HTTP 400
+- Replaced hardcoded credentials with environment variable references
+
+### Changed
+
+- **Enhanced README Badges**: Added security scan and plugin-validation badges
+- **Added Marketplace Links**: Added 'Listed on' marketplace links to README
+
 ### Security
 
 - **Resolved 14 MCP-Scan Security Failures**:
@@ -14,14 +81,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - W012 - External URL/code execution risks: Pinned Docker images (LocalStack 3.8.1, ollama 0.5.4, qdrant v1.13.2), npm packages (@modelcontextprotocol 0.6.2), and GitHub Actions (trivy-action, snyk/actions)
   - W011 - Third-party content exposure: Added content validation/filtering warnings across skills (RAG, Bedrock, Messaging, MCP patterns, Qdrant, Spring AI MCP, TS Lambda, Next.js, shadcn-ui)
 
-### Changed
-
-- **Enhanced README Badges**: Added security scan and plugin-validation badges
-- **Added Marketplace Links**: Added 'Listed on' marketplace links to README
-
-### Added
-
-- **Context7 Integration**: Added `context7.json` for claim skills repository
+- **Fixed Trust Hub Security Check**: Disabled Trust Hub API check returning HTTP 400 (incompatible with raw GitHub URLs)
 
 ## [2.3.0] - 2026-02-25
 

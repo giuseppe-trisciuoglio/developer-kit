@@ -85,7 +85,7 @@ make install              # Auto-install for all detected CLIs
 
 The Developer Kit now uses a **plugin-based architecture** with 10 separate plugins:
 
-- **developer-kit** - Core agents, commands, and skills (6 agents, 17 commands, 2 skills)
+- **developer-kit** - Core agents, commands, and skills (6 agents, 17 commands, 3 skills)
 - **developer-kit-java** - Java/Spring Boot/LangChain4J/AWS Lambda integration (9 agents, 11 commands, 49 skills)
 - **developer-kit-typescript** - TypeScript/NestJS/React/Next.js/Drizzle/Monorepo (13 agents, 3 commands, 16 skills)
 - **developer-kit-python** - Python/AWS Lambda capabilities (4 agents, 2 skills)
@@ -96,11 +96,11 @@ The Developer Kit now uses a **plugin-based architecture** with 10 separate plug
 - **developer-kit-project-management** - LRA workflow (1 command)
 - **github-spec-kit** - GitHub specifications (3 commands)
 
-**Total Components:** 43 agents, 36 commands, 91 skills across all plugins
+**Total Components:** 43 agents, 36 commands, 92 skills across all plugins
 
 | Plugin | Agents | Commands | Skills |
 |--------|--------|----------|--------|
-| developer-kit | 6 | 17 | 2 |
+| developer-kit | 6 | 17 | 3 |
 | developer-kit-java | 9 | 11 | 49 |
 | developer-kit-typescript | 13 | 3 | 16 |
 | developer-kit-python | 4 | 0 | 2 |
@@ -110,7 +110,7 @@ The Developer Kit now uses a **plugin-based architecture** with 10 separate plug
 | developer-kit-devops | 2 | 0 | 0 |
 | developer-kit-project-management | 0 | 1 | 0 |
 | github-spec-kit | 0 | 3 | 0 |
-| **Total** | **43** | **36** | **91** |
+| **Total** | **43** | **36** | **92** |
 
 **Plugin Discovery:** The Makefile automatically scans `plugins/*/.claude-plugin/plugin.json` files to discover all available plugins and their components (agents, commands, skills).
 

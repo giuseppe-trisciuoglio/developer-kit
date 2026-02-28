@@ -15,7 +15,8 @@ Quick reference to 8 LangChain4J skills for building AI-powered applications. Se
 | **langchain4j-tool-function-calling-patterns** | Tool definition, function orchestration |
 | **langchain4j-mcp-server-patterns** | MCP integration, tool exposure |
 | **langchain4j-testing-strategies** | Testing AI systems, mock models |
-| **qdrant-java-development** | Qdrant vector database integration |
+| **qdrant** | Qdrant vector database integration |
+| **spring-ai-mcp-server-patterns** | Spring AI MCP server patterns |
 
 ---
 
@@ -89,7 +90,7 @@ Vector stores: embeddings, similarity search, provider setup.
 
 ---
 
-### qdrant-java-development
+### qdrant
 
 **File**: `skills/qdrant/SKILL.md`
 
@@ -99,6 +100,19 @@ Qdrant vector database: Java integration, Spring Boot setup.
 - Using Qdrant for vector storage
 - Embedding storage and retrieval
 - Hybrid search patterns
+
+---
+
+### spring-ai-mcp-server-patterns
+
+**File**: `skills/spring-ai-mcp-server-patterns/SKILL.md`
+
+Spring AI MCP server: protocol implementation, tool exposure.
+
+**When to use:**
+- Creating MCP servers with Spring AI
+- Exposing tools to AI agents
+- Spring AI MCP protocol integration
 
 ---
 

@@ -161,7 +161,7 @@ When invoked:
 
 This agent leverages knowledge from and can autonomously invoke the following specialized skills:
 
-### Spring Boot Documentation Skills (8 skills)
+### Spring Boot Documentation Skills
 - **spring-boot-actuator** - Production monitoring and health check documentation
 - **spring-boot-cache** - Caching strategy and performance documentation
 - **spring-boot-crud-patterns** - CRUD operation documentation and examples
@@ -171,7 +171,7 @@ This agent leverages knowledge from and can autonomously invoke the following sp
 - **spring-boot-test-patterns** - Testing strategy and procedure documentation
 - **spring-data-jpa** - JPA/Hibernate patterns and database documentation
 
-### JUnit Testing Documentation Skills (15 skills)
+### JUnit Testing Documentation Skills
 - **unit-test-application-events** - Event testing documentation and procedures
 - **unit-test-bean-validation** - Validation testing documentation and examples
 - **unit-test-boundary-conditions** - Edge case testing documentation and strategies
@@ -188,7 +188,7 @@ This agent leverages knowledge from and can autonomously invoke the following sp
 - **unit-test-utility-methods** - Utility testing documentation and examples
 - **unit-test-wiremock-rest-api** - External API testing documentation and procedures
 
-### LangChain4j Documentation Skills (7 skills)
+### LangChain4j Documentation Skills
 - **langchain4j-spring-boot-integration** - Spring Boot integration documentation
 - **langchain4j-ai-services-patterns** - AI service architecture documentation
 - **langchain4j-rag-implementation-patterns** - RAG implementation documentation
@@ -197,7 +197,7 @@ This agent leverages knowledge from and can autonomously invoke the following sp
 - **langchain4j-mcp-server-patterns** - MCP server architecture documentation
 - **langchain4j-vector-stores-configuration** - Vector store configuration documentation
 
-### AWS Java Documentation Skills (10 skills)
+### AWS Java Documentation Skills
 - **aws-sdk-java-v2-core** - AWS SDK core documentation and configuration
 - **aws-sdk-java-v2-dynamodb** - DynamoDB integration documentation
 - **aws-sdk-java-v2-s3** - S3 integration and file storage documentation

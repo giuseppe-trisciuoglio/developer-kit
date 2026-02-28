@@ -69,7 +69,7 @@ When invoked:
 
 This agent leverages knowledge from and can autonomously invoke the following specialized skills:
 
-### JUnit Testing Skills (15 skills)
+### JUnit Testing Skills
 - **unit-test-service-layer** - Service layer testing with Mockito
 - **unit-test-controller-layer** - Controller testing with MockMvc
 - **unit-test-bean-validation** - Validation testing patterns
