@@ -218,6 +218,11 @@ class ValidationCLI:
                 if plugin_commands.exists():
                     files.extend(plugin_commands.glob("**/*.md"))
 
+                # Plugin rules
+                plugin_rules = plugin_dir / "rules"
+                if plugin_rules.exists():
+                    files.extend(plugin_rules.glob("*.md"))
+
                 # Plugin.json files
                 plugin_json = plugin_dir / ".claude-plugin" / "plugin.json"
                 if plugin_json.exists():

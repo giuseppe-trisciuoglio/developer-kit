@@ -1,0 +1,24 @@
+{
+  "name": "developer-kit-tools",
+  "version": "2.4.0",
+  "description": "External tools integration skills for CLI utilities, APIs, and third-party services",
+  "author": {
+    "name": "Giuseppe Trisciuoglio",
+    "email": "giuseppe.trisciuoglio@gmail.com"
+  },
+  "homepage": "https://github.com/giuseppe-trisciuoglio/developer-kit",
+  "repository": "https://github.com/giuseppe-trisciuoglio/developer-kit.git",
+  "license": "MIT",
+  "keywords": [
+    "tools",
+    "cli",
+    "notebooklm",
+    "integrations",
+    "external-services"
+  ],
+  "agents": [],
+  "commands": [],
+  "skills": [
+    "./skills/notebooklm"
+  ]
+}

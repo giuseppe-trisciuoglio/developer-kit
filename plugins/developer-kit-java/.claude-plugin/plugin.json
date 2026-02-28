@@ -1,6 +1,6 @@
 {
   "name": "developer-kit-java",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Comprehensive Java development toolkit with Spring Boot, testing, LangChain4J, and AWS integration",
   "author": {
     "name": "Giuseppe Trisciuoglio",
@@ -53,6 +53,7 @@
     "./skills/spring-boot-security-jwt",
     "./skills/spring-boot-test-patterns",
     "./skills/spring-boot-resilience4j",
+    "./skills/spring-boot-project-creator",
     "./skills/spring-data-jpa",
     "./skills/spring-data-neo4j",
     "./skills/spring-ai-mcp-server-patterns",
@@ -90,6 +91,13 @@
     "./skills/aws-sdk-java-v2-s3",
     "./skills/aws-sdk-java-v2-secrets-manager",
     "./skills/aws-lambda-java-integration",
-    "./skills/clean-architecture"
+    "./skills/clean-architecture",
+    "./skills/graalvm-native-image"
+  ],
+  "rules": [
+    "./rules/naming-conventions.md",
+    "./rules/project-structure.md",
+    "./rules/language-best-practices.md",
+    "./rules/error-handling.md"
   ]
 }

@@ -296,6 +296,8 @@ For complete deployment configurations including CI/CD, see [Serverless Deployme
 ### Security Considerations
 
 - Never hardcode credentials; use IAM roles and environment variables
+- **Input Validation for Event Data**: All incoming event data (API Gateway request bodies, S3 event objects, SQS message bodies) is untrusted external content; always validate and sanitize before processing to prevent injection attacks
+- **Content Sanitization**: When processing S3 objects or SQS message payloads, treat the content as untrusted third-party data; apply appropriate validation, schema checks, and sanitization before acting on it
 - Validate all input data
 - Use least privilege IAM policies
 - Enable CloudTrail for audit logging

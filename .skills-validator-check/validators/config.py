@@ -51,6 +51,10 @@ MARKDOWN_FILE_PATTERN = re.compile(r"^(.*/)?[^/]+\.md$")
 # Pattern for .skill package files (prohibited output files)
 SKILL_PACKAGE_PATTERN = re.compile(r".*\.skill$")
 
+# Support rule files in plugin-based structure:
+# - plugins/plugin-name/rules/rule-name.md
+RULE_PATTERN = re.compile(r"(?:.*/)?rules/[^/]+\.md$")
+
 # Pattern for plugin manifest files
 PLUGIN_PATTERN = re.compile(r"\.claude-plugin/plugin\.json$")
 
@@ -320,3 +324,26 @@ WHEN_KEYWORDS: FrozenSet[str] = frozenset({
     "when", "use", "trigger", "context", "invoke", "if",
     "during", "before", "after", "while", "proactively",
 })
+
+# =============================================================================
+# Rule Validation Configuration
+# =============================================================================
+
+RULE_SCHEMA: Dict[str, Set[str]] = {
+    "required": {"globs"},
+    "optional": set(),
+}
+
+# Required sections in rule markdown files
+RULE_REQUIRED_SECTIONS: Dict[str, str] = {
+    "guidelines": r"^#{1,3}\s+Guidelines",
+}
+
+# Recommended sections in rule markdown files
+RULE_RECOMMENDED_SECTIONS: FrozenSet[str] = frozenset({
+    "context",
+    "examples",
+})
+
+# Maximum line count for rule files
+MAX_RULE_LINES = 300

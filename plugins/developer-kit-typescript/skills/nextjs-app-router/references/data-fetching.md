@@ -5,7 +5,7 @@
 ```tsx
 // app/users/page.tsx
 async function getUsers() {
-  const res = await fetch("https://api.example.com/users", {
+  const res = await fetch(`${process.env.API_URL}/users`, {
     // Cache configuration
     next: { revalidate: 3600, tags: ["users"] },
   });
@@ -103,13 +103,13 @@ export default function DashboardPage() {
 ```tsx
 // app/user/[id]/posts/page.tsx
 async function getUser(id: string) {
-  const res = await fetch(`https://api.example.com/users/${id}`);
+  const res = await fetch(`${process.env.API_URL}/users/${id}`);
   return res.json();
 }
 
 async function getPosts(userId: string) {
   const res = await fetch(
-    `https://api.example.com/users/${userId}/posts`
+    `${process.env.API_URL}/users/${userId}/posts`
   );
   return res.json();
 }
@@ -208,7 +208,7 @@ export default function Error({
 // app/users/page.tsx
 async function getUsers() {
   try {
-    const res = await fetch("https://api.example.com/users");
+    const res = await fetch(`${process.env.API_URL}/users`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return res.json();
   } catch (error) {

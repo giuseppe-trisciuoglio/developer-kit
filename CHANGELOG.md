@@ -9,6 +9,70 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **New TypeScript Code Review Skills** (`developer-kit-typescript`):
+  - `nestjs-code-review`: NestJS code review with controller, service, module, guard, and DI pattern analysis
+  - `nextjs-code-review`: Next.js App Router review covering Server/Client Components, Server Actions, caching, and performance
+  - `react-code-review`: React 19 component review with hooks, accessibility, state management, and TypeScript integration
+  - `typescript-security-review`: Security audit for TypeScript/Node.js covering OWASP Top 10, XSS, injection, JWT, and dependency scanning
+  - Each skill includes reference documentation (patterns, anti-patterns, checklists)
+
+- **Standardized Coding Rules for Language Plugins** (PR #112, closes #109):
+  - Added `rules/` directory with path-scoped coding rules to 4 language plugins
+  - **Java** (`developer-kit-java`): 4 rules — naming-conventions, project-structure, language-best-practices, error-handling (Java 17+, Spring Boot, constructor DI, Records)
+  - **Python** (`developer-kit-python`): 4 rules — naming-conventions, project-structure, language-best-practices, error-handling (PEP 8, type hints, Pydantic, async patterns)
+  - **PHP** (`developer-kit-php`): 4 rules — naming-conventions, project-structure, language-best-practices, error-handling (PSR-12, PSR-4, PHP 8.1+, readonly properties)
+  - **TypeScript** (`developer-kit-typescript`): 16 rules — core (naming-conventions, project-structure, language-best-practices, error-handling), NestJS (architecture, api-design, security, testing), React (component-conventions, data-fetching, routing-conventions), Tailwind (styling-conventions), Data (drizzle-orm-conventions, shared-dto-conventions), Infra (nx-monorepo-conventions, i18n-conventions)
+  - Rules use Claude Code `.claude/rules/` compatible format with `globs:` frontmatter for automatic path-scoped activation
+
+- **New RuleValidator** (`.skills-validator-check`):
+  - Added `RuleValidator` for validating rule files structure and content
+  - Validates `globs:` frontmatter, required sections (Guidelines, Examples), and formatting
+  - Extended `ValidatorFactory` to include rule validation pattern
+  - Added comprehensive test suite for rule validation
+
+### Changed
+
+- **Updated plugin.json manifests**: All 4 language plugin manifests now include `rules` array with component references
+- **Updated install-claude.sh**: Rules are deployed to `.claude/rules/[plugin-name]/` with conflict resolution
+- **Updated Makefile**: `list-plugins` and `list-components` targets now display rules count
+- **Extended MCP scan checker**: Security scanning now covers rule files
+
+## [2.4.0] - 2026-02-28
+
+### Added
+
+- **New Spring Boot Project Creator skill** (`developer-kit-java`):
+  - `spring-boot-project-creator`: Automated Spring Boot project generation with customizable dependencies
+  - Supports Spring Boot 3.x with Java 17+
+  - Interactive dependency selection (Web, Data JPA, Security, Actuator, etc.)
+  - Best practices enforcement and project structure templates
+
+- **New GraalVM Native Image skill** (`developer-kit-java`):
+  - `graalvm-native-image`: Comprehensive skill for building GraalVM native executables from Java applications
+  - Covers: Maven/Gradle project analysis, Native Build Tools configuration, framework-specific patterns (Spring Boot AOT, Quarkus, Micronaut)
+  - GraalVM reachability metadata (reflect-config, resource-config)
+  - Iterative fix engine for resolving native build failures
+  - Tracing agent for automatic metadata collection
+  - Docker integration with multi-stage builds
+
+- **New GitHub Issue Workflow skill** (`developer-kit-core`):
+  - `github-issue-workflow`: Skill for creating and managing GitHub issues with workflow automation
+  - Plugin manifest updated to integrate new skill
+  - Security hardening: treats issue bodies as untrusted input with content-isolation, mandatory user confirmation, and prompt injection prevention
+
+- **New `developer-kit-tools` plugin** (PR #106):
+  - New plugin for external tools integration (CLI utilities, APIs, third-party services)
+  - `notebooklm`: Google NotebookLM integration skill for generating audio summaries, podcasts, and study guides from source documents
+  - Enforces user-provided sources and includes security guidance for content handling
+
+- **Context7 Integration**: Added `context7.json` for claim skills repository
+
+- **Enhanced Security Scanning**:
+  - Added MCP scan checker for per-skill security analysis
+  - Implemented PR-level security scanning (only changed skills)
+  - Added Gen Agent Trust Hub security check
+  - New security scan workflow for CI integration
+
 - **MCP-Scan Security Integration** (`.skills-validator-check`):
   - New `mcp_scan_checker.py` script for security scanning of skills
   - Integrates with [mcp-scan](https://github.com/invariantlabs-ai/mcp-scan) from Invariant Labs
@@ -27,22 +91,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Makefile Security Targets**:
   - `make security-scan`: Run MCP-Scan on all skills
   - `make security-scan-changed`: Run MCP-Scan only on changed skills
-
-### Fixed
-
-- **Disabled Trust Hub Security Check**:
-  - Commented out `security-check-skills` job in `plugin-validation.yml`
-  - Trust Hub API only accepts ClawHub URLs, not raw GitHub content URLs
-  - Returns HTTP 400 "Invalid skill URL" - addressed in issue #100
-  - Integration re-enabled via new mcp-scan approach
+- **Resolved 14 MCP-Scan Security Failures**:
+  - W007 - Insecure credential handling: Replaced hardcoded apiKey/password with env var references in RAG
+  - W012 - External URL/code execution risks: Pinned Docker images (LocalStack 3.8.1, ollama 0.5.4, qdrant v1.13.2), npm packages (@modelcontextprotocol 0.6.2), and GitHub Actions (trivy-action, snyk/actions)
+  - W011 - Third-party content exposure: Added content validation/filtering warnings across skills (RAG, Bedrock, Messaging, MCP patterns, Qdrant, Spring AI MCP, TS Lambda, Next.js, shadcn-ui)
+- Disabled Trust Hub security check returning HTTP 400
+- Replaced hardcoded credentials with environment variable references
 
 ### Changed
 
-- **Enhanced Security Scanning**:
-  - Replaced Trust Hub API with mcp-scan for skill security validation
-  - Improved PR scanning with `--changed` flag using git diff
-  - Added `--base` flag for custom base ref comparison
-  - Auto-detect base ref (origin/main, origin/develop, HEAD~1)
+- **Enhanced README Badges**: Added security scan and plugin-validation badges
+- **Added Marketplace Links**: Added 'Listed on' marketplace links to README
+
+### Security
+
+- **Resolved 14 MCP-Scan Security Failures**:
+  - W007 - Insecure credential handling: Replaced hardcoded apiKey/password with env var references in RAG
+  - W012 - External URL/code execution risks: Pinned Docker images (LocalStack 3.8.1, ollama 0.5.4, qdrant v1.13.2), npm packages (@modelcontextprotocol 0.6.2), and GitHub Actions (trivy-action, snyk/actions)
+  - W011 - Third-party content exposure: Added content validation/filtering warnings across skills (RAG, Bedrock, Messaging, MCP patterns, Qdrant, Spring AI MCP, TS Lambda, Next.js, shadcn-ui)
+
+- **Fixed Trust Hub Security Check**: Disabled Trust Hub API check returning HTTP 400 (incompatible with raw GitHub URLs)
 
 ## [2.3.0] - 2026-02-25
 
@@ -355,23 +423,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `aws-cloudformation-devops-expert`: Expert AWS DevOps engineer specializing in CloudFormation templates, Infrastructure as Code (IaC), and AWS deployment automation. Masters nested stacks, cross-stack references, custom resources, and CI/CD pipeline integration
   - `aws-solution-architect-expert`: Expert AWS Solution Architect specializing in scalable cloud architectures, Well-Architected Framework, and enterprise-grade AWS solutions. Masters multi-region deployments, high availability patterns, cost optimization, and security best practices
   - `general-refactor-expert`: Expert code refactoring specialist. Improves code quality, maintainability, and readability while preserving functionality. Applies clean code principles, SOLID patterns, and language-specific best practices
-### Added
-- Features in development
-
-### Changed
-- Changes in existing functionality
-
-### Deprecated
-- Soon-to-be removed features
-
-### Removed
-- Removed features
-
-### Fixed
-- Bug fixes
-
-### Security
-- Security improvements
 
 ## [1.21.0] - 2026-01-12
 

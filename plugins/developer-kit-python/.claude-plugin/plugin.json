@@ -1,6 +1,6 @@
 {
   "name": "developer-kit-python",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Python development capabilities",
   "author": {
     "name": "Giuseppe Trisciuoglio",
@@ -27,5 +27,11 @@
   "skills": [
     "./skills/clean-architecture",
     "./skills/aws-lambda-python-integration"
+  ],
+  "rules": [
+    "./rules/naming-conventions.md",
+    "./rules/project-structure.md",
+    "./rules/language-best-practices.md",
+    "./rules/error-handling.md"
   ]
 }

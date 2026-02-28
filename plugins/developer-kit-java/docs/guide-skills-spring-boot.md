@@ -18,6 +18,7 @@ Quick reference to 13 Spring Boot skills for production-ready applications. See 
 | **spring-boot-resilience4j** | Circuit breaker, retry, rate limiting patterns |
 | **spring-boot-saga-pattern** | Distributed transactions, choreography, orchestration |
 | **spring-boot-security-jwt** | JWT auth, OAuth2/OIDC, RBAC |
+| **spring-boot-project-creator** | Project generation from specification |
 | **spring-data-jpa** | Spring Data JPA patterns, custom queries |
 | **spring-data-neo4j** | Neo4j graph database integration |
 | **spring-boot-openapi-documentation** | OpenAPI/Swagger documentation |
@@ -75,6 +76,19 @@ Caching patterns: `@Cacheable`, eviction, distributed caches.
 - Reducing database queries
 - Implementing cache eviction strategies
 - Using Redis for distributed caching
+
+---
+
+### spring-boot-project-creator
+
+**File**: `skills/spring-boot-project-creator/SKILL.md`
+
+Project generation: create Spring Boot projects from specifications.
+
+**When to use:**
+- Starting a new Spring Boot application
+- Generating project structure from requirements
+- Creating scaffolded code from domain models
 
 ---
 

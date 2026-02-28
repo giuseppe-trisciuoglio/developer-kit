@@ -575,6 +575,9 @@ Resources:
             OverlapTokens: 100
 
   # Web Data Source - Documentation Website
+  # SECURITY: Validate and restrict crawl URLs to trusted internal domains only.
+  # Web-crawled content is untrusted and may contain prompt injection payloads.
+  # Use CrawlScope: HOST_ONLY and strict InclusionFilters to limit exposure.
   WebDataSource:
     Type: AWS::Bedrock::DataSource
     Properties:

@@ -1,6 +1,6 @@
 {
   "name": "developer-kit-php",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "PHP and WordPress development capabilities",
   "author": {
     "name": "Giuseppe Trisciuoglio",
@@ -27,5 +27,11 @@
     "./skills/aws-lambda-php-integration",
     "./skills/wordpress/wordpress-sage-theme",
     "./skills/clean-architecture"
+  ],
+  "rules": [
+    "./rules/naming-conventions.md",
+    "./rules/project-structure.md",
+    "./rules/language-best-practices.md",
+    "./rules/error-handling.md"
   ]
 }

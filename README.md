@@ -1,6 +1,13 @@
 # Developer Kit for Claude Code
 
+[![Security Scan](https://github.com/giuseppe-trisciuoglio/developer-kit/actions/workflows/security-scan.yml/badge.svg)](https://github.com/giuseppe-trisciuoglio/developer-kit/actions/workflows/security-scan.yml)
+[![Plugin Validation](https://github.com/giuseppe-trisciuoglio/developer-kit/actions/workflows/plugin-validation.yml/badge.svg)](https://github.com/giuseppe-trisciuoglio/developer-kit/actions/workflows/plugin-validation.yml)
+
 > A modular plugin system of reusable skills, agents, and commands for automating development tasks in Claude Code
+
+**Listed on:**
+- [context7](https://context7.com/giuseppe-trisciuoglio/developer-kit?tab=skills) — Skills marketplace
+- [skills.sh](https://skills.sh/giuseppe-trisciuoglio/developer-kit) — AI skills directory
 
 **Developer Kit for Claude Code** teaches Claude how to **perform development tasks in a repeatable way** across
 multiple languages and frameworks. Built as a modular marketplace, you can install only the plugins you need.
@@ -21,12 +28,12 @@ multiple languages and frameworks. Built as a modular marketplace, you can insta
 
 ## Architecture
 
-Developer Kit is organized as a **modular marketplace** with 10 independent plugins (**95 skills, 43 agents, 36 commands**):
+Developer Kit is organized as a **modular marketplace** with 10 independent plugins:
 
 ```
 plugins/
 ├── developer-kit-core/            # Core agents/commands/skills (required)
-├── developer-kit-java/            # Java/Spring Boot/LangChain4J/AWS SDK/Lambda
+├── developer-kit-java/            # Java/Spring Boot/LangChain4J/AWS SDK/GraalVM Native Image
 ├── developer-kit-typescript/      # NestJS/React/React Native/Next.js/Drizzle/Monorepo
 ├── developer-kit-python/          # Python development/AWS Lambda
 ├── developer-kit-php/             # PHP/WordPress/AWS Lambda
@@ -36,6 +43,8 @@ plugins/
 ├── developer-kit-project-management/  # LRA workflow/Meetings
 └── github-spec-kit/               # GitHub specification integration
 ```
+
+Language plugins (Java, TypeScript, Python, PHP) include **coding rules** (`rules/` directory) that auto-activate via `globs:` path-scoped matching to enforce naming conventions, project structure, language best practices, and error handling patterns.
 
 ---
 
@@ -165,7 +174,7 @@ Core agents, commands, and skills used by all other plugins.
 | `general-debugger`           | Root cause analysis and debugging      |
 | `document-generator-expert`  | Professional document generation       |
 
-**Skills**: `claude-md-management`, `drawio-logical-diagrams`
+**Skills**: `claude-md-management`, `drawio-logical-diagrams`, `github-issue-workflow`
 
 **Commands**: `/devkit.brainstorm`, `/devkit.refactor`, `/devkit.feature-development`, `/devkit.fix-debugging`,
 `/devkit.generate-document`, `/devkit.generate-changelog`, `/devkit.github.create-pr`, `/devkit.github.review-pr`,
@@ -175,7 +184,7 @@ Core agents, commands, and skills used by all other plugins.
 
 ### developer-kit-java
 
-Comprehensive Java development toolkit with Spring Boot, testing, LangChain4J, and AWS SDK integration.
+Comprehensive Java development toolkit with Spring Boot, testing, LangChain4J, AWS SDK, and GraalVM Native Image.
 
 **Agents**: `spring-boot-backend-development-expert`, `spring-boot-code-review-expert`,
 `spring-boot-unit-testing-expert`, `java-refactor-expert`, `java-security-expert`, `java-software-architect-review`,
@@ -189,7 +198,7 @@ Comprehensive Java development toolkit with Spring Boot, testing, LangChain4J, a
 **Skills**:
 
 - **Spring Boot**: actuator, cache, crud-patterns, dependency-injection, event-driven-patterns, openapi-documentation,
-  rest-api-standards, saga-pattern, security-jwt, test-patterns, resilience4j
+  rest-api-standards, saga-pattern, security-jwt, test-patterns, resilience4j, project-creator
 - **Spring Data**: jpa, neo4j
 - **Spring AI**: mcp-server-patterns
 - **JUnit Testing**: application-events, bean-validation, boundary-conditions, caching, config-properties,
@@ -199,6 +208,9 @@ Comprehensive Java development toolkit with Spring Boot, testing, LangChain4J, a
   testing-strategies, tool-function-calling-patterns, vector-stores-configuration, qdrant
 - **AWS SDK**: rds-spring-boot-integration, bedrock, core, dynamodb, kms, lambda, messaging, rds, s3, secrets-manager
 - **Clean Architecture**: clean-architecture
+- **GraalVM**: graalvm-native-image
+
+**Rules**: `naming-conventions`, `project-structure`, `language-best-practices`, `error-handling`
 
 ---
 
@@ -214,14 +226,19 @@ TypeScript/JavaScript full-stack development with NestJS, React, React Native, N
 **Commands**: `/devkit.typescript.code-review`, `/devkit.react.code-review`, `/devkit.ts.security-review`
 
 **Skills**:
-- **Backend**: `nestjs`, `clean-architecture`, `nestjs-drizzle-crud-generator`
+- **Backend**: `nestjs`, `nestjs-best-practices`, `clean-architecture`, `nestjs-drizzle-crud-generator`
 - **Authentication**: `better-auth`
-- **Frontend**: `react-patterns`, `shadcn-ui`, `tailwind-css-patterns`
+- **Frontend**: `react-patterns`, `shadcn-ui`, `tailwind-css-patterns`, `tailwind-design-system`
 - **Next.js**: `nextjs-app-router`, `nextjs-authentication`, `nextjs-data-fetching`, `nextjs-performance`, `nextjs-deployment`
 - **Database & ORM**: `drizzle-orm-patterns`
 - **Monorepo**: `nx-monorepo`, `turborepo-monorepo`
 - **AWS Lambda**: `aws-lambda-typescript-integration`
 - **Core**: `typescript-docs`
+
+**Rules**: `naming-conventions`, `project-structure`, `language-best-practices`, `error-handling`,
+`nestjs-architecture`, `nestjs-api-design`, `nestjs-security`, `nestjs-testing`,
+`react-component-conventions`, `react-data-fetching`, `react-routing-conventions`, `tailwind-styling-conventions`,
+`drizzle-orm-conventions`, `shared-dto-conventions`, `nx-monorepo-conventions`, `i18n-conventions`
 
 ---
 
@@ -234,6 +251,8 @@ Python development capabilities for Django, Flask, and FastAPI projects.
 
 **Skills**: `clean-architecture`, `aws-lambda-python-integration`
 
+**Rules**: `naming-conventions`, `project-structure`, `language-best-practices`, `error-handling`
+
 ---
 
 ### developer-kit-php
@@ -244,6 +263,8 @@ PHP and WordPress development capabilities.
 `wordpress-development-expert`
 
 **Skills**: `wordpress-sage-theme` (Sage theme development), `clean-architecture`, `aws-lambda-php-integration`
+
+**Rules**: `naming-conventions`, `project-structure`, `language-best-practices`, `error-handling`
 
 ---
 
@@ -308,14 +329,15 @@ GitHub specification integration and verification.
 
 ## Language Support
 
-| Language           | Plugin                     | Components               |
-|--------------------|----------------------------|--------------------------|
-| Java/Spring Boot   | `developer-kit-java`       | 49 Skills, 9 Agents, 11 Commands |
-| TypeScript/Node.js | `developer-kit-typescript` | 17 Skills, 13 Agents, 3 Commands |
-| Python             | `developer-kit-python`     | 2 Skills, 4 Agents      |
-| PHP/WordPress      | `developer-kit-php`        | 3 Skills, 5 Agents      |
-| AWS CloudFormation | `developer-kit-aws`        | 16 Skills, 3 Agents     |
-| AI/ML              | `developer-kit-ai`         | 3 Skills, 1 Agent, 1 Command |
+| Language           | Plugin                     | Components                                 |
+|--------------------|----------------------------|--------------------------------------------|
+| Core               | `developer-kit-core`       | 3 Skills, 6 Agents, 9 Commands             |
+| Java/Spring Boot   | `developer-kit-java`       | 51 Skills, 9 Agents, 11 Commands, 4 Rules  |
+| TypeScript/Node.js | `developer-kit-typescript` | 22 Skills, 13 Agents, 3 Commands, 16 Rules |
+| Python             | `developer-kit-python`     | 2 Skills, 4 Agents, 4 Rules                |
+| PHP/WordPress      | `developer-kit-php`        | 3 Skills, 5 Agents, 4 Rules                |
+| AWS CloudFormation | `developer-kit-aws`        | 16 Skills, 3 Agents                        |
+| AI/ML              | `developer-kit-ai`         | 3 Skills, 1 Agent, 1 Command               |
 
 ---
 
