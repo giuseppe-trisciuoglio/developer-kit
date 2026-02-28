@@ -9,14 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **New NestJS Best Practices skill** (`developer-kit-typescript`):
-  - `nestjs-best-practices`: Comprehensive guide for building scalable NestJS applications
-  - Modular architecture with `@Module()` encapsulation and circular dependency prevention
-  - Dependency injection scoping (DEFAULT, REQUEST, TRANSIENT) with best practices
-  - Error handling with custom exception filters and domain-specific exceptions
-  - DTO validation with `class-validator` and global `ValidationPipe`
-  - Drizzle ORM integration patterns (provider, repository, schema, transactions)
-  - Architecture deep-dive reference and component templates (module, service, controller)
+- **New TypeScript Code Review Skills** (`developer-kit-typescript`):
+  - `nestjs-code-review`: NestJS code review with controller, service, module, guard, and DI pattern analysis
+  - `nextjs-code-review`: Next.js App Router review covering Server/Client Components, Server Actions, caching, and performance
+  - `react-code-review`: React 19 component review with hooks, accessibility, state management, and TypeScript integration
+  - `typescript-security-review`: Security audit for TypeScript/Node.js covering OWASP Top 10, XSS, injection, JWT, and dependency scanning
+  - Each skill includes reference documentation (patterns, anti-patterns, checklists)
 
 - **New Spring Boot Project Creator skill** (`developer-kit-java`):
   - `spring-boot-project-creator`: Automated Spring Boot project generation with customizable dependencies
