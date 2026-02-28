@@ -13,12 +13,14 @@ from .config import (
     SKILL_PATTERN,
     AGENT_PATTERN,
     COMMAND_PATTERN,
+    RULE_PATTERN,
     MARKDOWN_FILE_PATTERN,
     SKILL_PACKAGE_PATTERN,
     PLUGIN_PATTERN,
     SKILL_SCHEMA,
     AGENT_SCHEMA,
     COMMAND_SCHEMA,
+    RULE_SCHEMA,
     SKILL_PROHIBITED_FILES,
     SKILL_ALLOWED_SUBDIRS,
     SKILL_REQUIRED_SECTIONS,
@@ -29,6 +31,8 @@ from .config import (
     COMMAND_SECTION_PATTERNS,
     AGENT_REQUIRED_SECTIONS,
     AGENT_RECOMMENDED_SECTIONS,
+    RULE_REQUIRED_SECTIONS,
+    RULE_RECOMMENDED_SECTIONS,
     VALID_TOOLS,
     VALID_MODELS,
     AGENT_VALID_MODELS,
@@ -41,6 +45,7 @@ from .config import (
     MAX_COMPATIBILITY_LENGTH,
     MAX_SKILL_LINES,
     MAX_SKILL_CHARACTERS,
+    MAX_RULE_LINES,
     WHAT_KEYWORDS,
     WHEN_KEYWORDS,
 )
@@ -1144,6 +1149,131 @@ class CommandValidator(BaseValidator):
             )
 
 
+class RuleValidator(BaseValidator):
+    """Validator for Claude Code Rules (.claude/rules/ format)."""
+
+    @property
+    def component_type(self) -> str:
+        return "rule"
+
+    @property
+    def file_pattern(self) -> re.Pattern:
+        return RULE_PATTERN
+
+    @property
+    def schema(self) -> Dict[str, Set[str]]:
+        return RULE_SCHEMA
+
+    def _validate_fields(
+        self,
+        frontmatter: Dict[str, Any],
+        result: ValidationResult
+    ) -> None:
+        """Override: rules have no name/description fields."""
+        pass
+
+    def _validate_specific(
+        self,
+        file_path: Path,
+        frontmatter: Dict[str, Any],
+        content: str,
+        result: ValidationResult
+    ) -> None:
+        """Rule-specific validation."""
+        # Validate globs field format
+        if "globs" in frontmatter:
+            self._validate_globs(frontmatter["globs"], result)
+
+        # Validate file naming (kebab-case)
+        self._validate_rule_filename(file_path, result)
+
+        # Validate markdown sections
+        self._validate_rule_sections(content, result)
+
+        # Validate file size
+        self._validate_rule_size(content, result)
+
+    def _validate_globs(self, globs: Any, result: ValidationResult) -> None:
+        """Validate the globs field."""
+        if isinstance(globs, str):
+            if not globs.strip():
+                result.add_error(
+                    message="Empty globs value",
+                    field_name="globs",
+                    suggestion="Provide a glob pattern (e.g., '**/*.java')"
+                )
+            elif not any(c in globs for c in ('*', '?', '{', '[')):
+                result.add_warning(
+                    message=f"Globs value '{globs}' contains no wildcard characters",
+                    field_name="globs",
+                    suggestion="Use glob patterns with wildcards (e.g., '**/*.java')"
+                )
+        elif isinstance(globs, list):
+            result.add_error(
+                message="Globs must be a string, not a list",
+                field_name="globs",
+                suggestion="Use a single string value (e.g., globs: \"**/*.java\"). "
+                           "YAML arrays may cause loading issues with Claude Code rules."
+            )
+        else:
+            result.add_error(
+                message=f"Globs must be a string, got {type(globs).__name__}",
+                field_name="globs",
+                suggestion="Use a string value (e.g., globs: \"**/*.java\")"
+            )
+
+    def _validate_rule_filename(self, file_path: Path, result: ValidationResult) -> None:
+        """Validate rule file uses kebab-case naming."""
+        stem = file_path.stem
+        if not KEBAB_CASE_PATTERN.match(stem):
+            result.add_error(
+                message=f"Rule filename must be kebab-case: '{file_path.name}'",
+                field_name=None,
+                suggestion="Rename to kebab-case (e.g., 'naming-conventions.md')"
+            )
+
+    def _validate_rule_sections(self, content: str, result: ValidationResult) -> None:
+        """Validate required and recommended markdown sections."""
+        match = re.search(r"\n---\s*\n", content)
+        if not match:
+            return
+
+        body = content[match.end():]
+
+        # Check required sections
+        for section_key, pattern in RULE_REQUIRED_SECTIONS.items():
+            if not re.search(pattern, body, re.IGNORECASE | re.MULTILINE):
+                section_name = section_key.replace("_", " ").title()
+                result.add_error(
+                    message=f"Missing required section: '## {section_name}'",
+                    suggestion=f"Add '## {section_name}' section to rule file"
+                )
+
+        # Check recommended sections
+        for section_key in RULE_RECOMMENDED_SECTIONS:
+            if section_key == "context":
+                pattern = r"^#{1,3}\s+Context"
+            elif section_key == "examples":
+                pattern = r"^#{1,3}\s+Examples"
+            else:
+                pattern = rf"^#{{1,3}}\s+{section_key.replace('_', ' ').title()}"
+            if not re.search(pattern, body, re.IGNORECASE | re.MULTILINE):
+                section_name = section_key.replace("_", " ").title()
+                result.add_warning(
+                    message=f"Missing recommended section: '## {section_name}'",
+                    suggestion=f"Consider adding '## {section_name}' section"
+                )
+
+    def _validate_rule_size(self, content: str, result: ValidationResult) -> None:
+        """Validate rule file size."""
+        line_count = content.count('\n') + 1
+        if line_count > MAX_RULE_LINES:
+            result.add_warning(
+                message=f"Rule file is too long: {line_count} lines (max {MAX_RULE_LINES})",
+                suggestion="Keep rule files concise and focused"
+            )
+
+
 class KebabCaseValidator(BaseValidator):
     """Validator for kebab-case naming convention in markdown files.
 
@@ -1416,6 +1546,9 @@ class PluginJsonValidator:
         self._validate_components(
             plugin_data, plugin_dir, "commands", result
         )
+        self._validate_components(
+            plugin_data, plugin_dir, "rules", result
+        )
 
         # Check for unregistered components
         self._check_unregistered_components(
@@ -1426,6 +1559,9 @@ class PluginJsonValidator:
         )
         self._check_unregistered_components(
             plugin_data, plugin_dir, "commands", result
+        )
+        self._check_unregistered_components(
+            plugin_data, plugin_dir, "rules", result
         )
 
         return result
@@ -1513,6 +1649,7 @@ class ValidatorFactory:
         SkillValidator(),
         AgentValidator(),
         CommandValidator(),
+        RuleValidator(),
         KebabCaseValidator(),
         SkillPackageValidator(),
         PluginVersionValidator(),
