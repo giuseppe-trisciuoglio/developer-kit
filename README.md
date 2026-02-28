@@ -1,6 +1,13 @@
 # Developer Kit for Claude Code
 
+[![Security Scan](https://github.com/giuseppe-trisciuoglio/developer-kit/actions/workflows/security-scan.yml/badge.svg)](https://github.com/giuseppe-trisciuoglio/developer-kit/actions/workflows/security-scan.yml)
+[![Plugin Validation](https://github.com/giuseppe-trisciuoglio/developer-kit/actions/workflows/plugin-validation.yml/badge.svg)](https://github.com/giuseppe-trisciuoglio/developer-kit/actions/workflows/plugin-validation.yml)
+
 > A modular plugin system of reusable skills, agents, and commands for automating development tasks in Claude Code
+
+**Listed on:**
+- [context7](https://context7.com/giuseppe-trisciuoglio/developer-kit?tab=skills) — Skills marketplace
+- [skills.sh](https://skills.sh/giuseppe-trisciuoglio/developer-kit) — AI skills directory
 
 **Developer Kit for Claude Code** teaches Claude how to **perform development tasks in a repeatable way** across
 multiple languages and frameworks. Built as a modular marketplace, you can install only the plugins you need.
