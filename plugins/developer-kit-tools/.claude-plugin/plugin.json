@@ -12,6 +12,7 @@
   "keywords": [
     "tools",
     "cli",
+    "gemini",
     "notebooklm",
     "integrations",
     "external-services"
@@ -19,6 +20,7 @@
   "agents": [],
   "commands": [],
   "skills": [
+    "./skills/gemini",
     "./skills/notebooklm"
   ]
 }

@@ -314,7 +314,7 @@ Project management and workflow commands.
 
 Additional development tools and integrations.
 
-**Skills**: `notebooklm` (Google NotebookLM integration)
+**Skills**: `notebooklm` (Google NotebookLM integration), `gemini` (Gemini CLI delegation for large-context tasks)
 
 ---
 
