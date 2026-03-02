@@ -42,6 +42,10 @@ gemini --version
 
 If unavailable, inform the user and stop execution until Gemini CLI is installed.
 
+## Reference
+
+- Command reference: `references/cli-command-reference.md`
+
 ## Mandatory Rules
 
 1. Only delegate when the user explicitly requests Gemini.
