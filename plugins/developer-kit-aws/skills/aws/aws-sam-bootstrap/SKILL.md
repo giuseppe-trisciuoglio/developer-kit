@@ -39,12 +39,12 @@ Identify one path before writing files:
 Select runtime and package mode first, then keep all generated files consistent.
 
 Supported runtime families:
-- Python: `python3.8` to `python3.12`
-- Node.js: `nodejs18.x`, `nodejs20.x`
-- Java: `java8.al2`, `java11`, `java17`, `java21`
-- Go: `provided.al2` or Go SAM templates
-- .NET: `dotnet6`, `dotnet8`
-- Ruby: `ruby3.2`
+- Python: `python3.10` to `python3.14` (avoid 3.8/3.9, deprecated)
+- Node.js: `nodejs20.x`, `nodejs22.x`, `nodejs24.x` (avoid 18.x, deprecated)
+- Java: `java8.al2`, `java11`, `java17`, `java21`, `java25`
+- Go: `provided.al2`, `provided.al2023`
+- .NET: `dotnet8`, `dotnet9`, `dotnet10` (avoid dotnet6, deprecated)
+- Ruby: `ruby3.2`, `ruby3.3`, `ruby3.4`
 
 Package type:
 - **Zip**: default for most functions
