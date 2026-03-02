@@ -28,7 +28,7 @@ multiple languages and frameworks. Built as a modular marketplace, you can insta
 
 ## Architecture
 
-Developer Kit is organized as a **modular marketplace** with 10 independent plugins:
+Developer Kit is organized as a **modular marketplace** with 11 independent plugins:
 
 ```
 plugins/
@@ -41,6 +41,7 @@ plugins/
 ├── developer-kit-ai/              # Prompt Engineering/RAG/Chunking
 ├── developer-kit-devops/          # Docker/GitHub Actions
 ├── developer-kit-project-management/  # LRA workflow/Meetings
+├── developer-kit-tools/           # Additional development tools
 └── github-spec-kit/               # GitHub specification integration
 ```
 
@@ -277,7 +278,7 @@ AWS infrastructure and CloudFormation expertise for Infrastructure as Code.
 **Skills**:
 - **CloudFormation** (15): `vpc`, `ec2`, `lambda`, `iam`, `s3`, `rds`, `dynamodb`, `ecs`, `auto-scaling`, `cloudwatch`,
   `cloudfront`, `security`, `elasticache`, `bedrock`, `task-ecs-deploy-gh`
-- **General AWS** (1): `aws-drawio-architecture-diagrams`
+- **General AWS** (3): `aws-drawio-architecture-diagrams`, `aws-cli-beast`, `aws-cost-optimization`
 
 ---
 
@@ -309,6 +310,14 @@ Project management and workflow commands.
 
 ---
 
+### developer-kit-tools
+
+Additional development tools and integrations.
+
+**Skills**: `notebooklm` (Google NotebookLM integration)
+
+---
+
 ### github-spec-kit
 
 GitHub specification integration and verification.
@@ -329,15 +338,15 @@ GitHub specification integration and verification.
 
 ## Language Support
 
-| Language           | Plugin                     | Components                                 |
-|--------------------|----------------------------|--------------------------------------------|
-| Core               | `developer-kit-core`       | 3 Skills, 6 Agents, 9 Commands             |
+| Language           | Plugin                     | Components                                  |
+|--------------------|----------------------------|---------------------------------------------|
+| Core               | `developer-kit-core`       | 3 Skills, 6 Agents, 11 Commands             |
 | Java/Spring Boot   | `developer-kit-java`       | 51 Skills, 9 Agents, 11 Commands, 4 Rules  |
-| TypeScript/Node.js | `developer-kit-typescript` | 22 Skills, 13 Agents, 3 Commands, 16 Rules |
-| Python             | `developer-kit-python`     | 2 Skills, 4 Agents, 4 Rules                |
-| PHP/WordPress      | `developer-kit-php`        | 3 Skills, 5 Agents, 4 Rules                |
-| AWS CloudFormation | `developer-kit-aws`        | 16 Skills, 3 Agents                        |
-| AI/ML              | `developer-kit-ai`         | 3 Skills, 1 Agent, 1 Command               |
+| TypeScript/Node.js | `developer-kit-typescript` | 23 Skills, 13 Agents, 3 Commands, 17 Rules |
+| Python             | `developer-kit-python`     | 2 Skills, 4 Agents, 4 Rules                 |
+| PHP/WordPress      | `developer-kit-php`        | 3 Skills, 5 Agents, 4 Rules                 |
+| AWS CloudFormation | `developer-kit-aws`        | 18 Skills, 3 Agents                         |
+| AI/ML              | `developer-kit-ai`         | 3 Skills, 1 Agent, 1 Command                |
 
 ---
 
