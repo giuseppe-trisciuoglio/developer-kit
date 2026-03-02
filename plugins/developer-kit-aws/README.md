@@ -23,6 +23,7 @@ The `developer-kit-aws` plugin provides expertise in AWS infrastructure design, 
 
 **General AWS skills**:
 - `aws-cli-beast` - AWS CLI Beast Mode for advanced cloud operations
+- `aws-sam-bootstrap` - AWS SAM bootstrap for new and existing serverless projects
 - AWS Architecture Diagrams (draw.io format)
 - AWS Cost Optimization strategies
 
