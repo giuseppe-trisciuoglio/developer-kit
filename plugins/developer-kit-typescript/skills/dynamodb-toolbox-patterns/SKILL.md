@@ -174,3 +174,9 @@ await AppTable.build(TransactWriteCommand)
 - Use conditional writes for concurrency-sensitive updates.
 - Transactions are limited and slower than single-item writes; use only for true atomic requirements.
 - Validate key design against target throughput before implementation.
+
+## References
+
+Primary references curated from Context7 are available in:
+
+- `references/context7-dynamodb-toolbox-v2.md`
