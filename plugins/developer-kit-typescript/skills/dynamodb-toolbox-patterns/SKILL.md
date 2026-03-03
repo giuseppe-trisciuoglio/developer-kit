@@ -1,6 +1,6 @@
 ---
 name: dynamodb-toolbox-patterns
-description: Provides TypeScript patterns for DynamoDB-Toolbox v2 including schema/table/entity modeling, .build() command workflow, query/scan access patterns, batch and transaction operations, and single-table design with computed keys.
+description: Provides TypeScript patterns for DynamoDB-Toolbox v2 including schema/table/entity modeling, .build() command workflow, query/scan access patterns, batch and transaction operations, and single-table design with computed keys. Use when implementing type-safe DynamoDB access layers with DynamoDB-Toolbox v2 in TypeScript services or serverless applications.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
@@ -166,6 +166,15 @@ await AppTable.build(TransactWriteCommand)
 - Encode access paths into GSI keys, not in-memory filters.
 - Prefer append-only timelines for audit/history data.
 - Keep hot partitions under control with scoped partitions and sharding where needed.
+
+## Best Practices
+
+- Design keys from access patterns first, then derive entity attributes.
+- Keep one source of truth for key composition (`computeKey`) to avoid drift.
+- Use `.options({ consistent: true })` only where strict read-after-write is required.
+- Prefer targeted queries over scans for runtime request paths.
+- Add conditional expressions for idempotency and optimistic concurrency control.
+- Validate batch/transaction size limits before execution to avoid partial failures.
 
 ## Constraints and Warnings
 
