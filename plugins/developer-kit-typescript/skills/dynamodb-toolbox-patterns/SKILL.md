@@ -179,4 +179,4 @@ await AppTable.build(TransactWriteCommand)
 
 Primary references curated from Context7 are available in:
 
-- `references/context7-dynamodb-toolbox-v2.md`
+- `references/api-dynamodb-toolbox-v2.md`
