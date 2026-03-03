@@ -314,7 +314,9 @@ Project management and workflow commands.
 
 Additional development tools and integrations.
 
-**Skills**: `notebooklm` (Google NotebookLM integration)
+**Skills**:
+- `notebooklm` (Google NotebookLM integration)
+- `copilot-cli` (GitHub Copilot CLI delegation with multi-model support)
 
 ---
 
