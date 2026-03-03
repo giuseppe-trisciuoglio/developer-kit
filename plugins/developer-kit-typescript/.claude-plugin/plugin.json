@@ -73,6 +73,7 @@
     "./skills/nextjs-code-review",
     "./skills/react-code-review",
     "./skills/typescript-security-review",
-    "./skills/nestjs-best-practices"
+    "./skills/nestjs-best-practices",
+    "./skills/zod-validation-utilities"
   ]
 }

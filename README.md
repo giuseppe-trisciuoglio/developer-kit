@@ -234,7 +234,7 @@ TypeScript/JavaScript full-stack development with NestJS, React, React Native, N
 - **Database & ORM**: `drizzle-orm-patterns`
 - **Monorepo**: `nx-monorepo`, `turborepo-monorepo`
 - **AWS Lambda**: `aws-lambda-typescript-integration`
-- **Core**: `typescript-docs`
+- **Core**: `typescript-docs`, `zod-validation-utilities`
 
 **Rules**: `naming-conventions`, `project-structure`, `language-best-practices`, `error-handling`,
 `nestjs-architecture`, `nestjs-api-design`, `nestjs-security`, `nestjs-testing`,
@@ -342,7 +342,7 @@ GitHub specification integration and verification.
 |--------------------|----------------------------|---------------------------------------------|
 | Core               | `developer-kit-core`       | 3 Skills, 6 Agents, 11 Commands             |
 | Java/Spring Boot   | `developer-kit-java`       | 51 Skills, 9 Agents, 11 Commands, 4 Rules  |
-| TypeScript/Node.js | `developer-kit-typescript` | 23 Skills, 13 Agents, 3 Commands, 17 Rules |
+| TypeScript/Node.js | `developer-kit-typescript` | 24 Skills, 13 Agents, 3 Commands, 17 Rules |
 | Python             | `developer-kit-python`     | 2 Skills, 4 Agents, 4 Rules                 |
 | PHP/WordPress      | `developer-kit-php`        | 3 Skills, 5 Agents, 4 Rules                 |
 | AWS CloudFormation | `developer-kit-aws`        | 18 Skills, 3 Agents                         |
