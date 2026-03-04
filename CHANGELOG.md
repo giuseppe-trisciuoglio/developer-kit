@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **New Universal Documentation Auto-Updater skill** (`developer-kit-core`):
+  - `universal-doc-updater`: Automatically updates project documentation by analyzing git changes between current branch and last release tag
+  - Performs git diff analysis to identify modifications, then updates README.md, CHANGELOG.md (Keep a Changelog standard), and discovers documentation folders
+  - Language-agnostic tool for maintaining documentation sync with codebase
+
 - **New AWS SAM Bootstrap skill** (`developer-kit-aws`):
   - `aws-sam-bootstrap`: AWS Serverless Application Model (SAM) bootstrap patterns for new and existing projects
   - Supports Python 3.10-3.14, Node.js 20/22/24, Java 25, and .NET 8-10 runtimes
