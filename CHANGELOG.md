@@ -30,6 +30,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `gemini`: Delegates tasks to Gemini CLI for large-context analysis workflows with non-interactive mode execution
   - Includes English prompt formulation, execution flags (`-m`, `--approval-mode`, `-r`, `--output-format`), and safe result handling
 
+- **New Copilot CLI delegation skill** (`developer-kit-tools`):
+  - `copilot-cli`: Delegates tasks to GitHub Copilot CLI with non-interactive mode and multi-model support
+  - Supports model selection (Claude, GPT-5.x, Gemini), permission controls (`--allow-tool`, `--allow-all-tools`, `--yolo`), output capture with `--silent`, session export with `--share`, and session resume with `--resume`
+
 - **New Rules management** (`developer-kit-core`):
   - Makefile targets for listing and installing plugin rules (`make list-rules`, `make install-rules`)
   - New `scripts/install-rules.sh` script for automated rule installation
