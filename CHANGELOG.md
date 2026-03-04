@@ -9,8 +9,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **New TypeScript Skill** (`developer-kit-typescript`):
+- **New AWS SAM Bootstrap skill** (`developer-kit-aws`):
+  - `aws-sam-bootstrap`: AWS Serverless Application Model (SAM) bootstrap patterns for new and existing projects
+  - Supports Python 3.10-3.14, Node.js 20/22/24, Java 25, and .NET 8-10 runtimes
+  - Includes `sam init`, migration checklist, template examples, and `samconfig.toml` configuration guidance
+
+- **New DynamoDB-Toolbox v2 skill** (`developer-kit-typescript`):
+  - `dynamodb-toolbox-patterns`: TypeScript patterns for DynamoDB-Toolbox v2 including schema/table/entity modeling
+  - Covers `.build()` command workflow, query/scan access patterns, batch and transaction operations, and single-table design with computed keys
+
+- **New Zod validation utilities skill** (`developer-kit-typescript`):
   - `zod-validation-utilities`: Modern Zod v4 validation utilities and schema patterns including coercion, transforms, complex schema composition, `refine`/`superRefine`, and React Hook Form `zodResolver` integration
+
+- **New Gemini CLI delegation skill** (`developer-kit-tools`):
+  - `gemini`: Delegates tasks to Gemini CLI for large-context analysis workflows with non-interactive mode execution
+  - Includes English prompt formulation, execution flags (`-m`, `--approval-mode`, `-r`, `--output-format`), and safe result handling
+
+- **New Rules management** (`developer-kit-core`):
+  - Makefile targets for listing and installing plugin rules (`make list-rules`, `make install-rules`)
+  - New `scripts/install-rules.sh` script for automated rule installation
+
+### Changed
+
+- **Core Commands Enhancement**: Enforced mandatory `[GATE]` stop points and `AskUserQuestion` usage in devkit commands (`brainstorm`, `feature-development`, `fix-debugging`, `refactor`, `generate-document`)
 
 ## [2.4.1] - 2026-03-01
 

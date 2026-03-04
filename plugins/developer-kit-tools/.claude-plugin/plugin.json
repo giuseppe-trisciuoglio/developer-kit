@@ -13,6 +13,7 @@
     "tools",
     "cli",
     "gemini",
+    "copilot",
     "notebooklm",
     "integrations",
     "external-services"
@@ -21,6 +22,7 @@
   "commands": [],
   "skills": [
     "./skills/gemini",
-    "./skills/notebooklm"
+    "./skills/notebooklm",
+    "./skills/copilot-cli"
   ]
 }
