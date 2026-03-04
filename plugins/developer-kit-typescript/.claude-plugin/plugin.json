@@ -1,6 +1,6 @@
 {
   "name": "developer-kit-typescript",
-  "version": "2.4.1",
+  "version": "2.5.0",
   "description": "TypeScript/JavaScript full-stack development with NestJS, React, and React Native",
   "author": {
     "name": "Giuseppe Trisciuoglio",
@@ -66,6 +66,7 @@
     "./skills/nextjs-performance",
     "./skills/nextjs-deployment",
     "./skills/drizzle-orm-patterns",
+    "./skills/dynamodb-toolbox-patterns",
     "./skills/nx-monorepo",
     "./skills/turborepo-monorepo",
     "./skills/aws-lambda-typescript-integration",
@@ -73,6 +74,7 @@
     "./skills/nextjs-code-review",
     "./skills/react-code-review",
     "./skills/typescript-security-review",
-    "./skills/nestjs-best-practices"
+    "./skills/nestjs-best-practices",
+    "./skills/zod-validation-utilities"
   ]
 }

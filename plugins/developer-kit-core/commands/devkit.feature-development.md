@@ -62,12 +62,13 @@ Parse $ARGUMENTS to detect the optional `--lang` parameter:
 
 ## Core Principles
 
-- **Ask clarifying questions**: Identify all ambiguities, edge cases, and underspecified behaviors. Ask specific,
-  concrete questions rather than making assumptions. Wait for user answers before proceeding with implementation. Ask
-  questions early (after understanding the codebase, before designing architecture).
-- **Structured user interaction**: Use the AskUserQuestion tool in all phases where you need to ask structured questions
-  to the user (Phase 3: Clarifying Questions, Phase 4: Architecture Design, and whenever multiple choice questions are
-  presented).
+- **Ask clarifying questions — NEVER SKIP**: Phases marked with **[GATE]** MANDATORY STOP POINT are hard gates. You MUST call
+  the AskUserQuestion tool and wait for the user's response before proceeding. Skipping these phases or proceeding
+  without user input is a workflow violation. Identify all ambiguities, edge cases, and underspecified behaviors. Ask
+  specific, concrete questions rather than making assumptions.
+- **Structured user interaction**: You MUST use the AskUserQuestion tool in all phases where you need to ask structured
+  questions to the user (Phase 3: Clarifying Questions, Phase 4: Architecture Design, and whenever multiple choice
+  questions are presented).
 - **Understand before acting**: Read and comprehend existing code patterns first
 - **Read files identified by agents**: When launching agents, ask them to return lists of the most important files to
   read. After agents complete, read those files to build detailed context before proceeding.
@@ -129,17 +130,21 @@ Task(
 
 **Goal**: Fill in gaps and resolve all ambiguities before designing
 
-**CRITICAL**: This is one of the most important phases. DO NOT SKIP.
+****[GATE]** MANDATORY STOP POINT — DO NOT SKIP THIS PHASE UNDER ANY CIRCUMSTANCES.**
+
+This is the most important phase of the entire workflow. You MUST stop here and ask questions before proceeding.
+Proceeding to Phase 4 without completing this phase is a workflow violation.
 
 **Actions**:
 
 1. Review the codebase findings and original feature request
 2. Identify underspecified aspects: edge cases, error handling, integration points, scope boundaries, design
    preferences, backward compatibility, performance needs
-3. **Use the AskUserQuestion tool to present all questions to the user in a clear, organized format**
-4. **Wait for answers before proceeding to architecture design**
+3. **You MUST call the AskUserQuestion tool to present all questions to the user in a clear, organized format**
+4. ****[GATE]** STOP: Wait for the user's answers. Do NOT proceed to Phase 4 until the user has responded.**
 
-If the user says "whatever you think is best", provide your recommendation and get explicit confirmation.
+If the user says "whatever you think is best", provide your recommendation and get explicit confirmation before
+proceeding.
 
 ---
 
@@ -154,7 +159,8 @@ If the user says "whatever you think is best", provide your recommendation and g
 2. Review the pragmatic approach and form your recommendation based on task context (consider: small fix vs large
    feature, urgency, complexity, team context).
 3. Present to user: brief summary of the pragmatic approach, trade-offs, and concrete implementation differences.
-4. **Use the AskUserQuestion tool to ask user whether they approve the pragmatic approach or want an alternative**
+4. **You MUST call the AskUserQuestion tool to ask user whether they approve the pragmatic approach or want an alternative**
+5. ****[GATE]** STOP: Wait for the user's approval. Do NOT proceed to Phase 5 until the user has responded.**
 
 ---
 

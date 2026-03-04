@@ -175,7 +175,7 @@ Core agents, commands, and skills used by all other plugins.
 | `general-debugger`           | Root cause analysis and debugging      |
 | `document-generator-expert`  | Professional document generation       |
 
-**Skills**: `claude-md-management`, `drawio-logical-diagrams`, `github-issue-workflow`
+**Skills**: `claude-md-management`, `drawio-logical-diagrams`, `github-issue-workflow`, `docs-updater`
 
 **Commands**: `/devkit.brainstorm`, `/devkit.refactor`, `/devkit.feature-development`, `/devkit.fix-debugging`,
 `/devkit.generate-document`, `/devkit.generate-changelog`, `/devkit.github.create-pr`, `/devkit.github.review-pr`,
@@ -217,7 +217,7 @@ Comprehensive Java development toolkit with Spring Boot, testing, LangChain4J, A
 
 ### developer-kit-typescript
 
-TypeScript/JavaScript full-stack development with NestJS, React, React Native, Next.js, Drizzle ORM, and Monorepo tools.
+TypeScript/JavaScript full-stack development with NestJS, React, React Native, Next.js, Drizzle ORM, DynamoDB-Toolbox, Zod validation, and Monorepo tools.
 
 **Agents**: `nestjs-backend-development-expert`, `nestjs-code-review-expert`, `nestjs-database-expert`,
 `nestjs-security-expert`, `nestjs-testing-expert`, `nestjs-unit-testing-expert`, `react-frontend-development-expert`,
@@ -231,7 +231,7 @@ TypeScript/JavaScript full-stack development with NestJS, React, React Native, N
 - **Authentication**: `better-auth`
 - **Frontend**: `react-patterns`, `shadcn-ui`, `tailwind-css-patterns`, `tailwind-design-system`
 - **Next.js**: `nextjs-app-router`, `nextjs-authentication`, `nextjs-data-fetching`, `nextjs-performance`, `nextjs-deployment`
-- **Database & ORM**: `drizzle-orm-patterns`
+- **Database & ORM**: `drizzle-orm-patterns`, `dynamodb-toolbox-patterns`, `zod-validation-utilities`
 - **Monorepo**: `nx-monorepo`, `turborepo-monorepo`
 - **AWS Lambda**: `aws-lambda-typescript-integration`
 - **Core**: `typescript-docs`
@@ -278,7 +278,7 @@ AWS infrastructure and CloudFormation expertise for Infrastructure as Code.
 **Skills**:
 - **CloudFormation** (15): `vpc`, `ec2`, `lambda`, `iam`, `s3`, `rds`, `dynamodb`, `ecs`, `auto-scaling`, `cloudwatch`,
   `cloudfront`, `security`, `elasticache`, `bedrock`, `task-ecs-deploy-gh`
-- **General AWS** (3): `aws-drawio-architecture-diagrams`, `aws-cli-beast`, `aws-cost-optimization`
+- **General AWS** (4): `aws-sam-bootstrap`, `aws-drawio-architecture-diagrams`, `aws-cli-beast`, `aws-cost-optimization`
 
 ---
 
@@ -317,6 +317,7 @@ Additional development tools and integrations.
 **Skills**:
 - `notebooklm` (Google NotebookLM integration)
 - `copilot-cli` (GitHub Copilot CLI delegation with multi-model support)
+- `gemini` (Gemini CLI delegation for large-context analysis)
 
 ---
 
@@ -342,12 +343,12 @@ GitHub specification integration and verification.
 
 | Language           | Plugin                     | Components                                  |
 |--------------------|----------------------------|---------------------------------------------|
-| Core               | `developer-kit-core`       | 3 Skills, 6 Agents, 11 Commands             |
+| Core               | `developer-kit-core`       | 4 Skills, 6 Agents, 17 Commands             |
 | Java/Spring Boot   | `developer-kit-java`       | 51 Skills, 9 Agents, 11 Commands, 4 Rules  |
-| TypeScript/Node.js | `developer-kit-typescript` | 23 Skills, 13 Agents, 3 Commands, 17 Rules |
+| TypeScript/Node.js | `developer-kit-typescript` | 25 Skills, 13 Agents, 3 Commands, 17 Rules |
 | Python             | `developer-kit-python`     | 2 Skills, 4 Agents, 4 Rules                 |
 | PHP/WordPress      | `developer-kit-php`        | 3 Skills, 5 Agents, 4 Rules                 |
-| AWS CloudFormation | `developer-kit-aws`        | 18 Skills, 3 Agents                         |
+| AWS CloudFormation | `developer-kit-aws`        | 19 Skills, 3 Agents                         |
 | AI/ML              | `developer-kit-ai`         | 3 Skills, 1 Agent, 1 Command                |
 
 ---

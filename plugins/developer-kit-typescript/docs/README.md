@@ -26,7 +26,7 @@ The Developer Kit TypeScript Plugin provides:
 
 - **TypeScript Agents**: 13 specialized agents for NestJS, React, TypeScript, and React Native development
 - **TypeScript Commands**: 3 commands for code review and security assessment
-- **TypeScript Skills**: 22 skills covering NestJS, React patterns, Next.js, Better Auth, Drizzle ORM, Monorepo (Nx/Turborepo), shadcn-ui, Tailwind CSS, AWS Lambda, TypeScript documentation, Clean Architecture, and Code Review (NestJS, Next.js, React, TypeScript Security)
+- **TypeScript Skills**: 25 skills covering NestJS, React patterns, Next.js, Better Auth, Drizzle ORM, DynamoDB-Toolbox v2, Zod validation, Monorepo (Nx/Turborepo), shadcn-ui, Tailwind CSS, AWS Lambda, TypeScript documentation, Clean Architecture, and Code Review (NestJS, Next.js, React, TypeScript Security)
 
 ---
 
@@ -42,6 +42,7 @@ developer-kit-typescript/
 │   ├── shadcn-ui/       # shadcn/ui component library skill
 │   ├── tailwind-css-patterns/  # Tailwind CSS skill
 │   ├── typescript-docs/ # TypeScript documentation skill
+│   ├── zod-validation-utilities/ # Zod v4 validation utilities
 │   ├── clean-architecture/     # Clean Architecture patterns
 │   ├── better-auth/            # Better Auth integration (NestJS + Next.js)
 │   ├── nextjs-app-router/      # Next.js App Router
@@ -50,6 +51,7 @@ developer-kit-typescript/
 │   ├── nextjs-performance/     # Next.js Performance
 │   ├── nextjs-deployment/      # Next.js Deployment
 │   ├── drizzle-orm-patterns/   # Drizzle ORM patterns
+│   ├── dynamodb-toolbox-patterns/ # DynamoDB-Toolbox v2 patterns
 │   ├── nestjs-drizzle-crud-generator/ # NestJS CRUD generator with Drizzle
 │   ├── nx-monorepo/            # Nx monorepo patterns
 │   ├── turborepo-monorepo/     # Turborepo monorepo patterns
@@ -112,6 +114,25 @@ developer-kit-typescript/
 - Transactions and migrations with Drizzle Kit
 - NestJS CRUD module generation with Drizzle ORM
 - Support for PostgreSQL, MySQL, SQLite
+
+### DynamoDB-Toolbox v2
+- Type-safe Table/Entity modeling for DynamoDB with AWS SDK v3 DocumentClient
+- `.build()` command workflows for CRUD operations (GetItem, PutItem, UpdateItem, DeleteItem)
+- Complex schema patterns with `item`, `string`, `number`, `list`, `set`, `map`, `record` types
+- Modifiers: `.key()`, `.required()`, `.default()`, `.transform()`, `.link()`
+- Query/Scan and index-focused access pattern guidance
+- Batch/transaction operations (BatchWriteCommand, TransactWriteCommand)
+- Single-table design with computed keys and entity patterns
+
+### Zod Validation
+- Modern Zod v4 validation utilities and schema patterns
+- Primitives with custom `error` option (`z.uuid()`, `z.email()`, `z.url()`)
+- Coercion at boundaries (`z.coerce.*`) for uncertain input types
+- `preprocess` and `transform` for data normalization
+- Complex structures: discriminated unions, tuples, records, arrays
+- `refine` and `superRefine` for custom validation logic
+- React Hook Form integration with `zodResolver`
+- `z.input`/`z.output` type inference for transformed schemas
 
 ### Monorepo Management
 - Nx workspace patterns (generators, affected commands, Module Federation)

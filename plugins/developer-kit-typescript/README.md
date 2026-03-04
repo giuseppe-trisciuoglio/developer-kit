@@ -59,6 +59,7 @@ The `developer-kit-typescript` plugin provides comprehensive support for TypeScr
 
 ### Database & ORM
 - **drizzle-orm-patterns** - Complete Drizzle ORM patterns for schema, queries, relations, transactions, and migrations
+- **dynamodb-toolbox-patterns** - DynamoDB-Toolbox v2 patterns for type-safe schema modeling, `.build()` commands, query/scan access patterns, batch/transactions, and single-table design
 - **nestjs-drizzle-crud-generator** - Automated NestJS CRUD module generation with Drizzle ORM
 
 ### AWS Lambda Integration
@@ -67,8 +68,9 @@ The `developer-kit-typescript` plugin provides comprehensive support for TypeScr
 ### Design System
 - **tailwind-design-system** - Tailwind CSS design system patterns and token management
 
-### Core/Shared
+### Validation & Core
 - **typescript-docs** - TypeScript documentation standards
+- **zod-validation-utilities** - Modern Zod v4 validation utilities with coercion, transforms, complex schemas, `refine`/`superRefine`, and React Hook Form integration
 
 ## Rules
 

@@ -5,13 +5,56 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.0] - 2026-03-04
+
+### Added
+
+- **New Documentation Auto-Updater skill** (`developer-kit-core`):
+  - `docs-updater`: Automatically updates project documentation by analyzing git changes between current branch and last release tag
+  - Performs git diff analysis to identify modifications, then updates README.md, CHANGELOG.md (Keep a Changelog standard), and discovers documentation folders
+  - Language-agnostic tool for maintaining documentation sync with codebase
+
+- **New AWS SAM Bootstrap skill** (`developer-kit-aws`):
+  - `aws-sam-bootstrap`: AWS Serverless Application Model (SAM) bootstrap patterns for new and existing projects
+  - Supports Python 3.10-3.14, Node.js 20/22/24, Java 25, and .NET 8-10 runtimes
+  - Includes `sam init`, migration checklist, template examples, and `samconfig.toml` configuration guidance
+
+- **New DynamoDB-Toolbox v2 skill** (`developer-kit-typescript`):
+  - `dynamodb-toolbox-patterns`: TypeScript patterns for DynamoDB-Toolbox v2 including schema/table/entity modeling
+  - Covers `.build()` command workflow, query/scan access patterns, batch and transaction operations, and single-table design with computed keys
+
+- **New Zod validation utilities skill** (`developer-kit-typescript`):
+  - `zod-validation-utilities`: Modern Zod v4 validation utilities and schema patterns including coercion, transforms, complex schema composition, `refine`/`superRefine`, and React Hook Form `zodResolver` integration
+
+- **New Gemini CLI delegation skill** (`developer-kit-tools`):
+  - `gemini`: Delegates tasks to Gemini CLI for large-context analysis workflows with non-interactive mode execution
+  - Includes English prompt formulation, execution flags (`-m`, `--approval-mode`, `-r`, `--output-format`), and safe result handling
+
+- **New Copilot CLI delegation skill** (`developer-kit-tools`):
+  - `copilot-cli`: Delegates tasks to GitHub Copilot CLI with non-interactive mode and multi-model support
+  - Supports model selection (Claude, GPT-5.x, Gemini), permission controls (`--allow-tool`, `--allow-all-tools`, `--yolo`), output capture with `--silent`, session export with `--share`, and session resume with `--resume`
+
+- **New Rules management** (`developer-kit-core`):
+  - Makefile targets for listing and installing plugin rules (`make list-rules`, `make install-rules`)
+  - New `scripts/install-rules.sh` script for automated rule installation
+
+### Changed
+
+- **Core Commands Enhancement**: Enforced mandatory `[GATE]` stop points and `AskUserQuestion` usage in devkit commands (`brainstorm`, `feature-development`, `fix-debugging`, `refactor`, `generate-document`)
+
 ## [Unreleased]
 
 ### Added
 
-- **New Copilot CLI delegation skill** (`developer-kit-tools`):
-  - `copilot-cli`: Delegates tasks to GitHub Copilot CLI in non-interactive mode (`copilot -p`) with model selection, permission guidance, session sharing, and resume support
-  - Includes operational guidance for English prompts, least-privilege permissions, and validation of external model output before applying changes
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
 
 ## [2.4.1] - 2026-03-01
 
@@ -30,31 +73,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `react-code-review`: React 19 component review with hooks, accessibility, state management, and TypeScript integration
   - `typescript-security-review`: Security audit for TypeScript/Node.js covering OWASP Top 10, XSS, injection, JWT, and dependency scanning
   - Each skill includes reference documentation (patterns, anti-patterns, checklists)
-
-- **Standardized Coding Rules for Language Plugins** (PR #112, closes #109):
-  - Added `rules/` directory with path-scoped coding rules to 4 language plugins
-  - **Java** (`developer-kit-java`): 4 rules — naming-conventions, project-structure, language-best-practices, error-handling (Java 17+, Spring Boot, constructor DI, Records)
-  - **Python** (`developer-kit-python`): 4 rules — naming-conventions, project-structure, language-best-practices, error-handling (PEP 8, type hints, Pydantic, async patterns)
-  - **PHP** (`developer-kit-php`): 4 rules — naming-conventions, project-structure, language-best-practices, error-handling (PSR-12, PSR-4, PHP 8.1+, readonly properties)
-  - **TypeScript** (`developer-kit-typescript`): 16 rules — core (naming-conventions, project-structure, language-best-practices, error-handling), NestJS (architecture, api-design, security, testing), React (component-conventions, data-fetching, routing-conventions), Tailwind (styling-conventions), Data (drizzle-orm-conventions, shared-dto-conventions), Infra (nx-monorepo-conventions, i18n-conventions)
-  - Rules use Claude Code `.claude/rules/` compatible format with `globs:` frontmatter for automatic path-scoped activation
-
-- **New RuleValidator** (`.skills-validator-check`):
-  - Added `RuleValidator` for validating rule files structure and content
-  - Validates `globs:` frontmatter, required sections (Guidelines, Examples), and formatting
-  - Extended `ValidatorFactory` to include rule validation pattern
-  - Added comprehensive test suite for rule validation
-
-### Changed
-
-- **Updated plugin.json manifests**: All 4 language plugin manifests now include `rules` array with component references
-- **Updated install-claude.sh**: Rules are deployed to `.claude/rules/[plugin-name]/` with conflict resolution
-- **Updated Makefile**: `list-plugins` and `list-components` targets now display rules count
-- **Extended MCP scan checker**: Security scanning now covers rule files
-
-## [2.4.0] - 2026-02-28
-
-### Added
 
 - **New Spring Boot Project Creator skill** (`developer-kit-java`):
   - `spring-boot-project-creator`: Automated Spring Boot project generation with customizable dependencies
@@ -82,6 +100,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Context7 Integration**: Added `context7.json` for claim skills repository
 
+- **Standardized Coding Rules for Language Plugins** (PR #112, closes #109):
+  - Added `rules/` directory with path-scoped coding rules to 4 language plugins
+  - **Java** (`developer-kit-java`): 4 rules — naming-conventions, project-structure, language-best-practices, error-handling (Java 17+, Spring Boot, constructor DI, Records)
+  - **Python** (`developer-kit-python`): 4 rules — naming-conventions, project-structure, language-best-practices, error-handling (PEP 8, type hints, Pydantic, async patterns)
+  - **PHP** (`developer-kit-php`): 4 rules — naming-conventions, project-structure, language-best-practices, error-handling (PSR-12, PSR-4, PHP 8.1+, readonly properties)
+  - **TypeScript** (`developer-kit-typescript`): 16 rules — core (naming-conventions, project-structure, language-best-practices, error-handling), NestJS (architecture, api-design, security, testing), React (component-conventions, data-fetching, routing-conventions), Tailwind (styling-conventions), Data (drizzle-orm-conventions, shared-dto-conventions), Infra (nx-monorepo-conventions, i18n-conventions)
+  - Rules use Claude Code `.claude/rules/` compatible format with `globs:` frontmatter for automatic path-scoped activation
+
+- **New RuleValidator** (`.skills-validator-check`):
+  - Added `RuleValidator` for validating rule files structure and content
+  - Validates `globs:` frontmatter, required sections (Guidelines, Examples), and formatting
+  - Extended `ValidatorFactory` to include rule validation pattern
+  - Added comprehensive test suite for rule validation
+
 - **Enhanced Security Scanning**:
   - Added MCP scan checker for per-skill security analysis
   - Implemented PR-level security scanning (only changed skills)
@@ -106,15 +138,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Makefile Security Targets**:
   - `make security-scan`: Run MCP-Scan on all skills
   - `make security-scan-changed`: Run MCP-Scan only on changed skills
-- **Resolved 14 MCP-Scan Security Failures**:
-  - W007 - Insecure credential handling: Replaced hardcoded apiKey/password with env var references in RAG
-  - W012 - External URL/code execution risks: Pinned Docker images (LocalStack 3.8.1, ollama 0.5.4, qdrant v1.13.2), npm packages (@modelcontextprotocol 0.6.2), and GitHub Actions (trivy-action, snyk/actions)
-  - W011 - Third-party content exposure: Added content validation/filtering warnings across skills (RAG, Bedrock, Messaging, MCP patterns, Qdrant, Spring AI MCP, TS Lambda, Next.js, shadcn-ui)
-- Disabled Trust Hub security check returning HTTP 400
-- Replaced hardcoded credentials with environment variable references
 
 ### Changed
 
+- **Updated plugin.json manifests**: All 4 language plugin manifests now include `rules` array with component references
+- **Updated install-claude.sh**: Rules are deployed to `.claude/rules/[plugin-name]/` with conflict resolution
+- **Updated Makefile**: `list-plugins` and `list-components` targets now display rules count
+- **Extended MCP scan checker**: Security scanning now covers rule files
 - **Enhanced README Badges**: Added security scan and plugin-validation badges
 - **Added Marketplace Links**: Added 'Listed on' marketplace links to README
 
@@ -799,7 +829,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.3.0...HEAD
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.5.0...HEAD
+[2.5.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.4.1...v2.5.0
+[2.4.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.4.0...v2.4.1
+[2.4.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.3.0...v2.4.0
 [2.3.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.0.0...v2.1.0

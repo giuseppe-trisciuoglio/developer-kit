@@ -14,17 +14,18 @@ The `developer-kit-aws` plugin provides expertise in AWS infrastructure design, 
 
 ## Skills
 
-**CloudFormation patterns** for major AWS services:
+**CloudFormation patterns** (15) for major AWS services:
 - VPC, EC2, Lambda, IAM, S3, RDS
 - DynamoDB, ECS, Auto Scaling
 - CloudWatch, CloudFront, Security
 - ElastiCache, Bedrock
 - ECS deployment with GitHub Actions
 
-**General AWS skills**:
+**General AWS skills** (4):
+- `aws-sam-bootstrap` - AWS SAM bootstrap for new and existing serverless projects (Python 3.10-3.14, Node.js 20/22/24, Java 25, .NET 8-10)
 - `aws-cli-beast` - AWS CLI Beast Mode for advanced cloud operations
-- AWS Architecture Diagrams (draw.io format)
-- AWS Cost Optimization strategies
+- `aws-drawio-architecture-diagrams` - Professional AWS architecture diagrams (draw.io format)
+- `aws-cost-optimization` - AWS cost optimization strategies
 
 ## Dependencies
 
