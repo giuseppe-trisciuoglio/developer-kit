@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **New TypeScript Skill** (`developer-kit-typescript`):
+  - `zod-validation-utilities`: Modern Zod v4 validation utilities and schema patterns including coercion, transforms, complex schema composition, `refine`/`superRefine`, and React Hook Form `zodResolver` integration
+
 ## [2.4.1] - 2026-03-01
 
 ### Changed
