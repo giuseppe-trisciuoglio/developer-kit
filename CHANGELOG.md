@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **New Copilot CLI delegation skill** (`developer-kit-tools`):
+  - `copilot-cli`: Delegates tasks to GitHub Copilot CLI in non-interactive mode (`copilot -p`) with model selection, permission guidance, session sharing, and resume support
+  - Includes operational guidance for English prompts, least-privilege permissions, and validation of external model output before applying changes
+
 ## [2.4.1] - 2026-03-01
 
 ### Changed
