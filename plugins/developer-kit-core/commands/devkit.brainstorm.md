@@ -60,7 +60,9 @@ incrementally, generate professional documentation, review the document, and rec
 
 ## Core Principles
 
-- **One question at a time**: Don't overwhelm with multiple questions
+- **One question at a time — NEVER SKIP**: Phases marked with **[GATE]** MANDATORY STOP POINT are hard gates. You MUST call the
+  AskUserQuestion tool and wait for the user's response before proceeding. Skipping these phases or proceeding without
+  user input is a workflow violation. Don't overwhelm with multiple questions.
 - **Multiple choice preferred**: Easier to answer than open-ended when possible
 - **YAGNI ruthlessly**: Remove unnecessary features from all designs
 - **Explore alternatives**: Always propose 2-3 approaches with trade-offs
@@ -98,12 +100,15 @@ incrementally, generate professional documentation, review the document, and rec
 
 **Goal**: Deeply understand the idea through structured dialogue
 
-**CRITICAL**: This phase builds the foundation for the design. DO NOT rush.
+****[GATE]** MANDATORY STOP POINT — DO NOT SKIP THIS PHASE UNDER ANY CIRCUMSTANCES.**
+
+This phase builds the foundation for the entire design. You MUST stop here and ask questions before proceeding.
+Proceeding to Phase 3 without completing this phase is a workflow violation.
 
 **Actions**:
 
 1. Ask questions **one at a time** to refine the idea
-2. **Use the AskUserQuestion tool with multiple choice options when possible**
+2. **You MUST call the AskUserQuestion tool with multiple choice options when possible**
 3. Focus on understanding:
     - **Purpose**: What is this trying to achieve?
     - **Constraints**: Are there technical, time, or resource constraints?
@@ -117,8 +122,8 @@ incrementally, generate professional documentation, review the document, and rec
 - "Which constraint is most important: development time, performance, or maintainability?"
 - "Who are the primary users of this feature?"
 
-4. **Wait for each answer before asking the next question**
-5. When the idea is clear, summarize understanding and get confirmation
+4. ****[GATE]** STOP: Wait for each answer before asking the next question. Do NOT batch multiple questions.**
+5. When the idea is clear, summarize understanding and get confirmation before proceeding to Phase 3
 
 ---
 
@@ -140,12 +145,12 @@ incrementally, generate professional documentation, review the document, and rec
     - Cons (drawbacks, risks)
     - Estimated complexity
 
-3. **Use the AskUserQuestion tool to present the approaches**:
+3. **You MUST call the AskUserQuestion tool to present the approaches**:
     - Lead with your recommended option
     - Explain your reasoning
     - Ask which approach they prefer
 
-4. **Wait for user selection before proceeding**
+4. ****[GATE]** STOP: Wait for user selection. Do NOT proceed to Phase 4 until the user has responded.**
 
 ---
 

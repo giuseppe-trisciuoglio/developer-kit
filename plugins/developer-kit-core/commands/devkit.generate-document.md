@@ -95,12 +95,14 @@ This command leverages specialized sub-agents for different aspects:
     - `--format` parameter (default: `markdown`)
     - Remaining text as the document objective/description
 2. Create todo list with all phases
-3. If document objective is unclear, ask user for:
+3. ****[GATE]** MANDATORY STOP POINT**: If the document objective is unclear or underspecified, you MUST call the AskUserQuestion
+   tool to ask the user:
     - What is the purpose of this document?
     - Who is the target audience?
     - What specific areas should be covered?
     - Any constraints or requirements?
-4. Summarize understanding and confirm with user
+4. ****[GATE]** STOP: Wait for the user's answers before proceeding. Do NOT proceed to Phase 2 until requirements are clear.**
+5. Summarize understanding and confirm with user
 
 ---
 
@@ -180,11 +182,12 @@ This command leverages specialized sub-agents for different aspects:
     - Required diagrams and visuals
     - Code examples to include
 
-3. **Use AskUserQuestion tool** to present outline and get approval:
+3. **You MUST call the AskUserQuestion tool** to present outline and get approval:
     - Show proposed document structure
     - Highlight key sections
     - Ask if any sections should be added/removed
     - Confirm target audience and depth
+4. ****[GATE]** STOP: Wait for the user's approval of the outline. Do NOT proceed to Phase 4 until the user has responded.**
 
 ---
 

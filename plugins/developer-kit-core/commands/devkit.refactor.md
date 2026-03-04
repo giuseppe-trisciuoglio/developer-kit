@@ -72,12 +72,14 @@ Parse $ARGUMENTS to detect the optional `--scope` parameter:
 
 ## Core Principles
 
-- **Backward compatibility first**: Always clarify if breaking changes are acceptable before proceeding
+- **Backward compatibility first — NEVER SKIP**: Phases marked with **[GATE]** MANDATORY STOP POINT are hard gates. You MUST
+  call the AskUserQuestion tool and wait for the user's response before proceeding. Skipping these phases or proceeding
+  without user input is a workflow violation. Always clarify if breaking changes are acceptable before proceeding.
 - **Deep understanding required**: Refactoring requires comprehensive knowledge of dependencies, usages, and side
   effects
 - **Incremental changes**: Prefer small, verifiable changes over large rewrites
 - **Test coverage awareness**: Understand existing test coverage before modifying code
-- **Structured user interaction**: Use the AskUserQuestion tool for all decision points
+- **Structured user interaction**: You MUST use the AskUserQuestion tool for all decision points
 - **Use TodoWrite**: Track all progress throughout
 - **No time estimates**: DO NOT provide or request time estimates
 
@@ -104,11 +106,14 @@ Parse $ARGUMENTS to detect the optional `--scope` parameter:
 
 **Goal**: Establish compatibility constraints before any exploration
 
-**CRITICAL**: This phase determines the entire refactoring strategy. DO NOT SKIP.
+****[GATE]** MANDATORY STOP POINT — DO NOT SKIP THIS PHASE UNDER ANY CIRCUMSTANCES.**
+
+This phase determines the entire refactoring strategy. You MUST stop here and ask the user about compatibility
+requirements before proceeding. Proceeding to Phase 3 without completing this phase is a workflow violation.
 
 **Actions**:
 
-1. **Use the AskUserQuestion tool to ask the user about compatibility requirements**:
+1. **You MUST call the AskUserQuestion tool to ask the user about compatibility requirements**:
 
    Present these options clearly:
 
@@ -126,8 +131,9 @@ Parse $ARGUMENTS to detect the optional `--scope` parameter:
     - Is there a deprecation strategy needed for phased migration?
     - Are there specific contracts (interfaces, DTOs, database schemas) that must be preserved?
 
-2. Document the compatibility decision clearly in the todo list
-3. This decision will guide all subsequent phases
+2. ****[GATE]** STOP: Wait for the user's answers. Do NOT proceed to Phase 3 until the user has responded.**
+3. Document the compatibility decision clearly in the todo list
+4. This decision will guide all subsequent phases
 
 ---
 
@@ -233,7 +239,8 @@ Task(
 
 2. If breaking changes are allowed, also design a deprecation/migration strategy
 3. Present the strategy to user with clear trade-offs
-4. **Use the AskUserQuestion tool to get user approval before proceeding**
+4. **You MUST call the AskUserQuestion tool to get user approval before proceeding**
+5. ****[GATE]** STOP: Wait for the user's approval. Do NOT proceed to Phase 5 until the user has responded.**
 
 ---
 

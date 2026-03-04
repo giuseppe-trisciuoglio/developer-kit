@@ -66,9 +66,11 @@ Parse $ARGUMENTS to detect the optional `--lang` parameter:
 - **Minimal changes**: Fix only what's broken, avoid scope creep
 - **Verify completely**: Confirm the fix works and doesn't break other things
 - **Use TodoWrite**: Track all progress throughout
-- **Structured user interaction**: Use the AskUserQuestion tool in all phases where you need to ask structured questions
-  to the user (Phase 1: Problem Capture, Phase 3: Root Cause Analysis, Phase 4: Fix Design, Phase 7: Verification).
-  Always use AskUserQuestion for clarifications, confirmations, and decisions rather than plain text questions.
+- **Structured user interaction — NEVER SKIP**: Phases marked with **[GATE]** STOP are hard gates. You MUST call the
+  AskUserQuestion tool and wait for the user's response before proceeding. Skipping these stops or proceeding without
+  user input is a workflow violation. Use AskUserQuestion in Phase 1: Problem Capture, Phase 3: Root Cause Analysis,
+  Phase 4: Fix Design, and Phase 7: Verification. Always use AskUserQuestion for clarifications, confirmations, and
+  decisions rather than plain text questions.
 - **No time estimates**: DO NOT provide or request time estimates or implementation timelines at any phase
 
 ---
@@ -88,12 +90,12 @@ Parse $ARGUMENTS to detect the optional `--lang` parameter:
     - Can you reproduce it consistently?
     - What are the reproduction steps?
     - Any recent changes that might be related?
-3. **Use the AskUserQuestion tool to gather all missing information in a clear, organized format**:
+3. **You MUST call the AskUserQuestion tool to gather all missing information in a clear, organized format**:
     - Error messages, logs, or stack traces
     - Steps to reproduce
     - Expected vs actual behavior
     - Environment details (local, staging, production)
-4. **Wait for user answers before proceeding to evidence collection**
+4. ****[GATE]** STOP: Wait for the user's answers. Do NOT proceed to Phase 2 until the user has responded.**
 
 ---
 
@@ -148,8 +150,8 @@ Task(
     - **Why**: Underlying reason this happens
     - **When**: Conditions that trigger the bug
 
-3. **Use the AskUserQuestion tool to confirm root cause with user before proceeding**
-4. **Wait for user confirmation before moving to Fix Design**
+3. **You MUST call the AskUserQuestion tool to confirm root cause with user before proceeding**
+4. ****[GATE]** STOP: Wait for user confirmation. Do NOT proceed to Phase 4 until the user has responded.**
 
 ---
 
@@ -176,8 +178,8 @@ Task(
     - Trade-offs and risks
     - **Your recommendation with reasoning**
 
-4. **Use the AskUserQuestion tool to ask user which approach they prefer**
-5. **Wait for user response before proceeding to implementation**
+4. **You MUST call the AskUserQuestion tool to ask user which approach they prefer**
+5. ****[GATE]** STOP: Wait for the user's choice. Do NOT proceed to Phase 5 until the user has responded.**
 
 ---
 
