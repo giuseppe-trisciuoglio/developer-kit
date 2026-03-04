@@ -217,7 +217,7 @@ Comprehensive Java development toolkit with Spring Boot, testing, LangChain4J, A
 
 ### developer-kit-typescript
 
-TypeScript/JavaScript full-stack development with NestJS, React, React Native, Next.js, Drizzle ORM, and Monorepo tools.
+TypeScript/JavaScript full-stack development with NestJS, React, React Native, Next.js, Drizzle ORM, DynamoDB-Toolbox, and Monorepo tools.
 
 **Agents**: `nestjs-backend-development-expert`, `nestjs-code-review-expert`, `nestjs-database-expert`,
 `nestjs-security-expert`, `nestjs-testing-expert`, `nestjs-unit-testing-expert`, `react-frontend-development-expert`,
@@ -231,10 +231,10 @@ TypeScript/JavaScript full-stack development with NestJS, React, React Native, N
 - **Authentication**: `better-auth`
 - **Frontend**: `react-patterns`, `shadcn-ui`, `tailwind-css-patterns`, `tailwind-design-system`
 - **Next.js**: `nextjs-app-router`, `nextjs-authentication`, `nextjs-data-fetching`, `nextjs-performance`, `nextjs-deployment`
-- **Database & ORM**: `drizzle-orm-patterns`
+- **Database & ORM**: `drizzle-orm-patterns`, `dynamodb-toolbox-patterns`
 - **Monorepo**: `nx-monorepo`, `turborepo-monorepo`
 - **AWS Lambda**: `aws-lambda-typescript-integration`
-- **Core**: `typescript-docs`
+- **Core**: `typescript-docs`, `zod-validation-utilities`
 
 **Rules**: `naming-conventions`, `project-structure`, `language-best-practices`, `error-handling`,
 `nestjs-architecture`, `nestjs-api-design`, `nestjs-security`, `nestjs-testing`,
@@ -314,7 +314,7 @@ Project management and workflow commands.
 
 Additional development tools and integrations.
 
-**Skills**: `notebooklm` (Google NotebookLM integration)
+**Skills**: `notebooklm` (Google NotebookLM integration), `gemini` (Gemini CLI delegation for large-context tasks)
 
 ---
 
@@ -342,7 +342,7 @@ GitHub specification integration and verification.
 |--------------------|----------------------------|---------------------------------------------|
 | Core               | `developer-kit-core`       | 3 Skills, 6 Agents, 11 Commands             |
 | Java/Spring Boot   | `developer-kit-java`       | 51 Skills, 9 Agents, 11 Commands, 4 Rules  |
-| TypeScript/Node.js | `developer-kit-typescript` | 23 Skills, 13 Agents, 3 Commands, 17 Rules |
+| TypeScript/Node.js | `developer-kit-typescript` | 24 Skills, 13 Agents, 3 Commands, 17 Rules |
 | Python             | `developer-kit-python`     | 2 Skills, 4 Agents, 4 Rules                 |
 | PHP/WordPress      | `developer-kit-php`        | 3 Skills, 5 Agents, 4 Rules                 |
 | AWS CloudFormation | `developer-kit-aws`        | 18 Skills, 3 Agents                         |

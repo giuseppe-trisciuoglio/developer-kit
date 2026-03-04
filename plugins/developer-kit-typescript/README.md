@@ -69,6 +69,7 @@ The `developer-kit-typescript` plugin provides comprehensive support for TypeScr
 
 ### Core/Shared
 - **typescript-docs** - TypeScript documentation standards
+- **zod-validation-utilities** - Modern Zod v4 validation utilities and schema patterns
 
 ## Rules
 

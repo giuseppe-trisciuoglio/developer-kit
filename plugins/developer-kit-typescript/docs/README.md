@@ -26,7 +26,7 @@ The Developer Kit TypeScript Plugin provides:
 
 - **TypeScript Agents**: 13 specialized agents for NestJS, React, TypeScript, and React Native development
 - **TypeScript Commands**: 3 commands for code review and security assessment
-- **TypeScript Skills**: 22 skills covering NestJS, React patterns, Next.js, Better Auth, Drizzle ORM, Monorepo (Nx/Turborepo), shadcn-ui, Tailwind CSS, AWS Lambda, TypeScript documentation, Clean Architecture, and Code Review (NestJS, Next.js, React, TypeScript Security)
+- **TypeScript Skills**: 23 skills covering NestJS, React patterns, Next.js, Better Auth, Drizzle ORM, DynamoDB-Toolbox, Monorepo (Nx/Turborepo), shadcn-ui, Tailwind CSS, AWS Lambda, TypeScript documentation, Clean Architecture, and Code Review (NestJS, Next.js, React, TypeScript Security)
 
 ---
 
@@ -50,6 +50,7 @@ developer-kit-typescript/
 │   ├── nextjs-performance/     # Next.js Performance
 │   ├── nextjs-deployment/      # Next.js Deployment
 │   ├── drizzle-orm-patterns/   # Drizzle ORM patterns
+│   ├── dynamodb-toolbox-patterns/ # DynamoDB-Toolbox v2 patterns
 │   ├── nestjs-drizzle-crud-generator/ # NestJS CRUD generator with Drizzle
 │   ├── nx-monorepo/            # Nx monorepo patterns
 │   ├── turborepo-monorepo/     # Turborepo monorepo patterns
@@ -112,6 +113,13 @@ developer-kit-typescript/
 - Transactions and migrations with Drizzle Kit
 - NestJS CRUD module generation with Drizzle ORM
 - Support for PostgreSQL, MySQL, SQLite
+
+### DynamoDB-Toolbox v2
+- Type-safe Table/Entity modeling for DynamoDB
+- `.build()` command workflows for CRUD operations
+- Complex schema patterns with defaults, transforms, and nested types
+- Query/Scan and index-focused access pattern guidance
+- Batch/transaction usage and single-table design best practices
 
 ### Monorepo Management
 - Nx workspace patterns (generators, affected commands, Module Federation)
