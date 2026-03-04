@@ -217,7 +217,7 @@ Comprehensive Java development toolkit with Spring Boot, testing, LangChain4J, A
 
 ### developer-kit-typescript
 
-TypeScript/JavaScript full-stack development with NestJS, React, React Native, Next.js, Drizzle ORM, and Monorepo tools.
+TypeScript/JavaScript full-stack development with NestJS, React, React Native, Next.js, Drizzle ORM, DynamoDB-Toolbox, and Monorepo tools.
 
 **Agents**: `nestjs-backend-development-expert`, `nestjs-code-review-expert`, `nestjs-database-expert`,
 `nestjs-security-expert`, `nestjs-testing-expert`, `nestjs-unit-testing-expert`, `react-frontend-development-expert`,
@@ -231,7 +231,7 @@ TypeScript/JavaScript full-stack development with NestJS, React, React Native, N
 - **Authentication**: `better-auth`
 - **Frontend**: `react-patterns`, `shadcn-ui`, `tailwind-css-patterns`, `tailwind-design-system`
 - **Next.js**: `nextjs-app-router`, `nextjs-authentication`, `nextjs-data-fetching`, `nextjs-performance`, `nextjs-deployment`
-- **Database & ORM**: `drizzle-orm-patterns`
+- **Database & ORM**: `drizzle-orm-patterns`, `dynamodb-toolbox-patterns`
 - **Monorepo**: `nx-monorepo`, `turborepo-monorepo`
 - **AWS Lambda**: `aws-lambda-typescript-integration`
 - **Core**: `typescript-docs`

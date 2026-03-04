@@ -66,6 +66,7 @@
     "./skills/nextjs-performance",
     "./skills/nextjs-deployment",
     "./skills/drizzle-orm-patterns",
+    "./skills/dynamodb-toolbox-patterns",
     "./skills/nx-monorepo",
     "./skills/turborepo-monorepo",
     "./skills/aws-lambda-typescript-integration",
