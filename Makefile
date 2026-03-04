@@ -20,9 +20,9 @@
 #   make uninstall             Remove all installations
 
 SHELL := /bin/bash
-.PHONY: all help check-deps list-plugins list-components list-agents list-commands list-skills \
+.PHONY: all help check-deps list-plugins list-components list-agents list-commands list-skills list-rules \
         install install-claude install-opencode install-copilot install-codex \
-        uninstall status backup clean security-scan security-scan-changed
+        install-rules uninstall status backup clean security-scan security-scan-changed
 
 # ═══════════════════════════════════════════════════════════════
 # COLORS & OUTPUT FORMATTING
@@ -169,6 +169,7 @@ help:
 	@echo "  make list-agents          List all available agents"
 	@echo "  make list-commands        List all available commands"
 	@echo "  make list-skills          List all available skills"
+	@echo "  make list-rules           List all available rules"
 	@echo ""
 	@echo -e "$(GREEN)Quality:$(NC)"
 	@echo "  make security-scan          Run MCP-Scan security check on all skills"
@@ -326,6 +327,36 @@ list-skills: check-deps
 		fi; \
 	done; \
 	echo ""
+
+list-rules:
+	@echo ""
+	@echo -e "$(BLUE)Available Rules:$(NC)"
+	@echo ""
+	@for plugin_dir in $(PLUGINS_DIR)/*/; do \
+		rules_dir="$$plugin_dir/rules"; \
+		if [ -d "$$rules_dir" ]; then \
+			plugin_name=$$(basename "$$plugin_dir"); \
+			echo -e "$(YELLOW)$$plugin_name:$(NC)"; \
+			for rule_file in $$rules_dir/*.md; do \
+				if [ -f "$$rule_file" ]; then \
+					rule_name=$$(basename "$$rule_file" .md); \
+					globs=$$(head -5 "$$rule_file" | grep -E '^globs:' | sed 's/^globs: *//' | head -1); \
+					if [ -z "$$globs" ]; then \
+						globs="no pattern"; \
+					fi; \
+					printf "  $(GREEN)%-40s$(NC) %s\n" "$$rule_name" "$$globs"; \
+				fi; \
+			done; \
+			echo ""; \
+		fi; \
+	done
+
+# ═══════════════════════════════════════════════════════════════
+# INSTALL RULES
+# ═══════════════════════════════════════════════════════════════
+
+install-rules:
+	@bash $(DEVKIT_DIR)/scripts/install-rules.sh "$(TARGET)"
 
 # ═══════════════════════════════════════════════════════════════
 # STATUS
