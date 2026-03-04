@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **New Universal Documentation Auto-Updater skill** (`developer-kit-core`):
-  - `universal-doc-updater`: Automatically updates project documentation by analyzing git changes between current branch and last release tag
+- **New Documentation Auto-Updater skill** (`developer-kit-core`):
+  - `docs-updater`: Automatically updates project documentation by analyzing git changes between current branch and last release tag
   - Performs git diff analysis to identify modifications, then updates README.md, CHANGELOG.md (Keep a Changelog standard), and discovers documentation folders
   - Language-agnostic tool for maintaining documentation sync with codebase
 
