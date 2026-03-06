@@ -48,6 +48,7 @@ mkdir -p "$TARGET_DIR/agents"
 mkdir -p "$TARGET_DIR/commands"
 mkdir -p "$TARGET_DIR/skills"
 mkdir -p "$TARGET_DIR/rules"
+mkdir -p "$TARGET_DIR/hooks"
 
 echo "  → Target: $TARGET_PROJECT"
 echo ""
@@ -99,6 +100,74 @@ echo ""
 
 installed_count=0
 skipped_count=0
+
+# Register a hook command in .claude/settings.json
+_register_hook_in_settings() {
+    local target_dir="$1"
+    local hook_name="$2"
+    local settings_file="$target_dir/settings.json"
+    local hook_command="python3 .claude/hooks/$hook_name"
+
+    if [[ ! -f "$settings_file" ]]; then
+        cat > "$settings_file" << EOF
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$hook_command"
+          }
+        ]
+      }
+    ]
+  }
+}
+EOF
+        echo "  ✓ Created .claude/settings.json with hook: $hook_name"
+        return
+    fi
+
+    python3 - << PYEOF
+import json, sys
+
+settings_file = "$settings_file"
+hook_command = "$hook_command"
+
+with open(settings_file) as f:
+    settings = json.load(f)
+
+settings.setdefault("hooks", {})
+settings["hooks"].setdefault("PreToolUse", [])
+
+bash_entry = None
+for entry in settings["hooks"]["PreToolUse"]:
+    if entry.get("matcher") == "Bash":
+        bash_entry = entry
+        break
+
+if bash_entry is None:
+    bash_entry = {"matcher": "Bash", "hooks": []}
+    settings["hooks"]["PreToolUse"].append(bash_entry)
+
+bash_entry.setdefault("hooks", [])
+
+for h in bash_entry["hooks"]:
+    if h.get("command") == hook_command:
+        print("  ○ Hook already registered in settings.json")
+        sys.exit(0)
+
+bash_entry["hooks"].append({"type": "command", "command": hook_command})
+
+with open(settings_file, "w") as f:
+    json.dump(settings, f, indent=2)
+    f.write("\n")
+
+print("  ✓ Registered hook in .claude/settings.json: $hook_name")
+PYEOF
+}
 
 # Install selected plugins
 for ((i=1; i<=plugin_num; i++)); do
@@ -294,6 +363,43 @@ for ((i=1; i<=plugin_num; i++)); do
                 fi
             done
         fi
+
+        # Install hooks
+        hooks=$(jq -r '.hooks[]? // empty' "$plugin_json" 2>/dev/null)
+        if [[ -n "$hooks" ]]; then
+            for hook in $hooks; do
+                hook_path="$base_dir/$hook"
+                if [[ -f "$hook_path" ]]; then
+                    hook_name=$(basename "$hook")
+                    target_file="$TARGET_DIR/hooks/$hook_name"
+
+                    if [[ -f "$target_file" ]]; then
+                        echo -n "  ⚠ $hook_name already exists. [O]verwrite, [S]kip? "
+                        read -n 1 conflict_action
+                        echo ""
+                        case $conflict_action in
+                            O|o)
+                                cp "$hook_path" "$target_file"
+                                chmod +x "$target_file"
+                                echo "    ✓ Overwritten: $hook_name"
+                                installed_count=$((installed_count + 1))
+                                _register_hook_in_settings "$TARGET_DIR" "$hook_name"
+                                ;;
+                            *)
+                                echo "    ○ Skipped: $hook_name"
+                                skipped_count=$((skipped_count + 1))
+                                ;;
+                        esac
+                    else
+                        cp "$hook_path" "$target_file"
+                        chmod +x "$target_file"
+                        echo "  ✓ Hook: $hook_name"
+                        installed_count=$((installed_count + 1))
+                        _register_hook_in_settings "$TARGET_DIR" "$hook_name"
+                    fi
+                fi
+            done
+        fi
     fi
 done
 
@@ -314,6 +420,7 @@ echo ""
 echo -e "${YELLOW}Usage:${NC}"
 echo "  - Skills are automatically discovered by Claude"
 echo "  - Rules are loaded from .claude/rules/ to enforce coding standards"
+echo "  - Hooks run automatically on tool events (configured in .claude/settings.json)"
 echo "  - Use @agent-name to invoke agents"
 echo "  - Use /command-name to run commands"
 echo ""

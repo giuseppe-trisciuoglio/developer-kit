@@ -1,0 +1,380 @@
+#!/usr/bin/env python3
+"""Destructive Command Prevention Hook for Claude Code.
+
+Prevents execution of Bash commands that target paths outside the working
+directory or match a blacklist of destructive operations.
+
+Hook event: PreToolUse (Bash)
+Input:  JSON via stdin  { "tool_name": "Bash", "tool_input": { "command": "..." } }
+Output: Exit 0 = allow | Exit 2 = block (stderr shown to Claude)
+
+Zero external dependencies — pure Python 3 standard library only.
+"""
+
+import json
+import os
+import re
+import shlex
+import sys
+from pathlib import Path
+from typing import Optional
+
+# ─── Blacklist Configuration ───────────────────────────────────────────────────
+
+# Commands whose path arguments are validated against the working directory.
+PATH_SENSITIVE_COMMANDS: frozenset[str] = frozenset(
+    {"rm", "unlink", "rmdir", "shred", "del", "erase"}
+)
+
+# AWS CLI destructive sub-commands (matched as "<service> <operation>").
+AWS_DESTRUCTIVE_SUBCOMMANDS: frozenset[str] = frozenset(
+    {
+        "s3 rm",
+        "s3api delete-object",
+        "s3api delete-objects",
+        "s3api delete-bucket",
+        "ec2 terminate-instances",
+        "ec2 delete-security-group",
+        "ec2 delete-vpc",
+        "ec2 delete-subnet",
+        "rds delete-db-instance",
+        "rds delete-db-cluster",
+        "dynamodb delete-table",
+        "lambda delete-function",
+        "iam delete-user",
+        "iam delete-role",
+        "iam delete-policy",
+        "cloudformation delete-stack",
+        "eks delete-cluster",
+        "ecs delete-cluster",
+        "ecs delete-service",
+    }
+)
+
+# Docker destructive sub-commands.
+DOCKER_DESTRUCTIVE_SUBCOMMANDS: frozenset[str] = frozenset(
+    {"rm", "rmi"}
+)
+DOCKER_DESTRUCTIVE_COMPOUND: frozenset[str] = frozenset(
+    {
+        # Modern canonical forms (docker <object> rm)
+        "container rm",
+        "image rm",
+        "volume rm",
+        "network rm",
+        # Prune operations
+        "container prune",
+        "image prune",
+        "volume prune",
+        "network prune",
+        "system prune",
+        "builder prune",
+    }
+)
+
+# Wrapper commands that delegate to a real command (skip them in analysis).
+# These pass the real command as the very next token (e.g. sudo rm, env -i rm).
+WRAPPER_COMMANDS: frozenset[str] = frozenset(
+    {"sudo", "env", "nice", "nohup", "timeout", "ionice", "time"}
+)
+
+# Commands that execute their first non-flag positional argument as a shell command.
+# Unlike WRAPPER_COMMANDS, these take a quoted command string that must be retokenized.
+QUOTED_COMMAND_WRAPPERS: frozenset[str] = frozenset({"watch", "strace", "ltrace"})
+
+# Shell invocation commands (recurse into -c argument).
+SHELL_COMMANDS: frozenset[str] = frozenset({"bash", "sh", "zsh", "fish", "dash", "ksh"})
+
+# Commands that pipe their arguments as a new command.
+DELEGATION_COMMANDS: frozenset[str] = frozenset({"xargs", "parallel"})
+
+# find flags that delegate execution.
+FIND_EXEC_FLAGS: frozenset[str] = frozenset({"-exec", "-execdir", "-ok", "-okdir"})
+
+# Shell operator tokens (not commands).
+SHELL_OPERATORS: frozenset[str] = frozenset(
+    {"|", ";", "&&", "||", "&", "(", ")", "{", "}", ">", "<", ">>", "<<", "2>", "2>>"}
+)
+
+
+# ─── Path Utilities ────────────────────────────────────────────────────────────
+
+
+def _expand_tilde(path: str) -> str:
+    """Expand leading tilde in a path string."""
+    if path == "~":
+        return str(Path.home())
+    if path.startswith("~/"):
+        return str(Path.home()) + path[1:]
+    # ~username/ — treat as a path under /home, cannot verify safely
+    if path.startswith("~"):
+        username = path[1:].split("/")[0]
+        return str(Path("/home") / username)
+    return path
+
+
+def _has_unresolvable_parts(path: str) -> bool:
+    """Return True if the path contains shell variables, globs, or runtime placeholders.
+
+    Handles:
+    - $VAR and ${VAR} / $(cmd) forms
+    - Glob characters: *, ?, [
+    - find/xargs placeholder: {}  (expands to runtime-determined paths)
+    """
+    return bool(re.search(r"\$[{(]?\w?|\*|\?|\[", path)) or path == "{}"
+
+
+def _resolve_path(path: str, cwd: str) -> Optional[str]:
+    """Resolve path to absolute form; returns None if unresolvable."""
+    path = _expand_tilde(path)
+    if _has_unresolvable_parts(path):
+        return None
+    if os.path.isabs(path):
+        return os.path.normpath(path)
+    return os.path.normpath(os.path.join(cwd, path))
+
+
+def _is_outside_cwd(path: str, cwd: str) -> tuple[bool, str]:
+    """Return (is_outside, reason) for the given path relative to cwd."""
+    if _has_unresolvable_parts(path):
+        return True, f"unresolvable variable or glob in path: {path!r}"
+
+    resolved = _resolve_path(path, cwd)
+    if resolved is None:
+        return True, f"cannot safely resolve path: {path!r}"
+
+    cwd_prefix = cwd.rstrip("/") + "/"
+    if resolved == cwd.rstrip("/") or (resolved + "/").startswith(cwd_prefix):
+        return False, ""
+
+    return True, f"{resolved!r} is outside working directory {cwd!r}"
+
+
+# ─── Tokenizer ─────────────────────────────────────────────────────────────────
+
+
+def _tokenize(command: str) -> list[str]:
+    """Tokenize a shell command with proper handling of pipes, chains and quotes.
+
+    shlex with posix=True splits ``$HOME`` into ``['$', 'HOME']``.
+    This function reassembles such pairs back into ``['$HOME']`` so that
+    variable-containing arguments are detected as unresolvable paths.
+    """
+    try:
+        lexer = shlex.shlex(command, punctuation_chars=True, posix=True)
+        lexer.whitespace_split = False
+        raw = list(lexer)
+    except ValueError:
+        return command.split()
+
+    result: list[str] = []
+    i = 0
+    while i < len(raw):
+        tok = raw[i]
+        # Reassemble $VAR or ${VAR} split by shlex punctuation handling
+        if tok == "$" and i + 1 < len(raw):
+            nxt = raw[i + 1]
+            if nxt and (nxt[0].isalnum() or nxt[0] in "_{("):
+                result.append("$" + nxt)
+                i += 2
+                continue
+        # Reassemble find/xargs {} placeholder split into ['{', '}']
+        if tok == "{" and i + 1 < len(raw) and raw[i + 1] == "}":
+            result.append("{}")
+            i += 2
+            continue
+        result.append(tok)
+        i += 1
+    return result
+
+
+# ─── Recursive Command Checker ─────────────────────────────────────────────────
+
+
+def _check_tokens(tokens: list[str], cwd: str, depth: int = 0) -> tuple[bool, str]:
+    """Recursively check a token list for dangerous commands.
+
+    Returns (is_dangerous, reason).
+    """
+    if depth > 5:
+        # Fail closed: nesting too deep to analyze safely
+        return True, "command nesting too deep to safely analyze (possible obfuscation)"
+
+    i = 0
+    while i < len(tokens):
+        token = tokens[i]
+
+        # Skip shell operators and empty tokens
+        if not token or token in SHELL_OPERATORS:
+            i += 1
+            continue
+
+        # ── Wrapper commands (sudo, env, nice, …) ────────────────────────────
+        if token in WRAPPER_COMMANDS:
+            i += 1
+            continue
+
+        # ── Quoted-command wrappers (watch, strace, ltrace) ──────────────────
+        # These execute their first non-flag positional argument as a command
+        # string and must be retokenized.
+        if token in QUOTED_COMMAND_WRAPPERS:
+            j = i + 1
+            while j < len(tokens):
+                arg = tokens[j]
+                if not arg or arg in SHELL_OPERATORS:
+                    break
+                if arg.startswith("-"):
+                    j += 1
+                    continue
+                # First non-flag positional argument is the command to execute
+                inner_tokens = _tokenize(arg)
+                dangerous, reason = _check_tokens(inner_tokens, cwd, depth + 1)
+                if dangerous:
+                    return True, reason
+                break
+            i += 1
+            continue
+
+        # ── Shell invocations: bash -c "..." ──────────────────────────────────
+        if token in SHELL_COMMANDS:
+            j = i + 1
+            while j < len(tokens):
+                if tokens[j] == "-c" and j + 1 < len(tokens):
+                    inner_tokens = _tokenize(tokens[j + 1])
+                    dangerous, reason = _check_tokens(inner_tokens, cwd, depth + 1)
+                    if dangerous:
+                        return True, reason
+                    break
+                elif tokens[j].startswith("-"):
+                    j += 1
+                else:
+                    break
+            i += 1
+            continue
+
+        # ── find -exec rm {} \; ───────────────────────────────────────────────
+        if token == "find":
+            j = i + 1
+            while j < len(tokens):
+                if tokens[j] in FIND_EXEC_FLAGS and j + 1 < len(tokens):
+                    end = j + 2
+                    while end < len(tokens) and tokens[end] not in (r"\;", "+", ";"):
+                        end += 1
+                    exec_tokens = tokens[j + 1 : end]
+                    dangerous, reason = _check_tokens(exec_tokens, cwd, depth + 1)
+                    if dangerous:
+                        return True, reason
+                j += 1
+            i += 1
+            continue
+
+        # ── xargs / parallel ──────────────────────────────────────────────────
+        if token in DELEGATION_COMMANDS:
+            if i + 1 < len(tokens):
+                dangerous, reason = _check_tokens(tokens[i + 1 :], cwd, depth + 1)
+                if dangerous:
+                    return True, reason
+            i += 1
+            continue
+
+        # ── AWS CLI ───────────────────────────────────────────────────────────
+        if token == "aws":
+            parts: list[str] = []
+            j = i + 1
+            while j < len(tokens) and tokens[j].startswith("--"):
+                j += 1
+            while j < len(tokens) and not tokens[j].startswith("-") and len(parts) < 3:
+                parts.append(tokens[j])
+                j += 1
+            for length in range(len(parts), 0, -1):
+                sub = " ".join(parts[:length])
+                if sub in AWS_DESTRUCTIVE_SUBCOMMANDS:
+                    return True, f"AWS CLI destructive operation: aws {sub}"
+            i += 1
+            continue
+
+        # ── Docker ────────────────────────────────────────────────────────────
+        if token == "docker":
+            if i + 1 < len(tokens):
+                sub1 = tokens[i + 1]
+                # Check compound form: docker <object> <operation> (e.g. docker container rm)
+                if i + 2 < len(tokens):
+                    compound = f"{sub1} {tokens[i + 2]}"
+                    if compound in DOCKER_DESTRUCTIVE_COMPOUND:
+                        return True, f"Docker destructive operation: docker {compound}"
+                # Check simple legacy form: docker rm, docker rmi
+                if sub1 in DOCKER_DESTRUCTIVE_SUBCOMMANDS:
+                    return True, f"Docker destructive operation: docker {sub1}"
+            i += 1
+            continue
+
+        # ── Git ───────────────────────────────────────────────────────────────
+        if token == "git":
+            if i + 1 < len(tokens):
+                sub = tokens[i + 1]
+                rest = tokens[i + 2 :]
+                if sub == "reset" and "--hard" in rest:
+                    return True, "git reset --hard discards all local changes"
+                if sub == "clean":
+                    # Allow dry-run flags: -n / --dry-run
+                    if "-n" not in rest and "--dry-run" not in rest:
+                        return True, "git clean removes untracked files (use -n for dry run first)"
+            i += 1
+            continue
+
+        # ── Path-sensitive commands ───────────────────────────────────────────
+        if token in PATH_SENSITIVE_COMMANDS:
+            j = i + 1
+            while j < len(tokens):
+                arg = tokens[j]
+                if not arg or arg in SHELL_OPERATORS:
+                    break
+                if arg == "--":
+                    j += 1
+                    continue
+                if arg.startswith("-"):
+                    j += 1
+                    continue
+                outside, reason = _is_outside_cwd(arg, cwd)
+                if outside:
+                    return True, f"{token!r} targets path outside working directory — {reason}"
+                j += 1
+            i += 1
+            continue
+
+        i += 1
+
+    return False, ""
+
+
+# ─── Entry Point ───────────────────────────────────────────────────────────────
+
+
+def main() -> None:
+    try:
+        input_data = json.load(sys.stdin)
+    except (json.JSONDecodeError, ValueError):
+        sys.exit(0)  # Non-blocking: malformed input, allow through
+
+    if input_data.get("tool_name") != "Bash":
+        sys.exit(0)
+
+    command: str = input_data.get("tool_input", {}).get("command", "")
+    if not command:
+        sys.exit(0)
+
+    cwd = os.environ.get("CLAUDE_CWD", os.getcwd())
+    tokens = _tokenize(command)
+    dangerous, reason = _check_tokens(tokens, cwd)
+
+    if dangerous:
+        print(f"BLOCKED: {reason}", file=sys.stderr)
+        print(f"Command : {command}", file=sys.stderr)
+        print(f"CWD     : {cwd}", file=sys.stderr)
+        sys.exit(2)
+
+    sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()
