@@ -30,6 +30,8 @@ PATH_SENSITIVE_COMMANDS: frozenset[str] = frozenset(
 AWS_DESTRUCTIVE_SUBCOMMANDS: frozenset[str] = frozenset(
     {
         "s3 rm",
+        "s3 mv",
+        "s3 rb",
         "s3api delete-object",
         "s3api delete-objects",
         "s3api delete-bucket",
@@ -37,17 +39,41 @@ AWS_DESTRUCTIVE_SUBCOMMANDS: frozenset[str] = frozenset(
         "ec2 delete-security-group",
         "ec2 delete-vpc",
         "ec2 delete-subnet",
+        "ec2 delete-volume",
+        "ec2 delete-snapshot",
+        "ec2 delete-key-pair",
         "rds delete-db-instance",
         "rds delete-db-cluster",
+        "rds delete-db-snapshot",
+        "rds delete-db-cluster-snapshot",
+        "rds delete-db-parameter-group",
+        "rds delete-db-subnet-group",
+        "rds delete-db-security-group",
+        "rds delete-global-cluster",
         "dynamodb delete-table",
         "lambda delete-function",
+        "lambda delete-alias",
+        "lambda delete-event-source-mapping",
+        "lambda delete-layer-version",
+        "lambda delete-provisioned-concurrency-config",
+        "lambda delete-function-concurrency",
+        "lambda delete-function-url-config",
+        "lambda delete-code-signing-config",
         "iam delete-user",
         "iam delete-role",
         "iam delete-policy",
         "cloudformation delete-stack",
+        "cloudformation delete-stack-instances",
+        "cloudformation delete-stack-set",
+        "cloudformation delete-change-set",
         "eks delete-cluster",
         "ecs delete-cluster",
         "ecs delete-service",
+        "secretsmanager delete-secret",
+        "kms schedule-key-deletion",
+        "kms disable-key",
+        "sns delete-topic",
+        "sqs delete-queue",
     }
 )
 
@@ -297,6 +323,7 @@ def _check_tokens(tokens: list[str], cwd: str, depth: int = 0) -> tuple[bool, st
         if token == "docker":
             if i + 1 < len(tokens):
                 sub1 = tokens[i + 1]
+                rest = tokens[i + 2:]
                 # Check compound form: docker <object> <operation> (e.g. docker container rm)
                 if i + 2 < len(tokens):
                     compound = f"{sub1} {tokens[i + 2]}"
@@ -305,6 +332,20 @@ def _check_tokens(tokens: list[str], cwd: str, depth: int = 0) -> tuple[bool, st
                 # Check simple legacy form: docker rm, docker rmi
                 if sub1 in DOCKER_DESTRUCTIVE_SUBCOMMANDS:
                     return True, f"Docker destructive operation: docker {sub1}"
+                # Check docker compose down -v (removes volumes)
+                if sub1 == "compose" and i + 2 < len(tokens):
+                    compose_sub = tokens[i + 2]
+                    if compose_sub == "down" and "-v" in rest:
+                        return True, "docker compose down -v removes volumes with data loss risk"
+                    if compose_sub == "rm":
+                        return True, "docker compose rm removes stopped containers"
+                # Check docker context rm
+                if sub1 == "context" and i + 2 < len(tokens) and tokens[i + 2] == "rm":
+                    return True, "docker context rm removes Docker contexts"
+                # Check docker swarm leave --force
+                if sub1 == "swarm" and i + 2 < len(tokens) and tokens[i + 2] == "leave":
+                    if "--force" in rest:
+                        return True, "docker swarm leave --force forcibly removes node from swarm"
             i += 1
             continue
 
@@ -319,6 +360,46 @@ def _check_tokens(tokens: list[str], cwd: str, depth: int = 0) -> tuple[bool, st
                     # Allow dry-run flags: -n / --dry-run
                     if "-n" not in rest and "--dry-run" not in rest:
                         return True, "git clean removes untracked files (use -n for dry run first)"
+                # Block force push operations
+                if sub == "push":
+                    if "--force" in rest or "-f" in rest:
+                        return True, "git push --force overwrites remote history (destructive)"
+                    if "--force-with-lease" in rest:
+                        return True, "git push --force-with-lease can overwrite remote history"
+                    if "--delete" in rest:
+                        return True, "git push --delete removes remote branch/tag"
+                # Block forced branch deletion
+                if sub == "branch":
+                    if "-D" in rest:
+                        return True, "git branch -D forcibly deletes branch without checks"
+                # Block tag deletion
+                if sub == "tag":
+                    if "-d" in rest or "--delete" in rest:
+                        return True, "git tag -d deletes tag"
+                # Block forced checkout
+                if sub == "checkout":
+                    if "-f" in rest or "--force" in rest:
+                        return True, "git checkout -f discards local changes forcibly"
+                # Block rebase operations
+                if sub == "rebase":
+                    return True, "git rebase rewrites commit history (potentially destructive)"
+                # Block history rewriting tools
+                if sub in ("filter-branch", "filter-repo"):
+                    return True, f"git {sub} rewrites repository history (highly destructive)"
+                # Block reflog expiration
+                if sub == "reflog":
+                    if "expire" in rest:
+                        return True, "git reflog expire deletes recovery references"
+                # Block reference deletion via update-ref
+                if sub == "update-ref":
+                    if "-d" in rest or "--delete" in rest:
+                        return True, "git update-ref -d deletes git references directly"
+                # Block git add (stages changes)
+                if sub == "add":
+                    return True, "git add stages changes to the index"
+                # Block git commit (creates commits)
+                if sub == "commit":
+                    return True, "git commit creates new commits in the repository"
             i += 1
             continue
 
