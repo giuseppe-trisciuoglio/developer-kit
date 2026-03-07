@@ -43,7 +43,8 @@
     "./commands/lra/devkit.lra.start-session.md",
     "./commands/lra/devkit.lra.status.md",
     "./commands/devkit.verify-skill.md",
-    "./commands/devkit.generate-security-assessment.md"
+    "./commands/devkit.generate-security-assessment.md",
+    "./commands/devkit.spec-to-tasks.md"
   ],
   "skills": [
     "./skills/claude-md-management",
