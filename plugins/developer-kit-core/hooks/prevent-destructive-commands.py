@@ -26,6 +26,68 @@ PATH_SENSITIVE_COMMANDS: frozenset[str] = frozenset(
     {"rm", "unlink", "rmdir", "shred", "del", "erase"}
 )
 
+# Commands that read file contents (used to detect access to sensitive files).
+FILE_READING_COMMANDS: frozenset[str] = frozenset(
+    {
+        "cat", "less", "more", "head", "tail", "grep", "egrep", "fgrep",
+        "awk", "sed", "cut", "sort", "uniq", "xxd", "hexdump", "strings",
+        "base64", "openssl", "jq", "yq", "bat", "tac", "nl", "od", "rev",
+    }
+)
+
+# Sensitive file patterns (files that should not be read).
+SENSITIVE_FILE_PATTERNS: tuple[str, ...] = (
+    # Environment files
+    ".env",
+    ".env.local",
+    ".env.production",
+    ".env.development",
+    ".env.test",
+    ".env.staging",
+    ".envrc",
+    # SSH keys
+    "id_rsa",
+    "id_dsa",
+    "id_ecdsa",
+    "id_ed25519",
+    "id_rsa.pub",
+    "id_dsa.pub",
+    "id_ecdsa.pub",
+    "id_ed25519.pub",
+    "authorized_keys",
+    "known_hosts",
+    # AWS credentials
+    "credentials",
+    "config",
+    # Database credentials
+    ".pgpass",
+    ".my.cnf",
+    ".netrc",
+    # NPM/Package registry credentials
+    ".npmrc",
+    ".pypirc",
+    "pip.conf",
+    # Other secrets
+    ".htpasswd",
+    "vault-password",
+    "secret",
+    "secrets",
+    "secret.json",
+    "secrets.json",
+    "secret.yaml",
+    "secrets.yaml",
+    "secret.yml",
+    "secrets.yml",
+    # Private keys (various formats)
+    ".key",
+    ".pem",
+    ".p12",
+    ".pfx",
+    ".pkcs12",
+    "private_key",
+    "private-key",
+)
+
 # AWS CLI destructive sub-commands (matched as "<service> <operation>").
 AWS_DESTRUCTIVE_SUBCOMMANDS: frozenset[str] = frozenset(
     {
@@ -400,6 +462,25 @@ def _check_tokens(tokens: list[str], cwd: str, depth: int = 0) -> tuple[bool, st
                 # Block git commit (creates commits)
                 if sub == "commit":
                     return True, "git commit creates new commits in the repository"
+            i += 1
+            continue
+
+        # ── File reading commands (check for sensitive files) ─────────────────
+        if token in FILE_READING_COMMANDS:
+            j = i + 1
+            while j < len(tokens):
+                arg = tokens[j]
+                if not arg or arg in SHELL_OPERATORS:
+                    break
+                if arg.startswith("-"):
+                    j += 1
+                    continue
+                # Check if the file path matches sensitive patterns
+                arg_lower = arg.lower()
+                for pattern in SENSITIVE_FILE_PATTERNS:
+                    if pattern in arg_lower or arg_lower.endswith(pattern):
+                        return True, f"attempt to read sensitive file: {arg!r}"
+                j += 1
             i += 1
             continue
 
