@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.1] - 2026-03-06
+
+### Changed
+
+- **Version alignment**: All plugins updated to version 2.5.1 to align with marketplace version
+  - `developer-kit-core`: 2.5.0 → 2.5.1
+  - `developer-kit-ai`: 2.5.0 → 2.5.1
+  - `developer-kit-aws`: 2.5.0 → 2.5.1
+  - `developer-kit-java`: 2.5.0 → 2.5.1
+  - `developer-kit-typescript`: 2.5.0 → 2.5.1
+  - `developer-kit-php`: 2.5.0 → 2.5.1
+  - `developer-kit-python`: 2.5.0 → 2.5.1
+  - `developer-kit-devops`: 2.5.0 → 2.5.1
+  - `developer-kit-project-management`: 2.5.0 → 2.5.1
+  - `developer-kit-tools`: 2.5.0 → 2.5.1
+  - `github-spec-kit`: 2.4.0 → 2.5.1
+
 ## [2.5.0] - 2026-03-04
 
 ### Added
