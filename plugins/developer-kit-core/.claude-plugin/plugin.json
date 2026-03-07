@@ -50,5 +50,8 @@
     "./skills/drawio-logical-diagrams",
     "./skills/github-issue-workflow",
     "./skills/docs-updater"
+  ],
+  "hooks": [
+    "./hooks/prevent-destructive-commands.py"
   ]
 }
