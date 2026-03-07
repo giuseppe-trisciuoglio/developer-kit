@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **New Codex CLI delegation skill** (`developer-kit-tools`):
+  - `codex`: Delegates complex development tasks to OpenAI's Codex CLI using GPT-5.3-codex models
+  - Supports `codex exec` for non-interactive code generation and `codex review` for code review workflows
+  - Includes model selection guide (gpt-5.3-codex, o3, o4-mini) and sandbox modes documentation
+  - Comprehensive examples covering main use cases with security warnings for dangerous modes
+  - CLI command reference documentation for all available commands
+
 ## [2.5.1] - 2026-03-06
 
 ### Changed
