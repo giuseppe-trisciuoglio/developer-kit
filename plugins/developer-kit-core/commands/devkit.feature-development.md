@@ -168,15 +168,23 @@ Execute the standard 7-phase workflow:
 
 **Actions**:
 
-1. Create todo list with all phases
-2. **Detect execution mode**:
+1. **Check for uncommitted changes FIRST** (before anything else):
+   - Run `git status --porcelain` to check for uncommitted changes
+   - If there are untracked files, staged changes, or unstaged modifications:
+     - Present the user with the specific changes found
+     - Ask via AskUserQuestion: "You have uncommitted changes. Please commit them before starting feature development. Do you want to proceed anyway (not recommended) or commit first?"
+     - If user chooses to commit first, stop and wait for them to run `git commit`
+     - If user proceeds anyway, document the uncommitted state and continue at user's risk
+   - Only proceed with the workflow if no uncommitted changes exist OR user explicitly accepts the risk
+2. Create todo list with all phases
+3. **Detect execution mode**:
    - If $ARGUMENTS starts with "Task:" (case-insensitive), go to **Task Mode Flow**
    - Otherwise, continue with **Feature Mode Flow**
-3. For Feature Mode: If feature unclear, ask user for:
+4. For Feature Mode: If feature unclear, ask user for:
     - What problem are they solving?
     - What should the feature do?
     - Any constraints or requirements?
-4. Summarize understanding and confirm with user
+5. Summarize understanding and confirm with user
 
 ---
 
