@@ -57,30 +57,50 @@ The Developer Kit follows a systematic development workflow that ensures high-qu
 
 **Command:** `/devkit.brainstorm [idea-description]`
 
-Start here when you have a new feature idea or need to explore design alternatives. This command guides you through a systematic 9-phase process:
+Start here when you have a new feature idea. This command guides you to create a **functional specification** (WHAT the system should do, not HOW):
 
-- **Context Discovery**: Understand project state and initial idea
 - **Idea Refinement**: Deep exploration through structured dialogue
-- **Approach Exploration**: Present 2-3 approaches with trade-offs
-- **Codebase Exploration**: Analyze existing code for design constraints
-- **Design Presentation**: Present design incrementally with validation
-- **Documentation Generation**: Create professional design documents
-- **Document Review**: Quality review by specialist agent
-- **Next Steps Recommendation**: Suggest appropriate follow-up command
+- **Use Case Definition**: Define user behaviors and business rules
+- **Acceptance Criteria**: Establish testable conditions for completion
+- **Specification Review**: Validate with user
 
-**Output**: A comprehensive design document saved to `docs/plans/YYYY-MM-DD--design.md`
+**Output**: Functional specification saved to `docs/specs/YYYY-MM-DD--feature-name.md`
 
 **Example:**
 ```bash
 /devkit.brainstorm Add user authentication with JWT tokens
 ```
 
-### 2. Feature Development Phase
+**Next step:** After specification, continue with `/devkit.spec-to-tasks`
 
-**Command:** `/devkit.feature-development [--lang=spring|typescript|nestjs|react|python|general] [feature-description]`
+### 2. Specification to Tasks Phase
 
-Use this command to implement the design created during brainstorming. It follows a systematic 7-phase approach:
+**Command:** `/devkit.spec-to-tasks [--lang=java|spring|typescript|nestjs|react|python|general] [spec-file]`
 
+Converts the functional specification into atomic, executable tasks:
+
+- **Task Decomposition**: Break down specification into actionable tasks
+- **Dependency Mapping**: Identify task dependencies
+- **Acceptance Criteria**: Each task has clear completion criteria
+- **Implementation Commands**: Pre-filled commands for execution
+
+**Output**: Task list saved to `docs/tasks/YYYY-MM-DD--feature-name--tasks.md`
+
+**Example:**
+```bash
+/devkit.spec-to-tasks docs/specs/2026-03-07-user-auth.md
+/devkit.spec-to-tasks --lang=spring docs/specs/2026-03-07-user-auth.md
+```
+
+**Next step:** Execute tasks with `/devkit.feature-development` or implement specific tasks with "Task:" prefix
+
+### 3. Feature Development Phase
+
+**Command:** `/devkit.feature-development [--lang=spring|typescript|nestjs|react|python|general] [feature-description | "Task: task-name"]`
+
+Use this command to implement features. Supports two modes:
+
+**Mode 1 - Feature Development:** Implement entire features
 - **Discovery**: Understand what needs to be built
 - **Codebase Exploration**: Deep understanding of existing code patterns
 - **Clarifying Questions**: Fill gaps and resolve ambiguities
@@ -88,6 +108,11 @@ Use this command to implement the design created during brainstorming. It follow
 - **Implementation**: Build the feature following conventions
 - **Quality Review**: Ensure code quality and correctness
 - **Summary**: Document what was accomplished
+
+**Mode 2 - Task Execution:** Execute specific tasks from a task list (use "Task:" prefix)
+- Reads task details from `docs/tasks/YYYY-MM-DD--*--tasks.md`
+- Focuses on specific task implementation
+- Updates task progress in the task list
 
 **Language/Framework Support:**
 - `--lang=spring` or `--lang=java`: Java/Spring Boot development
@@ -98,12 +123,16 @@ Use this command to implement the design created during brainstorming. It follow
 - `--lang=aws`: AWS infrastructure and CloudFormation
 - `--lang=general` or no flag: General-purpose development
 
-**Example:**
+**Examples:**
 ```bash
+# Feature Development Mode
 /devkit.feature-development --lang=spring Add REST API for user management
+
+# Task Execution Mode
+/devkit.feature-development --lang=spring "Task: User login endpoint"
 ```
 
-### 3. Code Review & Debug Phase
+### 4. Code Review & Debug Phase
 
 After implementation, use these specialized commands for quality assurance:
 
@@ -129,17 +158,21 @@ After implementation, use these specialized commands for quality assurance:
 1. Idea
    ↓
 2. /devkit.brainstorm
-   ↓ (creates design document)
-3. /devkit.feature-development
-   ↓ (implements feature)
-4. Code Review & Testing
+   ↓ (creates functional specification: docs/specs/)
+3. /devkit.spec-to-tasks
+   ↓ (creates task list: docs/tasks/)
+4. /devkit.feature-development
+   ↓ (implements feature or specific tasks)
+5. Code Review & Testing
    ↓
-5. /devkit.fix-debugging (if issues found)
+6. /devkit.fix-debugging (if issues found)
    ↓
-6. /devkit.refactor (for improvements)
+7. /devkit.refactor (for improvements)
    ↓
-7. Ready for deployment
+8. Ready for deployment
 ```
+
+**New Workflow:** `Idea → Functional Specification → Tasks → Implementation`
 
 ### Alternative Paths
 
@@ -177,9 +210,10 @@ Core agents, commands, and skills used by all other plugins.
 
 **Skills**: `claude-md-management`, `drawio-logical-diagrams`, `github-issue-workflow`, `docs-updater`
 
-**Commands**: `/devkit.brainstorm`, `/devkit.refactor`, `/devkit.feature-development`, `/devkit.fix-debugging`,
-`/devkit.generate-document`, `/devkit.generate-changelog`, `/devkit.github.create-pr`, `/devkit.github.review-pr`,
-`/devkit.lra.*` (7 LRA workflow commands), `/devkit.verify-skill`, `/devkit.generate-security-assessment`
+**Commands**: `/devkit.brainstorm`, `/devkit.spec-to-tasks`, `/devkit.refactor`, `/devkit.feature-development`,
+`/devkit.fix-debugging`, `/devkit.generate-document`, `/devkit.generate-changelog`, `/devkit.github.create-pr`,
+`/devkit.github.review-pr`, `/devkit.lra.*` (7 LRA workflow commands), `/devkit.verify-skill`,
+`/devkit.generate-security-assessment`
 
 ---
 

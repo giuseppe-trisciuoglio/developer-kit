@@ -63,7 +63,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **New Specification to Tasks command** (`developer-kit-core`):
+  - `devkit.spec-to-tasks`: Converts a functional specification into executable and trackable tasks
+  - Bridge between `devkit.brainstorm` (specification) and `devkit.feature-development` (implementation)
+  - Supports multiple languages: java, spring, typescript, nestjs, react, python, general
+  - Output: `docs/tasks/YYYY-MM-DD-feature-name-tasks.md` with task structure including title, description, acceptance criteria, dependencies, and implementation commands
+
+- **New Developer Workflow** (`developer-kit-core`):
+  - Complete workflow: `Idea → Functional Specification → Tasks → Implementation`
+  - New task list format with atomic, executable tasks
+
 ### Changed
+
+- **Brainstorm command revised** (`developer-kit-core`):
+  - `devkit.brainstorm`: Now generates pure functional specifications (WHAT, not HOW)
+  - Focus on business logic, use cases, and acceptance criteria
+  - No code, frameworks, or technical patterns in specifications
+  - Output changed to `docs/specs/YYYY-MM-DD-feature-name.md`
+
+- **Feature Development command enhanced** (`developer-kit-core`):
+  - `devkit.feature-development`: Added Task Mode support
+  - Execute specific tasks from a task list using "Task:" prefix
+  - Example: `/developer-kit:devkit.feature-development "Task: User login"`
 
 ### Deprecated
 

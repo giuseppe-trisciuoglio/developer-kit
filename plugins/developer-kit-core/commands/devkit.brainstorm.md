@@ -1,5 +1,5 @@
 ---
-description: "Provides guided brainstorming capability to transform ideas into pure functional specifications. Use when starting a new feature to define WHAT should be built (not HOW). Output: docs/specs/YYYY-MM-DD-feature-name.md"
+description: "Provides guided brainstorming capability to transform ideas into pure functional specifications. Use when starting a new feature to define WHAT should be built (not HOW). Output: docs/specs/[id]/YYYY-MM-DD-feature-name-specs.md"
 argument-hint: "[ idea-description ]"
 allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, TodoWrite, AskUserQuestion
 model: inherit
@@ -16,10 +16,12 @@ This command produces a **functional specification** — a document that describ
 The new workflow:
 
 ```
-Idea → Functional Specification (docs/specs/) → Tasks (docs/tasks/) → Implementation
+Idea → Functional Specification (docs/specs/[id]/) → Tasks (docs/specs/[id]/tasks/) → Implementation
 ```
 
-**Output**: `docs/specs/YYYY-MM-DD--feature-name.md`
+**Output**: `docs/specs/[id]/YYYY-MM-DD--feature-name-specs.md`
+
+Where `[id]` is a unique identifier in format `NNN-feature-name` (e.g., `001-hotel-search-aggregation`).
 
 ### What vs. How
 
@@ -28,7 +30,7 @@ Idea → Functional Specification (docs/specs/) → Tasks (docs/tasks/) → Impl
 | Focus | Business rules, user behaviors | Frameworks, patterns, code |
 | Language | Natural language | Technical terminology |
 | Examples | "User can reset password via email" | "Use Spring Security with JWT" |
-| Output | `docs/specs/` | `docs/plans/` (deprecated) |
+| Output | `docs/specs/[id]/` | `docs/plans/` (deprecated) |
 
 Use this command when starting a new feature to define clear functional requirements before any technical decisions.
 
@@ -41,7 +43,7 @@ Use this command when starting a new feature to define clear functional requirem
 After generating the functional specification, continue with:
 
 ```bash
-/developer-kit:devkit.spec-to-tasks docs/specs/YYYY-MM-DD--feature-name.md
+/developer-kit:devkit.spec-to-tasks docs/specs/[id]/
 ```
 
 ## Arguments
@@ -261,7 +263,16 @@ Task(
 **Actions**:
 
 1. Compile all validated specification sections
-2. Use the Task tool to launch the document-generator-expert subagent:
+
+2. Generate unique spec ID:
+   - Count existing folders in `docs/specs/` to determine next sequence number
+   - Create slug from feature name (lowercase, hyphenated)
+   - Format: `NNN-feature-slug` (e.g., `001-hotel-search-aggregation`)
+   - Example: If 5 specs exist, next ID is `006-feature-name`
+
+3. Create spec folder: `docs/specs/[id]/`
+
+4. Use the Task tool to launch the document-generator-expert subagent:
 
 ```
 Task(
@@ -270,6 +281,7 @@ Task(
 
     **Feature Title**: [title]
     **Date**: [current date]
+    **Spec ID**: [id] (e.g., 001-hotel-search-aggregation)
 
     **Business Context**:
     - Problem solved: [from Section 1]
@@ -300,7 +312,7 @@ Task(
     **Open Questions**: [list]
 
     Create a comprehensive, well-formatted functional specification and save it to:
-    docs/specs/YYYY-MM-DD--feature-name.md
+    docs/specs/[id]/YYYY-MM-DD--feature-name-specs.md
 
     IMPORTANT:
     - This is a FUNCTIONAL specification, NOT a technical design
@@ -313,7 +325,7 @@ Task(
 ```
 
 3. Wait for the document generator to complete
-4. Verify the document was created successfully in `docs/specs/`
+4. Verify the document was created successfully in `docs/specs/[id]/`
 5. Update todos
 
 ---
@@ -329,7 +341,7 @@ Task(
 ```
 Task(
   description: "Review functional specification quality",
-  prompt: "Review the functional specification at docs/specs/YYYY-MM-DD--feature-name.md for:
+  prompt: "Review the functional specification at docs/specs/[id]/YYYY-MM-DD--feature-name-specs.md for:
 
     1. **Completeness**: All required sections are present (Business Context, Functional Requirements, User Interactions, Acceptance Criteria, Integration Requirements, Out of Scope, Open Questions)
 
@@ -385,7 +397,7 @@ Task(
 
    **For converting specification to tasks**: Recommend `/developer-kit:devkit.spec-to-tasks`
    - Use when: Converting functional specification to trackable tasks
-   - Arguments: `--lang=[language] docs/specs/YYYY-MM-DD--feature-name.md`
+   - Arguments: `--lang=[language] docs/specs/[id]/`
 
 2. **Use the AskUserQuestion tool to present the recommendation**:
 
@@ -398,12 +410,13 @@ Task(
 
 ```bash
 # Example: Convert specification to tasks
-/developer-kit:devkit.spec-to-tasks --lang=[java|spring|typescript|nestjs|react|python|general] docs/specs/YYYY-MM-DD--feature-name.md
+/developer-kit:devkit.spec-to-tasks --lang=[java|spring|typescript|nestjs|react|python|general] docs/specs/[id]/
 ```
 
 4. If user chooses to continue, remind them:
-   - The functional specification has been saved at `docs/specs/YYYY-MM-DD--feature-name.md`
-   - The task list will be saved at `docs/tasks/YYYY-MM-DD--feature-name--tasks.md`
+   - The functional specification has been saved at `docs/specs/[id]/YYYY-MM-DD--feature-name-specs.md`
+   - The task list will be saved at `docs/specs/[id]/YYYY-MM-DD--feature-name--tasks.md`
+   - Individual tasks will be in `docs/specs/[id]/tasks/TASK-XXX.md`
 
 ---
 
@@ -419,7 +432,8 @@ Task(
     - **Approach Selected**: Which approach was chosen and why
     - **Integration Context**: Key integration requirements (if any)
     - **Functional Specification Created**: Key aspects of the specification
-    - **Document Location**: `docs/specs/YYYY-MM-DD--feature-name.md`
+    - **Spec ID**: `[id]` (e.g., `001-hotel-search-aggregation`)
+    - **Document Location**: `docs/specs/[id]/YYYY-MM-DD--feature-name-specs.md`
     - **Specification Review**: Review outcome and any revisions made
     - **Recommended Next Step**: Generate task list with `devkit.spec-to-tasks`
 
@@ -467,15 +481,16 @@ Phase 6: Documentation (document-generator-expert agent)
     ↓
 Phase 7: Specification Review (quality verification)
     ↓
-[Creates: docs/specs/YYYY-MM-DD--feature-name.md]
+[Creates: docs/specs/[id]/YYYY-MM-DD--feature-name-specs.md]
     ↓
 [Recommends: devkit.spec-to-tasks]
     ↓
-/developer-kit:devkit.spec-to-tasks --lang=[language] docs/specs/...
+/developer-kit:devkit.spec-to-tasks --lang=[language] docs/specs/[id]/
     ↓
-[Creates: docs/tasks/YYYY-MM-DD--feature-name--tasks.md]
+[Creates: docs/specs/[id]/YYYY-MM-DD--feature-name--tasks.md]
+[Creates: docs/specs/[id]/tasks/TASK-XXX.md]
     ↓
-/developer-kit:devkit.feature-development --lang=[language] "Task: [task name]"
+/developer-kit:devkit.feature-development --lang=[language] "docs/specs/[id]/tasks/TASK-XXX.md"
     ↓
 [Implements single task]
 ```
@@ -488,11 +503,12 @@ The functional specification created by this command serves as:
 2. **Communication tool**: Can be shared with team members for review
 3. **Documentation**: Becomes part of project's functional specification history
 4. **Task generation input**: Used by `devkit.spec-to-tasks` to create executable tasks
+5. **Organized storage**: All related files (spec, tasks, individual tasks) are grouped in `docs/specs/[id]/`
 
 ### Re-entering Brainstorming
 
 If implementation reveals specification issues, you can re-run `/developer-kit:devkit.brainstorm`:
-- The previous specification will be preserved
+- The previous specification will be preserved in its folder
 - A new specification will be created with the current date
 - You can reference the previous specification during the new brainstorming session
 
@@ -556,12 +572,12 @@ After running `/developer-kit:devkit.brainstorm`, continue with:
 
 ```bash
 # Step 2: Convert specification to tasks
-/developer-kit:devkit.spec-to-tasks --lang=spring docs/specs/2026-03-07-user-authentication.md
+/developer-kit:devkit.spec-to-tasks --lang=spring docs/specs/001-user-auth/
 
 # Step 3: Implement specific tasks
-/developer-kit:devkit.feature-development --lang=spring "Task: User login"
-/developer-kit:devkit.feature-development --lang=spring "Task: User logout"
-/developer-kit:devkit.feature-development --lang=spring "Task: Password reset"
+/developer-kit:devkit.feature-development --lang=spring "docs/specs/001-user-auth/tasks/TASK-001.md"
+/developer-kit:devkit.feature-development --lang=spring "docs/specs/001-user-auth/tasks/TASK-002.md"
+/developer-kit:devkit.feature-development --lang=spring "docs/specs/001-user-auth/tasks/TASK-003.md"
 ```
 
 This separates WHAT (functional specification) from HOW (implementation), following the "divide et impera" principle.
