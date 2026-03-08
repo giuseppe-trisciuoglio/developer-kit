@@ -212,7 +212,18 @@ Provide a comprehensive summary that will inform task generation.
    - Create a dependency graph mentally
    - Order tasks accordingly
 
-4. Present task structure to user via AskUserQuestion for approval
+4. Identify test requirements for each task:
+   - **Classes with business logic**: Entities, services, controllers, value objects with validation or state management
+   - **Classes needing tests**: Any class that contains:
+     - Business rules or validation logic
+     - State transitions or lifecycle management
+     - Data transformation or calculations
+     - Conditional logic or edge cases
+   - **Test priority**: High priority for domain models, services, controllers/handlers; medium for utilities; low for simple DTOs/POCOs
+   - **Test files to create**: For each class with business logic, create corresponding test file (e.g., Java: `SearchService.java` → `SearchServiceTest.java`, TypeScript: `search.service.ts` → `search.service.spec.ts`, Python: `search_service.py` → `test_search_service.py`)
+   - **Test coverage focus**: State transitions, validation rules, business logic, error handling, edge cases
+
+5. Present task structure to user via AskUserQuestion for approval
 
 ---
 
@@ -229,6 +240,8 @@ Provide a comprehensive summary that will inform task generation.
 3. Create tasks directory: `docs/specs/[id]/tasks/`
 
 4. For each task, create an individual task file with technical details from codebase analysis:
+
+   **IMPORTANT**: Always include test files in "Files to Create" section for any class that contains business logic, state management, validation, or complex behavior. Test files should be listed alongside source files with clear descriptions of what to test (e.g., "test state transitions", "test validation logic").
 
 ```markdown
 ---
@@ -250,29 +263,38 @@ Based on codebase analysis:
 - **Existing Patterns to Follow**: [patterns from codebase analysis]
 - **APIs to Integrate With**: [existing APIs or services]
 - **Shared Components**: [existing utilities, services, or modules to use]
-- **Conventions**: [coding conventions, naming, structure]
+- **Conventions**: [coding conventions, naming, structure, framework-specific patterns]
 
 ## Implementation Details
 
-- **Files to Create/Modify**:
-  - `[new files to create]`
-  - `[existing files to modify]`
+**Files to Create**:
+- `[source file 1]` - [brief description]
+- `[source file 2]` - [brief description]
+- `[test file 1]` - [brief description of what to test]
+- `[test file 2]` - [brief description of what to test]
 
-- **Technical Decisions**:
-  - Use [existing pattern] for [component type]
-  - Follow existing [convention] in the codebase
-  - Integrate with [existing service/API]
+**Files to Modify** (if applicable):
+- `[existing file 1]` - [what changes are needed]
+- `[existing file 2]` - [what changes are needed]
+
+**Key Design Decisions**:
+- Use [existing pattern] for [component type]
+- Follow existing [convention] in the codebase
+- Integrate with [existing service/API]
 
 ## Acceptance Criteria
 
 - [ ] Criterion 1 (functional)
 - [ ] Criterion 2 (functional)
 - [ ] Criterion 3 (functional)
+- [ ] All test files created with appropriate test coverage for business logic
+- [ ] Tests cover edge cases and validation rules
 
 ## Verification
 
-- **Tests to Add/Run**: [existing test patterns to follow]
+- **Tests to Add/Run**: [specific test scenarios to implement - e.g., "unit tests for state transitions", "validation tests for input parameters", "business rule tests"]
 - **Code Review Focus**: [specific technical aspects to verify]
+- **Test Coverage**: Verify that all classes with business logic have corresponding test files
 
 **Dependencies**: [TASK-YYY if applicable, otherwise "None"]
 
