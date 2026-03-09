@@ -1,0 +1,16 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/users/999"
+  },
+  "response": {
+    "status": 404,
+    "jsonBody": {
+      "error": "User not found",
+      "code": "USER_NOT_FOUND"
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

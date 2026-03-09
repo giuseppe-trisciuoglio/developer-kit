@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/users/slow"
+  },
+  "response": {
+    "status": 200,
+    "fixedDelayMilliseconds": 5000,
+    "jsonBody": {
+      "id": "slow",
+      "message": "This response was intentionally delayed"
+    }
+  }
+}

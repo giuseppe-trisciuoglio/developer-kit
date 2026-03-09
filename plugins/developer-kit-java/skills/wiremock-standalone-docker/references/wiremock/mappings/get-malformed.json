@@ -1,0 +1,10 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/users/malformed"
+  },
+  "response": {
+    "status": 200,
+    "body": "{ invalid json"
+  }
+}

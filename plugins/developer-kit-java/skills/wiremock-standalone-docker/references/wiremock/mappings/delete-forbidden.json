@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "DELETE",
+    "url": "/api/users/123"
+  },
+  "response": {
+    "status": 403,
+    "jsonBody": {
+      "error": "Forbidden",
+      "message": "Insufficient permissions to perform this action"
+    }
+  }
+}
