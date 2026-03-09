@@ -1,0 +1,17 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/protected"
+  },
+  "response": {
+    "status": 401,
+    "jsonBody": {
+      "error": "Unauthorized",
+      "message": "Invalid or missing authentication token"
+    },
+    "headers": {
+      "Content-Type": "application/json",
+      "WWW-Authenticate": "Bearer realm=\"api\""
+    }
+  }
+}

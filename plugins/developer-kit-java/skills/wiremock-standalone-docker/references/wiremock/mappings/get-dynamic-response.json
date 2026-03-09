@@ -1,0 +1,19 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPattern": "/api/users/.*"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "id": "{{request.pathSegments.[1]}}",
+      "timestamp": "{{now}}",
+      "randomUuid": "{{randomValue}}",
+      "method": "{{request.method}}"
+    },
+    "headers": {
+      "Content-Type": "application/json",
+      "X-Request-Id": "{{randomValue}}"
+    }
+  }
+}
