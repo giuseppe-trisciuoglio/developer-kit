@@ -97,9 +97,15 @@ You are converting a functional specification into executable tasks. Follow a sy
    - If a folder path is provided: use the folder directly
    - Look for `*-specs.md` file inside the folder
 4. Read the functional specification file (must match pattern `*-specs.md`)
-5. Extract the spec ID from folder name (e.g., `001-hotel-search-aggregation`)
-6. Verify the specification exists and is valid
-7. If file not found, ask user for correct path via AskUserQuestion
+5. **CRITICAL: Look for user context files in the spec folder**:
+   - Search for these specific files that contain the original user request:
+     - `user-request.md` - Original user request (from brainstorming - **PRIMARY**)
+     - `brainstorming-notes.md` - Notes from brainstorming session (**SECONDARY**)
+   - Read these files and incorporate their content into your analysis
+   - These files are created by the brainstorming command and contain critical context
+6. Extract the spec ID from folder name (e.g., `001-hotel-search-aggregation`)
+7. Verify the specification exists and is valid
+8. If file not found, ask user for correct path via AskUserQuestion
 
 ---
 
@@ -115,12 +121,34 @@ You are converting a functional specification into executable tasks. Follow a sy
    - Acceptance criteria
    - Integration requirements
 
-2. Group related requirements:
+2. **CRITICAL: Include technical requirements from context files**:
+   - Review user-request.md and brainstorming-notes.md found in Phase 1
+   - Extract technical details that were provided during brainstorming:
+     - Architecture patterns (message queues, caching, async processing)
+     - Specific technologies mentioned (Redis, RabbitMQ, specific databases)
+     - Integration patterns and external services
+     - Any implementation hints or technical constraints
+   - These technical requirements must be reflected in the task decomposition
+   - Example: If context mentions "RabbitMQ queues", there must be tasks for queue configuration and consumers
+
+3. Group related requirements:
    - Identify naturally atomic units of work
    - Note dependencies between requirements
    - Prioritize based on dependencies (what can be done first)
 
-3. Present the extracted requirements structure to user for confirmation
+4. **CRITICAL: Verify against original user request**:
+   - If a `user-request.md` file exists in the spec folder, read it
+   - Compare the extracted requirements against the original user request
+   - Identify any requirements that are mentioned in the original request but NOT captured in the specification
+   - If discrepancies found, use AskUserQuestion to present them to the user:
+     - "I found requirements from your original request that may not be in the specification:"
+       - [list missing requirements]
+     - Options:
+       - "Add missing requirements to task list" (recommended)
+       - "Regenerate specification to include them"
+       - "Continue with current specification"
+
+5. Present the extracted requirements structure (including technical requirements) to user for confirmation
 
 ---
 
@@ -424,7 +452,7 @@ The `--lang` parameter affects only the **Implementation Command** in each task 
 
 ## Examples
 
-### Example 1: User Authentication
+### Example 1: User Authentication (Spring Boot)
 
 ```bash
 # Convert specification to tasks
@@ -445,16 +473,55 @@ docs/specs/001-user-auth/
     └── TASK-006.md
 ```
 
-### Example 2: E-commerce Checkout
+Sample task file (`TASK-001.md`):
+```markdown
+---
+id: TASK-001
+title: "User registration endpoint"
+spec: docs/specs/001-user-auth/2026-03-07--user-auth-specs.md
+lang: spring
+dependencies: []
+---
+
+# TASK-001: User registration endpoint
+
+**Description**: Implement user registration with email validation
+
+## Technical Context
+- **Existing Patterns to Follow**: REST controllers in src/main/java/.../controller/
+- **APIs to Integrate With**: Existing UserRepository
+- **Conventions**: @RestController, @Valid annotations
+
+## Acceptance Criteria
+- [ ] POST /api/v1/users/register accepts email and password
+- [ ] Email uniqueness is validated
+- [ ] All test files created with appropriate test coverage
+
+**Implementation Command**:
+/developer-kit:devkit.feature-development --lang=spring "docs/specs/001-user-auth/tasks/TASK-001.md"
+```
+
+### Example 2: E-commerce Checkout (TypeScript)
 
 ```bash
 /developer-kit:devkit.spec-to-tasks --lang=typescript docs/specs/005-checkout-flow/
 ```
 
-### Example 3: API Integration
+### Example 3: API Integration (Python)
 
 ```bash
 /developer-kit:devkit.spec-to-tasks --lang=python docs/specs/010-payment-integration/
+```
+
+### Example 4: Full Workflow (after task generation)
+
+```bash
+# Step 1: Generate tasks from specification
+/developer-kit:devkit.spec-to-tasks --lang=nestjs docs/specs/003-notification-system/
+
+# Step 2: Implement tasks in dependency order
+/developer-kit:devkit.feature-development --lang=nestjs "docs/specs/003-notification-system/tasks/TASK-001.md"
+/developer-kit:devkit.feature-development --lang=nestjs "docs/specs/003-notification-system/tasks/TASK-002.md"
 ```
 
 ---

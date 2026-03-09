@@ -272,7 +272,25 @@ Task(
 
 3. Create spec folder: `docs/specs/[id]/`
 
-4. Use the Task tool to launch the document-generator-expert subagent:
+4. **CRITICAL: Save the original user request**:
+   - Create a file `user-request.md` in `docs/specs/[id]/` containing:
+     - The original user input/idea description
+     - Any constraints or requirements mentioned
+     - This file will be used by `spec-to-tasks` to verify all requirements are captured
+   - Example content:
+     ```markdown
+     # User Request
+
+     **Original Input**: [what the user asked for]
+
+     **Key Requirements Mentioned**:
+     - [requirement 1]
+     - [requirement 2]
+
+     **Constraints**: [any constraints mentioned]
+     ```
+
+5. Use the Task tool to launch the document-generator-expert subagent:
 
 ```
 Task(
@@ -324,15 +342,27 @@ Task(
 )
 ```
 
-3. Wait for the document generator to complete
-4. Verify the document was created successfully in `docs/specs/[id]/`
-5. Update todos
+6. Wait for the document generator to complete
+7. Verify the document was created successfully in `docs/specs/[id]/`
+
+8. **CRITICAL: Save brainstorming context files for later use by spec-to-tasks**:
+   - If you have conversation context or notes about the feature (from the dialogue with user), save them to the spec folder
+   - Create a file named `brainstorming-notes.md` in `docs/specs/[id]/` with:
+     - Key technical decisions discussed
+     - Architecture patterns mentioned
+     - Any specific technologies or integrations requested
+     - Notes about implementation approach
+   - This file will be read by `devkit.spec-to-tasks` to ensure technical details are NOT lost
+
+9. Update todos
 
 ---
 
 ## Phase 7: Specification Review
 
 **Goal**: Review the generated functional specification for quality and completeness
+
+**IMPORTANT**: The functional specification should be technology-agnostic (WHAT), but technical details discussed during brainstorming are preserved separately in `brainstorming-notes.md` for use by `spec-to-tasks`.
 
 **Actions**:
 
@@ -439,31 +469,6 @@ Task(
 
 ---
 
-## Practical Examples
-
-```bash
-# Simple feature idea
-/developer-kit:devkit.brainstorm Add user authentication with JWT tokens
-
-# Complex feature idea
-/developer-kit:devkit.brainstorm Implement real-time notifications using WebSockets
-
-# Refactoring idea
-/developer-kit:devkit.brainstorm Refactor the payment processing module to be more maintainable
-
-# Bug fix design
-/developer-kit:devkit.brainstorm Design a fix for the race condition in order processing
-
-# Performance improvement
-/developer-kit:devkit.brainstorm Design a caching strategy to reduce API response times
-
-# Integration idea
-/developer-kit:devkit.brainstorm Integrate Stripe payment processing for subscriptions
-
-# Architecture idea
-/developer-kit:devkit.brainstorm Design a microservices architecture for the reporting module
-```
-
 ## Integration with Development Commands
 
 This brainstorming command produces a **functional specification** that feeds into the new modular workflow:
@@ -550,34 +555,52 @@ Update the status as you progress through each phase and section.
 
 ### Example 1: Simple Feature Idea
 
-```
+```bash
 /developer-kit:devkit.brainstorm Add user authentication with JWT tokens
 ```
 
 ### Example 2: Complex Feature
 
-```
+```bash
 /developer-kit:devkit.brainstorm Implement real-time notifications using WebSockets
 ```
 
 ### Example 3: Refactoring
 
-```
+```bash
 /developer-kit:devkit.brainstorm Refactor the payment processing module to be more maintainable
 ```
 
-## New Workflow
-
-After running `/developer-kit:devkit.brainstorm`, continue with:
+### Example 4: Bug Fix Design
 
 ```bash
+/developer-kit:devkit.brainstorm Design a fix for the race condition in order processing
+```
+
+### Example 5: Performance Improvement
+
+```bash
+/developer-kit:devkit.brainstorm Design a caching strategy to reduce API response times
+```
+
+### Example 6: Integration
+
+```bash
+/developer-kit:devkit.brainstorm Integrate Stripe payment processing for subscriptions
+```
+
+### Example 7: Full Workflow (after brainstorming)
+
+```bash
+# Step 1: Brainstorm and generate functional specification
+/developer-kit:devkit.brainstorm Design a microservices architecture for the reporting module
+
 # Step 2: Convert specification to tasks
-/developer-kit:devkit.spec-to-tasks --lang=spring docs/specs/001-user-auth/
+/developer-kit:devkit.spec-to-tasks --lang=spring docs/specs/001-reporting-module/
 
 # Step 3: Implement specific tasks
-/developer-kit:devkit.feature-development --lang=spring "docs/specs/001-user-auth/tasks/TASK-001.md"
-/developer-kit:devkit.feature-development --lang=spring "docs/specs/001-user-auth/tasks/TASK-002.md"
-/developer-kit:devkit.feature-development --lang=spring "docs/specs/001-user-auth/tasks/TASK-003.md"
+/developer-kit:devkit.feature-development --lang=spring "docs/specs/001-reporting-module/tasks/TASK-001.md"
+/developer-kit:devkit.feature-development --lang=spring "docs/specs/001-reporting-module/tasks/TASK-002.md"
 ```
 
 This separates WHAT (functional specification) from HOW (implementation), following the "divide et impera" principle.
