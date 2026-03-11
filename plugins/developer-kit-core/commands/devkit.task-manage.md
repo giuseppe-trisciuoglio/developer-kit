@@ -91,7 +91,58 @@ Adds a new task to an existing specification.
 
 8. Update the traceability matrix if requirements are affected
 
-### Task File Template (New Task)
+### Task File Templates
+
+Choose the appropriate template based on task complexity:
+
+#### Template A: Simple (Recommended for most tasks)
+
+Use this template for straightforward tasks with clear scope.
+
+```yaml
+---
+id: "TASK-XXX"
+title: "[Task Title]"
+status: "pending"  # pending | in-progress | completed | superseded | optional
+description: "[What this task implements]"
+acceptance_criteria:
+  - "[Criterion 1]"
+  - "[Criterion 2]"
+dependencies: []
+  # - "TASK-YYY"  # if depends on other tasks
+files_to_create:
+  - "[file path]"
+files_to_modify:
+  - "[file path]"
+implementation_command: "/developer-kit:devkit.feature-development --lang=[lang] \"docs/specs/[id]/tasks/TASK-XXX.md\""
+---
+
+# TASK-XXX: [Task Title]
+
+**Description**: [Functional description]
+
+**Complexity**: [Score]/100 - [Simple/Moderate/Complex]
+
+## Acceptance Criteria
+
+- [ ] [Criterion 1]
+- [ ] [Criterion 2]
+
+## Files
+
+**To Create**:
+- `[file path]`
+
+**To Modify**:
+- `[file path]`
+
+**Implementation Command**:
+/developer-kit:devkit.feature-development --lang=[lang] "docs/specs/[id]/tasks/TASK-XXX.md"
+```
+
+#### Template B: Full (For complex tasks requiring detailed tracking)
+
+Use this template for complex tasks that need business context, data contracts, observability, and complexity tracking.
 
 ```yaml
 ---
@@ -187,6 +238,9 @@ context_hash: "[SHA-256 hash for change detection]"
 
 **Security**:
 - [Security consideration]
+
+**Implementation Command**:
+/developer-kit:devkit.feature-development --lang=[lang] "docs/specs/[id]/tasks/TASK-XXX.md"
 ```
 
 ### Context Hash Generation
@@ -447,6 +501,44 @@ Complex:   [█░░░░░░░░░] Z tasks (requires splitting)
 - [ ] Address complex tasks (split recommended)
 - [ ] Complete simple tasks first
 - [ ] Resolve dependency chains
+
+---
+
+## Examples
+
+### Example 1: Add a new task
+
+```bash
+# Add a new task to a specification
+/developer-kit:devkit.task-manage --action=add --spec=docs/specs/001-user-auth/ --lang=spring
+```
+
+### Example 2: Split a complex task
+
+```bash
+# Split a complex task into subtasks
+/developer-kit:devkit.task-manage --action=split --task=docs/specs/001-user-auth/tasks/TASK-007.md
+```
+
+### Example 3: Mark task as optional
+
+```bash
+# Mark a task as optional
+/developer-kit:devkit.task-manage --action=mark-optional --task=docs/specs/001-user-auth/tasks/TASK-003.md
+```
+
+### Example 4: Regenerate task index
+
+```bash
+# Regenerate the task index file
+/developer-kit:devkit.task-manage --action=regenerate-index --spec=docs/specs/001-user-auth/
+```
+
+### Example 5: List all tasks
+
+```bash
+# List all tasks with complexity
+/developer-kit:devkit.task-manage --action=list --spec=docs/specs/001-user-auth/
 ```
 
 ---

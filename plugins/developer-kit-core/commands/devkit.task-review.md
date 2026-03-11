@@ -170,6 +170,7 @@ You are reviewing an implemented task to verify it meets specifications and pass
 | `nestjs` | `developer-kit-typescript:nestjs-code-review-expert` |
 | `react` | `developer-kit-typescript:general-code-reviewer` |
 | `python` | `developer-kit-python:python-code-review-expert` |
+| `php` | `developer-kit-php:php-code-review-expert` |
 | `general` | `developer-kit:general-code-reviewer` |
 
 2. Launch code review agent to analyze implemented code
