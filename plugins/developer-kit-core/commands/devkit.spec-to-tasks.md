@@ -54,7 +54,7 @@ Idea → Functional Specification → Tasks → Implementation
 
 | Argument | Required | Description |
 |----------|----------|-------------|
-| `--lang` | Recommended | Target language/framework: `java`, `spring`, `typescript`, `nestjs`, `react`, `python`, `general`. Required for codebase analysis and technical task generation |
+| `--lang` | Recommended | Target language/framework: `java`, `spring`, `typescript`, `nestjs`, `react`, `python`, `php`, `general`. Required for codebase analysis and technical task generation |
 | `spec-file` | No | Path to spec file or spec folder (e.g., `docs/specs/001-feature-name/` or `docs/specs/001-feature-name/2026-03-07--feature-name-specs.md`) |
 
 ## Current Context
@@ -137,7 +137,7 @@ You are converting a functional specification into executable tasks. Follow a sy
    - Prioritize based on dependencies (what can be done first)
 
 4. **CRITICAL: Verify against original user request**:
-   - If a `user-request.md` file exists in the spec folder, read it
+   - Using the `user-request.md` content already read in Phase 1
    - Compare the extracted requirements against the original user request
    - Identify any requirements that are mentioned in the original request but NOT captured in the specification
    - If discrepancies found, use AskUserQuestion to present them to the user:
@@ -168,6 +168,7 @@ You are converting a functional specification into executable tasks. Follow a sy
 | `typescript` / `nestjs` | `developer-kit-typescript:typescript-software-architect-review` |
 | `react` | `developer-kit-typescript:react-software-architect-review` |
 | `python` | `developer-kit-python:python-software-architect-expert` |
+| `php` | `developer-kit-php:php-software-architect-expert` |
 | `general` | `developer-kit:general-code-explorer` |
 
 2. Launch the agent to explore codebase with this prompt:
@@ -446,6 +447,7 @@ The `--lang` parameter affects only the **Implementation Command** in each task 
 | `nestjs` | `devkit.feature-development --lang=nestjs "docs/specs/[id]/tasks/TASK-XXX.md"` |
 | `react` | `devkit.feature-development --lang=react "docs/specs/[id]/tasks/TASK-XXX.md"` |
 | `python` | `devkit.feature-development --lang=python "docs/specs/[id]/tasks/TASK-XXX.md"` |
+| `php` | `devkit.feature-development --lang=php "docs/specs/[id]/tasks/TASK-XXX.md"` |
 | `general` | `devkit.feature-development --lang=general "docs/specs/[id]/tasks/TASK-XXX.md"` |
 
 ---
