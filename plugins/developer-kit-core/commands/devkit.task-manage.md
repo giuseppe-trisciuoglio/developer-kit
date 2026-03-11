@@ -81,9 +81,15 @@ Adds a new task to an existing specification.
 
 5. Create the new task file following the standard task format
 
-6. Update the task index to include the new task
+6. Validate dependencies before saving:
+   - Verify all referenced task IDs exist in the tasks directory
+   - Check for circular dependencies (TASK-A depends on TASK-B which depends on TASK-A)
+   - Ensure task ID format matches pattern TASK-XXX
+   - Warn if dependency points to a superseded task
 
-7. Update the traceability matrix if requirements are affected
+7. Update the task index to include the new task
+
+8. Update the traceability matrix if requirements are affected
 
 ### Task File Template (New Task)
 
@@ -91,6 +97,7 @@ Adds a new task to an existing specification.
 ---
 id: "TASK-XXX"
 title: "[Task Title]"
+status: "pending"  # pending | in-progress | completed | superseded | optional
 description: "[What this task implements]"
 acceptance_criteria:
   - "[Criterion 1]"
@@ -182,6 +189,12 @@ context_hash: "[SHA-256 hash for change detection]"
 - [Security consideration]
 ```
 
+### Context Hash Generation
+
+The `context_hash` field is used for change detection. Generate SHA-256 hash of: task title + description + acceptance_criteria + files_to_create + files_to_modify.
+
+Regenerate whenever these fields change to detect task drift.
+
 ---
 
 ## Action: Split
@@ -207,6 +220,10 @@ Splits a complex task into smaller, more manageable subtasks.
    - Generate new task IDs (e.g., TASK-008, TASK-009)
    - Each subtask inherits relevant context from parent
    - Update dependencies to reflect split
+   - Calculate complexity for each subtask:
+     - Count files, acceptance criteria, components, design decisions, integration points, external dependencies
+     - Apply complexity formula
+     - Ensure each subtask has complexity < parent task complexity
 
 6. Mark original task as superseded:
    - Update status to "superseded"
@@ -370,7 +387,8 @@ COMPLEXITY SCORE =
   (Acceptance Criteria × 5) +
   (Independent Components × 25) +
   (Design Decisions × 10) +
-  (Integration Points × 15)
+  (Integration Points × 15) +
+  (External Dependencies × 20)
 
 Thresholds:
 - 0-30: Simple
