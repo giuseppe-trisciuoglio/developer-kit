@@ -84,7 +84,7 @@ Parse $ARGUMENTS to detect the optional `--lang` parameter:
 
 | Phase        | General (default)                          | Java/Spring Boot (`--lang=spring` or `--lang=java`) | TypeScript (`--lang=typescript` or `--lang=ts`)                 | NestJS (`--lang=nestjs`)                                        | React (`--lang=react`)                                     | AWS (`--lang=aws`)                                 | Python (`--lang=python` or `--lang=py`)                 |
 |--------------|--------------------------------------------|-----------------------------------------------------|-----------------------------------------------------------------|-----------------------------------------------------------------|------------------------------------------------------------|----------------------------------------------------|---------------------------------------------------------|
-| Exploration  | `developer-kit:general-code-explorer`      | `developer-kit:general-code-explorer`               | `developer-kit:general-code-explorer`                           | `developer-kit:general-code-explorer`                           | `developer-kit:general-code-explorer`                      | `developer-kit:general-code-explorer`              | `developer-kit:general-code-explorer`                   |
+| Exploration  | `developer-kit:general-code-explorer`      | `developer-kit-java:spring-boot-backend-development-expert` | `developer-kit:general-code-explorer`                           | `developer-kit:nestjs-backend-development-expert`               | `developer-kit:react-frontend-development-expert`          | `developer-kit:aws-solution-architect-expert`      | `developer-kit:general-code-explorer`                   |
 | Architecture | `developer-kit:general-software-architect` | `developer-kit-java:java-software-architect-review` | `developer-kit-typescript:typescript-software-architect-review` | `developer-kit-typescript:typescript-software-architect-review` | `developer-kit-typescript:react-software-architect-review` | `developer-kit-aws:aws-solution-architect-expert`  | `developer-kit-python:python-software-architect-expert` |
 | Code Review  | `developer-kit:general-code-reviewer`      | `developer-kit-java:spring-boot-code-review-expert` | `developer-kit-typescript:general-code-reviewer`                | `developer-kit-typescript:nestjs-code-review-expert`            | `developer-kit-typescript:general-code-reviewer`           | `developer-kit-aws:aws-architecture-review-expert` | `developer-kit-python:python-code-review-expert`        |
 
@@ -201,14 +201,19 @@ Execute the standard 7-phase workflow:
    - Trim whitespace
    - Example: "Task: User login" → "User login"
 
-2. Find the task list file:
-   - Look for `docs/tasks/*--tasks.md`
+2. Find the task file:
+   - If the task name is a file path (contains "/" or ends with ".md"): use it directly
+   - Otherwise, look for task files matching `docs/specs/*/tasks/TASK-*.md`
+   - Match task by ID (e.g., "TASK-001") or title in the task frontmatter
    - If multiple found, ask user which one via AskUserQuestion
    - If none found, error with helpful message
 
-3. Read the task list and locate the specific task:
-   - Match task title (partial match allowed)
-   - Extract: description, acceptance criteria, dependencies
+3. Read the task file and extract:
+   - Task ID and title from YAML frontmatter
+   - Description
+   - Acceptance criteria
+   - Dependencies from YAML frontmatter
+   - Reference to specification file
 
 ### T-2: Dependency Check
 
@@ -252,9 +257,12 @@ Execute the standard 7-phase workflow:
 
 **Actions**:
 
-1. Mark task as completed in task list file:
-   - Change `[ ]` to `[x]` in the task's acceptance criteria
-   - Add completion note with date
+1. Mark task as completed:
+   - Update the task file YAML frontmatter:
+     - Set `status: completed`
+     - Add `completed_date: YYYY-MM-DD`
+   - Change `[ ]` to `[x]` in the task's acceptance criteria checkboxes
+   - Add completion note with date in the task file
 
 2. Summarize:
    - What was implemented
@@ -264,8 +272,6 @@ Execute the standard 7-phase workflow:
 ---
 
 ## Feature Mode Flow (Standard - When no "Task:" prefix)
-
-### Phase 2: Codebase Exploration
 
 ## Phase 2: Codebase Exploration
 

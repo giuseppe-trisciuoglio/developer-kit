@@ -248,11 +248,11 @@ Task(
    - Technical patterns or architectural styles
    - Code or pseudo-code
 
-5. **After each section, use the AskUserQuestion tool**:
+5. **[GATE] After each section, use the AskUserQuestion tool**:
     - "Does this section look right so far?"
     - Options: "Yes, continue", "Needs revision", "Go back to earlier section"
 
-6. **Wait for validation before proceeding to the next section**
+6. **[GATE] STOP: Wait for validation before proceeding to the next section**
 
 ---
 
@@ -344,6 +344,10 @@ Task(
 
 6. Wait for the document generator to complete
 7. Verify the document was created successfully in `docs/specs/[id]/`
+   - If the file was not created or is incomplete:
+     - Check the subagent output for errors
+     - Re-run Phase 6 with additional guidance if needed
+     - Use AskUserQuestion to decide: "Retry generation", "Continue with manual creation", or "Abort"
 
 8. **CRITICAL: Save brainstorming context files for later use by spec-to-tasks**:
    - If you have conversation context or notes about the feature (from the dialogue with user), save them to the spec folder

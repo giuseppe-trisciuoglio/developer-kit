@@ -143,7 +143,7 @@ You are reviewing an implemented task to verify it meets specifications and pass
 
 **Actions**:
 
-1. Read the functional specification referenced in the task
+1. Review the functional specification (already loaded in Phase 1) to verify compliance
 2. Compare implementation against:
    - User stories and use cases
    - Business rules
@@ -236,6 +236,9 @@ You are reviewing an implemented task to verify it meets specifications and pass
 ### Minor
 - [list]
 
+### Info
+- [list]
+
 ## Recommendations
 
 - [actionable recommendations]
@@ -259,7 +262,9 @@ You are reviewing an implemented task to verify it meets specifications and pass
 
 3. If issues found:
    - List specific issues that need fixing
-   - Recommend returning to implementation with feedback
+   - Save findings to the review report at `docs/specs/[id]/tasks/TASK-XXX--review.md`
+   - Invoke `/developer-kit:devkit.feature-development --lang=[language] "docs/specs/[id]/tasks/TASK-XXX.md"`
+   - Reference the review report path so implementation can read the detailed findings
    - Track unresolved items
 
 ---

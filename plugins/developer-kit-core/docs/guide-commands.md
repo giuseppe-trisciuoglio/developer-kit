@@ -72,6 +72,9 @@ General purpose commands for brainstorming, feature development, refactoring, de
 | Command | Purpose |
 |---------|---------|
 | `/developer-kit:devkit.brainstorm` | Guided brainstorming to transform ideas into designs |
+| `/developer-kit:devkit.spec-to-tasks` | Convert specifications into trackable tasks with full context linkage and traceability matrix |
+| `/developer-kit:devkit.task-manage` | Manage tasks with context preservation (add, split, update, mark optional/required, list) |
+| `/developer-kit:devkit.task-review` | Verify implementation against original user request and technical constraints with intent alignment |
 | `/developer-kit:devkit.refactor` | Guided code refactoring with codebase understanding |
 | `/developer-kit:devkit.feature-development` | Guided feature development with architecture focus |
 | `/developer-kit:devkit.fix-debugging` | Guided bug fixing and systematic debugging |
@@ -171,13 +174,26 @@ Project management and workflow commands.
 # 1. Brainstorm the feature
 /developer-kit:devkit.brainstorm "Add user authentication"
 
-# 2. Develop the feature with architecture guidance
-/developer-kit:devkit.feature-development --lang=spring "Implement JWT authentication"
+# 2. Convert specification to tasks (with context)
+/developer-kit:devkit.spec-to-tasks --lang=spring docs/specs/001-user-auth/
+# Generates: tasks with context linkage, traceability matrix
 
-# 3. Review the implementation
-/developer-kit-java:devkit.java.code-review full src/main/java/auth/
+# 3. Review context and traceability
+/developer-kit:devkit.task-manage --action=list --spec=docs/specs/001-user-auth/
+# Shows: complexity scores, context coverage, business goals
 
-# 4. Generate tests
+# 4. Manage tasks if needed
+/developer-kit:devkit.task-manage --action=split --task=docs/specs/001-user-auth/tasks/TASK-007.md
+# Preserves: context chain when splitting
+
+# 5. Develop the feature
+/developer-kit:devkit.feature-development --lang=spring "docs/specs/001-user-auth/tasks/TASK-001.md"
+
+# 6. Review implementation (with intent alignment)
+/developer-kit:devkit.task-review --lang=spring "docs/specs/001-user-auth/tasks/TASK-001.md"
+# Validates: against original user request + technical constraints
+
+# 7. Generate tests
 /developer-kit-java:devkit.java.write-unit-tests src/main/java/auth/
 ```
 
@@ -248,12 +264,56 @@ Project management and workflow commands.
 
 ---
 
+## Context Management
+
+The Developer Kit maintains complete context throughout the development workflow:
+
+### Context Linkage Fields
+
+Each task includes:
+- **original_request**: Link to user-request.md
+- **technical_context**: Link to brainstorming-notes.md
+- **business_goals**: Objectives this task supports
+- **data_contracts**: Input/output/error contracts
+- **external_dependencies**: External systems and their impact
+- **observability**: Logging, metrics, security requirements
+
+### Traceability Matrix
+
+Generated for each specification:
+- User Requirements → Tasks mapping
+- Business Goals coverage
+- Data Contracts traceability
+- External Dependencies map
+- Observability coverage
+
+### Context Chain
+
+When splitting tasks:
+- Child tasks inherit all context from parent
+- Business goals are refined, not lost
+- Data contracts are partitioned by relevance
+- Context hash tracks changes
+
+### Intent Alignment
+
+Task review validates:
+- Implementation matches original user requirements
+- Business goals are achieved
+- Technical constraints are respected
+- Alignment score 0-100%
+
+---
+
 ## Command Selection Guide
 
 | Task | Recommended Command | Plugin |
 |------|---------------------|--------|
 | Brainstorm ideas | `/developer-kit:devkit.brainstorm` | Core |
+| Convert spec to tasks (with context) | `/developer-kit:devkit.spec-to-tasks` | Core |
+| Manage tasks (add/split/update) | `/developer-kit:devkit.task-manage` | Core |
 | Develop new feature | `/developer-kit:devkit.feature-development` | Core |
+| Review task implementation (with intent alignment) | `/developer-kit:devkit.task-review` | Core |
 | Debug issues | `/developer-kit:devkit.fix-debugging` | Core |
 | Refactor code | `/developer-kit:devkit.refactor` | Core |
 | Review Java code | `/developer-kit-java:devkit.java.code-review` | Java |
