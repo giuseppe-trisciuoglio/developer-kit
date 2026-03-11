@@ -5,6 +5,84 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **New Task Management command** (`developer-kit-core`):
+  - `devkit.task-manage`: Post-generation task management with 7 actions (add, split, mark-optional, mark-required, update, regenerate-index, list)
+  - Automatically calculate task complexity scores with constraint-based validation
+  - Split complex tasks into smaller, manageable atomic tasks
+  - Mark tasks as optional for MVP prioritization
+  - Dynamically add new tasks to existing specifications
+  - Update task requirements and acceptance criteria
+  - Regenerate task list index after modifications
+  - List all tasks with complexity scores and recommendations
+
+- **New Task Review command** (`developer-kit-core`):
+  - `devkit.task-review`: Verify that implemented tasks meet specifications and pass code review
+  - Validates task implementation against acceptance criteria
+  - Checks specification compliance
+  - Performs language-specific code review
+  - Generates comprehensive review reports
+
+- **New Specification to Tasks command** (`developer-kit-core`):
+  - `devkit.spec-to-tasks`: Converts a functional specification into executable and trackable tasks
+  - Bridge between `devkit.brainstorm` (specification) and `devkit.feature-development` (implementation)
+  - Supports multiple languages: java, spring, typescript, nestjs, react, python, general
+  - **Automatic complexity scoring**: Each task receives a complexity score (0-100+) based on files, criteria, components, decisions, and integrations
+  - **Strong constraint**: Tasks with score ≥ 51 MUST be split before implementation
+  - **Optional task support**: Tasks can be marked as optional for MVP prioritization
+  - Output: `docs/specs/[id]/tasks/TASK-XXX.md` with enhanced frontmatter including complexity score and optional status
+  - Includes technical context from codebase analysis (existing patterns, APIs, conventions)
+
+- **Task Complexity Scoring System** (`developer-kit-core`):
+  - Automatic calculation: `(Files × 10) + (Acceptance Criteria × 5) + (Independent Components × 25) + (Design Decisions × 10) + (Integration Points × 15)`
+  - Thresholds: Simple (0-30 ✅), Moderate (31-50 ⚠️), Complex (51+ ❌ must split)
+  - Visual indicators in task lists and management interface
+  - Prevents creation of overly complex tasks that span multiple components
+
+- **Enhanced Task File Format** (`developer-kit-core`):
+  - New frontmatter fields: `optional` (true/false), `complexity` (score/100)
+  - Complexity breakdown analysis in task files
+  - MVP status indicators
+  - Dependency-aware task generation
+
+- **New Developer Workflow** (`developer-kit-core`):
+  - Complete workflow: `Idea → Functional Specification → Tasks → Management → Implementation → Review`
+  - Task complexity validation before implementation
+  - Dynamic task management during development
+  - Post-generation task splitting and updates
+
+### Changed
+
+- **Brainstorm command revised** (`developer-kit-core`):
+  - `devkit.brainstorm`: Now generates pure functional specifications (WHAT, not HOW)
+  - Focus on business logic, use cases, and acceptance criteria
+  - No code, frameworks, or technical patterns in specifications
+  - Output changed to `docs/specs/YYYY-MM-DD-feature-name.md`
+
+- **Specification to Tasks command enhanced** (`developer-kit-core`):
+  - `devkit.spec-to-tasks`: Added automatic complexity scoring with strong constraint (score ≥ 51 must split)
+  - Complexity validation before task generation completes
+  - Post-generation task management section with best practices
+  - Complexity reference guide with examples and red flags
+  - Integration with `devkit.task-manage` for iterative task refinement
+
+- **Feature Development command enhanced** (`developer-kit-core`):
+  - `devkit.feature-development`: Added Task Mode support
+  - Execute specific tasks from a task list using "Task:" prefix
+  - Example: `/developer-kit:devkit.feature-development "Task: User login"`
+  - Enhanced integration with task complexity system
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
 ## [2.5.1] - 2026-03-06
 
 ### Changed
@@ -58,41 +136,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - **Core Commands Enhancement**: Enforced mandatory `[GATE]` stop points and `AskUserQuestion` usage in devkit commands (`brainstorm`, `feature-development`, `fix-debugging`, `refactor`, `generate-document`)
-
-## [Unreleased]
-
-### Added
-
-- **New Specification to Tasks command** (`developer-kit-core`):
-  - `devkit.spec-to-tasks`: Converts a functional specification into executable and trackable tasks
-  - Bridge between `devkit.brainstorm` (specification) and `devkit.feature-development` (implementation)
-  - Supports multiple languages: java, spring, typescript, nestjs, react, python, general
-  - Output: `docs/tasks/YYYY-MM-DD-feature-name-tasks.md` with task structure including title, description, acceptance criteria, dependencies, and implementation commands
-
-- **New Developer Workflow** (`developer-kit-core`):
-  - Complete workflow: `Idea → Functional Specification → Tasks → Implementation`
-  - New task list format with atomic, executable tasks
-
-### Changed
-
-- **Brainstorm command revised** (`developer-kit-core`):
-  - `devkit.brainstorm`: Now generates pure functional specifications (WHAT, not HOW)
-  - Focus on business logic, use cases, and acceptance criteria
-  - No code, frameworks, or technical patterns in specifications
-  - Output changed to `docs/specs/YYYY-MM-DD-feature-name.md`
-
-- **Feature Development command enhanced** (`developer-kit-core`):
-  - `devkit.feature-development`: Added Task Mode support
-  - Execute specific tasks from a task list using "Task:" prefix
-  - Example: `/developer-kit:devkit.feature-development "Task: User login"`
-
-### Deprecated
-
-### Removed
-
-### Fixed
-
-### Security
 
 ## [2.4.1] - 2026-03-01
 

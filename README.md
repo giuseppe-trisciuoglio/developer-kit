@@ -83,16 +83,55 @@ Converts the functional specification into atomic, executable tasks:
 - **Dependency Mapping**: Identify task dependencies
 - **Acceptance Criteria**: Each task has clear completion criteria
 - **Implementation Commands**: Pre-filled commands for execution
+- **Complexity Scoring**: Automatic calculation of task complexity (0-100+ scale)
+- **Strong Constraint**: Tasks with score ≥ 51 MUST be split before implementation
 
-**Output**: Task list saved to `docs/tasks/YYYY-MM-DD--feature-name--tasks.md`
+**Output**: Task list saved to `docs/specs/[id]/tasks/TASK-XXX.md` with complexity scores
 
 **Example:**
 ```bash
-/devkit.spec-to-tasks docs/specs/2026-03-07-user-auth.md
-/devkit.spec-to-tasks --lang=spring docs/specs/2026-03-07-user-auth.md
+/devkit.spec-to-tasks docs/specs/001-user-auth/
+/devkit.spec-to-tasks --lang=spring docs/specs/001-user-auth/
 ```
 
-**Next step:** Execute tasks with `/devkit.feature-development` or implement specific tasks with "Task:" prefix
+**Next step:** Review task complexity and manage tasks with `/devkit.task-manage`
+
+### 2.5. Task Management Phase (NEW)
+
+**Command:** `/devkit.task-manage --action=[list|split|add|mark-optional|update|regenerate-index] [options]`
+
+Manage tasks after generation to ensure they're appropriately sized and prioritized:
+
+- **List Tasks**: View all tasks with complexity scores and recommendations
+- **Split Complex Tasks**: Automatically split tasks with score ≥ 51 into smaller tasks
+- **Add New Tasks**: Dynamically add tasks to existing specifications
+- **Mark Optional**: Prioritize MVP by marking non-critical tasks as optional
+- **Update Tasks**: Modify requirements or acceptance criteria
+- **Regenerate Index**: Update task list after modifications
+
+**Complexity Scoring:**
+- Simple (0-30 ✅): OK as single task
+- Moderate (31-50 ⚠️): Consider splitting
+- Complex (51+ ❌): MUST split before implementation
+
+**Examples:**
+```bash
+# List all tasks with complexity scores
+/devkit.task-manage --action=list --spec=docs/specs/001-user-auth/
+
+# Split a complex task
+/devkit.task-manage --action=split --task=docs/specs/001-user-auth/tasks/TASK-007.md
+
+# Mark task as optional for MVP
+/devkit.task-manage --action=mark-optional --task=docs/specs/001-user-auth/tasks/TASK-010.md
+
+# Add a new task
+/devkit.task-manage --action=add --spec=docs/specs/001-user-auth/2026-03-07--user-auth.md --lang=spring
+```
+
+**Output**: Updated task files and regenerated task list index
+
+**Next step:** Execute tasks with `/devkit.feature-development`
 
 ### 3. Feature Development Phase
 
@@ -136,6 +175,13 @@ Use this command to implement features. Supports two modes:
 
 After implementation, use these specialized commands for quality assurance:
 
+**Task Review:** `/devkit.task-review [--lang=...] [task-file]`
+- Verify task implementation meets specifications
+- Validate acceptance criteria
+- Check specification compliance
+- Perform language-specific code review
+- Generate comprehensive review reports
+
 **Code Review:** `/devkit.refactor [--lang=...] [refactoring-description]`
 - Improve code structure, maintainability, and design
 - Reduce technical debt
@@ -148,6 +194,7 @@ After implementation, use these specialized commands for quality assurance:
 
 **Example:**
 ```bash
+/devkit.task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
 /devkit.fix-debugging --lang=spring Bean injection failing in OrderService
 /devkit.refactor --lang=typescript Simplify the authentication flow
 ```
@@ -160,19 +207,25 @@ After implementation, use these specialized commands for quality assurance:
 2. /devkit.brainstorm
    ↓ (creates functional specification: docs/specs/)
 3. /devkit.spec-to-tasks
-   ↓ (creates task list: docs/tasks/)
-4. /devkit.feature-development
-   ↓ (implements feature or specific tasks)
-5. Code Review & Testing
+   ↓ (creates task list with complexity scores: docs/specs/[id]/tasks/)
+4. /devkit.task-manage --action=list
+   ↓ (reviews task complexity and recommendations)
+5. /devkit.task-manage --action=split (if needed)
+   ↓ (splits complex tasks with score ≥ 51 into smaller tasks)
+6. /devkit.feature-development
+   ↓ (implements tasks following dependency order)
+7. /devkit.task-review
+   ↓ (verifies implementation meets specifications)
+8. Code Review & Testing
    ↓
-6. /devkit.fix-debugging (if issues found)
+9. /devkit.fix-debugging (if issues found)
    ↓
-7. /devkit.refactor (for improvements)
+10. /devkit.refactor (for improvements)
    ↓
-8. Ready for deployment
+11. Ready for deployment
 ```
 
-**New Workflow:** `Idea → Functional Specification → Tasks → Implementation`
+**New Workflow:** `Idea → Functional Specification → Tasks → Task Management → Implementation → Review → Quality Assurance`
 
 ### Alternative Paths
 
