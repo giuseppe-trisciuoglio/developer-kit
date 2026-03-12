@@ -83,7 +83,7 @@ vatNumber: z
 ```
 
 ### Enum Validation with Zod
-Export native TypeScript enums from `*-enum.ts` files. For Zod schemas, use `.enum()` or literal unions:
+Export native TypeScript enums from `*-enum.ts` files. For Zod schemas, use `.enum()` which handles both string unions AND native enums in Zod v4:
 
 ```typescript
 // tenant-status.enum.ts
@@ -94,12 +94,13 @@ export enum TenantStatus {
   Deleted = 'deleted',
 }
 
-// In schema: use z.enum() for Zod-native validation
+// In schema: use z.enum() for Zod-native validation with string literals
 status: z.enum(['created', 'active', 'suspended', 'deleted'])
 
-// Or import enum values
+// In Zod v4, z.enum() also accepts native TypeScript enums
+// z.nativeEnum() is deprecated - prefer z.enum()
 import { TenantStatus } from './tenant-status.enum';
-status: z.nativeEnum(TenantStatus)
+status: z.enum(TenantStatus)
 ```
 
 ### Type Inference
@@ -145,6 +146,34 @@ if (!validationResult.success) {
 
 ## Zod 4 Specific Patterns
 
+### UUID Validation
+
+Zod v4 supports one UUID validation approaches:
+
+```typescript
+// Standalone z.uuid() - RFC 9562/4122 compliant
+const strictUuidSchema = z.uuid();
+
+strictUuidSchema.parse('550e8400-e29b-41d4-a716-446655440000'); // ✅
+```
+
+Use `z.guid()` for permissive UUID-like patterns (any 8-4-4-4-12 hex format).
+
+### Record Schemas (Zod v4 Breaking Change)
+
+Zod v4 **requires both key and value types** explicitly - single-argument usage is removed:
+
+```typescript
+// ❌ Zod 3 (deprecated in v4)
+z.string().uuid();
+z.record(z.string())  // Error: Expected 2-3 arguments, got 1
+
+// ✅ Zod 4 - both key and value types required
+z.record(z.string(), z.string())     // Record<string, string>
+z.record(z.string(), z.unknown())    // Record<string, unknown>
+z.record(z.enum(['a', 'b']), z.number())  // Record<'a'|'b', number>
+```
+
 ### .pipe() for Transformations
 Zod 4 uses `.pipe()` for sequential transformations:
 
@@ -175,6 +204,37 @@ vatNumber: z
   )
 ```
 
+### Error Handling (Zod v4)
+
+Zod v4 uses a unified `error` parameter instead of separate `invalid_type_error`/`required_error`:
+
+```typescript
+// ❌ Zod 3 style (deprecated in v4)
+z.string({ invalid_type_error: 'Must be a string', required_error: 'Required' })
+
+// ✅ Zod 4 style - unified error parameter
+z.string({ error: 'Invalid string value' })
+
+// ✅ Zod 4 with error function for dynamic messages
+z.string({
+  error: (issue) => issue.input === undefined ? 'Required' : 'Invalid'
+})
+```
+
+### Default Values (Zod v4)
+
+`.default()` in Zod v4 short-circuits for `undefined`. Use `.prefault()` to replicate Zod 3's pre-parse default behavior:
+
+```typescript
+// .default() only applies when value is undefined
+const schema = z.string().default('fallback');
+schema.parse(undefined); // 'fallback'
+schema.parse(null);      // Error (null is not undefined)
+
+// Use .prefault() for Zod 3-like behavior
+const prefaultSchema = z.string().prefault(() => 'fallback');
+```
+
 ## Examples
 
 ### ✅ Good
@@ -200,6 +260,17 @@ export const CreateTenantSchema = z.object({
 });
 
 export type CreateTenantInput = z.infer<typeof CreateTenantSchema>;
+
+// UUID validation
+const uuidSchema = z.uuid();
+const userIdSchema = z.string().uuid();
+
+// Record with key and value types (Zod v4)
+const metadataSchema = z.record(z.string(), z.string());
+const payloadSchema = z.record(z.string(), z.unknown());
+
+// Enum validation with TypeScript native enum
+const statusSchema = z.enum(TenantStatus);  // z.enum() handles native enums in v4
 ```
 
 ### ❌ Bad
@@ -219,6 +290,12 @@ export const schema = z.object({ name: z.string() });
 
 // Regex without unicode flag
 z.string().regex(/^[a-z]+$/)  // Should be /^[a-z]+$/u
+
+// Record with single argument (Zod v4 breaking change)
+z.record(z.string())  // Error: Expected 2-3 arguments, got 1
+
+// Native enum with z.nativeEnum() (deprecated in v4)
+z.nativeEnum(MyEnum)  // Use z.enum(MyEnum) instead
 ```
 
 ## File Naming
