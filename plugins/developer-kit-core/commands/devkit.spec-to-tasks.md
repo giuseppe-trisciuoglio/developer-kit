@@ -171,7 +171,141 @@ You are converting a functional specification into executable tasks. Follow a sy
 | `php` | `developer-kit-php:php-software-architect-expert` |
 | `general` | `developer-kit:general-code-explorer` |
 
-2. Launch the agent to explore codebase with this prompt:
+2. Launch the agent with a language-specific prompt to explore the codebase:
+
+**For `java` / `spring`:**
+
+```
+Explore the Java/Spring Boot codebase to understand:
+
+1. **Project Structure**:
+   - Package organization (domain-driven, layered, etc.)
+   - Build configuration (Maven/Gradle, pom.xml/build.gradle)
+   - Main application class and entry points
+
+2. **Spring Patterns**:
+   - Spring Data JPA repositories and entity mapping
+   - Spring Security configuration and auth patterns
+   - REST controller conventions (@RestController, @RequestMapping)
+   - Service layer patterns (@Service, transaction management)
+   - Configuration properties (@ConfigurationProperties)
+
+3. **Data Layer**:
+   - Entity/DTO patterns
+   - Database migrations (Flyway, Liquibase)
+   - ORM patterns (Hibernate)
+
+4. **Testing Patterns**:
+   - Test directory structure
+   - Testing conventions (JUnit 5, Mockito)
+   - Integration test setup
+
+Provide a summary that will inform task generation with Spring-specific context.
+```
+
+**For `typescript` / `nestjs`:**
+
+```
+Explore the TypeScript/NestJS codebase to understand:
+
+1. **Project Structure**:
+   - Module organization
+   - TypeScript configuration (tsconfig.json)
+   - NestJS module structure
+
+2. **NestJS Patterns**:
+   - Controller conventions (@Controller, @Get, @Post, etc.)
+   - Service layer patterns (@Injectable, providers)
+   - Module organization (@Module)
+   - Dependency injection setup
+   - Guards and interceptors
+
+3. **Data Access**:
+   - ORM usage (TypeORM, Drizzle, Prisma)
+   - Repository patterns
+   - Database migrations
+
+4. **Testing Patterns**:
+   - Jest configuration
+   - Unit vs integration test structure
+
+Provide a summary that will inform task generation with NestJS-specific context.
+```
+
+**For `react`:**
+
+```
+Explore the React codebase to understand:
+
+1. **Project Structure**:
+   - App organization (Next.js, Remix, or CRA/Vite)
+   - Routing structure
+   - Component directory layout
+
+2. **React Patterns**:
+   - Component patterns (functional, hooks)
+   - State management (Context, Redux, Zustand, etc.)
+   - API communication (React Query, SWR, fetch)
+   - Form handling patterns
+
+3. **Styling**:
+   - CSS approach (CSS modules, Tailwind, styled-components)
+   - Component library usage
+
+4. **Testing Patterns**:
+   - Testing library (Jest, Vitest, React Testing Library)
+   - Component testing conventions
+
+Provide a summary that will inform task generation with React-specific context.
+```
+
+**For `python`:**
+
+```
+Explore the Python codebase to understand:
+
+1. **Project Structure**:
+   - Package organization
+   - requirements.txt, setup.py, or pyproject.toml
+   - Entry points (main.py, __main__.py)
+
+2. **Python Patterns**:
+   - Web framework (Django, FastAPI, Flask)
+   - Data models (SQLAlchemy, Pydantic, Django ORM)
+   - API patterns (REST, GraphQL)
+   - Authentication patterns
+
+3. **Testing Patterns**:
+   - pytest configuration
+   - Test directory structure
+   - Mocking conventions
+
+Provide a summary that will inform task generation with Python-specific context.
+```
+
+**For `php`:**
+
+```
+Explore the PHP codebase to understand:
+
+1. **Project Structure**:
+   - Composer-based project organization
+   - Laravel directory structure or custom MVC
+
+2. **PHP Patterns**:
+   - Framework conventions (Laravel, Symfony)
+   - ORM usage (Eloquent, Doctrine)
+   - Controller patterns
+   - Routing and middleware
+
+3. **Testing Patterns**:
+   - PHPUnit configuration
+   - Feature vs unit test structure
+
+Provide a summary that will inform task generation with PHP-specific context.
+```
+
+**For `general`:**
 
 ```
 Explore the codebase to understand:
@@ -236,12 +370,29 @@ Provide a comprehensive summary that will inform task generation.
    - **Acceptance Criteria**: 2-4 testable conditions
    - **Dependencies**: List task IDs this depends on (if any)
 
-3. Map dependencies:
+3. Map dependencies explicitly:
    - Identify which tasks must complete before others can start
-   - Create a dependency graph mentally
+   - **CRITICAL: List ALL dependencies explicitly for each task BEFORE generating files**
+   - For each task, document: "This task depends on: [TASK-ID-1, TASK-ID-2] (or 'None')"
+   - Identify potential circular dependencies (Task A depends on B, B depends on A)
    - Order tasks accordingly
 
-4. Identify test requirements for each task:
+4. **[GATE] Validate dependencies with user before generating files**:
+   - Present the dependency structure in a clear table format:
+
+   | Task ID | Title | Dependencies |
+   |---------|-------|--------------|
+   | TASK-001 | [Title] | None |
+   | TASK-002 | [Title] | TASK-001 |
+   | TASK-003 | [Title] | TASK-001, TASK-002 |
+   | ... | ... | ... |
+
+   - Use AskUserQuestion to confirm:
+     - **Option A**: Dependencies look correct, proceed to generate files
+     - **Option B**: Modify dependencies (specify which)
+     - **Option C**: Restructure tasks (some tasks are too coupled)
+
+5. Identify test requirements for each task:
    - **Classes with business logic**: Entities, services, controllers, value objects with validation or state management
    - **Classes needing tests**: Any class that contains:
      - Business rules or validation logic
@@ -252,7 +403,7 @@ Provide a comprehensive summary that will inform task generation.
    - **Test files to create**: For each class with business logic, create corresponding test file (e.g., Java: `SearchService.java` → `SearchServiceTest.java`, TypeScript: `search.service.ts` → `search.service.spec.ts`, Python: `search_service.py` → `test_search_service.py`)
    - **Test coverage focus**: State transitions, validation rules, business logic, error handling, edge cases
 
-5. Present task structure to user via AskUserQuestion for approval
+6. Present task structure to user via AskUserQuestion for approval
 
 ---
 
