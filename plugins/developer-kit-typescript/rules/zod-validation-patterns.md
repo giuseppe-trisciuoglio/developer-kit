@@ -1,3 +1,7 @@
+---
+globs: "**/*.ts"
+---
+
 # Rule: Zod 4 Validation Patterns
 
 ## Context
