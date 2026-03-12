@@ -178,15 +178,25 @@ Execute the standard 7-phase workflow:
      - If user chooses to commit first, stop and wait for them to run `git commit`
      - If user proceeds anyway, document the uncommitted state and continue at user's risk
    - Only proceed with the workflow if no uncommitted changes exist OR user explicitly accepts the risk
-2. Create todo list with all phases
-3. **Detect execution mode**:
+2. **Run lint and tests** (after git check passes):
+   - Detect available lint/test commands by checking `package.json` (scripts), `Makefile`, `pom.xml`, `build.gradle`, `pyproject.toml`, `composer.json`, etc.
+   - Run lint first (e.g., `npm run lint`, `make lint`, `./mvnw checkstyle:check`, `ruff check .`), then tests (e.g., `npm test`, `make test`, `./mvnw test -q`, `pytest`, `php artisan test`)
+   - If lint or tests fail:
+     - Show the failing output to the user
+     - Ask via AskUserQuestion: "Lint/tests are failing. It is recommended to fix them before starting feature development to avoid compounding issues. Do you want to fix them first (recommended) or proceed anyway?"
+     - If user chooses to fix first, stop and wait
+     - If user proceeds anyway, document the failures and continue at user's risk
+   - If no recognizable lint/test commands are found, skip this step and note it
+   - Only proceed if lint/tests pass OR user explicitly accepts the risk
+3. Create todo list with all phases
+4. **Detect execution mode**:
    - If $ARGUMENTS contains `--task=`, go to **Task Mode Flow**
    - Otherwise, continue with **Feature Mode Flow**
-4. For Feature Mode: If feature unclear, ask user for:
+5. For Feature Mode: If feature unclear, ask user for:
     - What problem are they solving?
     - What should the feature do?
     - Any constraints or requirements?
-5. Summarize understanding and confirm with user
+6. Summarize understanding and confirm with user
 
 ---
 
@@ -231,6 +241,16 @@ Execute the standard 7-phase workflow:
      - If user chooses to commit first, stop and wait for them to run `git commit`
      - If user proceeds anyway, document the uncommitted state and continue at user's risk
    - Only proceed with implementation if no uncommitted changes exist OR user explicitly accepts the risk
+2. **Run lint and tests** (after git check passes):
+   - Detect available lint/test commands by checking `package.json` (scripts), `Makefile`, `pom.xml`, `build.gradle`, `pyproject.toml`, `composer.json`, etc.
+   - Run lint first (e.g., `npm run lint`, `make lint`, `./mvnw checkstyle:check`, `ruff check .`), then tests (e.g., `npm test`, `make test`, `./mvnw test -q`, `pytest`, `php artisan test`)
+   - If lint or tests fail:
+     - Show the failing output to the user
+     - Ask via AskUserQuestion: "Lint/tests are failing. It is recommended to fix them before starting task implementation to avoid compounding issues. Do you want to fix them first (recommended) or proceed anyway?"
+     - If user chooses to fix first, stop and wait
+     - If user proceeds anyway, document the failures and continue at user's risk
+   - If no recognizable lint/test commands are found, skip this step and note it
+   - Only proceed if lint/tests pass OR user explicitly accepts the risk
 
 ### T-3: Dependency Check
 
