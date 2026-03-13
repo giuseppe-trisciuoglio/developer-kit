@@ -263,7 +263,9 @@ Core agents, commands, and skills used by all other plugins.
 
 **Skills**: `claude-md-management`, `drawio-logical-diagrams`, `github-issue-workflow`, `docs-updater`
 
-**Commands**: `/devkit.brainstorm`, `/devkit.spec-to-tasks`, `/devkit.refactor`, `/devkit.feature-development`,
+**Hooks**: `prevent-destructive-commands` (Python 3 PreToolUse hook for blocking dangerous Bash commands)
+
+**Commands**: `/devkit.brainstorm`, `/devkit.spec-to-tasks`, `/devkit.task-manage`, `/devkit.task-review`, `/devkit.refactor`, `/devkit.feature-development`,
 `/devkit.fix-debugging`, `/devkit.generate-document`, `/devkit.generate-changelog`, `/devkit.github.create-pr`,
 `/devkit.github.review-pr`, `/devkit.lra.*` (7 LRA workflow commands), `/devkit.verify-skill`,
 `/devkit.generate-security-assessment`
@@ -292,6 +294,7 @@ Comprehensive Java development toolkit with Spring Boot, testing, LangChain4J, A
 - **JUnit Testing**: application-events, bean-validation, boundary-conditions, caching, config-properties,
   controller-layer, exception-handler, json-serialization, mapper-converter, parameterized, scheduled-async,
   security-authorization, service-layer, utility-methods, wiremock-rest-api
+- **Integration Testing**: wiremock-standalone-docker (WireMock standalone server via Docker for integration/E2E testing)
 - **LangChain4J**: ai-services-patterns, mcp-server-patterns, rag-implementation-patterns, spring-boot-integration,
   testing-strategies, tool-function-calling-patterns, vector-stores-configuration, qdrant
 - **AWS SDK**: rds-spring-boot-integration, bedrock, core, dynamodb, kms, lambda, messaging, rds, s3, secrets-manager
@@ -326,7 +329,8 @@ TypeScript/JavaScript full-stack development with NestJS, React, React Native, N
 **Rules**: `naming-conventions`, `project-structure`, `language-best-practices`, `error-handling`,
 `nestjs-architecture`, `nestjs-api-design`, `nestjs-security`, `nestjs-testing`,
 `react-component-conventions`, `react-data-fetching`, `react-routing-conventions`, `tailwind-styling-conventions`,
-`drizzle-orm-conventions`, `shared-dto-conventions`, `nx-monorepo-conventions`, `i18n-conventions`
+`drizzle-orm-conventions`, `shared-dto-conventions`, `nx-monorepo-conventions`, `i18n-conventions`,
+`lambda-conventions`, `server-feature-conventions`
 
 ---
 
@@ -405,6 +409,7 @@ Additional development tools and integrations.
 - `notebooklm` (Google NotebookLM integration)
 - `copilot-cli` (GitHub Copilot CLI delegation with multi-model support)
 - `gemini` (Gemini CLI delegation for large-context analysis)
+- `codex` (OpenAI Codex CLI delegation for complex development tasks using GPT-5.3-codex models)
 
 ---
 

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.6.0] - 2026-03-13
+
 ### Added
 
 - **New Codex CLI delegation skill** (`developer-kit-tools`):
@@ -15,6 +17,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Includes model selection guide (gpt-5.3-codex, o3, o4-mini) and sandbox modes documentation
     - Comprehensive examples covering main use cases with security warnings for dangerous modes
     - CLI command reference documentation for all available commands
+
+- **New Destructive Command Prevention Hook** (`developer-kit-core`):
+  - `prevent-destructive-commands.py`: Python 3 PreToolUse hook that prevents execution of dangerous Bash commands
+  - Shell-aware tokenization with `shlex` (pipes, chains, quoted paths)
+  - Recursive analysis: `sudo`, `bash -c`, `find -exec`, `xargs`, `watch` wrappers
+  - Path validation: `rm`/`unlink`/`rmdir`/`shred` blocked outside CWD
+  - Extensible blacklist: AWS CLI, Docker, `git reset --hard`/`clean`
+  - Zero external dependencies (pure Python 3 stdlib)
+  - Installer updated to copy hooks and register in `.claude/settings.json`
+  - Security: Blocks attempts to read sensitive files (.env, keys, creds)
+
+- **New WireMock Standalone Docker skill** (`developer-kit-java`):
+  - `wiremock-standalone-docker`: Integration testing patterns using WireMock standalone server via Docker
+  - Supports stubs configuration with JSON mappings for various HTTP scenarios
+  - Example mappings: success, not found, unauthorized, rate limited, internal error, slow response, malformed response, forbidden DELETE
+  - Docker Compose configuration for quick WireMock server startup
+  - Ideal for integration/E2E testing when real services are unavailable
+
+- **New TypeScript Rules** (`developer-kit-typescript`):
+  - `lambda-conventions`: AWS Lambda TypeScript coding patterns (handler structure, context handling, error responses, logging, Powertools)
+  - `server-feature-conventions`: Server-side feature architecture (routing, controllers, services, validation, error handling, middleware)
+  - Enhanced `zod-validation-patterns`: Updated for Zod v4 with coercion, transforms, complex schema composition, and React Hook Form integration
 
 - **New Task Management command** (`developer-kit-core`):
   - `devkit.task-manage`: Post-generation task management with 7 actions (add, split, mark-optional, mark-required, update, regenerate-index, list)
@@ -36,7 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **New Specification to Tasks command** (`developer-kit-core`):
   - `devkit.spec-to-tasks`: Converts a functional specification into executable and trackable tasks
   - Bridge between `devkit.brainstorm` (specification) and `devkit.feature-development` (implementation)
-  - Supports multiple languages: java, spring, typescript, nestjs, react, python, general
+  - Supports multiple languages: java, spring, typescript, nestjs, react, python, general, php
   - **Automatic complexity scoring**: Each task receives a complexity score (0-100+) based on files, criteria, components, decisions, and integrations
   - **Strong constraint**: Tasks with score ≥ 51 MUST be split before implementation
   - **Optional task support**: Tasks can be marked as optional for MVP prioritization
@@ -75,12 +99,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Post-generation task management section with best practices
   - Complexity reference guide with examples and red flags
   - Integration with `devkit.task-manage` for iterative task refinement
+  - Added PHP support and language-specific reviewer mapping
+  - Now ingests original request and technical context from specification
 
 - **Feature Development command enhanced** (`developer-kit-core`):
   - `devkit.feature-development`: Added Task Mode support
   - Execute specific tasks from a task list using "Task:" prefix
   - Example: `/developer-kit:devkit.feature-development "Task: User login"`
   - Enhanced integration with task complexity system
+  - Added git status check before execution
+
+- **MCP Security Scan Checker enhanced** (`.skills-validator-check`):
+  - Updated to handle new WireMock skill references with external mappings
+  - Improved validation for Docker Compose and mapping files
 
 ### Deprecated
 
@@ -88,7 +119,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Core Commands Bug Fixes** (`developer-kit-core`):
+  - Added missing `[GATE]` markers in workflow commands
+  - Fixed task review command output formatting
+  - Improved specification generation workflow
+  - Enhanced code export with specialized agents
+  - Added missing feature in task manage command
+  - Improved task generation with test guide
+
+- **TypeScript Rules Bug Fixes** (`developer-kit-typescript`):
+  - Enhanced Zod v4 validation patterns with improved error handling
+  - Updated schema composition examples
+
 ### Security
+
+- **Destructive Command Prevention Hook Enhanced** (`developer-kit-core`):
+  - Added detection and blocking of attempts to read sensitive files (.env, keys, creds)
+  - Hardened path validation against path traversal attacks
+  - Enhanced recursive analysis for wrapper commands (sudo, bash -c, xargs, watch)
+  - Security-first approach: $VAR, ${VAR}, globs, and {} placeholders flagged for review
 
 ## [2.5.1] - 2026-03-06
 
