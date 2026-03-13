@@ -77,6 +77,7 @@ You are converting a functional specification into executable tasks. Follow a sy
 - **Codebase-aware**: Tasks reference existing patterns, APIs, and structures in the project
 - **Use TodoWrite**: Track all progress throughout
 - **No time estimates**: DO NOT provide or request time estimates
+- **Test instructions**: **Each task MUST include explicit and detailed instructions on what to test, specifying test types (unit, integration) and behaviors to verify, NEVER including test code.**
 
 ---
 
@@ -392,16 +393,28 @@ Provide a comprehensive summary that will inform task generation.
      - **Option B**: Modify dependencies (specify which)
      - **Option C**: Restructure tasks (some tasks are too coupled)
 
-5. Identify test requirements for each task:
-   - **Classes with business logic**: Entities, services, controllers, value objects with validation or state management
-   - **Classes needing tests**: Any class that contains:
-     - Business rules or validation logic
-     - State transitions or lifecycle management
-     - Data transformation or calculations
-     - Conditional logic or edge cases
-   - **Test priority**: High priority for domain models, services, controllers/handlers; medium for utilities; low for simple DTOs/POCOs
-   - **Test files to create**: For each class with business logic, create corresponding test file (e.g., Java: `SearchService.java` → `SearchServiceTest.java`, TypeScript: `search.service.ts` → `search.service.spec.ts`, Python: `search_service.py` → `test_search_service.py`)
-   - **Test coverage focus**: State transitions, validation rules, business logic, error handling, edge cases
+5. **Identificazione dei Requisiti di Test per Ogni Task**:
+    Per ogni task identificato, devi ora definire in modo preciso e obbligatorio cosa dovrà essere testato. Questa analisi guiderà la generazione della sezione "Istruzioni di Test" nel file del task.
+
+    - **Analizza le classi/componenti coinvolti**: Per ogni file che il task creerà o modificherà, determina il suo livello di complessità e l'importanza di testarlo.
+        - **Alta Priorità (Test Obbligatori)**: Classi con logica di business, gestione dello stato, regole di validazione, calcoli complessi, algoritmi, interazioni con servizi esterni (API, database). Esempi: Service, UseCase, Controller/Handler, Validator, Entity complesse.
+        - **Media Priorità (Test Consigliati)**: Classi di utility, helper, trasformatori di dati semplici, repository (se non generati automaticamente).
+        - **Bassa Priorità (Test Facoltativi)**: Semplici DTO, POCO, configurazioni.
+
+    - **Definisci i comportamenti da testare**: Per ogni componente ad alta priorità, elenca gli scenari di test specifici. Non generare codice, ma descrivi il comportamento.
+        - **Test Unitari**: Verificare il comportamento di una singola unità in isolamento.
+            - *Esempio (task di registrazione utente)*: "Testare che il metodo `register(userData)` nel `UserService` chiami il `UserRepository.save()` solo se l'email è unica e valida."
+            - *Esempio (task di calcolo del prezzo)*: "Testare che la funzione `calculateTotal(price, tax, discount)` restituisca il valore corretto per input validi, per tasse zero e per sconti massimi."
+        - **Test di Integrazione**: Verificare l'interazione tra più componenti (es. controller, service, database).
+            - *Esempio (task di registrazione utente)*: "Testare che una richiesta POST all'endpoint `/api/register` con dati validi salvi un nuovo utente nel database e restituisca uno status 201."
+            - *Esempio (task di integrazione pagamento)*: "Testare che il flusso completo 'checkout' chiami correttamente il gateway di pagamento fittizio e gestisca una risposta di successo."
+
+    - **Suggerisci i file di test da creare**: Per ogni file sorgente che richiede test, indica il corrispondente file di test secondo le convenzioni del linguaggio.
+        - Java: `UserService.java` → `UserServiceTest.java`
+        - TypeScript/NestJS: `user.service.ts` → `user.service.spec.ts`
+        - Python: `user_service.py` → `test_user_service.py`
+
+    - **Collega i test ai Criteri di Accettazione**: Assicurati che per ogni criterio di accettazione funzionale esista almeno uno scenario di test che lo verifichi. Questo passaggio è fondamentale per garantire la tracciabilità.
 
 6. Present task structure to user via AskUserQuestion for approval
 
@@ -434,51 +447,56 @@ dependencies: [TASK-YYY if applicable]
 
 # TASK-XXX: [Task Title]
 
-**Description**: [Functional description of what this task covers]
+**Descrizione Funzionale**: [Descrizione funzionale di cosa copre questo task]
 
-## Technical Context
+## Contesto Tecnico (da Codebase Analysis)
 
-Based on codebase analysis:
+- **Pattern Esistenti da Seguire**: [patterns dall'analisi del codebase]
+- **API con cui Integrarsi**: [API o servizi esistenti]
+- **Componenti Condivisi**: [utility, servizi o moduli esistenti da usare]
+- **Convenzioni**: [convenzioni di codifica, naming, struttura, pattern specifici del framework]
 
-- **Existing Patterns to Follow**: [patterns from codebase analysis]
-- **APIs to Integrate With**: [existing APIs or services]
-- **Shared Components**: [existing utilities, services, or modules to use]
-- **Conventions**: [coding conventions, naming, structure, framework-specific patterns]
+## Dettagli di Implementazione (Solo nomi file, niente codice)
 
-## Implementation Details
+**File da Creare**:
+- `[percorso/sorgente/1]` - [breve descrizione del suo scopo]
+- `[percorso/sorgente/2]` - [breve descrizione del suo scopo]
+- `[percorso/test/1]` - [es. user.service.spec.ts]
+- `[percorso/test/2]` - [es. user.controller.integration.spec.ts]
 
-**Files to Create**:
-- `[source file 1]` - [brief description]
-- `[source file 2]` - [brief description]
-- `[test file 1]` - [brief description of what to test]
-- `[test file 2]` - [brief description of what to test]
+**File da Modificare** (se applicabile):
+- `[percorso/esistente/1]` - [quali modifiche sono necessarie]
 
-**Files to Modify** (if applicable):
-- `[existing file 1]` - [what changes are needed]
-- `[existing file 2]` - [what changes are needed]
+## Istruzioni per i Test
 
-**Key Design Decisions**:
-- Use [existing pattern] for [component type]
-- Follow existing [convention] in the codebase
-- Integrate with [existing service/API]
+Questa sezione descrive **cosa** testare, non **come** implementare il codice di test.
 
-## Acceptance Criteria
+**1. Test Unitari Obbligatori:**
+   - `[Nome Classe/File Sorgente 1]`:
+     - [ ] Verificare che [metodo/unità] gestisca correttamente [scenario di successo].
+     - [ ] Verificare che [metodo/unità] lanci un'eccezione/errore quando [scenario di errore].
+     - [ ] Verificare che la logica di [specifica business rule] funzioni come descritto nella specifica.
+   - `[Nome Classe/File Sorgente 2]`:
+     - [ ] Testare la validazione di [campo specifico] con valori validi, non validi e borderline.
 
-- [ ] Criterion 1 (functional)
-- [ ] Criterion 2 (functional)
-- [ ] Criterion 3 (functional)
-- [ ] All test files created with appropriate test coverage for business logic
-- [ ] Tests cover edge cases and validation rules
+**2. Test di Integrazione Obbligatori:**
+   - `[Nome Flusso/Componente]`:
+     - [ ] Verificare che l'endpoint `[API endpoint]` con dati validi interagisca correttamente con il database e restituisca la risposta attesa (es. status 201, body corretto).
+     - [ ] Verificare che una chiamata all'endpoint `[API endpoint]` con dati non validi **non** modifichi lo stato del database e restituisca un errore appropriato (es. status 400).
 
-## Verification
+**3. Casi Limite e Condizioni di Errore da Testare:**
+   - [ ] Inviare dati mancanti o malformati.
+   - [ ] Simulare il timeout o il fallimento di un servizio esterno.
+   - [ ] Testare condizioni di competizione (se rilevante, es. doppia prenotazione).
+   - [ ] Testare con carichi di dati elevati o valori al limite (es. stringhe di lunghezza massima).
 
-- **Tests to Add/Run**: [specific test scenarios to implement - e.g., "unit tests for state transitions", "validation tests for input parameters", "business rule tests"]
-- **Code Review Focus**: [specific technical aspects to verify]
-- **Test Coverage**: Verify that all classes with business logic have corresponding test files
+**Criteri di Accettazione dei Test**:
+   - [ ] Tutti i test sopra descritti sono implementati e passano.
+   - [ ] La copertura dei test per le classi con logica di business è >= 80%.
 
-**Dependencies**: [TASK-YYY if applicable, otherwise "None"]
+**Dependencies**: [TASK-YYY se applicabile, altrimenti "None"]
 
-**Implementation Command**:
+**Comando di Implementazione**:
 /developer-kit:devkit.feature-development --lang=[language] "docs/specs/[id]/tasks/TASK-XXX.md"
 ```
 
@@ -638,19 +656,52 @@ dependencies: []
 
 # TASK-001: User registration endpoint
 
-**Description**: Implement user registration with email validation
+**Descrizione Funzionale**: Implementare la registrazione utente con validazione email
 
-## Technical Context
-- **Existing Patterns to Follow**: REST controllers in src/main/java/.../controller/
-- **APIs to Integrate With**: Existing UserRepository
-- **Conventions**: @RestController, @Valid annotations
+## Contesto Tecnico (da Codebase Analysis)
+- **Pattern Esistenti da Seguire**: REST controllers in src/main/java/.../controller/
+- **API con cui Integrarsi**: UserRepository esistente
+- **Convenzioni**: @RestController, @Valid annotations
 
-## Acceptance Criteria
-- [ ] POST /api/v1/users/register accepts email and password
-- [ ] Email uniqueness is validated
-- [ ] All test files created with appropriate test coverage
+## Dettagli di Implementazione (Solo nomi file, niente codice)
 
-**Implementation Command**:
+**File da Creare**:
+- `src/main/java/.../controller/AuthController.java` - Controller per registrazione
+- `src/main/java/.../service/UserService.java` - Servizio logica business
+- `src/test/java/.../controller/AuthControllerTest.java` - Test controller
+- `src/test/java/.../service/UserServiceTest.java` - Test servizio
+
+**File da Modificare**:
+- `src/main/java/.../config/SecurityConfig.java` - Aggiungere endpoint pubblico
+
+## Istruzioni per i Test
+
+Questa sezione descrive **cosa** testare, non **come** implementare il codice di test.
+
+**1. Test Unitari Obbligatori:**
+   - `UserService`:
+     - [ ] Verificare che il metodo `register(userData)` chiami il `UserRepository.save()` solo se l'email è unica.
+     - [ ] Verificare che venga lanciata `EmailAlreadyExistsException` quando l'email è già registrata.
+     - [ ] Verificare che la password venga codificata prima del salvataggio.
+   - `AuthController`:
+     - [ ] Testare la validazione dell'email con formati validi, non validi e mancanti.
+     - [ ] Verificare che il controller restituisca status 201 per registrazione riuscita.
+
+**2. Test di Integrazione Obbligatori:**
+   - `Flusso Registrazione`:
+     - [ ] Verificare che una richiesta POST all'endpoint `/api/v1/users/register` con dati validi salvi un nuovo utente nel database e restituisca status 201.
+     - [ ] Verificare che una richiesta con email duplicata restituisca status 409 e non modifichi il database.
+
+**3. Casi Limite e Condizioni di Errore da Testare:**
+   - [ ] Inviare email malformata (es. senza @).
+   - [ ] Inviare password troppo corta (es. meno di 8 caratteri).
+   - [ ] Inviare payload JSON malformato.
+
+**Criteri di Accettazione dei Test**:
+   - [ ] Tutti i test sopra descritti sono implementati e passano.
+   - [ ] La copertura dei test per UserService è >= 80%.
+
+**Comando di Implementazione**:
 /developer-kit:devkit.feature-development --lang=spring "docs/specs/001-user-auth/tasks/TASK-001.md"
 ```
 
