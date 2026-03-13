@@ -72,6 +72,7 @@
     "./skills/unit-test-service-layer",
     "./skills/unit-test-utility-methods",
     "./skills/unit-test-wiremock-rest-api",
+    "./skills/wiremock-standalone-docker",
     "./skills/langchain4j-ai-services-patterns",
     "./skills/langchain4j-mcp-server-patterns",
     "./skills/langchain4j-rag-implementation-patterns",
