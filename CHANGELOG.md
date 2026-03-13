@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **New Codex CLI delegation skill** (`developer-kit-tools`):
+    - `codex`: Delegates complex development tasks to OpenAI's Codex CLI using GPT-5.3-codex models
+    - Supports `codex exec` for non-interactive code generation and `codex review` for code review workflows
+    - Includes model selection guide (gpt-5.3-codex, o3, o4-mini) and sandbox modes documentation
+    - Comprehensive examples covering main use cases with security warnings for dangerous modes
+    - CLI command reference documentation for all available commands
+
 - **New Task Management command** (`developer-kit-core`):
   - `devkit.task-manage`: Post-generation task management with 7 actions (add, split, mark-optional, mark-required, update, regenerate-index, list)
   - Automatically calculate task complexity scores with constraint-based validation
@@ -136,6 +143,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - **Core Commands Enhancement**: Enforced mandatory `[GATE]` stop points and `AskUserQuestion` usage in devkit commands (`brainstorm`, `feature-development`, `fix-debugging`, `refactor`, `generate-document`)
+
+## [Unreleased]
+
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
 
 ## [2.4.1] - 2026-03-01
 
