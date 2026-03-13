@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  wiremock:
+    image: wiremock/wiremock:3.5.2
+    container_name: wiremock-standalone
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./wiremock:/home/wiremock
+    command: ["--global-response-templating"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/__healthcheck"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - wiremock-network
+
+  # Example application that uses WireMock
+  # app:
+  #   build: .
+  #   ports:
+  #     - "8081:8081"
+  #   environment:
+  #     - API_BASE_URL=http://wiremock:8080
+  #   depends_on:
+  #     - wiremock
+
+networks:
+  wiremock-network:
+    driver: bridge

@@ -1,0 +1,17 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/users/123"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "id": 123,
+      "name": "Mario Rossi",
+      "email": "mario.rossi@example.com"
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

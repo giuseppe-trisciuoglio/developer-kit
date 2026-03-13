@@ -1,0 +1,19 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/users/rate-limit"
+  },
+  "response": {
+    "status": 429,
+    "jsonBody": {
+      "error": "Too Many Requests",
+      "message": "Rate limit exceeded. Please retry after 60 seconds."
+    },
+    "headers": {
+      "Content-Type": "application/json",
+      "Retry-After": "60",
+      "X-RateLimit-Limit": "100",
+      "X-RateLimit-Remaining": "0"
+    }
+  }
+}

@@ -2,7 +2,8 @@
 """
 MCP-Scan security checker for skill definitions and rule files.
 
-Scans skills and rules one at a time using mcp-scan (from Invariant Labs) to detect:
+Scans skills and rules one at a time using snyk-agent-scan
+(formerly mcp-scan, from Invariant Labs) to detect:
 - Prompt injection attacks
 - Malware payloads
 - Sensitive data handling issues
@@ -28,7 +29,7 @@ Usage:
 Exit Codes:
     0 = All scans passed (no security issues found)
     1 = Security issues detected
-    2 = System error (mcp-scan not available or execution failure)
+    2 = System error (snyk-agent-scan not available or execution failure)
 """
 
 import argparse
@@ -193,7 +194,7 @@ def find_repo_root() -> Path:
 
 
 def check_mcp_scan_available() -> Tuple[bool, str]:
-    """Check if mcp-scan is available via uvx or pipx."""
+    """Check if snyk-agent-scan can be executed via uvx or pipx."""
     if shutil.which("uvx"):
         return True, "uvx"
     if shutil.which("pipx"):
@@ -359,7 +360,7 @@ def find_rule_files(repo_root: Path, plugin: Optional[str] = None,
 def scan_single_component(scan_path: Path, component_type: str, runner: str,
                           verbose: bool = False) -> ScanResult:
     """
-    Run mcp-scan on a single skill directory or rule file and return structured result.
+    Run snyk-agent-scan on a single skill directory or rule file.
     """
     component_name = scan_path.stem if scan_path.is_file() else scan_path.name
     result = ScanResult(
@@ -372,9 +373,9 @@ def scan_single_component(scan_path: Path, component_type: str, runner: str,
     target_path = str(scan_path.parent) if scan_path.is_file() else str(scan_path)
 
     if runner == "uvx":
-        cmd = ["uvx", "mcp-scan@latest", "scan", "--json", "--skills", target_path]
+        cmd = ["uvx", "snyk-agent-scan@latest", "scan", "--json", "--skills", target_path]
     elif runner == "pipx":
-        cmd = ["pipx", "run", "mcp-scan", "scan", "--json", "--skills", target_path]
+        cmd = ["pipx", "run", "snyk-agent-scan", "scan", "--json", "--skills", target_path]
     else:
         result.error = {"message": f"Unsupported runner: {runner}"}
         return result
@@ -403,7 +404,8 @@ def scan_single_component(scan_path: Path, component_type: str, runner: str,
                 print(f"  {YELLOW}Warning: Could not parse JSON output{NC}")
             return result
 
-        # mcp-scan returns: { "<config_path>": { client, path, servers, issues, labels, error } }
+        # snyk-agent-scan returns:
+        # { "<config_path>": { client, path, servers, issues, labels, error } }
         for config_key, config_data in parsed.items():
             if not isinstance(config_data, dict):
                 continue
@@ -478,7 +480,7 @@ def main() -> int:
     """Main entry point."""
     parser = argparse.ArgumentParser(
         prog="mcp-scan-checker",
-        description="Security scan skills and rules using mcp-scan (Invariant Labs)",
+        description="Security scan skills and rules using snyk-agent-scan (Invariant Labs)",
     )
 
     parser.add_argument(
