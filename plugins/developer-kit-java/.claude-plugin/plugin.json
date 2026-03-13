@@ -1,6 +1,6 @@
 {
   "name": "developer-kit-java",
-  "version": "2.5.1",
+  "version": "2.6.0",
   "description": "Comprehensive Java development toolkit with Spring Boot, testing, LangChain4J, and AWS integration",
   "author": {
     "name": "Giuseppe Trisciuoglio",
@@ -72,6 +72,7 @@
     "./skills/unit-test-service-layer",
     "./skills/unit-test-utility-methods",
     "./skills/unit-test-wiremock-rest-api",
+    "./skills/wiremock-standalone-docker",
     "./skills/langchain4j-ai-services-patterns",
     "./skills/langchain4j-mcp-server-patterns",
     "./skills/langchain4j-rag-implementation-patterns",

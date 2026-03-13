@@ -57,30 +57,89 @@ The Developer Kit follows a systematic development workflow that ensures high-qu
 
 **Command:** `/devkit.brainstorm [idea-description]`
 
-Start here when you have a new feature idea or need to explore design alternatives. This command guides you through a systematic 9-phase process:
+Start here when you have a new feature idea. This command guides you to create a **functional specification** (WHAT the system should do, not HOW):
 
-- **Context Discovery**: Understand project state and initial idea
 - **Idea Refinement**: Deep exploration through structured dialogue
-- **Approach Exploration**: Present 2-3 approaches with trade-offs
-- **Codebase Exploration**: Analyze existing code for design constraints
-- **Design Presentation**: Present design incrementally with validation
-- **Documentation Generation**: Create professional design documents
-- **Document Review**: Quality review by specialist agent
-- **Next Steps Recommendation**: Suggest appropriate follow-up command
+- **Use Case Definition**: Define user behaviors and business rules
+- **Acceptance Criteria**: Establish testable conditions for completion
+- **Specification Review**: Validate with user
 
-**Output**: A comprehensive design document saved to `docs/plans/YYYY-MM-DD--design.md`
+**Output**: Functional specification saved to `docs/specs/YYYY-MM-DD--feature-name.md`
 
 **Example:**
 ```bash
 /devkit.brainstorm Add user authentication with JWT tokens
 ```
 
-### 2. Feature Development Phase
+**Next step:** After specification, continue with `/devkit.spec-to-tasks`
 
-**Command:** `/devkit.feature-development [--lang=spring|typescript|nestjs|react|python|general] [feature-description]`
+### 2. Specification to Tasks Phase
 
-Use this command to implement the design created during brainstorming. It follows a systematic 7-phase approach:
+**Command:** `/devkit.spec-to-tasks [--lang=java|spring|typescript|nestjs|react|python|general] [spec-file]`
 
+Converts the functional specification into atomic, executable tasks:
+
+- **Task Decomposition**: Break down specification into actionable tasks
+- **Dependency Mapping**: Identify task dependencies
+- **Acceptance Criteria**: Each task has clear completion criteria
+- **Implementation Commands**: Pre-filled commands for execution
+- **Complexity Scoring**: Automatic calculation of task complexity (0-100+ scale)
+- **Strong Constraint**: Tasks with score ≥ 51 MUST be split before implementation
+
+**Output**: Task list saved to `docs/specs/[id]/tasks/TASK-XXX.md` with complexity scores
+
+**Example:**
+```bash
+/devkit.spec-to-tasks docs/specs/001-user-auth/
+/devkit.spec-to-tasks --lang=spring docs/specs/001-user-auth/
+```
+
+**Next step:** Review task complexity and manage tasks with `/devkit.task-manage`
+
+### 2.5. Task Management Phase (NEW)
+
+**Command:** `/devkit.task-manage --action=[list|split|add|mark-optional|update|regenerate-index] [options]`
+
+Manage tasks after generation to ensure they're appropriately sized and prioritized:
+
+- **List Tasks**: View all tasks with complexity scores and recommendations
+- **Split Complex Tasks**: Automatically split tasks with score ≥ 51 into smaller tasks
+- **Add New Tasks**: Dynamically add tasks to existing specifications
+- **Mark Optional**: Prioritize MVP by marking non-critical tasks as optional
+- **Update Tasks**: Modify requirements or acceptance criteria
+- **Regenerate Index**: Update task list after modifications
+
+**Complexity Scoring:**
+- Simple (0-30 ✅): OK as single task
+- Moderate (31-50 ⚠️): Consider splitting
+- Complex (51+ ❌): MUST split before implementation
+
+**Examples:**
+```bash
+# List all tasks with complexity scores
+/devkit.task-manage --action=list --spec=docs/specs/001-user-auth/
+
+# Split a complex task
+/devkit.task-manage --action=split --task=docs/specs/001-user-auth/tasks/TASK-007.md
+
+# Mark task as optional for MVP
+/devkit.task-manage --action=mark-optional --task=docs/specs/001-user-auth/tasks/TASK-010.md
+
+# Add a new task
+/devkit.task-manage --action=add --spec=docs/specs/001-user-auth/2026-03-07--user-auth.md --lang=spring
+```
+
+**Output**: Updated task files and regenerated task list index
+
+**Next step:** Execute tasks with `/devkit.feature-development`
+
+### 3. Feature Development Phase
+
+**Command:** `/devkit.feature-development [--lang=spring|typescript|nestjs|react|python|general] [feature-description | "Task: task-name"]`
+
+Use this command to implement features. Supports two modes:
+
+**Mode 1 - Feature Development:** Implement entire features
 - **Discovery**: Understand what needs to be built
 - **Codebase Exploration**: Deep understanding of existing code patterns
 - **Clarifying Questions**: Fill gaps and resolve ambiguities
@@ -88,6 +147,11 @@ Use this command to implement the design created during brainstorming. It follow
 - **Implementation**: Build the feature following conventions
 - **Quality Review**: Ensure code quality and correctness
 - **Summary**: Document what was accomplished
+
+**Mode 2 - Task Execution:** Execute specific tasks from a task list (use "Task:" prefix)
+- Reads task details from `docs/tasks/YYYY-MM-DD--*--tasks.md`
+- Focuses on specific task implementation
+- Updates task progress in the task list
 
 **Language/Framework Support:**
 - `--lang=spring` or `--lang=java`: Java/Spring Boot development
@@ -98,14 +162,25 @@ Use this command to implement the design created during brainstorming. It follow
 - `--lang=aws`: AWS infrastructure and CloudFormation
 - `--lang=general` or no flag: General-purpose development
 
-**Example:**
+**Examples:**
 ```bash
+# Feature Development Mode
 /devkit.feature-development --lang=spring Add REST API for user management
+
+# Task Execution Mode
+/devkit.feature-development --lang=spring "Task: User login endpoint"
 ```
 
-### 3. Code Review & Debug Phase
+### 4. Code Review & Debug Phase
 
 After implementation, use these specialized commands for quality assurance:
+
+**Task Review:** `/devkit.task-review [--lang=...] [task-file]`
+- Verify task implementation meets specifications
+- Validate acceptance criteria
+- Check specification compliance
+- Perform language-specific code review
+- Generate comprehensive review reports
 
 **Code Review:** `/devkit.refactor [--lang=...] [refactoring-description]`
 - Improve code structure, maintainability, and design
@@ -119,6 +194,7 @@ After implementation, use these specialized commands for quality assurance:
 
 **Example:**
 ```bash
+/devkit.task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
 /devkit.fix-debugging --lang=spring Bean injection failing in OrderService
 /devkit.refactor --lang=typescript Simplify the authentication flow
 ```
@@ -129,17 +205,27 @@ After implementation, use these specialized commands for quality assurance:
 1. Idea
    ↓
 2. /devkit.brainstorm
-   ↓ (creates design document)
-3. /devkit.feature-development
-   ↓ (implements feature)
-4. Code Review & Testing
+   ↓ (creates functional specification: docs/specs/)
+3. /devkit.spec-to-tasks
+   ↓ (creates task list with complexity scores: docs/specs/[id]/tasks/)
+4. /devkit.task-manage --action=list
+   ↓ (reviews task complexity and recommendations)
+5. /devkit.task-manage --action=split (if needed)
+   ↓ (splits complex tasks with score ≥ 51 into smaller tasks)
+6. /devkit.feature-development
+   ↓ (implements tasks following dependency order)
+7. /devkit.task-review
+   ↓ (verifies implementation meets specifications)
+8. Code Review & Testing
    ↓
-5. /devkit.fix-debugging (if issues found)
+9. /devkit.fix-debugging (if issues found)
    ↓
-6. /devkit.refactor (for improvements)
+10. /devkit.refactor (for improvements)
    ↓
-7. Ready for deployment
+11. Ready for deployment
 ```
+
+**New Workflow:** `Idea → Functional Specification → Tasks → Task Management → Implementation → Review → Quality Assurance`
 
 ### Alternative Paths
 
@@ -177,9 +263,12 @@ Core agents, commands, and skills used by all other plugins.
 
 **Skills**: `claude-md-management`, `drawio-logical-diagrams`, `github-issue-workflow`, `docs-updater`
 
-**Commands**: `/devkit.brainstorm`, `/devkit.refactor`, `/devkit.feature-development`, `/devkit.fix-debugging`,
-`/devkit.generate-document`, `/devkit.generate-changelog`, `/devkit.github.create-pr`, `/devkit.github.review-pr`,
-`/devkit.lra.*` (7 LRA workflow commands), `/devkit.verify-skill`, `/devkit.generate-security-assessment`
+**Hooks**: `prevent-destructive-commands` (Python 3 PreToolUse hook for blocking dangerous Bash commands)
+
+**Commands**: `/devkit.brainstorm`, `/devkit.spec-to-tasks`, `/devkit.task-manage`, `/devkit.task-review`, `/devkit.refactor`, `/devkit.feature-development`,
+`/devkit.fix-debugging`, `/devkit.generate-document`, `/devkit.generate-changelog`, `/devkit.github.create-pr`,
+`/devkit.github.review-pr`, `/devkit.lra.*` (7 LRA workflow commands), `/devkit.verify-skill`,
+`/devkit.generate-security-assessment`
 
 ---
 
@@ -205,6 +294,7 @@ Comprehensive Java development toolkit with Spring Boot, testing, LangChain4J, A
 - **JUnit Testing**: application-events, bean-validation, boundary-conditions, caching, config-properties,
   controller-layer, exception-handler, json-serialization, mapper-converter, parameterized, scheduled-async,
   security-authorization, service-layer, utility-methods, wiremock-rest-api
+- **Integration Testing**: wiremock-standalone-docker (WireMock standalone server via Docker for integration/E2E testing)
 - **LangChain4J**: ai-services-patterns, mcp-server-patterns, rag-implementation-patterns, spring-boot-integration,
   testing-strategies, tool-function-calling-patterns, vector-stores-configuration, qdrant
 - **AWS SDK**: rds-spring-boot-integration, bedrock, core, dynamodb, kms, lambda, messaging, rds, s3, secrets-manager
@@ -239,7 +329,8 @@ TypeScript/JavaScript full-stack development with NestJS, React, React Native, N
 **Rules**: `naming-conventions`, `project-structure`, `language-best-practices`, `error-handling`,
 `nestjs-architecture`, `nestjs-api-design`, `nestjs-security`, `nestjs-testing`,
 `react-component-conventions`, `react-data-fetching`, `react-routing-conventions`, `tailwind-styling-conventions`,
-`drizzle-orm-conventions`, `shared-dto-conventions`, `nx-monorepo-conventions`, `i18n-conventions`
+`drizzle-orm-conventions`, `shared-dto-conventions`, `nx-monorepo-conventions`, `i18n-conventions`,
+`lambda-conventions`, `server-feature-conventions`
 
 ---
 
@@ -318,6 +409,7 @@ Additional development tools and integrations.
 - `notebooklm` (Google NotebookLM integration)
 - `copilot-cli` (GitHub Copilot CLI delegation with multi-model support)
 - `gemini` (Gemini CLI delegation for large-context analysis)
+- `codex` (OpenAI Codex CLI delegation for complex development tasks using GPT-5.3-codex models)
 
 ---
 

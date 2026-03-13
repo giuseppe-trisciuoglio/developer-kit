@@ -1,6 +1,6 @@
 {
   "name": "developer-kit",
-  "version": "2.5.1",
+  "version": "2.6.0",
   "description": "Core agents and commands required by all Developer Kit plugins",
   "author": {
     "name": "Giuseppe Trisciuoglio",
@@ -30,6 +30,9 @@
     "./commands/devkit.brainstorm.md",
     "./commands/devkit.refactor.md",
     "./commands/devkit.feature-development.md",
+    "./commands/devkit.spec-to-tasks.md",
+    "./commands/devkit.task-review.md",
+    "./commands/devkit.task-manage.md",
     "./commands/devkit.fix-debugging.md",
     "./commands/devkit.generate-document.md",
     "./commands/devkit.generate-changelog.md",
@@ -50,5 +53,8 @@
     "./skills/drawio-logical-diagrams",
     "./skills/github-issue-workflow",
     "./skills/docs-updater"
+  ],
+  "hooks": [
+    "./hooks/prevent-destructive-commands.py"
   ]
 }

@@ -5,6 +5,140 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [2.6.0] - 2026-03-13
+
+### Added
+
+- **New Codex CLI delegation skill** (`developer-kit-tools`):
+    - `codex`: Delegates complex development tasks to OpenAI's Codex CLI using GPT-5.3-codex models
+    - Supports `codex exec` for non-interactive code generation and `codex review` for code review workflows
+    - Includes model selection guide (gpt-5.3-codex, o3, o4-mini) and sandbox modes documentation
+    - Comprehensive examples covering main use cases with security warnings for dangerous modes
+    - CLI command reference documentation for all available commands
+
+- **New Destructive Command Prevention Hook** (`developer-kit-core`):
+  - `prevent-destructive-commands.py`: Python 3 PreToolUse hook that prevents execution of dangerous Bash commands
+  - Shell-aware tokenization with `shlex` (pipes, chains, quoted paths)
+  - Recursive analysis: `sudo`, `bash -c`, `find -exec`, `xargs`, `watch` wrappers
+  - Path validation: `rm`/`unlink`/`rmdir`/`shred` blocked outside CWD
+  - Extensible blacklist: AWS CLI, Docker, `git reset --hard`/`clean`
+  - Zero external dependencies (pure Python 3 stdlib)
+  - Installer updated to copy hooks and register in `.claude/settings.json`
+  - Security: Blocks attempts to read sensitive files (.env, keys, creds)
+
+- **New WireMock Standalone Docker skill** (`developer-kit-java`):
+  - `wiremock-standalone-docker`: Integration testing patterns using WireMock standalone server via Docker
+  - Supports stubs configuration with JSON mappings for various HTTP scenarios
+  - Example mappings: success, not found, unauthorized, rate limited, internal error, slow response, malformed response, forbidden DELETE
+  - Docker Compose configuration for quick WireMock server startup
+  - Ideal for integration/E2E testing when real services are unavailable
+
+- **New TypeScript Rules** (`developer-kit-typescript`):
+  - `lambda-conventions`: AWS Lambda TypeScript coding patterns (handler structure, context handling, error responses, logging, Powertools)
+  - `server-feature-conventions`: Server-side feature architecture (routing, controllers, services, validation, error handling, middleware)
+  - Enhanced `zod-validation-patterns`: Updated for Zod v4 with coercion, transforms, complex schema composition, and React Hook Form integration
+
+- **New Task Management command** (`developer-kit-core`):
+  - `devkit.task-manage`: Post-generation task management with 7 actions (add, split, mark-optional, mark-required, update, regenerate-index, list)
+  - Automatically calculate task complexity scores with constraint-based validation
+  - Split complex tasks into smaller, manageable atomic tasks
+  - Mark tasks as optional for MVP prioritization
+  - Dynamically add new tasks to existing specifications
+  - Update task requirements and acceptance criteria
+  - Regenerate task list index after modifications
+  - List all tasks with complexity scores and recommendations
+
+- **New Task Review command** (`developer-kit-core`):
+  - `devkit.task-review`: Verify that implemented tasks meet specifications and pass code review
+  - Validates task implementation against acceptance criteria
+  - Checks specification compliance
+  - Performs language-specific code review
+  - Generates comprehensive review reports
+
+- **New Specification to Tasks command** (`developer-kit-core`):
+  - `devkit.spec-to-tasks`: Converts a functional specification into executable and trackable tasks
+  - Bridge between `devkit.brainstorm` (specification) and `devkit.feature-development` (implementation)
+  - Supports multiple languages: java, spring, typescript, nestjs, react, python, general, php
+  - **Automatic complexity scoring**: Each task receives a complexity score (0-100+) based on files, criteria, components, decisions, and integrations
+  - **Strong constraint**: Tasks with score ≥ 51 MUST be split before implementation
+  - **Optional task support**: Tasks can be marked as optional for MVP prioritization
+  - Output: `docs/specs/[id]/tasks/TASK-XXX.md` with enhanced frontmatter including complexity score and optional status
+  - Includes technical context from codebase analysis (existing patterns, APIs, conventions)
+
+- **Task Complexity Scoring System** (`developer-kit-core`):
+  - Automatic calculation: `(Files × 10) + (Acceptance Criteria × 5) + (Independent Components × 25) + (Design Decisions × 10) + (Integration Points × 15)`
+  - Thresholds: Simple (0-30 ✅), Moderate (31-50 ⚠️), Complex (51+ ❌ must split)
+  - Visual indicators in task lists and management interface
+  - Prevents creation of overly complex tasks that span multiple components
+
+- **Enhanced Task File Format** (`developer-kit-core`):
+  - New frontmatter fields: `optional` (true/false), `complexity` (score/100)
+  - Complexity breakdown analysis in task files
+  - MVP status indicators
+  - Dependency-aware task generation
+
+- **New Developer Workflow** (`developer-kit-core`):
+  - Complete workflow: `Idea → Functional Specification → Tasks → Management → Implementation → Review`
+  - Task complexity validation before implementation
+  - Dynamic task management during development
+  - Post-generation task splitting and updates
+
+### Changed
+
+- **Brainstorm command revised** (`developer-kit-core`):
+  - `devkit.brainstorm`: Now generates pure functional specifications (WHAT, not HOW)
+  - Focus on business logic, use cases, and acceptance criteria
+  - No code, frameworks, or technical patterns in specifications
+  - Output changed to `docs/specs/YYYY-MM-DD-feature-name.md`
+
+- **Specification to Tasks command enhanced** (`developer-kit-core`):
+  - `devkit.spec-to-tasks`: Added automatic complexity scoring with strong constraint (score ≥ 51 must split)
+  - Complexity validation before task generation completes
+  - Post-generation task management section with best practices
+  - Complexity reference guide with examples and red flags
+  - Integration with `devkit.task-manage` for iterative task refinement
+  - Added PHP support and language-specific reviewer mapping
+  - Now ingests original request and technical context from specification
+
+- **Feature Development command enhanced** (`developer-kit-core`):
+  - `devkit.feature-development`: Added Task Mode support
+  - Execute specific tasks from a task list using "Task:" prefix
+  - Example: `/developer-kit:devkit.feature-development "Task: User login"`
+  - Enhanced integration with task complexity system
+  - Added git status check before execution
+
+- **MCP Security Scan Checker enhanced** (`.skills-validator-check`):
+  - Updated to handle new WireMock skill references with external mappings
+  - Improved validation for Docker Compose and mapping files
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+- **Core Commands Bug Fixes** (`developer-kit-core`):
+  - Added missing `[GATE]` markers in workflow commands
+  - Fixed task review command output formatting
+  - Improved specification generation workflow
+  - Enhanced code export with specialized agents
+  - Added missing feature in task manage command
+  - Improved task generation with test guide
+
+- **TypeScript Rules Bug Fixes** (`developer-kit-typescript`):
+  - Enhanced Zod v4 validation patterns with improved error handling
+  - Updated schema composition examples
+
+### Security
+
+- **Destructive Command Prevention Hook Enhanced** (`developer-kit-core`):
+  - Added detection and blocking of attempts to read sensitive files (.env, keys, creds)
+  - Hardened path validation against path traversal attacks
+  - Enhanced recursive analysis for wrapper commands (sudo, bash -c, xargs, watch)
+  - Security-first approach: $VAR, ${VAR}, globs, and {} placeholders flagged for review
+
 ## [2.5.1] - 2026-03-06
 
 ### Changed
@@ -58,20 +192,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - **Core Commands Enhancement**: Enforced mandatory `[GATE]` stop points and `AskUserQuestion` usage in devkit commands (`brainstorm`, `feature-development`, `fix-debugging`, `refactor`, `generate-document`)
-
-## [Unreleased]
-
-### Added
-
-### Changed
-
-### Deprecated
-
-### Removed
-
-### Fixed
-
-### Security
 
 ## [2.4.1] - 2026-03-01
 
@@ -846,7 +966,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.5.0...HEAD
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.5.1...HEAD
+[2.5.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.5.0...v2.5.1
 [2.5.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.4.1...v2.5.0
 [2.4.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.4.0...v2.4.1
 [2.4.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.3.0...v2.4.0

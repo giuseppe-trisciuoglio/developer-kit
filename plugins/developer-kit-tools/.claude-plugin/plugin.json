@@ -1,6 +1,6 @@
 {
   "name": "developer-kit-tools",
-  "version": "2.5.1",
+  "version": "2.6.0",
   "description": "External tools integration skills for CLI utilities, APIs, and third-party services",
   "author": {
     "name": "Giuseppe Trisciuoglio",
@@ -14,6 +14,7 @@
     "cli",
     "gemini",
     "copilot",
+    "codex",
     "notebooklm",
     "integrations",
     "external-services"
@@ -23,6 +24,7 @@
   "skills": [
     "./skills/gemini",
     "./skills/notebooklm",
-    "./skills/copilot-cli"
+    "./skills/copilot-cli",
+    "./skills/codex"
   ]
 }
