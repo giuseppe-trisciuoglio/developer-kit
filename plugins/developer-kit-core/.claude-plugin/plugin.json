@@ -54,7 +54,5 @@
     "./skills/github-issue-workflow",
     "./skills/docs-updater"
   ],
-  "hooks": [
-    "./hooks/prevent-destructive-commands.py"
-  ]
+  "hooks": "./hooks/hooks.json"
 }

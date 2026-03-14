@@ -1,0 +1,16 @@
+{
+  "php": {
+    "command": "intelephense",
+    "args": ["--stdio"],
+    "extensionToLanguage": {
+      ".php": "php"
+    }
+  },
+  "php-language-server": {
+    "command": "php-language-server",
+    "args": ["--stdio"],
+    "extensionToLanguage": {
+      ".php": "php"
+    }
+  }
+}

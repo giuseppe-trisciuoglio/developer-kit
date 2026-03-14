@@ -76,5 +76,6 @@
     "./skills/typescript-security-review",
     "./skills/nestjs-best-practices",
     "./skills/zod-validation-utilities"
-  ]
+  ],
+  "lspServers": "./.lsp.json"
 }

@@ -166,9 +166,9 @@ You are reviewing an implemented task to verify it meets specifications and pass
 |----------|------------------|
 | `java` | `developer-kit-java:spring-boot-code-review-expert` |
 | `spring` | `developer-kit-java:spring-boot-code-review-expert` |
-| `typescript` | `developer-kit-typescript:general-code-reviewer` |
+| `typescript` | `developer-kit:general-code-reviewer` |
 | `nestjs` | `developer-kit-typescript:nestjs-code-review-expert` |
-| `react` | `developer-kit-typescript:general-code-reviewer` |
+| `react` | `developer-kit:general-code-reviewer` |
 | `python` | `developer-kit-python:python-code-review-expert` |
 | `php` | `developer-kit-php:php-code-review-expert` |
 | `general` | `developer-kit:general-code-reviewer` |

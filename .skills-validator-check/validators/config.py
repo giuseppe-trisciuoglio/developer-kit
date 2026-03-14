@@ -347,3 +347,43 @@ RULE_RECOMMENDED_SECTIONS: FrozenSet[str] = frozenset({
 
 # Maximum line count for rule files
 MAX_RULE_LINES = 300
+
+# =============================================================================
+# Plugin JSON Validation Schema
+# =============================================================================
+
+PLUGIN_JSON_SCHEMA: Dict[str, Set[str]] = {
+    "required": {"name"},
+    "optional": {
+        "version",
+        "description",
+        "author",
+        "homepage",
+        "repository",
+        "license",
+        "keywords",
+        "commands",
+        "agents",
+        "skills",
+        "hooks",
+        "mcpServers",
+        "outputStyles",
+        "lspServers",
+    },
+}
+
+# Valid license identifiers (SPDX license list subset)
+VALID_LICENSES: FrozenSet[str] = frozenset({
+    "MIT",
+    "Apache-2.0",
+    "GPL-3.0",
+    "BSD-3-Clause",
+    "ISC",
+    "LGPL-3.0",
+    "MPL-2.0",
+    "CDDL-1.0",
+    "EPL-2.0",
+})
+
+# Plugin name pattern (kebab-case, no spaces)
+PLUGIN_NAME_PATTERN = re.compile(r"^[a-z][a-z0-9]*(-[a-z0-9]+)*$")

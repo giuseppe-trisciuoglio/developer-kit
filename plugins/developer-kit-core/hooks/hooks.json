@@ -1,0 +1,17 @@
+{
+  "description": "Prevent execution of destructive Bash commands that target paths outside the working directory or match security blacklists",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/prevent-destructive-commands.py",
+            "statusMessage": "Checking command safety..."
+          }
+        ]
+      }
+    ]
+  }
+}

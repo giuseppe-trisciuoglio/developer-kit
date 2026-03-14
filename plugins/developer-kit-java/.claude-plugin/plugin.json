@@ -94,5 +94,6 @@
     "./skills/aws-lambda-java-integration",
     "./skills/clean-architecture",
     "./skills/graalvm-native-image"
-  ]
+  ],
+  "lspServers": "./.lsp.json"
 }

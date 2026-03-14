@@ -27,5 +27,6 @@
   "skills": [
     "./skills/clean-architecture",
     "./skills/aws-lambda-python-integration"
-  ]
+  ],
+  "lspServers": "./.lsp.json"
 }

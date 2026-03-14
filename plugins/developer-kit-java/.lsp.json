@@ -1,0 +1,17 @@
+{
+  "java": {
+    "command": "jdtls",
+    "args": [
+      "-configuration",
+      "~/.cache/jdtls/config",
+      "-data",
+      "~/.cache/jdtls/workspace"
+    ],
+    "extensionToLanguage": {
+      ".java": "java"
+    },
+    "env": {
+      "JAVA_HOME": "${JAVA_HOME}"
+    }
+  }
+}

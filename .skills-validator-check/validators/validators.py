@@ -42,12 +42,16 @@ from .config import (
     SEMVER_PATTERN,
     MAX_NAME_LENGTH,
     MAX_DESCRIPTION_LENGTH,
+    MIN_DESCRIPTION_LENGTH,
     MAX_COMPATIBILITY_LENGTH,
     MAX_SKILL_LINES,
     MAX_SKILL_CHARACTERS,
     MAX_RULE_LINES,
     WHAT_KEYWORDS,
     WHEN_KEYWORDS,
+    PLUGIN_JSON_SCHEMA,
+    VALID_LICENSES,
+    PLUGIN_NAME_PATTERN,
 )
 from .models import ValidationResult, Severity
 
@@ -1533,6 +1537,18 @@ class PluginJsonValidator:
             )
             return result
 
+        # Validate schema compliance
+        self._validate_schema(plugin_data, result)
+
+        # Validate specific fields
+        self._validate_name(plugin_data, result)
+        self._validate_version(plugin_data, result)
+        self._validate_description(plugin_data, result)
+        self._validate_author(plugin_data, result)
+        self._validate_keywords(plugin_data, result)
+        self._validate_license(plugin_data, result)
+        self._validate_component_paths(plugin_data, result)
+
         # Get plugin directory
         plugin_dir = file_path.parent.parent
 
@@ -1640,6 +1656,308 @@ class PluginJsonValidator:
                             field_name=component_type,
                             suggestion=f"Add './{component_type}/{item.name}' to plugin.json {component_type} array"
                         )
+
+    def _validate_schema(
+        self,
+        plugin_data: dict,
+        result: ValidationResult
+    ) -> None:
+        """Validate that all fields are recognized and required fields are present."""
+        # Check for required fields
+        required_fields = PLUGIN_JSON_SCHEMA["required"]
+        for field in required_fields:
+            if field not in plugin_data:
+                result.add_error(
+                    message=f"Missing required field: '{field}'",
+                    field_name=field,
+                    suggestion=f"Add '{field}' field to plugin.json"
+                )
+
+        # Check for unknown fields
+        known_fields = PLUGIN_JSON_SCHEMA["required"] | PLUGIN_JSON_SCHEMA["optional"]
+        for field in plugin_data.keys():
+            if field not in known_fields:
+                result.add_warning(
+                    message=f"Unknown field: '{field}'",
+                    field_name=field,
+                    suggestion=f"Remove '{field}' or verify it is a valid plugin.json field"
+                )
+
+    def _validate_name(
+        self,
+        plugin_data: dict,
+        result: ValidationResult
+    ) -> None:
+        """Validate plugin name field."""
+        name = plugin_data.get("name")
+        if not name:
+            return  # Already handled by schema validation
+
+        # Check type
+        if not isinstance(name, str):
+            result.add_error(
+                message=f"'name' must be a string, got {type(name).__name__}",
+                field_name="name",
+                suggestion="Ensure 'name' is a string value"
+            )
+            return
+
+        # Check length
+        if len(name) > MAX_NAME_LENGTH:
+            result.add_error(
+                message=f"'name' exceeds maximum length of {MAX_NAME_LENGTH} characters",
+                field_name="name",
+                suggestion=f"Shorten 'name' to {MAX_NAME_LENGTH} characters or less"
+            )
+
+        # Check kebab-case pattern
+        if not PLUGIN_NAME_PATTERN.match(name):
+            result.add_error(
+                message=f"'name' must be kebab-case (lowercase letters, numbers, hyphens), got: '{name}'",
+                field_name="name",
+                suggestion="Use kebab-case format (e.g., 'my-plugin', 'developer-kit-java')"
+            )
+
+    def _validate_version(
+        self,
+        plugin_data: dict,
+        result: ValidationResult
+    ) -> None:
+        """Validate version field if present."""
+        version = plugin_data.get("version")
+        if version is None:
+            return  # Optional field
+
+        # Check type
+        if not isinstance(version, str):
+            result.add_error(
+                message=f"'version' must be a string, got {type(version).__name__}",
+                field_name="version",
+                suggestion="Ensure 'version' is a string value"
+            )
+            return
+
+        # Check semantic versioning pattern
+        if not SEMVER_PATTERN.match(version):
+            result.add_error(
+                message=f"'version' must follow semantic versioning (X.Y.Z), got: '{version}'",
+                field_name="version",
+                suggestion="Use semantic versioning format (e.g., '1.0.0', '2.3.1')"
+            )
+
+    def _validate_description(
+        self,
+        plugin_data: dict,
+        result: ValidationResult
+    ) -> None:
+        """Validate description field if present."""
+        description = plugin_data.get("description")
+        if description is None:
+            return  # Optional field
+
+        # Check type
+        if not isinstance(description, str):
+            result.add_error(
+                message=f"'description' must be a string, got {type(description).__name__}",
+                field_name="description",
+                suggestion="Ensure 'description' is a string value"
+            )
+            return
+
+        # Check length
+        if len(description) > MAX_DESCRIPTION_LENGTH:
+            result.add_error(
+                message=f"'description' exceeds maximum length of {MAX_DESCRIPTION_LENGTH} characters",
+                field_name="description",
+                suggestion=f"Shorten 'description' to {MAX_DESCRIPTION_LENGTH} characters or less"
+            )
+
+        # Check minimum length
+        if len(description) < MIN_DESCRIPTION_LENGTH:
+            result.add_warning(
+                message=f"'description' is too short (minimum {MIN_DESCRIPTION_LENGTH} characters)",
+                field_name="description",
+                suggestion=f"Provide a more detailed description (at least {MIN_DESCRIPTION_LENGTH} characters)"
+            )
+
+    def _validate_author(
+        self,
+        plugin_data: dict,
+        result: ValidationResult
+    ) -> None:
+        """Validate author field if present."""
+        author = plugin_data.get("author")
+        if author is None:
+            return  # Optional field
+
+        # Check type
+        if not isinstance(author, dict):
+            result.add_error(
+                message=f"'author' must be an object, got {type(author).__name__}",
+                field_name="author",
+                suggestion="Ensure 'author' is an object with 'name' field"
+            )
+            return
+
+        # Check for required name field
+        if "name" not in author:
+            result.add_error(
+                message="'author' object must contain 'name' field",
+                field_name="author",
+                suggestion="Add 'name' field to author object"
+            )
+        elif not isinstance(author["name"], str):
+            result.add_error(
+                message="'author.name' must be a string",
+                field_name="author",
+                suggestion="Ensure 'author.name' is a string value"
+            )
+
+        # Validate optional email field
+        if "email" in author and not isinstance(author["email"], str):
+            result.add_error(
+                message="'author.email' must be a string",
+                field_name="author",
+                suggestion="Ensure 'author.email' is a string value"
+            )
+
+        # Validate optional url field
+        if "url" in author and not isinstance(author["url"], str):
+            result.add_error(
+                message="'author.url' must be a string",
+                field_name="author",
+                suggestion="Ensure 'author.url' is a string value"
+            )
+
+    def _validate_keywords(
+        self,
+        plugin_data: dict,
+        result: ValidationResult
+    ) -> None:
+        """Validate keywords field if present."""
+        keywords = plugin_data.get("keywords")
+        if keywords is None:
+            return  # Optional field
+
+        # Check type
+        if not isinstance(keywords, list):
+            result.add_error(
+                message=f"'keywords' must be an array, got {type(keywords).__name__}",
+                field_name="keywords",
+                suggestion="Ensure 'keywords' is an array of strings"
+            )
+            return
+
+        # Check each keyword
+        for i, keyword in enumerate(keywords):
+            if not isinstance(keyword, str):
+                result.add_error(
+                    message=f"'keywords[{i}]' must be a string, got {type(keyword).__name__}",
+                    field_name="keywords",
+                    suggestion="Ensure all keywords are string values"
+                )
+            elif len(keyword) == 0:
+                result.add_warning(
+                    message=f"'keywords[{i}]' is empty",
+                    field_name="keywords",
+                    suggestion="Remove empty keywords or provide meaningful values"
+                )
+
+    def _validate_license(
+        self,
+        plugin_data: dict,
+        result: ValidationResult
+    ) -> None:
+        """Validate license field if present."""
+        license_id = plugin_data.get("license")
+        if license_id is None:
+            return  # Optional field
+
+        # Check type
+        if not isinstance(license_id, str):
+            result.add_error(
+                message=f"'license' must be a string, got {type(license_id).__name__}",
+                field_name="license",
+                suggestion="Ensure 'license' is a string value (e.g., 'MIT', 'Apache-2.0')"
+            )
+            return
+
+        # Warn if not a recognized SPDX license
+        if license_id not in VALID_LICENSES:
+            result.add_warning(
+                message=f"'license' '{license_id}' is not a standard SPDX identifier",
+                field_name="license",
+                suggestion=f"Use a standard SPDX license identifier: {', '.join(sorted(VALID_LICENSES)[:5])}..."
+            )
+
+    def _validate_component_paths(
+        self,
+        plugin_data: dict,
+        result: ValidationResult
+    ) -> None:
+        """Validate component path fields (commands, agents, skills, hooks, mcpServers, lspServers, outputStyles)."""
+        # Fields that can be string or array
+        array_or_string_fields = ["commands", "agents", "skills", "outputStyles"]
+        for field in array_or_string_fields:
+            value = plugin_data.get(field)
+            if value is None:
+                continue
+
+            if not isinstance(value, (str, list)):
+                result.add_error(
+                    message=f"'{field}' must be a string or array, got {type(value).__name__}",
+                    field_name=field,
+                    suggestion=f"Ensure '{field}' is a string path or array of paths"
+                )
+                continue
+
+            # If array, check each element
+            if isinstance(value, list):
+                for i, item in enumerate(value):
+                    if not isinstance(item, str):
+                        result.add_error(
+                            message=f"'{field}[{i}]' must be a string, got {type(item).__name__}",
+                            field_name=field,
+                            suggestion=f"Ensure all items in '{field}' are string paths"
+                        )
+                    elif not item.startswith("./"):
+                        result.add_warning(
+                            message=f"'{field}[{i}]' path should start with './', got: '{item}'",
+                            field_name=field,
+                            suggestion="Use relative paths starting with './'"
+                        )
+
+        # Fields that can be string, array, or object (hooks, mcpServers, lspServers)
+        complex_fields = ["hooks", "mcpServers", "lspServers"]
+        for field in complex_fields:
+            value = plugin_data.get(field)
+            if value is None:
+                continue
+
+            if not isinstance(value, (str, list, dict)):
+                result.add_error(
+                    message=f"'{field}' must be a string, array, or object, got {type(value).__name__}",
+                    field_name=field,
+                    suggestion=f"Ensure '{field}' is a path string, array of paths, or inline configuration object"
+                )
+                continue
+
+            # If array, check each element
+            if isinstance(value, list):
+                for i, item in enumerate(value):
+                    if not isinstance(item, str):
+                        result.add_error(
+                            message=f"'{field}[{i}]' must be a string, got {type(item).__name__}",
+                            field_name=field,
+                            suggestion=f"Ensure all items in '{field}' are string paths"
+                        )
+                    elif not item.startswith("./"):
+                        result.add_warning(
+                            message=f"'{field}[{i}]' path should start with './', got: '{item}'",
+                            field_name=field,
+                            suggestion="Use relative paths starting with './'"
+                        )
+
 
 
 class ValidatorFactory:

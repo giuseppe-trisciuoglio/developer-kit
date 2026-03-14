@@ -27,5 +27,6 @@
     "./skills/aws-lambda-php-integration",
     "./skills/wordpress/wordpress-sage-theme",
     "./skills/clean-architecture"
-  ]
+  ],
+  "lspServers": "./.lsp.json"
 }
