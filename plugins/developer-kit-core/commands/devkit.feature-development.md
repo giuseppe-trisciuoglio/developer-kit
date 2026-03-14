@@ -139,6 +139,45 @@ Else:
 
 When Task Mode is detected:
 
+#### Task File Format
+
+Each task file in `docs/specs/[ID]/tasks/TASK-*.md` must have a YAML frontmatter with the following structure:
+
+```yaml
+---
+id: TASK-001
+title: "Task Title"
+spec: docs/specs/[ID-feature]/2026-03-07--feature-name.md
+lang: spring
+dependencies: []
+provides:
+  - file: "src/main/java/com/example/Task.java"
+    symbols:
+      - "Task"
+      - "TaskStatus"
+    type: "entity"
+expects:
+  - file: "src/main/java/com/example/Other.java"
+    symbols:
+      - "OtherService"
+    type: "service"
+---
+```
+
+**Frontmatter Fields:**
+- `id`: Unique task identifier (e.g., TASK-001)
+- `title`: Human-readable task title
+- `spec`: Reference to the specification file
+- `lang`: Programming language/framework (spring, typescript, nestjs, etc.)
+- `dependencies`: Array of task IDs this task depends on
+- `provides`: What this task makes available (optional but recommended)
+- `expects`: What this task requires from dependencies (optional but recommended)
+
+**provides/expects Format:**
+- `file`: Relative path to the source file
+- `symbols`: Array of symbols (classes, interfaces, functions, methods) provided/required
+- `type`: Type of component (entity, value-object, service, repository, controller, function, etc.)
+
 1. **Extract task name**: Extract value from `--task=` parameter
 2. **Find task list**: Look for files matching `docs/tasks/*--tasks.md`
 3. **Read task details**:
@@ -327,6 +366,65 @@ Execute the standard 7-phase workflow:
      - Query KG for API endpoints to integrate with
      - Use this context during implementation
 
+### T-3.6: Contract Validation (NEW)
+
+**Goal**: Verify that task expectations (expects) are satisfied by completed dependencies (provides)
+
+**Prerequisite**: T-3: Dependency Check completed
+
+**Actions**:
+
+1. **Extract expects from current task**:
+   - Read `expects` field from task YAML frontmatter
+   - Parse the list of expected items (files, classes, functions, methods)
+   - Example format:
+     ```yaml
+     expects:
+       - file: "src/main/java/com/hotels/search/poc/search/domain/entity/Search.java"
+         symbols:
+           - "Search"
+           - "SearchStatus"
+           - "SearchCriteria"
+       - file: "src/main/java/com/hotels/search/poc/search/domain/valueobject/SearchId.java"
+         symbols:
+           - "SearchId"
+     ```
+
+2. **For each expected item, verify it exists**:
+   - Check if the file exists
+   - Check if the symbols are declared in the file (using Grep or Read)
+   - If file doesn't exist or symbols not found → dependency contract not satisfied
+
+3. **Check provides from completed dependencies**:
+   - For each completed dependency, read its `provides` section
+   - Match expected items against provided items
+   - Track which expectations are satisfied by which dependencies
+
+4. **If any expectations are NOT satisfied**:
+   - Present errors to user:
+     ```
+     Contract Validation Failed:
+     Task expects the following but they are not provided by completed dependencies:
+
+     Expected: Search entity with symbols [Search, SearchStatus]
+     Provided by: None (no completed dependency provides this)
+
+     Expected: SearchId value object
+     Provided by: None
+
+     Options:
+     - "Proceed anyway" (implement missing contracts)
+     - "Cancel" (complete dependencies first)
+     ```
+   - Ask user via AskUserQuestion how to proceed
+   - If user chooses to proceed, log the unsatisfied contracts
+
+5. **If all expectations ARE satisfied**:
+   - Log: "Contract validation passed: All expectations satisfied by completed dependencies"
+   - Proceed to implementation with contract context
+
+**Note**: This phase ensures that task dependencies provide what the current task expects at the symbol level, not just at the task completion level.
+
 ### T-4: Implementation
 
 **Goal**: Implement the task following acceptance criteria
@@ -367,6 +465,64 @@ Execute the standard 7-phase workflow:
    - What was implemented
    - Acceptance criteria verified
    - Any notes for next tasks
+
+### T-6.5: Update Knowledge Graph with Provides (NEW)
+
+**Goal**: Automatically update the Knowledge Graph with what this task provides
+
+**Prerequisite**: T-6: Task Completion completed successfully
+
+**Actions**:
+
+1. **Extract provides from task**:
+   - Read `provides` field from task YAML frontmatter
+   - Example format:
+     ```yaml
+     provides:
+       - file: "src/main/java/com/hotels/search/poc/search/domain/entity/Search.java"
+         symbols:
+           - "Search"
+           - "SearchStatus"
+         type: "entity"
+       - file: "src/main/java/com/hotels/search/poc/search/domain/valueobject/SearchId.java"
+         symbols:
+           - "SearchId"
+         type: "value-object"
+     ```
+
+2. **Analyze actual implementation** (if provides not explicitly defined):
+   - Read the files listed in "Implementation Details" section
+   - Use Grep to find class/interface/function declarations
+   - Extract symbols that were actually implemented
+
+3. **Extract actual provides from implementation**:
+   - For each file created/modified:
+     - Find all public class declarations
+     - Find all public interface declarations
+     - Find all public function/method declarations
+     - Map to appropriate symbol types
+
+4. **Call knowledge-graph skill to update**:
+   ```
+   /knowledge-graph update [spec-folder] {
+     provides: [
+       { file: "...", symbols: [...], type: "entity|value-object|service|repository|..." }
+     ]
+   } "feature-development task completion"
+   ```
+
+5. **Log the update**:
+   ```
+   Knowledge Graph updated with task provides:
+   - TASK-001 provides: Search entity (Search, SearchStatus), SearchId value object
+   - Updated: docs/specs/001-hotel-search-aggregation/knowledge-graph.json
+   ```
+
+6. **If update fails**:
+   - Log warning but continue (non-blocking)
+   - Note: "Failed to update Knowledge Graph with provides, continuing without caching"
+
+**Note**: This ensures that future tasks can validate their expectations against what this task actually implemented, not just what was planned.
 
 ---
 
@@ -721,9 +877,12 @@ Throughout the process, maintain a todo list like:
 [ ] T-1: Task Identification
 [ ] T-2: Git State Check
 [ ] T-3: Dependency Check
+[ ] T-3.5: Knowledge Graph Validation
+[ ] T-3.6: Contract Validation (NEW)
 [ ] T-4: Implementation
 [ ] T-5: Verification
 [ ] T-6: Task Completion
+[ ] T-6.5: Update Knowledge Graph with Provides (NEW)
 ```
 
 Update the status as you progress through each phase.

@@ -242,6 +242,132 @@ Output:
 
 ---
 
+### 5. validate-contract (NEW)
+
+**Purpose**: Validate that task expectations (expects) are satisfied by completed dependencies (provides).
+
+**Usage:**
+```
+/knowledge-graph validate-contract [spec-folder] [expects] [completed-dependencies]
+```
+
+**Parameters:**
+- `spec-folder`: Path to spec folder
+- `expects`: Array of expected items (files + symbols)
+- `completed-dependencies`: Array of task IDs that are completed, each with their provides
+
+**Behavior:**
+- Checks if expected files exist
+- Verifies expected symbols are declared in those files
+- Validates that completed dependencies provide what's expected
+- Returns validation report with satisfied/unsatisfied expectations
+
+**Example:**
+
+```
+Input:
+  spec-folder: docs/specs/001-hotel-search/
+  expects: [
+    { file: "src/main/java/com/hotels/search/domain/entity/Search.java", symbols: ["Search", "SearchStatus"] },
+    { file: "src/main/java/com/hotels/search/domain/valueobject/SearchId.java", symbols: ["SearchId"] }
+  ]
+  completed-dependencies: [
+    { task_id: "TASK-001", provides: [
+      { file: "src/main/java/com/hotels/search/domain/entity/Search.java", symbols: ["Search", "SearchStatus", "SearchCriteria"] }
+    ]}
+  ]
+
+Output:
+  {
+    satisfied: [
+      { expectation: "Search entity with symbols [Search, SearchStatus]", provided_by: "TASK-001" }
+    ],
+    unsatisfied: [
+      { expectation: "SearchId value object", provided_by: "None", reason: "No completed dependency provides SearchId" }
+    ],
+    valid: false
+  }
+```
+
+**Implementation Steps:**
+1. For each expectation in `expects`:
+   a. Check if file exists (using Glob or Read)
+   b. Check if symbols are declared (using Grep to find class/interface declarations)
+2. Match expectations against provides from completed dependencies
+3. Build satisfied/unsatisfied arrays
+4. Return validation report
+
+**Error Messages:**
+| Scenario | Message |
+|----------|---------|
+| File not found | "Expected file {path} does not exist" |
+| Symbol not found | "Expected symbol {symbol} not found in {file}" |
+| No provider | "No completed dependency provides {item}" |
+| Contract satisfied | "Expectation satisfied by {task_id}" |
+
+---
+
+### 6. extract-provides (NEW)
+
+**Purpose**: Extract actual provides from implemented files by analyzing source code.
+
+**Usage:**
+```
+/knowledge-graph extract-provides [files]
+```
+
+**Parameters:**
+- `files`: Array of file paths to analyze
+
+**Behavior:**
+- For each file, parse to find declared symbols
+- Classify symbols by type (entity, value-object, service, repository, etc.)
+- Return array of provides with file, symbols, and inferred type
+
+**Example:**
+
+```
+Input:
+  files: [
+    "src/main/java/com/hotels/search/domain/entity/Search.java",
+    "src/main/java/com/hotels/search/domain/valueobject/SearchId.java"
+  ]
+
+Output:
+  provides: [
+    {
+      file: "src/main/java/com/hotels/search/domain/entity/Search.java",
+      symbols: ["Search", "SearchStatus"],
+      type: "entity"
+    },
+    {
+      file: "src/main/java/com/hotels/search/domain/valueobject/SearchId.java",
+      symbols: ["SearchId"],
+      type: "value-object"
+    }
+  ]
+```
+
+**Symbol Detection by Language:**
+
+| Language | Symbol Types | Detection Method |
+|----------|-------------|------------------|
+| Java | class, interface, enum | Grep for `^(public\|protected)? (class\|interface\|enum) ` |
+| TypeScript | class, interface, function, const | Grep for `^(export )?(class\|interface\|function\|const) ` |
+| Python | class, function | Grep for `^(class\|def) ` |
+| Go | struct, func, interface | Grep for `^(type\|func) ` |
+
+**Implementation Steps:**
+1. For each file:
+   a. Detect language from extension
+   b. Use appropriate Grep pattern to find declarations
+   c. Infer type from directory structure (e.g., `/domain/entity/` → entity)
+   d. Extract symbol names
+2. Build provides array
+3. Return extracted provides
+
+---
+
 ## KG Schema Reference
 
 The Knowledge Graph follows this structure:
@@ -267,10 +393,25 @@ knowledge-graph.json
 │   ├── repositories (array)
 │   ├── entities (array)
 │   └── dtos (array)
+├── provides (array) [NEW]
+│   └── { task_id, file, symbols: [], type, implemented_at }
 ├── apis
 │   ├── internal (array)
 │   └── external (array)
 └── integration_points (array)
+```
+
+**provides Schema (NEW):**
+```json
+"provides": [
+  {
+    "task_id": "TASK-001",
+    "file": "src/main/java/com/example/Domain.java",
+    "symbols": ["EntityName", "Status"],
+    "type": "entity|value-object|service|repository|controller|function|module",
+    "implemented_at": "2026-03-14T10:30:00Z"
+  }
+]
 ```
 
 For detailed schema with examples, see `references/schema.md`.
@@ -287,6 +428,9 @@ The Knowledge Graph integrates with Developer Kit commands through specific phas
 - **spec-to-tasks Phase 3.5**: Persist agent discoveries after analysis
 - **feature-development Phase 1.5**: Pre-load and validate task dependencies
 - **feature-development Phase 2.5**: Update KG with new discoveries
+- **feature-development T-3.5**: Knowledge Graph Validation (existing components/APIs)
+- **feature-development T-3.6**: Contract Validation (provides/expects between tasks)
+- **feature-development T-6.5**: Update KG with provides after task completion
 
 For detailed integration patterns, data flows, and examples, see `references/integration-patterns.md`.
 

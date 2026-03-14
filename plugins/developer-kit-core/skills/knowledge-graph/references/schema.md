@@ -220,6 +220,40 @@ docs/specs/[ID-feature]/knowledge-graph.json
       }
     },
 
+    "provides": {
+      "type": "array",
+      "description": "What tasks provide after implementation (for contract validation)",
+      "items": {
+        "type": "object",
+        "required": ["task_id", "file", "symbols", "type"],
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "description": "Task identifier (e.g., 'TASK-001')"
+          },
+          "file": {
+            "type": "string",
+            "description": "Full file path relative to project root"
+          },
+          "symbols": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Symbols (classes, interfaces, functions) provided by this file"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["entity", "value-object", "service", "repository", "controller", "function", "module", "class", "interface", "dto"],
+            "description": "Type of component"
+          },
+          "implemented_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 timestamp when this was implemented"
+          }
+        }
+      }
+    },
+
     "apis": {
       "type": "object",
       "properties": {
