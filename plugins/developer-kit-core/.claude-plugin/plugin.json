@@ -54,6 +54,5 @@
     "./skills/github-issue-workflow",
     "./skills/docs-updater",
     "./skills/knowledge-graph"
-  ],
-  "hooks": "./hooks/hooks.json"
+  ]
 }
