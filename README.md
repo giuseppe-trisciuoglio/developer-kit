@@ -45,7 +45,7 @@ plugins/
 └── github-spec-kit/               # GitHub specification integration
 ```
 
-Language plugins (Java, TypeScript, Python, PHP) include **coding rules** (`rules/` directory) that auto-activate via `globs:` path-scoped matching to enforce naming conventions, project structure, language best practices, and error handling patterns.
+Language plugins (Java, TypeScript, Python, PHP) include **coding rules** (`rules/` directory) that auto-activate via `globs:` path-scoped matching to enforce naming conventions, project structure, language best practices, and error handling patterns. They also include **LSP server configurations** (`.lsp.json`) for real-time code intelligence, diagnostics, and navigation features.
 
 ---
 
@@ -303,6 +303,8 @@ Comprehensive Java development toolkit with Spring Boot, testing, LangChain4J, A
 
 **Rules**: `naming-conventions`, `project-structure`, `language-best-practices`, `error-handling`
 
+**LSP Servers**: `java` (jdtls), `kotlin` (kotlin-language-server), `scala` (metals)
+
 ---
 
 ### developer-kit-typescript
@@ -332,6 +334,8 @@ TypeScript/JavaScript full-stack development with NestJS, React, React Native, N
 `drizzle-orm-conventions`, `shared-dto-conventions`, `nx-monorepo-conventions`, `i18n-conventions`,
 `lambda-conventions`, `server-feature-conventions`
 
+**LSP Servers**: `typescript`/`javascript` (typescript-language-server), `eslint` (eslint-language-server), `vue` (vue-language-server)
+
 ---
 
 ### developer-kit-python
@@ -345,6 +349,8 @@ Python development capabilities for Django, Flask, and FastAPI projects.
 
 **Rules**: `naming-conventions`, `project-structure`, `language-best-practices`, `error-handling`
 
+**LSP Servers**: `python` (pyright-langserver)
+
 ---
 
 ### developer-kit-php
@@ -357,6 +363,8 @@ PHP and WordPress development capabilities.
 **Skills**: `wordpress-sage-theme` (Sage theme development), `clean-architecture`, `aws-lambda-php-integration`
 
 **Rules**: `naming-conventions`, `project-structure`, `language-best-practices`, `error-handling`
+
+**LSP Servers**: `php` (intelephense)
 
 ---
 

@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Plugin Installation Bug Fix** (`developer-kit-core`):
+  - Fixed plugin.json error that prevented correct installation of developer-kit-core
+  - Updated hooks configuration structure for proper integration
+  - Removed deprecated `hooks/settings.json.example` file
+
+### Added
+
+- **LSP Server Configurations** (`developer-kit-java`, `developer-kit-php`, `developer-kit-python`, `developer-kit-typescript`):
+  - Java: `java`, `kotlin`, `scala` language servers (jdtls, kotlin-language-server, metals)
+  - PHP: `php` language server (intelephense)
+  - Python: `python` language server (pyright-langserver)
+  - TypeScript: `typescript`, `javascript`, `tsx`, `jsx` language servers (typescript-language-server, eslint-language-server, vue-language-server)
+  - Enables real-time code intelligence, diagnostics, and navigation features
+
+- **Validation System Enhancements** (`.skills-validator-check`):
+  - Added `config.py` for centralized validation configuration
+  - Added `validators.py` with improved validation logic
+  - Enhanced plugin validation with better error reporting
+
 ## [2.6.0] - 2026-03-13
 
 ### Added
