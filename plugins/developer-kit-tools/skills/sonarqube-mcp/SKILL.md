@@ -53,7 +53,16 @@ export SONARQUBE_ORG="your-org-key"   # required for SonarCloud
 # SONARQUBE_URL is not set for SonarCloud
 ```
 
-Add these to your shell profile (`~/.zshrc` or `~/.bashrc`) to persist across sessions, then restart Claude Code.
+**Configuration file (all platforms):** The MCP server reads credentials from `~/.sonarqube_mcp`. Create this file once:
+
+```bash
+# ~/.sonarqube_mcp
+export SONARQUBE_TOKEN="squ_your_token"
+export SONARQUBE_URL="http://host.docker.internal:9000"  # local SonarQube
+# export SONARQUBE_ORG="your-org-key"                   # SonarCloud only
+```
+
+> **Note for macOS:** Claude Code is a GUI application and does not inherit variables exported in `.zshrc`. The `~/.sonarqube_mcp` file is sourced directly by the MCP server launcher, so no `launchctl` or shell restart is needed.
 
 **Requirements:**
 - Docker must be installed and running
