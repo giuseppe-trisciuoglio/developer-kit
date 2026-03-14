@@ -25,6 +25,7 @@
     "./skills/gemini",
     "./skills/notebooklm",
     "./skills/copilot-cli",
-    "./skills/codex"
+    "./skills/codex",
+    "./skills/sonarqube-mcp"
   ]
 }
