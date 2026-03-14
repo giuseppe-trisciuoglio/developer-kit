@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.6.1] - 2026-03-14
+
 ### Fixed
 
 - **Plugin Installation Bug Fix** (`developer-kit-core`):
@@ -987,7 +989,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.5.1...HEAD
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.1...HEAD
+[2.5.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.0...v2.6.1
+[2.6.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.5.1...v2.6.0
 [2.5.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.5.0...v2.5.1
 [2.5.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.4.1...v2.5.0
 [2.4.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.4.0...v2.4.1
