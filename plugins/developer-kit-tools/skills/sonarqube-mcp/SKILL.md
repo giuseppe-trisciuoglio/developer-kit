@@ -33,29 +33,38 @@ Use this skill when:
 
 The plugin includes a `.mcp.json` that starts the SonarQube MCP Server automatically via Docker. Before using this skill, set the required environment variables:
 
-**SonarQube Server:**
+**SonarQube Server (remote):**
 ```bash
-export SONAR_TOKEN="squ_your_token"
-export SONAR_HOST_URL="https://sonarqube.mycompany.com"
+export SONARQUBE_TOKEN="squ_your_token"
+export SONARQUBE_URL="https://sonarqube.mycompany.com"
+```
+
+**SonarQube Server (local Docker on macOS/Windows):**
+```bash
+export SONARQUBE_TOKEN="squ_your_token"
+export SONARQUBE_URL="http://host.docker.internal:9000"
+# Do NOT use localhost or 127.0.0.1 — Docker containers cannot reach them
 ```
 
 **SonarCloud:**
 ```bash
-export SONAR_TOKEN="squ_your_token"
-export SONAR_HOST_URL=""   # leave empty or unset for SonarCloud
+export SONARQUBE_TOKEN="squ_your_token"
+export SONARQUBE_ORG="your-org-key"   # required for SonarCloud
+# SONARQUBE_URL is not set for SonarCloud
 ```
 
-Add these to your shell profile (`~/.zshrc` or `~/.bashrc`) to persist across sessions.
+Add these to your shell profile (`~/.zshrc` or `~/.bashrc`) to persist across sessions, then restart Claude Code.
 
 **Requirements:**
 - Docker must be installed and running
-- `SONAR_TOKEN` is always required
-- `SONAR_HOST_URL` is required for SonarQube Server; omit or leave empty for SonarCloud
+- `SONARQUBE_TOKEN` is always required
+- `SONARQUBE_URL` is required for SonarQube Server (use `host.docker.internal` for local instances)
+- `SONARQUBE_ORG` is required for SonarCloud (omit `SONARQUBE_URL` in that case)
 
 Verify MCP tool availability before proceeding:
 - Tool names follow the pattern: `mcp__sonarqube-mcp__<tool-name>`
 
-If the MCP server fails to start, check that Docker is running and the environment variables are set. Reference: [SonarQube MCP Server repository](https://github.com/SonarSource/sonarqube-mcp-server)
+If the MCP server fails to start, check that Docker is running and the environment variables (`SONARQUBE_TOKEN`, `SONARQUBE_URL` or `SONARQUBE_ORG`) are set. Reference: [mcp/sonarqube on Docker Hub](https://hub.docker.com/r/mcp/sonarqube)
 
 ## Reference Documents
 
