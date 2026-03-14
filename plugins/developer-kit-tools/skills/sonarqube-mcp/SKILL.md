@@ -31,14 +31,31 @@ Use this skill when:
 
 ## Prerequisites
 
-The SonarQube MCP Server must be configured in the project or user MCP settings. The agent uses MCP tools prefixed with `mcp__sonarqube-mcp__` (or the configured server name).
+The plugin includes a `.mcp.json` that starts the SonarQube MCP Server automatically via Docker. Before using this skill, set the required environment variables:
+
+**SonarQube Server:**
+```bash
+export SONAR_TOKEN="squ_your_token"
+export SONAR_HOST_URL="https://sonarqube.mycompany.com"
+```
+
+**SonarCloud:**
+```bash
+export SONAR_TOKEN="squ_your_token"
+export SONAR_HOST_URL=""   # leave empty or unset for SonarCloud
+```
+
+Add these to your shell profile (`~/.zshrc` or `~/.bashrc`) to persist across sessions.
+
+**Requirements:**
+- Docker must be installed and running
+- `SONAR_TOKEN` is always required
+- `SONAR_HOST_URL` is required for SonarQube Server; omit or leave empty for SonarCloud
 
 Verify MCP tool availability before proceeding:
-- Tool names follow the pattern: `mcp__<server-name>__<tool-name>`
-- Common server names: `sonarqube-mcp`, `sonar`, `sonarqube`
+- Tool names follow the pattern: `mcp__sonarqube-mcp__<tool-name>`
 
-If the MCP server is not available, inform the user and provide the setup reference:
-- [SonarQube MCP Server repository](https://github.com/SonarSource/sonarqube-mcp-server)
+If the MCP server fails to start, check that Docker is running and the environment variables are set. Reference: [SonarQube MCP Server repository](https://github.com/SonarSource/sonarqube-mcp-server)
 
 ## Reference Documents
 

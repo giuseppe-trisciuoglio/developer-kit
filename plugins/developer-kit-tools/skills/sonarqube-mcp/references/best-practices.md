@@ -188,8 +188,7 @@ After fixes, check the project health:
 {
   "name": "get_component_measures",
   "arguments": {
-    "component": "my-project",
-    "branch": "main",
+    "projectKey": "my-project",
     "metricKeys": ["bugs", "vulnerabilities", "code_smells", "security_rating", "reliability_rating"]
   }
 }

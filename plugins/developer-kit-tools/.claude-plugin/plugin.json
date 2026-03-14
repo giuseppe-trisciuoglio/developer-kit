@@ -19,6 +19,7 @@
     "integrations",
     "external-services"
   ],
+  "mcpServers": "./.mcp.json",
   "agents": [],
   "commands": [],
   "skills": [
