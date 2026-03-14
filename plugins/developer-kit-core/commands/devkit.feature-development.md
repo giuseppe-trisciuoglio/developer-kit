@@ -265,6 +265,68 @@ Execute the standard 7-phase workflow:
      - Ask user via AskUserQuestion: proceed anyway or complete dependencies first
 3. Proceed based on user decision
 
+### T-3.5: Knowledge Graph Validation (NEW)
+
+**Goal**: Validate task dependencies against actual codebase state
+
+**Actions**:
+
+1. **Extract spec_id from task**:
+   - Read `spec` field from task frontmatter (e.g., `docs/specs/001-hotel-search-aggregation/2026-03-07--hotel-search-aggregation.md`)
+   - Extract spec folder path
+
+2. **Check for Knowledge Graph**:
+   - Look for `knowledge-graph.json` in the spec folder
+   - If not found, skip validation with note: "No Knowledge Graph found, cannot validate dependencies"
+
+3. **If Knowledge Graph exists**:
+   - Extract task requirements from "Technical Context" or task description:
+     - Component references (services, repositories, controllers to use)
+     - API endpoints to integrate with
+     - Patterns to follow
+   - Call knowledge-graph validation skill:
+     ```
+     /knowledge-graph validate [spec-folder] {
+       components: [/* component IDs from task */],
+       apis: [/* API IDs from task */],
+       patterns: [/* pattern names from task */]
+     }
+     ```
+
+4. **Process validation results**:
+   - **If valid** (no errors):
+     - Proceed with implementation, all dependencies exist
+     - Log: "Task validated against Knowledge Graph: All dependencies exist"
+   - **If errors found**:
+     - Present errors to user:
+       ```
+       Task validation failed against Knowledge Graph:
+       Errors:
+       - Component UserService not found in codebase
+       - API /api/v1/payments not found, may need implementation
+
+       Options:
+       - "Proceed anyway" (implement missing components)
+       - "Update task" (remove/fix invalid dependencies)
+       - "Cancel" (fix task first, then implement)
+       ```
+     - Ask user via AskUserQuestion how to proceed
+   - **If warnings found**:
+     - Present warnings but allow continuation:
+       ```
+       Task validation warnings:
+       - Pattern "Circuit Breaker" differs slightly from codebase convention
+       - API /api/v1/hotels may need rate limiting
+
+       Proceed with implementation?
+       ```
+
+5. **If validation passed or user chose to proceed**:
+   - Load KG context for implementation (optional):
+     - Query KG for components the task will use
+     - Query KG for API endpoints to integrate with
+     - Use this context during implementation
+
 ### T-4: Implementation
 
 **Goal**: Implement the task following acceptance criteria
@@ -310,6 +372,48 @@ Execute the standard 7-phase workflow:
 
 ## Feature Mode Flow (Standard - When no --task= parameter)
 
+## Phase 1.5: Pre-load Knowledge Graph (NEW)
+
+**Goal**: Check if existing feature has cached analysis to inform implementation
+
+**Prerequisite**: Phase 1 (Discovery) completed
+
+**Actions**:
+
+1. **Ask user about existing specifications**:
+   - "Is this feature related to an existing specification in docs/specs/?"
+   - If yes, get spec folder path from user
+
+2. **If spec folder provided**:
+   - Check for `knowledge-graph.json` in the spec folder
+   - If KG exists:
+     - Read and summarize key findings:
+       - Patterns used in related feature
+       - Components available for reuse
+       - Integration points established
+       - Conventions to follow
+     - Present summary to user:
+       ```
+       Found related specification '[spec-id]' with cached analysis:
+       - X architectural patterns
+       - Y existing components
+       - Z integration points
+
+       Use these patterns for consistency with existing code?
+       ```
+     - If user chooses to use KG:
+       - Load KG patterns, components, APIs into context
+       - Use these patterns in Phase 4 (Architecture Design)
+       - Note: "Following patterns from existing [feature-name] implementation"
+     - If user chooses not to use KG:
+       - Proceed with fresh exploration in Phase 2
+
+3. **If no spec folder or KG doesn't exist**:
+   - Proceed to Phase 2 (Codebase Exploration) without KG context
+   - Note: "No cached analysis found, will explore codebase fresh"
+
+---
+
 ## Phase 2: Codebase Exploration
 
 **Goal**: Understand relevant existing code and patterns at both high and low levels
@@ -338,6 +442,47 @@ Task(
 
 2. Once the agents return, read all files identified by agents to build deep understanding
 3. Present comprehensive summary of findings and patterns discovered
+
+---
+
+## Phase 2.5: Update Knowledge Graph (NEW - Optional)
+
+**Goal**: Persist new discoveries from exploration into Knowledge Graph
+
+**Prerequisite**: Phase 2 (Codebase Exploration) completed AND user provided spec folder in Phase 1.5
+
+**Actions**:
+
+1. **Check if spec folder was provided** in Phase 1.5:
+   - If no spec folder, skip this phase
+   - If spec folder provided, proceed
+
+2. **Extract new findings from agent exploration**:
+   - Patterns discovered that weren't in KG
+   - New components identified
+   - New integration points found
+   - Updates to existing patterns/conventions
+
+3. **Update Knowledge Graph** using the skill:
+   - Call: `/knowledge-graph update [spec-folder] [update-object] "feature-development explorer agent"`
+   - Map agent findings to KG schema sections
+   - Skill will merge new findings into existing KG
+
+4. **Log update**:
+   ```
+   Knowledge Graph updated with exploration findings:
+   - X new patterns documented
+   - Y new components catalogued
+   - Z integration points mapped
+
+   Updated: docs/specs/[ID]/knowledge-graph.json
+   ```
+
+5. **If write fails**:
+   - Log warning but continue (non-blocking)
+   - Note: "Failed to update Knowledge Graph, continuing without caching"
+
+**Note**: This phase is optional and only executes if user provided a spec folder in Phase 1.5.
 
 ---
 

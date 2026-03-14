@@ -1,5 +1,6 @@
 ---
-globs: "**/*.java"
+paths:
+  - "**/*.java"
 ---
 # Rule: Java Best Practices
 

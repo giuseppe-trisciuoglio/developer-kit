@@ -153,6 +153,60 @@ You are converting a functional specification into executable tasks. Follow a sy
 
 ---
 
+## Phase 2.5: Check/Load Knowledge Graph (NEW)
+
+**Goal**: Check if cached codebase analysis exists from previous runs
+
+**Prerequisite**: Requires `--lang` parameter and spec folder path
+
+**Actions**:
+
+1. **Check for existing Knowledge Graph**:
+   - Look for `knowledge-graph.json` in the spec folder
+   - If file doesn't exist, skip to Phase 3 (Codebase Analysis)
+
+2. **If Knowledge Graph exists**:
+   - Read `metadata.updated_at` timestamp
+   - Calculate age: `current_time - updated_at`
+   - Load and summarize key findings:
+     - Count of patterns discovered
+     - Count of components (controllers, services, repositories)
+     - Count of APIs (internal/external)
+     - Technology stack identified
+
+3. **Present summary to user**:
+   ```
+   Found cached codebase analysis from X days ago:
+   - Y architectural patterns (Repository, Service Layer, etc.)
+   - Z components (N controllers, M services, K repositories)
+   - Q API endpoints documented
+   - Technology stack: [framework] [version]
+
+   The analysis is [fresh/getting stale/old].
+   ```
+
+4. **Ask user via AskUserQuestion**:
+   ```
+   Options:
+   - "Use cached analysis" (recommended if < 7 days old)
+   - "Re-explore codebase" (always explore fresh)
+   - "Show detailed cached findings" (review before deciding)
+   ```
+
+5. **Based on user choice**:
+   - **Use cached**: Load full KG into context, skip Phase 3, proceed to Phase 4
+   - **Re-explore**: Proceed to Phase 3 (Codebase Analysis)
+   - **Show details**: Display KG query results, then ask again
+
+6. **If using cached KG**:
+   - Query KG for all patterns: `query knowledge-graph [spec-folder] patterns`
+   - Query KG for all components: `query knowledge-graph [spec-folder] components`
+   - Query KG for all APIs: `query knowledge-graph [spec-folder] apis`
+   - Store results in context for Phase 4 (Task Decomposition)
+   - Note: "Proceeding with cached analysis from X days ago"
+
+---
+
 ## Phase 3: Codebase Analysis
 
 **Goal**: Understand existing codebase to generate technically accurate tasks
@@ -354,13 +408,107 @@ Provide a comprehensive summary that will inform task generation.
 
 ---
 
+## Phase 3.5: Update Knowledge Graph (NEW)
+
+**Goal**: Persist agent discoveries into the Knowledge Graph for future reuse
+
+**Prerequisite**: Phase 3 (Codebase Analysis) must have completed
+
+**Actions**:
+
+1. **Extract structured findings from agent analysis**:
+   - Parse the agent's comprehensive analysis output
+   - Map findings to KG schema sections:
+     - `patterns.architectural`: Design patterns discovered (Repository, Service Layer, etc.)
+     - `patterns.conventions`: Coding conventions (naming, testing, etc.)
+     - `components`: Code components identified (controllers, services, repositories, entities)
+     - `apis.internal`: REST endpoints and API structure
+     - `apis.external`: External service integrations
+     - `integration_points`: Database, cache, message queues, etc.
+
+2. **Construct KG update object**:
+   ```json
+   {
+     "metadata": {
+       "spec_id": "[extracted from folder]",
+       "feature_name": "[extracted from folder]",
+       "updated_at": "[current ISO timestamp]",
+       "analysis_sources": [
+         {
+           "agent": "[agent-type-used]",
+           "timestamp": "[current ISO timestamp]",
+           "focus": "codebase analysis for task generation"
+         }
+       ]
+     },
+     "codebase_context": {
+       "project_structure": { /* from agent analysis */ },
+       "technology_stack": { /* from agent analysis */ }
+     },
+     "patterns": {
+       "architectural": [ /* patterns discovered */ ],
+       "conventions": [ /* conventions identified */ ]
+     },
+     "components": {
+       "controllers": [ /* controllers found */ ],
+       "services": [ /* services found */ ],
+       "repositories": [ /* repositories found */ ],
+       "entities": [ /* entities found */ ],
+       "dtos": [ /* DTOs found */ ]
+     },
+     "apis": {
+       "internal": [ /* endpoints discovered */ ],
+       "external": [ /* external integrations */ ]
+     },
+     "integration_points": [ /* databases, caches, etc. */ ]
+   }
+   ```
+
+3. **Update Knowledge Graph** using the skill:
+   - Call the knowledge-graph skill: `/knowledge-graph update [spec-folder] [update-object] [agent-name]`
+   - The skill will:
+     - Create new `knowledge-graph.json` if it doesn't exist
+     - Deep merge update into existing KG if it exists
+     - Update `metadata.updated_at` and `metadata.analysis_sources`
+     - Write updated KG to `docs/specs/[ID]/knowledge-graph.json`
+
+4. **Log and report**:
+   ```
+   Knowledge Graph updated:
+   - X architectural patterns documented
+   - Y coding conventions identified
+   - Z components catalogued (N controllers, M services, K repositories)
+   - Q API endpoints documented
+   - R integration points mapped
+
+   Saved to: docs/specs/[ID]/knowledge-graph.json
+   ```
+
+5. **Verify update**:
+   - Read back the updated KG to confirm write succeeded
+   - Check that metadata was updated correctly
+   - If write failed, log warning but continue (non-blocking)
+
+**Note**: If user chose to use cached KG in Phase 2.5, **skip this phase** and proceed directly to Phase 4.
+
+---
+
 ## Phase 4: Technical Task Decomposition
 
 **Goal**: Break down requirements into atomic, executable tasks
 
 **Actions**:
 
-1. For each requirement group, create one or more tasks:
+1. **If Knowledge Graph context is available** (from Phase 2.5 cached or Phase 3.5 updated):
+   - Review KG patterns: Architectural patterns to follow in each task
+   - Review KG components: Existing components to reuse or integrate with
+   - Review KG APIs: Internal/external APIs relevant to tasks
+   - Review KG conventions: Naming, testing, and coding standards
+   - Use KG context to enrich "Technical Context" section of each task
+   - Example: "Follow existing Repository Pattern - extend JpaRepository"
+   - Example: "Integrate with existing HotelService.searchHotels() method"
+
+2. For each requirement group, create one or more tasks:
    - Each task should be implementable in 1-2 hours max
    - Tasks should have clear, testable completion criteria
    - Avoid tasks that span multiple user stories
