@@ -464,17 +464,17 @@ Provide a comprehensive summary that will inform task generation.
    }
    ```
 
-3. **Update Knowledge Graph** using the skill:
-   - Call the knowledge-graph skill: `/knowledge-graph update [spec-folder] [update-object] [agent-name]`
-   - The skill will:
-     - Create new `knowledge-graph.json` if it doesn't exist
-     - Deep merge update into existing KG if it exists
+3. **Update Knowledge Graph** using specs-quality command:
+   - Call: `/developer-kit:devkit.specs-quality [spec-folder] --update-kg-only`
+   - The specs-quality command will:
+     - Create/update `knowledge-graph.json` with discovered patterns
+     - Document components, APIs, and integration points
      - Update `metadata.updated_at` and `metadata.analysis_sources`
-     - Write updated KG to `docs/specs/[ID]/knowledge-graph.json`
+     - Generate summary report of changes
 
 4. **Log and report**:
    ```
-   Knowledge Graph updated:
+   Knowledge Graph updated via specs-quality:
    - X architectural patterns documented
    - Y coding conventions identified
    - Z components catalogued (N controllers, M services, K repositories)

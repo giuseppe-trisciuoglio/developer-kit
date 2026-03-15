@@ -304,14 +304,14 @@ Execute the standard 7-phase workflow:
      - Ask user via AskUserQuestion: proceed anyway or complete dependencies first
 3. Proceed based on user decision
 
-### T-3.5: Knowledge Graph Validation (NEW)
+### T-3.5: Knowledge Graph Validation
 
 **Goal**: Validate task dependencies against actual codebase state
 
 **Actions**:
 
 1. **Extract spec_id from task**:
-   - Read `spec` field from task frontmatter (e.g., `docs/specs/001-hotel-search-aggregation/2026-03-07--hotel-search-aggregation.md`)
+   - Read `spec` field from task frontmatter (e.g., `docs/specs/001-feature-name/2026-03-07--feature-name.md`)
    - Extract spec folder path
 
 2. **Check for Knowledge Graph**:
@@ -366,7 +366,7 @@ Execute the standard 7-phase workflow:
      - Query KG for API endpoints to integrate with
      - Use this context during implementation
 
-### T-3.6: Contract Validation (NEW)
+### T-3.6: Contract Validation
 
 **Goal**: Verify that task expectations (expects) are satisfied by completed dependencies (provides)
 
@@ -466,69 +466,47 @@ Execute the standard 7-phase workflow:
    - Acceptance criteria verified
    - Any notes for next tasks
 
-### T-6.5: Update Knowledge Graph with Provides (NEW)
+### T-6.5: Update Specs Quality
 
-**Goal**: Automatically update the Knowledge Graph with what this task provides
+**Goal**: Automatically update Knowledge Graph and enrich tasks after implementation
 
 **Prerequisite**: T-6: Task Completion completed successfully
 
 **Actions**:
 
-1. **Extract provides from task**:
-   - Read `provides` field from task YAML frontmatter
-   - Example format:
-     ```yaml
-     provides:
-       - file: "src/main/java/com/hotels/search/poc/search/domain/entity/Search.java"
-         symbols:
-           - "Search"
-           - "SearchStatus"
-         type: "entity"
-       - file: "src/main/java/com/hotels/search/poc/search/domain/valueobject/SearchId.java"
-         symbols:
-           - "SearchId"
-         type: "value-object"
-     ```
-
-2. **Analyze actual implementation** (if provides not explicitly defined):
-   - Read the files listed in "Implementation Details" section
-   - Use Grep to find class/interface/function declarations
-   - Extract symbols that were actually implemented
-
-3. **Extract actual provides from implementation**:
-   - For each file created/modified:
-     - Find all public class declarations
-     - Find all public interface declarations
-     - Find all public function/method declarations
-     - Map to appropriate symbol types
-
-4. **Call knowledge-graph skill to update**:
+1. **Call specs-quality command**:
    ```
-   /knowledge-graph update [spec-folder] {
-     provides: [
-       { file: "...", symbols: [...], type: "entity|value-object|service|repository|..." }
-     ]
-   } "feature-development task completion"
+   /developer-kit:devkit.specs-quality [spec-folder] --task=[TASK-ID]
    ```
 
-5. **Log the update**:
+2. **The specs-quality command will**:
+   - Extract provides from implemented files
+   - Update Knowledge Graph with new provides entries
+   - Enrich related tasks with updated technical context
+   - Generate summary report of changes
+
+3. **Log the update**:
    ```
-   Knowledge Graph updated with task provides:
+   Specs Quality updated:
    - TASK-001 provides: Search entity (Search, SearchStatus), SearchId value object
-   - Updated: docs/specs/001-hotel-search-aggregation/knowledge-graph.json
+   - Knowledge Graph updated: docs/specs/[ID]/knowledge-graph.json
+   - Dependent tasks enriched with new technical context
    ```
 
-6. **If update fails**:
+4. **If update fails**:
    - Log warning but continue (non-blocking)
-   - Note: "Failed to update Knowledge Graph with provides, continuing without caching"
+   - Note: "Failed to update specs quality, continuing without context sync"
 
-**Note**: This ensures that future tasks can validate their expectations against what this task actually implemented, not just what was planned.
+**Note**: This ensures that:
+- Future tasks can validate their expectations against actual implementations
+- Knowledge Graph stays synchronized with codebase
+- Related tasks benefit from updated technical context
 
 ---
 
 ## Feature Mode Flow (Standard - When no --task= parameter)
 
-## Phase 1.5: Pre-load Knowledge Graph (NEW)
+## Phase 1.5: Pre-load Knowledge Graph
 
 **Goal**: Check if existing feature has cached analysis to inform implementation
 
@@ -601,7 +579,7 @@ Task(
 
 ---
 
-## Phase 2.5: Update Knowledge Graph (NEW - Optional)
+## Phase 2.5: Update Knowledge Graph (Optional)
 
 **Goal**: Persist new discoveries from exploration into Knowledge Graph
 
@@ -878,11 +856,11 @@ Throughout the process, maintain a todo list like:
 [ ] T-2: Git State Check
 [ ] T-3: Dependency Check
 [ ] T-3.5: Knowledge Graph Validation
-[ ] T-3.6: Contract Validation (NEW)
+[ ] T-3.6: Contract Validation
 [ ] T-4: Implementation
 [ ] T-5: Verification
 [ ] T-6: Task Completion
-[ ] T-6.5: Update Knowledge Graph with Provides (NEW)
+[ ] T-6.5: Update Specs Quality
 ```
 
 Update the status as you progress through each phase.

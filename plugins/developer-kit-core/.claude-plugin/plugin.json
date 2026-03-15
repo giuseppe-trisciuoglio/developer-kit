@@ -31,6 +31,7 @@
     "./commands/devkit.refactor.md",
     "./commands/devkit.feature-development.md",
     "./commands/devkit.spec-to-tasks.md",
+    "./commands/devkit.specs-quality.md",
     "./commands/devkit.task-review.md",
     "./commands/devkit.task-manage.md",
     "./commands/devkit.fix-debugging.md",
