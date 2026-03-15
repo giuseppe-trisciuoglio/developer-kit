@@ -309,10 +309,10 @@ Result: knowledge-graph.json updated with discoveries
 Log: "Knowledge graph updated: 2 patterns, 3 components added"
 ```
 
-### Example 3: feature-development - Validate Task
+### Example 3: task-implementation - Validate Task
 
 ```yaml
-# Phase 1.5 of feature-development (Task Mode)
+# T-3.5 of task-implementation
 
 Task file specifies:
   Technical Context:
@@ -345,12 +345,12 @@ Alternative if validation fails:
 → Alert user: "HotelService not found in codebase. Create it first or update task?"
 ```
 
-### Example 4: feature-development - Enrich Implementation Context
+### Example 4: spec-to-tasks - Enrich Task Generation Context
 
 ```yaml
-# Phase 1.5 of feature-development (Feature Mode)
+# Phase 2.5 of spec-to-tasks
 
-User request: "Add booking functionality"
+Spec folder: `docs/specs/001-hotel-search/`
 
 Action: Check if existing spec has KG
 Query: /knowledge-graph query docs/specs/001-hotel-search/ all
@@ -362,7 +362,7 @@ Result summary:
    APIs: 5 endpoints, 1 external integration
    Conventions: Naming, testing with JUnit, Mockito for mocks"
 
-Present to user:
+Use this summary to enrich task generation:
   "Found related feature 'hotel-search' with cached analysis.
    Use existing patterns (Repository, Service) for consistency?"
 

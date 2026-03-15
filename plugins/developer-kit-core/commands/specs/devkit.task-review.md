@@ -1,5 +1,5 @@
 ---
-description: "Provides capability to verify that implemented tasks meet specifications and pass code review. Use when needing to validate a completed task from devkit.feature-development against its specification."
+description: "Provides capability to verify that implemented tasks meet specifications and pass code review. Use when needing to validate a completed task from devkit.task-implementation against its specification."
 argument-hint: "[ --lang=java|spring|typescript|nestjs|react|python|general ] [ task-file-path ]"
 allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, TodoWrite, AskUserQuestion
 model: inherit
@@ -24,7 +24,7 @@ This command reviews a completed task to ensure:
 
 ```
 Idea → Functional Specification → Tasks → Implementation → Review
-              (devkit.brainstorm)   (this)   (devkit.feature-development)  (this)
+              (devkit.brainstorm)   (this)   (devkit.task-implementation)  (this)
 ```
 
 ## Usage
@@ -117,6 +117,12 @@ You are reviewing an implemented task to verify it meets specifications and pass
    - Any deviations from the original plan
    - Additional changes that were made
 
+4. **Read decision-log.md if exists**:
+   - Check for `decision-log.md` in the spec folder (extract from task frontmatter `spec:` field)
+   - If file exists, read any DEC entries related to this task (TASK-XXX)
+   - Use decision context to understand WHY deviations were made
+   - Reference specific decision IDs when explaining deviations in findings
+
 ---
 
 ## Phase 3: Acceptance Criteria Validation
@@ -134,6 +140,14 @@ You are reviewing an implemented task to verify it meets specifications and pass
    - ✅ Met (with evidence)
    - ❌ Not met (with explanation)
    - ⚠️ Partially met (with details)
+
+4. **Update traceability-matrix.md**:
+   - Read `docs/specs/[id]/traceability-matrix.md` (extract from task frontmatter `spec:` field)
+   - For this task (TASK-XXX), update the matrix:
+     - Fill in "Test Files" column with test file names created for this task
+     - Fill in "Code Files" column with source files created for this task
+     - Update "Status" to "Implemented" for REQ-IDs covered by this task
+   - Save updated matrix back to `docs/specs/[id]/traceability-matrix.md`
 
 ---
 
@@ -226,6 +240,11 @@ You are reviewing an implemented task to verify it meets specifications and pass
 - **Compliant**: Yes/No
 - **Deviations**: [list]
 
+
+## Traceability
+
+-- **Traceability Coverage**: N/N requirements covered (X%)
+-- **REQ-IDs**: [List of REQ-IDs covered by this task]
 ## Code Review Findings
 
 ### Critical
@@ -243,6 +262,16 @@ You are reviewing an implemented task to verify it meets specifications and pass
 ## Recommendations
 
 - [actionable recommendations]
+
+## Decisions Referenced
+
+- [List any DEC-ID entries from decision-log.md that explain deviations]
+
+
+3. **If decision-log.md exists, include decisions referenced**:
+   - Search for DEC entries mentioning this task (TASK-XXX)
+   - Summarize key decisions that affected implementation
+   - Reference specific decision IDs (e.g., See DEC-003)
 ```
 
 3. Save report to: `docs/specs/[id]/tasks/TASK-XXX--review.md`
@@ -264,9 +293,10 @@ You are reviewing an implemented task to verify it meets specifications and pass
 3. If issues found:
    - List specific issues that need fixing
    - Save findings to the review report at `docs/specs/[id]/tasks/TASK-XXX--review.md`
-   - Invoke `/developer-kit:devkit.feature-development --lang=[language] "docs/specs/[id]/tasks/TASK-XXX.md"`
+   - Invoke `/developer-kit:devkit.task-implementation --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"`
    - Reference the review report path so implementation can read the detailed findings
    - Track unresolved items
+   - **Note**: Before re-implementing, consider running `/devkit.spec-review [spec-folder]` to verify the spec is still accurate if issues suggest spec-level problems
 
 ---
 
@@ -295,13 +325,13 @@ This command completes the verification loop:
 ```
 /developer-kit:devkit.brainstorm
     ↓
-[Creates: docs/specs/[id]/YYYY-MM-DD--feature-name-specs.md]
+[Creates: docs/specs/[id]/YYYY-MM-DD--feature-name.md]
     ↓
 /developer-kit:devkit.spec-to-tasks --lang=[language] docs/specs/[id]/
     ↓
 [Creates: docs/specs/[id]/tasks/TASK-XXX.md]
     ↓
-/developer-kit:devkit.feature-development --lang=[language] "docs/specs/[id]/tasks/TASK-XXX.md"
+/developer-kit:devkit.task-implementation--lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
     ↓
 [Implements task]
     ↓

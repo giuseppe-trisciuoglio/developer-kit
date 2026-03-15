@@ -150,15 +150,15 @@ Agent Analysis:
 
 ---
 
-## Pattern 2: feature-development Integration
+## Pattern 2: task-implementation Integration
 
-### Phase 1.5: Pre-load from Knowledge Graph
+### T-3.5: Pre-load from Knowledge Graph
 
-**Location**: After Phase 1 (Discovery), Before Phase 2 (Codebase Exploration)
+**Location**: After dependency checks, before implementation work starts
 
 **Goal**: Check if existing specification has cached analysis to inform implementation
 
-**For Task Mode (--task= parameter)**:
+**For task execution (`--task=` parameter)**:
 
 ```
 1. Load task file → extract spec_id from task frontmatter
@@ -187,34 +187,17 @@ Agent Analysis:
    d. Load KG context into working memory for implementation phase
 ```
 
-**For Feature Mode (free-form feature description)**:
+**For spec-driven task generation (`devkit.spec-to-tasks`)**:
 
 ```
-1. Ask user: "Is this feature related to an existing specification in docs/specs/?"
-2. If yes, get spec folder path from user
-3. Check if knowledge-graph.json exists
-4. If KG exists:
-   a. Load and summarize key findings:
-      - Patterns used in related feature
-      - Components available for reuse
-      - Integration points established
-      - Conventions to follow
-
-   b. Present summary to user:
-      "Found related specification '[spec-id]' with cached analysis:
-      - X architectural patterns
-      - Y existing components
-      - Z integration points
-
-      Use these patterns for consistency with existing code?"
-
-   c. If user chooses to use KG:
-      - Load KG patterns, components, APIs into context
-      - Use these patterns in Phase 4 (Architecture Design)
-      - Note: "Following patterns from existing [feature-name] implementation"
-
-   d. If user chooses not to use KG:
-      - Proceed with fresh exploration in Phase 2
+1. Resolve the spec folder
+2. Check if knowledge-graph.json exists
+3. If KG exists:
+   a. Load and summarize key findings
+   b. Reuse it automatically if fresh; ask only if borderline stale
+   c. Feed patterns/components/APIs into task decomposition
+4. If no KG exists or it is stale:
+   - Run fresh codebase exploration
 ```
 
 **User Interaction Example**:
@@ -232,20 +215,23 @@ Options:
 - "No, explore fresh" (different approach needed)
 ```
 
-### Phase 2.5: Update Knowledge Graph
+### Phase 3.5 / T-6.5: Update Knowledge Graph
 
-**Location**: After Phase 2 (Codebase Exploration), Before Phase 3 (Clarifying Questions)
+**Location**:
+- After `spec-to-tasks` codebase analysis
+- After `task-implementation`, via `spec-quality`
 
 **Goal**: Persist new discoveries from exploration into Knowledge Graph
 
-**When to Execute**: Only if user provided spec folder in Phase 1.5
+**When to Execute**:
+- During `spec-to-tasks` when a spec folder is being analyzed
+- During `task-implementation` once files are implemented and `provides` can be extracted
 
 **Implementation**:
 
 ```
-1. Check if spec folder was provided in Phase 1.5
-   - If no spec folder, skip this phase
-   - If spec folder provided, proceed
+1. Resolve the spec folder from the current command context
+   - If no spec folder is available, skip this phase
 
 2. Extract new findings from agent exploration:
    - Patterns discovered that weren't in KG
@@ -254,7 +240,7 @@ Options:
    - Updates to existing patterns/conventions
 
 3. Update Knowledge Graph:
-   /knowledge-graph update [spec-folder] [update-object] "feature-development explorer agent"
+   /knowledge-graph update [spec-folder] [update-object] "spec-to-tasks explorer agent"
 
    Map agent findings to KG schema sections
 
@@ -347,18 +333,18 @@ Found new integration: Stripe API for payment processing"
    ↓
 8. Task files created with Technical Context from KG
    ↓
-9. User runs: /devkit.feature-development --task=TASK-001
+9. User runs: /devkit.task-implementation --task="docs/specs/[id]/tasks/TASK-001.md"
    ↓
-10. feature-development Phase 1.5: Pre-load from Knowledge Graph
+10. task-implementation T-3.5: Pre-load from Knowledge Graph
     ├─ Load task dependencies
     ├─ Query KG for components/APIs
     └─ Validate: "UserService exists? API endpoint available?"
     ↓
-11. feature-development Phase 2: Implementation
+11. task-implementation T-4: Implementation
     ↓
-12. feature-development Phase 2.5: Update Knowledge Graph (optional)
-    ├─ New discoveries during implementation
-    └─ Update KG with new components
+12. task-implementation T-6.5: spec-quality updates Knowledge Graph
+    ├─ Extract provides from implemented files
+    └─ Persist them to KG
     ↓
 13. Implementation Complete
 ```
@@ -372,7 +358,7 @@ Found new integration: Stripe API for payment processing"
 ```
 Task file says: "Use HotelRepository for database access"
 
-feature-development T-3.5: Validate against KG
+task-implementation T-3.5: Validate against KG
 → Query: "components.repositories.HotelRepository"
 
 KG Response:
@@ -607,5 +593,6 @@ From Knowledge Graph (docs/specs/001/knowledge-graph.json):
 - `query-examples.md` - Query patterns and usage examples
 
 For command integration, see:
-- `/plugins/developer-kit-core/commands/devkit.spec-to-tasks.md` (Phase 2.5, 3.5)
-- `/plugins/developer-kit-core/commands/devkit.feature-development.md` (Phase 1.5, 2.5)
+- `/plugins/developer-kit-core/commands/specs/devkit.spec-to-tasks.md` (Phase 2.5, 3.5)
+- `/plugins/developer-kit-core/commands/specs/devkit.task-implementation.md` (T-3.5, T-6.5)
+- `/plugins/developer-kit-core/commands/specs/devkit.spec-quality.md` (Phase 4)

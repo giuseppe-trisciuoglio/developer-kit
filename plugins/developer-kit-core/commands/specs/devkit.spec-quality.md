@@ -1,5 +1,5 @@
 ---
-description: "Updates and improves specification context quality (Knowledge Graph and Tasks). Syncs KG, tasks, and codebase after implementations. Automatically integrated into spec-to-tasks and feature-development workflows."
+description: "Maintains specification context quality (Knowledge Graph, Tasks, Codebase) by synchronizing technical context after implementations. Syncs KG, tasks, and codebase. Automatically integrated into spec-to-tasks and task-implementation workflows."
 argument-hint: "[ spec-folder ] [--update-kg-only] [--task=TASK-XXX] [--dry-run]"
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash, Task, TodoWrite
 model: inherit
@@ -30,16 +30,16 @@ Idea → Specs → Tasks → Implementation → Specs Quality Update (this)
 
 ```bash
 # Basic usage - update context for a spec folder
-/developer-kit:devkit.specs-quality docs/specs/001-hotel-search-aggregation/
+/developer-kit:devkit.spec-quality docs/specs/001-hotel-search-aggregation/
 
 # Update KG only (used by spec-to-tasks after codebase analysis)
-/developer-kit:devkit.specs-quality docs/specs/001-hotel-search-aggregation/ --update-kg-only
+/developer-kit:devkit.spec-quality docs/specs/001-hotel-search-aggregation/ --update-kg-only
 
-# Update after task completion (used by feature-development)
-/developer-kit:devkit.specs-quality docs/specs/001-hotel-search-aggregation/ --task=TASK-001
+# Update after task completion (used by task-implementation)
+/developer-kit:devkit.spec-quality docs/specs/001-hotel-search-aggregation/ --task=TASK-001
 
 # Dry run - show what would be changed without making changes
-/developer-kit:devkit.specs-quality docs/specs/001-hotel-search-aggregation/ --dry-run
+/developer-kit:devkit.spec-quality docs/specs/001-hotel-search-aggregation/ --dry-run
 ```
 
 ## Arguments
@@ -205,7 +205,7 @@ Idea → Specs → Tasks → Implementation → Specs Quality Update (this)
 
 5. **Update metadata**:
    - Set `updated_at` to current ISO timestamp
-   - Add entry to `analysis_sources`: `{"agent": "specs-quality", "timestamp": "..."}`
+   - Add entry to `analysis_sources`: `{"agent": "spec-quality", "timestamp": "..."}`
 
 6. **Write updated KG**:
    - If `--dry-run`: Show diff instead of writing
@@ -247,6 +247,38 @@ Idea → Specs → Tasks → Implementation → Specs Quality Update (this)
    - If `--dry-run`: Show proposed changes
    - Otherwise: Write back to task file
 
+
+## Phase 5.5: Spec Document Drift Detection
+
+**Goal**: Detect drift between specification and implemented reality
+
+**Actions**:
+
+1. **Resolve and read the spec file** (`YYYY-MM-DD--feature-name.md` preferred, legacy `*-specs.md` supported):
+   - Extract all acceptance criteria from the spec
+   - List all user stories and requirements
+
+2. **Read decision-log.md** if exists:
+   - Extract all DEC entries with implementation deviations
+   - Identify scope changes, additions, removals
+
+3. **Read completed tasks**:
+   - Scan tasks/ directory for completed tasks (status: completed)
+   - Extract acceptance criteria from each completed task
+   - Identify what was actually implemented
+
+4. **Compare and identify drift**:
+   - Criteria in spec but NOT implemented → Unmet requirements
+   - Features implemented but NOT in spec → Scope expansion
+   - Modified implementations → Requirement refinement
+   - Documented deviations in decision-log → Explained drift
+
+5. **Generate drift report**:
+   - If drift detected:
+     - Add to report: "Spec Drift Detected: N criteria diverged from implementation. Consider running `/devkit.spec-sync [spec-folder]` to update specification."
+     - List specific drift items with references to DEC entries
+   - If no drift:
+     - Log: "Spec and implementation are aligned, no drift detected"
 ---
 
 ## Phase 6: Report Generation
@@ -300,21 +332,21 @@ Add to `spec-to-tasks` Phase 3.5 (after Codebase Analysis):
 
 After codebase analysis completes, automatically update KG:
 
-/developer-kit:devkit.specs-quality [spec-folder] --update-kg-only
+/developer-kit:devkit.spec-quality [spec-folder] --update-kg-only
 
 This persists agent discoveries into knowledge-graph.json for future reuse.
 ```
 
-### In feature-development Command
+### In task-implementation Command
 
-Add to `feature-development` Task Mode, after T-6 (Task Completion):
+Add to `task-implementation`, after T-6 (Task Completion):
 
 ```markdown
 ## T-6.5: Update Specs Quality
 
 After task completion and verification, update spec context:
 
-/developer-kit:devkit.specs-quality [spec-folder] --task=[TASK-ID]
+/developer-kit:devkit.spec-quality [spec-folder] --task=[TASK-ID]
 
 This updates:
 - Knowledge Graph with new provides entries
@@ -369,7 +401,7 @@ This updates:
 ### Example 1: Full Context Update
 
 ```bash
-/developer-kit:devkit.specs-quality docs/specs/001-hotel-search-aggregation/
+/developer-kit:devkit.spec-quality docs/specs/001-hotel-search-aggregation/
 ```
 
 Output:
@@ -398,7 +430,7 @@ Summary:
 ### Example 2: Dry Run
 
 ```bash
-/developer-kit:devkit.specs-quality docs/specs/001-hotel-search-aggregation/ --dry-run
+/developer-kit:devkit.spec-quality docs/specs/001-hotel-search-aggregation/ --dry-run
 ```
 
 Shows what would change without applying changes.
@@ -406,7 +438,7 @@ Shows what would change without applying changes.
 ### Example 3: After Task Implementation
 
 ```bash
-/developer-kit:devkit.specs-quality docs/specs/001-hotel-search-aggregation/ --task=TASK-001
+/developer-kit:devkit.spec-quality docs/specs/001-hotel-search-aggregation/ --task=TASK-001
 ```
 
 Updates KG with provides from TASK-001 and enriches related tasks.

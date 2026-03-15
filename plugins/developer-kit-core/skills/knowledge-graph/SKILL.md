@@ -1,6 +1,6 @@
 ---
 name: knowledge-graph
-description: "Manage persistent Knowledge Graph for specifications. Provides read, query, update, and validation capabilities for codebase analysis caching. Use when: spec-to-tasks needs to cache/reuse codebase analysis, feature-development needs to validate task dependencies, or any command needs to query existing patterns/components/APIs. Reduces redundant codebase exploration by caching agent discoveries."
+description: "Manage persistent Knowledge Graph for specifications. Provides read, query, update, and validation capabilities for codebase analysis caching. Use when: spec-to-tasks needs to cache/reuse codebase analysis, task-implementation needs to validate task dependencies or contracts, spec-quality needs to synchronize provides, or any command needs to query existing patterns/components/APIs. Reduces redundant codebase exploration by caching agent discoveries."
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash
 ---
 
@@ -25,7 +25,7 @@ The Knowledge Graph (KG) is a persistent JSON file that stores discoveries from 
 Use this skill when:
 
 1. **spec-to-tasks needs to cache/reuse codebase analysis** - Store agent discoveries for future reuse
-2. **feature-development needs to validate task dependencies** - Check if required components exist before implementing
+2. **task-implementation needs to validate task dependencies and contracts** - Check if required components exist before implementing
 3. **Any command needs to query existing patterns/components/APIs** - Retrieve cached codebase context
 4. **Reducing redundant codebase exploration** - Avoid re-analyzing already-explored code
 
@@ -368,6 +368,70 @@ Output:
 
 ---
 
+
+### 7. aggregate-knowledge-graphs (NEW)
+
+**Purpose**: Merge patterns and conventions from all spec KGs into a project-level summary for cross-spec learning.
+
+**Usage**:
+```
+/knowledge-graph aggregate [project-root]
+```
+
+**Parameters**:
+- `project-root`: Path to project root containing docs/specs/ directory
+
+**Behavior**:
+- Scan all `docs/specs/*/knowledge-graph.json` files
+- Extract `patterns.architectural` and `patterns.conventions` from each KG
+- Deduplicate by pattern name
+- Write to `docs/specs/.global-knowledge-graph.json`
+- Include metadata: which specs contributed, last aggregation date
+
+**Output**: `docs/specs/.global-knowledge-graph.json`
+
+**Global KG Schema**:
+```json
+{
+  "metadata": {
+    "aggregated_at": "[ISO timestamp]",
+    "project_root": "[path]",
+    "contributing_specs": ["spec-id-1", "spec-id-2"],
+    "total_patterns": N
+  },
+  "patterns": {
+    "architectural": [
+      {
+        "name": "[Pattern Name]",
+        "sources": ["spec-id-1", "spec-id-2"],
+        "frequency": 2,
+        "first_seen": "[date]",
+        "convention": "[detailed convention]"
+      }
+    ],
+    "conventions": [
+      {
+        "name": "[Convention Name]",
+        "sources": ["spec-id-1"],
+        "frequency": 1,
+        "examples": ["[brief example]"]
+      }
+    ]
+  }
+}
+```
+
+**Implementation Steps**:
+1. Scan docs/specs/ for all subdirectories containing knowledge-graph.json
+2. For each KG found:
+   a. Extract all patterns.architectural entries
+   b. Extract all patterns.conventions entries
+   c. Track which spec contributed each pattern
+3. Deduplicate by pattern.name (keep most detailed version)
+4. Build global KG with deduplicated patterns
+5. Update metadata with aggregation timestamp and contributing specs
+6. Write to docs/specs/.global-knowledge-graph.json
+7. Return summary: "Aggregated N architectural patterns and M conventions from X specs"
 ## KG Schema Reference
 
 The Knowledge Graph follows this structure:
@@ -420,17 +484,16 @@ For detailed schema with examples, see `references/schema.md`.
 
 ## Integration Patterns
 
-The Knowledge Graph integrates with Developer Kit commands through specific phases in the spec-to-tasks and feature-development workflows.
+The Knowledge Graph integrates with Developer Kit commands through specific phases in the spec-to-tasks, task-implementation, and spec-quality workflows.
 
 **Key Integration Points:**
 
 - **spec-to-tasks Phase 2.5**: Check/load cached analysis before exploring
 - **spec-to-tasks Phase 3.5**: Persist agent discoveries after analysis
-- **feature-development Phase 1.5**: Pre-load and validate task dependencies
-- **feature-development Phase 2.5**: Update KG with new discoveries
-- **feature-development T-3.5**: Knowledge Graph Validation (existing components/APIs)
-- **feature-development T-3.6**: Contract Validation (provides/expects between tasks)
-- **feature-development T-6.5**: Update KG with provides after task completion
+- **task-implementation T-3.5**: Knowledge Graph validation for existing components/APIs
+- **task-implementation T-3.6**: Contract validation for provides/expects between tasks
+- **task-implementation T-6.5**: Trigger `spec-quality` to persist provides after task completion
+- **spec-quality Phase 4**: Merge extracted provides into the KG
 
 For detailed integration patterns, data flows, and examples, see `references/integration-patterns.md`.
 
@@ -524,7 +587,7 @@ Result: knowledge-graph.json updated with pattern discovery
 ### Example 2: Validate Task Dependencies
 
 ```
-# feature-development Task Mode
+# task-implementation Task Mode
 Task: "Use HotelRepository to search hotels"
 
 Validate:
@@ -566,7 +629,7 @@ Result:
 
 ### Critical Constraints
 
-- **Read-Only Operations**: The knowledge-graph skill performs read-only operations on the codebase. It does NOT modify source code files, only creates/updates `knowledge-graph.json` files.
+- **Source-Code Safe Operations**: The knowledge-graph skill does NOT modify source code files. It only creates or updates `knowledge-graph.json` files and related KG artifacts.
 - **Path Validation**: The skill only reads/writes KG files from `docs/specs/[ID]/` paths. It will NOT access files outside this structure.
 - **No Automatic Code Generation**: This skill caches analysis results, it does NOT generate implementation code automatically.
 
@@ -574,7 +637,7 @@ Result:
 
 - **Validation Scope**: The `validate-against-knowledge-graph` function checks if components exist in the KG, but cannot verify if they exist in the actual codebase if the KG is outdated.
 - **Freshness Dependency**: KG accuracy depends on how recently it was updated. A KG older than 7 days may be stale.
-- **Single-Spec Scope**: Each KG is specific to a single specification (`docs/specs/[ID]/`). It does NOT provide cross-spec knowledge aggregation.
+- **Single-Spec First**: Each KG is primarily specific to a single specification (`docs/specs/[ID]/`). Cross-spec learning is available only through the optional `aggregate` operation and `.global-knowledge-graph.json`.
 - **File Size**: KG files can grow large (>1MB) for complex specifications. Monitor size and consider splitting if needed.
 
 ### Warnings
@@ -614,5 +677,6 @@ Result:
 - `references/query-examples.md` - Query patterns and examples
 
 For integration with commands, see:
-- `/plugins/developer-kit-core/commands/devkit.spec-to-tasks.md` (Phase 2.5, 3.5)
-- `/plugins/developer-kit-core/commands/devkit.feature-development.md` (Phase 1.5, 2.5)
+- `/plugins/developer-kit-core/commands/specs/devkit.spec-to-tasks.md` (Phase 2.5, 3.5)
+- `/plugins/developer-kit-core/commands/specs/devkit.task-implementation.md` (T-3.5, T-3.6, T-6.5)
+- `/plugins/developer-kit-core/commands/specs/devkit.spec-quality.md` (Phase 4)
