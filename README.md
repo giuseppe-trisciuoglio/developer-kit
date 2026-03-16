@@ -96,7 +96,7 @@ Converts the functional specification into atomic, executable tasks:
 
 **Next step:** Review task complexity and manage tasks with `/devkit.task-manage`
 
-### 2.5. Task Management Phase (NEW)
+### 2.5. Task Management Phase
 
 **Command:** `/devkit.task-manage --action=[list|split|add|mark-optional|update|regenerate-index] [options]`
 
