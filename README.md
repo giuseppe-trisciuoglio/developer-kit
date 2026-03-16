@@ -463,6 +463,10 @@ Additional development tools and integrations.
 - `copilot-cli` (GitHub Copilot CLI delegation with multi-model support)
 - `gemini` (Gemini CLI delegation for large-context analysis)
 - `codex` (OpenAI Codex CLI delegation for complex development tasks using GPT-5.3-codex models)
+- `sonarqube-mcp` (SonarQube integration via MCP for code quality analysis, issue management, and security hotspots)
+
+**MCP Servers**:
+- `sonarqube-mcp` (SonarQube server for quality gates, issue discovery, and security analysis)
 
 ---
 
