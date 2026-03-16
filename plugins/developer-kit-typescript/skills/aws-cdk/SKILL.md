@@ -1,6 +1,6 @@
 ---
 name: aws-cdk
-description: Provides comprehensive AWS CDK (Cloud Development Kit) patterns and best practices for defining cloud infrastructure in TypeScript. Use when creating CDK apps, stacks, and constructs, designing serverless or container architectures with CDK, configuring VPCs and networking, implementing IAM security hardening, writing CDK assertion and snapshot tests, or deploying infrastructure with cdk deploy. Triggers include "create cdk app", "aws cdk typescript", "cdk stack", "cdk construct", "infrastructure as code typescript", "cdk deploy", "cdk synth", "cdk test".
+description: Provides AWS CDK TypeScript patterns for defining, validating, and deploying AWS infrastructure as code. Use when creating CDK apps, stacks, and reusable constructs, modeling serverless or VPC-based architectures, applying IAM and encryption defaults, or testing and reviewing `cdk synth`, `cdk diff`, and `cdk deploy` changes. Triggers include "aws cdk typescript", "create cdk app", "cdk stack", "cdk construct", "cdk deploy", and "cdk test".
 allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 ---
 
@@ -8,32 +8,17 @@ allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 
 ## Overview
 
-AWS CDK (Cloud Development Kit) is an open-source IaC framework that lets you define AWS infrastructure using TypeScript. CDK synthesizes your code into CloudFormation templates and deploys them. TypeScript provides autocompletion, strong typing, and software engineering principles (modularity, DRY, testing) that static JSON/YAML templates cannot offer.
-
-**Key advantages over CloudFormation YAML:**
-
-| Aspect | CloudFormation YAML | AWS CDK TypeScript |
-|--------|--------------------|--------------------|
-| Abstraction | Low-level resources only | L1, L2, L3 constructs |
-| Type safety | None | Full TypeScript types |
-| Reusability | Copy-paste or nested stacks | Classes, functions, npm packages |
-| Testing | Manual review | Automated assertions + snapshots |
-| IDE support | Limited | Full autocompletion |
+Use this skill to build AWS infrastructure in TypeScript with reusable constructs, safe defaults, and a validation-first delivery loop.
 
 ## When to Use
 
 Use this skill when:
 
-- Creating a new CDK application or stack from scratch
-- Defining AWS resources (Lambda, API Gateway, DynamoDB, S3, ECS, RDS, etc.) with TypeScript
-- Choosing between L1, L2, and L3 construct levels
-- Designing multi-stack architectures with cross-stack references
-- Configuring environment-aware deployments (dev/staging/prod)
-- Implementing serverless patterns (Lambda + API Gateway + DynamoDB)
-- Setting up VPC networking (subnets, NAT, security groups)
-- Applying IAM least-privilege and encryption best practices
-- Writing CDK tests (fine-grained assertions, snapshot tests)
-- Running `cdk synth`, `cdk diff`, `cdk deploy`, `cdk destroy`
+- Creating or refactoring a CDK app, stack, or reusable construct in TypeScript
+- Choosing between L1, L2, and L3 constructs
+- Building serverless, networking, or security-focused AWS infrastructure
+- Wiring multi-stack applications and environment-aware deployments
+- Validating infrastructure changes with `cdk synth`, tests, `cdk diff`, and `cdk deploy`
 
 ## Instructions
 
@@ -131,7 +116,31 @@ cdk ls             # List all stacks in the app
 cdk doctor         # Check environment setup
 ```
 
-### 5. Cross-Stack References
+### 5. Recommended Delivery Loop
+
+1. **Model the stack**
+   - Start with L2 constructs and extract repeated logic into custom constructs.
+
+2. **Run `cdk synth`**
+   - Checkpoint: synthesis succeeds with no missing imports, invalid props, missing context, or unresolved references.
+   - If it fails: fix the construct configuration or context values, then rerun `cdk synth`.
+
+3. **Run infrastructure tests**
+   - Checkpoint: assertions cover IAM scope, stateful resources, and critical outputs.
+   - If tests fail: update the stack or test expectations, then rerun the test suite.
+
+4. **Run `cdk diff`**
+   - Checkpoint: review IAM broadening, resource replacement, export changes, and deletes on stateful resources.
+   - If the diff is risky: adjust names, dependencies, or `RemovalPolicy`, then rerun `cdk diff`.
+
+5. **Run `cdk deploy`**
+   - Checkpoint: the stack reaches `CREATE_COMPLETE` or `UPDATE_COMPLETE`.
+   - If deploy fails: inspect CloudFormation events, fix quotas, permissions, export conflicts, or bootstrap issues, then retry `cdk deploy`.
+
+6. **Verify runtime outcomes**
+   - Confirm stack outputs, endpoints, alarms, and integrations behave as expected before moving on.
+
+### 6. Cross-Stack References
 
 ```typescript
 // Stack A exports a value
@@ -220,16 +229,14 @@ test('creates DynamoDB table with PAY_PER_REQUEST', () => {
 
 ## Best Practices
 
-1. **One concern per stack** — Separate network, compute, storage, and monitoring into dedicated stacks
-2. **Use L2 constructs** — Prefer curated constructs over raw `Cfn*` resources for safer defaults
-3. **Environment-aware configuration** — Pass `env` with explicit account/region; never hardcode
-4. **Tag everything** — Use `Tags.of(scope).add(key, value)` or `cdk.Tags` for cost allocation
-5. **Least privilege IAM** — Use `.grant*()` helpers instead of manually crafting IAM policies
-6. **Pin construct versions** — Lock `aws-cdk-lib` version in `package.json` for reproducible builds
-7. **Use `cdk diff` before deploy** — Always review changes before applying to production
-8. **Test your infrastructure** — Write fine-grained assertions and snapshot tests
-9. **Avoid hardcoded values** — Use `CfnParameter`, `context`, or environment variables
-10. **RemovalPolicy** — Set `RETAIN` for production data, `DESTROY` for dev/test only
+1. **One concern per stack** — Separate network, compute, storage, and monitoring.
+2. **Prefer L2 constructs** — Drop to `Cfn*` only when you need unsupported properties.
+3. **Set explicit environments** — Pass `env` with account and region; avoid implicit production targets.
+4. **Use grant helpers** — Prefer `.grant*()` over handwritten IAM where possible.
+5. **Review the diff before deploy** — Treat IAM expansion, replacement, and deletes as mandatory checkpoints.
+6. **Test infrastructure** — Cover critical resources with fine-grained assertions.
+7. **Avoid hardcoded values** — Use context, parameters, or environment variables.
+8. **Use the right `RemovalPolicy`** — `RETAIN` for production data, `DESTROY` only for disposable environments.
 
 ## Constraints and Warnings
 
