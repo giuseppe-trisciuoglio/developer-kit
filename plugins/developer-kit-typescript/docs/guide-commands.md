@@ -207,4 +207,4 @@ Commands are invoked using the slash syntax in Claude Code:
 - [TypeScript Agents Guide](./guide-agents.md) - TypeScript plugin agents
 - [NestJS Skills Guide](./guide-skills-nestjs.md) - NestJS framework skills
 - [Frontend Skills Guide](./guide-skills-frontend.md) - React, TypeScript, UI skills
-- [Core Command Guide](../developer-kit-core/docs/guide-commands.md) - All commands across plugins
+- [Core Command Guide](../../developer-kit-core/docs/guide-commands.md) - All commands across plugins

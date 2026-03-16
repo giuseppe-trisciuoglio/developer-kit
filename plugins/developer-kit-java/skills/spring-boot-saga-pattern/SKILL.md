@@ -340,15 +340,15 @@ public class InventoryEventHandler {
 
 For detailed information, consult the following resources:
 
-- [Saga Pattern Definition](references/01-saga-pattern-definition.md)
-- [Choreography-Based Implementation](references/02-choreography-implementation.md)
-- [Orchestration-Based Implementation](references/03-orchestration-implementation.md)
-- [Event-Driven Architecture](references/04-event-driven-architecture.md)
-- [Compensating Transactions](references/05-compensating-transactions.md)
-- [State Management](references/06-state-management.md)
-- [Error Handling and Retry](references/07-error-handling-retry.md)
-- [Testing Strategies](references/08-testing-strategies.md)
-- [Common Pitfalls and Solutions](references/09-pitfalls-solutions.md)
+- [Saga Pattern Definition](references/saga-pattern-definition.md)
+- [Choreography-Based Implementation](references/choreography-implementation.md)
+- [Orchestration-Based Implementation](references/orchestration-implementation.md)
+- [Event-Driven Architecture](references/event-driven-architecture.md)
+- [Compensating Transactions](references/compensating-transactions.md)
+- [State Management](references/state-management.md)
+- [Error Handling and Retry](references/error-handling-retry.md)
+- [Testing Strategies](references/testing-strategies.md)
+- [Common Pitfalls and Solutions](references/pitfalls-solutions.md)
 
 See also [examples.md](references/examples.md) for complete implementation examples:
 

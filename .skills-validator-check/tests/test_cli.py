@@ -10,6 +10,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from validators.cli import ValidationCLI, main
 from validators.reporter import ConsoleReporter, JsonReporter
+from validators.models import Severity
 
 
 class TestValidationCLI:
@@ -92,6 +93,46 @@ This is a test skill with no real constraints.
 
         exit_code = cli.run(["--files", str(skill_file)])
         assert exit_code == 0
+
+    def test_run_with_specific_skill_expands_bundled_markdown(self, cli, tmp_path):
+        """Test CLI validates bundled markdown when only SKILL.md is passed."""
+        skill_dir = tmp_path / "skills" / "sample-skill"
+        references_dir = skill_dir / "references"
+        references_dir.mkdir(parents=True)
+
+        skill_file = skill_dir / "SKILL.md"
+        skill_file.write_text("""---
+name: sample-skill
+description: Test skill that helps when testing features. Use when testing new functionality.
+allowed-tools: Read
+---
+
+# Test Skill
+
+## Overview
+
+See [Examples](references/example-doc.md).
+
+## When to Use
+
+Use this skill when testing the CLI.
+
+## Instructions
+
+1. Run the test
+
+## Examples
+
+```python
+print("test")
+```
+""")
+
+        bundled_md = references_dir / "example-doc.md"
+        bundled_md.write_text("##Invalid Heading\n")
+
+        exit_code = cli.run(["--files", str(skill_file)])
+        assert exit_code == 1
 
     def test_run_with_invalid_file(self, cli, tmp_path):
         """Test CLI with invalid file reports errors."""
@@ -211,6 +252,91 @@ python -m pytest
             exit_code = cli.run(["--all"])
             assert exit_code == 0
 
+    def test_run_skips_external_url_check_by_default(self, cli, tmp_path):
+        """Test CLI skips remote checks for external HTTP(S) links by default."""
+        skill_dir = tmp_path / "skills" / "sample-skill"
+        skill_dir.mkdir(parents=True)
+        skill_file = skill_dir / "SKILL.md"
+        skill_file.write_text("""---
+name: sample-skill
+description: Test skill that helps when testing URL checks. Use when testing CLI flags.
+allowed-tools: Read
+---
+
+# Test Skill
+
+## Overview
+
+See [Remote Doc](https://example.com/missing).
+
+## When to Use
+
+Use this skill when testing the CLI.
+
+## Instructions
+
+1. Run the test
+
+## Examples
+
+```text
+ok
+```
+""")
+
+        with patch("validators.validators.urlopen", side_effect=AssertionError("urlopen should not be called")):
+            exit_code = cli.run(["--files", str(skill_file)])
+
+        assert exit_code == 0
+
+    def test_run_with_check_external_urls(self, cli, tmp_path):
+        """Test CLI can enable remote checks for external HTTP(S) links explicitly."""
+        skill_dir = tmp_path / "skills" / "sample-skill"
+        skill_dir.mkdir(parents=True)
+        skill_file = skill_dir / "SKILL.md"
+        skill_file.write_text("""---
+name: sample-skill
+description: Test skill that helps when testing URL checks. Use when testing CLI flags.
+allowed-tools: Read
+---
+
+# Test Skill
+
+## Overview
+
+See [Remote Doc](https://example.com/missing).
+
+## When to Use
+
+Use this skill when testing the CLI.
+
+## Instructions
+
+1. Run the test
+
+## Examples
+
+```text
+ok
+```
+""")
+
+        from urllib.error import HTTPError
+
+        with patch(
+            "validators.validators.urlopen",
+            side_effect=HTTPError(
+                "https://example.com/missing",
+                404,
+                "Not Found",
+                hdrs=None,
+                fp=None,
+            ),
+        ):
+            exit_code = cli.run(["--files", str(skill_file), "--check-external-urls"])
+
+        assert exit_code == 1
+
 
 class TestConsoleReporter:
     """Tests for ConsoleReporter."""
@@ -230,6 +356,16 @@ class TestConsoleReporter:
         """Test reporter in verbose mode."""
         reporter = ConsoleReporter(verbose=True)
         assert reporter.verbose is True
+
+    def test_reporter_ascii_fallback_symbols(self):
+        """Test reporter falls back to ASCII-safe symbols when stdout is ASCII-only."""
+        reporter = ConsoleReporter(use_colors=False)
+        reporter.supports_unicode = False
+
+        assert reporter._success_symbol() == "v"
+        assert reporter._symbol(Severity.ERROR) == "x"
+        assert reporter._arrow() == "->"
+        assert reporter._separator() == "-" * 60
 
 
 class TestJsonReporter:

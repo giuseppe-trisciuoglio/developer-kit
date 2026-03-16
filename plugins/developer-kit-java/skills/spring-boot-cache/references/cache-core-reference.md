@@ -89,7 +89,7 @@ SpEL expression to generate cache key (if not using method parameters as key).
 - `#root.targetClass` - Target class
 - `#root.args[0]` - Method arguments array
 - `#a0`, `#p0` - First argument
-- `#result` - Method result (only in @CachePut, @CacheEvict)
+- `#result` - Method result (only in `@`CachePut, `@`CacheEvict)
 
 #### condition
 SpEL expression evaluated before cache operation. Operation only executes if true.
@@ -109,7 +109,7 @@ SpEL expression evaluated AFTER method execution. Entry is cached only if false.
 ```
 
 #### beforeInvocation
-For @CacheEvict only. If true, cache is evicted BEFORE method execution (default: false).
+For `@`CacheEvict only. If true, cache is evicted BEFORE method execution (default: false).
 
 ```java
 @CacheEvict(value = "products", beforeInvocation = true)  // Evict before call
@@ -117,7 +117,7 @@ For @CacheEvict only. If true, cache is evicted BEFORE method execution (default
 ```
 
 #### allEntries
-For @CacheEvict only. If true, entire cache is cleared instead of single entry.
+For `@`CacheEvict only. If true, entire cache is cleared instead of single entry.
 
 ```java
 @CacheEvict(value = "products", allEntries = true)  // Clear all entries
@@ -292,7 +292,7 @@ public CacheManager cacheManager() {
 
 ## Transaction Integration
 
-### Cache + @Transactional Interaction
+### Cache + `@`Transactional Interaction
 
 ```java
 @Service
@@ -541,7 +541,7 @@ spring.cache.redis.time-to-live=600000
 | `#root.args` | Arguments array |
 | `#p<index>` | Argument at index |
 | `#<name>` | Named argument |
-| `#result` | Method result (@CachePut, @CacheEvict) |
+| `#result` | Method result (`@`CachePut, `@`CacheEvict) |
 
 ## Testing Reference
 

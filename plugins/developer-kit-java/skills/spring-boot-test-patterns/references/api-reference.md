@@ -7,18 +7,18 @@
 - `@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)`: Full test with random HTTP port
 - `@SpringBootTest(webEnvironment = WebEnvironment.MOCK)`: Full test with mock web environment
 - `@DataJpaTest`: Load only JPA components (repositories, entities)
-- `@WebMvcTest`: Load only MVC layer (controllers, @ControllerAdvice)
+- `@WebMvcTest`: Load only MVC layer (controllers, `@`ControllerAdvice)
 - `@WebFluxTest`: Load only WebFlux layer (reactive controllers)
 - `@JsonTest`: Load only JSON serialization components
 - `@RestClientTest`: Load only REST client components
-- `@AutoConfigureMockMvc`: Provide MockMvc bean in @SpringBootTest
+- `@AutoConfigureMockMvc`: Provide MockMvc bean in `@`SpringBootTest
 - `@AutoConfigureWebTestClient`: Provide WebTestClient bean for WebFlux tests
 - `@AutoConfigureTestDatabase`: Control test database configuration
 
 **Testcontainer Annotations:**
 - `@ServiceConnection`: Wire Testcontainer to Spring Boot test (Spring Boot 3.5+)
 - `@DynamicPropertySource`: Register dynamic properties at runtime
-- `@Container`: Mark field as Testcontainer (requires @Testcontainers)
+- `@Container`: Mark field as Testcontainer (requires `@`Testcontainers)
 - `@Testcontainers`: Enable Testcontainers lifecycle management
 
 **Test Lifecycle Annotations:**

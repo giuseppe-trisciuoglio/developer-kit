@@ -524,7 +524,7 @@ primary_region = "iad"
 ### AWS
 - Full control over infrastructure
 - ECS Fargate for containerized apps
-- Lambda for serverless (with @sls-next)
+- Lambda for serverless (with `@`sls-next)
 - CloudFront for global CDN
 
 ### GCP

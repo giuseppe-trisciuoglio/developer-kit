@@ -3,11 +3,14 @@
 import pytest
 import sys
 from pathlib import Path
+from urllib.error import HTTPError
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from validators.validators import (
     SkillValidator,
+    SkillMarkdownValidator,
     AgentValidator,
     CommandValidator,
     RuleValidator,
@@ -480,6 +483,384 @@ Example content without code blocks.
         assert any(i.severity == Severity.WARNING and "Missing" in i.message and "examples" in i.message
                    for i in result.issues)
 
+    def test_missing_markdown_link_target_fails(self, validator, temp_skill_file):
+        """Test missing markdown link target is reported."""
+        content = """---
+name: test-skill
+description: Some description when using this skill
+allowed-tools: Read
+---
+
+# Test Skill
+
+## Overview
+
+See [Examples](references/examples.md).
+
+## When to Use
+
+Use this skill.
+
+## Instructions
+
+1. Read the example.
+
+## Examples
+
+```md
+@references/examples.md
+```
+"""
+        skill_file = temp_skill_file(content)
+        result = validator.validate(skill_file)
+
+        assert not result.is_valid
+        assert any("Broken link" in i.message for i in result.issues)
+
+    def test_existing_markdown_link_target_passes(self, validator, temp_skill_file):
+        """Test existing markdown link target passes validation."""
+        content = """---
+name: test-skill
+description: Some description when using this skill
+allowed-tools: Read
+---
+
+# Test Skill
+
+## Overview
+
+See [Examples](references/examples.md).
+
+## When to Use
+
+Use this skill.
+
+## Instructions
+
+1. Read the example.
+
+## Examples
+
+```md
+@references/examples.md
+```
+"""
+        skill_file = temp_skill_file(content)
+        references_dir = skill_file.parent / "references"
+        references_dir.mkdir()
+        (references_dir / "examples.md").write_text("# Examples\n")
+
+        result = validator.validate(skill_file)
+
+        assert not any("Broken link" in i.message for i in result.issues)
+
+    def test_missing_at_reference_target_fails(self, validator, temp_skill_file):
+        """Test missing @references target is reported."""
+        content = """---
+name: test-skill
+description: Some description when using this skill
+allowed-tools: Read
+---
+
+# Test Skill
+
+## Overview
+
+Use @references/examples.md for extra details.
+
+## When to Use
+
+Use this skill.
+
+## Instructions
+
+1. Read the example.
+
+## Examples
+
+```text
+ok
+```
+"""
+        skill_file = temp_skill_file(content)
+        result = validator.validate(skill_file)
+
+        assert not result.is_valid
+        assert any("Broken @reference" in i.message for i in result.issues)
+
+    def test_annotation_outside_code_fails(self, validator, temp_skill_file):
+        """Test raw @annotations outside code are rejected."""
+        content = """---
+name: test-skill
+description: Some description when using this skill
+allowed-tools: Read
+---
+
+# Test Skill
+
+## Overview
+
+Use @Controller in Spring MVC.
+
+## When to Use
+
+Use this skill.
+
+## Instructions
+
+1. Review the controller.
+
+## Examples
+
+```java
+@Controller
+class DemoController {}
+```
+"""
+        skill_file = temp_skill_file(content)
+        result = validator.validate(skill_file)
+
+        assert not result.is_valid
+        assert any("Raw '@' token outside code block" in i.message for i in result.issues)
+
+    def test_annotation_inside_code_passes(self, validator, temp_skill_file):
+        """Test @annotations inside inline code do not trigger false positives."""
+        content = """---
+name: test-skill
+description: Some description when using this skill
+allowed-tools: Read
+---
+
+# Test Skill
+
+## Overview
+
+Use `@Controller` in Spring MVC.
+
+## When to Use
+
+Use this skill.
+
+## Instructions
+
+1. Review the controller.
+
+## Examples
+
+```java
+@Controller
+class DemoController {}
+```
+"""
+        skill_file = temp_skill_file(content)
+        result = validator.validate(skill_file)
+
+        assert not any("Raw '@' token outside code block" in i.message for i in result.issues)
+
+    def test_unclosed_fenced_code_block_fails(self, validator, temp_skill_file):
+        """Test unclosed fenced code blocks are reported."""
+        content = """---
+name: test-skill
+description: Some description when using this skill
+allowed-tools: Read
+---
+
+# Test Skill
+
+## Overview
+
+Overview text.
+
+## When to Use
+
+Use this skill.
+
+## Instructions
+
+1. Run the example.
+
+## Examples
+
+```bash
+echo test
+"""
+        skill_file = temp_skill_file(content)
+        result = validator.validate(skill_file)
+
+        assert not result.is_valid
+        assert any("Unclosed fenced code block" in i.message for i in result.issues)
+
+    def test_external_link_404_fails(self, validator, temp_skill_file):
+        """Test external links returning 404 are reported."""
+        validator = SkillValidator(validate_external_urls=True)
+        content = """---
+name: test-skill
+description: Some description when using this skill
+allowed-tools: Read
+---
+
+# Test Skill
+
+## Overview
+
+See [Remote Doc](https://example.com/missing).
+
+## When to Use
+
+Use this skill.
+
+## Instructions
+
+1. Open the remote doc.
+
+## Examples
+
+```text
+ok
+```
+"""
+        skill_file = temp_skill_file(content)
+
+        with patch(
+            "validators.validators.urlopen",
+            side_effect=HTTPError(
+                "https://example.com/missing",
+                404,
+                "Not Found",
+                hdrs=None,
+                fp=None,
+            ),
+        ):
+            result = validator.validate(skill_file)
+
+        assert not result.is_valid
+        assert any("External link is not reachable" in i.message for i in result.issues)
+
+    def test_external_link_with_unicode_is_normalized(self, validator, temp_skill_file):
+        """Test external links with Unicode characters are normalized before requests."""
+        validator = SkillValidator(validate_external_urls=True)
+        content = """---
+name: test-skill
+description: Some description when using this skill
+allowed-tools: Read
+---
+
+# Test Skill
+
+## Overview
+
+See [Remote Doc](https://esempio.it/città/guida).
+
+## When to Use
+
+Use this skill.
+
+## Instructions
+
+1. Open the remote doc.
+
+## Examples
+
+```text
+ok
+```
+"""
+        skill_file = temp_skill_file(content)
+
+        class DummyResponse:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, exc_type, exc, tb):
+                return False
+
+            def getcode(self):
+                return 200
+
+        seen_urls = []
+
+        def fake_urlopen(request, timeout=5):
+            seen_urls.append(request.full_url)
+            return DummyResponse()
+
+        with patch("validators.validators.urlopen", side_effect=fake_urlopen):
+            result = validator.validate(skill_file)
+
+        assert result.is_valid
+        assert seen_urls
+        assert seen_urls[0] == "https://esempio.it/citt%C3%A0/guida"
+
+    def test_invalid_external_link_is_reported_without_crashing(self, validator, temp_skill_file):
+        """Test invalid external URLs are reported as validation errors."""
+        validator = SkillValidator(validate_external_urls=True)
+        content = """---
+name: test-skill
+description: Some description when using this skill
+allowed-tools: Read
+---
+
+# Test Skill
+
+## Overview
+
+See [Remote Doc](https://bad host.example.com/doc).
+
+## When to Use
+
+Use this skill.
+
+## Instructions
+
+1. Open the remote doc.
+
+## Examples
+
+```text
+ok
+```
+"""
+        skill_file = temp_skill_file(content)
+        result = validator.validate(skill_file)
+
+        assert any("External link is not reachable" in i.message for i in result.issues)
+
+    def test_external_link_check_is_skipped_by_default(self, temp_skill_file):
+        """Test external URL reachability checks are skipped unless explicitly enabled."""
+        validator = SkillValidator()
+        content = """---
+name: test-skill
+description: Some description when using this skill
+allowed-tools: Read
+---
+
+# Test Skill
+
+## Overview
+
+See [Remote Doc](https://example.com/missing).
+
+## When to Use
+
+Use this skill.
+
+## Instructions
+
+1. Open the remote doc.
+
+## Examples
+
+```text
+ok
+```
+"""
+        skill_file = temp_skill_file(content)
+
+        with patch("validators.validators.urlopen", side_effect=AssertionError("urlopen should not be called")):
+            result = validator.validate(skill_file)
+
+        assert result.is_valid
+        assert not any("External link is not reachable" in i.message for i in result.issues)
+
     def test_valid_skill_with_all_sections_passes(
         self, validator, temp_skill_file, valid_skill_content
     ):
@@ -489,6 +870,40 @@ Example content without code blocks.
 
         assert result.is_valid, f"Errors: {[str(e) for e in result.errors]}"
         assert len(result.errors) == 0
+
+    def test_skill_token_limit_warns(self, validator, temp_skill_file):
+        """Test token-based length validation warns on oversized skills."""
+        repeated_tokens = "token " * 6000
+        content = f"""---
+name: test-skill
+description: Some description when using this skill
+allowed-tools: Read
+---
+
+# Test Skill
+
+## Overview
+
+{repeated_tokens}
+
+## When to Use
+
+Use this skill.
+
+## Instructions
+
+1. Run the validator.
+
+## Examples
+
+```text
+ok
+```
+"""
+        skill_file = temp_skill_file(content)
+        result = validator.validate(skill_file)
+
+        assert any("too many tokens" in i.message for i in result.issues)
 
     # ---- Directory structure tests ----
 
@@ -550,6 +965,51 @@ Example content without code blocks.
         structure_errors = [i for i in result.issues
                             if "Non-standard" in i.message]
         assert len(structure_errors) == 3
+
+
+class TestSkillMarkdownValidator:
+    """Tests for bundled skill markdown resources."""
+
+    @pytest.fixture
+    def validator(self):
+        return SkillMarkdownValidator()
+
+    def test_can_validate_reference_markdown(self, validator):
+        """Test validator recognizes bundled markdown files."""
+        assert validator.can_validate(Path("skills/test-skill/references/example.md"))
+        assert validator.can_validate(Path("plugins/test/skills/test-skill/scripts/notes.md"))
+
+    def test_cannot_validate_skill_entrypoint(self, validator):
+        """Test validator does not claim SKILL.md."""
+        assert not validator.can_validate(Path("skills/test-skill/SKILL.md"))
+
+    def test_valid_reference_markdown_passes(self, validator, tmp_path):
+        """Test valid bundled markdown passes validation."""
+        skill_dir = tmp_path / "skills" / "test-skill"
+        references_dir = skill_dir / "references"
+        references_dir.mkdir(parents=True)
+        (skill_dir / "SKILL.md").write_text("# Skill")
+        reference_file = references_dir / "example-doc.md"
+        reference_file.write_text("# Example\n\nSee [Index](../SKILL.md)\n")
+
+        result = validator.validate(reference_file)
+
+        assert result.is_valid
+
+    def test_invalid_reference_markdown_fails(self, validator, tmp_path):
+        """Test invalid bundled markdown is reported."""
+        skill_dir = tmp_path / "skills" / "test-skill"
+        references_dir = skill_dir / "references"
+        references_dir.mkdir(parents=True)
+        (skill_dir / "SKILL.md").write_text("# Skill")
+        reference_file = references_dir / "example-doc.md"
+        reference_file.write_text("##Invalid Heading\n\n```java\n@Controller\n")
+
+        result = validator.validate(reference_file)
+
+        assert not result.is_valid
+        assert any("Malformed heading" in i.message for i in result.issues)
+        assert any("Unclosed fenced code block" in i.message for i in result.issues)
 
 
 class TestAgentValidator:
@@ -842,6 +1302,11 @@ class TestValidatorFactory:
         validator = ValidatorFactory.get_validator(Path(".claude/commands/test.md"))
         assert isinstance(validator, CommandValidator)
 
+    def test_get_skill_markdown_validator(self):
+        """Test factory returns bundled skill markdown validator for references."""
+        validator = ValidatorFactory.get_validator(Path("skills/test-skill/references/example-doc.md"))
+        assert isinstance(validator, SkillMarkdownValidator)
+
     def test_get_none_for_unknown(self):
         """Test factory returns None for unknown files."""
         validator = ValidatorFactory.get_validator(Path("README.md"))
@@ -850,7 +1315,7 @@ class TestValidatorFactory:
     def test_get_all_patterns(self):
         """Test factory returns all patterns."""
         patterns = ValidatorFactory.get_all_patterns()
-        assert len(patterns) == 7  # Skill, Agent, Command, Rule, KebabCase, SkillPackage, PluginVersion
+        assert len(patterns) == 8  # Skill, SkillMarkdown, Agent, Command, Rule, KebabCase, SkillPackage, PluginVersion
 
 
 class TestPluginVersionValidator:

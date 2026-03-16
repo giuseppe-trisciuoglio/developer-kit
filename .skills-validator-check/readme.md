@@ -19,6 +19,9 @@ python3 .skills-validator-check/validators/cli.py --all --format json
 
 # Quiet mode (errors only)
 python3 .skills-validator-check/validators/cli.py -q
+
+# Check remote reachability for external HTTP(S) links
+python3 .skills-validator-check/validators/cli.py --all --check-external-urls
 ```
 
 ## What It Validates
@@ -53,6 +56,7 @@ python3 .skills-validator-check/validators/cli.py -q
 | `--format <format>` | Output format: `console`, `plain`, or `json` (default: console) |
 | `-v, --verbose` | Show verbose output including valid files |
 | `-q, --quiet` | Suppress warnings, show only errors |
+| `--check-external-urls` | Enable remote reachability checks for external HTTP(S) links |
 
 ## Exit Codes
 

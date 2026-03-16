@@ -122,9 +122,8 @@ Contains:
 
 **Location**: [plans/](./plans/)
 
-Contains architecture and planning documents:
-- [Decentralized Documentation Architecture Blueprint](./plans/2026-02-07--decentralized-documentation-architecture.md)
-- [Decentralized Documentation Visual Diagram](./plans/2026-02-07--decentralized-documentation-diagram.md)
+Contains architecture and planning documents such as:
+- [Pre-commit Validation Design](./plans/2026-02-05--pre-commit-validation-design.md)
 
 ---
 

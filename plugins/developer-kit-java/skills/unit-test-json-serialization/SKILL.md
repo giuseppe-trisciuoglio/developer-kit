@@ -1,14 +1,14 @@
 ---
 name: unit-test-json-serialization
-description: Provides patterns for unit testing JSON serialization/deserialization with Jackson and @JsonTest. Use when validating JSON mapping, custom serializers, and date format handling.
+description: Provides patterns for unit testing JSON serialization/deserialization with Jackson and `@JsonTest`. Use when validating JSON mapping, custom serializers, and date format handling.
 allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
-# Unit Testing JSON Serialization with @JsonTest
+# Unit Testing JSON Serialization with `@JsonTest`
 
 ## Overview
 
-This skill provides patterns for unit testing JSON serialization and deserialization using Spring's @JsonTest and Jackson. It covers testing POJO mapping, custom serializers/deserializers, field name mappings, nested objects, date/time formatting, polymorphic types, and null handling without full Spring context.
+This skill provides patterns for unit testing JSON serialization and deserialization using Spring's `@JsonTest` and Jackson. It covers testing POJO mapping, custom serializers/deserializers, field name mappings, nested objects, date/time formatting, polymorphic types, and null handling without full Spring context.
 
 ## When to Use
 
@@ -22,13 +22,13 @@ Use this skill when:
 
 ## Instructions
 
-1. **Use @JsonTest annotation**: Configure test context with @JsonTest for JacksonTester auto-configuration
+1. **Use `@`JsonTest annotation**: Configure test context with `@`JsonTest for JacksonTester auto-configuration
 2. **Test both serialization and deserialization**: Verify objects serialize to JSON and JSON deserializes to objects
 3. **Use JacksonTester**: Autowire JacksonTester for type-safe JSON assertions
 4. **Test null handling**: Verify null fields are handled correctly (included or excluded)
 5. **Test nested objects**: Verify complex nested structures serialize/deserialize properly
 6. **Test date/time formats**: Verify LocalDateTime, Date, and other temporal types format correctly
-7. **Test custom serializers**: Verify @JsonSerialize and custom JsonSerializer implementations work
+7. **Test custom serializers**: Verify `@`JsonSerialize and custom JsonSerializer implementations work
 8. **Use JsonPath assertions**: Extract and verify specific JSON paths with JsonPath matchers
 
 ## Examples
@@ -61,7 +61,7 @@ dependencies {
 }
 ```
 
-## Basic Pattern: @JsonTest
+## Basic Pattern: `@`JsonTest
 
 ### Test JSON Serialization
 
@@ -118,7 +118,7 @@ class UserDtoJsonTest {
 
 ## Testing Custom JSON Properties
 
-### @JsonProperty and @JsonIgnore
+### `@`JsonProperty and `@`JsonIgnore
 
 ```java
 public class Order {
@@ -380,11 +380,11 @@ class PolymorphicJsonTest {
 
 ## Best Practices
 
-- **Use @JsonTest** for focused JSON testing
+- **Use `@`JsonTest** for focused JSON testing
 - **Test both serialization and deserialization**
 - **Test null handling** and missing fields
 - **Test nested and complex structures**
-- **Verify field name mapping** with @JsonProperty
+- **Verify field name mapping** with `@`JsonProperty
 - **Test date/time formatting** thoroughly
 - **Test edge cases** (empty strings, empty collections)
 
@@ -398,24 +398,24 @@ class PolymorphicJsonTest {
 
 ## Constraints and Warnings
 
-- **@JsonTest loads limited context**: Only JSON-related beans are available; use @SpringBootTest for full context
+- **`@`JsonTest loads limited context**: Only JSON-related beans are available; use `@`SpringBootTest for full context
 - **Jackson version compatibility**: Ensure Jackson annotations match the Jackson version in use
-- **Date format standards**: ISO-8601 is the default format; custom formats require @JsonFormat annotation
+- **Date format standards**: ISO-8601 is the default format; custom formats require `@`JsonFormat annotation
 - **Null handling**: Use JsonInclude.Include.NON_NULL to exclude null fields from serialization
-- **Circular references**: Be aware of circular references; use @JsonManagedReference/@JsonBackReference
-- **Polymorphic type handling**: @JsonTypeInfo must be correctly configured for polymorphic deserialization
-- **Immutable objects**: Use @JsonCreator and @JsonProperty for constructor-based deserialization
+- **Circular references**: Be aware of circular references; use `@`JsonManagedReference/`@`JsonBackReference
+- **Polymorphic type handling**: `@`JsonTypeInfo must be correctly configured for polymorphic deserialization
+- **Immutable objects**: Use `@`JsonCreator and `@`JsonProperty for constructor-based deserialization
 
 ## Troubleshooting
 
 **JacksonTester not available**: Ensure class is annotated with `@JsonTest`.
 
-**Field name doesn't match**: Check @JsonProperty annotation and Jackson configuration.
+**Field name doesn't match**: Check `@`JsonProperty annotation and Jackson configuration.
 
 **DateTime parsing fails**: Verify date format matches Jackson's expected format.
 
 ## References
 
-- [Spring @JsonTest Documentation](https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/test/autoconfigure/json/JsonTest.html)
+- [Spring `@`JsonTest Documentation](https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/test/autoconfigure/json/JsonTest.html)
 - [Jackson ObjectMapper](https://fasterxml.github.io/jackson-databind/javadoc/2.15/com/fasterxml/jackson/databind/ObjectMapper.html)
 - [JSON Annotations](https://fasterxml.github.io/jackson-annotations/javadoc/2.15/)

@@ -49,6 +49,6 @@ developer-kit-core/
 
 ## See Also
 
-- [Java Plugin Documentation](../developer-kit-java/docs/) - Java and Spring Boot guides
-- [TypeScript Plugin Documentation](../developer-kit-typescript/docs/) - TypeScript, NestJS, and React guides
-- [AWS Plugin Documentation](../developer-kit-aws/docs/) - AWS and CloudFormation guides
+- [Java Plugin Documentation](../../developer-kit-java/docs/) - Java and Spring Boot guides
+- [TypeScript Plugin Documentation](../../developer-kit-typescript/docs/) - TypeScript, NestJS, and React guides
+- [AWS Plugin Documentation](../../developer-kit-aws/docs/) - AWS and CloudFormation guides

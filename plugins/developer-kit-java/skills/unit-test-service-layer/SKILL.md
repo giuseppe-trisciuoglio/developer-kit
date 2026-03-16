@@ -8,12 +8,12 @@ allowed-tools: Read, Write, Bash, Glob, Grep
 
 ## Overview
 
-This skill provides patterns for unit testing @Service classes using Mockito. It covers mocking all injected dependencies, verifying business logic, testing complex workflows, argument capturing, verification patterns, and testing async/reactive services without starting the Spring container.
+This skill provides patterns for unit testing `@`Service classes using Mockito. It covers mocking all injected dependencies, verifying business logic, testing complex workflows, argument capturing, verification patterns, and testing async/reactive services without starting the Spring container.
 
 ## When to Use
 
 Use this skill when:
-- Testing business logic in @Service classes
+- Testing business logic in `@`Service classes
 - Mocking repository and external client dependencies
 - Verifying service interactions with mocked collaborators
 - Testing complex workflows and orchestration logic
@@ -30,11 +30,11 @@ Include JUnit 5, Mockito, and AssertJ in your test classpath.
 
 ### 2. Create Test Class with Mockito Extension
 
-Use @ExtendWith(MockitoExtension.class) to enable Mockito annotations.
+Use `@`ExtendWith(MockitoExtension.class) to enable Mockito annotations.
 
 ### 3. Declare Mocks and Service Under Test
 
-Use @Mock for dependencies and @InjectMocks for the service being tested.
+Use `@`Mock for dependencies and `@`InjectMocks for the service being tested.
 
 ### 4. Arrange Test Data
 
@@ -375,7 +375,7 @@ void test() {
 
 ## Best Practices
 
-- **Use @ExtendWith(MockitoExtension.class)** for JUnit 5 integration
+- **Use `@`ExtendWith(MockitoExtension.class)** for JUnit 5 integration
 - **Construct service manually** instead of using reflection when possible
 - **Mock only direct dependencies** of the service under test
 - **Verify interactions** to ensure correct collaboration

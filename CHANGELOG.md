@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.6.2] - 2026-03-16
+
+### Fixed
+
+- **Global Documentation Fixes**:
+  - Fixed markdown errors on skills and reference files across all plugins
+  - Fixed documentation links in multiple plugin guides
+  - Fixed link issues on reference files in better-auth skill (`developer-kit-typescript`)
+
+### Added
+
+- **Tessl Integration**:
+  - Added `tessl.json` configuration for Tessl registry integration
+  - Added `tile.json` with complete tile definition for 79 skills across 11 plugins
+  - Added workflow for publishing tiles to Tessl registry (`.github/workflows/publish-tiles.yml`)
+
+- **Validation System Enhancements** (`.skills-validator-check`):
+  - Added comprehensive test coverage for CLI and validators
+  - Enhanced validation logic with better error reporting
+  - Added `config.py` for centralized configuration
+  - Added `reporter.py` for improved output formatting
+
+### Changed
+
+- **Version Bump**: Updated all plugins to version 2.6.2
+  - Updated `marketplace.json` with new version
+  - Updated all 11 plugin `plugin.json` files
+
 ## [2.6.1] - 2026-03-14
 
 ### Fixed

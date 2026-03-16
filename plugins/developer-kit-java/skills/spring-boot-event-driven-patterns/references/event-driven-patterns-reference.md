@@ -43,7 +43,7 @@ public abstract class DomainEvent {
 
 ## Event Publishing Annotations
 
-### @EventListener
+### `@`EventListener
 Register event listener methods.
 
 ```java
@@ -57,7 +57,7 @@ public void onSpecificProduct(ProductCreatedEvent event) { }
 public void onProductEvent(DomainEvent event) { }
 ```
 
-### @TransactionalEventListener
+### `@`TransactionalEventListener
 Listen to events within transaction lifecycle.
 
 ```java

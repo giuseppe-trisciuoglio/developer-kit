@@ -746,8 +746,8 @@ jobs:
 
 ## Further Reading
 
-- [Reference Documentation](./reference.md) - Detailed technical reference for GitHub Actions syntax, OIDC configuration, ECR operations, task definitions, and CloudFormation integration
-- [Production Examples](./examples.md) - Complete, production-ready workflows including basic deployments, multi-environment setups, blue/green deployments, private ECR with scanning, CloudFormation stack updates, and full CI/CD pipelines with testing
+- [Reference Documentation](references/reference.md) - Detailed technical reference for GitHub Actions syntax, OIDC configuration, ECR operations, task definitions, and CloudFormation integration
+- [Production Examples](references/examples.md) - Complete, production-ready workflows including basic deployments, multi-environment setups, blue/green deployments, private ECR with scanning, CloudFormation stack updates, and full CI/CD pipelines with testing
 
 ## Key Concepts
 
@@ -789,8 +789,8 @@ jobs:
 ## Related Skills
 
 - [aws-cloudformation-ecs](../aws-cloudformation-ecs/) - Design and implement ECS cluster architecture
-- [aws-sdk-java-v2-ecs](../../aws-java/aws-sdk-java-v2-ecs/) - Programmatic ECS management with Java SDK
-- [aws-cloudformation](../aws-cloudformation/) - Core CloudFormation patterns and best practices
+- [Amazon ECS Java SDK reference](https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/ecs/package-summary.html) - Programmatic ECS management with AWS SDK for Java 2.x
+- [AWS CloudFormation documentation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/) - Core CloudFormation patterns and best practices
 
 ## Constraints and Warnings
 

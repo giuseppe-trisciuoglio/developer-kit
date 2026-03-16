@@ -28,10 +28,16 @@ class ConsoleReporter:
         Severity.INFO: ColorCode.BLUE,
     }
 
-    SEVERITY_SYMBOLS = {
+    UNICODE_SEVERITY_SYMBOLS = {
         Severity.ERROR: "\u2717",  # ✗
         Severity.WARNING: "\u26a0",  # ⚠
         Severity.INFO: "\u2139",  # ℹ
+    }
+
+    ASCII_SEVERITY_SYMBOLS = {
+        Severity.ERROR: "x",
+        Severity.WARNING: "!",
+        Severity.INFO: "i",
     }
 
     def __init__(self, use_colors: bool = True, verbose: bool = False, quiet: bool = False):
@@ -44,6 +50,8 @@ class ConsoleReporter:
             quiet: Whether to suppress warnings (show only errors)
         """
         self.use_colors = use_colors and sys.stdout.isatty()
+        self.output_encoding = getattr(sys.stdout, "encoding", None) or "utf-8"
+        self.supports_unicode = self._supports_unicode(self.output_encoding)
         self.verbose = verbose
         self.quiet = quiet
 
@@ -52,6 +60,40 @@ class ConsoleReporter:
         if self.use_colors:
             return f"{color}{text}{ColorCode.RESET}"
         return text
+
+    def _supports_unicode(self, encoding: str) -> bool:
+        """Check whether the output stream encoding can emit Unicode safely."""
+        try:
+            "\u2713".encode(encoding)
+            return True
+        except (LookupError, UnicodeEncodeError):
+            return False
+
+    def _emit(self, text: str = "") -> None:
+        """Print text using a safe fallback for ASCII-only streams."""
+        try:
+            print(text)
+        except UnicodeEncodeError:
+            safe_text = text.encode(self.output_encoding, errors="replace").decode(self.output_encoding)
+            print(safe_text)
+
+    def _symbol(self, severity: Severity) -> str:
+        """Return the best symbol for the current terminal encoding."""
+        if self.supports_unicode:
+            return self.UNICODE_SEVERITY_SYMBOLS.get(severity, "?")
+        return self.ASCII_SEVERITY_SYMBOLS.get(severity, "?")
+
+    def _success_symbol(self) -> str:
+        """Return the success symbol for the current terminal encoding."""
+        return "\u2713" if self.supports_unicode else "v"
+
+    def _arrow(self) -> str:
+        """Return the suggestion arrow for the current terminal encoding."""
+        return "\u2192" if self.supports_unicode else "->"
+
+    def _separator(self) -> str:
+        """Return the section separator for the current terminal encoding."""
+        return ("\u2500" * 60) if self.supports_unicode else ("-" * 60)
 
     def report(self, results: List[ValidationResult]) -> int:
         """
@@ -90,12 +132,12 @@ class ConsoleReporter:
 
         # Header with status
         if result.is_valid:
-            status = self._color(ColorCode.GREEN, "\u2713")  # ✓
+            status = self._color(ColorCode.GREEN, self._success_symbol())
         else:
-            status = self._color(ColorCode.RED, "\u2717")  # ✗
+            status = self._color(ColorCode.RED, self._symbol(Severity.ERROR))
 
         # Print file header
-        print(f"\n{status} {result.file_path} ({result.component_type})")
+        self._emit(f"\n{status} {result.file_path} ({result.component_type})")
 
         # Print issues
         for issue in result.issues:
@@ -108,7 +150,7 @@ class ConsoleReporter:
             return
 
         color = self.SEVERITY_COLORS.get(issue.severity, "")
-        symbol = self.SEVERITY_SYMBOLS.get(issue.severity, "?")
+        symbol = self._symbol(issue.severity)
 
         # Build location string
         location = f"line {issue.line_number}" if issue.line_number else "frontmatter"
@@ -116,12 +158,12 @@ class ConsoleReporter:
 
         # Format the issue line
         colored_symbol = self._color(color, symbol)
-        print(f"  {colored_symbol} {location}{field_info}: {issue.message}")
+        self._emit(f"  {colored_symbol} {location}{field_info}: {issue.message}")
 
         # Print suggestion if available
         if issue.suggestion:
-            arrow = self._color(ColorCode.BLUE, "\u2192")  # →
-            print(f"    {arrow} {issue.suggestion}")
+            arrow = self._color(ColorCode.BLUE, self._arrow())
+            self._emit(f"    {arrow} {issue.suggestion}")
 
     def _report_summary(
         self,
@@ -131,22 +173,22 @@ class ConsoleReporter:
         total_warnings: int
     ) -> None:
         """Print final summary."""
-        print(f"\n{'─' * 60}")
+        self._emit(f"\n{self._separator()}")
 
         if total_errors == 0 and total_warnings == 0:
-            message = f"\u2713 All {total_files} file(s) validated successfully"
-            print(self._color(ColorCode.GREEN, message))
+            message = f"{self._success_symbol()} All {total_files} file(s) validated successfully"
+            self._emit(self._color(ColorCode.GREEN, message))
         elif total_errors == 0:
-            message = f"\u2713 {files_valid}/{total_files} file(s) valid with {total_warnings} warning(s)"
-            print(self._color(ColorCode.YELLOW, message))
+            message = f"{self._success_symbol()} {files_valid}/{total_files} file(s) valid with {total_warnings} warning(s)"
+            self._emit(self._color(ColorCode.YELLOW, message))
         else:
             parts = []
             if total_errors:
                 parts.append(f"{total_errors} error(s)")
             if total_warnings:
                 parts.append(f"{total_warnings} warning(s)")
-            message = f"\u2717 Validation failed: {', '.join(parts)}"
-            print(self._color(ColorCode.RED, message))
+            message = f"{self._symbol(Severity.ERROR)} Validation failed: {', '.join(parts)}"
+            self._emit(self._color(ColorCode.RED, message))
 
 
 class JsonReporter:

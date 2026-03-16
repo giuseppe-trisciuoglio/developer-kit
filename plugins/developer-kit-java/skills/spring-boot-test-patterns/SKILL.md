@@ -15,8 +15,8 @@ This skill provides comprehensive guidance for writing robust test suites for Sp
 Use this skill when:
 - Writing unit tests for services, repositories, or utilities
 - Implementing integration tests with real databases using Testcontainers
-- Setting up performance-optimized test slices (@DataJpaTest, @WebMvcTest)
-- Configuring Spring Boot 3.5+ @ServiceConnection for container management
+- Setting up performance-optimized test slices (`@`DataJpaTest, `@`WebMvcTest)
+- Configuring Spring Boot 3.5+ `@`ServiceConnection for container management
 - Testing REST APIs with MockMvc, TestRestTemplate, or WebTestClient
 - Optimizing test performance through context caching and container reuse
 - Setting up CI/CD pipelines for integration tests
@@ -36,14 +36,14 @@ Spring Boot testing follows a layered approach with distinct test types:
 
 **2. Slice Tests**
 - Minimal Spring context loading for specific layers
-- Use @DataJpaTest for repository tests
-- Use @WebMvcTest for controller tests
-- Use @WebFluxTest for reactive controller tests
+- Use `@`DataJpaTest for repository tests
+- Use `@`WebMvcTest for controller tests
+- Use `@`WebFluxTest for reactive controller tests
 - Target completion time: < 100ms per test
 
 **3. Integration Tests**
 - Full Spring context with real dependencies
-- Use @SpringBootTest with @ServiceConnection containers
+- Use `@`SpringBootTest with `@`ServiceConnection containers
 - Test complete application flows
 - Target completion time: < 500ms per test
 
@@ -52,7 +52,7 @@ Spring Boot testing follows a layered approach with distinct test types:
 **Spring Boot Test Annotations:**
 - `@SpringBootTest`: Load full application context (use sparingly)
 - `@DataJpaTest`: Load only JPA components (repositories, entities)
-- `@WebMvcTest`: Load only MVC layer (controllers, @ControllerAdvice)
+- `@WebMvcTest`: Load only MVC layer (controllers, `@`ControllerAdvice)
 - `@WebFluxTest`: Load only WebFlux layer (reactive controllers)
 - `@JsonTest`: Load only JSON serialization components
 
@@ -228,7 +228,7 @@ public class UserControllerIntegrationTest {
 }
 ```
 
-### Testcontainers with @ServiceConnection
+### Testcontainers with `@`ServiceConnection
 
 Configure containers with Spring Boot 3.5+:
 
@@ -366,7 +366,7 @@ public class UserControllerTest { }
 public class UserServiceFullIntegrationTest { }
 ```
 
-### 2. Use @ServiceConnection for Container Management
+### 2. Use `@`ServiceConnection for Container Management
 
 Prefer `@ServiceConnection` over manual `@DynamicPropertySource` for cleaner code:
 
@@ -612,10 +612,10 @@ For detailed information, refer to the following resources:
 ## Key Principles
 
 1. Use test slices for focused, fast tests
-2. Prefer @ServiceConnection on Spring Boot 3.5+
+2. Prefer `@`ServiceConnection on Spring Boot 3.5+
 3. Keep tests deterministic with explicit setup
 4. Mock external dependencies, use real databases
-5. Avoid @DirtiesContext unless absolutely necessary
+5. Avoid `@`DirtiesContext unless absolutely necessary
 6. Organize tests by layer to optimize context reuse
 
 ## Constraints and Warnings

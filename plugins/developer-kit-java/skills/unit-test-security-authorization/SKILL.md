@@ -1,6 +1,6 @@
 ---
 name: unit-test-security-authorization
-description: Provides patterns for unit testing Spring Security with @PreAuthorize, @Secured, @RolesAllowed. Validates role-based access control and authorization policies. Use when testing security configurations and access control logic.
+description: Provides patterns for unit testing Spring Security with `@PreAuthorize`, `@Secured`, `@RolesAllowed`. Validates role-based access control and authorization policies. Use when testing security configurations and access control logic.
 allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
@@ -8,12 +8,12 @@ allowed-tools: Read, Write, Bash, Glob, Grep
 
 ## Overview
 
-This skill provides patterns for unit testing Spring Security authorization logic using @PreAuthorize, @Secured, @RolesAllowed, and custom permission evaluators. It covers testing role-based access control (RBAC), expression-based authorization, custom permission evaluators, and verifying access denied scenarios without full Spring Security context.
+This skill provides patterns for unit testing Spring Security authorization logic using `@PreAuthorize`, `@Secured`, `@RolesAllowed`, and custom permission evaluators. It covers testing role-based access control (RBAC), expression-based authorization, custom permission evaluators, and verifying access denied scenarios without full Spring Security context.
 
 ## When to Use
 
 Use this skill when:
-- Testing @PreAuthorize and @Secured method-level security
+- Testing `@`PreAuthorize and `@`Secured method-level security
 - Testing role-based access control (RBAC)
 - Testing custom permission evaluators
 - Verifying access denied scenarios
@@ -30,11 +30,11 @@ Add spring-security-test to your test dependencies along with JUnit 5 and Assert
 
 ### 2. Enable Method Security in Configuration
 
-Use @EnableGlobalMethodSecurity(prePostEnabled = true) to activate @PreAuthorize annotations.
+Use `@`EnableGlobalMethodSecurity(prePostEnabled = true) to activate `@`PreAuthorize annotations.
 
-### 3. Create Test with @WithMockUser
+### 3. Create Test with `@`WithMockUser
 
-Apply @WithMockUser annotation to simulate authenticated users with specific roles and authorities.
+Apply `@`WithMockUser annotation to simulate authenticated users with specific roles and authorities.
 
 ### 4. Test Both Allow and Deny Scenarios
 
@@ -83,7 +83,7 @@ dependencies {
 }
 ```
 
-## Basic Pattern: Testing @PreAuthorize
+## Basic Pattern: Testing `@`PreAuthorize
 
 ### Simple Role-Based Access Control
 
@@ -152,7 +152,7 @@ class UserServiceSecurityTest {
 }
 ```
 
-## Testing @Secured Annotation
+## Testing `@`Secured Annotation
 
 ### Legacy Security Configuration
 
@@ -479,13 +479,13 @@ class RoleBasedAccessTest {
 
 ## Best Practices
 
-- **Use @WithMockUser** for setting authenticated user context
+- **Use `@`WithMockUser** for setting authenticated user context
 - **Test both allow and deny cases** for each security rule
 - **Test with different roles** to verify role-based decisions
 - **Test expression-based security** comprehensively
 - **Mock external dependencies** (permission evaluators, etc.)
 - **Test anonymous access separately** from authenticated access
-- **Use @EnableGlobalMethodSecurity** in configuration for method-level security
+- **Use `@`EnableGlobalMethodSecurity** in configuration for method-level security
 
 ## Common Pitfalls
 
@@ -497,12 +497,12 @@ class RoleBasedAccessTest {
 
 ## Constraints and Warnings
 
-- **Method security requires proxy**: @PreAuthorize works via proxies; direct method calls bypass security
-- **@EnableGlobalMethodSecurity**: Must be enabled for @PreAuthorize, @Secured to work
+- **Method security requires proxy**: `@`PreAuthorize works via proxies; direct method calls bypass security
+- **`@`EnableGlobalMethodSecurity**: Must be enabled for `@`PreAuthorize, `@`Secured to work
 - **Role prefix**: Spring adds "ROLE_" prefix automatically; use hasRole('ADMIN') not hasRole('ROLE_ADMIN')
 - **Authentication context**: Security context is thread-local; be careful with async tests
-- **@WithMockUser limitations**: Creates a simple Authentication; complex auth scenarios need custom setup
-- **SpEL expressions**: Complex SpEL in @PreAuthorize can be difficult to debug; test thoroughly
+- **`@`WithMockUser limitations**: Creates a simple Authentication; complex auth scenarios need custom setup
+- **SpEL expressions**: Complex SpEL in `@`PreAuthorize can be difficult to debug; test thoroughly
 - **Performance impact**: Method security adds overhead; consider security at layer boundaries
 
 ## Examples
@@ -574,7 +574,7 @@ void shouldExecuteDelete() {
 
 **AccessDeniedException not thrown**: Ensure `@EnableGlobalMethodSecurity(prePostEnabled = true)` is configured.
 
-**@WithMockUser not working**: Verify Spring Security test dependencies are on classpath.
+**`@`WithMockUser not working**: Verify Spring Security test dependencies are on classpath.
 
 **Custom PermissionEvaluator not invoked**: Check `@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)`.
 
@@ -582,4 +582,4 @@ void shouldExecuteDelete() {
 
 - [Spring Security Method Security](https://docs.spring.io/spring-security/site/docs/current/reference/html5/#jc-method)
 - [Spring Security Testing](https://docs.spring.io/spring-security/site/docs/current/reference/html5/#test)
-- [@WithMockUser Documentation](https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/test/context/support/WithMockUser.html)
+- [`@`WithMockUser Documentation](https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/test/context/support/WithMockUser.html)

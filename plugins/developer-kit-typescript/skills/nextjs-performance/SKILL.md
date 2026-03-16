@@ -247,7 +247,7 @@ Load these references when working on specific areas:
 ### Bundle
 - Lazy load heavy components with `dynamic()`
 - Use named exports for better tree shaking
-- Analyze bundle regularly with @next/bundle-analyzer
+- Analyze bundle regularly with `@`next/bundle-analyzer
 - Prefer ESM packages over CommonJS
 - Use modularizeImports for large libraries
 

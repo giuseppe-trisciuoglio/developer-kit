@@ -165,7 +165,7 @@ Create JwtAuthenticationFilter extending OncePerRequestFilter. Extract JWT from 
 
 ### 5. Configure Security Filter Chain
 
-Set up SecurityConfig with @EnableWebSecurity and @EnableMethodSecurity. Configure stateless session management, CSRF disabled, and authorization rules.
+Set up SecurityConfig with `@`EnableWebSecurity and `@`EnableMethodSecurity. Configure stateless session management, CSRF disabled, and authorization rules.
 
 ### 6. Create Authentication Endpoints
 
@@ -177,7 +177,7 @@ Store refresh tokens in database with expiration and revocation status. Implemen
 
 ### 8. Add Authorization Rules
 
-Apply @PreAuthorize annotations with role-based (hasRole) or permission-based (hasAuthority) checks to protected endpoints.
+Apply `@`PreAuthorize annotations with role-based (hasRole) or permission-based (hasAuthority) checks to protected endpoints.
 
 ### 9. Test Security Configuration
 

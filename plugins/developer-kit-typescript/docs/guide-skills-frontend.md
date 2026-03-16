@@ -495,4 +495,4 @@ To add new frontend skills:
 5. Update this guide with the new skill
 6. Register the skill in `.claude-plugin/plugin.json`
 
-See [CONTRIBUTING.md](../../CONTRIBUTING.md) for detailed guidelines.
+See [CONTRIBUTING.md](../../../CONTRIBUTING.md) for detailed guidelines.

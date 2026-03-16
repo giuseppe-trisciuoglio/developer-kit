@@ -2,7 +2,7 @@
 
 ## Controller and Mapping Annotations
 
-### @RestController
+### `@`RestController
 ```java
 @RestController
 @RequestMapping("/api/users")
@@ -11,7 +11,7 @@ public class UserController {
 }
 ```
 
-### @Controller
+### `@`Controller
 ```java
 @Controller
 @RequestMapping("/users")
@@ -20,7 +20,7 @@ public class UserController {
 }
 ```
 
-### @RequestMapping
+### `@`RequestMapping
 ```java
 // Class level
 @RequestMapping("/api")
@@ -58,7 +58,7 @@ public ResponseEntity<Void> optionsUsers() { ... }
 
 ## Parameter Binding Annotations
 
-### @PathVariable
+### `@`PathVariable
 ```java
 @GetMapping("/users/{id}")
 public User getUser(@PathVariable Long id) { ... }
@@ -72,7 +72,7 @@ public Order getOrder(@PathVariable Long userId, @PathVariable Long orderId) { .
 public User getUser(@PathVariable("userId") Long id) { ... }
 ```
 
-### @RequestParam
+### `@`RequestParam
 ```java
 @GetMapping("/users")
 public List<User> getUsers(
@@ -85,7 +85,7 @@ public List<User> getUsers(
 }
 ```
 
-### @RequestBody
+### `@`RequestBody
 ```java
 @PostMapping("/users")
 public User createUser(@RequestBody User user) { ... }
@@ -95,7 +95,7 @@ public User createUser(@RequestBody User user) { ... }
 public User createUser(@Valid @RequestBody User user) { ... }
 ```
 
-### @RequestHeader
+### `@`RequestHeader
 ```java
 @GetMapping("/users")
 public List<User> getUsers(@RequestHeader("Authorization") String authHeader) { ... }
@@ -107,13 +107,13 @@ public User createUser(
     @RequestHeader("X-Custom-Header") String customHeader) { ... }
 ```
 
-### @CookieValue
+### `@`CookieValue
 ```java
 @GetMapping("/users")
 public List<User> getUsers(@CookieValue("JSESSIONID") String sessionId) { ... }
 ```
 
-### @MatrixVariable
+### `@`MatrixVariable
 ```java
 @GetMapping("/users/{id}")
 public User getUser(
@@ -125,14 +125,14 @@ public User getUser(
 
 ## Response Annotations
 
-### @ResponseStatus
+### `@`ResponseStatus
 ```java
 @PostMapping("/users")
 @ResponseStatus(HttpStatus.CREATED)
 public User createUser(@RequestBody User user) { ... }
 ```
 
-### @ResponseBody
+### `@`ResponseBody
 ```java
 @Controller
 public class UserController {
@@ -178,7 +178,7 @@ public User createUser(@RequestBody User user) { ... }
 public List<User> getUsers() { ... }
 ```
 
-### @RequestBody with Content-Type
+### `@`RequestBody with Content-Type
 ```java
 @PostMapping(value = "/users", consumes = "application/json")
 public User createUserJson(@RequestBody User user) { ... }
@@ -189,7 +189,7 @@ public User createUserXml(@RequestBody User user) { ... }
 
 ## Validation Annotations
 
-### @Valid
+### `@`Valid
 ```java
 @PostMapping("/users")
 public User createUser(@Valid @RequestBody User user) { ... }
@@ -238,7 +238,7 @@ public class UserRequest {
 
 ## Specialized Annotations
 
-### @RestControllerAdvice
+### `@`RestControllerAdvice
 ```java
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -250,7 +250,7 @@ public class GlobalExceptionHandler {
 }
 ```
 
-### @ExceptionHandler
+### `@`ExceptionHandler
 ```java
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -267,7 +267,7 @@ public class GlobalExceptionHandler {
 }
 ```
 
-### @CrossOrigin
+### `@`CrossOrigin
 ```java
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -284,7 +284,7 @@ public List<User> getUsers() { ... }
 
 ## Async Processing
 
-### @Async
+### `@`Async
 ```java
 @Service
 public class AsyncService {

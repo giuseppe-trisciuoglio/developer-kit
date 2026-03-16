@@ -1,6 +1,6 @@
 ---
 name: unit-test-parameterized
-description: Provides parameterized testing patterns with @ParameterizedTest, @ValueSource, @CsvSource. Enables running a single test method with multiple input combinations. Use when testing multiple scenarios with similar logic.
+description: Provides parameterized testing patterns with `@ParameterizedTest`, `@ValueSource`, `@CsvSource`. Enables running a single test method with multiple input combinations. Use when testing multiple scenarios with similar logic.
 allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
@@ -8,7 +8,7 @@ allowed-tools: Read, Write, Bash, Glob, Grep
 
 ## Overview
 
-This skill provides patterns for writing efficient parameterized unit tests using JUnit 5's @ParameterizedTest. It covers @ValueSource, @CsvSource, @MethodSource, @EnumSource, @ArgumentsSource, and custom display names to run the same test logic with multiple input values, reducing test duplication and improving coverage.
+This skill provides patterns for writing efficient parameterized unit tests using JUnit 5's `@ParameterizedTest`. It covers `@ValueSource`, `@CsvSource`, `@MethodSource`, `@EnumSource`, `@ArgumentsSource`, and custom display names to run the same test logic with multiple input values, reducing test duplication and improving coverage.
 
 ## When to Use
 
@@ -23,11 +23,11 @@ Use this skill when:
 ## Instructions
 
 1. **Add junit-jupiter-params dependency**: Ensure junit-jupiter-params is on test classpath
-2. **Choose appropriate source**: Use @ValueSource for simple values, @CsvSource for tabular data, @MethodSource for complex objects
+2. **Choose appropriate source**: Use `@`ValueSource for simple values, `@`CsvSource for tabular data, `@`MethodSource for complex objects
 3. **Match parameter types**: Ensure test method parameters match data source types
 4. **Use descriptive display names**: Set `name = "..."` for readable test output
 5. **Test boundary values**: Include edge cases, null values, and extreme values in parameters
-6. **Use @EnumSource**: Test all enum values or filter specific ones
+6. **Use `@`EnumSource**: Test all enum values or filter specific ones
 7. **Create custom ArgumentsProvider**: Build reusable data sources for complex scenarios
 8. **Keep assertions simple**: Focus on single assertion per parameterized test
 
@@ -57,7 +57,7 @@ dependencies {
 }
 ```
 
-## Basic Pattern: @ValueSource
+## Basic Pattern: `@`ValueSource
 
 ### Simple Value Testing
 
@@ -89,7 +89,7 @@ class StringUtilsTest {
 }
 ```
 
-## @MethodSource for Complex Data
+## `@`MethodSource for Complex Data
 
 ### Factory Method Data Source
 
@@ -119,7 +119,7 @@ class CalculatorTest {
 }
 ```
 
-## @CsvSource for Tabular Data
+## `@`CsvSource for Tabular Data
 
 ### CSV-Based Test Data
 
@@ -158,7 +158,7 @@ class UserValidationTest {
 }
 ```
 
-## @CsvFileSource for External Data
+## `@`CsvFileSource for External Data
 
 ### CSV File-Based Testing
 
@@ -183,7 +183,7 @@ class PriceCalculationTest {
 // Keyboard,79.99,2,159.98
 ```
 
-## @EnumSource for Enum Testing
+## `@`EnumSource for Enum Testing
 
 ### Enum-Based Test Data
 
@@ -342,13 +342,13 @@ class ConcurrencyTest {
 
 ## Best Practices
 
-- **Use @ParameterizedTest** to reduce test duplication
+- **Use `@`ParameterizedTest** to reduce test duplication
 - **Use descriptive display names** with `(name = "...")`
 - **Test boundary values** systematically
 - **Keep test logic simple** - focus on single assertion
 - **Organize test data logically** - group similar scenarios
-- **Use @MethodSource** for complex test data
-- **Use @CsvSource** for tabular test data
+- **Use `@`MethodSource** for complex test data
+- **Use `@`CsvSource** for tabular test data
 - **Document expected behavior** in test names
 
 ## Common Patterns
@@ -376,9 +376,9 @@ void shouldBeInFibonacciSequence(int number) {
 
 - **Parameter count must match**: The number of parameters from source must match test method signature
 - **Type conversion is automatic**: JUnit converts source values to target parameter types when possible
-- **@ValueSource limitation**: Only supports literals (strings, ints, longs, doubles); not objects or null
-- **CSV escaping**: Strings containing commas must be enclosed in single quotes in @CsvSource
-- **MethodSource visibility**: @MethodSource methods must be static, can be private but must be in same class
+- **`@`ValueSource limitation**: Only supports literals (strings, ints, longs, doubles); not objects or null
+- **CSV escaping**: Strings containing commas must be enclosed in single quotes in `@`CsvSource
+- **MethodSource visibility**: `@`MethodSource methods must be static, can be private but must be in same class
 - **Display name placeholders**: Use {0}, {1}, etc. to reference parameters in display names
 - **Test execution order**: Parameterized tests execute each parameter set as a separate test invocation
 
@@ -393,5 +393,5 @@ void shouldBeInFibonacciSequence(int number) {
 ## References
 
 - [JUnit 5 Parameterized Tests](https://junit.org/junit5/docs/current/user-guide/#writing-tests-parameterized-tests)
-- [@ParameterizedTest Documentation](https://junit.org/junit5/docs/current/api/org.junit.jupiter.params/org/junit/jupiter/params/ParameterizedTest.html)
+- [`@`ParameterizedTest Documentation](https://junit.org/junit5/docs/current/api/org.junit.jupiter.params/org/junit/jupiter/params/ParameterizedTest.html)
 - [Boundary Value Analysis](https://en.wikipedia.org/wiki/Boundary-value_analysis)

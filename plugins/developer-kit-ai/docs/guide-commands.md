@@ -165,5 +165,5 @@ Commands are invoked using the slash syntax in Claude Code with the plugin prefi
 - [Prompt Engineering Skill](../skills/prompt-engineering/) - Comprehensive prompt engineering skill
 - [RAG Skill](../skills/rag/) - Retrieval-Augmented Generation skill
 - [Chunking Strategy Skill](../skills/chunking-strategy/) - Document chunking strategies
-- [Core Command Guide](../developer-kit-core/docs/guide-commands.md) - All commands across plugins
-- [Java Plugin](../developer-kit-java/docs/) - LangChain4J and Spring AI integration
+- [Core Command Guide](../../developer-kit-core/docs/guide-commands.md) - All commands across plugins
+- [Java Plugin](../../developer-kit-java/docs/) - LangChain4J and Spring AI integration

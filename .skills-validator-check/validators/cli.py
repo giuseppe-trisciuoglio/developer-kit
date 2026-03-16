@@ -27,6 +27,7 @@ class ValidationCLI:
 
     def __init__(self):
         self.repo_root = self._find_repo_root()
+        self.validate_external_urls = False
 
     def _find_repo_root(self) -> Path:
         """Find the repository root directory."""
@@ -57,6 +58,7 @@ class ValidationCLI:
         """
         parser = self._create_parser()
         parsed = parser.parse_args(args)
+        self.validate_external_urls = parsed.check_external_urls
 
         try:
             # Get files to validate
@@ -66,6 +68,8 @@ class ValidationCLI:
                 files = self._find_all_component_files()
             else:
                 files = self._get_staged_files()
+
+            files = self._expand_related_files(files)
 
             if not files:
                 print("No files to validate.")
@@ -148,6 +152,12 @@ class ValidationCLI:
             help="Show only errors (suppress warnings)"
         )
 
+        parser.add_argument(
+            "--check-external-urls",
+            action="store_true",
+            help="Check remote reachability for external HTTP(S) links"
+        )
+
         return parser
 
     def _get_staged_files(self) -> List[Path]:
@@ -176,25 +186,28 @@ class ValidationCLI:
 
     def _find_all_component_files(self) -> List[Path]:
         """Find all component files in the repository."""
-        files = []
+        files = set()
 
         # Root-level components (legacy structure)
         skills_dir = self.repo_root / "skills"
         if skills_dir.exists():
-            files.extend(skills_dir.glob("**/SKILL.md"))
+            files.update(skills_dir.glob("**/SKILL.md"))
+            files.update(skills_dir.glob("**/references/**/*.md"))
+            files.update(skills_dir.glob("**/assets/**/*.md"))
+            files.update(skills_dir.glob("**/scripts/**/*.md"))
 
         agents_dir = self.repo_root / "agents"
         if agents_dir.exists():
-            files.extend(agents_dir.glob("*.md"))
+            files.update(agents_dir.glob("*.md"))
 
         commands_dir = self.repo_root / ".claude" / "commands"
         if commands_dir.exists():
-            files.extend(commands_dir.glob("*.md"))
+            files.update(commands_dir.glob("*.md"))
 
         # Root-level commands directory (non-.claude)
         root_commands_dir = self.repo_root / "commands"
         if root_commands_dir.exists():
-            files.extend(root_commands_dir.glob("*.md"))
+            files.update(root_commands_dir.glob("*.md"))
 
         # Plugin-based components (new multi-plugin structure)
         plugins_dir = self.repo_root / "plugins"
@@ -206,42 +219,70 @@ class ValidationCLI:
                 # Plugin skills
                 plugin_skills = plugin_dir / "skills"
                 if plugin_skills.exists():
-                    files.extend(plugin_skills.glob("**/SKILL.md"))
+                    files.update(plugin_skills.glob("**/SKILL.md"))
+                    files.update(plugin_skills.glob("**/references/**/*.md"))
+                    files.update(plugin_skills.glob("**/assets/**/*.md"))
+                    files.update(plugin_skills.glob("**/scripts/**/*.md"))
 
                 # Plugin agents
                 plugin_agents = plugin_dir / "agents"
                 if plugin_agents.exists():
-                    files.extend(plugin_agents.glob("*.md"))
+                    files.update(plugin_agents.glob("*.md"))
 
                 # Plugin commands
                 plugin_commands = plugin_dir / "commands"
                 if plugin_commands.exists():
-                    files.extend(plugin_commands.glob("**/*.md"))
+                    files.update(plugin_commands.glob("**/*.md"))
 
                 # Plugin rules
                 plugin_rules = plugin_dir / "rules"
                 if plugin_rules.exists():
-                    files.extend(plugin_rules.glob("*.md"))
+                    files.update(plugin_rules.glob("*.md"))
 
                 # Plugin.json files
                 plugin_json = plugin_dir / ".claude-plugin" / "plugin.json"
                 if plugin_json.exists():
-                    files.append(plugin_json)
+                    files.add(plugin_json)
 
         return sorted(files)
+
+    def _expand_related_files(self, files: List[Path]) -> List[Path]:
+        """Include bundled markdown resources when a skill entrypoint is validated."""
+        expanded = set(files)
+
+        for file_path in files:
+            if file_path.name != "SKILL.md":
+                continue
+
+            skill_dir = file_path.parent
+            if not skill_dir.exists():
+                continue
+
+            for subdir in ("references", "assets", "scripts"):
+                resource_dir = skill_dir / subdir
+                if resource_dir.exists():
+                    expanded.update(resource_dir.rglob("*.md"))
+
+        return sorted(expanded)
 
     def _filter_component_files(self, files: List[Path]) -> List[Path]:
         """Filter to only include component files."""
         component_files = []
         for file_path in files:
-            validator = ValidatorFactory.get_validator(file_path)
+            validator = ValidatorFactory.get_validator(
+                file_path,
+                validate_external_urls=self.validate_external_urls
+            )
             if validator is not None:
                 component_files.append(file_path)
         return component_files
 
     def _validate_file(self, file_path: Path) -> Optional[ValidationResult]:
         """Validate a single file."""
-        validator = ValidatorFactory.get_validator(file_path)
+        validator = ValidatorFactory.get_validator(
+            file_path,
+            validate_external_urls=self.validate_external_urls
+        )
         if validator is None:
             return None
         return validator.validate(file_path)

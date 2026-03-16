@@ -15,7 +15,7 @@ Complete API documentation for Spring AI MCP server implementations.
 
 ## Core Annotations
 
-### @Tool
+### `@`Tool
 
 Marks a method as an MCP tool that can be invoked by AI models.
 
@@ -61,7 +61,7 @@ public WeatherData getWeather(@ToolParam("City name") String city) {
 }
 ```
 
-### @ToolParam
+### `@`ToolParam
 
 Documents a parameter for tool methods.
 
@@ -94,7 +94,7 @@ public @interface ToolParam {
 }
 ```
 
-### @PromptTemplate
+### `@`PromptTemplate
 
 Marks a method as a prompt template provider.
 
@@ -152,7 +152,7 @@ public Prompt createCodeReviewPrompt(@PromptParam("code") String code) {
 }
 ```
 
-### @PromptParam
+### `@`PromptParam
 
 Documents a parameter for prompt template methods.
 
@@ -185,7 +185,7 @@ public @interface PromptParam {
 }
 ```
 
-### @EnableMcpServer
+### `@`EnableMcpServer
 
 Enables MCP server auto-configuration.
 

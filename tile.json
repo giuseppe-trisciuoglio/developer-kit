@@ -1,6 +1,6 @@
 {
   "name": "giuseppe-trisciuoglio/developer-kit",
-  "version": "2.6.1",
+  "version": "2.6.2",
   "private": false,
   "summary": "Comprehensive developer toolkit providing reusable skills for Java/Spring Boot, TypeScript/NestJS/React/Next.js, Python, PHP, AWS CloudFormation, AI/RAG, DevOps, and more.",
   "skills": {
@@ -112,18 +112,6 @@
     "claude-md-management": {
       "path": "plugins/developer-kit-core/skills/claude-md-management/SKILL.md"
     },
-    "clean-architecture-java": {
-      "path": "plugins/developer-kit-java/skills/clean-architecture/SKILL.md"
-    },
-    "clean-architecture-php": {
-      "path": "plugins/developer-kit-php/skills/clean-architecture/SKILL.md"
-    },
-    "clean-architecture-python": {
-      "path": "plugins/developer-kit-python/skills/clean-architecture/SKILL.md"
-    },
-    "clean-architecture-typescript": {
-      "path": "plugins/developer-kit-typescript/skills/clean-architecture/SKILL.md"
-    },
     "codex": {
       "path": "plugins/developer-kit-tools/skills/codex/SKILL.md"
     },
@@ -150,9 +138,6 @@
     },
     "graalvm-native-image": {
       "path": "plugins/developer-kit-java/skills/graalvm-native-image/SKILL.md"
-    },
-    "knowledge-graph": {
-      "path": "plugins/developer-kit-core/skills/knowledge-graph/SKILL.md"
     },
     "langchain4j-ai-services-patterns": {
       "path": "plugins/developer-kit-java/skills/langchain4j-ai-services-patterns/SKILL.md"

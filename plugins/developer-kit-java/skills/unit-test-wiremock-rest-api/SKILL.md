@@ -31,7 +31,7 @@ Include wiremock in test scope along with JUnit 5 and AssertJ.
 
 ### 2. Register WireMock Extension
 
-Use @RegisterExtension with WireMockExtension.newInstance().options(wireMockConfig().dynamicPort()) for dynamic port allocation.
+Use `@`RegisterExtension with WireMockExtension.newInstance().options(wireMockConfig().dynamicPort()) for dynamic port allocation.
 
 ### 3. Configure HTTP Client
 
@@ -196,7 +196,7 @@ void shouldVerifyRequestBody() {
 - **Always use dynamic ports**: Fixed ports cause conflicts in parallel test execution
 - **HTTPS testing**: Configure WireMock for HTTPS if testing TLS connections
 - **Request matching specificity**: More specific stubs take precedence over general ones
-- **State between tests**: WireMock resets between tests automatically with @RegisterExtension
+- **State between tests**: WireMock resets between tests automatically with `@`RegisterExtension
 - **Performance**: WireMock adds overhead; consider mocking at the client layer for faster tests
 - **API contract changes**: Stubs may become out of sync with real APIs; keep them updated
 - **Network timeouts**: Configure appropriate timeouts for tests; don't let tests hang

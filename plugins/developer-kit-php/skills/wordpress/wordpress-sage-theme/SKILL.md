@@ -319,10 +319,10 @@ add_action('init', function() {
 
 ## References
 
-- **Sage Documentation**: See [SAGE.md](references/SAGE.md) for complete framework reference
-- **Blade Templates**: See [BLADE.md](references/BLADE.md) for advanced Blade patterns
-- **Bud Configuration**: See [BUD.md](references/BUD.md) for build tool configuration
-- **ACF Integration**: See [ACF.md](references/ACF.md) for ACF field examples
+- **Sage Documentation**: See [sage.md](references/sage.md) for complete framework reference
+- **Blade Templates**: See [blade.md](references/blade.md) for advanced Blade patterns
+- **Bud Configuration**: See [bud.md](references/bud.md) for build tool configuration
+- **ACF Integration**: See [acf.md](references/acf.md) for ACF field examples
 
 ## Troubleshooting
 

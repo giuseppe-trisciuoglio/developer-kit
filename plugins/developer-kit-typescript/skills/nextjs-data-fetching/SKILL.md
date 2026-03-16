@@ -234,7 +234,7 @@ export function Posts() {
 }
 ```
 
-See [REACT-QUERY.md](references/REACT-QUERY.md) for advanced patterns.
+See [react-query.md](references/react-query.md) for advanced patterns.
 
 ## Error Boundaries
 

@@ -4,7 +4,7 @@ Comprehensive implementation patterns for tool and function calling with LangCha
 
 ## Core Tool Definition Patterns
 
-### Basic Tool Definition with @Tool Annotation
+### Basic Tool Definition with `@`Tool Annotation
 
 The `@Tool` annotation converts regular Java methods into tools that LLMs can discover and execute.
 
@@ -108,7 +108,7 @@ public class OrderManagementTools {
 
 ## Memory Context Integration
 
-### @ToolMemoryId for User Context
+### `@`ToolMemoryId for User Context
 
 Tools can access conversation memory context to provide personalized and contextual responses:
 

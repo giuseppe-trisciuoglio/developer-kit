@@ -414,10 +414,10 @@ For detailed implementation patterns, advanced techniques, and comprehensive exa
 
 ## Related Skills
 
-- @aws-sdk-java-v2-core - Core AWS SDK patterns and configuration
-- @aws-sdk-java-v2-dynamodb - DynamoDB integration patterns
-- @aws-sdk-java-v2-secrets-manager - Secrets management patterns
-- @spring-boot-dependency-injection - Spring dependency injection patterns
+- `@`aws-sdk-java-v2-core - Core AWS SDK patterns and configuration
+- `@`aws-sdk-java-v2-dynamodb - DynamoDB integration patterns
+- `@`aws-sdk-java-v2-secrets-manager - Secrets management patterns
+- `@`spring-boot-dependency-injection - Spring dependency injection patterns
 
 ## External References
 

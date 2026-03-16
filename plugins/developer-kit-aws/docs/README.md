@@ -113,9 +113,9 @@ The AWS plugin includes CloudFormation skills for:
 
 ## See Also
 
-- [Core Plugin Documentation](../developer-kit-core/docs/) - Core guides and installation
-- [Java Plugin Documentation](../developer-kit-java/docs/) - Java AWS SDK integration
-- [DevOps Plugin Documentation](../developer-kit-devops/docs/) - Docker and GitHub Actions guides
+- [Core Plugin Documentation](../../developer-kit-core/docs/) - Core guides and installation
+- [Java Plugin Documentation](../../developer-kit-java/docs/) - Java AWS SDK integration
+- [DevOps Plugin Documentation](../../developer-kit-devops/docs/) - Docker and GitHub Actions guides
 
 ---
 
@@ -123,5 +123,5 @@ The AWS plugin includes CloudFormation skills for:
 
 The AWS plugin focuses on CloudFormation infrastructure as code. For AWS SDK integration from applications, see:
 
-- **[Java Plugin](../developer-kit-java/docs/)** - AWS SDK for Java integration (S3, DynamoDB, RDS, Lambda, SNS/SQS, Bedrock, KMS, Secrets Manager, RDS, Messaging)
+- **[Java Plugin](../../developer-kit-java/docs/)** - AWS SDK for Java integration (S3, DynamoDB, RDS, Lambda, SNS/SQS, Bedrock, KMS, Secrets Manager, RDS, Messaging)
 - The Java plugin contains 10 AWS Java SDK skills for programmatic AWS access from Java applications

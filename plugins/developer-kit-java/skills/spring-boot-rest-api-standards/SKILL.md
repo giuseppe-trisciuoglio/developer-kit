@@ -290,7 +290,7 @@ Use DTOs to separate API contracts from domain models. This prevents accidental 
 - Return appropriate HTTP status codes for each operation
 
 ### 3. Handle All Exceptions Globally
-Use @RestControllerAdvice to catch all exceptions consistently. Don't let raw exceptions bubble up to clients.
+Use `@`RestControllerAdvice to catch all exceptions consistently. Don't let raw exceptions bubble up to clients.
 
 ### 4. Always Paginate Large Result Sets
 For GET endpoints that might return many results, implement pagination to prevent performance issues and DDoS vulnerabilities.

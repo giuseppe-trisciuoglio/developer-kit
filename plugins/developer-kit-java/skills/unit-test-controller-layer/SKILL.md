@@ -1,6 +1,6 @@
 ---
 name: unit-test-controller-layer
-description: Provides patterns for unit testing REST controllers using MockMvc and @WebMvcTest. Validates request/response mapping, validation, and exception handling. Use when testing web layer endpoints in isolation.
+description: Provides patterns for unit testing REST controllers using MockMvc and `@WebMvcTest`. Validates request/response mapping, validation, and exception handling. Use when testing web layer endpoints in isolation.
 allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
@@ -8,7 +8,7 @@ allowed-tools: Read, Write, Bash, Glob, Grep
 
 ## Overview
 
-This skill provides patterns for unit testing @RestController and @Controller classes using MockMvc. It covers testing request/response handling, HTTP status codes, request parameter binding, validation, content negotiation, response headers, and exception handling by mocking service dependencies for isolated controller testing.
+This skill provides patterns for unit testing `@RestController` and `@Controller` classes using MockMvc. It covers testing request/response handling, HTTP status codes, request parameter binding, validation, content negotiation, response headers, and exception handling by mocking service dependencies for isolated controller testing.
 
 ## When to Use
 
@@ -23,7 +23,7 @@ Use this skill when:
 ## Instructions
 
 1. **Use standalone MockMvc setup**: Use `MockMvcBuilders.standaloneSetup(controller)` for isolated testing
-2. **Mock all service dependencies**: Use @Mock for all services injected into the controller
+2. **Mock all service dependencies**: Use `@`Mock for all services injected into the controller
 3. **Test all HTTP methods**: Verify GET, POST, PUT, PATCH, DELETE with appropriate status codes
 4. **Verify request/response formats**: Use JsonPath assertions for JSON response validation
 5. **Test validation errors**: Send invalid requests and verify 400 status with error details
@@ -352,11 +352,11 @@ void shouldReturnDifferentStatusCodesForDifferentScenarios() throws Exception {
 ## Constraints and Warnings
 
 - **Controller tests are not integration tests**: They verify HTTP handling, not full request flow
-- **MockMvc standalone setup limitations**: Some features like @Validated may not work without full context
+- **MockMvc standalone setup limitations**: Some features like `@`Validated may not work without full context
 - **JsonPath requires proper JSON structure**: Ensure response body is valid JSON for JsonPath assertions
 - **Don't test framework behavior**: Spring's request mapping is tested by Spring; test your code only
-- **Avoid hardcoding URLs**: Extract URL paths to constants or use the controller's @RequestMapping values
-- **Security annotations**: @PreAuthorize and @Secured require additional setup; consider separate security tests
+- **Avoid hardcoding URLs**: Extract URL paths to constants or use the controller's `@`RequestMapping values
+- **Security annotations**: `@`PreAuthorize and `@`Secured require additional setup; consider separate security tests
 - **File uploads**: Use MockMultipartFile for testing multipart file uploads
 
 ## Troubleshooting

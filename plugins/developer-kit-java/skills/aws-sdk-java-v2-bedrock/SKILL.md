@@ -429,7 +429,7 @@ public class BedrockService {
 }
 ```
 
-See the [examples directory](examples/) for comprehensive usage patterns.
+See the [examples directory](references/aws-sdk-examples.md) for comprehensive usage patterns.
 
 ## Advanced Topics
 
@@ -483,6 +483,6 @@ See the [Testing Strategies](references/testing-strategies.md) for:
 - [AWS SDK for Java 2.x Documentation](references/aws-sdk-java-bedrock-api.md)
 - [Bedrock API Reference](references/aws-bedrock-api-reference.md)
 - [AWS SDK Examples](references/aws-sdk-examples.md)
-- [Official AWS Examples](references/bedrock_code_examples.md)
-- [Supported Models](references/bedrock_models_supported.md)
-- [Runtime Examples](references/bedrock_runtime_code_examples.md)
+- [Official AWS Examples](references/bedrock-code-examples.md)
+- [Supported Models](references/bedrock-models-supported.md)
+- [Runtime Examples](references/bedrock-runtime-code-examples.md)

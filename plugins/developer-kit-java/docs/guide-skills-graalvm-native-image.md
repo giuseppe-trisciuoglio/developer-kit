@@ -123,12 +123,12 @@ Apply the native plugin:
 
 ## References
 
-- [Maven Native Profile](skills/graalvm-native-image/references/maven-native-profile.md)
-- [Gradle Native Plugin](skills/graalvm-native-image/references/gradle-native-plugin.md)
-- [Spring Boot Native](skills/graalvm-native-image/references/spring-boot-native.md)
-- [Quarkus & Micronaut](skills/graalvm-native-image/references/quarkus-micronaut-native.md)
-- [Reflection & Resource Config](skills/graalvm-native-image/references/reflection-resource-config.md)
-- [Tracing Agent](skills/graalvm-native-image/references/tracing-agent.md)
+- [Maven Native Profile](../skills/graalvm-native-image/references/maven-native-profile.md)
+- [Gradle Native Plugin](../skills/graalvm-native-image/references/gradle-native-plugin.md)
+- [Spring Boot Native](../skills/graalvm-native-image/references/spring-boot-native.md)
+- [Quarkus & Micronaut](../skills/graalvm-native-image/references/quarkus-micronaut-native.md)
+- [Reflection & Resource Config](../skills/graalvm-native-image/references/reflection-resource-config.md)
+- [Tracing Agent](../skills/graalvm-native-image/references/tracing-agent.md)
 
 ---
 

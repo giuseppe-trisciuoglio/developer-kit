@@ -49,7 +49,7 @@ Improve project documentation:
 
 ## 📋 Before You Start
 
-1. **Check existing content**: Search [skills/](./skills/), [agents/](./agents/), [commands/](./commands/) to avoid duplication
+1. **Check existing content**: Search existing components in [plugins/](./plugins/) to avoid duplicating skills, agents, or commands
 2. **Open an issue**: For significant changes, discuss your idea first by opening an issue
 3. **Understand the structure**: Review the project organization and existing patterns
 
@@ -357,18 +357,18 @@ git push origin feat/your-skill-name
 Study these examples to understand project conventions:
 
 ### Spring Boot Skills
-- [spring-boot-actuator](./skills/spring-boot/spring-boot-actuator/SKILL.md) - Full-featured skill with supporting files
-- [spring-boot-crud-patterns](./skills/spring-boot/spring-boot-crud-patterns/SKILL.md) - Architecture patterns
-- [spring-boot-dependency-injection](./skills/spring-boot/spring-boot-dependency-injection/SKILL.md) - Best practices focus
+- [spring-boot-actuator](./plugins/developer-kit-java/skills/spring-boot-actuator/SKILL.md) - Full-featured skill with supporting files
+- [spring-boot-crud-patterns](./plugins/developer-kit-java/skills/spring-boot-crud-patterns/SKILL.md) - Architecture patterns
+- [spring-boot-dependency-injection](./plugins/developer-kit-java/skills/spring-boot-dependency-injection/SKILL.md) - Best practices focus
 
 ### JUnit Test Skills
-- [junit-test directory](./skills/junit-test/) - Comprehensive testing patterns
+- [JUnit test guide](./plugins/developer-kit-java/docs/guide-skills-junit-test.md) - Comprehensive testing patterns
 
 ### LangChain4j Skills
-- [langchain4j directory](./skills/langchain4j/) - AI integration patterns
+- [LangChain4j guide](./plugins/developer-kit-java/docs/guide-skills-langchain4j.md) - AI integration patterns
 
 ### Existing Agents
-- [spring-boot-code-review-specialist](./agents/spring-boot-code-review-specialist.md) - Example agent
+- [spring-boot-code-review-expert](./plugins/developer-kit-java/agents/spring-boot-code-review-expert.md) - Example agent
 
 ## 🐛 Reporting Issues
 
@@ -388,7 +388,7 @@ When reporting issues, include:
 
 ## 📄 License
 
-By contributing, you agree that your contributions will be licensed under the same license as this project (check [LICENSE](./LICENSE)).
+By contributing, you agree that your contributions will be licensed under the same license as this project (see `LICENSE`).
 
 ## 🙏 Thank You!
 

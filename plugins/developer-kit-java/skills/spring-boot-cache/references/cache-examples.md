@@ -25,7 +25,7 @@ public class Product {
 }
 ```
 
-### Service with @Cacheable
+### Service with `@`Cacheable
 
 ```java
 @Service
@@ -200,7 +200,7 @@ void shouldCachePremiumProductsOnly() {
 
 ---
 
-## Example 3: Multiple Caches and @Caching
+## Example 3: Multiple Caches and `@`Caching
 
 Handle complex scenarios with multiple cache operations.
 

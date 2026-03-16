@@ -147,7 +147,7 @@ done
 
 - **oklch color format**: Use oklch for perceptual uniformity. Not all browsers support oklch natively; check compatibility if targeting older browsers
 - **Token naming**: Follow the shadcn/ui convention (`--primary`, `--primary-foreground`) for seamless integration
-- **@theme inline vs @theme**: Use `@theme inline` when bridging CSS variables to Tailwind utilities; use `@theme` for direct token definition
+- **`@`theme inline vs `@`theme**: Use `@theme inline` when bridging CSS variables to Tailwind utilities; use `@theme` for direct token definition
 - **Component wrapping**: Keep wrapper components thin. Only add constraints that enforce design system rules; avoid duplicating shadcn/ui logic
 - **Dark mode**: Always define dark mode values for every token in `:root`. Missing dark tokens cause visual regressions
 - **CSS variable scoping**: Tokens defined in `:root` are global. Use `[data-theme]` selectors for multi-theme without conflicts

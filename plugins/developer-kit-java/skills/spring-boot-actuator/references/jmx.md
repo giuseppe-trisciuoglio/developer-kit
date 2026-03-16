@@ -50,7 +50,7 @@ public class JmxConfiguration {
 
 ## Creating Custom MBeans
 
-### Using @ManagedResource Annotation
+### Using `@`ManagedResource Annotation
 
 ```java
 @Component

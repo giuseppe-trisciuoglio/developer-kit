@@ -32,7 +32,7 @@ public class RetryConfig {
 }
 ```
 
-## Retry with @Retryable
+## Retry with `@Retryable`
 
 ```java
 @Service
