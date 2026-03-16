@@ -86,5 +86,5 @@ Commands are invoked using the slash syntax in Claude Code:
 
 ## See Also
 
-- [Core Command Guide](../developer-kit-core/docs/guide-commands.md) - All commands across plugins
-- [DevOps Plugin](../developer-kit-devops/docs/) - Docker and GitHub Actions guides
+- [Core Command Guide](../../developer-kit-core/docs/guide-commands.md) - All commands across plugins
+- [DevOps Plugin](../../developer-kit-devops/docs/) - Docker and GitHub Actions guides

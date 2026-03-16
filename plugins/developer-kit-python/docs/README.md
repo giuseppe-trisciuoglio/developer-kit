@@ -72,6 +72,6 @@ developer-kit-python/
 
 ## See Also
 
-- [Core Plugin Documentation](../developer-kit-core/docs/) - Core guides and installation
-- [TypeScript Plugin Documentation](../developer-kit-typescript/docs/) - TypeScript, NestJS, and React guides
-- [Java Plugin Documentation](../developer-kit-java/docs/) - Java and Spring Boot guides
+- [Core Plugin Documentation](../../developer-kit-core/docs/) - Core guides and installation
+- [TypeScript Plugin Documentation](../../developer-kit-typescript/docs/) - TypeScript, NestJS, and React guides
+- [Java Plugin Documentation](../../developer-kit-java/docs/) - Java and Spring Boot guides

@@ -367,4 +367,4 @@ Agents can be invoked in several ways:
 - [TypeScript Commands Guide](./guide-commands.md) - TypeScript plugin commands
 - [NestJS Skills Guide](./guide-skills-nestjs.md) - NestJS framework skills
 - [Frontend Skills Guide](./guide-skills-frontend.md) - React, TypeScript, UI skills
-- [Core Agent Guide](../developer-kit-core/docs/guide-agents.md) - All agents across plugins
+- [Core Agent Guide](../../developer-kit-core/docs/guide-agents.md) - All agents across plugins

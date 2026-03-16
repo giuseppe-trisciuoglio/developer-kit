@@ -8,7 +8,7 @@ Welcome to the Developer Kit PHP Plugin documentation. This plugin provides comp
 
 ### Skills Guides
 
-- **[WordPress Sage Theme Skill](../skills/wordpress-sage-theme/)** - WordPress Sage theme development skill
+- **[WordPress Sage Theme Skill](../skills/wordpress/wordpress-sage-theme/)** - WordPress Sage theme development skill
 - **[Architecture Skills](./guide-skills-architecture.md)** - Clean Architecture and DDD skills (1 skill)
 
 ### Component Guides
@@ -83,6 +83,6 @@ developer-kit-php/
 
 ## See Also
 
-- [Core Plugin Documentation](../developer-kit-core/docs/) - Core guides and installation
-- [Python Plugin Documentation](../developer-kit-python/docs/) - Python development guides
-- [TypeScript Plugin Documentation](../developer-kit-typescript/docs/) - TypeScript, NestJS, and React guides
+- [Core Plugin Documentation](../../developer-kit-core/docs/) - Core guides and installation
+- [Python Plugin Documentation](../../developer-kit-python/docs/) - Python development guides
+- [TypeScript Plugin Documentation](../../developer-kit-typescript/docs/) - TypeScript, NestJS, and React guides

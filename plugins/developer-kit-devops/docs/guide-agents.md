@@ -96,5 +96,5 @@ Agents can be invoked in several ways:
 
 ## See Also
 
-- [Core Agent Guide](../developer-kit-core/docs/guide-agents.md) - All agents across plugins
-- [AWS Plugin Documentation](../developer-kit-aws/docs/) - AWS CloudFormation and DevOps guides
+- [Core Agent Guide](../../developer-kit-core/docs/guide-agents.md) - All agents across plugins
+- [AWS Plugin Documentation](../../developer-kit-aws/docs/) - AWS CloudFormation and DevOps guides

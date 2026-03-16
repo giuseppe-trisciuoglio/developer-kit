@@ -138,5 +138,5 @@ Agents can be invoked in several ways:
 
 ## See Also
 
-- [Core Agent Guide](../developer-kit-core/docs/guide-agents.md) - All agents across plugins
-- [TypeScript Plugin Documentation](../developer-kit-typescript/docs/) - TypeScript, NestJS, and React guides
+- [Core Agent Guide](../../developer-kit-core/docs/guide-agents.md) - All agents across plugins
+- [TypeScript Plugin Documentation](../../developer-kit-typescript/docs/) - TypeScript, NestJS, and React guides

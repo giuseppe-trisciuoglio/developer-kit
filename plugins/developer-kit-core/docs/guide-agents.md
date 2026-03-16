@@ -60,7 +60,7 @@ The Developer Kit is organized into specialized plugins, each containing domain-
 
 ### Core Plugin Agents
 
-**Plugin**: [developer-kit-core](../developer-kit-core/)
+**Plugin**: [developer-kit-core](../)
 
 General purpose agents for code analysis, review, refactoring, architecture design, and documentation.
 
@@ -77,7 +77,7 @@ General purpose agents for code analysis, review, refactoring, architecture desi
 
 ### Java Plugin Agents
 
-**Plugin**: [developer-kit-java](../developer-kit-java/)
+**Plugin**: [developer-kit-java](../../developer-kit-java/)
 
 Java and Spring Boot specialized agents for backend development, code review, testing, security, and architecture.
 
@@ -93,13 +93,13 @@ Java and Spring Boot specialized agents for backend development, code review, te
 | `java-tutorial-engineer` | Java learning and tutorial creation |
 | `langchain4j-ai-development-expert` | LangChain4J AI integration patterns |
 
-**Documentation**: [Java Agent Guide](../developer-kit-java/docs/guide-agents.md)
+**Documentation**: [Java Agent Guide](../../developer-kit-java/docs/guide-agents.md)
 
 ---
 
 ### TypeScript Plugin Agents
 
-**Plugin**: [developer-kit-typescript](../developer-kit-typescript/)
+**Plugin**: [developer-kit-typescript](../../developer-kit-typescript/)
 
 TypeScript, JavaScript, NestJS, and React specialized agents for full-stack development.
 
@@ -119,13 +119,13 @@ TypeScript, JavaScript, NestJS, and React specialized agents for full-stack deve
 | `typescript-documentation-expert` | TypeScript documentation generation |
 | `expo-react-native-development-expert` | React Native development with Expo |
 
-**Documentation**: [TypeScript Agent Guide](../developer-kit-typescript/docs/guide-agents.md)
+**Documentation**: [TypeScript Agent Guide](../../developer-kit-typescript/docs/guide-agents.md)
 
 ---
 
 ### Python Plugin Agents
 
-**Plugin**: [developer-kit-python](../developer-kit-python/)
+**Plugin**: [developer-kit-python](../../developer-kit-python/)
 
 Python development agents for code review, refactoring, security, and architecture.
 
@@ -136,13 +136,13 @@ Python development agents for code review, refactoring, security, and architectu
 | `python-security-expert` | Python security vulnerability assessment |
 | `python-software-architect-expert` | Python architecture design specialist |
 
-**Documentation**: [Python Agent Guide](../developer-kit-python/docs/guide-agents.md)
+**Documentation**: [Python Agent Guide](../../developer-kit-python/docs/guide-agents.md)
 
 ---
 
 ### PHP Plugin Agents
 
-**Plugin**: [developer-kit-php](../developer-kit-php/)
+**Plugin**: [developer-kit-php](../../developer-kit-php/)
 
 PHP development agents for code review, refactoring, security, and architecture.
 
@@ -154,13 +154,13 @@ PHP development agents for code review, refactoring, security, and architecture.
 | `php-software-architect-expert` | PHP architecture design specialist |
 | `wordpress-development-expert` | WordPress development specialist |
 
-**Documentation**: [PHP Agent Guide](../developer-kit-php/docs/guide-agents.md)
+**Documentation**: [PHP Agent Guide](../../developer-kit-php/docs/guide-agents.md)
 
 ---
 
 ### AWS Plugin Agents
 
-**Plugin**: [developer-kit-aws](../developer-kit-aws/)
+**Plugin**: [developer-kit-aws](../../developer-kit-aws/)
 
 AWS architecture, CloudFormation, and DevOps specialized agents.
 
@@ -170,13 +170,13 @@ AWS architecture, CloudFormation, and DevOps specialized agents.
 | `aws-architecture-review-expert` | AWS architecture review against Well-Architected Framework |
 | `aws-cloudformation-devops-expert` | CloudFormation IaC templates and DevOps automation |
 
-**Documentation**: [AWS Agent Guide](../developer-kit-aws/docs/guide-agents.md)
+**Documentation**: [AWS Agent Guide](../../developer-kit-aws/docs/guide-agents.md)
 
 ---
 
 ### AI Plugin Agents
 
-**Plugin**: [developer-kit-ai](../developer-kit-ai/)
+**Plugin**: [developer-kit-ai](../../developer-kit-ai/)
 
 AI and prompt engineering specialized agents.
 
@@ -184,13 +184,13 @@ AI and prompt engineering specialized agents.
 |-------|---------|
 | `prompt-engineering-expert` | Prompt optimization and pattern design |
 
-**Documentation**: [AI Agent Guide](../developer-kit-ai/docs/guide-agents.md)
+**Documentation**: [AI Agent Guide](../../developer-kit-ai/docs/guide-agents.md)
 
 ---
 
 ### DevOps Plugin Agents
 
-**Plugin**: [developer-kit-devops](../developer-kit-devops/)
+**Plugin**: [developer-kit-devops](../../developer-kit-devops/)
 
 DevOps and containerization specialized agents.
 
@@ -199,7 +199,7 @@ DevOps and containerization specialized agents.
 | `general-docker-expert` | Docker containerization and orchestration |
 | `github-actions-pipeline-expert` | GitHub Actions CI/CD pipeline development |
 
-**Documentation**: [DevOps Agent Guide](../developer-kit-devops/docs/guide-agents.md)
+**Documentation**: [DevOps Agent Guide](../../developer-kit-devops/docs/guide-agents.md)
 
 ---
 
