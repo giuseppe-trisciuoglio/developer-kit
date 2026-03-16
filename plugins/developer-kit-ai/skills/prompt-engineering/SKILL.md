@@ -1,15 +1,38 @@
 ---
 name: prompt-engineering
 description: >
-  Write, debug, and optimize prompts for LLMs. Guides few-shot example selection,
-  chain-of-thought structuring, system prompt design, and template composition.
-  Use when the user says "write a prompt", "improve my prompt", "prompting help",
-  "few-shot examples", "chain-of-thought", "system prompt", "prompt template",
-  or asks how to get better results from an LLM.
+  Provides workflows to write, debug, and optimize prompts for LLMs, including
+  few-shot example selection, chain-of-thought structuring, system prompt
+  design, and template composition. Use when the user asks to write or improve
+  a prompt, wants help with few-shot examples, chain-of-thought, system prompts,
+  prompt templates, or asks how to get better results from an LLM.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
 # Prompt Engineering
+
+## Overview
+
+Use this skill to design prompt systems that are clear, testable, and reusable.
+It covers prompt drafting, optimization, evaluation, and production-oriented
+patterns for few-shot prompting, reasoning workflows, templates, and system
+prompts.
+
+Keep the main workflow in this file and load the targeted reference files only
+for the pattern you are applying.
+
+## When to Use
+
+Use this skill when:
+
+- A user asks to write, rewrite, or improve a prompt
+- A prompt needs better structure, reliability, or output formatting
+- Few-shot examples or reasoning scaffolds are needed
+- A system prompt or reusable prompt template must be created
+- An existing prompt needs measurable optimization and testing
+
+Read the relevant files in `references/` when you need deeper guidance on a
+specific pattern.
 
 ## Core Patterns
 
@@ -213,6 +236,21 @@ You are an expert {role} specializing in {domain} with {experience_level} of exp
 - <5% variance across 3+ repeated runs
 - All edge cases and adversarial inputs handled gracefully
 - Output format matches spec on every test case
+
+## Best Practices
+
+- Optimize one variable at a time so results stay attributable
+- Keep prompts explicit about task, context, constraints, and output format
+- Prefer a small number of strong examples over many repetitive ones
+- Test prompts against happy-path, edge-case, and adversarial inputs
+- Move long pattern details to `references/` instead of bloating `SKILL.md`
+
+## Constraints and Warnings
+
+- Do not assume longer prompts are better; extra detail often adds ambiguity
+- Avoid exposing hidden reasoning requirements when a concise rationale is enough
+- Validate prompts on representative inputs before claiming improvement
+- Keep model-specific assumptions explicit because behavior varies across models
 
 ## Integration with Other Skills
 

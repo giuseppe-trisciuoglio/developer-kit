@@ -881,73 +881,7 @@ plugin-validate:
 # ═══════════════════════════════════════════════════════════════
 
 plugin-bump-version:
-	@VERSION="$(VERSION)" BUMP="$(BUMP)" python3 - <<'PY'
-	import json
-	import os
-	import re
-	import sys
-	from pathlib import Path
-	
-	marketplace_path = Path(".claude-plugin/marketplace.json")
-	tile_path = Path("tile.json")
-	plugin_paths = sorted(Path("plugins").glob("*/.claude-plugin/plugin.json"))
-	semver_pattern = re.compile(r"^\d+\.\d+\.\d+$$")
-	
-	if not marketplace_path.exists():
-	    print("Missing .claude-plugin/marketplace.json", file=sys.stderr)
-	    sys.exit(1)
-	if not tile_path.exists():
-	    print("Missing tile.json", file=sys.stderr)
-	    sys.exit(1)
-	if not plugin_paths:
-	    print("No plugin.json files found under plugins/", file=sys.stderr)
-	    sys.exit(1)
-	
-	requested_version = os.environ.get("VERSION", "").strip()
-	bump_kind = os.environ.get("BUMP", "patch").strip() or "patch"
-	
-	marketplace = json.loads(marketplace_path.read_text())
-	current_version = marketplace.get("version", "").strip()
-	if not semver_pattern.match(current_version):
-	    print(f"Current marketplace version is not semantic: {current_version}", file=sys.stderr)
-	    sys.exit(1)
-	
-	if requested_version:
-	    if not semver_pattern.match(requested_version):
-	        print(f"Invalid VERSION: {requested_version}. Expected semantic version x.y.z", file=sys.stderr)
-	        sys.exit(1)
-	    new_version = requested_version
-	else:
-	    if bump_kind not in {"major", "minor", "patch"}:
-	        print(f"Invalid BUMP: {bump_kind}. Use major, minor, or patch", file=sys.stderr)
-	        sys.exit(1)
-	    major, minor, patch = (int(part) for part in current_version.split("."))
-	    if bump_kind == "major":
-	        new_version = f"{major + 1}.0.0"
-	    elif bump_kind == "minor":
-	        new_version = f"{major}.{minor + 1}.0"
-	    else:
-	        new_version = f"{major}.{minor}.{patch + 1}"
-	
-	marketplace["version"] = new_version
-	for plugin in marketplace.get("plugins", []):
-	    plugin["version"] = new_version
-	marketplace_path.write_text(json.dumps(marketplace, indent=2, ensure_ascii=False) + "\n")
-	
-	for plugin_path in plugin_paths:
-	    plugin_data = json.loads(plugin_path.read_text())
-	    plugin_data["version"] = new_version
-	    plugin_path.write_text(json.dumps(plugin_data, indent=2, ensure_ascii=False) + "\n")
-	
-	tile = json.loads(tile_path.read_text())
-	tile["version"] = new_version
-	tile_path.write_text(json.dumps(tile, indent=2, ensure_ascii=False) + "\n")
-	
-	print(f"Bumped version: {current_version} -> {new_version}")
-	print(f"Updated marketplace file: {marketplace_path}")
-	print(f"Updated plugin manifests: {len(plugin_paths)}")
-	print(f"Updated tile file: {tile_path}")
-	PY
+	@VERSION="$(VERSION)" BUMP="$(BUMP)" python3 scripts/bump_plugin_versions.py
 
 # ═══════════════════════════════════════════════════════════════
 # CLAUDE CODE INTERACTIVE INSTALLATION
