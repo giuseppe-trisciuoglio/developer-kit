@@ -1,16 +1,16 @@
 ---
-name: claude-md-management
-description: Provides comprehensive CLAUDE.md file management capabilities including auditing, quality assessment, and targeted improvements. Use when user asks to check, audit, update, improve, fix, maintain, or validate CLAUDE.md files. Also triggers for "project memory optimization", "CLAUDE.md quality check", "documentation review", or when CLAUDE.md needs to be created from scratch. This skill scans all CLAUDE.md files, evaluates quality against standardized criteria, outputs detailed quality reports with scores and recommendations, then makes targeted updates with user approval.
+name: memory-md-management
+description: Provides comprehensive memory file management capabilities including auditing, quality assessment, and targeted improvements for files such as CLAUDE.md. Use when user asks to check, audit, update, improve, fix, maintain, or validate project memory files. Also triggers for "project memory optimization", "CLAUDE.md quality check", "documentation review", or when a project memory file needs to be created from scratch. This skill scans memory files, evaluates quality against standardized criteria, outputs detailed quality reports with scores and recommendations, then makes targeted updates with user approval.
 allowed-tools: Read, Glob, Grep, Bash, Edit
 ---
 
-# CLAUDE.md Management
+# Memory.md Management
 
-Provides comprehensive CLAUDE.md file management capabilities including auditing, quality assessment, and targeted improvements. This skill ensures Claude Code has optimal project context by maintaining high-quality documentation files.
+Provides comprehensive project memory file management capabilities including auditing, quality assessment, and targeted improvements. This skill ensures the coding agent has optimal project context by maintaining high-quality documentation files such as `CLAUDE.md`.
 
 ## Overview
 
-CLAUDE.md files are the primary mechanism for providing project-specific context to Claude Code sessions. This skill manages the complete lifecycle of CLAUDE.md files: discovery, quality assessment, reporting, and improvement. It follows a 5-phase workflow that ensures documentation is current, actionable, and concise.
+Project memory files such as `CLAUDE.md` are the primary mechanism for providing project-specific context to coding agent sessions. This skill manages their complete lifecycle: discovery, quality assessment, reporting, and improvement. It follows a 5-phase workflow that ensures documentation is current, actionable, and concise.
 
 The skill evaluates CLAUDE.md files against standardized quality criteria across 6 dimensions: Commands/Workflows, Architecture Clarity, Non-Obvious Patterns, Conciseness, Currency, and Actionability. Each file receives a score (0-100) and letter grade (A-F) with specific improvement recommendations.
 
@@ -20,11 +20,11 @@ Use this skill when:
 
 - User explicitly asks to "check", "audit", "update", "improve", "fix", or "maintain" CLAUDE.md
 - User mentions "CLAUDE.md quality", "documentation review", or "project memory optimization"
-- CLAUDE.md needs to be created from scratch for a new project
+- A project memory file needs to be created from scratch for a new project
 - User asks about improving Claude's understanding of the codebase
 - Documentation has become stale or outdated
 - Starting work on a new codebase and need to understand existing documentation
-- User presses `#` during a session to incorporate learnings into CLAUDE.md
+- User presses `#` during a session to incorporate learnings into a memory file
 
 **Trigger phrases:** "audit CLAUDE.md", "check documentation quality", "improve project context", "review CLAUDE.md", "validate documentation"
 

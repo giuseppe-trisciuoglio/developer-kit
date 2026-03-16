@@ -1,4 +1,4 @@
-# CLAUDE.md Update Guidelines
+# Memory File Update Guidelines
 
 ## Core Principle
 
