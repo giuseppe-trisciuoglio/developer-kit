@@ -262,7 +262,7 @@ export function MagicLinkSignIn() {
 
 ## Passkey Plugin
 
-> **Detailed Guide**: See [PASSKEY.md](./PASSKEY.md) for complete implementation guide.
+> **Detailed Guide**: See [passkey.md](./passkey.md) for complete implementation guide.
 
 ### Installation
 
