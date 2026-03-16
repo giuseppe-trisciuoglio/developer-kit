@@ -1,5 +1,6 @@
 ---
-globs: "src/**/*.ts"
+paths:
+  - "src/**/*.ts"
 ---
 # Rule: NestJS API Design
 

@@ -1,5 +1,6 @@
 ---
-globs: "**/*.{ts,tsx}"
+paths:
+  - "**/*.{ts,tsx}"
 ---
 # Rule: Internationalization (i18n) Conventions
 

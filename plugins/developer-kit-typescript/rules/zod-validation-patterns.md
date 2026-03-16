@@ -1,5 +1,6 @@
 ---
-globs: "**/*.ts"
+paths:
+  - "**/*.ts"
 ---
 
 # Rule: Zod 4 Validation Patterns

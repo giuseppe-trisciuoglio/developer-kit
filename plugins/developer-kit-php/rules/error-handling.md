@@ -1,5 +1,6 @@
 ---
-globs: "**/*.php"
+paths:
+  - "**/*.php"
 ---
 # Rule: PHP Error Handling
 

@@ -1,5 +1,6 @@
 ---
-globs: "**/*.dto.ts"
+paths:
+  - "**/*.dto.ts"
 ---
 # Rule: Shared DTO Conventions
 

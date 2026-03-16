@@ -90,6 +90,9 @@ Adds a new task to an existing specification.
 7. Update the task index to include the new task
 
 8. Update the traceability matrix if requirements are affected
+   - Read traceability-matrix.md and add rows for new REQ-IDs
+   - Initialize Test Files and Code Files columns with "-"
+   - Create matrix if it does not exist with header structure
 
 ### Task File Templates
 
@@ -114,7 +117,7 @@ files_to_create:
   - "[file path]"
 files_to_modify:
   - "[file path]"
-implementation_command: "/developer-kit:devkit.feature-development --lang=[lang] \"docs/specs/[id]/tasks/TASK-XXX.md\""
+implementation_command: "/developer-kit:devkit.task-implementation --lang=[lang] --task=\"docs/specs/[id]/tasks/TASK-XXX.md\""
 ---
 
 # TASK-XXX: [Task Title]
@@ -137,7 +140,7 @@ implementation_command: "/developer-kit:devkit.feature-development --lang=[lang]
 - `[file path]`
 
 **Implementation Command**:
-/developer-kit:devkit.feature-development --lang=[lang] "docs/specs/[id]/tasks/TASK-XXX.md"
+/developer-kit:devkit.task-implementation --lang=[lang] --task="docs/specs/[id]/tasks/TASK-XXX.md"
 ```
 
 #### Template B: Full (For complex tasks requiring detailed tracking)
@@ -159,7 +162,7 @@ files_to_create:
   - "[file path]"
 files_to_modify:
   - "[file path]"
-implementation_command: "/developer-kit:devkit.feature-development --lang=[lang] \"docs/specs/[id]/tasks/TASK-XXX.md\""
+implementation_command: "/developer-kit:devkit.task-implementation --lang=[lang] --task=\"docs/specs/[id]/tasks/TASK-XXX.md\""
 business_goals:
   - "[Business goal this task serves]"
 data_contracts:
@@ -240,7 +243,7 @@ context_hash: "[SHA-256 hash for change detection]"
 - [Security consideration]
 
 **Implementation Command**:
-/developer-kit:devkit.feature-development --lang=[lang] "docs/specs/[id]/tasks/TASK-XXX.md"
+/developer-kit:devkit.task-implementation --lang=[lang] --task="docs/specs/[id]/tasks/TASK-XXX.md"
 ```
 
 ### Context Hash Generation
@@ -286,6 +289,9 @@ Splits a complex task into smaller, more manageable subtasks.
 7. Update task index with new structure
 
 8. Update traceability matrix
+   - For each new subtask, add rows to traceability-matrix.md
+   - Update parent task rows to reflect new subtask structure
+   - Update coverage summary with new task count
 
 ### Context Chain Inheritance
 
@@ -490,10 +496,10 @@ Complex:   [█░░░░░░░░░] Z tasks (requires splitting)
 
 ```bash
 # Task 1
-/developer-kit:devkit.feature-development --lang=[lang] "docs/specs/[id]/tasks/TASK-001.md"
+/developer-kit:devkit.task-implementation --lang=[lang] --task="docs/specs/[id]/tasks/TASK-001.md"
 
 # Task 2
-/developer-kit:devkit.feature-development --lang=[lang] "docs/specs/[id]/tasks/TASK-002.md"
+/developer-kit:devkit.task-implementation --lang=[lang] --task="docs/specs/[id]/tasks/TASK-002.md"
 ```
 
 ## Next Actions

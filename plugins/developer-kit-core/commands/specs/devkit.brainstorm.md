@@ -1,5 +1,5 @@
 ---
-description: "Provides guided brainstorming capability to transform ideas into pure functional specifications. Use when starting a new feature to define WHAT should be built (not HOW). Output: docs/specs/[id]/YYYY-MM-DD--feature-name-specs.md"
+description: "Provides guided brainstorming capability to transform ideas into pure functional specifications. Use when starting a new feature to define WHAT should be built (not HOW). Output: docs/specs/[id]/YYYY-MM-DD--feature-name.md"
 argument-hint: "[ idea-description ]"
 allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, TodoWrite, AskUserQuestion
 model: inherit
@@ -7,11 +7,13 @@ model: inherit
 
 # Brainstorming
 
-Provides guided brainstorming to transform ideas into pure functional specifications (WHAT, not HOW). Focus on business logic, use cases, and acceptance criteria — no code, frameworks, or technical patterns.
+Provides guided brainstorming to transform ideas into pure functional specifications (WHAT, not HOW). Focus on business
+logic, use cases, and acceptance criteria — no code, frameworks, or technical patterns.
 
 ## Overview
 
-This command produces a **functional specification** — a document that describes WHAT the system should do, without HOW it will be implemented.
+This command produces a **functional specification** — a document that describes WHAT the system should do, without HOW
+it will be implemented.
 
 The new workflow:
 
@@ -19,18 +21,20 @@ The new workflow:
 Idea → Functional Specification (docs/specs/[id]/) → Tasks (docs/specs/[id]/tasks/) → Implementation
 ```
 
-**Output**: `docs/specs/[id]/YYYY-MM-DD--feature-name-specs.md`
+**Output**: `docs/specs/[id]/YYYY-MM-DD--feature-name.md`
+
+Preferred naming is `YYYY-MM-DD--feature-name.md`. If the spec folder already uses legacy `*-specs.md` files, keep the existing convention instead of mixing both formats.
 
 Where `[id]` is a unique identifier in format `NNN-feature-name` (e.g., `001-hotel-search-aggregation`).
 
 ### What vs. How
 
-| Aspect | Functional Specification (WHAT) | Technical Design (HOW) |
-|--------|-------------------------------|----------------------|
-| Focus | Business rules, user behaviors | Frameworks, patterns, code |
-| Language | Natural language | Technical terminology |
+| Aspect   | Functional Specification (WHAT)     | Technical Design (HOW)         |
+|----------|-------------------------------------|--------------------------------|
+| Focus    | Business rules, user behaviors      | Frameworks, patterns, code     |
+| Language | Natural language                    | Technical terminology          |
 | Examples | "User can reset password via email" | "Use Spring Security with JWT" |
-| Output | `docs/specs/[id]/` | `docs/plans/` (deprecated) |
+| Output   | `docs/specs/[id]/`                  | `docs/plans/` (deprecated)     |
 
 Use this command when starting a new feature to define clear functional requirements before any technical decisions.
 
@@ -48,13 +52,14 @@ After generating the functional specification, continue with:
 
 ## Arguments
 
-| Argument | Required | Description |
-|----------|----------|-------------|
-| `idea-description` | No | Description of the idea or feature to brainstorm |
+| Argument           | Required | Description                                      |
+|--------------------|----------|--------------------------------------------------|
+| `idea-description` | No       | Description of the idea or feature to brainstorm |
 
 ## Current Context
 
 The command will automatically gather context information when needed:
+
 - Current git branch and status
 - Recent commits and changes
 - Available when the repository has history
@@ -62,6 +67,7 @@ The command will automatically gather context information when needed:
 ### Argument Details
 
 **idea-description**
+
 - Purpose: Describes the initial idea, feature, or problem to solve
 - Format: Free text describing the concept
 - Default: If not provided, the command will ask for it interactively
@@ -69,15 +75,15 @@ The command will automatically gather context information when needed:
 
 ---
 
-You are helping a developer transform an idea into a fully formed design. Follow a systematic approach: understand the project
-context, explore the idea through targeted questions, explore existing code, propose alternative approaches, present the design
+You are helping a developer transform an idea into a fully formed design. Follow a systematic approach: understand the
+project
+context, explore the idea through targeted questions, explore existing code, propose alternative approaches, present the
+design
 incrementally, generate professional documentation, review the document, and recommend the next development command.
 
 ## Core Principles
 
-- **One question at a time — NEVER SKIP**: Phases marked with **[GATE]** MANDATORY STOP POINT are hard gates. You MUST call the
-  AskUserQuestion tool and wait for the user's response before proceeding. Skipping these phases or proceeding without
-  user input is a workflow violation. Don't overwhelm with multiple questions.
+- **Ask only high-signal questions**: Use AskUserQuestion only when the answer materially changes scope, acceptance criteria, or constraints. If the request is already clear, proceed without adding extra checkpoints.
 - **Multiple choice preferred**: Easier to answer than open-ended when possible
 - **YAGNI ruthlessly**: Remove unnecessary features from all specifications
 - **Functional focus ONLY**: Describe WHAT the system should do, never HOW it will be implemented
@@ -108,21 +114,29 @@ incrementally, generate professional documentation, review the document, and rec
     - What is the high-level goal?
     - Any initial thoughts or constraints?
 
+4. **Determine workflow tier based on idea complexity**:
+    - **Quick** (bug fix, small change, <3 files, well-understood solution):
+        - Recommend switching to `/developer-kit:devkit.quick-spec` for faster turnaround
+        - Ask via AskUserQuestion:
+            - Options:
+                - "Continue with full brainstorming" (for comprehensive spec)
+                - "Switch to quick spec" (recommended for bug fixes/small changes)
+    - **Standard** (feature, moderate scope, 3-10 files): Continue with brainstorm
+    - **Full** (greenfield, complex, >10 files or multiple modules): Continue with brainstorm + recommend spec-review
+      after
+
 ---
 
 ## Phase 2: Idea Refinement
 
 **Goal**: Deeply understand the idea through structured dialogue
 
-****[GATE]** MANDATORY STOP POINT — DO NOT SKIP THIS PHASE UNDER ANY CIRCUMSTANCES.**
-
-This phase builds the foundation for the entire design. You MUST stop here and ask questions before proceeding.
-Proceeding to Phase 3 without completing this phase is a workflow violation.
+Run this phase only if the initial request still has meaningful ambiguity after Phase 1.
 
 **Actions**:
 
-1. Ask questions **one at a time** to refine the idea
-2. **You MUST call the AskUserQuestion tool with multiple choice options when possible**
+1. Ask up to 3 tightly related questions to refine the idea
+2. Prefer a single AskUserQuestion checkpoint with multiple choice options when possible
 3. Focus on understanding:
     - **Purpose**: What is this trying to achieve?
     - **Constraints**: Are there technical, time, or resource constraints?
@@ -136,8 +150,8 @@ Proceeding to Phase 3 without completing this phase is a workflow violation.
 - "Which constraint is most important: development time, performance, or maintainability?"
 - "Who are the primary users of this feature?"
 
-4. ****[GATE]** STOP: Wait for each answer before asking the next question. Do NOT batch multiple questions.**
-5. When the idea is clear, summarize understanding and get confirmation before proceeding to Phase 3
+4. If the idea becomes clear, summarize assumptions and proceed to Phase 3
+5. If ambiguity remains after one checkpoint, ask one final focused follow-up and then proceed
 
 ---
 
@@ -166,12 +180,15 @@ Proceeding to Phase 3 without completing this phase is a workflow violation.
     - NO libraries or dependencies
     - NO code or pseudo-code
 
-4. **You MUST call the AskUserQuestion tool to present the approaches**:
+4. If there are materially different scope options, use AskUserQuestion to present them:
     - Lead with your recommended option
     - Explain your reasoning
-    - Ask which approach they prefer
+5. If one approach is clearly dominant, select it, record the rationale, and proceed without an extra gate
 
-5. ****[GATE]** STOP: Wait for user selection. Do NOT proceed to Phase 4 until the user has responded.**
+6. **After approach selection, log the decision**:
+    - Create an in-memory note of DEC-001: Approach Selection
+    - Record: date, approach chosen, alternatives presented, rationale
+    - This will be written to `decision-log.md` in Phase 6
 
 ---
 
@@ -184,6 +201,7 @@ Proceeding to Phase 3 without completing this phase is a workflow violation.
 **Actions**:
 
 1. Only if the feature needs to integrate with existing systems, use the Task tool to explore:
+
 ```
 Task(
   description: "Explore codebase for integration context",
@@ -219,40 +237,40 @@ Task(
 3. Cover the following areas in separate sections:
 
    **Section 1: Business Context**
-   - What problem does this feature solve?
-   - Who are the users and what are their goals?
-   - How does this fit into the overall system purpose?
+    - What problem does this feature solve?
+    - Who are the users and what are their goals?
+    - How does this fit into the overall system purpose?
 
    **Section 2: Functional Requirements**
-   - User stories and use cases
-   - Business rules and constraints
-   - Data requirements (what data, not how to store)
-   - External system capabilities needed
+    - User stories and use cases
+    - Business rules and constraints
+    - Data requirements (what data, not how to store)
+    - External system capabilities needed
 
    **Section 3: User Interactions**
-   - User flows and journeys
-   - Alternative paths and edge cases
-   - Error scenarios and how users are informed
+    - User flows and journeys
+    - Alternative paths and edge cases
+    - Error scenarios and how users are informed
 
    **Section 4: Acceptance Criteria**
-   - Clear, testable criteria for each user story
-   - Success conditions in natural language
-   - Edge case handling
+    - Clear, testable criteria for each user story
+    - Success conditions in natural language
+    - Edge case handling
 
    **Section 5: Integration Requirements**
-   - What existing systems must integrate with (capabilities, not implementation)
-   - Data exchange requirements (not technical protocols)
+    - What existing systems must integrate with (capabilities, not implementation)
+    - Data exchange requirements (not technical protocols)
 
 4. **CRITICAL**: Throughout all sections, NEVER mention:
-   - Frameworks, libraries, or tools
-   - Technical patterns or architectural styles
-   - Code or pseudo-code
+    - Frameworks, libraries, or tools
+    - Technical patterns or architectural styles
+    - Code or pseudo-code
 
-5. **[GATE] After each section, use the AskUserQuestion tool**:
-    - "Does this section look right so far?"
-    - Options: "Yes, continue", "Needs revision", "Go back to earlier section"
+5. Validate only at meaningful checkpoints:
+    - Default: generate all sections, then present one consolidated review
+    - Use AskUserQuestion mid-way only if a section introduces new ambiguity or a major scope decision
 
-6. **[GATE] STOP: Wait for validation before proceeding to the next section**
+6. If no major ambiguity is detected, proceed directly to Phase 6 and collect feedback on the complete draft
 
 ---
 
@@ -265,30 +283,30 @@ Task(
 1. Compile all validated specification sections
 
 2. Generate unique spec ID:
-   - Count existing folders in `docs/specs/` to determine next sequence number
-   - Create slug from feature name (lowercase, hyphenated)
-   - Format: `NNN-feature-slug` (e.g., `001-hotel-search-aggregation`)
-   - Example: If 5 specs exist, next ID is `006-feature-name`
+    - Count existing folders in `docs/specs/` to determine next sequence number
+    - Create slug from feature name (lowercase, hyphenated)
+    - Format: `NNN-feature-slug` (e.g., `001-hotel-search-aggregation`)
+    - Example: If 5 specs exist, next ID is `006-feature-name`
 
 3. Create spec folder: `docs/specs/[id]/`
 
 4. **CRITICAL: Save the original user request**:
-   - Create a file `user-request.md` in `docs/specs/[id]/` containing:
-     - The original user input/idea description
-     - Any constraints or requirements mentioned
-     - This file will be used by `spec-to-tasks` to verify all requirements are captured
-   - Example content:
-     ```markdown
-     # User Request
-
-     **Original Input**: [what the user asked for]
-
-     **Key Requirements Mentioned**:
-     - [requirement 1]
-     - [requirement 2]
-
-     **Constraints**: [any constraints mentioned]
-     ```
+    - Create a file `user-request.md` in `docs/specs/[id]/` containing:
+        - The original user input/idea description
+        - Any constraints or requirements mentioned
+        - This file will be used by `spec-to-tasks` to verify all requirements are captured
+    - Example content:
+      ```markdown
+      # User Request
+ 
+      **Original Input**: [what the user asked for]
+ 
+      **Key Requirements Mentioned**:
+      - [requirement 1]
+      - [requirement 2]
+ 
+      **Constraints**: [any constraints mentioned]
+      ```
 
 5. Use the Task tool to launch the document-generator-expert subagent:
 
@@ -330,7 +348,7 @@ Task(
     **Open Questions**: [list]
 
     Create a comprehensive, well-formatted functional specification and save it to:
-    docs/specs/[id]/YYYY-MM-DD--feature-name-specs.md
+    docs/specs/[id]/YYYY-MM-DD--feature-name.md
 
     IMPORTANT:
     - This is a FUNCTIONAL specification, NOT a technical design
@@ -344,19 +362,42 @@ Task(
 
 6. Wait for the document generator to complete
 7. Verify the document was created successfully in `docs/specs/[id]/`
-   - If the file was not created or is incomplete:
-     - Check the subagent output for errors
-     - Re-run Phase 6 with additional guidance if needed
-     - Use AskUserQuestion to decide: "Retry generation", "Continue with manual creation", or "Abort"
+    - If the file was not created or is incomplete:
+        - Check the subagent output for errors
+        - Re-run Phase 6 with additional guidance if needed
+        - Use AskUserQuestion to decide: "Retry generation", "Continue with manual creation", or "Abort"
 
 8. **CRITICAL: Save brainstorming context files for later use by spec-to-tasks**:
-   - If you have conversation context or notes about the feature (from the dialogue with user), save them to the spec folder
-   - Create a file named `brainstorming-notes.md` in `docs/specs/[id]/` with:
-     - Key technical decisions discussed
-     - Architecture patterns mentioned
-     - Any specific technologies or integrations requested
-     - Notes about implementation approach
-   - This file will be read by `devkit.spec-to-tasks` to ensure technical details are NOT lost
+    - If you have conversation context or notes about the feature (from the dialogue with user), save them to the spec
+      folder
+    - Create a file named `brainstorming-notes.md` in `docs/specs/[id]/` with:
+        - Key technical decisions discussed
+        - Architecture patterns mentioned
+        - Any specific technologies or integrations requested
+        - Notes about implementation approach
+    - This file will be read by `devkit.spec-to-tasks` to ensure technical details are NOT lost
+
+8.5. **Create decision-log.md for decision audit trail**:
+
+- Create a file `decision-log.md` in `docs/specs/[id]/` with the following format:
+  ```markdown
+  # Decision Log: [Feature Name]
+  
+  | ID | Date | Task | Decision | Alternatives | Impact | Decided By |
+  |----|------|------|----------|--------------|--------|------------|
+  
+  ## DEC-001: Approach Selection
+  - **Date**: [current date YYYY-MM-DD]
+  - **Task**: Brainstorming
+  - **Phase**: Approach Selection
+  - **Context**: Selection of functional approach for feature specification
+  - **Decision**: [Approach chosen - A/B/C]
+  - **Alternatives Considered**: [Brief description of approaches presented]
+  - **Impact**: Specification structure, scope boundaries, acceptance criteria
+  - **Decided By**: user selection
+  ```
+- This file will track all non-trivial decisions made during implementation
+- Future phases (task-implementation, task-review) will append entries to this file
 
 9. Update todos
 
@@ -366,7 +407,8 @@ Task(
 
 **Goal**: Review the generated functional specification for quality and completeness
 
-**IMPORTANT**: The functional specification should be technology-agnostic (WHAT), but technical details discussed during brainstorming are preserved separately in `brainstorming-notes.md` for use by `spec-to-tasks`.
+**IMPORTANT**: The functional specification should be technology-agnostic (WHAT), but technical details discussed during
+brainstorming are preserved separately in `brainstorming-notes.md` for use by `spec-to-tasks`.
 
 **Actions**:
 
@@ -375,7 +417,7 @@ Task(
 ```
 Task(
   description: "Review functional specification quality",
-  prompt: "Review the functional specification at docs/specs/[id]/YYYY-MM-DD--feature-name-specs.md for:
+  prompt: "Review the functional specification at docs/specs/[id]/YYYY-MM-DD--feature-name.md for:
 
     1. **Completeness**: All required sections are present (Business Context, Functional Requirements, User Interactions, Acceptance Criteria, Integration Requirements, Out of Scope, Open Questions)
 
@@ -408,9 +450,9 @@ Task(
 3. **Use the AskUserQuestion tool to present the review findings**:
 
    Present options based on agent assessment:
-   - **Option A**: Document is excellent, proceed to next steps
-   - **Option B**: Minor revisions needed (agent will specify what)
-   - **Option C**: Major revisions needed (regenerate with corrections)
+    - **Option A**: Document is excellent, proceed to next steps
+    - **Option B**: Minor revisions needed (agent will specify what)
+    - **Option C**: Major revisions needed (regenerate with corrections)
 
 4. If revisions are needed:
     - For minor revisions: Edit the document directly based on agent feedback
@@ -430,25 +472,28 @@ Task(
 1. The functional specification is complete. The next step is to convert it to executable tasks:
 
    **For converting specification to tasks**: Recommend `/developer-kit:devkit.spec-to-tasks`
-   - Use when: Converting functional specification to trackable tasks
-   - Arguments: `--lang=[language] docs/specs/[id]/`
+    - Use when: Converting functional specification to trackable tasks
+    - Arguments: `--lang=[language] docs/specs/[id]/`
 
 2. **Use the AskUserQuestion tool to present the recommendation**:
 
    Present options:
-   - **Option A**: Generate task list now (recommended)
-   - **Option B**: Exit and review the specification first
-   - **Option C**: Proceed directly to implementation
+    - **Option A**: Run spec-review first, then generate tasks (recommended)
+    - **Option B**: Skip review and go directly to task generation (warning: may have quality issues)
+    - **Option C**: Exit and review the specification manually
 
 3. Include the pre-filled command:
 
-```bash
-# Example: Convert specification to tasks
-/developer-kit:devkit.spec-to-tasks --lang=[java|spring|typescript|nestjs|react|python|general] docs/specs/[id]/
-```
+3. Include the pre-filled commands:
 
-4. If user chooses to continue, remind them:
-   - The functional specification has been saved at `docs/specs/[id]/YYYY-MM-DD--feature-name-specs.md`
+```bash
+# Recommended: Run spec-review first, then generate tasks
+/developer-kit:devkit.spec-review docs/specs/[id]/
+/developer-kit:devkit.spec-to-tasks --lang=[java|spring|typescript|nestjs|react|python|general] docs/specs/[id]/
+
+# Alternative: Skip review and generate tasks directly
+/developer-kit:devkit.spec-to-tasks --lang=[java|spring|typescript|nestjs|react|python|general] docs/specs/[id]/
+```   - The functional specification has been saved at `docs/specs/[id]/YYYY-MM-DD--feature-name.md`
    - The task list will be saved at `docs/specs/[id]/YYYY-MM-DD--feature-name--tasks.md`
    - Individual tasks will be in `docs/specs/[id]/tasks/TASK-XXX.md`
 
@@ -467,7 +512,7 @@ Task(
     - **Integration Context**: Key integration requirements (if any)
     - **Functional Specification Created**: Key aspects of the specification
     - **Spec ID**: `[id]` (e.g., `001-hotel-search-aggregation`)
-    - **Document Location**: `docs/specs/[id]/YYYY-MM-DD--feature-name-specs.md`
+    - **Document Location**: `docs/specs/[id]/YYYY-MM-DD--feature-name.md`
     - **Specification Review**: Review outcome and any revisions made
     - **Recommended Next Step**: Generate task list with `devkit.spec-to-tasks`
 
@@ -480,28 +525,30 @@ This brainstorming command produces a **functional specification** that feeds in
 ### New Output Flow
 
 ```
+
 /developer-kit:devkit.brainstorm
-    ↓
+↓
 Phase 4: Optional Codebase Exploration (for integration context only)
-    ↓
+↓
 Phase 5: Functional Specification Presentation (validated incrementally)
-    ↓
+↓
 Phase 6: Documentation (document-generator-expert agent)
-    ↓
+↓
 Phase 7: Specification Review (quality verification)
-    ↓
-[Creates: docs/specs/[id]/YYYY-MM-DD--feature-name-specs.md]
-    ↓
+↓
+[Creates: docs/specs/[id]/YYYY-MM-DD--feature-name.md]
+↓
 [Recommends: devkit.spec-to-tasks]
-    ↓
+↓
 /developer-kit:devkit.spec-to-tasks --lang=[language] docs/specs/[id]/
-    ↓
+↓
 [Creates: docs/specs/[id]/YYYY-MM-DD--feature-name--tasks.md]
 [Creates: docs/specs/[id]/tasks/TASK-XXX.md]
-    ↓
-/developer-kit:devkit.feature-development --lang=[language] "docs/specs/[id]/tasks/TASK-XXX.md"
-    ↓
+↓
+/developer-kit:devkit.task-implementation --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
+↓
 [Implements single task]
+
 ```
 
 ### Specification as Reference
@@ -526,20 +573,22 @@ If implementation reveals specification issues, you can re-run `/developer-kit:d
 Throughout the process, maintain a todo list like:
 
 ```
+
 [ ] Phase 1: Context Discovery
 [ ] Phase 2: Idea Refinement
 [ ] Phase 3: Functional Approach Exploration
 [ ] Phase 4: Contextual Codebase Exploration (Optional)
 [ ] Phase 5: Functional Specification Presentation
-    [ ] Section 1: Business Context
-    [ ] Section 2: Functional Requirements
-    [ ] Section 3: User Interactions
-    [ ] Section 4: Acceptance Criteria
-    [ ] Section 5: Integration Requirements
+[ ] Section 1: Business Context
+[ ] Section 2: Functional Requirements
+[ ] Section 3: User Interactions
+[ ] Section 4: Acceptance Criteria
+[ ] Section 5: Integration Requirements
 [ ] Phase 6: Functional Specification Generation
 [ ] Phase 7: Specification Review
 [ ] Phase 8: Next Steps Recommendation
 [ ] Phase 9: Summary
+
 ```
 
 Update the status as you progress through each phase and section.
@@ -603,8 +652,8 @@ Update the status as you progress through each phase and section.
 /developer-kit:devkit.spec-to-tasks --lang=spring docs/specs/001-reporting-module/
 
 # Step 3: Implement specific tasks
-/developer-kit:devkit.feature-development --lang=spring "docs/specs/001-reporting-module/tasks/TASK-001.md"
-/developer-kit:devkit.feature-development --lang=spring "docs/specs/001-reporting-module/tasks/TASK-002.md"
+/developer-kit:devkit.task-implementation --lang=spring --task="docs/specs/001-reporting-module/tasks/TASK-001.md"
+/developer-kit:devkit.task-implementation --lang=spring --task="docs/specs/001-reporting-module/tasks/TASK-002.md"
 ```
 
 This separates WHAT (functional specification) from HOW (implementation), following the "divide et impera" principle.

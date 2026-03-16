@@ -1,5 +1,6 @@
 ---
-globs: "**/*.ts"
+paths:
+  - "**/*.ts"
 ---
 # Rule: Nx Monorepo Conventions
 

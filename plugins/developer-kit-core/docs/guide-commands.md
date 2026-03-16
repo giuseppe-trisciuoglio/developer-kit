@@ -69,19 +69,55 @@ The Developer Kit is organized into specialized plugins, each containing domain-
 
 General purpose commands for brainstorming, feature development, refactoring, debugging, documentation, and workflow management.
 
+### Specification Workflow Commands
+
+The Developer Kit provides a comprehensive workflow for transforming ideas into implemented features:
+
+| Command | Purpose | Phases |
+|---------|---------|--------|
+| `/developer-kit:devkit.brainstorm` | Full specification creation for complex features | 9 phases |
+| `/developer-kit:devkit.quick-spec` | Lightweight spec for bug fixes and small features | 4 phases |
+| `/developer-kit:devkit.spec-review` | Interactive spec quality assessment | 7 phases |
+| `/developer-kit:devkit.spec-quality` | Knowledge Graph synchronization | - |
+| `/developer-kit:devkit.spec-to-tasks` | Convert specs to executable tasks | - |
+| `/developer-kit:devkit.spec-sync` | Sync spec with implementation state | 6 phases |
+| `/developer-kit:devkit.task-implementation` | Guided single-task implementation | 11 steps |
+
+### Task Management Commands
+
 | Command | Purpose |
 |---------|---------|
-| `/developer-kit:devkit.brainstorm` | Guided brainstorming to transform ideas into designs |
-| `/developer-kit:devkit.spec-to-tasks` | Convert specifications into trackable tasks with full context linkage and traceability matrix |
-| `/developer-kit:devkit.task-manage` | Manage tasks with context preservation (add, split, update, mark optional/required, list) |
-| `/developer-kit:devkit.task-review` | Verify implementation against original user request and technical constraints with intent alignment |
-| `/developer-kit:devkit.refactor` | Guided code refactoring with codebase understanding |
+| `/developer-kit:devkit.task-manage` | Manage tasks (add, split, update, mark optional/required, list) |
+| `/developer-kit:devkit.task-review` | Verify implementation against specifications |
+| `/developer-kit:devkit.task-implementation` | Execute single tasks with Knowledge Graph validation |
+
+### Development Commands
+
+| Command | Purpose |
+|---------|---------|
 | `/developer-kit:devkit.feature-development` | Guided feature development with architecture focus |
+| `/developer-kit:devkit.refactor` | Guided code refactoring with codebase understanding |
 | `/developer-kit:devkit.fix-debugging` | Guided bug fixing and systematic debugging |
+
+### Documentation Commands
+
+| Command | Purpose |
+|---------|---------|
 | `/developer-kit:devkit.generate-document` | Generate professional documents (assessments, specs) |
 | `/developer-kit:devkit.generate-changelog` | Generate and maintain project changelog |
+| `/developer-kit:devkit.generate-security-assessment` | Generate comprehensive security assessment |
+
+### GitHub Integration Commands
+
+| Command | Purpose |
+|---------|---------|
 | `/developer-kit:devkit.github.create-pr` | Create GitHub pull request with detailed description |
 | `/developer-kit:devkit.github.review-pr` | Comprehensive GitHub pull request review |
+
+### LRA Workflow Commands
+
+| Command | Purpose |
+|---------|---------|
 | `/developer-kit:devkit.lra.init` | Initialize environment for long-running agent workflow |
 | `/developer-kit:devkit.lra.add-feature` | Add a new feature to the feature list |
 | `/developer-kit:devkit.lra.checkpoint` | Create a checkpoint - commit changes, update progress |
@@ -89,8 +125,12 @@ General purpose commands for brainstorming, feature development, refactoring, de
 | `/developer-kit:devkit.lra.recover` | Recover from a broken state |
 | `/developer-kit:devkit.lra.start-session` | Start a new coding session |
 | `/developer-kit:devkit.lra.status` | Show current project status |
+
+### Utility Commands
+
+| Command | Purpose |
+|---------|---------|
 | `/developer-kit:devkit.verify-skill` | Validates a skill against DevKit standards |
-| `/developer-kit:devkit.generate-security-assessment` | Generate comprehensive security assessment document |
 
 **Documentation**: [Core Command Guide](./guide-commands.md)
 
@@ -168,7 +208,56 @@ Project management and workflow commands.
 
 ## Common Workflows
 
-### Feature Development Workflow
+### Specification Workflow
+
+The Developer Kit supports two parallel workflows depending on feature complexity:
+
+#### Full Brainstorming Workflow (Complex Features)
+
+```bash
+# 1. Full specification creation (9 phases)
+/developer-kit:devkit.brainstorm "Add user authentication with JWT tokens"
+
+# 2. Optional: Review and improve spec quality
+/developer-kit:devkit.spec-review docs/specs/002-user-auth/
+
+# 3. Sync technical context (Knowledge Graph)
+/developer-kit:devkit.spec-quality docs/specs/002-user-auth/
+
+# 4. Convert specification to tasks
+/developer-kit:devkit.spec-to-tasks --lang=spring docs/specs/002-user-auth/
+
+# 5. Review and manage tasks
+/developer-kit:devkit.task-manage --action=list --spec=docs/specs/002-user-auth/
+/developer-kit:devkit.task-manage --action=split --task=docs/specs/002-user-auth/tasks/TASK-007.md
+
+# 6. Implement tasks (11-step workflow)
+/developer-kit:devkit.task-implementation --lang=spring --task="TASK-001"
+# Includes: Git check, KG validation, contract validation, implementation, verification
+
+# 7. Sync spec with implementation (if deviations detected)
+/developer-kit:devkit.spec-sync docs/specs/002-user-auth/
+
+# 8. Review implementation
+/developer-kit:devkit.task-review --lang=spring "docs/specs/002-user-auth/tasks/TASK-001.md"
+```
+
+#### Quick Spec Workflow (Bug Fixes / Small Features)
+
+```bash
+# 1. Quick specification (4 phases)
+/developer-kit:devkit.quick-spec "Fix memory leak in session cleanup"
+
+# 2. Based on criteria count:
+#    - 1-2 criteria: Direct implementation
+#    - 3+ criteria: Generate task list
+/developer-kit:devkit.spec-to-tasks --lang=spring docs/specs/003-quick-fix/
+
+# 3. Implement with guided workflow
+/developer-kit:devkit.task-implementation --lang=spring --task="TASK-001"
+```
+
+### Feature Development Workflow (Legacy)
 
 ```bash
 # 1. Brainstorm the feature
@@ -186,7 +275,7 @@ Project management and workflow commands.
 /developer-kit:devkit.task-manage --action=split --task=docs/specs/001-user-auth/tasks/TASK-007.md
 # Preserves: context chain when splitting
 
-# 5. Develop the feature
+# 5. Develop the feature (alternative: use task-implementation)
 /developer-kit:devkit.feature-development --lang=spring "docs/specs/001-user-auth/tasks/TASK-001.md"
 
 # 6. Review implementation (with intent alignment)
@@ -307,13 +396,30 @@ Task review validates:
 
 ## Command Selection Guide
 
+### Specification Workflow
+
 | Task | Recommended Command | Plugin |
 |------|---------------------|--------|
-| Brainstorm ideas | `/developer-kit:devkit.brainstorm` | Core |
-| Convert spec to tasks (with context) | `/developer-kit:devkit.spec-to-tasks` | Core |
+| Full spec for complex feature | `/developer-kit:devkit.brainstorm` | Core |
+| Quick spec for bug fix/small feature | `/developer-kit:devkit.quick-spec` | Core |
+| Review spec quality (max 5 questions) | `/developer-kit:devkit.spec-review` | Core |
+| Sync Knowledge Graph | `/developer-kit:devkit.spec-quality` | Core |
+| Convert spec to tasks | `/developer-kit:devkit.spec-to-tasks` | Core |
+| Sync spec with implementation | `/developer-kit:devkit.spec-sync` | Core |
+
+### Task Implementation
+
+| Task | Recommended Command | Plugin |
+|------|---------------------|--------|
+| Implement single task (11 steps) | `/developer-kit:devkit.task-implementation` | Core |
 | Manage tasks (add/split/update) | `/developer-kit:devkit.task-manage` | Core |
+| Review task implementation | `/developer-kit:devkit.task-review` | Core |
 | Develop new feature | `/developer-kit:devkit.feature-development` | Core |
-| Review task implementation (with intent alignment) | `/developer-kit:devkit.task-review` | Core |
+
+### General Development
+
+| Task | Recommended Command | Plugin |
+|------|---------------------|--------|
 | Debug issues | `/developer-kit:devkit.fix-debugging` | Core |
 | Refactor code | `/developer-kit:devkit.refactor` | Core |
 | Review Java code | `/developer-kit-java:devkit.java.code-review` | Java |
@@ -323,10 +429,16 @@ Task review validates:
 | Generate CRUD | `/developer-kit-java:devkit.java.generate-crud` | Java |
 | Security review | `/developer-kit-java:devkit.java.security-review` or `/developer-kit-typescript:devkit.ts.security-review` | Language-specific |
 | Dependency audit | `/developer-kit-java:devkit.java.dependency-audit` | Java |
-| Generate docs | `/developer-kit-java:devkit.java.generate-docs` or `/developer-kit:devkit.generate-document` | Core/Language |
+
+### Documentation & GitHub
+
+| Task | Recommended Command | Plugin |
+|------|---------------------|--------|
+| Generate docs | `/developer-kit:devkit.generate-document` | Core |
+| Generate changelog | `/developer-kit:devkit.generate-changelog` | Core |
+| Security assessment | `/developer-kit:devkit.generate-security-assessment` | Core |
 | Create PR | `/developer-kit:devkit.github.create-pr` | Core |
 | Review PR | `/developer-kit:devkit.github.review-pr` | Core |
-| Generate changelog | `/developer-kit:devkit.generate-changelog` | Core |
 | LRA workflow | `/developer-kit:devkit.lra.*` | Core |
 
 ---
