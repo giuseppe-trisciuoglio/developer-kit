@@ -75,7 +75,8 @@
     "./skills/react-code-review",
     "./skills/typescript-security-review",
     "./skills/nestjs-best-practices",
-    "./skills/zod-validation-utilities"
+    "./skills/zod-validation-utilities",
+    "./skills/aws-cdk"
   ],
   "lspServers": "./.lsp.json"
 }
