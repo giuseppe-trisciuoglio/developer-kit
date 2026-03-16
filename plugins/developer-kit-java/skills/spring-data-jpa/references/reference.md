@@ -186,7 +186,7 @@ long deleteByStatusAndAge(String status, Integer age);
 void deleteByStatus(String status);                  // Bulk delete
 ```
 
-### Custom Queries with @Query
+### Custom Queries with `@`Query
 
 #### JPQL Queries
 Use Java Persistence Query Language for complex queries.

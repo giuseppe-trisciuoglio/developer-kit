@@ -116,7 +116,7 @@ Examples:
 }
 ```
 
-## Tailwind v4.1+ @theme Directive
+## Tailwind v4.1+ `@`theme Directive
 
 ### Basic Theme Extension
 

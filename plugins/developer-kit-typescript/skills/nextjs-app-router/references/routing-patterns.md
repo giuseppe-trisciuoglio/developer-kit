@@ -13,7 +13,7 @@
 | `default.tsx` | Fallback per parallel routes |
 | `route.ts` | API Route Handler |
 
-## Parallel Routes (@slot)
+## Parallel Routes (`@`slot)
 
 Permettono di renderizzare più pagine nello stesso layout simultaneamente.
 

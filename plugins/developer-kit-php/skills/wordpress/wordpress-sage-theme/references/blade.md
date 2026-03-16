@@ -6,19 +6,19 @@ Complete reference for Blade templating in Sage WordPress themes.
 
 ### Template Inheritance
 
-**@extends**: Inherit from a layout
+**`@`extends**: Inherit from a layout
 ```blade
 @extends('layouts.app')
 ```
 
-**@section**: Define content section
+**`@`section**: Define content section
 ```blade
 @section('content')
   <h1>Page Content</h1>
 @endsection
 ```
 
-**@yield**: Display content section
+**`@`yield**: Display content section
 ```blade
 @yield('content')
 @yield('content', 'Default content if not provided')
@@ -26,7 +26,7 @@ Complete reference for Blade templating in Sage WordPress themes.
 
 ### Conditionals
 
-**@if/@else/@elseif/@endif**
+**`@`if/`@`else/`@`elseif/`@`endif**
 ```blade
 @if (condition)
   <p>True</p>
@@ -37,14 +37,14 @@ Complete reference for Blade templating in Sage WordPress themes.
 @endif
 ```
 
-**@unless**: Negative if
+**`@`unless**: Negative if
 ```blade
 @unless ($user->logged_in)
   <a href="/login">Login</a>
 @endunless
 ```
 
-**@isset/null**: Check variable existence
+**`@`isset/null**: Check variable existence
 ```blade
 @isset($variable)
   {{ $variable }}
@@ -55,7 +55,7 @@ Complete reference for Blade templating in Sage WordPress themes.
 @endempty
 ```
 
-**@auth/@guest**: User authentication
+**`@`auth/`@`guest**: User authentication
 ```blade
 @auth
   <a href="/dashboard">Dashboard</a>
@@ -68,7 +68,7 @@ Complete reference for Blade templating in Sage WordPress themes.
 
 ### Loops
 
-**@while**: WordPress loop
+**`@`while**: WordPress loop
 ```blade
 @while (have_posts())
   @php the_post() @endphp
@@ -76,21 +76,21 @@ Complete reference for Blade templating in Sage WordPress themes.
 @endwhile
 ```
 
-**@foreach**: Iterate arrays
+**`@`foreach**: Iterate arrays
 ```blade
 @foreach ($items as $item)
   <li>{{ $item->name }}</li>
 @endforeach
 ```
 
-**@for**: Standard for loop
+**`@`for**: Standard for loop
 ```blade
 @for ($i = 0; $i < 10; $i++)
   <span>{{ $i }}</span>
 @endfor
 ```
 
-**@break/@continue**: Loop control
+**`@`break/`@`continue**: Loop control
 ```blade
 @foreach ($items as $item)
   @if ($item->skip)
@@ -107,22 +107,22 @@ Complete reference for Blade templating in Sage WordPress themes.
 
 ### Includes
 
-**@include**: Include template
+**`@`include**: Include template
 ```blade
 @include('components.card')
 ```
 
-**@includeIf**: Include if exists
+**`@`includeIf**: Include if exists
 ```blade
 @includeIf('components.optional')
 ```
 
-**@includeWhen**: Include conditionally
+**`@`includeWhen**: Include conditionally
 ```blade
 @includeWhen($condition, 'components.featured')
 ```
 
-**@includeIf**: With variables
+**`@`includeIf**: With variables
 ```blade
 @include('components.button', ['text' => 'Click', 'url' => '/page'])
 ```
@@ -167,7 +167,7 @@ Complete reference for Blade templating in Sage WordPress themes.
 
 ### Directives
 
-**@php**: Execute PHP
+**`@`php**: Execute PHP
 ```blade
 @php
   $data = get_field('data');
@@ -175,26 +175,26 @@ Complete reference for Blade templating in Sage WordPress themes.
 @endphp
 ```
 
-**@verbatim**: Disable Blade parsing
+**`@`verbatim**: Disable Blade parsing
 ```blade
 @verbatim
   {{ This won't be parsed }}
 @endverbatim
 ```
 
-**@once**: Execute once per rendering
+**`@`once**: Execute once per rendering
 ```blade
 @once
   <script src="https://cdn.example.com/widget.js"></script>
 @endonce
 ```
 
-**@csrf**: CSRF token (rarely used in WP)
+**`@`csrf**: CSRF token (rarely used in WP)
 ```blade
 @csrf
 ```
 
-**@method**: Form method spoofing
+**`@`method**: Form method spoofing
 ```blade
 @method('PUT')
 ```
@@ -294,7 +294,7 @@ Complete reference for Blade templating in Sage WordPress themes.
 {!! $html_content !!}
 ```
 
-**@verbatim**: Multiple unescaped lines
+**`@`verbatim**: Multiple unescaped lines
 ```blade
 @verbatim
   <div class="example">

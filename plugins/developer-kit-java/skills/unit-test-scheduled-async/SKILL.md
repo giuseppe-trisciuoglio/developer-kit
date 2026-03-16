@@ -1,20 +1,20 @@
 ---
 name: unit-test-scheduled-async
-description: Provides patterns for unit testing scheduled and async tasks using @Scheduled and @Async. Handles mocking task execution and timing. Use when validating asynchronous operations and scheduling behavior.
+description: Provides patterns for unit testing scheduled and async tasks using `@Scheduled` and `@Async`. Handles mocking task execution and timing. Use when validating asynchronous operations and scheduling behavior.
 allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
-# Unit Testing @Scheduled and @Async Methods
+# Unit Testing `@Scheduled` and `@Async` Methods
 
 ## Overview
 
-This skill provides patterns for unit testing @Scheduled and @Async methods using JUnit 5. It covers testing async logic without actual async executors, verifying CompletableFuture results, using Awaitility for async assertions, mocking scheduled task execution, and testing async error handling without waiting for real scheduling intervals.
+This skill provides patterns for unit testing `@Scheduled` and `@Async` methods using JUnit 5. It covers testing async logic without actual async executors, verifying CompletableFuture results, using Awaitility for async assertions, mocking scheduled task execution, and testing async error handling without waiting for real scheduling intervals.
 
 ## When to Use
 
 Use this skill when:
-- Testing @Scheduled method logic
-- Testing @Async method behavior
+- Testing `@`Scheduled method logic
+- Testing `@`Async method behavior
 - Verifying CompletableFuture results
 - Testing async error handling
 - Want fast tests without actual scheduling
@@ -22,11 +22,11 @@ Use this skill when:
 
 ## Instructions
 
-1. **Test async methods directly**: Call @Async methods directly instead of relying on Spring's async executor
+1. **Test async methods directly**: Call `@`Async methods directly instead of relying on Spring's async executor
 2. **Use CompletableFuture.get()**: Wait for async operations to complete with explicit timeout
-3. **Mock async dependencies**: Use @Mock for services that async methods depend on
+3. **Mock async dependencies**: Use `@`Mock for services that async methods depend on
 4. **Use Awaitility for assertions**: Apply Awaitility.await() when testing actual async behavior
-5. **Test scheduled methods directly**: Call @Scheduled methods directly instead of waiting for cron expressions
+5. **Test scheduled methods directly**: Call `@`Scheduled methods directly instead of waiting for cron expressions
 6. **Verify mock interactions**: Ensure dependencies were called correctly after async completion
 7. **Test exception handling**: Verify exceptions in async methods propagate correctly
 8. **Set appropriate timeouts**: Always use timeout with CompletableFuture.get() to avoid hanging tests
@@ -68,7 +68,7 @@ dependencies {
 }
 ```
 
-## Testing @Async Methods
+## Testing `@`Async Methods
 
 ### Basic Async Testing with CompletableFuture
 
@@ -189,7 +189,7 @@ class UserNotificationServiceAsyncTest {
 }
 ```
 
-## Testing @Scheduled Methods
+## Testing `@`Scheduled Methods
 
 ### Mock Task Execution
 
@@ -425,7 +425,7 @@ class ScheduledTaskTimingTest {
 
 ## Common Pitfalls
 
-- Testing with actual @Async executor (use direct method calls instead)
+- Testing with actual `@`Async executor (use direct method calls instead)
 - Not waiting for CompletableFuture completion in tests
 - Forgetting to test exception handling in async methods
 - Not mocking dependencies that async methods call
@@ -433,25 +433,25 @@ class ScheduledTaskTimingTest {
 
 ## Constraints and Warnings
 
-- **@Async requires proxy**: Spring's @Async works via proxies; direct method calls bypass async behavior
+- **`@`Async requires proxy**: Spring's `@`Async works via proxies; direct method calls bypass async behavior
 - **ThreadPoolTaskScheduler**: Scheduled tasks use a thread pool; order of execution is not guaranteed
 - **CompletableFuture chaining**: Chain operations carefully; exceptions in intermediate stages can be lost
 - **Awaitility timeout**: Set reasonable timeouts; infinite waits can hang test suites
 - **Scheduled task timing**: Don't test actual cron/fixedRate timing; test the method logic directly
 - **Thread safety**: Async code must be thread-safe; verify behavior under concurrent access
-- **@Async on same class**: Calling @Async method from another method in same class won't be async
+- **`@`Async on same class**: Calling `@`Async method from another method in same class won't be async
 
 ## Troubleshooting
 
 **CompletableFuture hangs in test**: Ensure methods complete or set timeout with `.get(timeout, unit)`.
 
-**Async method not executing**: Call method directly instead of relying on @Async in tests.
+**Async method not executing**: Call method directly instead of relying on `@`Async in tests.
 
 **Awaitility timeout**: Increase timeout duration or reduce polling interval.
 
 ## References
 
-- [Spring @Async Documentation](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/scheduling/annotation/Async.html)
-- [Spring @Scheduled Documentation](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/scheduling/annotation/Scheduled.html)
+- [Spring `@`Async Documentation](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/scheduling/annotation/Async.html)
+- [Spring `@`Scheduled Documentation](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/scheduling/annotation/Scheduled.html)
 - [Awaitility Testing Library](https://github.com/awaitility/awaitility)
 - [CompletableFuture API](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletableFuture.html)

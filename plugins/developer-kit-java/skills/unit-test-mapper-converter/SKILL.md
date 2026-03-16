@@ -27,9 +27,9 @@ Use this skill when:
 3. **Test null handling**: Verify null inputs produce null outputs or appropriate defaults
 4. **Test nested objects**: Verify nested objects are mapped correctly and independently
 5. **Use recursive comparison**: For complex nested structures, use assertThat().usingRecursiveComparison()
-6. **Test custom mappings**: Verify @Mapping annotations with custom expressions work correctly
-7. **Test enum mappings**: Verify @ValueMapping correctly translates enum values
-8. **Test partial updates**: Verify @MappingTarget updates only specified fields
+6. **Test custom mappings**: Verify `@`Mapping annotations with custom expressions work correctly
+7. **Test enum mappings**: Verify `@`ValueMapping correctly translates enum values
+8. **Test partial updates**: Verify `@`MappingTarget updates only specified fields
 
 ## Examples
 
@@ -199,7 +199,7 @@ class NestedObjectMapperTest {
 
 ## Testing Custom Mapping Methods
 
-### Mapper with @Mapping Annotations
+### Mapper with `@`Mapping Annotations
 
 ```java
 @Mapper(componentModel = "spring")
@@ -435,12 +435,12 @@ class PartialMapperTest {
 ## Constraints and Warnings
 
 - **MapStruct generates code at compile time**: Tests will fail if mapper doesn't generate correctly
-- **Mapper componentModel**: Spring component model requires @Component for dependency injection
+- **Mapper componentModel**: Spring component model requires `@`Component for dependency injection
 - **Null value strategies**: Configure nullValueMappingStrategy and nullValuePropertyMappingStrategy appropriately
 - **Collection immutability**: Be aware that mapping immutable collections may require special handling
 - **Circular dependencies**: MapStruct cannot handle circular dependencies between mappers
 - **Date/Time mapping**: Verify date/time objects map correctly across timezones
-- **Expression-based mappings**: Expressions in @Mapping are not validated at compile time
+- **Expression-based mappings**: Expressions in `@`Mapping are not validated at compile time
 
 ## Troubleshooting
 

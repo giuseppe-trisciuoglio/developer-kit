@@ -214,10 +214,10 @@ Generate {content_type} that meets the following specifications:
 - Audience-appropriate language
 
 ## Generated Content
-```
+~~~markdown
 
 ### 4. Analysis Template
-```
+~~~
 # Template: Comprehensive Analysis
 # Purpose: Perform detailed analysis of given input
 # Required Variables: {input_data}, {analysis_framework}, {focus_areas}
@@ -597,3 +597,4 @@ class TemplatePerformanceMonitor:
 - **Audit Trail**: Track template changes and usage
 
 This comprehensive template system architecture provides the foundation for building scalable, maintainable prompt templates that can be efficiently managed and optimized across diverse use cases.
+```

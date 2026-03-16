@@ -171,10 +171,10 @@ AI Application ←→ MCP Client ←→ Spring AI ←→ MCP Server ←→ Sprin
 
 ### Key Spring AI Components
 
-- **@Tool**: Declares methods as callable functions for AI models
-- **@ToolParam**: Documents parameter purposes for AI understanding
-- **@PromptTemplate**: Defines reusable prompt patterns
-- **@Model**: Specifies AI model configurations
+- **`@`Tool**: Declares methods as callable functions for AI models
+- **`@`ToolParam**: Documents parameter purposes for AI understanding
+- **`@`PromptTemplate**: Defines reusable prompt patterns
+- **`@`Model**: Specifies AI model configurations
 - **FunctionCallback**: Low-level function calling integration
 
 ## Implementation Patterns
@@ -1170,7 +1170,7 @@ class McpServerIntegrationTest {
 }
 ```
 
-### Testing with @WebMvcTest (Slice Test)
+### Testing with `@`WebMvcTest (Slice Test)
 
 ```java
 @WebMvcTest(controllers = McpController.class)
@@ -1992,7 +1992,7 @@ Complete API documentation is available in [api-reference.md](./references/api-r
 
 - [Spring AI Documentation](https://docs.spring.io/spring-ai/reference/)
 - [Model Context Protocol Specification](https://modelcontextprotocol.org/)
-- [LangChain4j MCP Patterns](../langchain4j/langchain4j-mcp-server-patterns/SKILL.md)
+- [LangChain4j MCP Patterns](../langchain4j-mcp-server-patterns/SKILL.md)
 - [Spring Boot Documentation](https://docs.spring.io/spring-boot/docs/current/reference/html/)
 
 ## Constraints and Warnings

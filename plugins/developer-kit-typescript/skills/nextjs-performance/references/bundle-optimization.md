@@ -99,7 +99,7 @@ import { debounce } from 'lodash-es'
 
 ## Bundle Analysis
 
-### @next/bundle-analyzer
+### `@`next/bundle-analyzer
 
 ```bash
 npm install --save-dev @next/bundle-analyzer

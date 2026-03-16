@@ -4,7 +4,7 @@
 spring-boot-security-jwt/
 ├── SKILL.md                           # Main skill documentation
 ├── README.md                          # User-friendly overview and quick start
-├── STRUCTURE.md                       # This file - skill structure documentation
+├── structure.md                       # This file - skill structure documentation
 │
 ├── references/                        # Comprehensive reference documentation
 │   ├── jwt-configuration.md          # Complete JWT setup and configuration

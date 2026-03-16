@@ -133,7 +133,7 @@ After user approval, use Edit tool to apply changes. Preserve existing content s
 **User request:** "Check if my CLAUDE.md is good"
 
 **Response:**
-```markdown
+~~~markdown
 ## CLAUDE.md Quality Report
 
 ### Summary
@@ -245,7 +245,7 @@ Also found issue with API_BASE_URL:
 ```
 
 Apply these changes?
-```
+~~~
 
 ## Best Practices
 

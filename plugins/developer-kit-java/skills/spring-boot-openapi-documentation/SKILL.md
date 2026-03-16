@@ -40,15 +40,15 @@ Add the appropriate SpringDoc starter dependency for your application type (WebM
 
 ### 2. Document Controllers
 
-Use OpenAPI annotations (@Tag, @Operation, @ApiResponse, @Parameter) to add descriptive information to your REST controllers. Group related endpoints under tags and document all response codes.
+Use OpenAPI annotations (`@`Tag, `@`Operation, `@`ApiResponse, `@`Parameter) to add descriptive information to your REST controllers. Group related endpoints under tags and document all response codes.
 
 ### 3. Document Models
 
-Apply @Schema annotations to DTOs and entities to document field constraints, examples, and validation rules. Hide internal fields and mark read-only properties appropriately.
+Apply `@`Schema annotations to DTOs and entities to document field constraints, examples, and validation rules. Hide internal fields and mark read-only properties appropriately.
 
 ### 4. Configure Security
 
-Set up security schemes for authentication methods (JWT Bearer, OAuth2, Basic Auth) and apply @SecurityRequirement to protected endpoints.
+Set up security schemes for authentication methods (JWT Bearer, OAuth2, Basic Auth) and apply `@`SecurityRequirement to protected endpoints.
 
 ### 5. Test Documentation
 
@@ -593,7 +593,7 @@ public class BookController {
    - Especially useful for Pageable, custom filter objects
    - Keeps controller methods clean
 
-6. **Group related endpoints with @Tag**
+6. **Group related endpoints with `@`Tag**
    - Organize API by domain entities or features
    - Use consistent tag names across controllers
 

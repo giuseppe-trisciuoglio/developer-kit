@@ -4,7 +4,7 @@ Complete API reference for tool and function calling with LangChain4j.
 
 ## Tool Definition
 
-### @Tool Annotation
+### `@`Tool Annotation
 
 **Purpose**: Mark methods that LLM can call.
 
@@ -25,7 +25,7 @@ User getUserById(String userId) { ... }
 void sendEmail(String to, String subject, String body) { ... }
 ```
 
-### @P Annotation
+### `@`P Annotation
 
 **Purpose**: Describe tool parameters for LLM understanding.
 

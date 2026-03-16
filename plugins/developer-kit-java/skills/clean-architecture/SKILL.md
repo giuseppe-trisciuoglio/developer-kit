@@ -31,9 +31,9 @@ Dependencies flow inward. Inner layers know nothing about outer layers.
 | Layer | Responsibility | Spring Boot Equivalent |
 |-------|---------------|----------------------|
 | **Domain** | Entities, value objects, domain events, repository interfaces | `domain/` - no Spring annotations |
-| **Application** | Use cases, application services, DTOs, ports | `application/` - @Service, @Transactional |
-| **Infrastructure** | Frameworks, database, external APIs | `infrastructure/` - @Repository, @Entity |
-| **Adapter** | Controllers, presenters, external gateways | `adapter/` - @RestController |
+| **Application** | Use cases, application services, DTOs, ports | `application/` - `@`Service, `@`Transactional |
+| **Infrastructure** | Frameworks, database, external APIs | `infrastructure/` - `@`Repository, `@`Entity |
+| **Adapter** | Controllers, presenters, external gateways | `adapter/` - `@`RestController |
 
 #### Hexagonal Architecture (Ports & Adapters)
 
@@ -116,14 +116,14 @@ The domain layer must have zero dependencies on Spring or any framework.
 5. **Domain Events**: Decouple side effects from primary operations
 6. **Constructor Injection**: Mandatory dependencies via final fields
 7. **DTO Mapping**: Separate domain models from API contracts
-8. **Transaction Boundaries**: Place @Transactional in application services
+8. **Transaction Boundaries**: Place `@`Transactional in application services
 
 ### 8. Write Tests
 
 - **Domain Tests**: Pure unit tests without Spring context, fast execution
 - **Application Tests**: Unit tests with mocked ports using Mockito
-- **Infrastructure Tests**: Integration tests with @DataJpaTest and Testcontainers
-- **Adapter Tests**: Controller tests with @WebMvcTest
+- **Infrastructure Tests**: Integration tests with `@`DataJpaTest and Testcontainers
+- **Adapter Tests**: Controller tests with `@`WebMvcTest
 
 ## Examples
 
@@ -359,9 +359,9 @@ class OrderServiceTest {
 3. **Rich Domain Models**: Place business logic in entities, not services - avoid anemic domain models
 4. **Repository Pattern**: Domain defines interface, infrastructure implements - never the reverse
 5. **Domain Events**: Decouple side effects from primary operations using event-driven patterns
-6. **Constructor Injection**: Mandatory dependencies via final fields with Lombok @RequiredArgsConstructor
+6. **Constructor Injection**: Mandatory dependencies via final fields with Lombok `@`RequiredArgsConstructor
 7. **DTO Mapping**: Separate domain models from API contracts - never expose entities directly
-8. **Transaction Boundaries**: Place @Transactional in application services, never in domain layer
+8. **Transaction Boundaries**: Place `@`Transactional in application services, never in domain layer
 9. **Factory Methods**: Use static factory methods like `Entity.create()` for entity construction with invariant enforcement
 10. **Separate JPA Entities**: Keep domain entities separate from JPA entities with mappers between them
 

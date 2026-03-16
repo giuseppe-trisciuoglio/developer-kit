@@ -200,7 +200,7 @@ resilience4j:
 
 ## Annotation Reference
 
-### @CircuitBreaker
+### `@`CircuitBreaker
 
 ```java
 @CircuitBreaker(
@@ -212,7 +212,7 @@ resilience4j:
 public String fallback(Long id, Exception ex) { }
 ```
 
-### @Retry
+### `@`Retry
 
 ```java
 @Retry(
@@ -221,7 +221,7 @@ public String fallback(Long id, Exception ex) { }
 )
 ```
 
-### @RateLimiter
+### `@`RateLimiter
 
 ```java
 @RateLimiter(
@@ -230,7 +230,7 @@ public String fallback(Long id, Exception ex) { }
 )
 ```
 
-### @Bulkhead
+### `@`Bulkhead
 
 ```java
 @Bulkhead(
@@ -240,7 +240,7 @@ public String fallback(Long id, Exception ex) { }
 )
 ```
 
-### @TimeLimiter
+### `@`TimeLimiter
 
 ```java
 @TimeLimiter(

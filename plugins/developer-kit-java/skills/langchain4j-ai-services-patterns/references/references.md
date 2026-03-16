@@ -33,7 +33,7 @@ public class AiServices {
 
 ### Core Annotations
 
-**@SystemMessage**: Define system prompt for the AI service.
+**`@`SystemMessage**: Define system prompt for the AI service.
 ```java
 @SystemMessage("You are a helpful Java developer")
 String chat(String userMessage);
@@ -43,7 +43,7 @@ String chat(String userMessage);
 String explain(@V("expertise") String domain, String question);
 ```
 
-**@UserMessage**: Define user message template.
+**`@`UserMessage**: Define user message template.
 ```java
 @UserMessage("Translate to {{language}}: {{text}}")
 String translate(@V("language") String lang, @V("text") String text);
@@ -53,7 +53,7 @@ String translate(@V("language") String lang, @V("text") String text);
 String summarize(String text); // {{it}} refers to parameter
 ```
 
-**@MemoryId**: Create separate memory context per identifier.
+**`@`MemoryId**: Create separate memory context per identifier.
 ```java
 interface MultiUserChat {
     String chat(@MemoryId String userId, String message);
@@ -61,7 +61,7 @@ interface MultiUserChat {
 }
 ```
 
-**@V**: Map method parameter to template variable.
+**`@`V**: Map method parameter to template variable.
 ```java
 @UserMessage("Write {{type}} code for {{language}}")
 String writeCode(@V("type") String codeType, @V("language") String lang);
@@ -86,7 +86,7 @@ ChatMemoryProvider provider = memoryId ->
 
 ### Tool Integration
 
-**@Tool**: Mark methods that LLM can call.
+**`@`Tool**: Mark methods that LLM can call.
 ```java
 @Tool("Calculate sum of two numbers")
 int add(@P("first number") int a, @P("second number") int b) {
@@ -94,7 +94,7 @@ int add(@P("first number") int a, @P("second number") int b) {
 }
 ```
 
-**@P**: Parameter description for LLM.
+**`@`P**: Parameter description for LLM.
 ```java
 @Tool("Search documents")
 List<Document> search(
@@ -115,7 +115,7 @@ ToolProvider provider = context ->
 
 ### Structured Output
 
-**@Description**: Annotate output fields for extraction.
+**`@`Description**: Annotate output fields for extraction.
 ```java
 class Person {
     @Description("Person's full name")

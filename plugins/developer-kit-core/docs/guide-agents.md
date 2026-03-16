@@ -73,8 +73,6 @@ General purpose agents for code analysis, review, refactoring, architecture desi
 | `general-debugger` | Root cause analysis and targeted debugging |
 | `document-generator-expert` | Professional document generation for assessments and specs |
 
-**Documentation**: [Core Agent Guide](./agents.md)
-
 ---
 
 ### Java Plugin Agents

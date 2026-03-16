@@ -13,7 +13,7 @@
 - [ ] Proper HTTP methods and status codes
 - [ ] All parameters validated with pipes (ParseUUIDPipe, ParseIntPipe, etc.)
 - [ ] Request bodies validated with DTOs and ValidationPipe
-- [ ] OpenAPI decorators present (@ApiTags, @ApiOperation, @ApiResponse)
+- [ ] OpenAPI decorators present (`@`ApiTags, `@`ApiOperation, `@`ApiResponse)
 - [ ] Proper error responses documented
 - [ ] No direct repository or database access
 - [ ] Route versioning applied consistently
@@ -32,23 +32,23 @@
 - [ ] Response DTOs that exclude sensitive fields
 - [ ] Proper type definitions (no `any`)
 - [ ] Validation error messages are user-friendly
-- [ ] Nested objects properly validated with @ValidateNested and @Type
-- [ ] Array items validated with @ArrayMinSize, @ArrayMaxSize
-- [ ] Optional fields marked with @IsOptional
+- [ ] Nested objects properly validated with `@`ValidateNested and `@`Type
+- [ ] Array items validated with `@`ArrayMinSize, `@`ArrayMaxSize
+- [ ] Optional fields marked with `@`IsOptional
 
 ## Dependency Injection
 - [ ] All services use constructor injection
 - [ ] Proper provider scoping (Singleton, Request, Transient)
 - [ ] Custom providers use proper tokens (string or Symbol)
 - [ ] No circular dependencies (or resolved with forwardRef)
-- [ ] Interface-based injection with @Inject token for abstraction
+- [ ] Interface-based injection with `@`Inject token for abstraction
 
 ## Guards and Authorization
 - [ ] All protected routes have authentication guards
 - [ ] Role-based authorization uses guards + decorators, not inline checks
 - [ ] Guards are composable and reusable
-- [ ] Custom decorators for extracting user context (@CurrentUser)
-- [ ] Public routes explicitly marked with @Public or similar
+- [ ] Custom decorators for extracting user context (`@`CurrentUser)
+- [ ] Public routes explicitly marked with `@`Public or similar
 
 ## Interceptors and Middleware
 - [ ] Cross-cutting concerns handled by interceptors (logging, caching, transformation)

@@ -28,7 +28,7 @@ DTOs:
 - Response always includes id
 
 JPA entity:
-- @Id with @GeneratedValue(IDENTITY) for numeric generated ids
+- `@`Id with `@`GeneratedValue(IDENTITY) for numeric generated ids
 
 Notes:
 - Provide all templates in templates/ (see templates/README.md)

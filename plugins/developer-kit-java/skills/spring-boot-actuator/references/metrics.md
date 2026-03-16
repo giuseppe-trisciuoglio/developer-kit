@@ -233,7 +233,7 @@ public class MyService {
 }
 ```
 
-### Using @Timed Annotation
+### Using `@`Timed Annotation
 
 You can use the `@Timed` annotation to time method executions:
 
@@ -262,7 +262,7 @@ public class TimedConfiguration {
 }
 ```
 
-### Using @Counted Annotation
+### Using `@`Counted Annotation
 
 You can use the `@Counted` annotation to count method invocations:
 

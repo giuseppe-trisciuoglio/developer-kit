@@ -1,6 +1,6 @@
 ---
 name: unit-test-bean-validation
-description: Provides patterns for unit testing Jakarta Bean Validation (@Valid, @NotNull, @Min, @Max, etc.) with custom validators and constraint violations. Validates logic without Spring context. Use when ensuring data integrity and validation rules are correct.
+description: Provides patterns for unit testing Jakarta Bean Validation (`@Valid`, `@NotNull`, `@Min`, `@Max`, etc.) with custom validators and constraint violations. Validates logic without Spring context. Use when ensuring data integrity and validation rules are correct.
 allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
@@ -8,13 +8,13 @@ allowed-tools: Read, Write, Bash, Glob, Grep
 
 ## Overview
 
-This skill provides patterns for unit testing Jakarta Bean Validation annotations and custom validator implementations using JUnit 5. It covers testing built-in constraints (@NotNull, @Email, @Min, @Max), creating custom validators, cross-field validation, validation groups, and parameterized testing scenarios.
+This skill provides patterns for unit testing Jakarta Bean Validation annotations and custom validator implementations using JUnit 5. It covers testing built-in constraints (`@NotNull`, `@Email`, `@Min`, `@Max`), creating custom validators, cross-field validation, validation groups, and parameterized testing scenarios.
 
 ## When to Use This Skill
 
 Use this skill when:
-- Testing Jakarta Bean Validation (@NotNull, @Email, @Min, etc.)
-- Testing custom @Constraint validators
+- Testing Jakarta Bean Validation (`@`NotNull, `@`Email, `@`Min, etc.)
+- Testing custom `@`Constraint validators
 - Verifying constraint violation error messages
 - Testing cross-field validation logic
 - Want fast validation tests without Spring context
@@ -23,12 +23,12 @@ Use this skill when:
 ## Instructions
 
 1. **Add validation dependencies**: Include jakarta.validation-api and hibernate-validator in your test classpath
-2. **Create a Validator instance**: Use `Validation.buildDefaultValidatorFactory().getValidator()` in @BeforeEach
+2. **Create a Validator instance**: Use `Validation.buildDefaultValidatorFactory().getValidator()` in `@`BeforeEach
 3. **Test valid scenarios**: Always test that valid objects pass validation without violations
 4. **Test each constraint separately**: Create focused tests for individual validation rules
 5. **Extract violation details**: Use assertions to verify property path, message, and invalid value
 6. **Test custom validators**: Write dedicated tests for each custom constraint implementation
-7. **Use parameterized tests**: Apply @ParameterizedTest for testing multiple invalid inputs efficiently
+7. **Use parameterized tests**: Apply `@`ParameterizedTest for testing multiple invalid inputs efficiently
 8. **Test validation groups**: Verify conditional validation based on validation groups
 
 ## Examples
@@ -116,7 +116,7 @@ class UserValidationTest {
 
 ## Testing Individual Constraint Annotations
 
-### Test @NotNull, @NotBlank, @Email
+### Test `@`NotNull, `@`NotBlank, `@`Email
 
 ```java
 class UserDtoTest {
@@ -177,7 +177,7 @@ class UserDtoTest {
 }
 ```
 
-## Testing @Min, @Max, @Size Constraints
+## Testing `@`Min, `@`Max, `@`Size Constraints
 
 ```java
 class ProductDtoTest {
@@ -476,10 +476,10 @@ class EmailValidationTest {
 
 ## Constraints and Warnings
 
-- **Constraints ignore null by default**: Except @NotNull, most constraints ignore null values; combine with @NotNull for mandatory fields
+- **Constraints ignore null by default**: Except `@`NotNull, most constraints ignore null values; combine with `@`NotNull for mandatory fields
 - **Validator is thread-safe**: Validator instances can be shared across tests, but create new ones for isolation if needed
 - **Message localization**: Test with different locales if your application supports internationalization
-- **Cascading validation**: Use @Valid on nested objects to enable cascading validation
+- **Cascading validation**: Use `@`Valid on nested objects to enable cascading validation
 - **Performance consideration**: Validation has overhead; don't over-validate in critical paths
 - **Custom validators must be stateless**: Validator implementations should not maintain state between invocations
 - **Test in isolation**: Validation tests should not depend on Spring context or database

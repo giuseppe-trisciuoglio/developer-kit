@@ -17,7 +17,7 @@ Use only the sections relevant to the project. Not all sections are needed.
 
 Document the essential commands for working with the project.
 
-```markdown
+~~~markdown
 ## Commands
 
 | Command | Description |
@@ -27,16 +27,16 @@ Document the essential commands for working with the project.
 | `<cmd>` | Production build |
 | `<cmd>` | Run tests |
 | `<cmd>` | Lint/format code |
-```
+~~~
 
 ### Architecture
 
 Describe the project structure so Claude understands where things live.
 
-```markdown
+~~~markdown
 ## Architecture
 
-```
+~~~
 <tree-structure>
 ```
 
@@ -240,3 +240,4 @@ When updating any CLAUDE.md:
 2. **Be current**: Verify info against the actual codebase
 3. **Be brief**: One line per concept when possible
 4. **Be useful**: Would this help a new Claude session understand the project?
+```

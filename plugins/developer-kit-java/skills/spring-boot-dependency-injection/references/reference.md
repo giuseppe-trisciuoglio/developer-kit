@@ -40,7 +40,7 @@ public interface BeanFactory {
 
 ## Dependency Injection Annotations
 
-### @Autowired
+### `@`Autowired
 Auto-wire dependencies (property, constructor, or method injection).
 
 ```java
@@ -49,7 +49,7 @@ Auto-wire dependencies (property, constructor, or method injection).
 @Autowired private UserRepository repository;  // Field injection (avoid)
 ```
 
-### @Qualifier
+### `@`Qualifier
 Disambiguate when multiple beans of same type exist.
 
 ```java
@@ -62,7 +62,7 @@ private DataSource dataSource;
 public CacheService cacheService() { }
 ```
 
-### @Primary
+### `@`Primary
 Mark bean as preferred when multiple exist.
 
 ```java
@@ -74,7 +74,7 @@ public DataSource primaryDataSource() { }
 public DataSource secondaryDataSource() { }
 ```
 
-### @Value
+### `@`Value
 Inject properties and SpEL expressions.
 
 ```java
@@ -85,7 +85,7 @@ Inject properties and SpEL expressions.
 private String value;
 ```
 
-### @Lazy
+### `@`Lazy
 Delay bean initialization until first access.
 
 ```java
@@ -98,7 +98,7 @@ public ExpensiveBean expensiveBean() { }
 private ExpensiveBean bean;  // Lazy proxy
 ```
 
-### @Scope
+### `@`Scope
 Define bean lifecycle scope.
 
 ```java
@@ -110,7 +110,7 @@ Define bean lifecycle scope.
 @Scope("websocket")     // One per WebSocket session
 ```
 
-### @Configuration
+### `@`Configuration
 Mark class as providing bean definitions.
 
 ```java
@@ -121,7 +121,7 @@ public class AppConfig {
 }
 ```
 
-### @Bean
+### `@`Bean
 Define a bean in configuration class.
 
 ```java
@@ -137,7 +137,7 @@ public UserService userService() { }
 public UserService userService() { }
 ```
 
-### @Component / @Service / @Repository / @Controller
+### `@`Component / `@`Service / `@`Repository / `@`Controller
 Stereotype annotations for component scanning.
 
 ```java
@@ -151,7 +151,7 @@ public class UserService { }
 
 ## Conditional Bean Registration
 
-### @ConditionalOnProperty
+### `@`ConditionalOnProperty
 Create bean only if property exists.
 
 ```java
@@ -167,7 +167,7 @@ public NotificationService notificationService() { }
 public NotificationService notificationService() { }
 ```
 
-### @ConditionalOnClass / @ConditionalOnMissingClass
+### `@`ConditionalOnClass / `@`ConditionalOnMissingClass
 Create bean based on classpath availability.
 
 ```java
@@ -180,7 +180,7 @@ public CacheService cacheService() { }
 public LocalCacheService fallbackCacheService() { }
 ```
 
-### @ConditionalOnBean / @ConditionalOnMissingBean
+### `@`ConditionalOnBean / `@`ConditionalOnMissingBean
 Create bean based on other beans.
 
 ```java
@@ -193,7 +193,7 @@ public UserService userService() { }
 public UserService defaultUserService() { }
 ```
 
-### @ConditionalOnExpression
+### `@`ConditionalOnExpression
 Create bean based on SpEL expression.
 
 ```java
@@ -204,7 +204,7 @@ public SecurityService securityService() { }
 
 ## Profile-Based Configuration
 
-### @Profile
+### `@`Profile
 Activate bean only in specific profiles.
 
 ```java
@@ -233,7 +233,7 @@ spring.datasource.url=jdbc:postgresql://prod-db:5432/prod
 
 ## Component Scanning
 
-### @ComponentScan
+### `@`ComponentScan
 Configure component scanning.
 
 ```java
@@ -485,7 +485,7 @@ public class ResourceManager implements InitializingBean, DisposableBean {
 }
 ```
 
-### @PostConstruct / @PreDestroy
+### `@`PostConstruct / `@`PreDestroy
 
 ```java
 @Component
@@ -505,7 +505,7 @@ public class ResourceManager {
 }
 ```
 
-### @Bean with initMethod and destroyMethod
+### `@`Bean with initMethod and destroyMethod
 
 ```java
 @Configuration
@@ -611,13 +611,13 @@ class UserControllerTest {
 | Constructor injection | ✅ Mandatory | Explicit, immutable, testable |
 | Setter injection | ⚠️ Optional deps | Clear optionality |
 | Field injection | ❌ Never | Hidden, untestable |
-| @Autowired on constructor | ✅ Implicit (4.3+) | Clear intent |
-| Lombok @RequiredArgsConstructor | ✅ Recommended | Reduces boilerplate |
+| `@`Autowired on constructor | ✅ Implicit (4.3+) | Clear intent |
+| Lombok `@`RequiredArgsConstructor | ✅ Recommended | Reduces boilerplate |
 | Circular dependencies | ❌ Avoid | Use events instead |
 | Too many dependencies | ❌ Avoid | SRP violation |
-| @Lazy for expensive beans | ✅ Appropriate | Faster startup |
+| `@`Lazy for expensive beans | ✅ Appropriate | Faster startup |
 | Profiles for environments | ✅ Recommended | Environment-specific config |
-| @Value for properties | ✅ Recommended | Type-safe injection |
+| `@`Value for properties | ✅ Recommended | Type-safe injection |
 
 ## External Resources
 

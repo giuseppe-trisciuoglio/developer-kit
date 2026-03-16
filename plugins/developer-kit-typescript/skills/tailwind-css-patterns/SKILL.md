@@ -66,7 +66,7 @@ function ProductCard({ product }: { product: Product }) {
 - **Class Proliferation**: Long class strings can reduce readability; extract components when needed
 - **Purge Configuration**: Must configure content paths correctly for production builds
 - **Arbitrary Values**: Use sparingly; prefer design tokens for consistency
-- **Specificity Issues**: Avoid @apply with complex selectors
+- **Specificity Issues**: Avoid `@`apply with complex selectors
 - **Dark Mode**: Requires proper configuration (class or media strategy)
 - **JIT Mode**: Some dynamic patterns may not be detected; use safelist if needed
 - **Browser Support**: Check Tailwind docs for browser compatibility
@@ -690,12 +690,12 @@ export default {
 2. **Consistent Spacing**: Use Tailwind's spacing scale (4, 8, 12, 16, etc.)
 3. **Color Palette**: Stick to Tailwind's color system for consistency
 4. **Component Extraction**: Extract repeated patterns into components
-5. **Utility Composition**: Prefer utility classes over @apply for better maintainability
+5. **Utility Composition**: Prefer utility classes over `@`apply for better maintainability
 6. **Semantic HTML**: Use proper HTML elements with Tailwind classes
 7. **Performance**: Configure content paths correctly for optimal CSS purging
 8. **Accessibility**: Include focus styles, ARIA labels, and respect user preferences
-9. **CSS-First Config**: Use @theme directive for v4.1+ instead of JavaScript config
-10. **Custom Utilities**: Create reusable utilities with @utility for complex patterns
+9. **CSS-First Config**: Use `@`theme directive for v4.1+ instead of JavaScript config
+10. **Custom Utilities**: Create reusable utilities with `@`utility for complex patterns
 
 ## Configuration
 

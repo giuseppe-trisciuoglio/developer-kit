@@ -32,7 +32,7 @@ Configure management.endpoints.web.exposure.include property with the specific e
 
 ### 3. Secure Management Traffic
 
-Apply Spring Security to management endpoints using @Configuration class with EndpointRequest matcher. Consider using a dedicated management port for additional isolation.
+Apply Spring Security to management endpoints using `@`Configuration class with EndpointRequest matcher. Consider using a dedicated management port for additional isolation.
 
 ### 4. Configure Health Probes
 
@@ -92,7 +92,7 @@ Test each endpoint is accessible and returns expected data. Verify health checks
 ### 5. Enable diagnostics tooling
 - Turn on `/actuator/startup` (Spring Boot 3.5+) and `/actuator/conditions` during incident response to inspect auto-configuration decisions.
 - Register an `HttpExchangeRepository` (e.g., `InMemoryHttpExchangeRepository`) before enabling `/actuator/httpexchanges` for request auditing.
-- Consult `references/official-actuator-docs.md` for endpoint behaviors and limits.
+- Consult `references/endpoint-reference.md` for endpoint behaviors and limits.
 
 ## Examples
 
@@ -198,7 +198,7 @@ More end-to-end samples are available in `references/examples.md`.
 ## Reference Materials
 - [Endpoint quick reference](references/endpoint-reference.md)
 - [Implementation examples](references/examples.md)
-- [Official documentation extract](references/official-actuator-docs.md)
+- [Official documentation extract](references/endpoint-reference.md)
 - [Auditing with Actuator](references/auditing.md)
 - [Cloud Foundry integration](references/cloud-foundry.md)
 - [Enabling Actuator features](references/enabling.md)

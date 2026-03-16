@@ -2,11 +2,11 @@ Amazon Bedrock examples using SDK for Java 2.x - AWS SDK for Java 2.x
 
 Amazon Bedrock examples using SDK for Java 2.x - AWS SDK for Java 2.x
 
-[Open PDF](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock_code_examples.html/pdfs/sdk-for-java/latest/developer-guide/aws-sdk-java-dg-v2.pdf#java_bedrock_code_examples "Open PDF")
+[Open PDF](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock_code_examples.html/pdfs/sdk-for-java/latest/developer-guide/aws-sdk-java-dg-v2.pdf#java_bedrock_code_examples "Open PDF")
 
-[Documentation](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock_code_examples.html/index.html) [AWS SDK for Java](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock_code_examples.html/sdk-for-java/index.html) [Developer Guide for version 2.x](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock_code_examples.html/home.html)
+[Documentation](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock_code_examples.html/index.html) [AWS SDK for Java](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock_code_examples.html/sdk-for-java/index.html) [Developer Guide for version 2.x](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock_code_examples.html/home.html)
 
-[Actions](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock_code_examples.html#actions)
+[Actions](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock_code_examples.html#actions)
 
 # Amazon Bedrock examples using SDK for Java 2.x
 
@@ -20,7 +20,7 @@ instructions on how to set up and run the code in context.
 
 ###### Topics
 
-- [Actions](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock_code_examples.html#actions)
+- [Actions](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock_code_examples.html#actions)
 
 
 ## Actions
@@ -230,7 +230,7 @@ in _AWS SDK for Java 2.x API Reference_.
 
 
 
-[Document Conventions](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock_code_examples.html/general/latest/gr/docconventions.html)
+[Document Conventions](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock_code_examples.html/general/latest/gr/docconventions.html)
 
 AWS Batch
 

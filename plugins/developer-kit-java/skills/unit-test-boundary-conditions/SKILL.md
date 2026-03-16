@@ -24,7 +24,7 @@ Use this skill when:
 ## Instructions
 
 1. **Identify boundaries**: List all numeric limits (MIN_VALUE, MAX_VALUE, zero), string states (null, empty, whitespace), and collection sizes (empty, single, many)
-2. **Use parameterized tests**: Apply @ParameterizedTest with @ValueSource for testing multiple boundary values efficiently
+2. **Use parameterized tests**: Apply `@`ParameterizedTest with `@`ValueSource for testing multiple boundary values efficiently
 3. **Test both sides of boundaries**: Test values just below, at, and just above each boundary
 4. **Verify floating point precision**: Use `isCloseTo(expected, within(tolerance))` for floating point comparisons
 5. **Test collection states**: Explicitly test empty (0), single (1), and many (>1) element scenarios

@@ -138,7 +138,7 @@ management:
 
 ## Custom Spans
 
-### Using @Observed Annotation
+### Using `@`Observed Annotation
 
 ```java
 @Service
@@ -388,7 +388,7 @@ public class UserRepository {
 
 ## Async Processing Tracing
 
-### @Async Methods
+### `@`Async Methods
 
 ```java
 @Service

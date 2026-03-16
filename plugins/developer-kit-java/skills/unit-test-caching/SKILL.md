@@ -1,6 +1,6 @@
 ---
 name: unit-test-caching
-description: Provides patterns for unit testing caching behavior using Spring Cache annotations (@Cacheable, @CachePut, @CacheEvict). Use when validating cache configuration and cache hit/miss scenarios.
+description: Provides patterns for unit testing caching behavior using Spring Cache annotations (`@Cacheable`, `@CachePut`, `@CacheEvict`). Use when validating cache configuration and cache hit/miss scenarios.
 allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
@@ -8,14 +8,14 @@ allowed-tools: Read, Write, Bash, Glob, Grep
 
 ## Overview
 
-This skill provides patterns for unit testing Spring caching annotations (@Cacheable, @CacheEvict, @CachePut) without full Spring context. It covers testing cache behavior, hits/misses, invalidation strategies, cache key generation, and conditional caching using in-memory cache managers.
+This skill provides patterns for unit testing Spring caching annotations (`@Cacheable`, `@CacheEvict`, `@CachePut`) without full Spring context. It covers testing cache behavior, hits/misses, invalidation strategies, cache key generation, and conditional caching using in-memory cache managers.
 
 ## When to Use
 
 Use this skill when:
-- Testing @Cacheable method caching
-- Testing @CacheEvict cache invalidation
-- Testing @CachePut cache updates
+- Testing `@`Cacheable method caching
+- Testing `@`CacheEvict cache invalidation
+- Testing `@`CachePut cache updates
 - Verifying cache key generation
 - Testing conditional caching
 - Want fast caching tests without Redis or cache infrastructure
@@ -27,7 +27,7 @@ Use this skill when:
 3. **Test both cache and eviction scenarios**: Verify data is cached on first call and evicted when appropriate
 4. **Test cache key generation**: Ensure SpEL expressions in `@Cacheable(key = "...")` produce correct keys
 5. **Test conditional caching**: Verify `unless` and `condition` parameters work correctly
-6. **Clear cache between tests**: Reset cache state in @BeforeEach or use @DirtiesContext
+6. **Clear cache between tests**: Reset cache state in `@`BeforeEach or use `@`DirtiesContext
 7. **Mock service dependencies**: Use mocks for repositories and other services the caching layer uses
 8. **Verify cache behavior explicitly**: Don't rely on timing; verify actual cache hit/miss behavior
 
@@ -68,7 +68,7 @@ dependencies {
 }
 ```
 
-## Basic Pattern: Testing @Cacheable
+## Basic Pattern: Testing `@`Cacheable
 
 ### Cache Hit and Miss Behavior
 
@@ -148,7 +148,7 @@ class UserServiceCachingTest {
 }
 ```
 
-## Testing @CacheEvict
+## Testing `@`CacheEvict
 
 ### Cache Invalidation
 
@@ -228,7 +228,7 @@ class ProductCacheEvictTest {
 }
 ```
 
-## Testing @CachePut
+## Testing `@`CachePut
 
 ### Cache Update
 
@@ -401,11 +401,11 @@ class CacheKeyTest {
 
 ## Constraints and Warnings
 
-- **@Cacheable requires a proxy**: Spring's caching works via proxies; direct method calls bypass caching
+- **`@`Cacheable requires a proxy**: Spring's caching works via proxies; direct method calls bypass caching
 - **Cache key collisions**: Be aware that different parameters can produce the same cache key if key generation is not specific
 - **Serialization requirements**: Cached objects must be serializable when using distributed caches
 - **Memory usage**: In-memory caches can consume significant memory; consider TTL and max-size settings
-- **@CachePut vs @Cacheable**: @CachePut always executes the method, while @Cacheable skips execution on cache hit
+- **`@`CachePut vs `@`Cacheable**: `@`CachePut always executes the method, while `@`Cacheable skips execution on cache hit
 - **Null caching**: By default, null results are cached unless `unless = "#result == null"` is specified
 - **Thread safety**: Cache operations should be thread-safe; verify behavior under concurrent access
 

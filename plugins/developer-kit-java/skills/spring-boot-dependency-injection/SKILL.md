@@ -32,27 +32,27 @@ List all collaborators required by each class. Distinguish between mandatory dep
 
 ### 2. Apply Constructor Injection
 
-Create constructors that accept all mandatory dependencies. Mark fields as final. Use Lombok @RequiredArgsConstructor to reduce boilerplate.
+Create constructors that accept all mandatory dependencies. Mark fields as final. Use Lombok `@`RequiredArgsConstructor to reduce boilerplate.
 
 ### 3. Handle Optional Collaborators
 
-For optional dependencies, provide setter methods with @Autowired(required = false) or use ObjectProvider<T> for lazy resolution. Include default no-op implementations.
+For optional dependencies, provide setter methods with `@`Autowired(required = false) or use ObjectProvider<T> for lazy resolution. Include default no-op implementations.
 
 ### 4. Configure Beans
 
-Declare @Bean methods in @Configuration classes. Use conditional annotations (@ConditionalOnProperty, @ConditionalOnMissingBean) for environment-specific beans.
+Declare `@`Bean methods in `@`Configuration classes. Use conditional annotations (`@`ConditionalOnProperty, `@`ConditionalOnMissingBean) for environment-specific beans.
 
 ### 5. Resolve Ambiguity
 
-Apply @Primary to default implementations. Use @Qualifier with specific names when multiple beans of the same type exist.
+Apply `@`Primary to default implementations. Use `@`Qualifier with specific names when multiple beans of the same type exist.
 
 ### 6. Validate Wiring
 
-Write unit tests that instantiate classes directly with mock dependencies. Add slice tests (@WebMvcTest, @DataJpaTest) to verify Spring context loads without errors.
+Write unit tests that instantiate classes directly with mock dependencies. Add slice tests (`@`WebMvcTest, `@`DataJpaTest) to verify Spring context loads without errors.
 
 ### 7. Review Configuration
 
-Ensure no field injection (@Autowired on fields) remains. Verify circular dependencies are resolved through domain events or extracted services.
+Ensure no field injection (`@`Autowired on fields) remains. Verify circular dependencies are resolved through domain events or extracted services.
 
 ## Prerequisites
 
