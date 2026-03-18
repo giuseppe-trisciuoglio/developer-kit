@@ -22,7 +22,8 @@
 SHELL := /bin/bash
 .PHONY: all help check-deps list-plugins list-components list-agents list-commands list-skills list-rules \
         install install-claude install-opencode install-copilot install-codex \
-        install-rules uninstall status backup clean security-scan security-scan-changed
+        install-rules uninstall status backup clean security-scan security-scan-changed \
+        skill-lint skill-security skill-review plugin-validate plugin-bump-version
 
 # ═══════════════════════════════════════════════════════════════
 # COLORS & OUTPUT FORMATTING
@@ -42,6 +43,11 @@ NC     := \033[0m # No Color
 DEVKIT_DIR   := $(shell pwd)
 PLUGINS_DIR  := $(DEVKIT_DIR)/plugins
 BACKUP_DIR   := $(HOME)/.devkit-backups/$(shell date +%Y%m%d_%H%M%S)
+BUMP         ?= patch
+VALIDATOR_CLI := python3 .skills-validator-check/validators/cli.py
+MCP_SCAN_CLI  := python3 .skills-validator-check/validators/mcp_scan_checker.py
+MARKETPLACE_JSON := .claude-plugin/marketplace.json
+TILE_JSON       := tile.json
 
 # Target directories per CLI
 CLAUDE_DIR        := .claude
@@ -172,6 +178,13 @@ help:
 	@echo "  make list-rules           List all available rules"
 	@echo ""
 	@echo -e "$(GREEN)Quality:$(NC)"
+	@echo "  make skill-lint SKILL=path            Validate one skill with the skill validator"
+	@echo "  make skill-security SKILL=path        Run MCP security validation on one skill"
+	@echo "  make skill-review SKILL=path          Review one skill with tessl"
+	@echo "  make plugin-validate                  Validate all components in the repository"
+	@echo "  make plugin-bump-version              Bump versions in marketplace.json, plugin.json, and tile.json"
+	@echo "    Examples: make plugin-bump-version BUMP=minor"
+	@echo "              make plugin-bump-version VERSION=2.8.0"
 	@echo "  make security-scan          Run MCP-Scan security check on all skills"
 	@echo "  make security-scan-changed  Run MCP-Scan only on changed skills (vs main)"
 	@echo ""
@@ -803,6 +816,74 @@ install-codex: check-deps
 	@echo ""
 
 # ═══════════════════════════════════════════════════════════════
+# SKILL VALIDATION
+# ═══════════════════════════════════════════════════════════════
+
+skill-lint:
+	@if [ -z "$(SKILL)" ]; then \
+		echo -e "$(RED)✗ Usage: make skill-lint SKILL=plugins/<plugin>/skills/<skill-dir>$(NC)"; \
+		exit 1; \
+	fi
+	@skill_input="$(SKILL)"; \
+	if [ -d "$$skill_input" ]; then \
+		skill_entry="$$skill_input/SKILL.md"; \
+	else \
+		skill_entry="$$skill_input"; \
+	fi; \
+	if [ ! -f "$$skill_entry" ]; then \
+		echo -e "$(RED)✗ Skill entrypoint not found: $$skill_entry$(NC)"; \
+		exit 1; \
+	fi; \
+	echo -e "$(BLUE)ℹ Running skill validator on $$skill_entry$(NC)"; \
+	$(VALIDATOR_CLI) --files "$$skill_entry" -v
+
+skill-security:
+	@if [ -z "$(SKILL)" ]; then \
+		echo -e "$(RED)✗ Usage: make skill-security SKILL=plugins/<plugin>/skills/<skill-dir>$(NC)"; \
+		exit 1; \
+	fi
+	@skill_input="$(SKILL)"; \
+	if [ ! -e "$$skill_input" ]; then \
+		echo -e "$(RED)✗ Skill path not found: $$skill_input$(NC)"; \
+		exit 1; \
+	fi; \
+	echo -e "$(BLUE)ℹ Running MCP security validation on $$skill_input$(NC)"; \
+	$(MCP_SCAN_CLI) --path "$$skill_input" -v
+
+skill-review:
+	@if [ -z "$(SKILL)" ]; then \
+		echo -e "$(RED)✗ Usage: make skill-review SKILL=plugins/<plugin>/skills/<skill-dir>$(NC)"; \
+		exit 1; \
+	fi
+	@if ! command -v tessl >/dev/null 2>&1; then \
+		echo -e "$(RED)✗ 'tessl' command not found in PATH$(NC)"; \
+		exit 1; \
+	fi
+	@skill_input="$(SKILL)"; \
+	if [ -f "$$skill_input" ]; then \
+		skill_dir="$$(dirname "$$skill_input")"; \
+	else \
+		skill_dir="$$skill_input"; \
+	fi; \
+	if [ ! -d "$$skill_dir" ]; then \
+		echo -e "$(RED)✗ Skill directory not found: $$skill_dir$(NC)"; \
+		exit 1; \
+	fi; \
+	echo -e "$(BLUE)ℹ Running tessl skill review on $$skill_dir$(NC)"; \
+	tessl skill review "$$skill_dir"
+
+plugin-validate:
+	@echo -e "$(BLUE)ℹ Running repository-wide component validation$(NC)"
+	@$(VALIDATOR_CLI) --all -v
+
+# ═══════════════════════════════════════════════════════════════
+# VERSION BUMP
+# ═══════════════════════════════════════════════════════════════
+
+plugin-bump-version:
+	@VERSION="$(VERSION)" BUMP="$(BUMP)" python3 scripts/bump_plugin_versions.py
+
+# ═══════════════════════════════════════════════════════════════
 # CLAUDE CODE INTERACTIVE INSTALLATION
 # ═══════════════════════════════════════════════════════════════
 # TO BE IMPLEMENTED - This will be a comprehensive interactive installer
@@ -827,10 +908,10 @@ install-claude: check-deps
 # ═══════════════════════════════════════════════════════════════
 
 security-scan:
-	@python3 .skills-validator-check/validators/mcp_scan_checker.py --all -v
+	@$(MCP_SCAN_CLI) --all -v
 
 security-scan-changed:
-	@python3 .skills-validator-check/validators/mcp_scan_checker.py --changed -v
+	@$(MCP_SCAN_CLI) --changed -v
 
 # ═══════════════════════════════════════════════════════════════
 # CLEAN

@@ -1,6 +1,6 @@
 {
   "name": "developer-kit",
-  "version": "2.6.2",
+  "version": "2.6.3",
   "description": "Core agents and commands required by all Developer Kit plugins",
   "author": {
     "name": "Giuseppe Trisciuoglio",
@@ -53,6 +53,5 @@
     "./skills/drawio-logical-diagrams",
     "./skills/github-issue-workflow",
     "./skills/docs-updater"
-  ],
-  "hooks": "./hooks/hooks.json"
+  ]
 }
