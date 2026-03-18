@@ -53,6 +53,5 @@
     "./skills/drawio-logical-diagrams",
     "./skills/github-issue-workflow",
     "./skills/docs-updater"
-  ],
-  "hooks": "./hooks/hooks.json"
+  ]
 }
