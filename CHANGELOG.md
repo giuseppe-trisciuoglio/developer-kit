@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.6.3] - 2026-03-18
+
+### Fixed
+
+- **Core Hook Fix** (`developer-kit-core`):
+  - Removed duplicate hook loading issue (Closes #158)
+
 ## [2.6.2] - 2026-03-16
 
 ### Fixed
@@ -1017,8 +1024,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.1...HEAD
-[2.5.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.0...v2.6.1
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.3...HEAD
+[2.6.3]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.2...v2.6.3
+[2.6.2]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.1...v2.6.2
+[2.6.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.0...v2.6.1
 [2.6.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.5.1...v2.6.0
 [2.5.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.5.0...v2.5.1
 [2.5.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.4.1...v2.5.0
