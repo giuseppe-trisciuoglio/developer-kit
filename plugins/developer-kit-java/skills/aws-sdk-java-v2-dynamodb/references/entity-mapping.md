@@ -2,7 +2,7 @@
 
 This document provides detailed information about entity mapping in DynamoDB Enhanced Client.
 
-## @DynamoDbBean Annotation
+## `@`DynamoDbBean Annotation
 
 The `@DynamoDbBean` annotation marks a class as a DynamoDB entity:
 
@@ -15,7 +15,7 @@ public class Customer {
 
 ## Field Annotations
 
-### @DynamoDbPartitionKey
+### `@`DynamoDbPartitionKey
 Marks a field as the partition key:
 
 ```java
@@ -25,7 +25,7 @@ public String getCustomerId() {
 }
 ```
 
-### @DynamoDbSortKey
+### `@`DynamoDbSortKey
 Marks a field as the sort key (used with composite keys):
 
 ```java
@@ -36,7 +36,7 @@ public String getOrderId() {
 }
 ```
 
-### @DynamoDbAttribute
+### `@`DynamoDbAttribute
 Maps a field to a DynamoDB attribute with custom name:
 
 ```java
@@ -46,7 +46,7 @@ public String getName() {
 }
 ```
 
-### @DynamoDbSecondaryPartitionKey
+### `@`DynamoDbSecondaryPartitionKey
 Marks a field as a partition key for a Global Secondary Index:
 
 ```java
@@ -56,7 +56,7 @@ public String getCategory() {
 }
 ```
 
-### @DynamoDbSecondarySortKey
+### `@`DynamoDbSecondarySortKey
 Marks a field as a sort key for a Global Secondary Index:
 
 ```java
@@ -66,7 +66,7 @@ public BigDecimal getPrice() {
 }
 ```
 
-### @DynamoDbConvertedBy
+### `@`DynamoDbConvertedBy
 Custom attribute conversion:
 
 ```java

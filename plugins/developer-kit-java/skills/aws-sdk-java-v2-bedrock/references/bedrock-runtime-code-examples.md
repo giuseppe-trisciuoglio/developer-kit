@@ -2,11 +2,11 @@ Amazon Bedrock Runtime examples using SDK for Java 2.x - AWS SDK for Java 2.x
 
 Amazon Bedrock Runtime examples using SDK for Java 2.x - AWS SDK for Java 2.x
 
-[Open PDF](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock-runtime_code_examples.html/pdfs/sdk-for-java/latest/developer-guide/aws-sdk-java-dg-v2.pdf#java_bedrock-runtime_code_examples "Open PDF")
+[Open PDF](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock-runtime_code_examples.html/pdfs/sdk-for-java/latest/developer-guide/aws-sdk-java-dg-v2.pdf#java_bedrock-runtime_code_examples "Open PDF")
 
-[Documentation](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock-runtime_code_examples.html/index.html) [AWS SDK for Java](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock-runtime_code_examples.html/sdk-for-java/index.html) [Developer Guide for version 2.x](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock-runtime_code_examples.html/home.html)
+[Documentation](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock-runtime_code_examples.html/index.html) [AWS SDK for Java](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock-runtime_code_examples.html/sdk-for-java/index.html) [Developer Guide for version 2.x](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock-runtime_code_examples.html/home.html)
 
-[Scenarios](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock-runtime_code_examples.html#scenarios) [Amazon Nova](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock-runtime_code_examples.html#amazon_nova) [Amazon Nova Canvas](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock-runtime_code_examples.html#amazon_nova_canvas) [Amazon Titan Image Generator](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock-runtime_code_examples.html#amazon_titan_image_generator) [Amazon Titan Text Embeddings](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock-runtime_code_examples.html#amazon_titan_text_embeddings) [Anthropic Claude](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock-runtime_code_examples.html#anthropic_claude) [Cohere Command](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock-runtime_code_examples.html#cohere_command) [Meta Llama](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock-runtime_code_examples.html#meta_llama) [Mistral AI](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock-runtime_code_examples.html#mistral_ai) [Stable Diffusion](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock-runtime_code_examples.html#stable_diffusion)
+[Scenarios](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock-runtime_code_examples.html#scenarios) [Amazon Nova](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock-runtime_code_examples.html#amazon_nova) [Amazon Nova Canvas](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock-runtime_code_examples.html#amazon_nova_canvas) [Amazon Titan Image Generator](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock-runtime_code_examples.html#amazon_titan_image_generator) [Amazon Titan Text Embeddings](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock-runtime_code_examples.html#amazon_titan_text_embeddings) [Anthropic Claude](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock-runtime_code_examples.html#anthropic_claude) [Cohere Command](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock-runtime_code_examples.html#cohere_command) [Meta Llama](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock-runtime_code_examples.html#meta_llama) [Mistral AI](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock-runtime_code_examples.html#mistral_ai) [Stable Diffusion](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock-runtime_code_examples.html#stable_diffusion)
 
 # Amazon Bedrock Runtime examples using SDK for Java 2.x
 
@@ -20,25 +20,25 @@ instructions on how to set up and run the code in context.
 
 ###### Topics
 
-- [Scenarios](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock-runtime_code_examples.html#scenarios)
+- [Scenarios](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock-runtime_code_examples.html#scenarios)
 
-- [Amazon Nova](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock-runtime_code_examples.html#amazon_nova)
+- [Amazon Nova](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock-runtime_code_examples.html#amazon_nova)
 
-- [Amazon Nova Canvas](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock-runtime_code_examples.html#amazon_nova_canvas)
+- [Amazon Nova Canvas](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock-runtime_code_examples.html#amazon_nova_canvas)
 
-- [Amazon Titan Image Generator](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock-runtime_code_examples.html#amazon_titan_image_generator)
+- [Amazon Titan Image Generator](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock-runtime_code_examples.html#amazon_titan_image_generator)
 
-- [Amazon Titan Text Embeddings](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock-runtime_code_examples.html#amazon_titan_text_embeddings)
+- [Amazon Titan Text Embeddings](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock-runtime_code_examples.html#amazon_titan_text_embeddings)
 
-- [Anthropic Claude](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock-runtime_code_examples.html#anthropic_claude)
+- [Anthropic Claude](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock-runtime_code_examples.html#anthropic_claude)
 
-- [Cohere Command](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock-runtime_code_examples.html#cohere_command)
+- [Cohere Command](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock-runtime_code_examples.html#cohere_command)
 
-- [Meta Llama](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock-runtime_code_examples.html#meta_llama)
+- [Meta Llama](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock-runtime_code_examples.html#meta_llama)
 
-- [Mistral AI](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock-runtime_code_examples.html#mistral_ai)
+- [Mistral AI](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock-runtime_code_examples.html#mistral_ai)
 
-- [Stable Diffusion](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock-runtime_code_examples.html#stable_diffusion)
+- [Stable Diffusion](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock-runtime_code_examples.html#stable_diffusion)
 
 
 ## Scenarios
@@ -4116,7 +4116,7 @@ in _AWS SDK for Java 2.x API Reference_.
 
 
 
-[Document Conventions](http://https:%2F%2Fdocs.aws.amazon.com%2Fsdk-for-java%2Flatest%2Fdeveloper-guide%2Fjava_bedrock-runtime_code_examples.html/general/latest/gr/docconventions.html)
+[Document Conventions](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/java_bedrock-runtime_code_examples.html/general/latest/gr/docconventions.html)
 
 Amazon Bedrock
 

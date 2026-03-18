@@ -560,7 +560,7 @@ describe('Documentation', () => {
 1. Install TypeDoc: `npm install --save-dev typedoc`
 2. Create configuration file
 3. Update comment syntax if needed
-4. Add @category and @group tags
+4. Add `@`category and `@`group tags
 5. Generate and review output
 6. Fix any warnings or errors
 

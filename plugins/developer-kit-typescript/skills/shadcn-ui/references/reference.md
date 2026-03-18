@@ -479,11 +479,11 @@ leaveDelay: 100
 return (
 
 
-![Preview](http://https:%2F%2Fcontext7.com%2Fwebsites%2Fshadcn_io%2Fllms.txt/thumbnail.jpg)
+![Preview](https://context7.com/websites/shadcn_io/llms.txt/thumbnail.jpg)
 {isHovering && (
 
 
-![Full size](http://https:%2F%2Fcontext7.com%2Fwebsites%2Fshadcn_io%2Fllms.txt/full-size.jpg)
+![Full size](https://context7.com/websites/shadcn_io/llms.txt/full-size.jpg)
 
 )}
 

@@ -51,7 +51,7 @@ Leverage AssertJ's readable assertion methods for clear test code.
 
 ### 7. Consider Parameterized Tests
 
-Use @ParameterizedTest for testing multiple similar scenarios with different inputs.
+Use `@`ParameterizedTest for testing multiple similar scenarios with different inputs.
 
 ## Examples
 
@@ -298,7 +298,7 @@ class ValidatorUtilsTest {
 
 ## Testing Parameterized Scenarios
 
-### Multiple Test Cases with @ParameterizedTest
+### Multiple Test Cases with `@`ParameterizedTest
 
 ```java
 import org.junit.jupiter.params.ParameterizedTest;
@@ -396,7 +396,7 @@ class MathUtilsEdgeCaseTest {
 - **Cover happy path and edge cases** - null, empty, extreme values
 - **Use descriptive test names** - clearly state what's being tested
 - **Keep tests simple and short** - utility tests should be quick to understand
-- **Use @ParameterizedTest** for testing multiple similar scenarios
+- **Use `@`ParameterizedTest** for testing multiple similar scenarios
 - **Avoid mocking when not needed** - only mock external dependencies
 - **Test boundary conditions** - min/max values, empty collections, null inputs
 

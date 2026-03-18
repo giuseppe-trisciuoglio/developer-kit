@@ -170,6 +170,6 @@ developer-kit-typescript/
 
 ## See Also
 
-- [Core Plugin Documentation](../developer-kit-core/docs/) - Core guides and installation
-- [Java Plugin Documentation](../developer-kit-java/docs/) - Java and Spring Boot guides
-- [Python Plugin Documentation](../developer-kit-python/docs/) - Python development guides
+- [Core Plugin Documentation](../../developer-kit-core/docs/) - Core guides and installation
+- [Java Plugin Documentation](../../developer-kit-java/docs/) - Java and Spring Boot guides
+- [Python Plugin Documentation](../../developer-kit-python/docs/) - Python development guides

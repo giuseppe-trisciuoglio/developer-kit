@@ -67,5 +67,5 @@ Commands are invoked using the slash syntax in Claude Code:
 
 ## See Also
 
-- [Core Command Guide](../developer-kit-core/docs/guide-commands.md) - All commands across plugins
-- [LRA Workflow Guide](../developer-kit-core/docs/guide-lra-workflow.md) - Long-running agent workflow
+- [Core Command Guide](../../developer-kit-core/docs/guide-commands.md) - All commands across plugins
+- [LRA Workflow Guide](../../developer-kit-core/docs/guide-lra-workflow.md) - Long-running agent workflow

@@ -282,7 +282,7 @@ public class ReactiveUserControllerIntegrationTest {
 
 ## Testcontainers Configuration Patterns
 
-### @ServiceConnection Pattern (Spring Boot 3.5+)
+### `@`ServiceConnection Pattern (Spring Boot 3.5+)
 
 ```java
 @TestConfiguration
@@ -300,7 +300,7 @@ public class TestContainerConfig {
 }
 ```
 
-### @DynamicPropertySource Pattern (Legacy)
+### `@`DynamicPropertySource Pattern (Legacy)
 
 ```java
 public class SharedContainers {

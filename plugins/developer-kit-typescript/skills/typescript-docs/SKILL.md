@@ -20,11 +20,11 @@ Deliver production-ready TypeScript documentation that serves multiple audiences
 ## Instructions
 
 1. **Configure TypeDoc**: Set up typedoc.json with entry points and output settings
-2. **Add JSDoc Comments**: Document all public APIs with @param, @returns, @example
+2. **Add JSDoc Comments**: Document all public APIs with `@`param, `@`returns, `@`example
 3. **Create ADRs**: Document architectural decisions with context and consequences
 4. **Set Up Pipeline**: Configure CI/CD for automated documentation generation
 5. **Write Examples**: Include runnable code examples for complex functions
-6. **Cross-Reference**: Use @see and @link to connect related documentation
+6. **Cross-Reference**: Use `@`see and `@`link to connect related documentation
 7. **Validate Docs**: Run ESLint with JSDoc rules to ensure completeness
 
 ## Examples
@@ -67,11 +67,11 @@ export class AuthService {
 
 ## Constraints and Warnings
 
-- **Private Members**: Use @private or exclude from TypeDoc output
+- **Private Members**: Use `@`private or exclude from TypeDoc output
 - **Complex Types**: Document generic constraints and type parameters
-- **Breaking Changes**: Use @deprecated with migration guidance
+- **Breaking Changes**: Use `@`deprecated with migration guidance
 - **Security Info**: Never include secrets or credentials in documentation
-- **Link Validity**: Ensure @see references point to valid locations
+- **Link Validity**: Ensure `@`see references point to valid locations
 - **Example Code**: All examples should be runnable and tested
 - **Versioning**: Keep documentation in sync with code versions
 
@@ -784,10 +784,10 @@ export function load(app) {
 ## Best Practices
 
 1. **Document Public APIs**: All public methods, classes, and interfaces
-2. **Use @example**: Provide runnable examples for complex functions
-3. **Include @throws**: Document all possible errors
-4. **Add @see**: Cross-reference related functions/types
-5. **Use @remarks**: Add implementation details and notes
+2. **Use `@`example**: Provide runnable examples for complex functions
+3. **Include `@`throws**: Document all possible errors
+4. **Add `@`see**: Cross-reference related functions/types
+5. **Use `@`remarks**: Add implementation details and notes
 6. **Document Generics**: Explain generic constraints and usage
 7. **Include Performance Notes**: Document time/space complexity
 8. **Add Security Warnings**: Highlight security considerations
@@ -798,9 +798,9 @@ export function load(app) {
 
 1. **Don't document obvious code**: Focus on why, not what
 2. **Avoid outdated examples**: Keep examples current
-3. **Don't skip error cases**: Document all @throws scenarios
+3. **Don't skip error cases**: Document all `@`throws scenarios
 4. **Avoid generic descriptions**: Be specific to your implementation
 5. **Don't ignore edge cases**: Document special conditions
-6. **Avoid broken links**: Keep @see references valid
+6. **Avoid broken links**: Keep `@`see references valid
 7. **Don't use unclear language**: Write for your audience
 8. **Avoid duplication**: Link to related docs instead of repeating

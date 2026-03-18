@@ -16,7 +16,7 @@ This document provides detailed reference information for Spring Data Neo4j, inc
 
 ### Entity Annotations
 
-#### @Node
+#### `@`Node
 
 Marks a class as a Neo4j node entity.
 
@@ -33,7 +33,7 @@ public class MyEntity {
 - `value` or `labels`: String or String array for node labels
 - `primaryLabel`: Specify which label is primary (when using multiple labels)
 
-#### @Id
+#### `@`Id
 
 Marks a field as the entity identifier.
 
@@ -46,11 +46,11 @@ private Long id;  // Auto-generated internal ID
 ```
 
 **Important:**
-- Required on every @Node entity
+- Required on every `@`Node entity
 - Can be used with business keys or generated values
 - Must be unique within the node type
 
-#### @GeneratedValue
+#### `@`GeneratedValue
 
 Configures ID generation strategy.
 
@@ -69,7 +69,7 @@ private String customId;
 - `InternalIdGenerator` (default for Long): Uses Neo4j's internal ID
 - `UUIDStringGenerator`: Generates UUID strings
 
-#### @Property
+#### `@`Property
 
 Maps a field to a different property name in Neo4j.
 
@@ -83,7 +83,7 @@ private String javaFieldName;
 - Property names contain special characters
 - Following different naming conventions
 
-#### @Relationship
+#### `@`Relationship
 
 Defines relationships between nodes.
 
@@ -108,7 +108,7 @@ private Set<RelatedEntity> connections;
 - `INCOMING`: Target node → this node
 - `UNDIRECTED`: Ignores direction when querying
 
-#### @RelationshipProperties
+#### `@`RelationshipProperties
 
 Marks a class as relationship properties container.
 
@@ -133,7 +133,7 @@ public class ActedIn {
 
 ### Repository Annotations
 
-#### @Query
+#### `@`Query
 
 Defines custom Cypher query for a repository method.
 
@@ -150,7 +150,7 @@ Node findById(String id);  // Positional parameter
 - Use `$0`, `$1`, etc. for positional parameters
 - SpEL expressions supported: `#{#entityName}`
 
-#### @Param
+#### `@`Param
 
 Binds method parameter to query parameter.
 
@@ -165,7 +165,7 @@ List<Node> find(@Param("customName") String name);
 
 ### Configuration Annotations
 
-#### @EnableNeo4jRepositories
+#### `@`EnableNeo4jRepositories
 
 Enables Neo4j repository support.
 
@@ -184,7 +184,7 @@ public class Neo4jConfiguration {
 
 **Note:** Auto-enabled by Spring Boot starter, manual configuration rarely needed.
 
-#### @DataNeo4jTest
+#### `@`DataNeo4jTest
 
 Test slice annotation for Neo4j tests.
 

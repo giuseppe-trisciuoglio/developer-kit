@@ -587,10 +587,10 @@ class LambdaInvokerServiceTest {
 
 ## Related Skills
 
-- @aws-sdk-java-v2-core - Core AWS SDK patterns and client configuration
-- @spring-boot-dependency-injection - Spring dependency injection best practices
-- @unit-test-service-layer - Service testing patterns with Mockito
-- @spring-boot-actuator - Production monitoring and health checks
+- `@`aws-sdk-java-v2-core - Core AWS SDK patterns and client configuration
+- `@`spring-boot-dependency-injection - Spring dependency injection best practices
+- `@`unit-test-service-layer - Service testing patterns with Mockito
+- `@`spring-boot-actuator - Production monitoring and health checks
 
 ## References
 

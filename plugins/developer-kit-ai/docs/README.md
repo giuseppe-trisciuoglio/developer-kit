@@ -82,6 +82,6 @@ developer-kit-ai/
 
 ## See Also
 
-- [Core Plugin Documentation](../developer-kit-core/docs/) - Core guides and installation
-- [Java Plugin Documentation](../developer-kit-java/docs/) - LangChain4J and Spring AI integration for Java
-- [Python Plugin Documentation](../developer-kit-python/docs/) - Python AI/ML development guides
+- [Core Plugin Documentation](../../developer-kit-core/docs/) - Core guides and installation
+- [Java Plugin Documentation](../../developer-kit-java/docs/) - LangChain4J and Spring AI integration for Java
+- [Python Plugin Documentation](../../developer-kit-python/docs/) - Python AI/ML development guides

@@ -12,7 +12,7 @@ To use this skill when you need to:
 - Set up Spring Data Neo4j in a Spring Boot application
 - Create and map graph node entities and relationships
 - Implement Neo4j repositories with custom queries
-- Write Cypher queries using @Query annotations
+- Write Cypher queries using `@`Query annotations
 - Configure Neo4j connections and dialects
 - Test Neo4j repositories with embedded databases
 - Work with both imperative and reactive Neo4j operations
@@ -26,7 +26,7 @@ Spring Data Neo4j provides three levels of abstraction for Neo4j integration:
 - **Neo4j Template**: Medium-level template-based operations
 - **Neo4j Repositories**: High-level repository pattern with query derivation
 
-Key features include reactive and imperative operation modes, immutable entity mapping, custom query support via @Query annotation, Spring's Conversion Service integration, and full support for graph relationships and traversals.
+Key features include reactive and imperative operation modes, immutable entity mapping, custom query support via `@`Query annotation, Spring's Conversion Service integration, and full support for graph relationships and traversals.
 
 ## Instructions
 
@@ -54,13 +54,13 @@ Key features include reactive and imperative operation modes, immutable entity m
 
 ### Define Node Entities
 
-1. **Use @Node annotation to mark entity classes**
+1. **Use `@`Node annotation to mark entity classes**
 2. **Choose ID strategy:**
-   - Business key as @Id (immutable, natural identifier)
-   - Generated @Id @GeneratedValue (Neo4j internal ID)
-3. **Define relationships with @Relationship annotation**
+   - Business key as `@`Id (immutable, natural identifier)
+   - Generated `@`Id `@`GeneratedValue (Neo4j internal ID)
+3. **Define relationships with `@`Relationship annotation**
 4. **Keep entities immutable with final fields**
-5. **Use @Property for custom property names**
+5. **Use `@`Property for custom property names**
 
 ### Create Repositories
 
@@ -68,12 +68,12 @@ Key features include reactive and imperative operation modes, immutable entity m
    - `Neo4jRepository<Entity, ID>` for imperative operations
    - `ReactiveNeo4jRepository<Entity, ID>` for reactive operations
 2. **Use query derivation for simple queries**
-3. **Apply @Query annotation for complex Cypher queries**
+3. **Apply `@`Query annotation for complex Cypher queries**
 4. **Use $paramName syntax for parameters**
 
 ### Test Your Implementation
 
-1. **Use @DataNeo4jTest for repository testing**
+1. **Use `@`DataNeo4jTest for repository testing**
 2. **Set up Neo4j Harness with test fixtures**
 3. **Test both positive and edge cases**
 4. **Clean up test data between tests**
@@ -217,7 +217,7 @@ public interface MovieRepository extends ReactiveNeo4jRepository<MovieEntity, St
 - **Do not mix imperative and reactive in the same application**
 - Reactive requires Neo4j 4+ on the database side
 
-## Custom Queries with @Query
+## Custom Queries with `@`Query
 
 ```java
 @Repository
@@ -357,14 +357,14 @@ See [examples](./references/examples.md) for comprehensive code examples.
 
 ### Entity Design
 - Use immutable entities with final fields
-- Choose between business keys (@Id) or generated IDs (@Id @GeneratedValue)
+- Choose between business keys (`@`Id) or generated IDs (`@`Id `@`GeneratedValue)
 - Keep entities focused on graph structure, not business logic
 - Use proper relationship directions (INCOMING, OUTGOING, UNDIRECTED)
 
 ### Repository Design
 - Extend `Neo4jRepository` for imperative or `ReactiveNeo4jRepository` for reactive
 - Use query derivation for simple queries
-- Write custom @Query for complex graph patterns
+- Write custom `@`Query for complex graph patterns
 - Don't mix imperative and reactive in same application
 
 ### Configuration

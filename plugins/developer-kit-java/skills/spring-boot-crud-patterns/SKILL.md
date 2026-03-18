@@ -40,7 +40,7 @@ Create JPA entities in infrastructure/persistence that map to domain models. Imp
 
 ### 5. Build Application Services
 
-Create @Service classes with @Transactional methods that orchestrate domain operations, repository access, and DTO mapping.
+Create `@`Service classes with `@`Transactional methods that orchestrate domain operations, repository access, and DTO mapping.
 
 ### 6. Define Request/Response DTOs
 
@@ -48,11 +48,11 @@ Use Java records or immutable classes for API contracts. Apply jakarta.validatio
 
 ### 7. Expose REST Controllers
 
-Create @RestController classes mapped to /api endpoints. Return ResponseEntity with appropriate status codes (201 for POST, 204 for DELETE).
+Create `@`RestController classes mapped to /api endpoints. Return ResponseEntity with appropriate status codes (201 for POST, 204 for DELETE).
 
 ### 8. Write Tests
 
-Unit test domain logic in isolation. Use @DataJpaTest and Testcontainers for integration testing of persistence layer.
+Unit test domain logic in isolation. Use `@`DataJpaTest and Testcontainers for integration testing of persistence layer.
 
 ## Prerequisites
 

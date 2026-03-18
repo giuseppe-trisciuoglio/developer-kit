@@ -522,9 +522,9 @@ public class ToolResultProcessingExample {
 
 ## Best Practices
 
-1. **Clear Descriptions**: Write detailed @Tool descriptions for LLM context
+1. **Clear Descriptions**: Write detailed `@`Tool descriptions for LLM context
 2. **Strong Typing**: Use specific types (int, String) instead of generic Object
-3. **Parameter Descriptions**: Use @P with clear descriptions of expected formats
+3. **Parameter Descriptions**: Use `@`P with clear descriptions of expected formats
 4. **Error Handling**: Always implement error handlers for graceful failures
 5. **Temperature**: Set temperature=0 for deterministic tool selection
 6. **Validation**: Validate all parameters before execution

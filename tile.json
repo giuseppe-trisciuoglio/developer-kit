@@ -1,0 +1,332 @@
+{
+  "name": "giuseppe-trisciuoglio/developer-kit",
+  "version": "2.6.3",
+  "private": false,
+  "summary": "Comprehensive developer toolkit providing reusable skills for Java/Spring Boot, TypeScript/NestJS/React/Next.js, Python, PHP, AWS CloudFormation, AI/RAG, DevOps, and more.",
+  "skills": {
+    "aws-cli-beast": {
+      "path": "plugins/developer-kit-aws/skills/aws/aws-cli-beast/SKILL.md"
+    },
+    "aws-cloudformation-auto-scaling": {
+      "path": "plugins/developer-kit-aws/skills/aws-cloudformation/aws-cloudformation-auto-scaling/SKILL.md"
+    },
+    "aws-cloudformation-bedrock": {
+      "path": "plugins/developer-kit-aws/skills/aws-cloudformation/aws-cloudformation-bedrock/SKILL.md"
+    },
+    "aws-cloudformation-cloudfront": {
+      "path": "plugins/developer-kit-aws/skills/aws-cloudformation/aws-cloudformation-cloudfront/SKILL.md"
+    },
+    "aws-cloudformation-cloudwatch": {
+      "path": "plugins/developer-kit-aws/skills/aws-cloudformation/aws-cloudformation-cloudwatch/SKILL.md"
+    },
+    "aws-cloudformation-dynamodb": {
+      "path": "plugins/developer-kit-aws/skills/aws-cloudformation/aws-cloudformation-dynamodb/SKILL.md"
+    },
+    "aws-cloudformation-ec2": {
+      "path": "plugins/developer-kit-aws/skills/aws-cloudformation/aws-cloudformation-ec2/SKILL.md"
+    },
+    "aws-cloudformation-ecs": {
+      "path": "plugins/developer-kit-aws/skills/aws-cloudformation/aws-cloudformation-ecs/SKILL.md"
+    },
+    "aws-cloudformation-elasticache": {
+      "path": "plugins/developer-kit-aws/skills/aws-cloudformation/aws-cloudformation-elasticache/SKILL.md"
+    },
+    "aws-cloudformation-iam": {
+      "path": "plugins/developer-kit-aws/skills/aws-cloudformation/aws-cloudformation-iam/SKILL.md"
+    },
+    "aws-cloudformation-lambda": {
+      "path": "plugins/developer-kit-aws/skills/aws-cloudformation/aws-cloudformation-lambda/SKILL.md"
+    },
+    "aws-cloudformation-rds": {
+      "path": "plugins/developer-kit-aws/skills/aws-cloudformation/aws-cloudformation-rds/SKILL.md"
+    },
+    "aws-cloudformation-s3": {
+      "path": "plugins/developer-kit-aws/skills/aws-cloudformation/aws-cloudformation-s3/SKILL.md"
+    },
+    "aws-cloudformation-security": {
+      "path": "plugins/developer-kit-aws/skills/aws-cloudformation/aws-cloudformation-security/SKILL.md"
+    },
+    "aws-cloudformation-task-ecs-deploy-gh": {
+      "path": "plugins/developer-kit-aws/skills/aws-cloudformation/aws-cloudformation-task-ecs-deploy-gh/SKILL.md"
+    },
+    "aws-cloudformation-vpc": {
+      "path": "plugins/developer-kit-aws/skills/aws-cloudformation/aws-cloudformation-vpc/SKILL.md"
+    },
+    "aws-cost-optimization": {
+      "path": "plugins/developer-kit-aws/skills/aws/aws-cost-optimization/SKILL.md"
+    },
+    "aws-drawio-architecture-diagrams": {
+      "path": "plugins/developer-kit-aws/skills/aws/aws-drawio-architecture-diagrams/SKILL.md"
+    },
+    "aws-lambda-java-integration": {
+      "path": "plugins/developer-kit-java/skills/aws-lambda-java-integration/SKILL.md"
+    },
+    "aws-lambda-php-integration": {
+      "path": "plugins/developer-kit-php/skills/aws-lambda-php-integration/SKILL.md"
+    },
+    "aws-lambda-python-integration": {
+      "path": "plugins/developer-kit-python/skills/aws-lambda-python-integration/SKILL.md"
+    },
+    "aws-lambda-typescript-integration": {
+      "path": "plugins/developer-kit-typescript/skills/aws-lambda-typescript-integration/SKILL.md"
+    },
+    "aws-rds-spring-boot-integration": {
+      "path": "plugins/developer-kit-java/skills/aws-rds-spring-boot-integration/SKILL.md"
+    },
+    "aws-sam-bootstrap": {
+      "path": "plugins/developer-kit-aws/skills/aws/aws-sam-bootstrap/SKILL.md"
+    },
+    "aws-sdk-java-v2-bedrock": {
+      "path": "plugins/developer-kit-java/skills/aws-sdk-java-v2-bedrock/SKILL.md"
+    },
+    "aws-sdk-java-v2-core": {
+      "path": "plugins/developer-kit-java/skills/aws-sdk-java-v2-core/SKILL.md"
+    },
+    "aws-sdk-java-v2-dynamodb": {
+      "path": "plugins/developer-kit-java/skills/aws-sdk-java-v2-dynamodb/SKILL.md"
+    },
+    "aws-sdk-java-v2-kms": {
+      "path": "plugins/developer-kit-java/skills/aws-sdk-java-v2-kms/SKILL.md"
+    },
+    "aws-sdk-java-v2-lambda": {
+      "path": "plugins/developer-kit-java/skills/aws-sdk-java-v2-lambda/SKILL.md"
+    },
+    "aws-sdk-java-v2-messaging": {
+      "path": "plugins/developer-kit-java/skills/aws-sdk-java-v2-messaging/SKILL.md"
+    },
+    "aws-sdk-java-v2-rds": {
+      "path": "plugins/developer-kit-java/skills/aws-sdk-java-v2-rds/SKILL.md"
+    },
+    "aws-sdk-java-v2-s3": {
+      "path": "plugins/developer-kit-java/skills/aws-sdk-java-v2-s3/SKILL.md"
+    },
+    "aws-sdk-java-v2-secrets-manager": {
+      "path": "plugins/developer-kit-java/skills/aws-sdk-java-v2-secrets-manager/SKILL.md"
+    },
+    "better-auth": {
+      "path": "plugins/developer-kit-typescript/skills/better-auth/SKILL.md"
+    },
+    "chunking-strategy": {
+      "path": "plugins/developer-kit-ai/skills/chunking-strategy/SKILL.md"
+    },
+    "claude-md-management": {
+      "path": "plugins/developer-kit-core/skills/claude-md-management/SKILL.md"
+    },
+    "codex": {
+      "path": "plugins/developer-kit-tools/skills/codex/SKILL.md"
+    },
+    "copilot-cli": {
+      "path": "plugins/developer-kit-tools/skills/copilot-cli/SKILL.md"
+    },
+    "docs-updater": {
+      "path": "plugins/developer-kit-core/skills/docs-updater/SKILL.md"
+    },
+    "drawio-logical-diagrams": {
+      "path": "plugins/developer-kit-core/skills/drawio-logical-diagrams/SKILL.md"
+    },
+    "drizzle-orm-patterns": {
+      "path": "plugins/developer-kit-typescript/skills/drizzle-orm-patterns/SKILL.md"
+    },
+    "dynamodb-toolbox-patterns": {
+      "path": "plugins/developer-kit-typescript/skills/dynamodb-toolbox-patterns/SKILL.md"
+    },
+    "gemini": {
+      "path": "plugins/developer-kit-tools/skills/gemini/SKILL.md"
+    },
+    "github-issue-workflow": {
+      "path": "plugins/developer-kit-core/skills/github-issue-workflow/SKILL.md"
+    },
+    "graalvm-native-image": {
+      "path": "plugins/developer-kit-java/skills/graalvm-native-image/SKILL.md"
+    },
+    "langchain4j-ai-services-patterns": {
+      "path": "plugins/developer-kit-java/skills/langchain4j-ai-services-patterns/SKILL.md"
+    },
+    "langchain4j-mcp-server-patterns": {
+      "path": "plugins/developer-kit-java/skills/langchain4j-mcp-server-patterns/SKILL.md"
+    },
+    "langchain4j-rag-implementation-patterns": {
+      "path": "plugins/developer-kit-java/skills/langchain4j-rag-implementation-patterns/SKILL.md"
+    },
+    "langchain4j-spring-boot-integration": {
+      "path": "plugins/developer-kit-java/skills/langchain4j-spring-boot-integration/SKILL.md"
+    },
+    "langchain4j-testing-strategies": {
+      "path": "plugins/developer-kit-java/skills/langchain4j-testing-strategies/SKILL.md"
+    },
+    "langchain4j-tool-function-calling-patterns": {
+      "path": "plugins/developer-kit-java/skills/langchain4j-tool-function-calling-patterns/SKILL.md"
+    },
+    "langchain4j-vector-stores-configuration": {
+      "path": "plugins/developer-kit-java/skills/langchain4j-vector-stores-configuration/SKILL.md"
+    },
+    "nestjs": {
+      "path": "plugins/developer-kit-typescript/skills/nestjs/SKILL.md"
+    },
+    "nestjs-best-practices": {
+      "path": "plugins/developer-kit-typescript/skills/nestjs-best-practices/SKILL.md"
+    },
+    "nestjs-code-review": {
+      "path": "plugins/developer-kit-typescript/skills/nestjs-code-review/SKILL.md"
+    },
+    "nestjs-drizzle-crud-generator": {
+      "path": "plugins/developer-kit-typescript/skills/nestjs-drizzle-crud-generator/SKILL.md"
+    },
+    "nextjs-app-router": {
+      "path": "plugins/developer-kit-typescript/skills/nextjs-app-router/SKILL.md"
+    },
+    "nextjs-authentication": {
+      "path": "plugins/developer-kit-typescript/skills/nextjs-authentication/SKILL.md"
+    },
+    "nextjs-code-review": {
+      "path": "plugins/developer-kit-typescript/skills/nextjs-code-review/SKILL.md"
+    },
+    "nextjs-data-fetching": {
+      "path": "plugins/developer-kit-typescript/skills/nextjs-data-fetching/SKILL.md"
+    },
+    "nextjs-deployment": {
+      "path": "plugins/developer-kit-typescript/skills/nextjs-deployment/SKILL.md"
+    },
+    "nextjs-performance": {
+      "path": "plugins/developer-kit-typescript/skills/nextjs-performance/SKILL.md"
+    },
+    "notebooklm": {
+      "path": "plugins/developer-kit-tools/skills/notebooklm/SKILL.md"
+    },
+    "nx-monorepo": {
+      "path": "plugins/developer-kit-typescript/skills/nx-monorepo/SKILL.md"
+    },
+    "prompt-engineering": {
+      "path": "plugins/developer-kit-ai/skills/prompt-engineering/SKILL.md"
+    },
+    "qdrant": {
+      "path": "plugins/developer-kit-java/skills/qdrant/SKILL.md"
+    },
+    "rag": {
+      "path": "plugins/developer-kit-ai/skills/rag/SKILL.md"
+    },
+    "react-code-review": {
+      "path": "plugins/developer-kit-typescript/skills/react-code-review/SKILL.md"
+    },
+    "react-patterns": {
+      "path": "plugins/developer-kit-typescript/skills/react-patterns/SKILL.md"
+    },
+    "shadcn-ui": {
+      "path": "plugins/developer-kit-typescript/skills/shadcn-ui/SKILL.md"
+    },
+    "spring-ai-mcp-server-patterns": {
+      "path": "plugins/developer-kit-java/skills/spring-ai-mcp-server-patterns/SKILL.md"
+    },
+    "spring-boot-actuator": {
+      "path": "plugins/developer-kit-java/skills/spring-boot-actuator/SKILL.md"
+    },
+    "spring-boot-cache": {
+      "path": "plugins/developer-kit-java/skills/spring-boot-cache/SKILL.md"
+    },
+    "spring-boot-crud-patterns": {
+      "path": "plugins/developer-kit-java/skills/spring-boot-crud-patterns/SKILL.md"
+    },
+    "spring-boot-dependency-injection": {
+      "path": "plugins/developer-kit-java/skills/spring-boot-dependency-injection/SKILL.md"
+    },
+    "spring-boot-event-driven-patterns": {
+      "path": "plugins/developer-kit-java/skills/spring-boot-event-driven-patterns/SKILL.md"
+    },
+    "spring-boot-openapi-documentation": {
+      "path": "plugins/developer-kit-java/skills/spring-boot-openapi-documentation/SKILL.md"
+    },
+    "spring-boot-project-creator": {
+      "path": "plugins/developer-kit-java/skills/spring-boot-project-creator/SKILL.md"
+    },
+    "spring-boot-resilience4j": {
+      "path": "plugins/developer-kit-java/skills/spring-boot-resilience4j/SKILL.md"
+    },
+    "spring-boot-rest-api-standards": {
+      "path": "plugins/developer-kit-java/skills/spring-boot-rest-api-standards/SKILL.md"
+    },
+    "spring-boot-saga-pattern": {
+      "path": "plugins/developer-kit-java/skills/spring-boot-saga-pattern/SKILL.md"
+    },
+    "spring-boot-security-jwt": {
+      "path": "plugins/developer-kit-java/skills/spring-boot-security-jwt/SKILL.md"
+    },
+    "spring-boot-test-patterns": {
+      "path": "plugins/developer-kit-java/skills/spring-boot-test-patterns/SKILL.md"
+    },
+    "spring-data-jpa": {
+      "path": "plugins/developer-kit-java/skills/spring-data-jpa/SKILL.md"
+    },
+    "spring-data-neo4j": {
+      "path": "plugins/developer-kit-java/skills/spring-data-neo4j/SKILL.md"
+    },
+    "tailwind-css-patterns": {
+      "path": "plugins/developer-kit-typescript/skills/tailwind-css-patterns/SKILL.md"
+    },
+    "tailwind-design-system": {
+      "path": "plugins/developer-kit-typescript/skills/tailwind-design-system/SKILL.md"
+    },
+    "turborepo-monorepo": {
+      "path": "plugins/developer-kit-typescript/skills/turborepo-monorepo/SKILL.md"
+    },
+    "typescript-docs": {
+      "path": "plugins/developer-kit-typescript/skills/typescript-docs/SKILL.md"
+    },
+    "typescript-security-review": {
+      "path": "plugins/developer-kit-typescript/skills/typescript-security-review/SKILL.md"
+    },
+    "unit-test-application-events": {
+      "path": "plugins/developer-kit-java/skills/unit-test-application-events/SKILL.md"
+    },
+    "unit-test-bean-validation": {
+      "path": "plugins/developer-kit-java/skills/unit-test-bean-validation/SKILL.md"
+    },
+    "unit-test-boundary-conditions": {
+      "path": "plugins/developer-kit-java/skills/unit-test-boundary-conditions/SKILL.md"
+    },
+    "unit-test-caching": {
+      "path": "plugins/developer-kit-java/skills/unit-test-caching/SKILL.md"
+    },
+    "unit-test-config-properties": {
+      "path": "plugins/developer-kit-java/skills/unit-test-config-properties/SKILL.md"
+    },
+    "unit-test-controller-layer": {
+      "path": "plugins/developer-kit-java/skills/unit-test-controller-layer/SKILL.md"
+    },
+    "unit-test-exception-handler": {
+      "path": "plugins/developer-kit-java/skills/unit-test-exception-handler/SKILL.md"
+    },
+    "unit-test-json-serialization": {
+      "path": "plugins/developer-kit-java/skills/unit-test-json-serialization/SKILL.md"
+    },
+    "unit-test-mapper-converter": {
+      "path": "plugins/developer-kit-java/skills/unit-test-mapper-converter/SKILL.md"
+    },
+    "unit-test-parameterized": {
+      "path": "plugins/developer-kit-java/skills/unit-test-parameterized/SKILL.md"
+    },
+    "unit-test-scheduled-async": {
+      "path": "plugins/developer-kit-java/skills/unit-test-scheduled-async/SKILL.md"
+    },
+    "unit-test-security-authorization": {
+      "path": "plugins/developer-kit-java/skills/unit-test-security-authorization/SKILL.md"
+    },
+    "unit-test-service-layer": {
+      "path": "plugins/developer-kit-java/skills/unit-test-service-layer/SKILL.md"
+    },
+    "unit-test-utility-methods": {
+      "path": "plugins/developer-kit-java/skills/unit-test-utility-methods/SKILL.md"
+    },
+    "unit-test-wiremock-rest-api": {
+      "path": "plugins/developer-kit-java/skills/unit-test-wiremock-rest-api/SKILL.md"
+    },
+    "wiremock-standalone-docker": {
+      "path": "plugins/developer-kit-java/skills/wiremock-standalone-docker/SKILL.md"
+    },
+    "wordpress-sage-theme": {
+      "path": "plugins/developer-kit-php/skills/wordpress/wordpress-sage-theme/SKILL.md"
+    },
+    "zod-validation-utilities": {
+      "path": "plugins/developer-kit-typescript/skills/zod-validation-utilities/SKILL.md"
+    }
+  }
+}

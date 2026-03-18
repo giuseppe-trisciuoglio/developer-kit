@@ -2,15 +2,21 @@
 Validation logic for Claude Code components.
 """
 
+import json
 import re
 from abc import ABC, abstractmethod
+from http.client import InvalidURL
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Any
+from typing import Any, Dict, List, Optional, Set, Tuple
+from urllib.error import HTTPError, URLError
+from urllib.parse import quote, unquote, urlsplit, urlunsplit
+from urllib.request import Request, urlopen
 
 import yaml
 
 from .config import (
     SKILL_PATTERN,
+    SKILL_BUNDLED_MARKDOWN_PATTERN,
     AGENT_PATTERN,
     COMMAND_PATTERN,
     RULE_PATTERN,
@@ -45,6 +51,7 @@ from .config import (
     MIN_DESCRIPTION_LENGTH,
     MAX_COMPATIBILITY_LENGTH,
     MAX_SKILL_LINES,
+    MAX_SKILL_TOKENS,
     MAX_SKILL_CHARACTERS,
     MAX_RULE_LINES,
     WHAT_KEYWORDS,
@@ -58,6 +65,11 @@ from .models import ValidationResult, Severity
 
 class BaseValidator(ABC):
     """Abstract base class for all component validators."""
+
+    _external_url_cache: Dict[str, Tuple[str, Optional[str]]] = {}
+
+    def __init__(self, validate_external_urls: bool = False):
+        self.validate_external_urls = validate_external_urls
 
     @property
     @abstractmethod
@@ -80,6 +92,338 @@ class BaseValidator(ABC):
     def can_validate(self, file_path: Path) -> bool:
         """Check if this validator can handle the given file."""
         return bool(self.file_pattern.search(str(file_path)))
+
+    def _extract_body(self, content: str) -> Tuple[str, int]:
+        """Return markdown body after frontmatter and the starting line number offset."""
+        match = re.search(r"\n---\s*\n", content)
+        if not match:
+            return content, 0
+        return content[match.end():], content[:match.end()].count("\n")
+
+    def _find_skill_root(self, file_path: Path) -> Path:
+        """Resolve the skill root directory for SKILL.md and bundled resources."""
+        current = file_path.parent if file_path.is_file() else file_path
+
+        for candidate in [current] + list(current.parents):
+            if (candidate / "SKILL.md").exists():
+                return candidate
+
+        return file_path.parent
+
+    def _count_tokens(self, content: str) -> int:
+        """Approximate token count using word/punctuation chunks."""
+        return len(re.findall(r"\w+|[^\w\s]", content, re.UNICODE))
+
+    def _mask_code_regions(self, content: str) -> str:
+        """Mask fenced and inline code while preserving string length and line numbers."""
+        lines = content.splitlines(keepends=True)
+        masked_lines: List[str] = []
+        in_fence = False
+        fence_char = ""
+        fence_length = 0
+
+        inline_code_pattern = re.compile(r"(`+)([^`]*?)\1")
+
+        for line in lines:
+            fence_match = re.match(r"^\s{0,3}([`~]{3,})(.*)$", line)
+
+            if in_fence:
+                if fence_match:
+                    fence = fence_match.group(1)
+                    if fence[0] == fence_char and len(fence) >= fence_length:
+                        in_fence = False
+                masked_lines.append(re.sub(r"[^\n]", " ", line))
+                continue
+
+            if fence_match:
+                fence = fence_match.group(1)
+                in_fence = True
+                fence_char = fence[0]
+                fence_length = len(fence)
+                masked_lines.append(re.sub(r"[^\n]", " ", line))
+                continue
+
+            masked_lines.append(
+                inline_code_pattern.sub(
+                    lambda match: " " * len(match.group(0)),
+                    line,
+                )
+            )
+
+        return "".join(masked_lines)
+
+    def _validate_markdown_syntax(
+        self,
+        content: str,
+        result: ValidationResult,
+        body_only: bool = False
+    ) -> None:
+        """Validate markdown syntax with lightweight structural checks."""
+        text = content
+        line_offset = 0
+
+        if body_only:
+            text, line_offset = self._extract_body(content)
+
+        lines = text.splitlines()
+        in_fence = False
+        fence_char = ""
+        fence_length = 0
+        fence_line = 0
+
+        for idx, line in enumerate(lines, start=1):
+            fence_match = re.match(r"^\s{0,3}([`~]{3,})(.*)$", line)
+
+            if in_fence:
+                if fence_match:
+                    fence = fence_match.group(1)
+                    if fence[0] == fence_char and len(fence) >= fence_length:
+                        in_fence = False
+                continue
+
+            if fence_match:
+                fence = fence_match.group(1)
+                in_fence = True
+                fence_char = fence[0]
+                fence_length = len(fence)
+                fence_line = idx
+                continue
+
+            if re.match(r"^\s{0,3}#{1,6}(?!#)\S", line):
+                result.add_error(
+                    message="Malformed heading: missing space after '#' markers",
+                    line_number=line_offset + idx,
+                    suggestion="Use headings like '## Overview' instead of '##Overview'"
+                )
+
+        if in_fence:
+            result.add_error(
+                message="Unclosed fenced code block",
+                line_number=line_offset + fence_line,
+                suggestion="Close the fenced code block with matching backticks or tildes"
+            )
+
+    def _normalize_link_target(self, raw_target: str) -> str:
+        """Normalize a markdown link target by removing title/fragment wrappers."""
+        target = raw_target.strip()
+        if target.startswith("<") and ">" in target:
+            target = target[1:target.index(">")]
+        else:
+            target = target.split()[0]
+        return target.strip()
+
+    def _issue_line_number(self, content: str, start_index: int, line_offset: int = 0) -> int:
+        """Convert a character index to a 1-based line number."""
+        return line_offset + content[:start_index].count("\n") + 1
+
+    def _validate_external_url(
+        self,
+        url: str,
+        result: ValidationResult,
+        line_number: int
+    ) -> None:
+        """Validate that an external HTTP(S) URL is reachable."""
+        cached = self._external_url_cache.get(url)
+        if cached is None:
+            outcome = "error"
+            detail = None
+            try:
+                request_url = self._prepare_request_url(url)
+            except (UnicodeError, ValueError) as exc:
+                self._external_url_cache[url] = ("error", f"invalid URL: {exc}")
+                request_url = None
+
+            if request_url is None:
+                cached = self._external_url_cache[url]
+                outcome, detail = cached
+                message = f"External link is not reachable: {url}"
+                if detail:
+                    message = f"{message} ({detail})"
+                result.add_error(
+                    message=message,
+                    line_number=line_number,
+                    suggestion="Fix or remove the invalid external link"
+                )
+                return
+
+            try:
+                request = Request(request_url, headers={"User-Agent": "developer-kit-validator/1.0"})
+                head_request = Request(
+                    request_url,
+                    headers={"User-Agent": "developer-kit-validator/1.0"},
+                    method="HEAD"
+                )
+            except (ValueError, InvalidURL) as exc:
+                self._external_url_cache[url] = ("error", f"invalid URL: {exc}")
+                result.add_error(
+                    message=f"External link is not reachable: {url} (invalid URL: {exc})",
+                    line_number=line_number,
+                    suggestion="Fix or remove the invalid external link"
+                )
+                return
+
+            try:
+                with urlopen(head_request, timeout=5) as response:
+                    status = response.getcode() or 200
+                    if status < 400:
+                        outcome = "ok"
+            except HTTPError as exc:
+                if exc.code in (401, 403):
+                    outcome = "ok"
+                elif exc.code == 405:
+                    try:
+                        with urlopen(request, timeout=5) as response:
+                            status = response.getcode() or 200
+                            outcome = "ok" if status < 400 else "error"
+                            detail = f"HTTP {status}"
+                    except HTTPError as get_exc:
+                        if get_exc.code in (401, 403):
+                            outcome = "ok"
+                        elif get_exc.code == 404:
+                            outcome = "error"
+                            detail = "HTTP 404"
+                        elif get_exc.code == 429 or 500 <= get_exc.code < 600:
+                            outcome = "warning"
+                            detail = f"HTTP {get_exc.code}"
+                        else:
+                            outcome = "error"
+                            detail = f"HTTP {get_exc.code}"
+                    except (URLError, ValueError, InvalidURL) as get_exc:
+                        outcome = "warning"
+                        detail = getattr(get_exc, "reason", str(get_exc))
+                elif exc.code == 404:
+                    outcome = "error"
+                    detail = "HTTP 404"
+                elif exc.code == 429 or 500 <= exc.code < 600:
+                    outcome = "warning"
+                    detail = f"HTTP {exc.code}"
+                else:
+                    outcome = "error"
+                    detail = f"HTTP {exc.code}"
+            except (URLError, ValueError, InvalidURL) as exc:
+                outcome = "warning"
+                detail = getattr(exc, "reason", str(exc))
+
+            cached = (outcome, detail)
+            self._external_url_cache[url] = cached
+
+        outcome, detail = cached
+        if outcome == "ok":
+            return
+
+        message = f"External link is not reachable: {url}"
+        if detail:
+            message = f"{message} ({detail})"
+
+        if outcome == "warning":
+            result.add_warning(
+                message=message,
+                line_number=line_number,
+                suggestion="Verify the link manually or retry later if the remote service is temporarily unavailable"
+            )
+        else:
+            result.add_error(
+                message=message,
+                line_number=line_number,
+                suggestion="Fix or remove the broken external link"
+            )
+
+    def _prepare_request_url(self, url: str) -> str:
+        """Normalize URLs so they can be requested safely by urllib/http.client."""
+        parsed = urlsplit(url)
+        netloc = parsed.netloc.encode("idna").decode("ascii")
+        path = quote(unquote(parsed.path), safe="/:@-._~!$&'()*+,;=")
+        query = quote(unquote(parsed.query), safe="=&:@-._~!$'()*+,;/?")
+        fragment = quote(unquote(parsed.fragment), safe="")
+        return urlunsplit((parsed.scheme, netloc, path, query, fragment))
+
+    def _validate_link_target(
+        self,
+        base_path: Path,
+        raw_target: str,
+        result: ValidationResult,
+        line_number: int,
+        skill_root: Optional[Path] = None,
+        uses_at_syntax: bool = False
+    ) -> None:
+        """Validate markdown or @-style link targets."""
+        target = self._normalize_link_target(raw_target)
+        if not target or target.startswith("#"):
+            return
+
+        parsed = urlsplit(target)
+        if parsed.scheme in ("mailto", "tel", "data"):
+            return
+
+        if parsed.scheme in ("http", "https"):
+            if self.validate_external_urls:
+                self._validate_external_url(target, result, line_number)
+            return
+
+        relative_target = unquote(parsed.path)
+        if not relative_target:
+            return
+
+        root = skill_root or base_path.parent
+        resolved = (root / relative_target) if uses_at_syntax else (base_path.parent / relative_target)
+
+        if not resolved.exists():
+            syntax_label = "@reference" if uses_at_syntax else "link"
+            result.add_error(
+                message=f"Broken {syntax_label}: '{raw_target}'",
+                line_number=line_number,
+                suggestion=f"Ensure '{relative_target}' exists relative to '{root if uses_at_syntax else base_path.parent}'"
+            )
+
+    def _validate_markdown_links(
+        self,
+        file_path: Path,
+        content: str,
+        result: ValidationResult,
+        body_only: bool = False
+    ) -> None:
+        """Validate local/external markdown links and @references outside code blocks."""
+        text = content
+        line_offset = 0
+
+        if body_only:
+            text, line_offset = self._extract_body(content)
+
+        masked = self._mask_code_regions(text)
+        skill_root = self._find_skill_root(file_path)
+
+        md_link_pattern = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
+        at_reference_pattern = re.compile(r"(?<![A-Za-z0-9_.+-])@((?:references|assets|scripts)/[^\s`)>]+)")
+        suspicious_at_pattern = re.compile(r"(?<![A-Za-z0-9_.+-])@([A-Za-z][A-Za-z0-9_]*)")
+
+        consumed_at_indices: Set[int] = set()
+
+        for match in md_link_pattern.finditer(masked):
+            line_number = self._issue_line_number(masked, match.start(), line_offset)
+            self._validate_link_target(file_path, match.group(1), result, line_number)
+
+        for match in at_reference_pattern.finditer(masked):
+            line_number = self._issue_line_number(masked, match.start(), line_offset)
+            self._validate_link_target(
+                file_path,
+                match.group(1),
+                result,
+                line_number,
+                skill_root=skill_root,
+                uses_at_syntax=True
+            )
+            consumed_at_indices.add(match.start())
+
+        for match in suspicious_at_pattern.finditer(masked):
+            if match.start() in consumed_at_indices:
+                continue
+            token = match.group(0)
+            line_number = self._issue_line_number(masked, match.start(), line_offset)
+            result.add_error(
+                message=f"Raw '@' token outside code block: '{token}'",
+                line_number=line_number,
+                suggestion="Wrap annotations like '@Controller' in inline code or fenced code blocks, or use '@references/...' only for resource links"
+            )
 
     def validate(self, file_path: Path) -> ValidationResult:
         """Validate a file and return the result."""
@@ -500,7 +844,8 @@ class SkillValidator(BaseValidator):
         if "context7_trust_score" in frontmatter:
             self._validate_trust_score(frontmatter["context7_trust_score"], result)
 
-        # Validate markdown structure
+        # Validate markdown syntax and structure
+        self._validate_markdown_syntax(content, result, body_only=True)
         self._validate_markdown_structure(content, result)
 
         # Validate I/O examples
@@ -514,6 +859,9 @@ class SkillValidator(BaseValidator):
 
         # Validate file references are max one level deep
         self._validate_file_references(content, result)
+
+        # Validate local/external links and @references syntax
+        self._validate_markdown_links(file_path, content, result, body_only=True)
 
         # Validate progressive disclosure limits (file size)
         self._validate_progressive_disclosure(content, result)
@@ -533,6 +881,13 @@ class SkillValidator(BaseValidator):
         if line_count > MAX_SKILL_LINES:
             result.add_warning(
                 message=f"SKILL.md is too long: {line_count} lines (max {MAX_SKILL_LINES})",
+                suggestion="Move detailed content to separate files in references/"
+            )
+
+        token_count = self._count_tokens(content)
+        if token_count > MAX_SKILL_TOKENS:
+            result.add_warning(
+                message=f"SKILL.md has too many tokens: {token_count} (max {MAX_SKILL_TOKENS})",
                 suggestion="Move detailed content to separate files in references/"
             )
 
@@ -854,12 +1209,74 @@ class SkillValidator(BaseValidator):
     def _get_marketplace_version(self, marketplace_path: Path) -> Optional[str]:
         """Read version from marketplace.json."""
         try:
-            import json
             with open(marketplace_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
             return data.get('version')
         except (json.JSONDecodeError, KeyError, FileNotFoundError, IOError):
             return None
+
+
+class SkillMarkdownValidator(BaseValidator):
+    """Validator for bundled markdown resources inside skill directories."""
+
+    @property
+    def component_type(self) -> str:
+        return "skill-markdown"
+
+    @property
+    def file_pattern(self) -> re.Pattern:
+        return SKILL_BUNDLED_MARKDOWN_PATTERN
+
+    @property
+    def schema(self) -> Dict[str, Set[str]]:
+        return {"required": set(), "optional": set()}
+
+    def can_validate(self, file_path: Path) -> bool:
+        """Check if this validator can handle a bundled markdown resource."""
+        return file_path.name != "SKILL.md" and bool(self.file_pattern.search(str(file_path)))
+
+    def validate(self, file_path: Path) -> ValidationResult:
+        """Validate bundled markdown syntax, links, and filename convention."""
+        result = ValidationResult(
+            file_path=file_path,
+            component_type=self.component_type
+        )
+
+        try:
+            content = file_path.read_text(encoding="utf-8")
+        except FileNotFoundError:
+            result.add_error(
+                message=f"File not found: {file_path}",
+                suggestion="Verify the file path is correct"
+            )
+            return result
+        except UnicodeDecodeError:
+            result.add_error(
+                message="File is not valid UTF-8",
+                suggestion="Ensure the file uses UTF-8 encoding"
+            )
+            return result
+
+        filename = file_path.stem
+        if file_path.name not in KEBAB_CASE_EXEMPT_FILES and not KEBAB_CASE_PATTERN.match(filename):
+            result.add_error(
+                message=f"Filename must use kebab-case: '{file_path.name}'",
+                suggestion="Rename the file using lowercase kebab-case"
+            )
+
+        self._validate_markdown_syntax(content, result)
+        self._validate_markdown_links(file_path, content, result)
+        return result
+
+    def _validate_specific(
+        self,
+        file_path: Path,
+        frontmatter: Dict[str, Any],
+        content: str,
+        result: ValidationResult
+    ) -> None:
+        """Not used for bundled markdown validation."""
+        pass
 
 
 class AgentValidator(BaseValidator):
@@ -2007,21 +2424,28 @@ class PluginJsonValidator:
 class ValidatorFactory:
     """Factory for creating appropriate validators."""
 
-    _validators: List[Any] = [
-        SkillValidator(),
-        AgentValidator(),
-        CommandValidator(),
-        RuleValidator(),
-        KebabCaseValidator(),
-        SkillPackageValidator(),
-        PluginVersionValidator(),
-        PluginJsonValidator(),
-    ]
+    @classmethod
+    def _build_validators(cls, validate_external_urls: bool = False) -> List[Any]:
+        return [
+            SkillValidator(validate_external_urls=validate_external_urls),
+            SkillMarkdownValidator(validate_external_urls=validate_external_urls),
+            AgentValidator(),
+            CommandValidator(),
+            RuleValidator(),
+            KebabCaseValidator(),
+            SkillPackageValidator(),
+            PluginVersionValidator(),
+            PluginJsonValidator(),
+        ]
 
     @classmethod
-    def get_validator(cls, file_path: Path) -> Optional[Any]:
+    def get_validator(
+        cls,
+        file_path: Path,
+        validate_external_urls: bool = False
+    ) -> Optional[Any]:
         """Get the appropriate validator for a file."""
-        for validator in cls._validators:
+        for validator in cls._build_validators(validate_external_urls=validate_external_urls):
             if validator.can_validate(file_path):
                 return validator
         return None
@@ -2029,4 +2453,4 @@ class ValidatorFactory:
     @classmethod
     def get_all_patterns(cls) -> List[re.Pattern]:
         """Get all file patterns for component files."""
-        return [v.file_pattern for v in cls._validators if hasattr(v, 'file_pattern')]
+        return [v.file_pattern for v in cls._build_validators() if hasattr(v, 'file_pattern')]

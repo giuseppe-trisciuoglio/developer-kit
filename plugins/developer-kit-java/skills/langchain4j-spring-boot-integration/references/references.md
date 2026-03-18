@@ -75,7 +75,7 @@ langchain4j:
 
 ## Spring Configuration Annotations
 
-### @Configuration
+### `@`Configuration
 ```java
 @Configuration
 public class AiConfig {
@@ -93,7 +93,7 @@ public class AiConfig {
 }
 ```
 
-### @ConditionalOnProperty
+### `@`ConditionalOnProperty
 ```java
 @Configuration
 @ConditionalOnProperty(
@@ -106,7 +106,7 @@ public class AiFeatureConfig {
 }
 ```
 
-### @EnableConfigurationProperties
+### `@`EnableConfigurationProperties
 ```java
 @Configuration
 @EnableConfigurationProperties(AiProperties.class)
@@ -157,7 +157,7 @@ public class ChatService {
 
 ## REST Annotations
 
-### @RestController with RequestMapping
+### `@`RestController with RequestMapping
 ```java
 @RestController
 @RequestMapping("/api/chat")
@@ -194,7 +194,7 @@ public class ChatRequest {
 
 ## Exception Handling
 
-### @ControllerAdvice
+### `@`ControllerAdvice
 ```java
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -225,7 +225,7 @@ if (!authorized) {
 
 ## Async and Reactive
 
-### @Async
+### `@`Async
 ```java
 @Service
 @EnableAsync
@@ -239,7 +239,7 @@ public class AsyncService {
 }
 ```
 
-### @Scheduled
+### `@`Scheduled
 ```java
 @Component
 public class ScheduledTasks {
@@ -258,7 +258,7 @@ public class ScheduledTasks {
 
 ## Testing
 
-### @SpringBootTest
+### `@`SpringBootTest
 ```java
 @SpringBootTest
 class ChatServiceTest {
@@ -273,7 +273,7 @@ class ChatServiceTest {
 }
 ```
 
-### @WebMvcTest
+### `@`WebMvcTest
 ```java
 @WebMvcTest(ChatController.class)
 class ChatControllerTest {
@@ -294,7 +294,7 @@ class ChatControllerTest {
 }
 ```
 
-### @DataJpaTest
+### `@`DataJpaTest
 ```java
 @DataJpaTest
 class DocumentRepositoryTest {
@@ -369,7 +369,7 @@ management:
 
 ## Security Configuration
 
-### @EnableWebSecurity
+### `@`EnableWebSecurity
 ```java
 @Configuration
 @EnableWebSecurity
@@ -390,7 +390,7 @@ public class SecurityConfig {
 
 ## Bean Lifecycle
 
-### @PostConstruct and @PreDestroy
+### `@`PostConstruct and `@`PreDestroy
 ```java
 @Service
 public class AiService {
@@ -413,11 +413,11 @@ public class AiService {
 
 1. **Use Constructor Injection**: Explicitly declare dependencies
 2. **Externalize Configuration**: Use application.yml for settings
-3. **Handle Exceptions**: Use @ControllerAdvice for consistent error handling
+3. **Handle Exceptions**: Use `@`ControllerAdvice for consistent error handling
 4. **Implement Caching**: Cache AI responses when appropriate
 5. **Use Async Processing**: For long-running AI operations
 6. **Add Health Checks**: Implement custom health indicators
 7. **Log Appropriately**: Debug AI service calls in development
-8. **Test Thoroughly**: Use @SpringBootTest and @WebMvcTest
+8. **Test Thoroughly**: Use `@`SpringBootTest and `@`WebMvcTest
 9. **Secure APIs**: Implement authentication and authorization
 10. **Monitor Performance**: Track AI service metrics

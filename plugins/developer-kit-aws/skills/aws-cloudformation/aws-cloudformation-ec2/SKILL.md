@@ -1886,8 +1886,8 @@ fi
 
 ## Related Resources
 
-- For advanced examples: See [EXAMPLES.md](EXAMPLES.md)
-- For reference: See [REFERENCE.md](REFERENCE.md)
+- For advanced examples: See [EXAMPLES.md](references/examples.md)
+- For reference: See [REFERENCE.md](references/reference.md)
 - AWS CloudFormation User Guide: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/
 - AWS EC2 Documentation: https://docs.aws.amazon.com/ec2/
 - AWS ALB Documentation: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/

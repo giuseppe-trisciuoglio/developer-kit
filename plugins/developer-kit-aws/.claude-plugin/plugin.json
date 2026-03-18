@@ -1,6 +1,6 @@
 {
   "name": "developer-kit-aws",
-  "version": "2.6.1",
+  "version": "2.6.3",
   "description": "AWS infrastructure and CloudFormation expertise",
   "author": {
     "name": "Giuseppe Trisciuoglio",

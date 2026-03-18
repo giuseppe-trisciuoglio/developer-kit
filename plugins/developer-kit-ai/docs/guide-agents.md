@@ -74,5 +74,5 @@ Agents can be invoked in several ways:
 - [Prompt Engineering Skill](../skills/prompt-engineering/) - Comprehensive prompt engineering skill
 - [RAG Skill](../skills/rag/) - Retrieval-Augmented Generation skill
 - [Chunking Strategy Skill](../skills/chunking-strategy/) - Document chunking strategies
-- [Core Agent Guide](../developer-kit-core/docs/guide-agents.md) - All agents across plugins
-- [Java Plugin](../developer-kit-java/docs/) - LangChain4J and Spring AI integration
+- [Core Agent Guide](../../developer-kit-core/docs/guide-agents.md) - All agents across plugins
+- [Java Plugin](../../developer-kit-java/docs/) - LangChain4J and Spring AI integration

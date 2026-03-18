@@ -171,7 +171,7 @@ To accomplish Spring Boot configuration for LangChain4j:
 
 **Property-Based Configuration:** Configure AI models through application properties for different providers.
 
-**Manual Bean Configuration:** For advanced configurations, define beans manually using @Configuration.
+**Manual Bean Configuration:** For advanced configurations, define beans manually using `@`Configuration.
 
 **Multiple Providers:** Support for multiple AI providers with explicit wiring when needed.
 
@@ -179,11 +179,11 @@ To accomplish Spring Boot configuration for LangChain4j:
 
 To accomplish interface-based AI service definitions:
 
-**Basic AI Service:** Create interfaces with @AiService annotation and define methods with message templates.
+**Basic AI Service:** Create interfaces with `@`AiService annotation and define methods with message templates.
 
 **Streaming AI Service:** Implement streaming responses using Reactor or Project Reactor.
 
-**Explicit Wiring:** Specify which model to use with @AiService(wiringMode = EXPLICIT, chatModel = "modelBeanName").
+**Explicit Wiring:** Specify which model to use with `@`AiService(wiringMode = EXPLICIT, chatModel = "modelBeanName").
 
 ## RAG Implementation
 
@@ -199,7 +199,7 @@ To accomplish RAG system implementation:
 
 To accomplish AI tool integration:
 
-**Spring Component Tools:** Define tools as Spring components with @Tool annotations.
+**Spring Component Tools:** Define tools as Spring components with `@`Tool annotations.
 
 **Database Access Tools:** Create tools for database operations and business logic.
 

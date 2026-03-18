@@ -275,4 +275,4 @@ Agents can be invoked in several ways:
 - [JUnit Test Skills Guide](./guide-skills-junit-test.md) - JUnit testing skills
 - [LangChain4J Skills Guide](./guide-skills-langchain4j.md) - LangChain4J skills
 - [AWS Java Skills Guide](./guide-skills-aws-java.md) - AWS Java SDK skills
-- [Core Agent Guide](../developer-kit-core/docs/guide-agents.md) - All agents across plugins
+- [Core Agent Guide](../../developer-kit-core/docs/guide-agents.md) - All agents across plugins

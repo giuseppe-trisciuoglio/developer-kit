@@ -18,7 +18,7 @@ public class UserControllerTest { }
 public class UserServiceFullIntegrationTest { }
 ```
 
-## Use @ServiceConnection for Container Management (Spring Boot 3.5+)
+## Use `@`ServiceConnection for Container Management (Spring Boot 3.5+)
 
 Prefer `@ServiceConnection` over manual `@DynamicPropertySource` for cleaner code:
 

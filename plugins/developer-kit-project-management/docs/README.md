@@ -49,5 +49,5 @@ developer-kit-project-management/
 
 ## See Also
 
-- [Core Plugin Documentation](../developer-kit-core/docs/) - Core guides and installation
-- [LRA Workflow Guide](../developer-kit-core/docs/guide-lra-workflow.md) - Long-running agent workflow for project management
+- [Core Plugin Documentation](../../developer-kit-core/docs/) - Core guides and installation
+- [LRA Workflow Guide](../../developer-kit-core/docs/guide-lra-workflow.md) - Long-running agent workflow for project management

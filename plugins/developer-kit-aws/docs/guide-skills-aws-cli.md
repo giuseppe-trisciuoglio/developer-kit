@@ -182,4 +182,4 @@ The AWS CLI skill complements other AWS-related capabilities:
 
 - [CloudFormation Skills Guide](./guide-skills-cloudformation.md) - Infrastructure as Code with CloudFormation
 - [AWS Agents Guide](./guide-agents.md) - AWS specialized agents
-- [Java AWS Skills Guide](../developer-kit-java/docs/guide-skills-aws-java.md) - AWS SDK integration from Java
+- [Java AWS Skills Guide](../../developer-kit-java/docs/guide-skills-aws-java.md) - AWS SDK integration from Java

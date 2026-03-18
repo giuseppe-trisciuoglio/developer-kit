@@ -1,6 +1,6 @@
 ---
 name: spring-boot-event-driven-patterns
-description: Provides Event-Driven Architecture (EDA) patterns in Spring Boot using ApplicationEvent, @EventListener, and Kafka. Use when building loosely-coupled microservices with domain events, transactional event listeners, and distributed messaging patterns.
+description: Provides Event-Driven Architecture (EDA) patterns in Spring Boot using ApplicationEvent, `@EventListener`, and Kafka. Use when building loosely-coupled microservices with domain events, transactional event listeners, and distributed messaging patterns.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
@@ -8,7 +8,7 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 
 ## Overview
 
-Implement Event-Driven Architecture (EDA) patterns in Spring Boot 3.x using domain events, ApplicationEventPublisher, @TransactionalEventListener, and distributed messaging with Kafka and Spring Cloud Stream.
+Implement Event-Driven Architecture (EDA) patterns in Spring Boot 3.x using domain events, ApplicationEventPublisher, `@TransactionalEventListener`, and distributed messaging with Kafka and Spring Cloud Stream.
 
 ## When to Use This Skill
 
@@ -36,11 +36,11 @@ Add ApplicationEventPublisher to services that need to publish events. Publish e
 
 ### 3. Configure Transactional Listeners
 
-Use @TransactionalEventListener with phase = AFTER_COMMIT to ensure events are only processed after successful database transaction.
+Use `@`TransactionalEventListener with phase = AFTER_COMMIT to ensure events are only processed after successful database transaction.
 
 ### 4. Set Up Kafka Infrastructure
 
-Configure KafkaTemplate for publishing events to topics. Create @KafkaListener beans to consume events from other services.
+Configure KafkaTemplate for publishing events to topics. Create `@`KafkaListener beans to consume events from other services.
 
 ### 5. Implement Spring Cloud Stream
 

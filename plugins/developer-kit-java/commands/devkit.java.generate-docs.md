@@ -631,9 +631,9 @@ docker-compose up -d postgres redis
 ## 📚 Documentation
 
 - **[API Documentation](http://localhost:8080/swagger-ui.html)** - Interactive API docs
-- **[Architecture Guide](docs/architecture.md)** - System design and patterns
-- **[Developer Guide](docs/development.md)** - Setup and contribution guidelines
-- **[Deployment Guide](docs/deployment.md)** - Production deployment instructions
+- **`docs/architecture.md`** - System design and patterns
+- **`docs/development.md`** - Setup and contribution guidelines
+- **`docs/deployment.md`** - Production deployment instructions
 
 ## 🧪 Testing
 
@@ -739,7 +739,7 @@ spring.data.redis.timeout=2000ms
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+We welcome contributions! Please see `CONTRIBUTING.md` for details.
 
 ### Development Workflow
 
@@ -770,7 +770,7 @@ This project uses:
 
 ## 📄 License
 
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Apache License 2.0 - see the `LICENSE` file for details.
 
 ## 🆘 Support
 

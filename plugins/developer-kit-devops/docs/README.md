@@ -58,6 +58,6 @@ developer-kit-devops/
 
 ## See Also
 
-- [Core Plugin Documentation](../developer-kit-core/docs/) - Core guides and installation
-- [AWS Plugin Documentation](../developer-kit-aws/docs/) - AWS CloudFormation and infrastructure
-- [Java Plugin Documentation](../developer-kit-java/docs/) - Java and Spring Boot guides
+- [Core Plugin Documentation](../../developer-kit-core/docs/) - Core guides and installation
+- [AWS Plugin Documentation](../../developer-kit-aws/docs/) - AWS CloudFormation and infrastructure
+- [Java Plugin Documentation](../../developer-kit-java/docs/) - Java and Spring Boot guides

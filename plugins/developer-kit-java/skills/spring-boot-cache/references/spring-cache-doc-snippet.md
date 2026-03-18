@@ -30,8 +30,7 @@ method is invoked, and the cache is updated before returning the value.
 > the Spring Cache and JCache annotations.
 
 If you do not add any specific cache library, Spring Boot
-auto-configures a [simple
-provider](io/caching.xml#io.caching.provider.simple) that uses
+auto-configures a simple provider that uses
 concurrent maps in memory. When a cache is required (such as
 `piDecimals` in the preceding example), this provider creates it for
 you. The simple provider is not really recommended for production usage,
@@ -65,24 +64,24 @@ If you have not defined a bean of type
 Spring Boot tries to detect the following providers (in the indicated
 order):
 
-1.  [io/caching.xml](io/caching.xml#io.caching.provider.generic)
+1.  `io/caching.xml#io.caching.provider.generic`
 
-2.  [io/caching.xml](io/caching.xml#io.caching.provider.jcache) (EhCache
+2.  `io/caching.xml#io.caching.provider.jcache` (EhCache
     3, Hazelcast, Infinispan, and others)
 
-3.  [io/caching.xml](io/caching.xml#io.caching.provider.hazelcast)
+3.  `io/caching.xml#io.caching.provider.hazelcast`
 
-4.  [io/caching.xml](io/caching.xml#io.caching.provider.infinispan)
+4.  `io/caching.xml#io.caching.provider.infinispan`
 
-5.  [io/caching.xml](io/caching.xml#io.caching.provider.couchbase)
+5.  `io/caching.xml#io.caching.provider.couchbase`
 
-6.  [io/caching.xml](io/caching.xml#io.caching.provider.redis)
+6.  `io/caching.xml#io.caching.provider.redis`
 
-7.  [io/caching.xml](io/caching.xml#io.caching.provider.caffeine)
+7.  `io/caching.xml#io.caching.provider.caffeine`
 
-8.  [io/caching.xml](io/caching.xml#io.caching.provider.cache2k)
+8.  `io/caching.xml#io.caching.provider.cache2k`
 
-9.  [io/caching.xml](io/caching.xml#io.caching.provider.simple)
+9.  `io/caching.xml#io.caching.provider.simple`
 
 Additionally, {url-spring-boot-for-apache-geode-site}[Spring Boot for
 Apache Geode] provides
@@ -93,8 +92,8 @@ for using Apache Geode as a cache provider].
 > If the `org.springframework.cache.CacheManager[] is
 > auto-configured by Spring Boot, it is possible to *force* a particular
 > cache provider by setting the configprop:spring.cache.type[]
-> property. Use this property if you need to [use no-op
-> caches](io/caching.xml#io.caching.provider.none) in certain
+> property. Use this property if you need to use no-op
+> caches in certain
 > environments (such as tests).
 
 > [!TIP]
@@ -162,7 +161,7 @@ cache with implementation details, as shown in the following example:
 > implementation.
 
 > [!TIP]
-> Spring Boot has [general support for Hazelcast](io/hazelcast.xml). If
+> Spring Boot has general support for Hazelcast. If
 > a single `com.hazelcast.core.HazelcastInstance[] is
 > available, it is automatically reused for the
 > `javax.cache.CacheManager[] as well, unless the
@@ -188,7 +187,7 @@ There are two ways to customize the underlying
 
 ## Hazelcast
 
-Spring Boot has [general support for Hazelcast](io/hazelcast.xml). If a
+Spring Boot has general support for Hazelcast. If a
 `com.hazelcast.core.HazelcastInstance[] has been
 auto-configured and `com.hazelcast:hazelcast-spring` is on the
 classpath, it is automatically wrapped in a
@@ -202,8 +201,8 @@ classpath, it is automatically wrapped in a
 > based implementation. If you want to use Hazelcast as a JCache
 > compliant cache, set configprop:spring.cache.type[] to `jcache`. If
 > you have multiple JCache compliant cache providers and want to force
-> the use of Hazelcast, you have to [explicitly set the JCache
-> provider](io/caching.xml#io.caching.provider.jcache).
+> the use of Hazelcast, you have to explicitly set the JCache
+> provider.
 
 ## Infinispan
 
@@ -231,7 +230,7 @@ respectively.
 ## Couchbase
 
 If Spring Data Couchbase is available and Couchbase is
-[configured](data/nosql.xml#data.nosql.couchbase), a
+configured, a
 `org.springframework.data.couchbase.cache.CouchbaseCacheManager[]
 is auto-configured. It is possible to create additional caches on
 startup by setting the configprop:spring.cache.cache-names[] property

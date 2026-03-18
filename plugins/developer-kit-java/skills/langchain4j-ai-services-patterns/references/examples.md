@@ -67,7 +67,7 @@ public class StatefulAssistantExample {
 }
 ```
 
-## 3. Multi-User Memory with @MemoryId
+## 3. Multi-User Memory with `@`MemoryId
 
 **Scenario**: Separate conversation history per user.
 
@@ -522,13 +522,13 @@ public class RAGIntegrationExample {
 
 ## Best Practices Summary
 
-1. **Always use @SystemMessage** for consistent behavior across different messages
+1. **Always use `@`SystemMessage** for consistent behavior across different messages
 2. **Enable temperature=0** for deterministic tasks (extraction, calculations)
 3. **Use MessageWindowChatMemory** for conversation history management
 4. **Implement error handling** for tool failures
 5. **Use structured output** when you need typed responses
 6. **Stream long responses** for better UX
-7. **Use @MemoryId** for multi-user scenarios
+7. **Use `@`MemoryId** for multi-user scenarios
 8. **Template variables** for dynamic system prompts
 9. **Tool descriptions** should be clear and actionable
 10. **Always validate** tool parameters before execution

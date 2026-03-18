@@ -275,7 +275,7 @@ void shouldWorkInAllRegions(Region region) {
 ### Testing Authentication
 
 ```java
-@Test
+`@`Test
 void shouldUseIamRoleForAuthentication() {
     BedrockRuntimeClient client = BedrockRuntimeClient.builder()
         .region(Region.US_EAST_1)
@@ -324,8 +324,8 @@ public class BedrockTestFixtures {
 ### Integration Test Suite
 
 ```java
-@Suite
-@SelectClasses({
+`@`Suite
+`@`SelectClasses({
     BedrockAIServiceTest.class,
     BedrockConfigurationTest.class,
     BedrockStreamingTest.class,
@@ -362,4 +362,5 @@ localstack.enabled=true
 aws.region=us-east-1
 bedrock.timeout=5000
 bedrock.retry.max-attempts=3
+```
 ```

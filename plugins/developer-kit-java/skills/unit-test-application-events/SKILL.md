@@ -1,6 +1,6 @@
 ---
 name: unit-test-application-events
-description: Provides patterns for testing Spring application events (ApplicationEvent) with @EventListener and ApplicationEventPublisher. Handles event publishing, listening, and async event handling in Spring Boot applications. Use when validating event-driven workflows in your Spring Boot services.
+description: Provides patterns for testing Spring application events (ApplicationEvent) with `@EventListener` and ApplicationEventPublisher. Handles event publishing, listening, and async event handling in Spring Boot applications. Use when validating event-driven workflows in your Spring Boot services.
 allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
@@ -14,7 +14,7 @@ This skill provides comprehensive patterns for testing Spring ApplicationEvent p
 
 Use this skill when:
 - Testing ApplicationEventPublisher event publishing
-- Testing @EventListener method invocation
+- Testing `@`EventListener method invocation
 - Verifying event listener logic and side effects
 - Testing event propagation through listeners
 - Want fast event-driven architecture tests
@@ -27,7 +27,7 @@ Use this skill when:
 3. **Use ArgumentCaptor**: Capture published events to verify their content using `ArgumentCaptor.forClass(EventType.class)`
 4. **Test listener side effects**: Invoke listener methods directly and verify their effects on mocked dependencies
 5. **Test event data integrity**: Always verify that the captured event contains the correct data
-6. **Handle async events**: For @Async listeners, use Thread.sleep() or Awaitility to wait for completion
+6. **Handle async events**: For `@`Async listeners, use Thread.sleep() or Awaitility to wait for completion
 7. **Test error scenarios**: Verify exception handling in both publishers and listeners
 
 ## Examples
@@ -147,7 +147,7 @@ class UserServiceEventTest {
 
 ## Testing Event Listeners
 
-### @EventListener Annotation
+### `@`EventListener Annotation
 
 ```java
 // Event listener
@@ -251,7 +251,7 @@ class MultiListenerTest {
 
 ## Testing Conditional Event Listeners
 
-### @EventListener with Condition
+### `@`EventListener with Condition
 
 ```java
 @Component
@@ -279,7 +279,7 @@ class ConditionalListenerTest {
 
 ## Testing Async Event Listeners
 
-### @Async with @EventListener
+### `@`Async with `@`EventListener
 
 ```java
 @Component
@@ -336,7 +336,7 @@ class AsyncEventListenerTest {
 - **Do not test Spring framework behavior**: Focus on your event logic, not Spring's event publishing mechanism
 - **Avoid Thread.sleep() in production code**: Use it only in test scenarios for async event verification
 - **Event listeners should be idempotent**: Design listeners to handle duplicate events gracefully
-- **Beware of event ordering**: Spring does not guarantee listener execution order without @Order annotation
+- **Beware of event ordering**: Spring does not guarantee listener execution order without `@`Order annotation
 - **Test event serialization**: If events are sent across JVM boundaries, test serialization/deserialization
 - **Memory considerations**: Be cautious with event-driven architecture in long-running processes; events can accumulate
 
@@ -352,4 +352,4 @@ class AsyncEventListenerTest {
 
 - [Spring ApplicationEvent](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/ApplicationEvent.html)
 - [Spring ApplicationEventPublisher](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/ApplicationEventPublisher.html)
-- [@EventListener Documentation](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/event/EventListener.html)
+- [`@`EventListener Documentation](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/event/EventListener.html)

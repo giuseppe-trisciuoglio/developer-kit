@@ -93,9 +93,9 @@ developer-kit-java/
 
 ## See Also
 
-- [Core Plugin Documentation](../developer-kit-core/docs/) - Core guides and installation
-- [TypeScript Plugin Documentation](../developer-kit-typescript/docs/) - TypeScript, NestJS, and React guides
-- [AWS Plugin Documentation](../developer-kit-aws/docs/) - AWS CloudFormation guides
+- [Core Plugin Documentation](../../developer-kit-core/docs/) - Core guides and installation
+- [TypeScript Plugin Documentation](../../developer-kit-typescript/docs/) - TypeScript, NestJS, and React guides
+- [AWS Plugin Documentation](../../developer-kit-aws/docs/) - AWS CloudFormation guides
 
 ---
 
@@ -104,4 +104,4 @@ developer-kit-java/
 The Java plugin contains AWS Java SDK skills that are related to the AWS plugin:
 
 - **[AWS Java Skills](./guide-skills-aws-java.md)** - AWS SDK integration from Java
-- See [AWS Plugin](../developer-kit-aws/docs/) for CloudFormation infrastructure skills
+- See [AWS Plugin](../../developer-kit-aws/docs/) for CloudFormation infrastructure skills

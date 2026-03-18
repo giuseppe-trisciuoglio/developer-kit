@@ -65,7 +65,7 @@ The Developer Kit is organized into specialized plugins, each containing domain-
 
 ### Core Plugin Commands
 
-**Plugin**: [developer-kit-core](../developer-kit-core/)
+**Plugin**: [developer-kit-core](../)
 
 General purpose commands for feature development, refactoring, debugging, documentation, GitHub integration, and workflow management.
 
@@ -112,7 +112,7 @@ General purpose commands for feature development, refactoring, debugging, docume
 |---------|---------|
 | `/developer-kit:devkit.verify-skill` | Validates a skill against DevKit standards |
 
-**Documentation**: [Core Command Guide](./commands.md)
+**Documentation**: [Core Command Guide](./guide-commands.md)
 
 ---
 
@@ -150,7 +150,7 @@ Specifications-driven development workflow for transforming ideas into functiona
 
 ### Java Plugin Commands
 
-**Plugin**: [developer-kit-java](../developer-kit-java/)
+**Plugin**: [developer-kit-java](../../developer-kit-java/)
 
 Java and Spring Boot specialized commands for code review, testing, CRUD generation, documentation, and more.
 
@@ -168,13 +168,13 @@ Java and Spring Boot specialized commands for code review, testing, CRUD generat
 | `/developer-kit-java:devkit.java.upgrade-dependencies` | Upgrade dependencies with compatibility checks |
 | `/developer-kit-java:devkit.java.generate-refactoring-tasks` | Generate refactoring task list |
 
-**Documentation**: [Java Command Guide](../developer-kit-java/docs/guide-commands.md)
+**Documentation**: [Java Command Guide](../../developer-kit-java/docs/guide-commands.md)
 
 ---
 
 ### TypeScript Plugin Commands
 
-**Plugin**: [developer-kit-typescript](../developer-kit-typescript/)
+**Plugin**: [developer-kit-typescript](../../developer-kit-typescript/)
 
 TypeScript, JavaScript, NestJS, and React specialized commands for code review and security assessment.
 
@@ -184,13 +184,13 @@ TypeScript, JavaScript, NestJS, and React specialized commands for code review a
 | `/developer-kit-typescript:devkit.react.code-review` | React frontend code review |
 | `/developer-kit-typescript:devkit.ts.security-review` | TypeScript security vulnerability assessment |
 
-**Documentation**: [TypeScript Command Guide](../developer-kit-typescript/docs/guide-commands.md)
+**Documentation**: [TypeScript Command Guide](../../developer-kit-typescript/docs/guide-commands.md)
 
 ---
 
 ### GitHub Spec Kit Commands
 
-**Plugin**: [github-spec-kit](../github-spec-kit/)
+**Plugin**: [github-spec-kit](../../github-spec-kit/)
 
 GitHub specification and workflow commands.
 
@@ -200,13 +200,13 @@ GitHub specification and workflow commands.
 | `/github-spec-kit:speckit.optimize` | Optimize GitHub workflows |
 | `/github-spec-kit:speckit.verify` | Verify GitHub specifications |
 
-**Documentation**: [Spec Kit Command Guide](../github-spec-kit/docs/guide-commands.md)
+**Documentation**: [Spec Kit Command Guide](../../github-spec-kit/docs/guide-commands.md)
 
 ---
 
 ### Project Management Plugin Commands
 
-**Plugin**: [developer-kit-project-management](../developer-kit-project-management/)
+**Plugin**: [developer-kit-project-management](../../developer-kit-project-management/)
 
 Project management and workflow commands.
 
@@ -214,7 +214,7 @@ Project management and workflow commands.
 |---------|---------|
 | Ralph Loop commands | Long-running agent workflow management |
 
-**Documentation**: [Project Management Command Guide](../developer-kit-project-management/docs/guide-commands.md)
+**Documentation**: [Project Management Command Guide](../../developer-kit-project-management/docs/guide-commands.md)
 
 ---
 

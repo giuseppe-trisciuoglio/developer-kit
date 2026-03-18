@@ -60,6 +60,6 @@ github-spec-kit/
 
 ## See Also
 
-- [Core Plugin Documentation](../developer-kit-core/docs/) - Core guides and installation
-- [DevOps Plugin Documentation](../developer-kit-devops/docs/) - Docker and GitHub Actions guides
-- [Core Commands](../developer-kit-core/docs/guide-commands.md) - GitHub PR commands
+- [Core Plugin Documentation](../../developer-kit-core/docs/) - Core guides and installation
+- [DevOps Plugin Documentation](../../developer-kit-devops/docs/) - Docker and GitHub Actions guides
+- [Core Commands](../../developer-kit-core/docs/guide-commands.md) - GitHub PR commands

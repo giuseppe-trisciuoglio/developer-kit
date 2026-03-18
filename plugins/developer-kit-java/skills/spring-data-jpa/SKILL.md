@@ -1,6 +1,6 @@
 ---
 name: spring-data-jpa
-description: Provides patterns to implement persistence layers with Spring Data JPA. Use when creating repositories, configuring entity relationships, writing queries (derived and @Query), setting up pagination, database auditing, transactions, UUID primary keys, multiple databases, and database indexing.
+description: Provides patterns to implement persistence layers with Spring Data JPA. Use when creating repositories, configuring entity relationships, writing queries (derived and `@Query`), setting up pagination, database auditing, transactions, UUID primary keys, multiple databases, and database indexing.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
@@ -15,7 +15,7 @@ To implement persistence layers with Spring Data JPA, create repository interfac
 Use this Skill when:
 - Implementing repository interfaces with automatic CRUD operations
 - Creating entities with relationships (one-to-one, one-to-many, many-to-many)
-- Writing queries using derived method names or custom @Query annotations
+- Writing queries using derived method names or custom `@`Query annotations
 - Setting up pagination and sorting for large datasets
 - Implementing database auditing with timestamps and user tracking
 - Configuring transactions and exception handling
@@ -43,7 +43,7 @@ To implement a repository interface:
    List<User> findByStatusOrderByCreatedDateDesc(String status);
    ```
 
-3. **Implement custom queries with @Query:**
+3. **Implement custom queries with `@`Query:**
    ```java
    @Query("SELECT u FROM User u WHERE u.status = :status")
    List<User> findActiveUsers(@Param("status") String status);
@@ -81,14 +81,14 @@ To implement a repository interface:
 ### Apply Query Patterns
 
 1. **Use derived queries for simple conditions**
-2. **Use @Query for complex queries**
+2. **Use `@`Query for complex queries**
 3. **Return Optional<T> for single results**
 4. **Use Pageable for pagination**
-5. **Apply @Modifying for update/delete operations**
+5. **Apply `@`Modifying for update/delete operations**
 
 ### Manage Transactions
 
-1. **Mark read-only operations with @Transactional(readOnly = true)**
+1. **Mark read-only operations with `@`Transactional(readOnly = true)**
 2. **Use explicit transaction boundaries for modifying operations**
 3. **Specify rollback conditions when needed**
 

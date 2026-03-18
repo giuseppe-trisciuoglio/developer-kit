@@ -170,7 +170,7 @@ public class AppConfig {
 
 ---
 
-## Example 4: Resolving Ambiguities with @Qualifier
+## Example 4: Resolving Ambiguities with `@`Qualifier
 
 ```java
 @Configuration

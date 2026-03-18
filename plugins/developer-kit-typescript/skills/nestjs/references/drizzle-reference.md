@@ -406,7 +406,7 @@ const db = drizzle({
 
 Source: https://orm.drizzle.team/docs/get-started/bun-sqlite-new
 
-Commands to install Drizzle ORM and Drizzle Kit, essential for ORM functionality and schema management. Drizzle Kit requires @types/bun for TypeScript projects.
+Commands to install Drizzle ORM and Drizzle Kit, essential for ORM functionality and schema management. Drizzle Kit requires `@`types/bun for TypeScript projects.
 
 ```npm
 npm i drizzle-orm
@@ -1439,7 +1439,7 @@ npx tsx src/app.ts
 
 Source: https://orm.drizzle.team/docs/get-started/nile-new
 
-Installs the core Drizzle ORM package, the 'pg' driver for PostgreSQL, 'dotenv' for environment variables, and development dependencies like 'drizzle-kit', 'tsx', and '@types/pg' using bun.
+Installs the core Drizzle ORM package, the 'pg' driver for PostgreSQL, 'dotenv' for environment variables, and development dependencies like 'drizzle-kit', 'tsx', and '`@`types/pg' using bun.
 
 ```bash
 bun add drizzle-orm pg dotenv
@@ -1557,11 +1557,11 @@ bun add postgres
 
 --------------------------------
 
-### Install @libsql/client Package
+### Install `@`libsql/client Package
 
 Source: https://orm.drizzle.team/docs/tutorials/drizzle-with-turso
 
-Installs the '@libsql/client' package, which is the official driver for interacting with libSQL-compatible databases like Turso. This client enables Drizzle ORM to communicate with the database.
+Installs the '`@`libsql/client' package, which is the official driver for interacting with libSQL-compatible databases like Turso. This client enables Drizzle ORM to communicate with the database.
 
 ```npm
 npm i @libsql/client
@@ -1615,7 +1615,7 @@ bun add -D drizzle-kit
 
 Source: https://orm.drizzle.team/docs/get-started/nile-new
 
-Installs the core Drizzle ORM package, the 'pg' driver for PostgreSQL, 'dotenv' for environment variables, and development dependencies like 'drizzle-kit', 'tsx', and '@types/pg'.
+Installs the core Drizzle ORM package, the 'pg' driver for PostgreSQL, 'dotenv' for environment variables, and development dependencies like 'drizzle-kit', 'tsx', and '`@`types/pg'.
 
 ```bash
 npm i drizzle-orm pg dotenv
@@ -1708,7 +1708,7 @@ supabase init
 
 Source: https://orm.drizzle.team/docs/get-started/nile-new
 
-Installs the core Drizzle ORM package, the 'pg' driver for PostgreSQL, 'dotenv' for environment variables, and development dependencies like 'drizzle-kit', 'tsx', and '@types/pg' using pnpm.
+Installs the core Drizzle ORM package, the 'pg' driver for PostgreSQL, 'dotenv' for environment variables, and development dependencies like 'drizzle-kit', 'tsx', and '`@`types/pg' using pnpm.
 
 ```bash
 pnpm add drizzle-orm pg dotenv
@@ -1886,7 +1886,7 @@ docker pull postgres:15
 
 Source: https://orm.drizzle.team/docs/get-started/nile-new
 
-Installs the core Drizzle ORM package, the 'pg' driver for PostgreSQL, 'dotenv' for environment variables, and development dependencies like 'drizzle-kit', 'tsx', and '@types/pg' using yarn.
+Installs the core Drizzle ORM package, the 'pg' driver for PostgreSQL, 'dotenv' for environment variables, and development dependencies like 'drizzle-kit', 'tsx', and '`@`types/pg' using yarn.
 
 ```bash
 yarn add drizzle-orm pg dotenv

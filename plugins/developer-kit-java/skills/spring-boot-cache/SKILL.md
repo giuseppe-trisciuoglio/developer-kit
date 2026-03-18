@@ -35,7 +35,7 @@ Include spring-boot-starter-cache and your preferred cache provider (Caffeine, R
 
 ### 2. Enable Caching
 
-Add @EnableCaching to a @Configuration class and declare CacheManager bean(s) for your cache providers.
+Add `@`EnableCaching to a `@`Configuration class and declare CacheManager bean(s) for your cache providers.
 
 ### 3. Define Cache Configuration
 
@@ -43,7 +43,7 @@ Configure cache names, TTL settings, and capacity limits in application.yml or v
 
 ### 4. Anotate Service Methods
 
-Apply @Cacheable for read operations, @CachePut for updates, and @CacheEvict for invalidation. Use @CacheConfig to define default cache names at class level.
+Apply `@`Cacheable for read operations, `@`CachePut for updates, and `@`CacheEvict for invalidation. Use `@`CacheConfig to define default cache names at class level.
 
 ### 5. Configure Cache Keys and Conditions
 
@@ -51,7 +51,7 @@ Use SpEL expressions to define cache keys (key = "#user.id"), conditions (condit
 
 ### 6. Implement Cache Eviction Strategy
 
-Create scheduled jobs or use @CacheEvict with allEntries=true to periodically clear time-sensitive caches.
+Create scheduled jobs or use `@`CacheEvict with allEntries=true to periodically clear time-sensitive caches.
 
 ### 7. Monitor Cache Performance
 
@@ -177,7 +177,7 @@ Enable Actuator cache endpoint to observe hit/miss ratios. Consider Micrometer m
 
 ## Examples
 
-### Example 1: Basic @Cacheable Usage
+### Example 1: Basic `@`Cacheable Usage
 
 **Input:**
 ```java

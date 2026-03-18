@@ -1,0 +1,28 @@
+name: Publish Tessl Tile
+
+permissions:
+  id-token: write
+  contents: read
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'tile.json'
+      - 'plugins/**/SKILL.md'
+      - 'plugins/**/references/**'
+      - 'plugins/**/patterns/**'
+  workflow_dispatch:
+
+jobs:
+  publish:
+    name: Publish tile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: tesslio/publish@main
+        with:
+          token: ${{ secrets.TESSL_API_TOKEN }}
+          review: 'true'
+          review-threshold: '50'

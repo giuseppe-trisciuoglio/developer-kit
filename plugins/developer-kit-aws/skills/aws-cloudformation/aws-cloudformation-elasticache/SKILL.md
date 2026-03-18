@@ -1291,8 +1291,8 @@ aws cloudformation describe-stack-drift-detection-status \
 
 ## Related Resources
 
-- For advanced patterns: See [EXAMPLES.md](EXAMPLES.md)
-- For reference: See [REFERENCE.md](REFERENCE.md)
+- For advanced patterns: See [EXAMPLES.md](references/examples.md)
+- For reference: See [REFERENCE.md](references/reference.md)
 - AWS CloudFormation User Guide: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/
 - ElastiCache Documentation: https://docs.aws.amazon.com/AmazonElastiCache/latest/redsug/
 - Redis Documentation: https://redis.io/documentation

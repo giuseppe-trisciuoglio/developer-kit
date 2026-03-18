@@ -1827,8 +1827,8 @@ aws cloudformation execute-change-set \
 
 ## Related Resources
 
-- For advanced patterns: See [EXAMPLES.md](EXAMPLES.md)
-- For reference: See [REFERENCE.md](REFERENCE.md)
+- For advanced patterns: See [EXAMPLES.md](references/examples.md)
+- For reference: See [REFERENCE.md](references/reference.md)
 - AWS CloudFormation User Guide: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/
 - RDS Documentation: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/
 - RDS Best Practices: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_BestPractices.html

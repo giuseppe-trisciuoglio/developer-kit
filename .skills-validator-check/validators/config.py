@@ -22,6 +22,7 @@ MAX_COMPATIBILITY_LENGTH = 500
 
 # Progressive disclosure limits (per spec: < 5000 tokens recommended, ~500 lines)
 MAX_SKILL_LINES = 500
+MAX_SKILL_TOKENS = 5000
 MAX_SKILL_CHARACTERS = 20000
 
 # =============================================================================
@@ -32,6 +33,13 @@ MAX_SKILL_CHARACTERS = 20000
 # - skills/category/skill-name/SKILL.md
 # - plugins/plugin-name/skills/category/skill-name/SKILL.md
 SKILL_PATTERN = re.compile(r"(?:.*/)?skills/.+/SKILL\.md$")
+
+# Bundled markdown resources inside skill directories:
+# - skills/skill-name/references/example.md
+# - plugins/plugin-name/skills/skill-name/references/example.md
+SKILL_BUNDLED_MARKDOWN_PATTERN = re.compile(
+    r"(?:.*/)?skills/.+/(?:references|assets|scripts)/.+\.md$"
+)
 
 # Support both root-level and plugin-based agents:
 # - agents/agent-name.md

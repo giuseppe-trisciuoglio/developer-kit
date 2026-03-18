@@ -474,4 +474,4 @@ Commands are invoked using the slash syntax in Claude Code:
 - [JUnit Test Skills Guide](./guide-skills-junit-test.md) - JUnit testing skills
 - [LangChain4J Skills Guide](./guide-skills-langchain4j.md) - LangChain4J skills
 - [AWS Java Skills Guide](./guide-skills-aws-java.md) - AWS Java SDK skills
-- [Core Command Guide](../developer-kit-core/docs/guide-commands.md) - All commands across plugins
+- [Core Command Guide](../../developer-kit-core/docs/guide-commands.md) - All commands across plugins

@@ -1,6 +1,6 @@
 ---
 name: nextjs-app-router
-description: Provides patterns and code examples for building Next.js 16+ applications with App Router architecture. Use when creating projects with App Router, implementing Server Components and Client Components ("use client"), creating Server Actions for forms, building Route Handlers (route.ts), configuring caching with "use cache" directive (cacheLife, cacheTag), setting up parallel routes (@slot) or intercepting routes, migrating to proxy.ts, or working with App Router file conventions (layout.tsx, page.tsx, loading.tsx, error.tsx).
+description: Provides patterns and code examples for building Next.js 16+ applications with App Router architecture. Use when creating projects with App Router, implementing Server Components and Client Components ("use client"), creating Server Actions for forms, building Route Handlers (route.ts), configuring caching with "use cache" directive (cacheLife, cacheTag), setting up parallel routes (`@slot`) or intercepting routes, migrating to proxy.ts, or working with App Router file conventions (layout.tsx, page.tsx, loading.tsx, error.tsx).
 allowed-tools: Read, Write, Edit, Bash
 ---
 
@@ -26,7 +26,7 @@ Activate when user requests involve:
 - "Server Action", "form submission", "mutation"
 - "Route Handler", "API endpoint", "route.ts"
 - "use cache", "cacheLife", "cacheTag", "revalidation"
-- "parallel routes", "@slot", "intercepting routes"
+- "parallel routes", "`@`slot", "intercepting routes"
 - "proxy.ts", "migrate from middleware.ts"
 - "layout.tsx", "page.tsx", "loading.tsx", "error.tsx", "not-found.tsx"
 - "generateMetadata", "next/image", "next/font"

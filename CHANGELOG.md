@@ -7,38 +7,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.6.3] - 2026-03-18
+
+### Fixed
+
+- **Core Hook Fix** (`developer-kit-core`):
+  - Removed duplicate hook loading issue (Closes #158)
+
+## [2.6.2] - 2026-03-16
+
+### Fixed
+
+- **Global Documentation Fixes**:
+  - Fixed markdown errors on skills and reference files across all plugins
+  - Fixed documentation links in multiple plugin guides
+  - Fixed link issues on reference files in better-auth skill (`developer-kit-typescript`)
+
 ### Added
 
-- **Knowledge Graph Skill** (`developer-kit-core`):
-  - New `knowledge-graph` skill for managing specification knowledge graphs
-  - Provides schema definition with entities, relationships, and graph structure
-  - Includes comprehensive query examples for common operations
-  - Documents integration patterns with existing workflows
-  - Reference files: `schema.md`, `query-examples.md`, `integration-patterns.md`
+- **Tessl Integration**:
+  - Added `tessl.json` configuration for Tessl registry integration
+  - Added `tile.json` with complete tile definition for 79 skills across 11 plugins
+  - Added workflow for publishing tiles to Tessl registry (`.github/workflows/publish-tiles.yml`)
 
-- **Specs Quality Command** (`developer-kit-core`):
-  - New `devkit.spec-quality` command for maintaining specification context quality
-  - Synchronizes Knowledge Graph, Tasks, and Codebase after implementations
-  - Automatically integrated into `spec-to-tasks` and `feature-development` workflows
-  - Supports options: `--update-kg-only`, `--task=TASK-XXX`, `--dry-run`
+- **Validation System Enhancements** (`.skills-validator-check`):
+  - Added comprehensive test coverage for CLI and validators
+  - Enhanced validation logic with better error reporting
+  - Added `config.py` for centralized configuration
+  - Added `reporter.py` for improved output formatting
 
 ### Changed
 
-- **Feature Development Command** (`developer-kit-core`):
-  - Enhanced integration with Knowledge Graph for better context management
-  - Improved workflow coordination with spec-quality command
-
-- **Spec to Tasks Command** (`developer-kit-core`):
-  - Enhanced task generation with Knowledge Graph integration
-  - Improved technical context extraction from codebase analysis
-
-- **Plugin Manifest** (`developer-kit-core`):
-  - Updated `plugin.json` to include new `knowledge-graph` skill
-  - Added `devkit.spec-quality` command to commands list
-
-- **Rules Updates**:
-  - Minor updates to rule files across `developer-kit-java`, `developer-kit-php`, `developer-kit-python`, `developer-kit-typescript`
-  - Consistency improvements and reference updates
+- **Version Bump**: Updated all plugins to version 2.6.2
+  - Updated `marketplace.json` with new version
+  - Updated all 11 plugin `plugin.json` files
 
 ## [2.6.1] - 2026-03-14
 
@@ -1022,8 +1024,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.1...HEAD
-[2.5.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.0...v2.6.1
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.3...HEAD
+[2.6.3]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.2...v2.6.3
+[2.6.2]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.1...v2.6.2
+[2.6.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.0...v2.6.1
 [2.6.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.5.1...v2.6.0
 [2.5.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.5.0...v2.5.1
 [2.5.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.4.1...v2.5.0

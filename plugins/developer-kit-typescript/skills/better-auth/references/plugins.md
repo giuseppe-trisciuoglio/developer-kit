@@ -15,7 +15,7 @@ Better Auth supports various plugins for extending authentication functionality.
 
 ## Two-Factor Authentication (2FA)
 
-> **Detailed Guide**: See [MFA_2FA.md](./MFA_2FA.md) for complete implementation guide.
+> **Detailed Guide**: See [MFA_2FA.md](./mfa-2fa.md) for complete implementation guide.
 
 ### Installation
 
@@ -262,7 +262,7 @@ export function MagicLinkSignIn() {
 
 ## Passkey Plugin
 
-> **Detailed Guide**: See [PASSKEY.md](./PASSKEY.md) for complete implementation guide.
+> **Detailed Guide**: See [passkey.md](./passkey.md) for complete implementation guide.
 
 ### Installation
 
