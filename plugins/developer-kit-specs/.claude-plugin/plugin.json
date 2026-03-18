@@ -1,0 +1,34 @@
+{
+  "name": "developer-kit-specs",
+  "version": "2.6.1",
+  "description": "Specifications-driven development workflow for transforming ideas into functional specifications and executable tasks",
+  "author": {
+    "name": "Giuseppe Trisciuoglio",
+    "email": "giuseppe.trisciuoglio@gmail.com"
+  },
+  "homepage": "https://github.com/giuseppe-trisciuoglio/developer-kit",
+  "repository": "https://github.com/giuseppe-trisciuoglio/developer-kit.git",
+  "license": "MIT",
+  "keywords": [
+    "developer-kit",
+    "specs",
+    "specifications",
+    "brainstorming",
+    "task-management",
+    "functional-requirements"
+  ],
+  "commands": [
+    "./commands/specs/specs.brainstorm.md",
+    "./commands/specs/specs.spec-to-tasks.md",
+    "./commands/specs/specs.task-manage.md",
+    "./commands/specs/specs.task-review.md",
+    "./commands/specs/specs.task-implementation.md",
+    "./commands/specs/specs.spec-sync-with-code.md",
+    "./commands/specs/specs.spec-sync-context.md",
+    "./commands/specs/specs.quick-spec.md",
+    "./commands/specs/specs.spec-quality-check.md"
+  ],
+  "skills": [
+    "./skills/knowledge-graph"
+  ]
+}

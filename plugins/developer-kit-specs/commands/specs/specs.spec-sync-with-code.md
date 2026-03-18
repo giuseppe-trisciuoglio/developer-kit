@@ -1,11 +1,11 @@
 ---
 description: "Synchronizes functional specification with current implementation state. Detects deviations between spec and code, proposes specification updates based on decision-log and completed tasks. Closes the SDD triangle (Spec <-> Test <-> Code)."
-argument-hint: "[ spec-folder ] [--after-task=TASK-XXX]"
+argument-hint: "[ --spec=\"docs/specs/XXX-feature\" ] [ --task=\"docs/specs/XXX-feature/tasks/TASK-XXX.md\" ]"
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash, AskUserQuestion, TodoWrite
 model: inherit
 ---
 
-# Spec Sync
+# Spec Sync With Code
 
 Synchronizes the functional specification with the current implementation state, detecting and proposing updates based on the decision-log and completed tasks.
 
@@ -26,7 +26,7 @@ The current workflow is unidirectional: Spec → Tasks → Code. Decisions made 
 ### Workflow Position
 
 ```
-Idea → Spec → Tasks → Implementation → Spec Sync (this)
+Idea → Spec → Tasks → Implementation → Spec Sync With Code (this)
            ↑                              ↓
            └──────────────────────────────┘
                Update spec with decisions
@@ -36,13 +36,13 @@ Idea → Spec → Tasks → Implementation → Spec Sync (this)
 
 ```bash
 # Sync spec after implementation drift detected
-/developer-kit:devkit.spec-sync docs/specs/001-hotel-search-aggregation/
+/specs:spec-sync-with-code docs/specs/001-hotel-search-aggregation/
 
 # Sync after specific task completed
-/developer-kit:devkit.spec-sync docs/specs/001-hotel-search-aggregation/ --after-task=TASK-001
+/specs:spec-sync-with-code docs/specs/001-hotel-search-aggregation/ --task=TASK-001
 
 # Sync for current spec folder (auto-detected)
-/developer-kit:devkit.spec-sync
+/specs:spec-sync-with-code
 ```
 
 ## Arguments
@@ -231,21 +231,21 @@ Idea → Spec → Tasks → Implementation → Spec Sync (this)
 This command integrates with the SDD workflow:
 
 ```
-/developer-kit:devkit.brainstorm
+/specs:brainstorm
     ↓
 [Creates: docs/specs/[id]/YYYY-MM-DD--feature-name.md]
     ↓
-/developer-kit:devkit.spec-to-tasks --lang=[language] docs/specs/[id]/
+/specs:spec-to-tasks --lang=[language] docs/specs/[id]/
     ↓
 [Creates: docs/specs/[id]/tasks/TASK-XXX.md]
     ↓
-/developer-kit:devkit.task-implementation --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
+/specs:task-implementation --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
     ↓
 [Implements task, may deviate from spec]
     ↓
 T-6.6: Spec Deviation Check detects deviation
     ↓
-/developer-kit:devkit.spec-sync docs/specs/[id]/  ← This command
+/specs:spec-sync-with-code docs/specs/[id]/  ← This command
     ↓
 [Spec updated with deviations from decision-log.md]
 ```
@@ -273,7 +273,7 @@ Run spec-sync manually when:
 
 ```bash
 # Task T-003 added pagination not in original spec
-/developer-kit:devkit.spec-sync docs/specs/001-hotel-search/ --after-task=TASK-003
+/specs:spec-sync-with-code docs/specs/001-hotel-search/ --after-task=TASK-003
 ```
 
 Output:
@@ -300,7 +300,7 @@ Options:
 
 ```bash
 # Sync entire spec after multiple tasks completed
-/developer-kit:devkit.spec-sync docs/specs/001-user-auth/
+/specs:spec-sync-with-code docs/specs/001-user-auth/
 ```
 
 ### Example 3: Auto-Detect Spec Folder
@@ -308,7 +308,7 @@ Options:
 ```bash
 # Run from within spec directory
 cd docs/specs/001-hotel-search-aggregation/
-/developer-kit:devkit.spec-sync
+/specs:spec-sync-with-code
 ```
 
 ---

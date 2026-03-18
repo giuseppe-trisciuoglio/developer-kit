@@ -41,13 +41,13 @@ Use this command when starting a new feature to define clear functional requirem
 ## Usage
 
 ```bash
-/developer-kit:devkit.brainstorm [idea-description]
+/specs:brainstorm [idea-description]
 ```
 
 After generating the functional specification, continue with:
 
 ```bash
-/developer-kit:devkit.spec-to-tasks docs/specs/[id]/
+/specs:spec-to-tasks docs/specs/[id]/
 ```
 
 ## Arguments
@@ -116,13 +116,13 @@ incrementally, generate professional documentation, review the document, and rec
 
 4. **Determine workflow tier based on idea complexity**:
     - **Quick** (bug fix, small change, <3 files, well-understood solution):
-        - Recommend switching to `/developer-kit:devkit.quick-spec` for faster turnaround
+        - Recommend switching to `/specs:quick-spec` for faster turnaround
         - Ask via AskUserQuestion:
             - Options:
                 - "Continue with full brainstorming" (for comprehensive spec)
                 - "Switch to quick spec" (recommended for bug fixes/small changes)
     - **Standard** (feature, moderate scope, 3-10 files): Continue with brainstorm
-    - **Full** (greenfield, complex, >10 files or multiple modules): Continue with brainstorm + recommend spec-review
+    - **Full** (greenfield, complex, >10 files or multiple modules): Continue with brainstorm + recommend spec-quality-check
       after
 
 ---
@@ -471,14 +471,14 @@ Task(
 
 1. The functional specification is complete. The next step is to convert it to executable tasks:
 
-   **For converting specification to tasks**: Recommend `/developer-kit:devkit.spec-to-tasks`
+   **For converting specification to tasks**: Recommend `/specs:spec-to-tasks`
     - Use when: Converting functional specification to trackable tasks
     - Arguments: `--lang=[language] docs/specs/[id]/`
 
 2. **Use the AskUserQuestion tool to present the recommendation**:
 
    Present options:
-    - **Option A**: Run spec-review first, then generate tasks (recommended)
+    - **Option A**: Run spec-quality-check first, then generate tasks (recommended)
     - **Option B**: Skip review and go directly to task generation (warning: may have quality issues)
     - **Option C**: Exit and review the specification manually
 
@@ -487,12 +487,12 @@ Task(
 3. Include the pre-filled commands:
 
 ```bash
-# Recommended: Run spec-review first, then generate tasks
-/developer-kit:devkit.spec-review docs/specs/[id]/
-/developer-kit:devkit.spec-to-tasks --lang=[java|spring|typescript|nestjs|react|python|general] docs/specs/[id]/
+# Recommended: Run spec-quality-check first, then generate tasks
+/specs:spec-quality-check docs/specs/[id]/
+/specs:spec-to-tasks --lang=[java|spring|typescript|nestjs|react|python|general] docs/specs/[id]/
 
 # Alternative: Skip review and generate tasks directly
-/developer-kit:devkit.spec-to-tasks --lang=[java|spring|typescript|nestjs|react|python|general] docs/specs/[id]/
+/specs:spec-to-tasks --lang=[java|spring|typescript|nestjs|react|python|general] docs/specs/[id]/
 ```   - The functional specification has been saved at `docs/specs/[id]/YYYY-MM-DD--feature-name.md`
    - The task list will be saved at `docs/specs/[id]/YYYY-MM-DD--feature-name--tasks.md`
    - Individual tasks will be in `docs/specs/[id]/tasks/TASK-XXX.md`
@@ -526,7 +526,7 @@ This brainstorming command produces a **functional specification** that feeds in
 
 ```
 
-/developer-kit:devkit.brainstorm
+/specs:brainstorm
 ↓
 Phase 4: Optional Codebase Exploration (for integration context only)
 ↓
@@ -540,12 +540,12 @@ Phase 7: Specification Review (quality verification)
 ↓
 [Recommends: devkit.spec-to-tasks]
 ↓
-/developer-kit:devkit.spec-to-tasks --lang=[language] docs/specs/[id]/
+/specs:spec-to-tasks --lang=[language] docs/specs/[id]/
 ↓
 [Creates: docs/specs/[id]/YYYY-MM-DD--feature-name--tasks.md]
 [Creates: docs/specs/[id]/tasks/TASK-XXX.md]
 ↓
-/developer-kit:devkit.task-implementation --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
+/specs:task-implementation --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
 ↓
 [Implements single task]
 
@@ -563,7 +563,7 @@ The functional specification created by this command serves as:
 
 ### Re-entering Brainstorming
 
-If implementation reveals specification issues, you can re-run `/developer-kit:devkit.brainstorm`:
+If implementation reveals specification issues, you can re-run `/specs:brainstorm`:
 - The previous specification will be preserved in its folder
 - A new specification will be created with the current date
 - You can reference the previous specification during the new brainstorming session
@@ -609,51 +609,51 @@ Update the status as you progress through each phase and section.
 ### Example 1: Simple Feature Idea
 
 ```bash
-/developer-kit:devkit.brainstorm Add user authentication with JWT tokens
+/specs:brainstorm Add user authentication with JWT tokens
 ```
 
 ### Example 2: Complex Feature
 
 ```bash
-/developer-kit:devkit.brainstorm Implement real-time notifications using WebSockets
+/specs:brainstorm Implement real-time notifications using WebSockets
 ```
 
 ### Example 3: Refactoring
 
 ```bash
-/developer-kit:devkit.brainstorm Refactor the payment processing module to be more maintainable
+/specs:brainstorm Refactor the payment processing module to be more maintainable
 ```
 
 ### Example 4: Bug Fix Design
 
 ```bash
-/developer-kit:devkit.brainstorm Design a fix for the race condition in order processing
+/specs:brainstorm Design a fix for the race condition in order processing
 ```
 
 ### Example 5: Performance Improvement
 
 ```bash
-/developer-kit:devkit.brainstorm Design a caching strategy to reduce API response times
+/specs:brainstorm Design a caching strategy to reduce API response times
 ```
 
 ### Example 6: Integration
 
 ```bash
-/developer-kit:devkit.brainstorm Integrate Stripe payment processing for subscriptions
+/specs:brainstorm Integrate Stripe payment processing for subscriptions
 ```
 
 ### Example 7: Full Workflow (after brainstorming)
 
 ```bash
 # Step 1: Brainstorm and generate functional specification
-/developer-kit:devkit.brainstorm Design a microservices architecture for the reporting module
+/specs:brainstorm Design a microservices architecture for the reporting module
 
 # Step 2: Convert specification to tasks
-/developer-kit:devkit.spec-to-tasks --lang=spring docs/specs/001-reporting-module/
+/specs:spec-to-tasks --lang=spring docs/specs/001-reporting-module/
 
 # Step 3: Implement specific tasks
-/developer-kit:devkit.task-implementation --lang=spring --task="docs/specs/001-reporting-module/tasks/TASK-001.md"
-/developer-kit:devkit.task-implementation --lang=spring --task="docs/specs/001-reporting-module/tasks/TASK-002.md"
+/specs:task-implementation --lang=spring --task="docs/specs/001-reporting-module/tasks/TASK-001.md"
+/specs:task-implementation --lang=spring --task="docs/specs/001-reporting-module/tasks/TASK-002.md"
 ```
 
 This separates WHAT (functional specification) from HOW (implementation), following the "divide et impera" principle.

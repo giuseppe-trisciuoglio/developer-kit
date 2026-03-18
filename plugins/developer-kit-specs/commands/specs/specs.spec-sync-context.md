@@ -1,13 +1,13 @@
 ---
-description: "Maintains specification context quality (Knowledge Graph, Tasks, Codebase) by synchronizing technical context after implementations. Syncs KG, tasks, and codebase. Automatically integrated into spec-to-tasks and task-implementation workflows."
-argument-hint: "[ spec-folder ] [--update-kg-only] [--task=TASK-XXX] [--dry-run]"
+description: "Synchronizes specification context (Knowledge Graph, Tasks, Codebase) after implementations. Maintains technical context alignment. Automatically integrated into spec-to-tasks and task-implementation workflows."
+argument-hint: "[ --spec=\"docs/specs/XXX-feature\" ] [--update-kg-only] [ --task=\"docs/specs/XXX-feature/tasks/TASK-XXX.md\" ] [--dry-run]"
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash, Task, TodoWrite
 model: inherit
 ---
 
-# Specs Quality - Context Improvement
+# Spec Sync Context - Technical Context Synchronization
 
-Maintains the quality and consistency of specification context by synchronizing Knowledge Graph, Tasks, and Codebase.
+Synchronizes the specification context (Knowledge Graph, Tasks, Codebase) to maintain technical consistency after implementations.
 
 ## Overview
 
@@ -20,7 +20,7 @@ This command solves three main problems in the specification workflow:
 ### Workflow Position
 
 ```
-Idea → Specs → Tasks → Implementation → Specs Quality Update (this)
+Idea → Specs → Tasks → Implementation → Spec Sync Context (this)
                 ↑         ↓              ↓
                 └─────────────────────────────────────┘
                     Continuously sync context
@@ -30,16 +30,16 @@ Idea → Specs → Tasks → Implementation → Specs Quality Update (this)
 
 ```bash
 # Basic usage - update context for a spec folder
-/developer-kit:devkit.spec-quality docs/specs/001-hotel-search-aggregation/
+/specs:spec-sync-context docs/specs/001-hotel-search-aggregation/
 
 # Update KG only (used by spec-to-tasks after codebase analysis)
-/developer-kit:devkit.spec-quality docs/specs/001-hotel-search-aggregation/ --update-kg-only
+/specs:spec-sync-context docs/specs/001-hotel-search-aggregation/ --update-kg-only
 
 # Update after task completion (used by task-implementation)
-/developer-kit:devkit.spec-quality docs/specs/001-hotel-search-aggregation/ --task=TASK-001
+/specs:spec-sync-context docs/specs/001-hotel-search-aggregation/ --task=TASK-001
 
 # Dry run - show what would be changed without making changes
-/developer-kit:devkit.spec-quality docs/specs/001-hotel-search-aggregation/ --dry-run
+/specs:spec-sync-context docs/specs/001-hotel-search-aggregation/ --dry-run
 ```
 
 ## Arguments
@@ -332,7 +332,7 @@ Add to `spec-to-tasks` Phase 3.5 (after Codebase Analysis):
 
 After codebase analysis completes, automatically update KG:
 
-/developer-kit:devkit.spec-quality [spec-folder] --update-kg-only
+/specs:spec-quality [spec-folder] --update-kg-only
 
 This persists agent discoveries into knowledge-graph.json for future reuse.
 ```
@@ -346,7 +346,7 @@ Add to `task-implementation`, after T-6 (Task Completion):
 
 After task completion and verification, update spec context:
 
-/developer-kit:devkit.spec-quality [spec-folder] --task=[TASK-ID]
+/specs:spec-quality [spec-folder] --task=[TASK-ID]
 
 This updates:
 - Knowledge Graph with new provides entries
@@ -401,7 +401,7 @@ This updates:
 ### Example 1: Full Context Update
 
 ```bash
-/developer-kit:devkit.spec-quality docs/specs/001-hotel-search-aggregation/
+/specs:spec-quality docs/specs/001-hotel-search-aggregation/
 ```
 
 Output:
@@ -430,7 +430,7 @@ Summary:
 ### Example 2: Dry Run
 
 ```bash
-/developer-kit:devkit.spec-quality docs/specs/001-hotel-search-aggregation/ --dry-run
+/specs:spec-quality docs/specs/001-hotel-search-aggregation/ --dry-run
 ```
 
 Shows what would change without applying changes.
@@ -438,7 +438,7 @@ Shows what would change without applying changes.
 ### Example 3: After Task Implementation
 
 ```bash
-/developer-kit:devkit.spec-quality docs/specs/001-hotel-search-aggregation/ --task=TASK-001
+/specs:spec-quality docs/specs/001-hotel-search-aggregation/ --task=TASK-001
 ```
 
 Updates KG with provides from TASK-001 and enriches related tasks.

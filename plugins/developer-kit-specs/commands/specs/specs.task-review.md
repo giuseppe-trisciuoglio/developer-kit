@@ -1,6 +1,6 @@
 ---
 description: "Provides capability to verify that implemented tasks meet specifications and pass code review. Use when needing to validate a completed task from devkit.task-implementation against its specification."
-argument-hint: "[ --lang=java|spring|typescript|nestjs|react|python|general ] [ task-file-path ]"
+argument-hint: "[ --lang=java|spring|typescript|nestjs|react|python|general ] [ --task=\"docs/specs/XXX-feature/tasks/TASK-XXX.md\" ]"
 allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, TodoWrite, AskUserQuestion
 model: inherit
 ---
@@ -31,15 +31,15 @@ Idea → Functional Specification → Tasks → Implementation → Review
 
 ```bash
 # Review a specific task
-/developer-kit:devkit.task-review docs/specs/001-user-auth/tasks/TASK-001.md
+/specs:task-review docs/specs/001-user-auth/tasks/TASK-001.md
 
 # With language specification for code review
-/developer-kit:devkit.task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
-/developer-kit:devkit.task-review --lang=typescript docs/specs/001-user-auth/tasks/TASK-001.md
-/developer-kit:devkit.task-review --lang=nestjs docs/specs/001-user-auth/tasks/TASK-001.md
-/developer-kit:devkit.task-review --lang=react docs/specs/001-user-auth/tasks/TASK-001.md
-/developer-kit:devkit.task-review --lang=python docs/specs/001-user-auth/tasks/TASK-001.md
-/developer-kit:devkit.task-review --lang=general docs/specs/001-user-auth/tasks/TASK-001.md
+/specs:task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
+/specs:task-review --lang=typescript docs/specs/001-user-auth/tasks/TASK-001.md
+/specs:task-review --lang=nestjs docs/specs/001-user-auth/tasks/TASK-001.md
+/specs:task-review --lang=react docs/specs/001-user-auth/tasks/TASK-001.md
+/specs:task-review --lang=python docs/specs/001-user-auth/tasks/TASK-001.md
+/specs:task-review --lang=general docs/specs/001-user-auth/tasks/TASK-001.md
 ```
 
 ## Arguments
@@ -293,7 +293,7 @@ You are reviewing an implemented task to verify it meets specifications and pass
 3. If issues found:
    - List specific issues that need fixing
    - Save findings to the review report at `docs/specs/[id]/tasks/TASK-XXX--review.md`
-   - Invoke `/developer-kit:devkit.task-implementation --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"`
+   - Invoke `/specs:task-implementation --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"`
    - Reference the review report path so implementation can read the detailed findings
    - Track unresolved items
    - **Note**: Before re-implementing, consider running `/devkit.spec-review [spec-folder]` to verify the spec is still accurate if issues suggest spec-level problems
@@ -323,19 +323,19 @@ You are reviewing an implemented task to verify it meets specifications and pass
 This command completes the verification loop:
 
 ```
-/developer-kit:devkit.brainstorm
+/specs:brainstorm
     ↓
 [Creates: docs/specs/[id]/YYYY-MM-DD--feature-name.md]
     ↓
-/developer-kit:devkit.spec-to-tasks --lang=[language] docs/specs/[id]/
+/specs:spec-to-tasks --lang=[language] docs/specs/[id]/
     ↓
 [Creates: docs/specs/[id]/tasks/TASK-XXX.md]
     ↓
-/developer-kit:devkit.task-implementation--lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
+/specs:task-implementation--lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
     ↓
 [Implements task]
     ↓
-/developer-kit:devkit.task-review --lang=[language] "docs/specs/[id]/tasks/TASK-XXX.md"
+/specs:task-review --lang=[language] "docs/specs/[id]/tasks/TASK-XXX.md"
     ↓
 [Verifies implementation, generates review report]
     ↓
@@ -351,19 +351,19 @@ This command completes the verification loop:
 
 ```bash
 # Review a completed task
-/developer-kit:devkit.task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
+/specs:task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
 ```
 
 ### Example 2: Review Checkout Task
 
 ```bash
-/developer-kit:devkit.task-review --lang=typescript docs/specs/005-checkout/tasks/TASK-003.md
+/specs:task-review --lang=typescript docs/specs/005-checkout/tasks/TASK-003.md
 ```
 
 ### Example 3: Review API Integration Task
 
 ```bash
-/developer-kit:devkit.task-review --lang=python docs/specs/010-payment/tasks/TASK-002.md
+/specs:task-review --lang=python docs/specs/010-payment/tasks/TASK-002.md
 ```
 
 ---

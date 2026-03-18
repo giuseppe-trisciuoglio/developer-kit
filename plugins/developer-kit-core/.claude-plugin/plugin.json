@@ -27,15 +27,6 @@
     "./agents/document-generator-expert.md"
   ],
   "commands": [
-    "./commands/specs/devkit.brainstorm.md",
-    "./commands/specs/devkit.task-implementation.md",
-    "./commands/specs/devkit.spec-to-tasks.md",
-    "./commands/specs/devkit.spec-sync.md",
-    "./commands/specs/devkit.spec-quality.md",
-    "./commands/specs/devkit.quick-spec.md",
-    "./commands/specs/devkit.spec-review.md",
-    "./commands/specs/devkit.task-review.md",
-    "./commands/specs/devkit.task-manage.md",
     "./commands/devkit.refactor.md",
     "./commands/devkit.feature-development.md",
     "./commands/devkit.fix-debugging.md",
@@ -57,7 +48,6 @@
     "./skills/claude-md-management",
     "./skills/drawio-logical-diagrams",
     "./skills/github-issue-workflow",
-    "./skills/docs-updater",
-    "./skills/knowledge-graph"
+    "./skills/docs-updater"
   ]
 }

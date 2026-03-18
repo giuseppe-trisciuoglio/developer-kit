@@ -23,8 +23,10 @@ Welcome to the Developer Kit Core documentation. This section contains essential
 The Developer Kit Core plugin provides:
 
 - **General Purpose Agents**: Code exploration, review, refactoring, architecture, debugging, and documentation
-- **Core Commands**: Brainstorming, feature development, refactoring, debugging, documentation generation, changelog management, GitHub integration, and LRA workflow
+- **Core Commands**: Feature development, refactoring, debugging, documentation generation, changelog management, GitHub integration, and LRA workflow
 - **Generic Workflows**: Workflows applicable to all development tasks
+
+> **Note**: Specification-driven development commands (brainstorming, spec-to-tasks, task-management) are now provided by the [developer-kit-specs](../developer-kit-specs/) plugin.
 
 ---
 
@@ -49,6 +51,7 @@ developer-kit-core/
 
 ## See Also
 
+- [Developer Kit Specs Plugin](../developer-kit-specs/) - Specifications-driven development workflow
 - [Java Plugin Documentation](../developer-kit-java/docs/) - Java and Spring Boot guides
 - [TypeScript Plugin Documentation](../developer-kit-typescript/docs/) - TypeScript, NestJS, and React guides
 - [AWS Plugin Documentation](../developer-kit-aws/docs/) - AWS and CloudFormation guides

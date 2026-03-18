@@ -242,7 +242,7 @@ Output:
 
 ---
 
-### 5. validate-contract (NEW)
+### 5. validate-contract
 
 **Purpose**: Validate that task expectations (expects) are satisfied by completed dependencies (provides).
 
@@ -397,7 +397,7 @@ Output:
     "aggregated_at": "[ISO timestamp]",
     "project_root": "[path]",
     "contributing_specs": ["spec-id-1", "spec-id-2"],
-    "total_patterns": N
+    "total_patterns": 9
   },
   "patterns": {
     "architectural": [
@@ -465,17 +465,22 @@ knowledge-graph.json
 └── integration_points (array)
 ```
 
-**provides Schema (NEW):**
+**provides Schema:**
 ```json
-"provides": [
-  {
-    "task_id": "TASK-001",
-    "file": "src/main/java/com/example/Domain.java",
-    "symbols": ["EntityName", "Status"],
-    "type": "entity|value-object|service|repository|controller|function|module",
-    "implemented_at": "2026-03-14T10:30:00Z"
-  }
-]
+{
+   "provides": [
+      {
+         "task_id": "TASK-001",
+         "file": "src/main/java/com/example/Domain.java",
+         "symbols": [
+            "EntityName",
+            "Status"
+         ],
+         "type": "entity|value-object|service|repository|controller|function|module",
+         "implemented_at": "2026-03-14T10:30:00Z"
+      }
+   ]
+}
 ```
 
 For detailed schema with examples, see `references/schema.md`.
@@ -677,6 +682,6 @@ Result:
 - `references/query-examples.md` - Query patterns and examples
 
 For integration with commands, see:
-- `/plugins/developer-kit-core/commands/specs/devkit.spec-to-tasks.md` (Phase 2.5, 3.5)
-- `/plugins/developer-kit-core/commands/specs/devkit.task-implementation.md` (T-3.5, T-3.6, T-6.5)
-- `/plugins/developer-kit-core/commands/specs/devkit.spec-quality.md` (Phase 4)
+- `/plugins/developer-kit-specs/commands/specs/devkit.spec-to-tasks.md` (Phase 2.5, 3.5)
+- `/plugins/developer-kit-specs/commands/specs/devkit.task-implementation.md` (T-3.5, T-3.6, T-6.5)
+- `/plugins/developer-kit-specs/commands/specs/devkit.spec-quality.md` (Phase 4)
