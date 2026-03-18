@@ -36,7 +36,7 @@ The AI Plugin provides specialized commands for AI development, prompt engineeri
 
 **Arguments:**
 - `prompt-text` - The prompt to optimize (required)
-- `target-model` - Target LLM model (default: `claude-3.5-sonnet`)
+- `target-model` - Target LLM model (default: `claude-sonnet-4-6`)
 - `optimization-level` - Level of optimization depth (default: `standard`)
 
 **Optimization Levels:**
@@ -69,7 +69,7 @@ The AI Plugin provides specialized commands for AI development, prompt engineeri
 /developer-kit-ai:devkit.prompt-optimize "Analyze this code and suggest improvements"
 
 # Standard optimization for Claude
-/developer-kit-ai:devkit.prompt-optimize "Write a function to process orders" claude-3.5-sonnet standard
+/developer-kit-ai:devkit.prompt-optimize "Write a function to process orders" claude-sonnet-4-6 standard
 
 # Advanced optimization for GPT-4
 /developer-kit-ai:devkit.prompt-optimize "Create a comprehensive code review system" gpt-4 advanced
@@ -121,12 +121,12 @@ Commands are invoked using the slash syntax in Claude Code with the plugin prefi
 
 ```bash
 # 1. Start with basic optimization
-/developer-kit-ai:devkit.prompt-optimize "Your initial prompt" claude-3.5-sonnet basic
+/developer-kit-ai:devkit.prompt-optimize "Your initial prompt" claude-sonnet-4-6 basic
 
 # 2. Review output and identify improvements
 
 # 3. Run advanced optimization with refined requirements
-/developer-kit-ai:devkit.prompt-optimize "Refined prompt with context" claude-3.5-sonnet advanced
+/developer-kit-ai:devkit.prompt-optimize "Refined prompt with context" claude-sonnet-4-6 advanced
 
 # 4. Test the optimized prompt with target model
 
@@ -166,4 +166,4 @@ Commands are invoked using the slash syntax in Claude Code with the plugin prefi
 - [RAG Skill](../skills/rag/) - Retrieval-Augmented Generation skill
 - [Chunking Strategy Skill](../skills/chunking-strategy/) - Document chunking strategies
 - [Core Command Guide](../../developer-kit-core/docs/guide-commands.md) - All commands across plugins
-- [Java Plugin](../../developer-kit-java/docs/) - LangChain4J and Spring AI integration
+- [Java Plugin](../../developer-kit-java/docs/guide-skills-langchain4j.md) - LangChain4J and Spring AI integration

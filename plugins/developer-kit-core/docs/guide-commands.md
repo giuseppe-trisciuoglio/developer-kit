@@ -130,10 +130,10 @@ Specifications-driven development workflow for transforming ideas into functiona
 |---------|---------|--------|
 | `/specs:brainstorm` | Full specification creation for complex features | 9 phases |
 | `/specs:quick-spec` | Lightweight spec for bug fixes and small features | 4 phases |
-| `/specs:spec-review` | Interactive spec quality assessment | 7 phases |
-| `/specs:spec-quality` | Knowledge Graph synchronization | - |
+| `/specs:spec-quality-check` | Interactive spec quality assessment | 7 phases |
+| `/specs:spec-sync-context` | Knowledge Graph and technical context synchronization | - |
 | `/specs:spec-to-tasks` | Convert specs to executable tasks | - |
-| `/specs:spec-sync` | Sync spec with implementation state | 6 phases |
+| `/specs:spec-sync-with-code` | Sync spec with implementation state | 6 phases |
 | `/specs:task-implementation` | Guided single-task implementation | 11 steps |
 
 #### Task Management Commands
@@ -231,10 +231,10 @@ The Developer Kit supports two parallel workflows depending on feature complexit
 /specs:brainstorm "Add user authentication with JWT tokens"
 
 # 2. Optional: Review and improve spec quality
-/specs:spec-review docs/specs/002-user-auth/
+/specs:spec-quality-check docs/specs/002-user-auth/
 
 # 3. Sync technical context (Knowledge Graph)
-/specs:spec-quality docs/specs/002-user-auth/
+/specs:spec-sync-context docs/specs/002-user-auth/
 
 # 4. Convert specification to tasks
 /specs:spec-to-tasks --lang=spring docs/specs/002-user-auth/
@@ -248,7 +248,7 @@ The Developer Kit supports two parallel workflows depending on feature complexit
 # Includes: Git check, KG validation, contract validation, implementation, verification
 
 # 7. Sync spec with implementation (if deviations detected)
-/specs:spec-sync docs/specs/002-user-auth/
+/specs:spec-sync-with-code docs/specs/002-user-auth/
 
 # 8. Review implementation
 /specs:task-review --lang=spring "docs/specs/002-user-auth/tasks/TASK-001.md"
@@ -414,10 +414,10 @@ Task review validates:
 |------|---------------------|--------|
 | Full spec for complex feature | `/specs:brainstorm` | Specs |
 | Quick spec for bug fix/small feature | `/specs:quick-spec` | Specs |
-| Review spec quality (max 5 questions) | `/specs:spec-review` | Specs |
-| Sync Knowledge Graph | `/specs:spec-quality` | Specs |
+| Review spec quality (max 5 questions) | `/specs:spec-quality-check` | Specs |
+| Sync Knowledge Graph and technical context | `/specs:spec-sync-context` | Specs |
 | Convert spec to tasks | `/specs:spec-to-tasks` | Specs |
-| Sync spec with implementation | `/specs:spec-sync` | Specs |
+| Sync spec with implementation | `/specs:spec-sync-with-code` | Specs |
 
 ### Task Implementation
 

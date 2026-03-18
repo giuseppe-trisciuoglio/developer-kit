@@ -7,6 +7,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **New Plugin: developer-kit-specs** - Specifications-driven development workflow plugin
+  - Extracted specs-related commands from developer-kit-core for better separation of concerns
+  - New namespace `/specs:*` for all specification commands
+  - Complete workflow: brainstorming → specification → tasks → implementation → review
+
+### Changed
+
+- **Breaking Change**: Specification commands namespace change
+  - Old namespace (removed): `/developer-kit:devkit.brainstorm`, `/developer-kit:devkit.spec-to-tasks`, etc.
+  - New namespace: `/specs:brainstorm`, `/specs:spec-to-tasks`, `/specs:task-manage`, etc.
+
+- **Command Renames** (developer-kit-specs):
+  - `spec-quality` → `spec-sync-context` - Synchronizes technical context (KG, Tasks, Codebase)
+  - `spec-review` → `spec-quality-check` - Reviews specification content quality
+  - `spec-sync` → `spec-sync-with-code` - Synchronizes specification with implementation
+
+- **Plugin Restructure**:
+  - Moved 9 specification commands from `developer-kit-core` to `developer-kit-specs`
+  - Moved `knowledge-graph` skill to `developer-kit-specs`
+  - Updated all plugin documentation to reflect new command locations
+
+### Migration Guide
+
+To use the specification-driven development workflow:
+
+1. Install both plugins:
+   ```bash
+   /plugin install developer-kit-core
+   /plugin install developer-kit-specs
+   ```
+
+2. Update your workflow commands:
+   - `/specs:brainstorm` instead of `/developer-kit:devkit.brainstorm`
+   - `/specs:spec-to-tasks` instead of `/developer-kit:devkit.spec-to-tasks`
+   - `/specs:task-manage` instead of `/developer-kit:devkit.task-manage`
+
 ## [2.6.3] - 2026-03-18
 
 ### Fixed

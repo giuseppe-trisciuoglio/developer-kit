@@ -20,4 +20,4 @@ The `developer-kit-python` plugin provides Python development expertise, includi
 
 ## Dependencies
 
-- `developer-kit` (required)
+- `developer-kit-core` (required)

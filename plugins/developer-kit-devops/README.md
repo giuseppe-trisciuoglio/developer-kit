@@ -13,4 +13,4 @@ The `developer-kit-devops` plugin provides expertise in DevOps practices, Docker
 
 ## Dependencies
 
-- `developer-kit` (required)
+- `developer-kit-core` (required)
