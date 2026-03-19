@@ -1,5 +1,5 @@
 ---
-description: "Synchronizes specification context (Knowledge Graph, Tasks, Codebase) after implementations. Maintains technical context alignment. Automatically integrated into spec-to-tasks and task-implementation workflows."
+description: "Synchronizes specification context (WHAT: syncs Knowledge Graph JSON, Task files, and Codebase state) after implementations. Maintains technical context alignment. Use WHEN: after spec-to-tasks or task-implementation workflows complete."
 argument-hint: "[ --spec=\"docs/specs/XXX-feature\" ] [--update-kg-only] [ --task=\"docs/specs/XXX-feature/tasks/TASK-XXX.md\" ] [--dry-run]"
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash, Task, TodoWrite
 model: inherit

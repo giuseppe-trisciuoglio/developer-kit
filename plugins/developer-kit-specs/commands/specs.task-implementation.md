@@ -513,3 +513,28 @@ After generating tasks with `/specs:spec-to-tasks`, implement individual tasks:
 /specs:task-implementation --lang=spring --task="TASK-001"
 /specs:task-implementation --lang=typescript --task="TASK-002"
 ```
+
+**Expected Output:**
+
+```
+# Successful execution - Task identified
+→ Task identified: TASK-001 "User login"
+→ Checking git status...
+→ Validating dependencies...
+→ Knowledge Graph validation: ✓ All dependencies exist
+→ Contract validation: ✓ All expectations satisfied
+
+# Or with errors - Dependency not met
+→ Task identified: TASK-002 "Password reset"
+→ Dependency check failed:
+  - TASK-001 not completed (required by this task)
+  Options:
+  - [1] Proceed anyway
+  - [2] Complete dependencies first
+  - [3] Cancel
+
+# Or with invalid task
+/specs:task-implementation --task="Invalid task"
+→ Error: Task "Invalid task" not found
+  Suggestion: Use --task=TASK-XXX or provide full path to task file
+```

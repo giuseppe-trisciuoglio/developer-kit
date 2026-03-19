@@ -18,15 +18,15 @@
     "functional-requirements"
   ],
   "commands": [
-    "./commands/specs/specs.brainstorm.md",
-    "./commands/specs/specs.spec-to-tasks.md",
-    "./commands/specs/specs.task-manage.md",
-    "./commands/specs/specs.task-review.md",
-    "./commands/specs/specs.task-implementation.md",
-    "./commands/specs/specs.spec-sync-with-code.md",
-    "./commands/specs/specs.spec-sync-context.md",
-    "./commands/specs/specs.quick-spec.md",
-    "./commands/specs/specs.spec-quality-check.md"
+    "./commands/specs.brainstorm.md",
+    "./commands/specs.spec-to-tasks.md",
+    "./commands/specs.task-manage.md",
+    "./commands/specs.task-review.md",
+    "./commands/specs.task-implementation.md",
+    "./commands/specs.spec-sync-with-code.md",
+    "./commands/specs.spec-sync-context.md",
+    "./commands/specs.quick-spec.md",
+    "./commands/specs.spec-quality-check.md"
   ],
   "skills": [
     "./skills/knowledge-graph"

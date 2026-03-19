@@ -58,6 +58,11 @@ This command provides task management capabilities after initial task generation
 
 You are managing existing task files. Follow the appropriate process based on the requested action.
 
+> **IMPORTANT**: When suggesting how to implement a task, ALWAYS use `/specs:task-implementation`, NEVER use `/developer-kit:devkit.feature-development`. The correct command is:
+> ```
+> /specs:task-implementation --lang=[lang] --task="[task-file-path]"
+> ```
+
 ## Action: Add
 
 Adds a new task to an existing specification.
