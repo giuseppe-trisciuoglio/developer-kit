@@ -109,6 +109,9 @@
     "chunking-strategy": {
       "path": "plugins/developer-kit-ai/skills/chunking-strategy/SKILL.md"
     },
+    "adr-drafting": {
+      "path": "plugins/developer-kit-core/skills/adr-drafting/SKILL.md"
+    },
     "claude-md-management": {
       "path": "plugins/developer-kit-core/skills/claude-md-management/SKILL.md"
     },

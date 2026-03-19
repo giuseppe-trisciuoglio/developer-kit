@@ -49,9 +49,10 @@
     "./commands/devkit.generate-security-assessment.md"
   ],
   "skills": [
+    "./skills/adr-drafting",
     "./skills/claude-md-management",
+    "./skills/docs-updater",
     "./skills/drawio-logical-diagrams",
-    "./skills/github-issue-workflow",
-    "./skills/docs-updater"
+    "./skills/github-issue-workflow"
   ]
 }
