@@ -261,7 +261,7 @@ Core agents, commands, and skills used by all other plugins.
 | `general-debugger`           | Root cause analysis and debugging      |
 | `document-generator-expert`  | Professional document generation       |
 
-**Skills**: `claude-md-management`, `drawio-logical-diagrams`, `github-issue-workflow`, `docs-updater`
+**Skills**: `adr-drafting`, `claude-md-management`, `docs-updater`, `drawio-logical-diagrams`, `github-issue-workflow`
 
 **Hooks**: `prevent-destructive-commands` (Python 3 PreToolUse hook for blocking dangerous Bash commands)
 
@@ -443,7 +443,7 @@ GitHub specification integration and verification.
 
 | Language           | Plugin                     | Components                                  |
 |--------------------|----------------------------|---------------------------------------------|
-| Core               | `developer-kit-core`       | 4 Skills, 6 Agents, 17 Commands             |
+| Core               | `developer-kit-core`       | 5 Skills, 6 Agents, 20 Commands             |
 | Java/Spring Boot   | `developer-kit-java`       | 51 Skills, 9 Agents, 11 Commands, 4 Rules  |
 | TypeScript/Node.js | `developer-kit-typescript` | 25 Skills, 13 Agents, 3 Commands, 17 Rules |
 | Python             | `developer-kit-python`     | 2 Skills, 4 Agents, 4 Rules                 |
