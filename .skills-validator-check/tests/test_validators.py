@@ -14,6 +14,7 @@ from validators.validators import (
     AgentValidator,
     CommandValidator,
     RuleValidator,
+    HookValidator,
     ValidatorFactory,
     KebabCaseValidator,
     SkillPackageValidator,
@@ -1315,7 +1316,7 @@ class TestValidatorFactory:
     def test_get_all_patterns(self):
         """Test factory returns all patterns."""
         patterns = ValidatorFactory.get_all_patterns()
-        assert len(patterns) == 8  # Skill, SkillMarkdown, Agent, Command, Rule, KebabCase, SkillPackage, PluginVersion
+        assert len(patterns) == 9  # Skill, SkillMarkdown, Agent, Command, Rule, Hook, KebabCase, SkillPackage, PluginVersion
 
 
 class TestPluginVersionValidator:
@@ -1598,7 +1599,7 @@ class TestRuleValidator:
         assert len(result.errors) == 0
 
     def test_missing_globs_fails(self, validator, temp_rule_file):
-        """Test missing globs field is reported as error."""
+        """Test missing globs and paths fields is reported as error."""
         content = """---
 ---
 # Rule
@@ -1610,8 +1611,10 @@ class TestRuleValidator:
         result = validator.validate(rule_file)
 
         assert not result.is_valid
-        assert any(i.field_name == "globs" and i.severity == Severity.ERROR
-                   for i in result.issues)
+        assert any(
+            ("globs" in i.message or "paths" in i.message) and i.severity == Severity.ERROR
+            for i in result.issues
+        )
 
     def test_empty_globs_fails(self, validator, temp_rule_file):
         """Test empty globs value is reported as error."""
@@ -1742,3 +1745,122 @@ name: some-rule
             Path("plugins/dev-kit/rules/naming-conventions.md")
         )
         assert isinstance(validator, RuleValidator)
+
+
+class TestHookValidator:
+    """Tests for HookValidator."""
+
+    @pytest.fixture
+    def validator(self):
+        return HookValidator()
+
+    @pytest.fixture
+    def tmp_hooks_file(self, tmp_path):
+        """Factory for creating temporary hooks.json files matching HOOK_PATTERN."""
+        def _make(content: str) -> Path:
+            hooks_dir = tmp_path / "hooks"
+            hooks_dir.mkdir(exist_ok=True)
+            f = hooks_dir / "hooks.json"
+            f.write_text(content, encoding="utf-8")
+            return f
+        return _make
+
+    def test_can_validate_hooks_file(self, validator):
+        assert validator.can_validate(Path("plugins/my-plugin/hooks/hooks.json"))
+
+    def test_cannot_validate_other_json(self, validator):
+        assert not validator.can_validate(Path("plugins/my-plugin/.claude-plugin/plugin.json"))
+
+    def test_component_type(self, validator):
+        assert validator.component_type == "hook"
+
+    def test_valid_hooks_file(self, validator, tmp_hooks_file):
+        content = '''{
+  "description": "My hooks",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/format.sh",
+            "async": true,
+            "timeout": 30,
+            "statusMessage": "Formatting..."
+          }
+        ]
+      }
+    ]
+  }
+}'''
+        result = validator.validate(tmp_hooks_file(content))
+        assert result.is_valid
+
+    def test_invalid_json(self, validator, tmp_hooks_file):
+        result = validator.validate(tmp_hooks_file("{not valid json"))
+        assert not result.is_valid
+        assert any("Invalid JSON" in i.message for i in result.issues)
+
+    def test_missing_hooks_key(self, validator, tmp_hooks_file):
+        result = validator.validate(tmp_hooks_file('{"description": "no hooks key"}'))
+        assert not result.is_valid
+        assert any("Missing required" in i.message and "hooks" in i.message for i in result.issues)
+
+    def test_unknown_event_warns(self, validator, tmp_hooks_file):
+        content = '{"hooks": {"UnknownEvent": [{"hooks": [{"type": "command", "command": "echo"}]}]}}'
+        result = validator.validate(tmp_hooks_file(content))
+        from validators.models import Severity
+        assert any("Unknown hook event" in i.message and i.severity == Severity.WARNING for i in result.issues)
+
+    def test_missing_type_field(self, validator, tmp_hooks_file):
+        content = '{"hooks": {"PostToolUse": [{"hooks": [{"command": "echo"}]}]}}'
+        result = validator.validate(tmp_hooks_file(content))
+        assert not result.is_valid
+        assert any('"type"' in i.message for i in result.issues)
+
+    def test_invalid_type_value(self, validator, tmp_hooks_file):
+        content = '{"hooks": {"PostToolUse": [{"hooks": [{"type": "invalid"}]}]}}'
+        result = validator.validate(tmp_hooks_file(content))
+        assert not result.is_valid
+        assert any("unknown value" in i.message for i in result.issues)
+
+    def test_command_type_missing_command(self, validator, tmp_hooks_file):
+        content = '{"hooks": {"PostToolUse": [{"hooks": [{"type": "command"}]}]}}'
+        result = validator.validate(tmp_hooks_file(content))
+        assert not result.is_valid
+        assert any('"command"' in i.message for i in result.issues)
+
+    def test_http_type_missing_url(self, validator, tmp_hooks_file):
+        content = '{"hooks": {"PostToolUse": [{"hooks": [{"type": "http"}]}]}}'
+        result = validator.validate(tmp_hooks_file(content))
+        assert not result.is_valid
+        assert any('"url"' in i.message for i in result.issues)
+
+    def test_prompt_type_missing_prompt(self, validator, tmp_hooks_file):
+        content = '{"hooks": {"Stop": [{"hooks": [{"type": "prompt"}]}]}}'
+        result = validator.validate(tmp_hooks_file(content))
+        assert not result.is_valid
+        assert any('"prompt"' in i.message for i in result.issues)
+
+    def test_async_must_be_bool(self, validator, tmp_hooks_file):
+        content = '{"hooks": {"PostToolUse": [{"hooks": [{"type": "command", "command": "echo", "async": "yes"}]}]}}'
+        result = validator.validate(tmp_hooks_file(content))
+        assert not result.is_valid
+        assert any("async" in i.message for i in result.issues)
+
+    def test_timeout_must_be_number(self, validator, tmp_hooks_file):
+        content = '{"hooks": {"PostToolUse": [{"hooks": [{"type": "command", "command": "echo", "timeout": "30s"}]}]}}'
+        result = validator.validate(tmp_hooks_file(content))
+        assert not result.is_valid
+        assert any("timeout" in i.message for i in result.issues)
+
+    def test_timeout_negative_fails(self, validator, tmp_hooks_file):
+        content = '{"hooks": {"PostToolUse": [{"hooks": [{"type": "command", "command": "echo", "timeout": -1}]}]}}'
+        result = validator.validate(tmp_hooks_file(content))
+        assert not result.is_valid
+        assert any("timeout" in i.message and ">= 0" in i.message for i in result.issues)
+
+    def test_factory_returns_hook_validator(self):
+        validator = ValidatorFactory.get_validator(Path("plugins/my-plugin/hooks/hooks.json"))
+        assert isinstance(validator, HookValidator)
