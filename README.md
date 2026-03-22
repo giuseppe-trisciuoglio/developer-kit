@@ -41,9 +41,11 @@ plugins/
 ├── developer-kit-ai/              # Prompt Engineering/RAG/Chunking
 ├── developer-kit-devops/          # Docker/GitHub Actions
 ├── developer-kit-project-management/  # LRA workflow/Meetings
-├── developer-kit-tools/           # Additional development tools
+├── developer-kit-tools/           # Additional development tools and MCP integrations
 └── github-spec-kit/               # GitHub specification integration
 ```
+
+Current marketplace totals: **116 skills**, **43 agents**, and **44 commands** across the 11 plugin manifests.
 
 Language plugins (Java, TypeScript, Python, PHP) include **coding rules** (`rules/` directory) that auto-activate via `globs:` path-scoped matching to enforce naming conventions, project structure, language best practices, and error handling patterns. They also include **LSP server configurations** (`.lsp.json`) for real-time code intelligence, diagnostics, and navigation features.
 
@@ -354,7 +356,7 @@ Comprehensive Java development toolkit with Spring Boot, testing, LangChain4J, A
 
 ### developer-kit-typescript
 
-TypeScript/JavaScript full-stack development with NestJS, React, React Native, Next.js, Drizzle ORM, DynamoDB-Toolbox, Zod validation, and Monorepo tools.
+TypeScript/JavaScript full-stack development with NestJS, React, React Native, Next.js, Drizzle ORM, DynamoDB-Toolbox, Zod validation, AWS CDK, and Monorepo tools.
 
 **Agents**: `nestjs-backend-development-expert`, `nestjs-code-review-expert`, `nestjs-database-expert`,
 `nestjs-security-expert`, `nestjs-testing-expert`, `nestjs-unit-testing-expert`, `react-frontend-development-expert`,
@@ -370,7 +372,7 @@ TypeScript/JavaScript full-stack development with NestJS, React, React Native, N
 - **Next.js**: `nextjs-app-router`, `nextjs-authentication`, `nextjs-data-fetching`, `nextjs-performance`, `nextjs-deployment`
 - **Database & ORM**: `drizzle-orm-patterns`, `dynamodb-toolbox-patterns`, `zod-validation-utilities`
 - **Monorepo**: `nx-monorepo`, `turborepo-monorepo`
-- **AWS Lambda**: `aws-lambda-typescript-integration`
+- **AWS**: `aws-lambda-typescript-integration`, `aws-cdk`
 - **Core**: `typescript-docs`
 
 **Rules**: `naming-conventions`, `project-structure`, `language-best-practices`, `error-handling`,
@@ -463,6 +465,9 @@ Additional development tools and integrations.
 - `copilot-cli` (GitHub Copilot CLI delegation with multi-model support)
 - `gemini` (Gemini CLI delegation for large-context analysis)
 - `codex` (OpenAI Codex CLI delegation for complex development tasks using GPT-5.3-codex models)
+- `sonarqube-mcp` (SonarQube MCP integration with plugin-provided MCP server configuration)
+
+**MCP Servers**: `sonarqube-mcp` via `.mcp.json`
 
 ---
 
@@ -486,11 +491,13 @@ GitHub specification integration and verification.
 
 ## Language Support
 
+Component counts below reflect the current plugin manifests in this repository.
+
 | Language           | Plugin                     | Components                                  |
 |--------------------|----------------------------|---------------------------------------------|
-| Core               | `developer-kit-core`       | 5 Skills, 6 Agents, 20 Commands             |
-| Java/Spring Boot   | `developer-kit-java`       | 51 Skills, 9 Agents, 11 Commands, 4 Rules  |
-| TypeScript/Node.js | `developer-kit-typescript` | 25 Skills, 13 Agents, 3 Commands, 17 Rules |
+| Core               | `developer-kit-core`       | 6 Skills, 6 Agents, 25 Commands             |
+| Java/Spring Boot   | `developer-kit-java`       | 52 Skills, 9 Agents, 11 Commands, 4 Rules  |
+| TypeScript/Node.js | `developer-kit-typescript` | 26 Skills, 13 Agents, 3 Commands, 19 Rules |
 | Python             | `developer-kit-python`     | 2 Skills, 4 Agents, 4 Rules                 |
 | PHP/WordPress      | `developer-kit-php`        | 3 Skills, 5 Agents, 4 Rules                 |
 | AWS CloudFormation | `developer-kit-aws`        | 19 Skills, 3 Agents                         |

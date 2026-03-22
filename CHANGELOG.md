@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Specification Workflow Expansion** (`developer-kit-core`):
+  - Added `devkit.quick-spec` for lightweight 4-phase specifications
+  - Added `devkit.spec-review` for interactive specification quality assessment
+  - Added `devkit.spec-sync` to reconcile specifications with implementation state
+  - Added `devkit.task-implementation` for guided single-task execution with verification gates
+
 - **Knowledge Graph Skill** (`developer-kit-core`):
   - New `knowledge-graph` skill for managing specification knowledge graphs
   - Provides schema definition with entities, relationships, and graph structure
@@ -16,13 +22,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Documents integration patterns with existing workflows
   - Reference files: `schema.md`, `query-examples.md`, `integration-patterns.md`
 
+- **ADR Drafting Skill** (`developer-kit-core`):
+  - New `adr-drafting` skill for drafting Architecture Decision Records for significant architectural changes
+  - Complements specification and architecture workflows with structured ADR creation guidance
+
 - **Specs Quality Command** (`developer-kit-core`):
   - New `devkit.spec-quality` command for maintaining specification context quality
   - Synchronizes Knowledge Graph, Tasks, and Codebase after implementations
   - Automatically integrated into `spec-to-tasks` and `feature-development` workflows
   - Supports options: `--update-kg-only`, `--task=TASK-XXX`, `--dry-run`
 
+- **SonarQube MCP Integration** (`developer-kit-tools`):
+  - New `sonarqube-mcp` skill for SonarQube-assisted analysis workflows
+  - Added plugin-level `.mcp.json` configuration registering the `sonarqube-mcp` MCP server
+  - Added environment-driven MCP wiring for `SONARQUBE_TOKEN`, `SONARQUBE_URL`, and `SONARQUBE_ORG`
+
 ### Changed
+
+- **Core Command Organization** (`developer-kit-core`):
+  - Reorganized specification commands into `commands/specs/`
+  - Moved documentation commands into `commands/documentation/`
+  - Updated core documentation to reflect the expanded specification workflow and command layout
 
 - **Feature Development Command** (`developer-kit-core`):
   - Enhanced integration with Knowledge Graph for better context management
@@ -32,13 +52,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Enhanced task generation with Knowledge Graph integration
   - Improved technical context extraction from codebase analysis
 
-- **Plugin Manifest** (`developer-kit-core`):
-  - Updated `plugin.json` to include `adr-drafting`, `memory-md-management`, and `knowledge-graph`
-  - Added `devkit.spec-quality` command to commands list
+- **Memory Management Skill Rename** (`developer-kit-core`):
+  - Renamed `claude-md-management` to `memory-md-management`
+  - Updated manifest registrations and documentation references
+
+- **Skill Review Workflow** (global):
+  - Evolved the review workflow from `skill-review` to `skill-review-and-optimize`
+  - Added the related apply workflow for carrying optimization changes forward
+  - Added automated PR review support for the updated skill review process
+
+- **Version Alignment** (global):
+  - Bumped marketplace and plugin manifests to `2.7.0`
+  - Updated marketplace plugin entries to keep all published versions aligned
+
+- **Documentation Refresh** (global):
+  - Updated top-level and plugin documentation to reflect the current specification workflow and plugin capabilities
 
 - **Rules Updates**:
-  - Minor updates to rule files across `developer-kit-java`, `developer-kit-php`, `developer-kit-python`, `developer-kit-typescript`
-  - Consistency improvements and reference updates
+  - Minor updates to rule files across `developer-kit-java`, `developer-kit-php`, `developer-kit-python`, and `developer-kit-typescript`
+  - Consistency improvements and validator/reference updates
 
 ## [2.6.3] - 2026-03-18
 
