@@ -338,8 +338,8 @@ WHEN_KEYWORDS: FrozenSet[str] = frozenset({
 # =============================================================================
 
 RULE_SCHEMA: Dict[str, Set[str]] = {
-    "required": {"globs"},
-    "optional": set(),
+    "required": set(),
+    "optional": {"globs", "paths"},
 }
 
 # Required sections in rule markdown files

@@ -1030,25 +1030,25 @@
       "issues": []
     },
     {
-      "file": "/Users/giuseppe/project/GT/developer-kit/plugins/developer-kit-core/skills/claude-md-management/SKILL.md",
+      "file": "/Users/giuseppe/project/GT/developer-kit/plugins/developer-kit-core/skills/memory-md-management/SKILL.md",
       "component_type": "skill",
       "is_valid": true,
       "issues": []
     },
     {
-      "file": "/Users/giuseppe/project/GT/developer-kit/plugins/developer-kit-core/skills/claude-md-management/references/quality-criteria.md",
+      "file": "/Users/giuseppe/project/GT/developer-kit/plugins/developer-kit-core/skills/memory-md-management/references/quality-criteria.md",
       "component_type": "skill-markdown",
       "is_valid": true,
       "issues": []
     },
     {
-      "file": "/Users/giuseppe/project/GT/developer-kit/plugins/developer-kit-core/skills/claude-md-management/references/templates.md",
+      "file": "/Users/giuseppe/project/GT/developer-kit/plugins/developer-kit-core/skills/memory-md-management/references/templates.md",
       "component_type": "skill-markdown",
       "is_valid": true,
       "issues": []
     },
     {
-      "file": "/Users/giuseppe/project/GT/developer-kit/plugins/developer-kit-core/skills/claude-md-management/references/update-guidelines.md",
+      "file": "/Users/giuseppe/project/GT/developer-kit/plugins/developer-kit-core/skills/memory-md-management/references/update-guidelines.md",
       "component_type": "skill-markdown",
       "is_valid": true,
       "issues": []

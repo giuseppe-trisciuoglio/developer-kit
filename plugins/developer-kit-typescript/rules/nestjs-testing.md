@@ -1,5 +1,6 @@
 ---
-globs: "**/*.spec.ts"
+paths:
+  - "**/*.spec.ts"
 ---
 # Rule: NestJS Testing
 

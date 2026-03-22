@@ -1,6 +1,6 @@
 {
   "name": "developer-kit",
-  "version": "2.6.3",
+  "version": "2.7.0",
   "description": "Core agents and commands required by all Developer Kit plugins",
   "author": {
     "name": "Giuseppe Trisciuoglio",
@@ -27,15 +27,21 @@
     "./agents/document-generator-expert.md"
   ],
   "commands": [
-    "./commands/devkit.brainstorm.md",
+    "./commands/specs/devkit.brainstorm.md",
+    "./commands/specs/devkit.task-implementation.md",
+    "./commands/specs/devkit.spec-to-tasks.md",
+    "./commands/specs/devkit.spec-sync.md",
+    "./commands/specs/devkit.spec-quality.md",
+    "./commands/specs/devkit.quick-spec.md",
+    "./commands/specs/devkit.spec-review.md",
+    "./commands/specs/devkit.task-review.md",
+    "./commands/specs/devkit.task-manage.md",
     "./commands/devkit.refactor.md",
     "./commands/devkit.feature-development.md",
-    "./commands/devkit.spec-to-tasks.md",
-    "./commands/devkit.task-review.md",
-    "./commands/devkit.task-manage.md",
     "./commands/devkit.fix-debugging.md",
-    "./commands/devkit.generate-document.md",
-    "./commands/devkit.generate-changelog.md",
+    "./commands/documentation/devkit.generate-document.md",
+    "./commands/documentation/devkit.generate-changelog.md",
+    "./commands/documentation/devkit.generate-security-assessment.md",
     "./commands/devkit.github.create-pr.md",
     "./commands/devkit.github.review-pr.md",
     "./commands/lra/devkit.lra.init.md",
@@ -45,14 +51,14 @@
     "./commands/lra/devkit.lra.recover.md",
     "./commands/lra/devkit.lra.start-session.md",
     "./commands/lra/devkit.lra.status.md",
-    "./commands/devkit.verify-skill.md",
-    "./commands/devkit.generate-security-assessment.md"
+    "./commands/devkit.verify-skill.md"
   ],
   "skills": [
     "./skills/adr-drafting",
-    "./skills/claude-md-management",
+    "./skills/memory-md-management",
     "./skills/docs-updater",
     "./skills/drawio-logical-diagrams",
-    "./skills/github-issue-workflow"
+    "./skills/github-issue-workflow",
+    "./skills/knowledge-graph"
   ]
 }

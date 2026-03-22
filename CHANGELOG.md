@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Knowledge Graph Skill** (`developer-kit-core`):
+  - New `knowledge-graph` skill for managing specification knowledge graphs
+  - Provides schema definition with entities, relationships, and graph structure
+  - Includes comprehensive query examples for common operations
+  - Documents integration patterns with existing workflows
+  - Reference files: `schema.md`, `query-examples.md`, `integration-patterns.md`
+
+- **Specs Quality Command** (`developer-kit-core`):
+  - New `devkit.spec-quality` command for maintaining specification context quality
+  - Synchronizes Knowledge Graph, Tasks, and Codebase after implementations
+  - Automatically integrated into `spec-to-tasks` and `feature-development` workflows
+  - Supports options: `--update-kg-only`, `--task=TASK-XXX`, `--dry-run`
+
+### Changed
+
+- **Feature Development Command** (`developer-kit-core`):
+  - Enhanced integration with Knowledge Graph for better context management
+  - Improved workflow coordination with spec-quality command
+
+- **Spec to Tasks Command** (`developer-kit-core`):
+  - Enhanced task generation with Knowledge Graph integration
+  - Improved technical context extraction from codebase analysis
+
+- **Plugin Manifest** (`developer-kit-core`):
+  - Updated `plugin.json` to include `adr-drafting`, `memory-md-management`, and `knowledge-graph`
+  - Added `devkit.spec-quality` command to commands list
+
+- **Rules Updates**:
+  - Minor updates to rule files across `developer-kit-java`, `developer-kit-php`, `developer-kit-python`, `developer-kit-typescript`
+  - Consistency improvements and reference updates
+
 ## [2.6.3] - 2026-03-18
 
 ### Fixed

@@ -1,5 +1,6 @@
 ---
-globs: "**/*.py"
+paths:
+  - "**/*.py"
 ---
 # Rule: Python Project Structure
 

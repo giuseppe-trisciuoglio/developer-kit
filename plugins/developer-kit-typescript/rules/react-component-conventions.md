@@ -1,5 +1,6 @@
 ---
-globs: "**/*.tsx"
+paths:
+  - "**/*.tsx"
 ---
 # Rule: React Component Conventions
 

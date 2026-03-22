@@ -199,49 +199,93 @@ After implementation, use these specialized commands for quality assurance:
 /devkit.refactor --lang=typescript Simplify the authentication flow
 ```
 
-### Typical Development Flow
+### Complete Workflow Diagram
 
 ```
-1. Idea
-   ↓
-2. /devkit.brainstorm
-   ↓ (creates functional specification: docs/specs/)
-3. /devkit.spec-to-tasks
-   ↓ (creates task list with complexity scores: docs/specs/[id]/tasks/)
-4. /devkit.task-manage --action=list
-   ↓ (reviews task complexity and recommendations)
-5. /devkit.task-manage --action=split (if needed)
-   ↓ (splits complex tasks with score ≥ 51 into smaller tasks)
-6. /devkit.feature-development
-   ↓ (implements tasks following dependency order)
-7. /devkit.task-review
-   ↓ (verifies implementation meets specifications)
-8. Code Review & Testing
-   ↓
-9. /devkit.fix-debugging (if issues found)
-   ↓
-10. /devkit.refactor (for improvements)
-   ↓
-11. Ready for deployment
+                         +--------------------------------------+
+                         |                IDEA                  |
+                         +--------------------------------------+
+                                          |
+                    +----------------------+----------------------+
+                    |                                             |
+                    +                                             +
+     +-------------------------+                +-------------------------+
+     |   Full Brainstorming    |                |      Quick Spec        |
+     |      (9 phases)        |                |      (4 phases)        |
+     +-------------------------+                +-------------------------+
+                    |                                             |
+                    +----------------------+----------------------+
+                                           +
+                         +--------------------------------------+
+                         |  docs/specs/[id]/YYYY-MM-DD--name   |
+                         +--------------------------------------+
+                                          |
+                    +----------------------+----------------------+
+                    |                                             |
+                    +                                             +
+     +-------------------------+                +-------------------------+
+     |    devkit.spec-review   |                |   devkit.spec-quality   |
+     |   (interactive, max 5   |                |   (Knowledge Graph      |
+     |        questions)        |                |       sync)             |
+     +-------------------------+                +-------------------------+
+                    |                                             |
+                    +----------------------+----------------------+
+                                           +
+                         +--------------------------------------+
+                         |       devkit.spec-to-tasks            |
+                         |   (generates task list)              |
+                         +--------------------------------------+
+                                          |
+                    +----------------------+----------------------+
+                    |                                             |
+                    +                                             +
+     +-------------------------+                +-------------------------+
+     |   devkit.task-manage    |                |   devkit.task-review    |
+     |    (list/split/add)     |                |                         |
+     +-------------------------+                +-------------------------+
+                    |
+                    +
+                         +--------------------------------------+
+                         |  docs/specs/[id]/tasks/TASK-XXX.md   |
+                         +--------------------------------------+
+                                          |
+                    +----------------------+----------------------+
+                    |                                             |
+                    +                                             +
+     +-------------------------+                +-------------------------+
+     | devkit.task-implement.  |                | devkit.spec-sync       |
+     |      (11 steps)          |<--------------+ (when deviations       |
+     |                         |                |       detected)         |
+     | - Git state check       |                +-------------------------+
+     | - KG validation         |                              |
+     | - Contract validation   |                              |
+     | - Implementation        |                              |
+     | - Verification          |                              |
+     | - Auto-update KG        |                              |
+     +-------------------------+                              |
+                    |                                          |
+                    +------------------------------------------+
+                                           +
+                         +--------------------------------------+
+                         |           IMPLEMENTATION              |
+                         +--------------------------------------+
 ```
-
-**New Workflow:** `Idea → Functional Specification → Tasks → Task Management → Implementation → Review → Quality Assurance`
 
 ### Alternative Paths
 
-**For Bug Fixes:**
+**For Bug Fixes (using Quick Spec):**
 ```
-Bug Report → /devkit.fix-debugging → Fix implemented → Verification
+Bug Report -> /devkit.quick-spec -> /devkit.task-implementation -> Verification
 ```
 
 **For Refactoring:**
 ```
-Code Issue → /devkit.brainstorm (optional) → /devkit.refactor → Improved code
+Code Issue -> /devkit.brainstorm (optional) -> /devkit.refactor -> Improved code
 ```
 
-**For Quick Features:**
+**For Quick Features (using Quick Spec):**
 ```
-Simple Feature → /devkit.feature-development → Implemented directly
+Simple Feature -> /devkit.quick-spec -> Direct implementation or tasks
 ```
 
 ---
@@ -261,11 +305,12 @@ Core agents, commands, and skills used by all other plugins.
 | `general-debugger`           | Root cause analysis and debugging      |
 | `document-generator-expert`  | Professional document generation       |
 
-**Skills**: `adr-drafting`, `claude-md-management`, `docs-updater`, `drawio-logical-diagrams`, `github-issue-workflow`
+**Skills**: `adr-drafting`, `memory-md-management`, `docs-updater`, `drawio-logical-diagrams`, `github-issue-workflow`, `knowledge-graph`
 
 **Hooks**: `prevent-destructive-commands` (Python 3 PreToolUse hook for blocking dangerous Bash commands)
 
-**Commands**: `/devkit.brainstorm`, `/devkit.spec-to-tasks`, `/devkit.task-manage`, `/devkit.task-review`, `/devkit.refactor`, `/devkit.feature-development`,
+**Commands**: `/devkit.brainstorm`, `/devkit.quick-spec`, `/devkit.spec-to-tasks`, `/devkit.spec-quality`, `/devkit.spec-review`, `/devkit.spec-sync`,
+`/devkit.task-manage`, `/devkit.task-review`, `/devkit.task-implementation`, `/devkit.refactor`, `/devkit.feature-development`,
 `/devkit.fix-debugging`, `/devkit.generate-document`, `/devkit.generate-changelog`, `/devkit.github.create-pr`,
 `/devkit.github.review-pr`, `/devkit.lra.*` (7 LRA workflow commands), `/devkit.verify-skill`,
 `/devkit.generate-security-assessment`

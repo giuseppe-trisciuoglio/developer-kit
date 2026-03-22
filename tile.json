@@ -1,6 +1,6 @@
 {
   "name": "giuseppe-trisciuoglio/developer-kit",
-  "version": "2.6.3",
+  "version": "2.7.0",
   "private": false,
   "summary": "Comprehensive developer toolkit providing reusable skills for Java/Spring Boot, TypeScript/NestJS/React/Next.js, Python, PHP, AWS CloudFormation, AI/RAG, DevOps, and more.",
   "skills": {
@@ -112,8 +112,8 @@
     "adr-drafting": {
       "path": "plugins/developer-kit-core/skills/adr-drafting/SKILL.md"
     },
-    "claude-md-management": {
-      "path": "plugins/developer-kit-core/skills/claude-md-management/SKILL.md"
+    "memory-md-management": {
+      "path": "plugins/developer-kit-core/skills/memory-md-management/SKILL.md"
     },
     "codex": {
       "path": "plugins/developer-kit-tools/skills/codex/SKILL.md"
