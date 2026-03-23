@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.7.0] - 2026-03-23
+## [2.7.1] - 2026-03-23
 
 ### Added
 
@@ -1105,8 +1105,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.7.0...HEAD
-[2.7.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.3...v2.7.0
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.7.1...HEAD
+[2.7.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.3...v2.7.1
 [2.6.3]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.2...v2.6.3
 [2.6.2]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.1...v2.6.2
 [2.6.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.0...v2.6.1
