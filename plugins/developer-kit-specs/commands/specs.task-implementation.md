@@ -386,6 +386,11 @@ This command implements a specific task following a focused workflow:
    - Log "Implementation matches spec, no sync needed"
    - Proceed to summary
 
+5. **For spec-driven chat sessions outside this command**:
+   - If the assistant used `docs/specs/[id]/` as working context and the session clarified or changed what should be built, update the affected spec artifacts before concluding.
+   - Treat specification files as deliverables whenever they directly shaped implementation decisions, not as read-only references.
+   - If no spec changes are required, state that explicitly with a short rationale.
+
 ---
 
 ## Task File Format

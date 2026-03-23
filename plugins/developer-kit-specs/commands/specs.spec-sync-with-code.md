@@ -369,6 +369,8 @@ Run spec-sync manually when:
 - After completing several tasks to bring spec up to date
 - Before starting a new feature phase
 - When decision-log.md has many entries not reflected in spec
+- After a normal chat session that used `docs/specs/[id]/` as implementation context and clarified, narrowed, or expanded what should be built
+- When recommendations made during the session changed task notes, acceptance criteria, decisions, or any other spec artifact even if `/specs:task-implementation` was not used
 
 ---
 

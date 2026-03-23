@@ -21,6 +21,26 @@ Idea → Functional Specification → Tasks → Implementation → Review
        (brainstorm)              (spec-to-tasks)          (task-review)
 ```
 
+## Specification Maintenance Note
+
+- Treat files in `docs/specs/` as deliverables whenever they are used to drive implementation, not just as background context.
+- After `/specs:task-implementation`, complete `/specs:task-review`, fix every finding, and run `/specs:spec-sync-with-code` whenever the implementation changed, clarified, or constrained the intended behavior, decisions, acceptance criteria, or task notes.
+- During a normal chat session, if the assistant used an existing spec to guide implementation or recommendations, update the affected spec files before concluding whenever the session changed or clarified what should be built.
+- If no spec update is needed, say that explicitly and explain why the current specification already matches the implemented outcome.
+
+Example to include in the CLAUDE.md or AGENTS.md for specification maintenance:
+
+```markdown
+## Specification Maintenance Rules
+
+- When work is driven by files in `docs/specs/`, treat the specification as a deliverable, not only as background context.
+- After `/specs:task-implementation`, always run `/specs:task-review`, fix every finding, and then run `/specs:spec-sync-with-code` whenever the implementation
+  changed, clarified, or constrained the intended behavior, acceptance criteria, decisions, or task notes.
+- During normal chat sessions, if specs were used to guide implementation or recommendations, update the affected spec files before concluding whenever the
+  session changed or clarified what should be built.
+- If no spec update is needed, state that explicitly and explain why the current spec already matches the implemented outcome.
+```
+
 ## Commands
 
 ### Specification Creation
