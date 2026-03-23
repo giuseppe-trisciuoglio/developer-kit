@@ -1601,9 +1601,21 @@ class RuleValidator(BaseValidator):
         result: ValidationResult
     ) -> None:
         """Rule-specific validation."""
-        # Validate globs field format
+        # Validate globs field format (Cursor format)
         if "globs" in frontmatter:
             self._validate_globs(frontmatter["globs"], result)
+
+        # Validate paths field format (Claude Code format)
+        if "paths" in frontmatter:
+            self._validate_paths(frontmatter["paths"], result)
+
+        # Validate that at least one of globs or paths is present
+        if "globs" not in frontmatter and "paths" not in frontmatter:
+            result.add_error(
+                message="Missing required field: 'paths' or 'globs'",
+                field_name="paths",
+                suggestion="Add either 'paths:' (Claude Code format) or 'globs:' (Cursor format) to the frontmatter"
+            )
 
         # Validate file naming (kebab-case)
         self._validate_rule_filename(file_path, result)
@@ -1641,6 +1653,38 @@ class RuleValidator(BaseValidator):
                 message=f"Globs must be a string, got {type(globs).__name__}",
                 field_name="globs",
                 suggestion="Use a string value (e.g., globs: \"**/*.java\")"
+            )
+
+    def _validate_paths(self, paths: Any, result: ValidationResult) -> None:
+        """Validate the paths field (Claude Code format)."""
+        if isinstance(paths, list):
+            # Validate each path in the list
+            for i, path in enumerate(paths):
+                if not isinstance(path, str):
+                    result.add_error(
+                        message=f"Paths[{i}] must be a string, got {type(path).__name__}",
+                        field_name="paths",
+                        suggestion="Use string values in the paths array (e.g., paths:\n  - \"**/*.ts\")"
+                    )
+                elif not path.strip():
+                    result.add_error(
+                        message=f"Paths[{i}] is empty",
+                        field_name="paths",
+                        suggestion="Provide a valid glob pattern"
+                    )
+        elif isinstance(paths, str):
+            # Single string is also acceptable for paths
+            if not paths.strip():
+                result.add_error(
+                    message="Empty paths value",
+                    field_name="paths",
+                    suggestion="Provide a glob pattern (e.g., '**/*.java')"
+                )
+        else:
+            result.add_error(
+                message=f"Paths must be a list or string, got {type(paths).__name__}",
+                field_name="paths",
+                suggestion="Use a list format (e.g., paths:\n  - \"**/*.ts\")"
             )
 
     def _validate_rule_filename(self, file_path: Path, result: ValidationResult) -> None:

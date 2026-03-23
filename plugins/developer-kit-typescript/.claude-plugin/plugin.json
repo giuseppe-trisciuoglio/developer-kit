@@ -1,6 +1,6 @@
 {
   "name": "developer-kit-typescript",
-  "version": "2.6.3",
+  "version": "2.7.0",
   "description": "TypeScript/JavaScript full-stack development with NestJS, React, and React Native",
   "author": {
     "name": "Giuseppe Trisciuoglio",
@@ -75,7 +75,8 @@
     "./skills/react-code-review",
     "./skills/typescript-security-review",
     "./skills/nestjs-best-practices",
-    "./skills/zod-validation-utilities"
+    "./skills/zod-validation-utilities",
+    "./skills/aws-cdk"
   ],
   "lspServers": "./.lsp.json"
 }

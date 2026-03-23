@@ -1,5 +1,6 @@
 ---
-globs: "**/*.schema.ts"
+paths:
+  - "**/*.schema.ts"
 ---
 # Rule: Drizzle ORM Conventions
 

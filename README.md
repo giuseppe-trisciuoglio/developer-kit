@@ -41,9 +41,11 @@ plugins/
 ├── developer-kit-ai/              # Prompt Engineering/RAG/Chunking
 ├── developer-kit-devops/          # Docker/GitHub Actions
 ├── developer-kit-project-management/  # LRA workflow/Meetings
-├── developer-kit-tools/           # Additional development tools
+├── developer-kit-tools/           # Additional development tools and MCP integrations
 └── github-spec-kit/               # GitHub specification integration
 ```
+
+Current marketplace totals: **116 skills**, **43 agents**, and **44 commands** across the 11 plugin manifests.
 
 Language plugins (Java, TypeScript, Python, PHP) include **coding rules** (`rules/` directory) that auto-activate via `globs:` path-scoped matching to enforce naming conventions, project structure, language best practices, and error handling patterns. They also include **LSP server configurations** (`.lsp.json`) for real-time code intelligence, diagnostics, and navigation features.
 
@@ -199,49 +201,93 @@ After implementation, use these specialized commands for quality assurance:
 /devkit.refactor --lang=typescript Simplify the authentication flow
 ```
 
-### Typical Development Flow
+### Complete Workflow Diagram
 
 ```
-1. Idea
-   ↓
-2. /devkit.brainstorm
-   ↓ (creates functional specification: docs/specs/)
-3. /devkit.spec-to-tasks
-   ↓ (creates task list with complexity scores: docs/specs/[id]/tasks/)
-4. /devkit.task-manage --action=list
-   ↓ (reviews task complexity and recommendations)
-5. /devkit.task-manage --action=split (if needed)
-   ↓ (splits complex tasks with score ≥ 51 into smaller tasks)
-6. /devkit.feature-development
-   ↓ (implements tasks following dependency order)
-7. /devkit.task-review
-   ↓ (verifies implementation meets specifications)
-8. Code Review & Testing
-   ↓
-9. /devkit.fix-debugging (if issues found)
-   ↓
-10. /devkit.refactor (for improvements)
-   ↓
-11. Ready for deployment
+                         +--------------------------------------+
+                         |                IDEA                  |
+                         +--------------------------------------+
+                                          |
+                    +----------------------+----------------------+
+                    |                                             |
+                    +                                             +
+     +-------------------------+                +-------------------------+
+     |   Full Brainstorming    |                |      Quick Spec        |
+     |      (9 phases)        |                |      (4 phases)        |
+     +-------------------------+                +-------------------------+
+                    |                                             |
+                    +----------------------+----------------------+
+                                           +
+                         +--------------------------------------+
+                         |  docs/specs/[id]/YYYY-MM-DD--name   |
+                         +--------------------------------------+
+                                          |
+                    +----------------------+----------------------+
+                    |                                             |
+                    +                                             +
+     +-------------------------+                +-------------------------+
+     |    devkit.spec-review   |                |   devkit.spec-quality   |
+     |   (interactive, max 5   |                |   (Knowledge Graph      |
+     |        questions)        |                |       sync)             |
+     +-------------------------+                +-------------------------+
+                    |                                             |
+                    +----------------------+----------------------+
+                                           +
+                         +--------------------------------------+
+                         |       devkit.spec-to-tasks            |
+                         |   (generates task list)              |
+                         +--------------------------------------+
+                                          |
+                    +----------------------+----------------------+
+                    |                                             |
+                    +                                             +
+     +-------------------------+                +-------------------------+
+     |   devkit.task-manage    |                |   devkit.task-review    |
+     |    (list/split/add)     |                |                         |
+     +-------------------------+                +-------------------------+
+                    |
+                    +
+                         +--------------------------------------+
+                         |  docs/specs/[id]/tasks/TASK-XXX.md   |
+                         +--------------------------------------+
+                                          |
+                    +----------------------+----------------------+
+                    |                                             |
+                    +                                             +
+     +-------------------------+                +-------------------------+
+     | devkit.task-implement.  |                | devkit.spec-sync       |
+     |      (11 steps)          |<--------------+ (when deviations       |
+     |                         |                |       detected)         |
+     | - Git state check       |                +-------------------------+
+     | - KG validation         |                              |
+     | - Contract validation   |                              |
+     | - Implementation        |                              |
+     | - Verification          |                              |
+     | - Auto-update KG        |                              |
+     +-------------------------+                              |
+                    |                                          |
+                    +------------------------------------------+
+                                           +
+                         +--------------------------------------+
+                         |           IMPLEMENTATION              |
+                         +--------------------------------------+
 ```
-
-**New Workflow:** `Idea → Functional Specification → Tasks → Task Management → Implementation → Review → Quality Assurance`
 
 ### Alternative Paths
 
-**For Bug Fixes:**
+**For Bug Fixes (using Quick Spec):**
 ```
-Bug Report → /devkit.fix-debugging → Fix implemented → Verification
+Bug Report -> /devkit.quick-spec -> /devkit.task-implementation -> Verification
 ```
 
 **For Refactoring:**
 ```
-Code Issue → /devkit.brainstorm (optional) → /devkit.refactor → Improved code
+Code Issue -> /devkit.brainstorm (optional) -> /devkit.refactor -> Improved code
 ```
 
-**For Quick Features:**
+**For Quick Features (using Quick Spec):**
 ```
-Simple Feature → /devkit.feature-development → Implemented directly
+Simple Feature -> /devkit.quick-spec -> Direct implementation or tasks
 ```
 
 ---
@@ -261,11 +307,12 @@ Core agents, commands, and skills used by all other plugins.
 | `general-debugger`           | Root cause analysis and debugging      |
 | `document-generator-expert`  | Professional document generation       |
 
-**Skills**: `claude-md-management`, `drawio-logical-diagrams`, `github-issue-workflow`, `docs-updater`
+**Skills**: `adr-drafting`, `memory-md-management`, `docs-updater`, `drawio-logical-diagrams`, `github-issue-workflow`, `knowledge-graph`
 
 **Hooks**: `prevent-destructive-commands` (Python 3 PreToolUse hook for blocking dangerous Bash commands)
 
-**Commands**: `/devkit.brainstorm`, `/devkit.spec-to-tasks`, `/devkit.task-manage`, `/devkit.task-review`, `/devkit.refactor`, `/devkit.feature-development`,
+**Commands**: `/devkit.brainstorm`, `/devkit.quick-spec`, `/devkit.spec-to-tasks`, `/devkit.spec-quality`, `/devkit.spec-review`, `/devkit.spec-sync`,
+`/devkit.task-manage`, `/devkit.task-review`, `/devkit.task-implementation`, `/devkit.refactor`, `/devkit.feature-development`,
 `/devkit.fix-debugging`, `/devkit.generate-document`, `/devkit.generate-changelog`, `/devkit.github.create-pr`,
 `/devkit.github.review-pr`, `/devkit.lra.*` (7 LRA workflow commands), `/devkit.verify-skill`,
 `/devkit.generate-security-assessment`
@@ -309,7 +356,7 @@ Comprehensive Java development toolkit with Spring Boot, testing, LangChain4J, A
 
 ### developer-kit-typescript
 
-TypeScript/JavaScript full-stack development with NestJS, React, React Native, Next.js, Drizzle ORM, DynamoDB-Toolbox, Zod validation, and Monorepo tools.
+TypeScript/JavaScript full-stack development with NestJS, React, React Native, Next.js, Drizzle ORM, DynamoDB-Toolbox, Zod validation, AWS CDK, and Monorepo tools.
 
 **Agents**: `nestjs-backend-development-expert`, `nestjs-code-review-expert`, `nestjs-database-expert`,
 `nestjs-security-expert`, `nestjs-testing-expert`, `nestjs-unit-testing-expert`, `react-frontend-development-expert`,
@@ -325,7 +372,7 @@ TypeScript/JavaScript full-stack development with NestJS, React, React Native, N
 - **Next.js**: `nextjs-app-router`, `nextjs-authentication`, `nextjs-data-fetching`, `nextjs-performance`, `nextjs-deployment`
 - **Database & ORM**: `drizzle-orm-patterns`, `dynamodb-toolbox-patterns`, `zod-validation-utilities`
 - **Monorepo**: `nx-monorepo`, `turborepo-monorepo`
-- **AWS Lambda**: `aws-lambda-typescript-integration`
+- **AWS**: `aws-lambda-typescript-integration`, `aws-cdk`
 - **Core**: `typescript-docs`
 
 **Rules**: `naming-conventions`, `project-structure`, `language-best-practices`, `error-handling`,
@@ -418,6 +465,9 @@ Additional development tools and integrations.
 - `copilot-cli` (GitHub Copilot CLI delegation with multi-model support)
 - `gemini` (Gemini CLI delegation for large-context analysis)
 - `codex` (OpenAI Codex CLI delegation for complex development tasks using GPT-5.3-codex models)
+- `sonarqube-mcp` (SonarQube MCP integration with plugin-provided MCP server configuration)
+
+**MCP Servers**: `sonarqube-mcp` via `.mcp.json`
 
 ---
 
@@ -441,11 +491,13 @@ GitHub specification integration and verification.
 
 ## Language Support
 
+Component counts below reflect the current plugin manifests in this repository.
+
 | Language           | Plugin                     | Components                                  |
 |--------------------|----------------------------|---------------------------------------------|
-| Core               | `developer-kit-core`       | 4 Skills, 6 Agents, 17 Commands             |
-| Java/Spring Boot   | `developer-kit-java`       | 51 Skills, 9 Agents, 11 Commands, 4 Rules  |
-| TypeScript/Node.js | `developer-kit-typescript` | 25 Skills, 13 Agents, 3 Commands, 17 Rules |
+| Core               | `developer-kit-core`       | 6 Skills, 6 Agents, 25 Commands             |
+| Java/Spring Boot   | `developer-kit-java`       | 52 Skills, 9 Agents, 11 Commands, 4 Rules  |
+| TypeScript/Node.js | `developer-kit-typescript` | 26 Skills, 13 Agents, 3 Commands, 19 Rules |
 | Python             | `developer-kit-python`     | 2 Skills, 4 Agents, 4 Rules                 |
 | PHP/WordPress      | `developer-kit-php`        | 3 Skills, 5 Agents, 4 Rules                 |
 | AWS CloudFormation | `developer-kit-aws`        | 19 Skills, 3 Agents                         |

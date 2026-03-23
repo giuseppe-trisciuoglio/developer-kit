@@ -1,6 +1,6 @@
 {
   "name": "developer-kit-tools",
-  "version": "2.6.3",
+  "version": "2.7.0",
   "description": "External tools integration skills for CLI utilities, APIs, and third-party services",
   "author": {
     "name": "Giuseppe Trisciuoglio",
@@ -19,12 +19,14 @@
     "integrations",
     "external-services"
   ],
+  "mcpServers": "./.mcp.json",
   "agents": [],
   "commands": [],
   "skills": [
     "./skills/gemini",
     "./skills/notebooklm",
     "./skills/copilot-cli",
-    "./skills/codex"
+    "./skills/codex",
+    "./skills/sonarqube-mcp"
   ]
 }

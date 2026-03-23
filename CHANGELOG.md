@@ -7,6 +7,87 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.7.0] - 2026-03-23
+
+### Added
+
+- **SonarQube MCP Integration** (`developer-kit-tools`):
+  - New `sonarqube-mcp` skill for SonarQube-assisted analysis workflows
+  - Plugin-level `.mcp.json` configuration registering the `sonarqube-mcp` MCP server
+  - Environment-driven MCP wiring for `SONARQUBE_TOKEN`, `SONARQUBE_URL`, and `SONARQUBE_ORG`
+  - Quality gate monitoring, issue discovery/triaging, and pre-push code analysis patterns
+  - Reference documentation: `best-practices.md`, `llm-context.md`, `metrics.md`, `severity-levels.md`
+
+- **Knowledge Graph Skill** (`developer-kit-core`):
+  - New `knowledge-graph` skill for managing persistent Knowledge Graphs in specifications
+  - Provides schema definition with entities, relationships, and graph structure
+  - Includes comprehensive query examples for common operations
+  - Documents integration patterns with existing workflows
+  - Reference files: `schema.md`, `query-examples.md`, `integration-patterns.md`
+
+- **ADR Drafting Skill** (`developer-kit-core`):
+  - New `adr-drafting` skill for drafting Architecture Decision Records
+  - Repository-aware naming and storage guidance (`docs/architecture/adr/`)
+  - Standard ADR template with Title, Status, Context, Decision, and Consequences sections
+  - Reference files: `template.md`, `examples.md`
+
+- **Specification Workflow Expansion** (`developer-kit-core`):
+  - Added `devkit.quick-spec` command for lightweight 4-phase specifications
+  - Added `devkit.spec-review` command for interactive specification quality assessment
+  - Added `devkit.spec-sync` command to reconcile specifications with implementation state
+  - Added `devkit.task-implementation` command for guided single-task execution
+  - All spec commands organized into `commands/specs/` subfolder
+
+- **Specs Quality Command** (`developer-kit-core`):
+  - New `devkit.spec-quality` command for maintaining specification context quality
+  - Synchronizes Knowledge Graph, Tasks, and Codebase after implementations
+  - Automatically integrated into `spec-to-tasks` and `feature-development` workflows
+  - Supports options: `--update-kg-only`, `--task=TASK-XXX`, `--dry-run`
+
+- **AWS CDK Skill** (`developer-kit-typescript`):
+  - New AWS CDK infrastructure-as-code skill for TypeScript
+  - Patterns for stack definitions, constructs, and deployment workflows
+
+- **Skill Review & Optimize Workflow** (global):
+  - Evolved from `skill-review` to `skill-review-and-optimize` with AI-powered optimization
+  - Added apply workflow for `/apply-optimize` comment triggers
+  - Added GitHub Action for automated skill review on PRs
+
+### Changed
+
+- **Core Command Organization** (`developer-kit-core`):
+  - Reorganized specification commands into `commands/specs/`
+  - Moved documentation commands into `commands/documentation/`
+  - Updated core documentation to reflect the expanded specification workflow
+
+- **Feature Development Command** (`developer-kit-core`):
+  - Enhanced integration with Knowledge Graph for better context management
+  - Improved workflow coordination with spec-quality command
+
+- **Spec to Tasks Command** (`developer-kit-core`):
+  - Enhanced task generation with Knowledge Graph integration
+  - Improved technical context extraction from codebase analysis
+
+- **Memory Management Skill Rename** (`developer-kit-core`):
+  - Renamed `claude-md-management` to `memory-md-management`
+  - Updated manifest registrations and documentation references
+
+- **Prompt Engineering Skill** (`developer-kit-ai`):
+  - Improved skill structure with concrete examples
+  - Added explicit validation checkpoints and failure-mode diagnosis
+  - Consolidated quality assurance into concise quality gates
+
+- **Version Alignment** (global):
+  - Bumped marketplace and plugin manifests to `2.7.0`
+  - Updated marketplace plugin entries to keep all published versions aligned
+
+- **Documentation Refresh** (global):
+  - Updated top-level and plugin documentation to reflect the current specification workflow
+
+- **Rules Updates**:
+  - Minor updates to rule files across `developer-kit-java`, `developer-kit-php`, `developer-kit-python`, and `developer-kit-typescript`
+  - Consistency improvements and validator/reference updates
+
 ## [2.6.3] - 2026-03-18
 
 ### Fixed
@@ -1024,7 +1105,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.3...HEAD
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.7.0...HEAD
+[2.7.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.3...v2.7.0
 [2.6.3]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.2...v2.6.3
 [2.6.2]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.1...v2.6.2
 [2.6.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.0...v2.6.1

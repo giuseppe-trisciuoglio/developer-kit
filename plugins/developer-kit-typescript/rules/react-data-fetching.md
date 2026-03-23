@@ -1,5 +1,6 @@
 ---
-globs: "**/*.{ts,tsx}"
+paths:
+  - "**/*.{ts,tsx}"
 ---
 # Rule: React Data Fetching Conventions
 

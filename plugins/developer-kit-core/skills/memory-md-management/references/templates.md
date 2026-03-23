@@ -1,4 +1,4 @@
-# CLAUDE.md Templates
+# Memory File Templates
 
 ## Key Principles
 

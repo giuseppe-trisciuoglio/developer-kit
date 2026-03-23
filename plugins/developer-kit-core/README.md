@@ -19,8 +19,21 @@ The `developer-kit` plugin provides foundational agents and commands used across
 
 ## Commands
 
+### Specification Workflow
+- `devkit.brainstorm` - Full 9-phase idea generation and specification exploration
+- `devkit.quick-spec` - Lightweight 4-phase spec for bug fixes and small features
+- `devkit.spec-review` - Interactive specification quality assessment (max 5 questions)
+- `devkit.spec-quality` - Maintain specification context quality (Knowledge Graph sync)
+- `devkit.spec-to-tasks` - Convert functional specifications into executable tasks
+- `devkit.spec-sync` - Synchronize specification with implementation state
+- `devkit.task-implementation` - Guided task implementation (11-step workflow)
+
+### Task Management
+- `devkit.task-manage` - Post-generation task management (list, split, add, mark-optional, update)
+- `devkit.task-review` - Verify implemented tasks meet specifications
+- `devkit.task-implementation` - Guided single-task implementation with Knowledge Graph validation
+
 ### Core Workflows
-- `devkit.brainstorm` - Idea generation and exploration
 - `devkit.refactor` - Refactoring coordination
 - `devkit.feature-development` - Feature implementation guidance
 - `devkit.fix-debugging` - Debugging assistance
@@ -46,11 +59,13 @@ The `developer-kit` plugin provides foundational agents and commands used across
 
 ## Skills
 
-- **claude-md-management** - CLAUDE.md file management and optimization
+- **adr-drafting** - Draft new Architecture Decision Records (ADRs) for significant architectural changes
+- **memory-md-management** - Project memory file management and optimization
 - **drawio-logical-diagrams** - Professional logical flow diagrams and system architecture diagrams in draw.io XML format
 - **github-issue-workflow** - GitHub issue creation and management with workflow automation
+- **docs-updater** - Automated documentation updates by analyzing git changes between releases
+- **knowledge-graph** - Knowledge Graph management for specifications with schema, query patterns, and integration examples
 
 ## Dependencies
 
 None - this is the foundational plugin.
-

@@ -1,5 +1,6 @@
 ---
-globs: "**/*.tsx"
+paths:
+  - "**/*.tsx"
 ---
 # Rule: Tailwind Styling Conventions
 
