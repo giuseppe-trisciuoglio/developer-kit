@@ -18,7 +18,6 @@ Key capabilities include:
 - OAuth provider integration (GitHub, Google, etc.)
 - Role-based access control (RBAC)
 - JWT and database session strategies
-- Comprehensive testing patterns
 
 ## When to Use
 
@@ -33,7 +32,6 @@ Use this skill when implementing authentication for Next.js 15+ with App Router:
 - Managing sessions with JWT or database strategy
 - Creating credential-based authentication
 - Handling sign-in/sign-out flows
-- Testing authentication flows
 
 ## Instructions
 
@@ -295,256 +293,29 @@ declare module "next-auth/jwt" {
 }
 ```
 
+## Constraints and Warnings
+
+- Middleware runs on Edge runtime - cannot use Node.js database drivers
+- Server Components cannot set cookies - use Server Actions instead
+- Always verify authentication in Server Actions, not just middleware
+- See [references/best-practices.md](references/best-practices.md) for complete security guidelines
+
 ## Examples
 
-### Example 1: Complete Protected Dashboard
-
-**Input:** User needs a dashboard accessible only to authenticated users
-
-**Implementation:**
-
-```tsx
-// app/dashboard/page.tsx
-import { auth } from "@/auth";
-import { redirect } from "next/navigation";
-import { getUserTodos } from "@/app/lib/data";
-
-export default async function DashboardPage() {
-  const session = await auth();
-
-  if (!session?.user?.id) {
-    redirect("/login");
-  }
-
-  const todos = await getUserTodos(session.user.id);
-
-  return (
-    <main>
-      <h1>Welcome, {session.user.name}</h1>
-      <p>Email: {session.user.email}</p>
-      <TodoList todos={todos} />
-    </main>
-  );
-}
-```
-
-**Output:** Dashboard renders only for authenticated users, with their specific data.
-
-### Example 2: Role-Based Admin Panel
-
-**Input:** Admin panel should be accessible only to users with "admin" role
-
-**Implementation:**
-
-```tsx
-// app/admin/page.tsx
-import { auth } from "@/auth";
-import { unauthorized } from "next/navigation";
-
-export default async function AdminPage() {
-  const session = await auth();
-
-  if (session?.user?.role !== "admin") {
-    unauthorized();
-  }
-
-  return (
-    <main>
-      <h1>Admin Panel</h1>
-      <p>Welcome, administrator {session.user.name}</p>
-    </main>
-  );
-}
-```
-
-**Output:** Only admin users see the panel; others get 401 error.
-
-### Example 3: Secure Server Action with Form
-
-**Input:** Form submission should only work for authenticated users
-
-**Implementation:**
-
-```tsx
-// app/components/create-todo-form.tsx
-"use server";
-
-import { auth } from "@/auth";
-import { revalidatePath } from "next/cache";
-
-export async function createTodo(formData: FormData) {
-  const session = await auth();
-
-  if (!session?.user?.id) {
-    throw new Error("Unauthorized");
-  }
-
-  const title = formData.get("title") as string;
-
-  await db.todo.create({
-    data: {
-      title,
-      userId: session.user.id,
-    },
-  });
-
-  revalidatePath("/dashboard");
-}
-
-// Usage in component
-export function CreateTodoForm() {
-  return (
-    <form action={createTodo}>
-      <input name="title" placeholder="New todo..." required />
-      <button type="submit">Add Todo</button>
-    </form>
-  );
-}
-```
-
-**Output:** Todo created only for authenticated user; unauthorized requests throw error.
-
-### Example 4: OAuth Sign-In Button
-
-**Input:** User should be able to sign in with GitHub
-
-**Implementation:**
-
-```tsx
-// components/auth/sign-in-button.tsx
-"use client";
-
-import { signIn, signOut, useSession } from "next-auth/react";
-
-export function AuthButton() {
-  const { data: session, status } = useSession();
-
-  if (status === "loading") {
-    return <button disabled>Loading...</button>;
-  }
-
-  if (session) {
-    return (
-      <button onClick={() => signOut()}>
-        Sign out {session.user?.name}
-      </button>
-    );
-  }
-
-  return (
-    <button onClick={() => signIn("github")}>
-      Sign in with GitHub
-    </button>
-  );
-}
-```
-
-**Output:** Button shows "Sign in with GitHub" for unauthenticated users, "Sign out {name}" for authenticated users.
-
-### Example 5: Credentials Provider Login
-
-**Input:** Implement email/password login
-
-**Implementation:**
-
-```tsx
-// auth.ts
-import Credentials from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
-
-export const { handlers, auth, signIn, signOut } = NextAuth({
-  providers: [
-    Credentials({
-      name: "credentials",
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          return null;
-        }
-
-        const user = await db.user.findUnique({
-          where: { email: credentials.email },
-        });
-
-        if (!user || !user.password) {
-          return null;
-        }
-
-        const isValid = await bcrypt.compare(
-          credentials.password,
-          user.password
-        );
-
-        return isValid
-          ? { id: user.id, email: user.email, name: user.name }
-          : null;
-      },
-    }),
-  ],
-});
-```
-
-**Output:** Users can authenticate with email/password against your database.
+See [references/examples.md](references/examples.md) for comprehensive code examples:
+- Complete protected dashboard
+- Role-based admin panel
+- Secure Server Action with form
+- OAuth sign-in button
+- Credentials provider login
 
 ## Best Practices
 
-1. **Use Server Components by default** - Access session directly without client-side JavaScript
-2. **Minimize Client Components** - Only use `useSession()` for reactive session updates
-3. **Cache session checks** - Use React's `cache()` for repeated lookups in the same render
-4. **Middleware for optimistic checks** - Redirect quickly, but always re-verify in Server Actions
-5. **Treat Server Actions like API endpoints** - Always authenticate before mutations
-6. **Never hardcode secrets** - Use environment variables for all credentials
-7. **Implement proper error handling** - Return appropriate HTTP status codes
-8. **Use TypeScript type extensions** - Extend NextAuth types for custom fields
-9. **Separate auth logic** - Create a DAL (Data Access Layer) for consistent checks
-10. **Test authentication flows** - Mock `auth()` function in unit tests
-
-## Constraints and Warnings
-
-### Critical Limitations
-
-- **Middleware runs on Edge runtime** - Cannot use Node.js APIs like database drivers
-- **Server Components cannot set cookies** - Use Server Actions for cookie operations
-- **Session callback timing** - Only called on session creation/access, not every request
-
-### Common Mistakes
-
-```tsx
-// ❌ WRONG: Setting cookies in Server Component
-export default async function Page() {
-  cookies().set("key", "value"); // Won't work
-}
-
-// ✅ CORRECT: Use Server Action
-async function setCookieAction() {
-  "use server";
-  cookies().set("key", "value");
-}
-```
-
-```typescript
-// ❌ WRONG: Database queries in Middleware
-export default auth(async (req) => {
-  const user = await db.user.findUnique(); // Won't work in Edge
-});
-
-// ✅ CORRECT: Use only Edge-compatible APIs
-export default auth(async (req) => {
-  const session = req.auth; // This works
-});
-```
-
-### Security Considerations
-
-- Always verify authentication in Server Actions - middleware alone is not enough
-- Use `unauthorized()` for unauthenticated access, `redirect()` for other cases
-- Store sensitive tokens in `httpOnly` cookies
-- Validate all user input before processing
-- Use HTTPS in production
-- Set appropriate cookie `sameSite` attributes
+See [references/best-practices.md](references/best-practices.md) for detailed guidance on:
+- Server Components vs Client Components
+- Security considerations
+- Common mistakes to avoid
+- Performance optimization tips
 
 ## References
 
@@ -552,3 +323,5 @@ export default auth(async (req) => {
 - [references/oauth-providers.md](references/oauth-providers.md) - Provider-specific configurations (GitHub, Google, Discord, Auth0, etc.)
 - [references/database-adapter.md](references/database-adapter.md) - Database session management with Prisma, Drizzle, and custom adapters
 - [references/testing-patterns.md](references/testing-patterns.md) - Testing authentication flows with Vitest and Playwright
+- [references/examples.md](references/examples.md) - Comprehensive code examples
+- [references/best-practices.md](references/best-practices.md) - Best practices and security guidelines
