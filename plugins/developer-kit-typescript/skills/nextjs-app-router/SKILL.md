@@ -146,7 +146,7 @@ export default function UserForm() {
 }
 ```
 
-See [references/server-actions.md](references/server-actions.md) for validation with Zod, optimistic updates, and advanced patterns.
+For advanced Server Action patterns with validation, see [references/patterns.md](references/patterns.md#server-actions-patterns).
 
 ### Configure Caching
 
@@ -172,7 +172,7 @@ export default async function ProductPage({
 }
 ```
 
-See [references/caching-strategies.md](references/caching-strategies.md) for cache profiles, on-demand revalidation, and advanced caching patterns.
+For comprehensive caching strategies, see [references/patterns.md](references/patterns.md#caching-patterns).
 
 ### Create Route Handler
 
@@ -249,7 +249,7 @@ export default async function Page({
 }
 ```
 
-See [references/nextjs16-migration.md](references/nextjs16-migration.md) for migration guide and proxy.ts configuration.
+For migration guide and proxy.ts configuration, see [references/patterns.md](references/patterns.md#nextjs-16-async-api-patterns).
 
 ### Implement Parallel Routes
 
@@ -290,11 +290,11 @@ export default function AnalyticsPage() {
 }
 ```
 
-See [references/routing-patterns.md](references/routing-patterns.md) for intercepting routes, route groups, and dynamic routes.
+For intercepting routes, route groups, and dynamic routes, see [references/patterns.md](references/patterns.md#routing-patterns).
 
-## Best Practices
+## Decision Guidelines
 
-### Server vs Client Decision
+### Server vs Client Component
 
 1. Start with Server Component (default)
 2. Use Client Component only for:
@@ -310,41 +310,37 @@ See [references/routing-patterns.md](references/routing-patterns.md) for interce
 - Parallelize independent fetches
 - Add Suspense boundaries with `loading.tsx`
 
-### Caching Strategy
+## Constraints and Warnings
 
-```tsx
-"use cache";
-import { cacheLife, cacheTag } from "next/cache";
+### Constraints
 
-// Set cache duration
-cacheLife("hours");
+- Server Components cannot use browser APIs or React hooks
+- Client Components cannot be async (no direct data fetching)
+- `cookies()`, `headers()`, `draftMode()` are async in Next.js 16
+- `params` and `searchParams` are Promise-based in Next.js 16
+- Server Actions must be defined with "use server" directive
 
-// Tag for revalidation
-cacheTag("resource-name");
-```
+### Warnings
 
-### Performance Checklist
+- Attempting to use `await` in a Client Component will cause a build error
+- Accessing `window` or `document` in Server Components will throw an error
+- Forgetting to await `cookies()` or `headers()` in Next.js 16 will result in a Promise instead of the actual values
+- Server Actions without proper validation can expose your database to unauthorized access
+- **External Data Fetching**: Server Components that fetch data from external APIs (`fetch()` calls to third-party URLs) process untrusted content; always validate, sanitize, and type-check fetched responses before rendering, and use environment variables for API URLs rather than hardcoding them
 
-- Use `loading.tsx` for Suspense boundaries
-- Use `next/image` for optimized images
-- Use `next/font` for font optimization
-- Enable React Compiler in `next.config.ts`
-- Add `error.tsx` for error handling
-- Add `not-found.tsx` for 404 handling
+For comprehensive best practices, security guidelines, and common pitfalls, see [references/best-practices.md](references/best-practices.md).
 
 ## Examples
 
-### Example 1: Create Blog Post with Server Action
+This skill includes comprehensive real-world examples demonstrating Next.js App Router patterns:
 
-**Input:** Create a form to submit blog posts with validation
+### Quick Examples
 
-**Output:**
+**Server Action with Validation:**
 ```tsx
-// app/blog/actions.ts
+// app/actions.ts
 "use server";
-
 import { z } from "zod";
-import { revalidatePath } from "next/cache";
 
 const schema = z.object({
   title: z.string().min(5),
@@ -367,41 +363,9 @@ export async function createPost(formData: FormData) {
 }
 ```
 
+**Product Page with Caching:**
 ```tsx
-// app/blog/new/page.tsx
-"use client";
-
-import { useActionState } from "react";
-import { createPost } from "../actions";
-
-export default function NewPostPage() {
-  const [state, formAction, pending] = useActionState(createPost, {});
-
-  return (
-    <form action={formAction}>
-      <input name="title" placeholder="Title" />
-      {state.errors?.title && <span>{state.errors.title[0]}</span>}
-
-      <textarea name="content" placeholder="Content" />
-      {state.errors?.content && <span>{state.errors.content[0]}</span>}
-
-      <button type="submit" disabled={pending}>
-        {pending ? "Publishing..." : "Publish"}
-      </button>
-    </form>
-  );
-}
-```
-
-### Example 2: Product Page with Caching
-
-**Input:** Create a cached product page with revalidation
-
-**Output:**
-```tsx
-// app/products/[id]/page.tsx
 "use cache";
-
 import { cacheLife, cacheTag } from "next/cache";
 
 export default async function ProductPage({
@@ -410,43 +374,15 @@ export default async function ProductPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-
-  cacheTag(`product-${id}`, "products");
+  cacheTag(`product-${id}`);
   cacheLife("hours");
 
   const product = await db.product.findUnique({ where: { id } });
-
-  if (!product) {
-    notFound();
-  }
-
-  return (
-    <article>
-      <h1>{product.name}</h1>
-      <p>{product.description}</p>
-      <p>${product.price}</p>
-    </article>
-  );
+  return <ProductDetail product={product} />;
 }
 ```
 
-```tsx
-// app/api/revalidate/route.ts
-import { revalidateTag } from "next/cache";
-import { NextResponse } from "next/server";
-
-export async function POST(request: Request) {
-  const { tag } = await request.json();
-  revalidateTag(tag);
-  return NextResponse.json({ revalidated: true });
-}
-```
-
-### Example 3: Dashboard with Parallel Routes
-
-**Input:** Create a dashboard with sidebar and main content areas
-
-**Output:**
+**Dashboard with Parallel Routes:**
 ```tsx
 // app/dashboard/layout.tsx
 export default function DashboardLayout({
@@ -459,10 +395,10 @@ export default function DashboardLayout({
   stats: React.ReactNode;
 }) {
   return (
-    <div className="flex">
-      <aside className="w-64">{sidebar}</aside>
-      <main className="flex-1">
-        <div className="grid grid-cols-3">{stats}</div>
+    <div className="dashboard">
+      <aside>{sidebar}</aside>
+      <main>
+        <div>{stats}</div>
         {children}
       </main>
     </div>
@@ -470,51 +406,81 @@ export default function DashboardLayout({
 }
 ```
 
-```tsx
-// app/dashboard/@sidebar/page.tsx
-export default function Sidebar() {
-  return <nav>{/* Navigation links */}</nav>;
-}
+### Comprehensive Examples
 
-// app/dashboard/@stats/page.tsx
-export default async function Stats() {
-  const stats = await fetchStats();
-  return (
-    <>
-      <div>Users: {stats.users}</div>
-      <div>Orders: {stats.orders}</div>
-      <div>Revenue: {stats.revenue}</div>
-    </>
-  );
-}
-```
+For detailed, production-ready examples, see:
 
-## Constraints and Warnings
+- **[references/examples.md](references/examples.md)** - Complete implementations including:
+  - Blog platform with Server Actions, validation, and optimistic updates
+  - E-commerce product page with advanced caching and revalidation
+  - Dashboard with parallel routes and independent data loading
+  - Image gallery with infinite scroll and progressive loading
+  - Real-time chat app with Server Actions
 
-### Constraints
+## Best Practices
 
-- Server Components cannot use browser APIs or React hooks
-- Client Components cannot be async (no direct data fetching)
-- `cookies()`, `headers()`, `draftMode()` are async in Next.js 16
-- `params` and `searchParams` are Promise-based in Next.js 16
-- Server Actions must be defined with "use server" directive
+### Core Principles
 
-### Warnings
+1. **Start with Server Components** - Use Server Components by default, only add "use client" when necessary
+2. **Push Client Components Down** - Keep Client Components deep in the component tree
+3. **Fetch Data Server-Side** - Fetch in Server Components when possible, not in Client Components
+4. **Parallelize Fetches** - Use `Promise.all()` for independent data fetching
+5. **Add Suspense Boundaries** - Use `loading.tsx` and `<Suspense>` for better UX
+6. **Validate Server Actions** - Always validate and sanitize user input in Server Actions
+7. **Use Caching Strategically** - Apply "use cache" with appropriate cacheLife and cacheTag
+8. **Secure External Data** - Always validate and type-check external API responses
 
-- Attempting to use `await` in a Client Component will cause a build error
-- Accessing `window` or `document` in Server Components will throw an error
-- Forgetting to await `cookies()` or `headers()` in Next.js 16 will result in a Promise instead of the actual values
-- Server Actions without proper validation can expose your database to unauthorized access
-- **External Data Fetching**: Server Components that fetch data from external APIs (`fetch()` calls to third-party URLs) process untrusted content; always validate, sanitize, and type-check fetched responses before rendering, and use environment variables for API URLs rather than hardcoding them
+### Performance Checklist
+
+- Use `loading.tsx` for Suspense boundaries
+- Use `next/image` for optimized images
+- Use `next/font` for font optimization
+- Enable React Compiler in `next.config.ts`
+- Add `error.tsx` for error handling
+- Add `not-found.tsx` for 404 handling
+- Implement route-based code splitting with dynamic imports
+- Use `cache()` from React for request deduplication
+
+### Security Guidelines
+
+- Never expose secrets in Client Components
+- Always validate Server Action input with Zod or similar
+- Implement rate limiting for public Server Actions
+- Sanitize user-generated content before rendering
+- Use environment variables for API URLs and keys
+- Implement authentication checks in Server Actions and Route Handlers
+
+### Common Pitfalls to Avoid
+
+- Forgetting to `await` async Next.js APIs (cookies, headers, params)
+- Using browser APIs (window, document) in Server Components
+- Using `await` in Client Components
+- Fetching data in Client Components when Server Components would work
+- Missing validation in Server Actions
+- Exposing secrets to the client
+- Not implementing error boundaries
+
+For comprehensive best practices, security guidelines, constraints, and detailed explanations of common pitfalls, see **[references/best-practices.md](references/best-practices.md)**.
 
 ## References
 
-Consult these files for detailed patterns:
+### Detailed Documentation
 
-- **[references/app-router-fundamentals.md](references/app-router-fundamentals.md)** - Server/Client Components, file conventions, navigation, next/image, next/font
-- **[references/routing-patterns.md](references/routing-patterns.md)** - Parallel routes, intercepting routes, route groups, dynamic routes
-- **[references/caching-strategies.md](references/caching-strategies.md)** - "use cache", cacheLife, cacheTag, revalidation
-- **[references/server-actions.md](references/server-actions.md)** - Server Actions, useActionState, validation, optimistic updates
-- **[references/nextjs16-migration.md](references/nextjs16-migration.md)** - Async APIs, proxy.ts, Turbopack, config
-- **[references/data-fetching.md](references/data-fetching.md)** - Data patterns, Suspense, streaming
-- **[references/metadata-api.md](references/metadata-api.md)** - generateMetadata, OpenGraph, sitemap
+Consult these files for comprehensive patterns, examples, and best practices:
+
+**Core Patterns:**
+- **[references/patterns.md](references/patterns.md)** - Complete code patterns for Server/Client Components, Server Actions, Route Handlers, Caching, Routing, and Next.js 16 Async APIs
+
+**Real-World Examples:**
+- **[references/examples.md](references/examples.md)** - Comprehensive examples including Blog with Server Actions, E-commerce Product Page with Caching, Dashboard with Parallel Routes, Image Gallery, and Real-time Chat App
+
+**Best Practices:**
+- **[references/best-practices.md](references/best-practices.md)** - Architecture best practices, performance optimization, security guidelines, Server vs Client Component decision guidelines, data fetching strategies, caching strategies, constraints, limitations, and common pitfalls
+
+### External Resources
+
+- [Next.js App Router Documentation](https://nextjs.org/docs/app)
+- [Next.js 16 Release Notes](https://nextjs.org/blog/next-16)
+- [Server Components Guide](https://nextjs.org/docs/app/building-your-application/rendering/server-components)
+- [Server Actions Guide](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions)
+- [Caching and Revalidation](https://nextjs.org/docs/app/building-your-application/caching)
