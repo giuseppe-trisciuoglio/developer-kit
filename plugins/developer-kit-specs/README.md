@@ -9,6 +9,7 @@ This plugin provides a complete workflow for:
 - **Task Generation**: Convert functional specifications into executable tasks
 - **Task Management**: Add, split, update, and manage tasks after generation
 - **Task Review**: Verify implemented tasks meet specifications
+- **Automatic stop gate after task implementation**: Forces review, fixes, and spec sync handling before Claude stops
 - **Spec Quality Check**: Review and validate specification content quality
 - **Spec Sync Context**: Synchronize technical context (Knowledge Graph, Tasks, Codebase)
 - **Spec Sync With Code**: Synchronize functional specification with implementation
@@ -57,6 +58,12 @@ Idea → Functional Specification → Tasks → Implementation → Review
 
 # 5. Implement a task
 /specs:task-implementation --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
+
+# Installed hook: Claude cannot stop yet until review/fixes run
+/specs:task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
+
+# If review reveals spec drift or documentation changes
+/specs:spec-sync-with-code docs/specs/001-user-auth/ --after-task=TASK-001
 
 # 6. Sync technical context after implementation
 /specs:spec-sync-context docs/specs/001-user-auth/ --task=TASK-001

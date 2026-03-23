@@ -98,6 +98,8 @@ Specifications-driven development workflow for transforming ideas into functiona
 
 **Skills**: `knowledge-graph` - Persistent Knowledge Graph for specifications with caching and validation
 
+**Hooks**: `task-implementation-review-stop` - Stop hook that forces `/specs:task-review`, fixes, and optional spec sync after `/specs:task-implementation`
+
 **Commands**: `/specs:brainstorm`, `/specs:quick-spec`, `/specs:spec-quality-check`, `/specs:spec-sync-context`,
 `/specs:spec-to-tasks`, `/specs:spec-sync-with-code`, `/specs:task-manage`, `/specs:task-review`,
 `/specs:task-implementation`

@@ -1,0 +1,16 @@
+{
+  "description": "Enforce post-implementation review and optional spec synchronization after /specs:task-implementation",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/task-implementation-review-stop.py\"",
+            "statusMessage": "Checking task-implementation review workflow..."
+          }
+        ]
+      }
+    ]
+  }
+}
