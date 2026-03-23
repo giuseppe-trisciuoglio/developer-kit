@@ -63,50 +63,42 @@ Activate when user requests involve:
 npx create-next-app@latest my-app --typescript --tailwind --app --turbopack
 ```
 
-### Implement Server Component
+### Server vs Client Components
 
-Server Components are the default in App Router.
+**Server Components** (default):
+- Run only on the server
+- Cannot use hooks or browser APIs
+- Direct database access
+- Better performance
 
 ```tsx
-// app/users/page.tsx
-async function getUsers() {
-  const apiUrl = process.env.API_URL;
-  const res = await fetch(`${apiUrl}/users`);
-  return res.json();
-}
-
+// app/users/page.tsx (Server Component)
 export default async function UsersPage() {
-  const users = await getUsers();
-  return (
-    <main>
-      {users.map(user => <UserCard key={user.id} user={user} />)}
-    </main>
-  );
+  const users = await db.user.findMany();
+  return <UserList users={users} />;
 }
 ```
 
-### Implement Client Component
-
-Add `"use client"` when using hooks, browser APIs, or event handlers.
+**Client Components** (add `"use client"`):
+- Use hooks (useState, useEffect)
+- Browser APIs (window, localStorage)
+- Event handlers (onClick, onSubmit)
 
 ```tsx
+// components/Counter.tsx
 "use client";
 
 import { useState } from "react";
 
 export default function Counter() {
   const [count, setCount] = useState(0);
-  return (
-    <button onClick={() => setCount(c => c + 1)}>
-      Count: {count}
-    </button>
-  );
+  return <button onClick={() => setCount(c => c + 1)}>{count}</button>;
 }
 ```
 
-### Create Server Action
+### Server Actions
 
-Define actions in separate files with "use server" directive.
+Define actions in separate files with "use server" directive:
 
 ```tsx
 // app/actions.ts
@@ -116,14 +108,12 @@ import { revalidatePath } from "next/cache";
 
 export async function createUser(formData: FormData) {
   const name = formData.get("name") as string;
-  const email = formData.get("email") as string;
-
-  await db.user.create({ data: { name, email } });
+  await db.user.create({ data: { name } });
   revalidatePath("/users");
 }
 ```
 
-Use with forms in Client Components:
+Use with forms:
 
 ```tsx
 "use client";
@@ -133,52 +123,17 @@ import { createUser } from "./actions";
 
 export default function UserForm() {
   const [state, formAction, pending] = useActionState(createUser, {});
-
-  return (
-    <form action={formAction}>
-      <input name="name" />
-      <input name="email" type="email" />
-      <button type="submit" disabled={pending}>
-        {pending ? "Creating..." : "Create"}
-      </button>
-    </form>
-  );
+  return <form action={formAction}><input name="name" /><button disabled={pending}>Create</button></form>;
 }
 ```
 
 See [references/server-actions.md](references/server-actions.md) for validation with Zod, optimistic updates, and advanced patterns.
 
-### Configure Caching
+### Route Handlers
 
-Use "use cache" directive for explicit caching (Next.js 16+).
+Implement API endpoints:
 
 ```tsx
-"use cache";
-
-import { cacheLife, cacheTag } from "next/cache";
-
-export default async function ProductPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-
-  cacheTag(`product-${id}`);
-  cacheLife("hours");
-
-  const product = await fetchProduct(id);
-  return <ProductDetail product={product} />;
-}
-```
-
-See [references/caching-strategies.md](references/caching-strategies.md) for cache profiles, on-demand revalidation, and advanced caching patterns.
-
-### Create Route Handler
-
-Implement API endpoints using Route Handlers.
-
-```ts
 // app/api/users/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
@@ -194,29 +149,42 @@ export async function POST(request: NextRequest) {
 }
 ```
 
-Dynamic segments use `[param]`:
+Dynamic segments:
 
-```ts
+```tsx
 // app/api/users/[id]/route.ts
-interface RouteParams {
-  params: Promise<{ id: string }>;
-}
-
-export async function GET(request: NextRequest, { params }: RouteParams) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const user = await db.user.findUnique({ where: { id } });
-
-  if (!user) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
-  }
-
   return NextResponse.json(user);
 }
 ```
 
-### Handle Next.js 16 Async APIs
+### Caching with "use cache"
 
-All Next.js APIs are async in version 16.
+Use "use cache" directive for explicit caching (Next.js 16+):
+
+```tsx
+"use cache";
+
+import { cacheLife, cacheTag } from "next/cache";
+
+export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+
+  cacheTag(`product-${id}`);
+  cacheLife("hours");
+
+  const product = await fetchProduct(id);
+  return <ProductDetail product={product} />;
+}
+```
+
+See [references/caching-strategies.md](references/caching-strategies.md) for cache profiles, on-demand revalidation, and advanced caching patterns.
+
+### Next.js 16 Async APIs
+
+All Next.js APIs are async in version 16:
 
 ```tsx
 import { cookies, headers, draftMode } from "next/headers";
@@ -227,8 +195,6 @@ export default async function Page() {
   const { isEnabled } = await draftMode();
 
   const session = cookieStore.get("session")?.value;
-  const userAgent = headersList.get("user-agent");
-
   return <div>...</div>;
 }
 ```
@@ -236,45 +202,29 @@ export default async function Page() {
 Params and searchParams are also async:
 
 ```tsx
-export default async function Page({
-  params,
-  searchParams,
-}: {
+export default async function Page({ params, searchParams }: {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ sort?: string }>;
 }) {
   const { slug } = await params;
   const { sort } = await searchParams;
-  // ...
 }
 ```
 
 See [references/nextjs16-migration.md](references/nextjs16-migration.md) for migration guide and proxy.ts configuration.
 
-### Implement Parallel Routes
+### Parallel Routes
 
-Use `@folder` convention for parallel route slots.
+Use `@folder` convention for parallel route slots:
 
 ```tsx
 // app/dashboard/layout.tsx
-export default function DashboardLayout({
-  children,
-  team,
-  analytics,
-}: {
+export default function DashboardLayout({ children, team, analytics }: {
   children: React.ReactNode;
   team: React.ReactNode;
   analytics: React.ReactNode;
 }) {
-  return (
-    <div>
-      {children}
-      <div className="grid grid-cols-2">
-        {team}
-        {analytics}
-      </div>
-    </div>
-  );
+  return <div>{children}<div className="grid grid-cols-2">{team}{analytics}</div></div>;
 }
 ```
 
@@ -283,211 +233,37 @@ export default function DashboardLayout({
 export default function TeamPage() {
   return <div>Team Section</div>;
 }
-
-// app/dashboard/@analytics/page.tsx
-export default function AnalyticsPage() {
-  return <div>Analytics Section</div>;
-}
 ```
 
 See [references/routing-patterns.md](references/routing-patterns.md) for intercepting routes, route groups, and dynamic routes.
 
-## Best Practices
-
-### Server vs Client Decision
-
-1. Start with Server Component (default)
-2. Use Client Component only for:
-   - React hooks (useState, useEffect, useContext)
-   - Browser APIs (window, document, localStorage)
-   - Event handlers (onClick, onSubmit)
-   - Client-only libraries
-
-### Data Fetching
-
-- Fetch in Server Components when possible
-- Use React's `cache()` for deduplication
-- Parallelize independent fetches
-- Add Suspense boundaries with `loading.tsx`
-
-### Caching Strategy
-
-```tsx
-"use cache";
-import { cacheLife, cacheTag } from "next/cache";
-
-// Set cache duration
-cacheLife("hours");
-
-// Tag for revalidation
-cacheTag("resource-name");
-```
-
-### Performance Checklist
-
-- Use `loading.tsx` for Suspense boundaries
-- Use `next/image` for optimized images
-- Use `next/font` for font optimization
-- Enable React Compiler in `next.config.ts`
-- Add `error.tsx` for error handling
-- Add `not-found.tsx` for 404 handling
-
 ## Examples
 
-### Example 1: Create Blog Post with Server Action
+For complete, real-world examples, see **[references/examples.md](references/examples.md)**:
 
-**Input:** Create a form to submit blog posts with validation
+- **Blog System**: Complete blog with Server Actions, Zod validation, form handling, and revalidation
+- **E-commerce**: Product catalog with caching, shopping cart, and revalidation endpoints
+- **Dashboard**: Parallel routes implementation with sidebar, stats, and main content areas
+- **Authentication**: Login/logout flow with Server Actions and secure session management
+- **Search & Filtering**: Search page with server-side filtering and URL-based query params
 
-**Output:**
-```tsx
-// app/blog/actions.ts
-"use server";
+Each example includes production-ready code with error handling, validation, and best practices.
 
-import { z } from "zod";
-import { revalidatePath } from "next/cache";
+## Best Practices
 
-const schema = z.object({
-  title: z.string().min(5),
-  content: z.string().min(10),
-});
+For comprehensive best practices, see **[references/best-practices.md](references/best-practices.md)**:
 
-export async function createPost(formData: FormData) {
-  const parsed = schema.safeParse({
-    title: formData.get("title"),
-    content: formData.get("content"),
-  });
-
-  if (!parsed.success) {
-    return { errors: parsed.error.flatten().fieldErrors };
-  }
-
-  await db.post.create({ data: parsed.data });
-  revalidatePath("/blog");
-  return { success: true };
-}
-```
-
-```tsx
-// app/blog/new/page.tsx
-"use client";
-
-import { useActionState } from "react";
-import { createPost } from "../actions";
-
-export default function NewPostPage() {
-  const [state, formAction, pending] = useActionState(createPost, {});
-
-  return (
-    <form action={formAction}>
-      <input name="title" placeholder="Title" />
-      {state.errors?.title && <span>{state.errors.title[0]}</span>}
-
-      <textarea name="content" placeholder="Content" />
-      {state.errors?.content && <span>{state.errors.content[0]}</span>}
-
-      <button type="submit" disabled={pending}>
-        {pending ? "Publishing..." : "Publish"}
-      </button>
-    </form>
-  );
-}
-```
-
-### Example 2: Product Page with Caching
-
-**Input:** Create a cached product page with revalidation
-
-**Output:**
-```tsx
-// app/products/[id]/page.tsx
-"use cache";
-
-import { cacheLife, cacheTag } from "next/cache";
-
-export default async function ProductPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-
-  cacheTag(`product-${id}`, "products");
-  cacheLife("hours");
-
-  const product = await db.product.findUnique({ where: { id } });
-
-  if (!product) {
-    notFound();
-  }
-
-  return (
-    <article>
-      <h1>{product.name}</h1>
-      <p>{product.description}</p>
-      <p>${product.price}</p>
-    </article>
-  );
-}
-```
-
-```tsx
-// app/api/revalidate/route.ts
-import { revalidateTag } from "next/cache";
-import { NextResponse } from "next/server";
-
-export async function POST(request: Request) {
-  const { tag } = await request.json();
-  revalidateTag(tag);
-  return NextResponse.json({ revalidated: true });
-}
-```
-
-### Example 3: Dashboard with Parallel Routes
-
-**Input:** Create a dashboard with sidebar and main content areas
-
-**Output:**
-```tsx
-// app/dashboard/layout.tsx
-export default function DashboardLayout({
-  children,
-  sidebar,
-  stats,
-}: {
-  children: React.ReactNode;
-  sidebar: React.ReactNode;
-  stats: React.ReactNode;
-}) {
-  return (
-    <div className="flex">
-      <aside className="w-64">{sidebar}</aside>
-      <main className="flex-1">
-        <div className="grid grid-cols-3">{stats}</div>
-        {children}
-      </main>
-    </div>
-  );
-}
-```
-
-```tsx
-// app/dashboard/@sidebar/page.tsx
-export default function Sidebar() {
-  return <nav>{/* Navigation links */}</nav>;
-}
-
-// app/dashboard/@stats/page.tsx
-export default async function Stats() {
-  const stats = await fetchStats();
-  return (
-    <>
-      <div>Users: {stats.users}</div>
-      <div>Orders: {stats.orders}</div>
-      <div>Revenue: {stats.revenue}</div>
-    </>
-  );
-}
-```
+- **Architecture**: Server vs Client decision tree, component composition, prop passing patterns
+- **Data Fetching**: Server-side fetching, cache() for deduplication, parallel fetching, Suspense boundaries
+- **Server Actions**: Input validation with Zod, consistent response shapes, revalidation strategies
+- **Caching**: Appropriate cache durations, on-demand revalidation patterns
+- **Route Handlers**: External API proxying, input validation, error handling
+- **File Organization**: Route groups, parallel routes, Server Actions organization
+- **Error Handling**: Error boundaries, not-found handling, global error handlers
+- **Performance**: Loading states, image optimization, font optimization, React Compiler
+- **Security**: Input validation, environment variables, secure Server Actions, protected routes
+- **Testing**: Server Action testing, Route Handler testing
+- **Deployment**: Environment variables, production optimizations, performance monitoring
 
 ## Constraints and Warnings
 
@@ -510,6 +286,12 @@ export default async function Stats() {
 ## References
 
 Consult these files for detailed patterns:
+
+- **[references/patterns.md](references/patterns.md)** - Comprehensive code patterns for Server/Client Components, Route Handlers, async APIs, caching, parallel routes, integration patterns, file organization, error handling, and performance
+- **[references/examples.md](references/examples.md)** - Complete real-world examples including blog with Server Actions, e-commerce with caching, dashboard with parallel routes, authentication flow, and search/filtering
+- **[references/best-practices.md](references/best-practices.md)** - Architecture patterns, data fetching, Server Actions, caching strategies, route handlers, file organization, error handling, performance optimization, security, testing, deployment, and common pitfalls
+
+### Additional Resources
 
 - **[references/app-router-fundamentals.md](references/app-router-fundamentals.md)** - Server/Client Components, file conventions, navigation, next/image, next/font
 - **[references/routing-patterns.md](references/routing-patterns.md)** - Parallel routes, intercepting routes, route groups, dynamic routes
