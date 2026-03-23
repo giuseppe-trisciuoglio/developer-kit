@@ -77,6 +77,16 @@ serverless deploy
 vendor/bin/bref deploy
 ```
 
+## Examples
+
+For complete examples including:
+
+1. **Create a Symfony Lambda API** - Build a REST API using Bref for a todo application
+2. **Optimize Cold Start** - Reduce Symfony Lambda cold start from 5s to <2s
+3. **Deploy with GitHub Actions** - Configure CI/CD pipeline for automated deployment
+
+See [examples.md](references/examples.md) for detailed Input/Output examples and step-by-step guides.
+
 ## References
 
 For detailed guidance on specific topics:
