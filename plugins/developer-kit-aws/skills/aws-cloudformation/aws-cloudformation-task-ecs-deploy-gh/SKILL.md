@@ -14,26 +14,13 @@ Deploy containerized applications to Amazon ECS using GitHub Actions workflows. 
 
 ## When to Use
 
-**Use this skill when:**
-- Deploying Docker containers to Amazon ECS
-- Setting up GitHub Actions CI/CD pipelines for AWS
-- Configuring AWS authentication for GitHub Actions (OIDC or IAM keys)
-- Building and pushing Docker images to Amazon ECR
-- Updating ECS task definitions dynamically
-- Implementing blue/green or rolling deployments
-- Managing CloudFormation stacks from CI/CD
-- Setting up multi-environment deployments (dev/staging/prod)
-- Configuring private ECR repositories with image scanning
-- Automating container deployment with proper security practices
-
-**Trigger phrases:**
-- "Deploy to ECS with GitHub Actions"
-- "Set up CI/CD for ECS containers"
-- "Configure GitHub Actions for AWS deployment"
-- "Build and push Docker image to ECR"
-- "Update ECS task definition from CI/CD"
-- "Implement blue/green deployment for ECS"
-- "Deploy CloudFormation stack from GitHub Actions"
+- Deploying Docker containers to Amazon ECS with GitHub Actions
+- Setting up CI/CD pipelines for ECS using CloudFormation
+- Configuring AWS OIDC authentication for GitHub Actions
+- Building Docker images and pushing to Amazon ECR
+- Updating ECS task definitions dynamically in CI/CD
+- Implementing blue/green or rolling deployments for ECS
+- Managing CloudFormation stacks from GitHub Actions
 
 ## Instructions
 
@@ -47,20 +34,6 @@ Follow these steps to set up ECS deployment with GitHub Actions:
 6. **Set Up ECS Service**: Configure service with deployment strategy
 7. **Create GitHub Workflow**: Define CI/CD pipeline steps
 8. **Configure Secrets**: Store credentials securely in GitHub Secrets
-
-## Quick Reference
-
-| Component | Purpose |
-|-----------|---------|
-| **GitHub Actions** | Automate workflows from GitHub repository events |
-| **OIDC Authentication** | Secure, tokenless authentication between GitHub and AWS |
-| **ECR** | Amazon Elastic Container Registry for Docker image storage |
-| **ECS** | Amazon Elastic Container Service for container orchestration |
-| **Fargate** | Serverless compute engine for ECS without managing servers |
-| **Task Definition** | Blueprint for ECS containers (similar to Pod spec in Kubernetes) |
-| **Service** | Long-running ECS service with load balancing and auto-scaling |
-| **CloudFormation** | Infrastructure as Code for AWS resource management |
-| **Blue/Green Deployment** | Zero-downtime deployment strategy with CodeDeploy |
 
 ## Quick Start
 
@@ -99,6 +72,11 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
+      - name: Verify image push
+        run: |
+          docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "Image $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG verified"
+
       - name: Update task definition
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         id: render-task
@@ -106,6 +84,20 @@ jobs:
           task-definition: task-definition.json
           container-name: my-app
           image: ${{ steps.login-ecr.outputs.registry }}/my-app:${{ github.sha }}
+
+      - name: Validate task definition
+        run: |
+          # Validate JSON syntax
+          cat ${{ steps.render-task.outputs.task-definition }} | jq empty && echo "Task definition JSON is valid"
+          # Verify container image matches expected
+          CONTAINER_IMAGE=$(cat ${{ steps.render-task.outputs.task-definition }} | jq -r '.containerDefinitions[0].image')
+          EXPECTED_IMAGE="${{ steps.login-ecr.outputs.registry }}/my-app:${{ github.sha }}"
+          if [ "$CONTAINER_IMAGE" = "$EXPECTED_IMAGE" ]; then
+            echo "Container image matches expected: $CONTAINER_IMAGE"
+          else
+            echo "ERROR: Container image mismatch. Expected: $EXPECTED_IMAGE, Got: $CONTAINER_IMAGE"
+            exit 1
+          fi
 
       - name: Deploy to ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
@@ -117,6 +109,45 @@ jobs:
 ```
 
 See [references/workflow-examples.md](references/workflow-examples.md) for complete workflow examples including multi-environment and blue/green deployments.
+
+## Examples
+
+### Multi-Environment Deployment
+
+```yaml
+jobs:
+  deploy:
+    strategy:
+      matrix:
+        environment: [dev, staging, prod]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ matrix.env_account }}:role/github-actions-ecs-role
+          aws-region: ${{ matrix.region }}
+      - name: Deploy to ${{ matrix.environment }}
+        run: |
+          ECR_REGISTRY=${{ env.ECR_REGISTRY }}
+          docker build -t $ECR_REGISTRY/my-app:${{ github.sha }} .
+          docker push $ECR_REGISTRY/my-app:${{ github.sha }}
+```
+
+### Blue/Green Deployment with CodeDeploy
+
+```yaml
+- name: Deploy with CodeDeploy
+  run: |
+    aws deploy create-deployment \
+      --application-name my-app \
+      --deployment-group-name ${{ matrix.environment }} \
+      --deployment-config-name CodeDeployDefault ECSAllAtOnce \
+      --revision "{\"revisionType\":\"AppSpecContent\",\"appSpecContent\":{\"content\":\"$(cat appspec.yml)\",\"filename\":\"appspec.yml\"}}"
+    aws deploy wait deployment-successful --deployment-id $(aws deploy list-deployments --application-name my-app --query 'deployments[0]' --output text)
+```
+
+See [references/workflow-examples.md](references/workflow-examples.md) for additional patterns including ECR lifecycle policies, task definition templates, and CloudFormation stack updates.
 
 ## Best Practices
 

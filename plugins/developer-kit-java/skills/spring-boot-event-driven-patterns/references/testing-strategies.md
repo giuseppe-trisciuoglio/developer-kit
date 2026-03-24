@@ -220,7 +220,7 @@ class EventDrivenIntegrationTest {
 }
 ```
 
-## Testing Event Handlers with @TransactionalEventListener
+## Testing Event Handlers with `@TransactionalEventListener`
 
 ### Test Transactional Event Listener
 

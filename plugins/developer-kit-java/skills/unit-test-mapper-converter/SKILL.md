@@ -1,6 +1,6 @@
 ---
 name: unit-test-mapper-converter
-description: Provides patterns for unit testing mappers and converters (MapStruct, custom mappers). Validates object transformation logic in isolation. Use when ensuring correct data transformation between DTOs and domain objects.
+description: Provides patterns for unit testing mappers, converters, and bean mappings. Validates entity-to-DTO and model transformation logic in isolation. Generates executable mapping tests with MapStruct and custom converter test coverage. Use when writing mapping tests, converter tests, entity mapping tests, or ensuring correct data transformation between DTOs and domain objects.
 allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
@@ -8,450 +8,125 @@ allowed-tools: Read, Write, Bash, Glob, Grep
 
 ## Overview
 
-This skill provides patterns for unit testing MapStruct mappers and custom converter classes. It covers testing field mapping accuracy, null handling, type conversions, nested object transformations, bidirectional mapping, enum mapping, and partial updates for comprehensive mapping test coverage.
+Provides patterns for unit testing MapStruct mappers and custom converter classes. Covers field mapping accuracy, null handling, type conversions, nested object transformations, bidirectional mapping, enum mapping, and partial updates.
 
 ## When to Use
 
-Use this skill when:
-- Testing MapStruct mapper implementations
-- Testing custom entity-to-DTO converters
-- Testing nested object mapping
-- Verifying null handling in mappers
-- Testing type conversions and transformations
-- Want comprehensive mapping test coverage before integration tests
+- Writing mapping tests for MapStruct mapper implementations
+- Testing custom entity-to-DTO converters and bean mappings
+- Validating nested object mapping and collection transformations
 
 ## Instructions
 
-1. **Use Mappers.getMapper()**: Get mapper instances for non-Spring standalone tests
-2. **Test bidirectional mapping**: Verify entity→DTO and DTO→entity transformations are symmetric
-3. **Test null handling**: Verify null inputs produce null outputs or appropriate defaults
-4. **Test nested objects**: Verify nested objects are mapped correctly and independently
-5. **Use recursive comparison**: For complex nested structures, use assertThat().usingRecursiveComparison()
-6. **Test custom mappings**: Verify `@`Mapping annotations with custom expressions work correctly
-7. **Test enum mappings**: Verify `@`ValueMapping correctly translates enum values
-8. **Test partial updates**: Verify `@`MappingTarget updates only specified fields
+### 1. Validate Generated Mapper Classes
+Before testing, verify generated mapper classes exist:
+```bash
+# Maven
+ls target/generated-sources/
+
+# Gradle
+ls build/generated/sources/
+```
+
+**If generated classes are missing:**
+1. Run `mvn compile` (Maven) or `./gradlew compileJava` (Gradle)
+2. Check that the MapStruct annotation processor is configured
+3. Verify `@Mapper` interfaces are in a compiled source set
+
+### 2. Test Null Handling
+```java
+assertThat(mapper.toDto(null)).isNull();
+```
+Configure `nullValueMappingStrategy` in mapper if null should return empty/default.
+
+**If null tests fail:**
+1. Add `nullValueMappingStrategy = NullValueMappingStrategy.RETURN_NULL` to `@Mapper`
+2. Or use `nullValuePropertyMappingStrategy` for nested property handling
+
+### 3. Test Bidirectional Mapping
+```java
+User restored = mapper.toEntity(mapper.toDto(original));
+assertThat(restored).usingRecursiveComparison().isEqualTo(original);
+```
+
+**If bidirectional tests fail:**
+1. Check `@Mapping` annotations for field name mismatches
+2. Verify both directions are explicitly mapped if auto-mapping fails
+3. Use `unmappedTargetPolicy = ReportingPolicy.ERROR` to catch missing mappings
+
+### 4. Test Nested Object Mapping
+```java
+assertThat(dto.getNested()).usingRecursiveComparison().isEqualTo(expected);
+```
+
+**If nested tests fail:**
+1. Ensure nested mapper exists or is referenced via `uses = NestedMapper.class`
+2. Check collection element mappings with `elementMappingStrategy`
+
+### 5. Test Custom Expressions
+Custom expressions in `@Mapping(target = "field", expression = "java(...)")` are not compile-time validated.
+
+**If expression tests fail:**
+1. Verify the expression syntax and method signatures
+2. Check that imported classes are accessible from the expression context
+
+### 6. Test Enum Mappings
+Use `@ValueMapping` for enum-to-enum translations. Test all enum values exhaustively.
+
+## Best Practices
+
+- Use `Mappers.getMapper()` for standalone tests, Spring injection for integration tests
+- Use `usingRecursiveComparison()` for complex nested structures
+- Test all mapper methods including collection transformations
+- Verify null handling for all nullable source fields
+- Test bidirectional mapping catches asymmetries between entity→DTO and DTO→entity
+- Keep mapper tests focused on transformation correctness, not implementation details
+
+## Constraints and Warnings
+
+- **Compile-time generation**: MapStruct generates code at compile time—verify generated classes exist before running tests
+- **Null handling**: Configure `nullValueMappingStrategy` and `nullValuePropertyMappingStrategy` appropriately
+- **Expression validation**: Expressions in `@Mapping` are not validated at compile time—test them explicitly
+- **Circular dependencies**: MapStruct cannot handle circular dependencies between mappers
+- **Collection immutability**: Mapping immutable collections may require special configuration
+- **Date/Time**: Verify date/time objects map correctly across timezones
 
 ## Examples
 
-## Setup: Testing Mappers
-
-### Maven
-```xml
-<dependency>
-  <groupId>org.mapstruct</groupId>
-  <artifactId>mapstruct</artifactId>
-  <version>1.5.5.Final</version>
-</dependency>
-<dependency>
-  <groupId>org.junit.jupiter</groupId>
-  <artifactId>junit-jupiter</artifactId>
-  <scope>test</scope>
-</dependency>
-<dependency>
-  <groupId>org.assertj</groupId>
-  <artifactId>assertj-core</artifactId>
-  <scope>test</scope>
-</dependency>
-```
-
-### Gradle
-```kotlin
-dependencies {
-  implementation("org.mapstruct:mapstruct:1.5.5.Final")
-  testImplementation("org.junit.jupiter:junit-jupiter")
-  testImplementation("org.assertj:assertj-core")
-}
-```
-
-## Basic Pattern: Testing MapStruct Mapper
-
-### Simple Entity to DTO Mapping
-
+Complete executable test with imports:
 ```java
-// Mapper interface
-@Mapper(componentModel = "spring")
-public interface UserMapper {
-  UserDto toDto(User user);
-  User toEntity(UserDto dto);
-  List<UserDto> toDtos(List<User> users);
-}
+package com.example.mapper;
 
-// Unit test
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 import static org.assertj.core.api.Assertions.*;
 
-class UserMapperTest {
-
-  private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
+class UserMapperCompleteTest {
+  private final UserMapper mapper = Mappers.getMapper(UserMapper.class);
 
   @Test
   void shouldMapUserToDto() {
     User user = new User(1L, "Alice", "alice@example.com", 25);
-    
-    UserDto dto = userMapper.toDto(user);
-    
-    assertThat(dto)
-      .isNotNull()
-      .extracting("id", "name", "email", "age")
-      .containsExactly(1L, "Alice", "alice@example.com", 25);
-  }
-
-  @Test
-  void shouldMapDtoToEntity() {
-    UserDto dto = new UserDto(1L, "Alice", "alice@example.com", 25);
-    
-    User user = userMapper.toEntity(dto);
-    
-    assertThat(user)
-      .isNotNull()
-      .hasFieldOrPropertyWithValue("id", 1L)
-      .hasFieldOrPropertyWithValue("name", "Alice");
-  }
-
-  @Test
-  void shouldMapListOfUsers() {
-    List<User> users = List.of(
-      new User(1L, "Alice", "alice@example.com", 25),
-      new User(2L, "Bob", "bob@example.com", 30)
-    );
-    
-    List<UserDto> dtos = userMapper.toDtos(users);
-    
-    assertThat(dtos)
-      .hasSize(2)
-      .extracting(UserDto::getName)
-      .containsExactly("Alice", "Bob");
-  }
-
-  @Test
-  void shouldHandleNullEntity() {
-    UserDto dto = userMapper.toDto(null);
-    
-    assertThat(dto).isNull();
-  }
-}
-```
-
-## Testing Nested Object Mapping
-
-### Map Complex Hierarchies
-
-```java
-// Entities with nesting
-class User {
-  private Long id;
-  private String name;
-  private Address address;
-  private List<Phone> phones;
-}
-
-// Mapper with nested mapping
-@Mapper(componentModel = "spring")
-public interface UserMapper {
-  UserDto toDto(User user);
-  User toEntity(UserDto dto);
-}
-
-// Unit test for nested objects
-class NestedObjectMapperTest {
-
-  private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
-
-  @Test
-  void shouldMapNestedAddress() {
-    Address address = new Address("123 Main St", "New York", "NY", "10001");
-    User user = new User(1L, "Alice", address);
-    
-    UserDto dto = userMapper.toDto(user);
-    
-    assertThat(dto.getAddress())
-      .isNotNull()
-      .hasFieldOrPropertyWithValue("street", "123 Main St")
-      .hasFieldOrPropertyWithValue("city", "New York");
-  }
-
-  @Test
-  void shouldMapListOfNestedPhones() {
-    List<Phone> phones = List.of(
-      new Phone("123-456-7890", "MOBILE"),
-      new Phone("987-654-3210", "HOME")
-    );
-    User user = new User(1L, "Alice", null, phones);
-    
-    UserDto dto = userMapper.toDto(user);
-    
-    assertThat(dto.getPhones())
-      .hasSize(2)
-      .extracting(PhoneDto::getNumber)
-      .containsExactly("123-456-7890", "987-654-3210");
-  }
-
-  @Test
-  void shouldHandleNullNestedObjects() {
-    User user = new User(1L, "Alice", null);
-    
-    UserDto dto = userMapper.toDto(user);
-    
-    assertThat(dto.getAddress()).isNull();
-  }
-}
-```
-
-## Testing Custom Mapping Methods
-
-### Mapper with `@`Mapping Annotations
-
-```java
-@Mapper(componentModel = "spring")
-public interface ProductMapper {
-  @Mapping(source = "name", target = "productName")
-  @Mapping(source = "price", target = "salePrice")
-  @Mapping(target = "discount", expression = "java(product.getPrice() * 0.1)")
-  ProductDto toDto(Product product);
-
-  @Mapping(source = "productName", target = "name")
-  @Mapping(source = "salePrice", target = "price")
-  Product toEntity(ProductDto dto);
-}
-
-class CustomMappingTest {
-
-  private final ProductMapper mapper = Mappers.getMapper(ProductMapper.class);
-
-  @Test
-  void shouldMapFieldsWithCustomNames() {
-    Product product = new Product(1L, "Laptop", 999.99);
-    
-    ProductDto dto = mapper.toDto(product);
-    
-    assertThat(dto)
-      .hasFieldOrPropertyWithValue("productName", "Laptop")
-      .hasFieldOrPropertyWithValue("salePrice", 999.99);
-  }
-
-  @Test
-  void shouldCalculateDiscountFromExpression() {
-    Product product = new Product(1L, "Laptop", 100.0);
-    
-    ProductDto dto = mapper.toDto(product);
-    
-    assertThat(dto.getDiscount()).isEqualTo(10.0);
-  }
-
-  @Test
-  void shouldReverseMapCustomFields() {
-    ProductDto dto = new ProductDto(1L, "Laptop", 999.99);
-    
-    Product product = mapper.toEntity(dto);
-    
-    assertThat(product)
-      .hasFieldOrPropertyWithValue("name", "Laptop")
-      .hasFieldOrPropertyWithValue("price", 999.99);
-  }
-}
-```
-
-## Testing Enum Mapping
-
-### Map Enums Between Entity and DTO
-
-```java
-// Enum with different representation
-enum UserStatus { ACTIVE, INACTIVE, SUSPENDED }
-enum UserStatusDto { ENABLED, DISABLED, LOCKED }
-
-@Mapper(componentModel = "spring")
-public interface UserMapper {
-  @ValueMapping(source = "ACTIVE", target = "ENABLED")
-  @ValueMapping(source = "INACTIVE", target = "DISABLED")
-  @ValueMapping(source = "SUSPENDED", target = "LOCKED")
-  UserStatusDto toStatusDto(UserStatus status);
-}
-
-class EnumMapperTest {
-
-  private final UserMapper mapper = Mappers.getMapper(UserMapper.class);
-
-  @Test
-  void shouldMapActiveToEnabled() {
-    UserStatusDto dto = mapper.toStatusDto(UserStatus.ACTIVE);
-    assertThat(dto).isEqualTo(UserStatusDto.ENABLED);
-  }
-
-  @Test
-  void shouldMapSuspendedToLocked() {
-    UserStatusDto dto = mapper.toStatusDto(UserStatus.SUSPENDED);
-    assertThat(dto).isEqualTo(UserStatusDto.LOCKED);
-  }
-}
-```
-
-## Testing Custom Type Conversions
-
-### Non-MapStruct Custom Converter
-
-```java
-// Custom converter class
-public class DateFormatter {
-  private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-  public static String format(LocalDate date) {
-    return date != null ? date.format(formatter) : null;
-  }
-
-  public static LocalDate parse(String dateString) {
-    return dateString != null ? LocalDate.parse(dateString, formatter) : null;
-  }
-}
-
-// Unit test
-class DateFormatterTest {
-
-  @Test
-  void shouldFormatLocalDateToString() {
-    LocalDate date = LocalDate.of(2024, 1, 15);
-    
-    String result = DateFormatter.format(date);
-    
-    assertThat(result).isEqualTo("2024-01-15");
-  }
-
-  @Test
-  void shouldParseStringToLocalDate() {
-    String dateString = "2024-01-15";
-    
-    LocalDate result = DateFormatter.parse(dateString);
-    
-    assertThat(result).isEqualTo(LocalDate.of(2024, 1, 15));
-  }
-
-  @Test
-  void shouldHandleNullInFormat() {
-    String result = DateFormatter.format(null);
-    assertThat(result).isNull();
-  }
-
-  @Test
-  void shouldHandleInvalidDateFormat() {
-    assertThatThrownBy(() -> DateFormatter.parse("invalid-date"))
-      .isInstanceOf(DateTimeParseException.class);
-  }
-}
-```
-
-## Testing Bidirectional Mapping
-
-### Entity ↔ DTO Round Trip
-
-```java
-class BidirectionalMapperTest {
-
-  private final UserMapper mapper = Mappers.getMapper(UserMapper.class);
-
-  @Test
-  void shouldMaintainDataInRoundTrip() {
-    User original = new User(1L, "Alice", "alice@example.com", 25);
-    
-    UserDto dto = mapper.toDto(original);
-    User restored = mapper.toEntity(dto);
-    
-    assertThat(restored)
-      .hasFieldOrPropertyWithValue("id", original.getId())
-      .hasFieldOrPropertyWithValue("name", original.getName())
-      .hasFieldOrPropertyWithValue("email", original.getEmail())
-      .hasFieldOrPropertyWithValue("age", original.getAge());
-  }
-
-  @Test
-  void shouldPreserveAllFieldsInBothDirections() {
-    Address address = new Address("123 Main", "NYC", "NY", "10001");
-    User user = new User(1L, "Alice", "alice@example.com", 25, address);
-    
     UserDto dto = mapper.toDto(user);
-    User restored = mapper.toEntity(dto);
-    
-    assertThat(restored).usingRecursiveComparison().isEqualTo(user);
+    assertThat(dto)
+      .isNotNull()
+      .extracting(UserDto::getName, UserDto::getEmail)
+      .containsExactly("Alice", "alice@example.com");
+  }
+
+  @Test
+  void shouldMaintainRoundTrip() {
+    User original = new User(1L, "Alice", "alice@example.com", 25);
+    assertThat(mapper.toEntity(mapper.toDto(original)))
+      .usingRecursiveComparison()
+      .isEqualTo(original);
+  }
+
+  @Test
+  void shouldHandleNullInput() {
+    assertThat(mapper.toDto(null)).isNull();
   }
 }
 ```
 
-## Testing Partial Mapping
-
-### Update Existing Entity from DTO
-
-```java
-@Mapper(componentModel = "spring")
-public interface UserMapper {
-  void updateEntity(@MappingTarget User entity, UserDto dto);
-}
-
-class PartialMapperTest {
-
-  private final UserMapper mapper = Mappers.getMapper(UserMapper.class);
-
-  @Test
-  void shouldUpdateExistingEntity() {
-    User existing = new User(1L, "Alice", "alice@old.com", 25);
-    UserDto dto = new UserDto(1L, "Alice", "alice@new.com", 26);
-    
-    mapper.updateEntity(existing, dto);
-    
-    assertThat(existing)
-      .hasFieldOrPropertyWithValue("email", "alice@new.com")
-      .hasFieldOrPropertyWithValue("age", 26);
-  }
-
-  @Test
-  void shouldNotUpdateFieldsNotInDto() {
-    User existing = new User(1L, "Alice", "alice@example.com", 25);
-    UserDto dto = new UserDto(1L, "Bob", null, 0);
-    
-    mapper.updateEntity(existing, dto);
-    
-    // Assuming null-aware mapping is configured
-    assertThat(existing.getEmail()).isEqualTo("alice@example.com");
-  }
-}
-```
-
-## Best Practices
-
-- **Test all mapper methods** comprehensively
-- **Verify null handling** for every nullable field
-- **Test nested objects** independently and together
-- **Use recursive comparison** for complex nested structures
-- **Test bidirectional mapping** to catch asymmetries
-- **Keep mapper tests simple and focused** on transformation correctness
-- **Use Mappers.getMapper()** for non-Spring standalone tests
-
-## Common Pitfalls
-
-- Not testing null input cases
-- Not verifying nested object mappings
-- Assuming bidirectional mapping is symmetric
-- Not testing edge cases (empty collections, etc.)
-- Tight coupling of mapper tests to MapStruct internals
-
-## Constraints and Warnings
-
-- **MapStruct generates code at compile time**: Tests will fail if mapper doesn't generate correctly
-- **Mapper componentModel**: Spring component model requires `@`Component for dependency injection
-- **Null value strategies**: Configure nullValueMappingStrategy and nullValuePropertyMappingStrategy appropriately
-- **Collection immutability**: Be aware that mapping immutable collections may require special handling
-- **Circular dependencies**: MapStruct cannot handle circular dependencies between mappers
-- **Date/Time mapping**: Verify date/time objects map correctly across timezones
-- **Expression-based mappings**: Expressions in `@`Mapping are not validated at compile time
-
-## Troubleshooting
-
-**Null pointer exceptions during mapping**: Check `nullValuePropertyMappingStrategy` and `nullValueCheckStrategy` in `@Mapper`.
-
-**Enum mapping not working**: Verify `@ValueMapping` annotations correctly map source to target values.
-
-**Nested mapping produces null**: Ensure nested mapper interfaces are also mapped in parent mapper.
-
-## References
-
-- [MapStruct Official Documentation](https://mapstruct.org/)
-- [MapStruct Mapping Strategies](https://mapstruct.org/documentation/stable/reference/html/)
-- [JUnit 5 Best Practices](https://junit.org/junit5/docs/current/user-guide/)
+Additional examples in: `references/examples.md`

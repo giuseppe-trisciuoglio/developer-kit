@@ -180,6 +180,103 @@ const chartConfig = {
 
 See [references/charts-components.md](references/charts-components.md) for Line, Area, and Pie chart examples.
 
+## Examples
+
+### Login Form with Validation
+```tsx
+"use client"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { Button } from "@/components/ui/button"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+
+const formSchema = z.object({
+  email: z.string().email("Invalid email"),
+  password: z.string().min(8, "Min 8 characters"),
+})
+
+export function LoginForm() {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: { email: "", password: "" },
+  })
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(console.log)} className="space-y-4">
+        <FormField name="email" control={form.control} render={({ field }) => (
+          <FormItem>
+            <FormLabel>Email</FormLabel>
+            <FormControl><Input type="email" {...field} /></FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
+        <FormField name="password" control={form.control} render={({ field }) => (
+          <FormItem>
+            <FormLabel>Password</FormLabel>
+            <FormControl><Input type="password" {...field} /></FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
+        <Button type="submit">Login</Button>
+      </form>
+    </Form>
+  )
+}
+```
+
+### Data Table with Actions
+```tsx
+import { ColumnDef } from "@tanstack/react-table"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { DataTable } from "@/components/ui/data-table"
+
+const columns: ColumnDef<User>[] = [
+  { id: "select", header: ({ table }) => (
+    <Checkbox checked={table.getIsAllPageRowsSelected()} />
+  ), cell: ({ row }) => (
+    <Checkbox checked={row.getIsSelected()} />
+  )},
+  { accessorKey: "name", header: "Name" },
+  { accessorKey: "email", header: "Email" },
+  { id: "actions", cell: ({ row }) => (
+    <Button variant="ghost" size="sm">Edit</Button>
+  )},
+]
+```
+
+### Dialog with Form
+```tsx
+import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+
+<Dialog>
+  <DialogTrigger asChild>
+    <Button variant="outline">Add User</Button>
+  </DialogTrigger>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Add New User</DialogTitle>
+    </DialogHeader>
+    {/* <LoginForm /> */}
+  </DialogContent>
+</Dialog>
+```
+
+### Toast Notifications
+```tsx
+import { useToast } from "@/components/ui/use-toast"
+import { Button } from "@/components/ui/button"
+
+const { toast } = useToast()
+
+toast({ title: "Saved", description: "Changes saved successfully." })
+toast({ variant: "destructive", title: "Error", description: "Failed to save." })
+```
+
 ## Best Practices
 
 - **Accessibility**: Use Radix UI primitives — ARIA attributes are built in

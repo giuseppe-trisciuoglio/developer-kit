@@ -6,15 +6,10 @@ allowed-tools: Read, Write, Bash
 
 # AWS CloudFormation S3 Patterns
 
-Create production-ready Amazon S3 infrastructure using AWS CloudFormation templates.
-
-## Overview
-
-Create production-ready Amazon S3 infrastructure using AWS CloudFormation templates. This skill covers S3 bucket configurations, bucket policies, versioning, lifecycle rules, and template structure best practices.
+Provides S3 bucket configurations, policies, versioning, lifecycle rules, and CloudFormation template structure best practices for production-ready infrastructure.
 
 ## When to Use
 
-Use this skill when:
 - Creating S3 buckets with custom configurations
 - Implementing bucket policies for access control
 - Configuring S3 versioning for data protection
@@ -22,20 +17,36 @@ Use this skill when:
 - Creating Outputs for cross-stack references
 - Using Parameters with AWS-specific types
 - Organizing templates with Mappings and Conditions
-- Building reusable CloudFormation templates for S3
+
+## Overview
+
+S3 bucket configurations, policies, versioning, lifecycle rules, and CloudFormation template structure for production-ready infrastructure.
 
 ## Instructions
 
-Follow these steps to create S3 infrastructure with CloudFormation:
-
-1. **Define Bucket Parameters**: Specify bucket name, versioning, and encryption
+1. **Define Bucket Resources**: Create `AWS::S3::Bucket` with versioning, encryption, PublicAccessBlock
 2. **Configure Bucket Policy**: Set up IAM policies for access control
 3. **Set Up Lifecycle Rules**: Define transitions and expiration policies
-4. **Enable Versioning**: Protect against accidental deletions
-5. **Configure CORS**: Allow cross-origin requests if needed
-6. **Add Public Access Block**: Prevent accidental public exposure
-7. **Set Up Logging**: Enable access logging for audit purposes
-8. **Configure Replication**: Implement cross-region replication for DR
+4. **Configure CORS**: Allow cross-origin requests if needed
+5. **Add Outputs**: Export bucket names/ARNs for cross-stack references
+
+**Validate before deploy:**
+```bash
+aws cloudformation validate-template --template-body file://template.yaml
+```
+
+**Deploy with rollback on failure:**
+```bash
+aws cloudformation deploy \
+  --template-file template.yaml \
+  --stack-name my-s3-stack \
+  --capabilities CAPABILITY_IAM
+```
+
+If deployment fails, CloudFormation automatically rolls back. Check failures with:
+```bash
+aws cloudformation describe-stack-events --stack-name my-s3-stack
+```
 
 ## Quick Reference
 

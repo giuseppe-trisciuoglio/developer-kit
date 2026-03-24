@@ -1,22 +1,24 @@
 ---
 name: react-patterns
-description: Provides comprehensive React 19 patterns covering Server Components, Actions, use() hook, useOptimistic, useFormStatus, useFormState, React Compiler, concurrent features, Suspense, and modern TypeScript development. Proactively use for any React development, component architecture, state management, performance optimization, or when implementing React 19's latest features.
+description: Provides comprehensive React 19 patterns for Server Components, Server Actions, useOptimistic, useActionState, useTransition, concurrent features, Suspense boundaries, and TypeScript integration. Generates executable code patterns, validates security for public endpoints, and optimizes performance with React Compiler or manual memoization. Proactively use when building React 19 applications with Next.js App Router, implementing optimistic UI, or optimizing concurrent rendering.
 allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 ---
 
-# React Development Patterns
+# React 19 Development Patterns
 
-Build modern React 19 applications with Server Components, Actions, concurrent features, and TypeScript.
+## Overview
+
+React 19 patterns for Next.js App Router, Server Actions, optimistic UI, and concurrent features. See Quick Reference for API summary and Examples for copy-paste patterns.
 
 ## When to Use
 
-- Building React 19 components with TypeScript/JavaScript
-- Managing component state with hooks (useState, useReducer, useContext)
-- Implementing React 19 features (use(), useOptimistic, useFormStatus, useActionState)
-- Optimizing performance with useMemo, useCallback, or React Compiler
-- Creating custom hooks for reusable logic
-- Working with Server Components, Server Actions, and Suspense
-- Building forms with new form hooks and server-side mutations
+- Building React 19 applications with Next.js App Router
+- Implementing optimistic UI with `useOptimistic` or `useTransition`
+- Creating Server Actions with form validation
+- Migrating from class components to hooks
+- Optimizing concurrent rendering with React Compiler
+- Managing complex state with `useReducer` or custom hooks
+- Wrapping async operations in Suspense boundaries
 
 ## Quick Reference
 
@@ -44,6 +46,9 @@ Build modern React 19 applications with Server Components, Actions, concurrent f
 4. **Handle Async**: Wrap data-fetching components in Suspense boundaries
 5. **Optimize**: Use React Compiler or manual memoization for expensive renders
 6. **Handle Errors**: Add ErrorBoundary for graceful error handling
+7. **Validate Server Actions**: Define Zod/schema validation, then test:
+   - Submit invalid inputs → verify rejection
+   - Submit valid inputs → verify success
 
 ## Examples
 

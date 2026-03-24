@@ -1,7 +1,7 @@
 ---
 name: spring-boot-event-driven-patterns
-description: Provides Event-Driven Architecture (EDA) patterns in Spring Boot using ApplicationEvent, `@EventListener`, and Kafka. Use when building loosely-coupled microservices with domain events, transactional event listeners, and distributed messaging patterns.
-allowed-tools: Read, Write, Edit, Bash, Glob, Grep
+description: Provides Event-Driven Architecture (EDA) patterns for Spring Boot — creates domain events, configures ApplicationEvent and @TransactionalEventListener, sets up Kafka producers and consumers, and implements the transactional outbox pattern for reliable distributed messaging. Use when implementing event-driven systems in Spring Boot, setting up async messaging with Kafka, publishing domain events from DDD aggregates, or needing reliable event publishing with the outbox pattern.
+allowed-tools: Read, Write, Edit, Bash
 ---
 
 # Spring Boot Event-Driven Patterns
@@ -12,14 +12,12 @@ Implement Event-Driven Architecture (EDA) patterns in Spring Boot 3.x using doma
 
 ## When to Use
 
-- Loose coupling between microservices through event-based communication
-- Domain event publishing from aggregate roots in DDD architectures
-- Transactional event listeners ensuring consistency after database commits
-- Distributed messaging with Kafka for inter-service communication
-- Event streaming with Spring Cloud Stream for reactive systems
-- Reliability using the transactional outbox pattern
-- Asynchronous communication between bounded contexts
-- Event sourcing foundations with proper event sourcing patterns
+- Implementing event-driven microservices with Kafka messaging
+- Publishing domain events from aggregate roots in DDD architectures
+- Setting up transactional event listeners that fire after database commits
+- Adding async messaging with producers and consumers via Spring Kafka
+- Ensuring reliable event delivery using the transactional outbox pattern
+- Replacing synchronous calls with event-based communication between services
 
 ## Quick Reference
 
@@ -31,6 +29,48 @@ Implement Event-Driven Architecture (EDA) patterns in Spring Boot 3.x using doma
 | **Kafka** | `@KafkaListener(topics = "...")` for distributed event consumption |
 | **Spring Cloud Stream** | Functional programming model with `Consumer` beans |
 | **Outbox Pattern** | Atomic event storage with business data, scheduled publisher |
+
+## Examples
+
+### Monolithic to Event-Driven Refactoring
+
+**Before (Anti-Pattern):**
+```java
+@Transactional
+public Order processOrder(OrderRequest request) {
+    Order order = orderRepository.save(request);
+    inventoryService.reserve(order.getItems()); // Blocking
+    paymentService.charge(order.getPayment()); // Blocking
+    emailService.sendConfirmation(order); // Blocking
+    return order;
+}
+```
+
+**After (Event-Driven):**
+```java
+@Transactional
+public Order processOrder(OrderRequest request) {
+    Order order = Order.create(request);
+    orderRepository.save(order);
+
+    // Publish event after transaction commits
+    eventPublisher.publishEvent(new OrderCreatedEvent(order.getId(), order.getItems()));
+
+    return order;
+}
+
+@Component
+public class OrderEventHandler {
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void handleOrderCreated(OrderCreatedEvent event) {
+        // Execute asynchronously after the order is saved
+        inventoryService.reserve(event.getItems());
+        paymentService.charge(event.getPayment());
+    }
+}
+```
+
+See [examples.md](references/examples.md) for complete working examples.
 
 ## Instructions
 
@@ -90,6 +130,8 @@ public class ProductEventHandler {
 }
 ```
 
+**Validate:** Confirm the event handler fires only after the transaction commits by checking that the database state is committed before the handler executes.
+
 See [event-handling.md](references/event-handling.md) for handling patterns.
 
 ### 4. Configure Kafka Infrastructure
@@ -103,6 +145,8 @@ spring:
     producer:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 ```
+
+**Validate:** Send a test event via `KafkaTemplate` and confirm it appears in the consumer logs before proceeding to production patterns.
 
 See [dependency-setup.md](references/dependency-setup.md) and [configuration.md](references/configuration.md).
 
@@ -121,6 +165,8 @@ public class OutboxEvent {
 }
 ```
 
+**Validate:** Confirm the scheduled processor picks up pending events by checking the `publishedAt` timestamp is set after the scheduled run.
+
 Scheduled processor publishes pending events. See [outbox-pattern.md](references/outbox-pattern.md).
 
 ### 6. Handle Failure Scenarios
@@ -134,6 +180,8 @@ public void handleProductEvent(ProductCreatedEventDto event) {
     orderService.onProductCreated(event);
 }
 ```
+
+**Validate:** Confirm messages reach the dead-letter topic after exhausting retries before moving to observability.
 
 ### 7. Add Observability
 
@@ -152,48 +200,6 @@ Enable Spring Cloud Sleuth for distributed tracing, monitor metrics.
 - **Make handlers order-independent**: Event ordering is not guaranteed in distributed systems
 - **Batch event processing**: When handling high volumes
 - **Monitor event latencies**: Set up alerts for slow processing
-
-## Refactoring Examples
-
-### Monolithic to Event-Driven
-
-**Before (Anti-Pattern):**
-```java
-@Transactional
-public Order processOrder(OrderRequest request) {
-    Order order = orderRepository.save(request);
-    inventoryService.reserve(order.getItems()); // Blocking
-    paymentService.charge(order.getPayment()); // Blocking
-    emailService.sendConfirmation(order); // Blocking
-    return order;
-}
-```
-
-**After (Event-Driven):**
-```java
-@Transactional
-public Order processOrder(OrderRequest request) {
-    Order order = Order.create(request);
-    orderRepository.save(order);
-
-    // Publish event after transaction commits
-    eventPublisher.publishEvent(new OrderCreatedEvent(order.getId(), order.getItems()));
-
-    return order;
-}
-
-@Component
-public class OrderEventHandler {
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void handleOrderCreated(OrderCreatedEvent event) {
-        // Execute asynchronously after the order is saved
-        inventoryService.reserve(event.getItems());
-        paymentService.charge(event.getPayment());
-    }
-}
-```
-
-See [examples.md](references/examples.md) for more examples.
 
 ## References
 

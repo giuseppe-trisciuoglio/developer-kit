@@ -12,14 +12,9 @@ Create production-ready Amazon RDS infrastructure using AWS CloudFormation templ
 
 ## When to Use
 
-Use this skill when:
-- Creating RDS database instances (MySQL, PostgreSQL, Aurora, MariaDB)
-- Configuring DB clusters with read replicas
-- Setting up multi-AZ deployments for high availability
-- Creating DB parameter groups and option groups
-- Configuring DB subnet groups for VPC deployment
-- Implementing cross-stack references
-- Integrating with Secrets Manager for credentials
+- Creating RDS instances (MySQL, PostgreSQL, Aurora) or DB clusters with read replicas
+- Setting up multi-AZ deployments or configuring parameter/subnet groups
+- Integrating with Secrets Manager or implementing cross-stack references
 
 ## Quick Reference
 
@@ -171,37 +166,143 @@ Outputs:
 
 See [template-structure.md](references/template-structure.md) for cross-stack reference patterns and import/export strategies.
 
+### Validation Steps
+
+Always validate before deploying, especially to production.
+
+```bash
+# Validate the template syntax
+aws cloudformation validate-template --template-body file://template.yaml
+
+# Review the change set before applying updates
+aws cloudformation create-change-set \
+  --stack-name my-rds-stack \
+  --template-body file://template.yaml \
+  --change-set-type UPDATE
+
+aws cloudformation describe-change-set --change-set-name <arn>
+
+# Execute the change set if the preview looks correct
+aws cloudformation execute-change-set --change-set-name <arn>
+```
+
 ## Best Practices
 
-### Security
-- **Enable encryption at rest** for all production databases
-- **Use Secrets Manager** for credential storage and rotation
-- **Restrict security groups** to application tier only
-- **Disable public access** - deploy in private subnets
-- **Use IAM database authentication** where possible
+| Category | Practice | Implementation |
+|----------|----------|----------------|
+| Security | Encryption at rest | `StorageEncrypted: true` with KMS key |
+| Security | Credential management | Use Secrets Manager integration |
+| Security | Network isolation | Private subnets, restrictive SG rules |
+| Security | IAM authentication | Enable `IAMDatabaseAuthentication` |
+| HA | Multi-AZ deployment | `MultiAZ: true` for production |
+| HA | Deletion protection | `DeletionProtection: true` for production |
+| HA | Backup retention | 35 days for production, 7 for dev |
+| HA | Read replicas | Use for read-heavy workloads |
+| Cost | Storage type | Use `gp3` for cost efficiency |
+| Cost | Instance sizing | Right-size based on workload |
+| Cost | Serverless | Consider Aurora Serverless for variable loads |
+| Operations | Change sets | Always review before applying updates |
+| Operations | Drift detection | Enable for template compliance |
+| Operations | Monitoring | Configure CloudWatch alarms |
 
-### High Availability
-- **Enable Multi-AZ** for production databases
-- **Configure read replicas** for scaling read workloads
-- **Set appropriate backup retention** (35 days for production)
-- **Enable deletion protection** on production databases
-- **Use Aurora** for automatic multi-AZ replication
+See [operational-practices.md](references/operational-practices.md) for detailed guidance on stack policies, termination protection, and backup strategies.
 
-### Cost Optimization
-- **Use gp3 storage** for cost-effective performance
-- **Right-size instance classes** based on workload
-- **Monitor storage autoscaling** to prevent runaway costs
-- **Set backup retention** appropriately per environment
-- **Consider Aurora Serverless** for intermittent workloads
+## Examples
 
-### Operations
-- **Always use change sets** before updating production stacks
-- **Enable drift detection** to maintain template compliance
-- **Set stack policies** to protect critical resources
-- **Enable termination protection** on production stacks
-- **Configure CloudWatch alarms** for monitoring
+Complete production-ready RDS instance with MultiAZ, encryption, and Secrets Manager integration:
 
-See [operational-practices.md](references/operational-practices.md) for detailed guidance on stack policies, termination protection, drift detection, change sets, backup strategies, and monitoring.
+```yaml
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Production RDS Instance
+
+Parameters:
+  VpcId:
+    Type: AWS::EC2::VPC::Identifier
+  SubnetIds:
+    Type: List<AWS::EC2::Subnet::Identifier>
+  AppSecurityGroupId:
+    Type: AWS::EC2::SecurityGroup::Id
+  Environment:
+    Type: String
+    AllowedValues: [dev, staging, production]
+  MasterUsername:
+    Type: String
+    Default: dbadmin
+
+Conditions:
+  IsProduction: !Equals [!Ref Environment, production]
+
+Resources:
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: !Sub "${AWS::StackName} subnet group"
+      SubnetIds: !Ref SubnetIds
+
+  DBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: !Sub "${AWS::StackName} RDS security group"
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          SourceSecurityGroupId: !Ref AppSecurityGroupId
+
+  DBInstance:
+    Type: AWS::RDS::DBInstance
+    DeletionPolicy: Snapshot
+    UpdateReplacePolicy: Snapshot
+    Properties:
+      DBInstanceIdentifier: !Sub "${AWS::StackName}-mysql"
+      DBInstanceClass: db.t3.medium
+      Engine: mysql
+      EngineVersion: '8.0'
+      MasterUsername: !Ref MasterUsername
+      MasterUserPassword: !Ref MasterUserPassword
+      AllocatedStorage: 50
+      StorageType: gp3
+      StorageEncrypted: true
+      KmsKeyId: !Ref KmsKeyId
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      VPCSecurityGroups: [!Ref DBSecurityGroup]
+      MultiAZ: !If [IsProduction, true, false]
+      BackupRetentionPeriod: !If [IsProduction, 35, 7]
+      DeletionProtection: !If [IsProduction, true, false]
+      EnablePerformanceInsights: !If [IsProduction, true, false]
+      PerformanceInsightsRetentionPeriod: !If [IsProduction, 731, 7]
+
+  KmsKeyId:
+    Type: AWS::KMS::Key
+    Condition: IsProduction
+    Properties:
+      Description: KMS key for RDS encryption
+      EnableKeyRotation: true
+      KeyPolicy:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: Enable IAM User Permissions
+            Effect: Allow
+            Principal:
+              AWS: !Sub arn:aws:iam::${AWS::AccountId}:root
+            Action: kms:*
+            Resource: '*'
+
+Outputs:
+  DBEndpoint:
+    Description: Database endpoint
+    Value: !GetAtt DBInstance.Endpoint.Address
+    Export:
+      Name: !Sub ${AWS::StackName}-DBEndpoint
+  DBPort:
+    Description: Database port
+    Value: !GetAtt DBInstance.Endpoint.Port
+    Export:
+      Name: !Sub ${AWS::StackName}-DBPort
+```
+
+See [examples.md](references/examples.md) for additional examples including Aurora clusters, read replicas, and multi-region setups.
 
 ## References
 

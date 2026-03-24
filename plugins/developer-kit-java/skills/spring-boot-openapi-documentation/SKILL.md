@@ -173,6 +173,83 @@ Configure API grouping, versioning, and build plugins. See [advanced-configurati
 - Security schemes must be properly configured before using `@SecurityRequirement` annotations
 - Hidden endpoints (`@Operation(hidden = true)`) are still visible in code and may leak through other documentation tools
 
+## Examples
+
+### Basic Controller Documentation
+
+```java
+@RestController
+@Tag(name = "Books", description = "Book management APIs")
+@RequestMapping("/api/books")
+public class BookController {
+
+    @Operation(
+        summary = "Get book by ID",
+        description = "Retrieves detailed information about a specific book"
+    )
+    @ApiResponse(responseCode = "200", description = "Book found")
+    @ApiResponse(responseCode = "404", description = "Book not found")
+    @GetMapping("/{id}")
+    public Book getBook(@PathVariable Long id) {
+        return bookService.findById(id);
+    }
+
+    @Operation(summary = "Create new book")
+    @SecurityRequirement(name = "bearer-jwt")
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Book createBook(@Valid @RequestBody CreateBookRequest request) {
+        return bookService.create(request);
+    }
+}
+```
+
+### Documented Model with Validation
+
+```java
+@Schema(description = "Book entity")
+public class Book {
+    @Schema(description = "Unique identifier", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
+    private Long id;
+
+    @Schema(description = "Book title", example = "Clean Code", required = true)
+    @NotBlank
+    @Size(min = 1, max = 200)
+    private String title;
+
+    @Schema(description = "Author name", example = "Robert C. Martin")
+    @NotBlank
+    private String author;
+
+    @Schema(description = "Price in USD", example = "29.99", minimum = "0")
+    @NotNull
+    @DecimalMin("0.0")
+    private BigDecimal price;
+}
+```
+
+### Security Configuration
+
+```java
+@Bean
+public OpenAPI customOpenAPI() {
+    return new OpenAPI()
+        .info(new Info()
+            .title("Book API")
+            .version("1.0.0")
+            .description("REST API for book management"))
+        .components(new Components()
+            .addSecuritySchemes("bearer-jwt", new SecurityScheme()
+                .type(SecurityScheme.Type.HTTP)
+                .scheme("bearer")
+                .bearerFormat("JWT"))
+            .addSecuritySchemes("api-key", new SecurityScheme()
+                .type(SecurityScheme.Type.APIKEY)
+                .in(SecurityScheme.In.HEADER)
+                .name("X-API-Key")));
+}
+```
+
 ## Related Skills
 
 - `spring-boot-rest-api-standards` — REST API design standards

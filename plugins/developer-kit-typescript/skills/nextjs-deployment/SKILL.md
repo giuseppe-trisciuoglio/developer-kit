@@ -8,6 +8,10 @@ allowed-tools: Read, Write, Edit, Bash
 
 Deploy Next.js applications to production with Docker, CI/CD pipelines, and comprehensive monitoring.
 
+## Overview
+
+This skill provides patterns and code examples for deploying Next.js applications to production environments. It covers containerization with Docker, CI/CD automation with GitHub Actions, environment configuration, health checks, and production monitoring. Use standalone output mode for container deployments, multi-stage Docker builds for optimized images, and OpenTelemetry for observability.
+
 ## When to Use
 
 Activate when user requests involve:
@@ -224,7 +228,7 @@ Without this key, Server Actions fail with "Failed to find Server Action" errors
 - **Performance**: Use `output: 'standalone'`, enable CDN for static assets, use `next/image`
 - **Environment**: Use same Docker image across environments, inject runtime config via env vars
 
-## Example: Complete Production Setup
+## Examples
 
 ```typescript
 // next.config.ts

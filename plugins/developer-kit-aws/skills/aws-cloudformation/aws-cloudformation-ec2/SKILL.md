@@ -12,27 +12,9 @@ Create production-ready EC2 infrastructure using AWS CloudFormation templates. C
 
 ## When to Use
 
-Use this skill when:
-- Creating new EC2 instances (On-Demand or SPOT)
-- Configuring Security Groups for network access control
-- Creating IAM roles and instance profiles for EC2
-- Setting up Application Load Balancers (ALB) with target groups
-- Implementing template Parameters with AWS-specific types
-- Creating Outputs for cross-stack references
-- Organizing templates with Mappings and Conditions
-
-## Quick Reference
-
-| Component | CloudFormation Type | Use Case |
-|-----------|-------------------|----------|
-| EC2 Instance | `AWS::EC2::Instance` | Compute resources |
-| Security Group | `AWS::EC2::SecurityGroup` | Network access control |
-| IAM Role | `AWS::IAM::Role` | Instance permissions |
-| Instance Profile | `AWS::IAM::InstanceProfile` | Attach IAM role to EC2 |
-| ALB | `AWS::ElasticLoadBalancingV2::LoadBalancer` | Layer 7 load balancing |
-| Target Group | `AWS::ElasticLoadBalancingV2::TargetGroup` | ALB target management |
-| Listener | `AWS::ElasticLoadBalancingV2::Listener` | ALB port/protocol config |
-| Spot Fleet | `AWS::EC2::SpotFleet` | Cost-optimized instances |
+- Creating EC2 instances (On-Demand or SPOT) with Security Groups and IAM roles
+- Setting up Application Load Balancers with target groups
+- Implementing template Parameters, Mappings, Conditions, and cross-stack references
 
 ## Instructions
 
@@ -133,6 +115,8 @@ Ec2Instance:
 
 See [ec2-instances.md](references/ec2-instances.md) for multi-volume configurations, detailed monitoring, SPOT instances, and complete stack examples.
 
+**Validate template:** `aws cloudformation validate-template --template-body file://template.yaml`
+
 ### Step 5 — Add Application Load Balancer
 
 Create ALB with target group and listener for traffic distribution.
@@ -191,6 +175,70 @@ Outputs:
 ```
 
 See [template-structure.md](references/template-structure.md) for cross-stack reference patterns and import/export strategies.
+
+## Examples
+
+### Minimal EC2 with ALB Template
+
+```yaml
+AWSTemplateFormatVersion: "2010-09-09"
+Description: EC2 instance with ALB
+
+Parameters:
+  LatestAmiId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+  InstanceType:
+    Type: AWS::EC2::InstanceType
+    Default: t3.micro
+
+Resources:
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable HTTP and SSH
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+
+  Ec2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref LatestAmiId
+      InstanceType: !Ref InstanceType
+      SecurityGroupIds: [!Ref InstanceSecurityGroup]
+
+  LoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Scheme: internet-facing
+      SecurityGroups: [!Ref InstanceSecurityGroup]
+      Subnets: [subnet-12345678, subnet-87654321]
+
+Outputs:
+  InstanceId:
+    Value: !Ref Ec2Instance
+  LoadBalancerDns:
+    Value: !GetAtt LoadBalancer.DNSName
+```
+
+### Deploy with Change Set
+
+```bash
+# Create change set
+aws cloudformation create-change-set \
+  --stack-name my-ec2-stack \
+  --template-body file://template.yaml \
+  --change-set-type CREATE
+
+# Execute after review
+aws cloudformation execute-change-set \
+  --change-set-name <change-set-name>
+```
+
+See [examples.md](references/examples.md) for complete production-ready templates.
 
 ## Best Practices
 

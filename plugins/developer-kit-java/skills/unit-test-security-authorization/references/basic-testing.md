@@ -1,6 +1,6 @@
 # Basic Testing Patterns
 
-## Testing @PreAuthorize with Role-Based Access Control
+## Testing `@PreAuthorize` with Role-Based Access Control
 
 ### Service with Security Annotations
 
@@ -71,7 +71,7 @@ class UserServiceSecurityTest {
 }
 ```
 
-## Testing @Secured Annotation
+## Testing `@Secured` Annotation
 
 ### Legacy Security Configuration
 
@@ -220,7 +220,7 @@ class RoleBasedAccessTest {
 }
 ```
 
-## @WithMockUser Options
+## `@WithMockUser` Options
 
 ```java
 // Basic usage

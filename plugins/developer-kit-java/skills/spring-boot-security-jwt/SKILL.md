@@ -8,12 +8,23 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 
 JWT authentication and authorization patterns for Spring Boot 3.5.x using Spring Security 6.x and JJWT. Covers token generation, validation, refresh strategies, RBAC/ABAC, and OAuth2 integration.
 
+## Overview
+
+This skill provides implementation patterns for stateless JWT authentication in Spring Boot applications. It covers the complete authentication flow including token generation with JJWT 0.12.6, Bearer/cookie-based authentication, refresh token rotation, and method-level authorization with `@PreAuthorize` expressions.
+
+Key capabilities:
+- Access and refresh token generation with configurable expiration
+- Bearer token and HttpOnly cookie authentication strategies
+- Integration with Spring Data JPA and OAuth2 providers
+- RBAC with role/permission-based `@PreAuthorize` rules
+- Token revocation and blacklisting for logout/rotation
+
 ## When to Use
 
 Activate when user requests involve:
 - "Implement JWT authentication", "secure REST API with tokens"
 - "Spring Security 6.x configuration", "SecurityFilterChain setup"
-- "Role-based access control", "RBAC", "@PreAuthorize"
+- "Role-based access control", "RBAC", `` `@PreAuthorize` ``
 - "Refresh token", "token rotation", "token revocation"
 - "OAuth2 integration", "social login", "Google/GitHub auth"
 - "Stateless authentication", "SPA backend security"
@@ -252,6 +263,54 @@ See [references/testing.md](references/testing.md) and [references/jwt-testing-g
 - Do not accept tokens without validating signature and expiration
 - Do not share signing keys across environments
 
+## Examples
+
+### Basic Authentication Flow
+
+```java
+@RestController
+@RequestMapping("/api/auth")
+@RequiredArgsConstructor
+public class AuthController {
+
+    private final AuthService authService;
+
+    @PostMapping("/authenticate")
+    public ResponseEntity<AuthResponse> authenticate(
+            @RequestBody LoginRequest request) {
+        return ResponseEntity.ok(authService.authenticate(request));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refresh(@RequestBody RefreshRequest request) {
+        return ResponseEntity.ok(authService.refreshToken(request.refreshToken()));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout() {
+        authService.logout();
+        return ResponseEntity.ok().build();
+    }
+}
+```
+
+### JWT Authorization on Controller Method
+
+```java
+@RestController
+@RequestMapping("/api/admin")
+@PreAuthorize("hasRole('ADMIN')")
+public class AdminController {
+
+    @GetMapping("/users")
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
+        return ResponseEntity.ok(adminService.getAllUsers());
+    }
+}
+```
+
+See [references/examples.md](references/examples.md) for complete entity models and service implementations.
+
 ## References
 
 | File | Content |
@@ -270,6 +329,27 @@ See [references/testing.md](references/testing.md) and [references/jwt-testing-g
 | [references/microservices-security.md](references/microservices-security.md) | Inter-service JWT propagation, resource server config |
 | [references/migration-spring-security-6x.md](references/migration-spring-security-6x.md) | Migration from Spring Security 5.x |
 | [references/troubleshooting.md](references/troubleshooting.md) | Common errors, debugging tips |
+
+## Constraints and Warnings
+
+### Security Constraints
+- JWT tokens are signed but not encrypted — do not include sensitive data in claims
+- Always validate `exp`, `iss`, and `aud` claims before trusting the token
+- Signing keys must be at least 256 bits; never use weak keys in production
+- Load secrets from environment variables or secure vaults, never from config files
+- SameSite cookie attribute is essential for CSRF protection in cookie-based flows
+
+### Spring Security 6.x Constraints
+- `WebSecurityConfigurerAdapter` is removed — use `SecurityFilterChain` beans only
+- `@EnableGlobalMethodSecurity` is deprecated — use `@EnableMethodSecurity`
+- Lambda DSL is required for `HttpSecurity` configuration (no method chaining)
+- `WebSecurityConfigurerAdapter.order()` replaced by `@Order` on `@Configuration` classes
+
+### Token Constraints
+- Access tokens should expire in 5-15 minutes for security
+- Refresh tokens should be stored server-side (DB or Redis), never in localStorage
+- Implement token blacklisting for immediate revocation on logout
+- `jti` claim is required for token blacklisting to work correctly
 
 ## Related Skills
 

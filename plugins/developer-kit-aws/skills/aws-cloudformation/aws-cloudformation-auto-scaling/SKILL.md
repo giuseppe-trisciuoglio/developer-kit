@@ -215,6 +215,170 @@ Outputs:
       Name: !Sub "${AWS::StackName}-AutoScalingGroupArn"
 ```
 
+## Examples
+
+### Complete Auto Scaling Template
+
+Full end-to-end template with VPC, ASG, ALB, and scaling policies:
+
+```yaml
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Auto Scaling Group with ALB integration
+
+Parameters:
+  Environment:
+    Type: String
+    Default: production
+  InstanceType:
+    Type: AWS::EC2::Instance::Type
+    Default: t3.micro
+  AmiId:
+    Type: AWS::EC2::Image::Id
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+  SubnetIds:
+    Type: List<AWS::EC2::Subnet::Id>
+
+Resources:
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for ASG instances
+      VpcId: !Ref VpcId
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: "-1"
+
+  TargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub "${AWS::StackName}-tg"
+      Port: 80
+      Protocol: HTTP
+      VpcId: !Ref VpcId
+      HealthCheckPath: /health
+      TargetType: instance
+
+  LaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateName: !Sub "${AWS::StackName}-lt"
+      ImageId: !Ref AmiId
+      InstanceType: !Ref InstanceType
+      SecurityGroupIds:
+        - !Ref InstanceSecurityGroup
+
+  AutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      AutoScalingGroupName: !Sub "${AWS::StackName}-asg"
+      MinSize: 2
+      MaxSize: 10
+      DesiredCapacity: 4
+      LaunchTemplate:
+        LaunchTemplateId: !Ref LaunchTemplate
+        Version: !GetAtt LaunchTemplate.LatestVersionNumber
+      VPCZoneIdentifier: !Ref SubnetIds
+      TargetGroupARNs:
+        - !Ref TargetGroup
+      HealthCheckType: ELB
+      HealthCheckGracePeriod: 300
+      Tags:
+        - Key: Name
+          Value: !Sub "${AWS::StackName}-instance"
+          PropagateAtLaunch: true
+
+  ScalingPolicy:
+    Type: AWS::AutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub "${AWS::StackName}-cpu-policy"
+      PolicyType: TargetTrackingScaling
+      AutoScalingGroupName: !Ref AutoScalingGroup
+      TargetTrackingConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: ASGAverageCPUUtilization
+        TargetValue: 70
+
+Outputs:
+  AutoScalingGroupName:
+    Value: !Ref AutoScalingGroup
+    Export:
+      Name: !Sub "${AWS::StackName}-ASG-Name"
+```
+
+### Validation Commands
+
+Validate template and test changes before deployment:
+
+```bash
+# Validate CloudFormation template
+aws cloudformation validate-template --template-body file://template.yaml
+
+# Create change set to preview changes
+aws cloudformation create-change-set \
+  --stack-name my-asg-stack \
+  --template-body file://template.yaml \
+  --change-set-type CREATE
+
+# Describe change set
+aws cloudformation describe-change-set \
+  --stack-name my-asg-stack \
+  --change-set-name <change-set-id>
+
+# Execute change set
+aws cloudformation execute-change-set \
+  --stack-name my-asg-stack \
+  --change-set-name <change-set-id>
+```
+
+### Verification Commands
+
+Verify ASG health and configuration after deployment:
+
+```bash
+# Describe Auto Scaling Groups
+aws autoscaling describe-auto-scaling-groups \
+  --auto-scaling-group-names my-asg-stack-asg
+
+# Check instance health
+aws autoscaling describe-auto-scaling-instances \
+  --instance-ids <instance-id>
+
+# Verify scaling policies
+aws autoscaling describe-policies \
+  --auto-scaling-group-name my-asg-stack-asg
+
+# Review scaling activities
+aws autoscaling describe-scaling-activities \
+  --auto-scaling-group-name my-asg-stack-asg
+```
+
+## Constraints and Warnings
+
+### Resource Limits
+
+- ASG max size: 10000 instances (request limit increase for more)
+- Max 20 launch configurations per account (use Launch Templates instead)
+- Lifecycle hooks: 50 per ASG
+- Scaling policies: 20 per ASG (Target Tracking limit)
+- Cooldown period: 300 seconds default (decrease cautiously)
+
+### Operational Warnings
+
+- Do not update both Launch Configuration and Launch Template on the same ASG in one update
+- Always use `UpdatePolicy` for graceful updates and instance refresh
+- Set `HealthCheckGracePeriod` >= expected instance initialization time
+- Lifecycle hook timeout must accommodate graceful shutdown procedures
+- Spot Instances: set `InstanceMaintenancePolicy` to avoid unexpected terminations
+
+### Security Warnings
+
+- Never hardcode credentials; use IAM instance profiles
+- Use Service-Linked Roles for Auto Scaling (`aws-autoscaling.amazonaws.com`)
+- Restrict ASG describe permissions to prevent information disclosure
+- KMS keys for EBS encryption must be created in same region as ASG
+- Cross-stack references export names must be unique per region
+
 ## Best Practices
 
 ### High Availability

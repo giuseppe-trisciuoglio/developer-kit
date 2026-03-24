@@ -1,6 +1,6 @@
 ---
 name: unit-test-application-events
-description: Provides patterns for testing Spring application events (ApplicationEvent) with `@EventListener` and ApplicationEventPublisher. Handles event publishing, listening, and async event handling in Spring Boot applications. Use when validating event-driven workflows in your Spring Boot services.
+description: Provides patterns for unit testing Spring application events. Validates event publishing with ApplicationEventPublisher, tests @EventListener annotation behavior, and verifies async event handling. Use when writing tests for event listeners, mocking application events, or verifying events were published in your Spring Boot services.
 allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
@@ -8,31 +8,34 @@ allowed-tools: Read, Write, Bash, Glob, Grep
 
 ## Overview
 
-This skill provides comprehensive patterns for testing Spring ApplicationEvent publishers and event listeners using JUnit 5. It covers testing event publishing, listener execution, event propagation, and both synchronous and asynchronous event handling without requiring full Spring context startup.
+Provides actionable patterns for testing Spring `ApplicationEvent` publishers and `@EventListener` consumers using JUnit 5 and Mockito — without booting the full Spring context.
 
 ## When to Use
 
-Use this skill when:
-- Testing ApplicationEventPublisher event publishing
-- Testing `@`EventListener method invocation
-- Verifying event listener logic and side effects
-- Testing event propagation through listeners
-- Want fast event-driven architecture tests
-- Testing both synchronous and asynchronous event handling
+- Writing unit tests for event publishers or listeners
+- Verifying that an event was published with correct payload
+- Testing `@EventListener` method invocation and side effects
+- Testing event propagation through multiple listeners
+- Validating async event handling (`@Async` + `@EventListener`)
+- Mocking `ApplicationEventPublisher` in service tests
 
 ## Instructions
 
-1. **Add required dependencies**: Include spring-boot-starter, JUnit 5, Mockito, and AssertJ in your project
-2. **Mock the ApplicationEventPublisher**: In service tests, use `@Mock` to mock the event publisher
-3. **Use ArgumentCaptor**: Capture published events to verify their content using `ArgumentCaptor.forClass(EventType.class)`
-4. **Test listener side effects**: Invoke listener methods directly and verify their effects on mocked dependencies
-5. **Test event data integrity**: Always verify that the captured event contains the correct data
-6. **Handle async events**: For `@`Async listeners, use Thread.sleep() or Awaitility to wait for completion
-7. **Test error scenarios**: Verify exception handling in both publishers and listeners
+1. **Add test dependencies**: `spring-boot-starter`, JUnit 5, Mockito, AssertJ
+2. **Mock ApplicationEventPublisher**: use `@Mock` on the publisher field in the service under test
+3. **Capture events with ArgumentCaptor**: `ArgumentCaptor.forClass(EventType.class)` to inspect published payload
+4. **Verify listener side effects**: invoke listener directly against mocked dependencies
+5. **Test async handlers**: use `Thread.sleep()` or Awaitility — then assert the async operation was called
+6. **Add validation checkpoints**:
+   - After capturing an event, confirm `eventCaptor.getValue()` is not null before asserting fields
+   - If the listener is not invoked, verify `publishEvent()` was called with the correct event type
+   - If async assertions fail, increase wait time and check the executor pool is not saturated
+7. **Cover error scenarios**: assert listeners handle exceptions gracefully
 
 ## Examples
 
 ### Maven
+
 ```xml
 <dependency>
   <groupId>org.springframework.boot</groupId>
@@ -56,6 +59,7 @@ Use this skill when:
 ```
 
 ### Gradle
+
 ```kotlin
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter")
@@ -65,12 +69,9 @@ dependencies {
 }
 ```
 
-## Basic Pattern: Event Publishing and Listening
-
-### Custom Event and Publisher
+### Custom Event and Publisher Test
 
 ```java
-// Custom application event
 public class UserCreatedEvent extends ApplicationEvent {
   private final User user;
 
@@ -79,15 +80,11 @@ public class UserCreatedEvent extends ApplicationEvent {
     this.user = user;
   }
 
-  public User getUser() {
-    return user;
-  }
+  public User getUser() { return user; }
 }
 
-// Service that publishes events
 @Service
 public class UserService {
-
   private final ApplicationEventPublisher eventPublisher;
   private final UserRepository userRepository;
 
@@ -97,25 +94,16 @@ public class UserService {
   }
 
   public User createUser(String name, String email) {
-    User user = new User(name, email);
-    User savedUser = userRepository.save(user);
-    
+    User savedUser = userRepository.save(new User(name, email));
     eventPublisher.publishEvent(new UserCreatedEvent(this, savedUser));
-    
     return savedUser;
   }
 }
+```
 
-// Unit test
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+### Unit Test for Event Publishing
 
+```java
 @ExtendWith(MockitoExtension.class)
 class UserServiceEventTest {
 
@@ -138,153 +126,58 @@ class UserServiceEventTest {
     userService.createUser("Alice", "alice@example.com");
 
     verify(eventPublisher).publishEvent(eventCaptor.capture());
-    
-    UserCreatedEvent capturedEvent = eventCaptor.getValue();
-    assertThat(capturedEvent.getUser()).isEqualTo(newUser);
+    assertThat(eventCaptor.getValue().getUser()).isEqualTo(newUser);
   }
 }
 ```
 
-## Testing Event Listeners
-
-### `@`EventListener Annotation
+### Listener Direct Test
 
 ```java
-// Event listener
 @Component
 public class UserEventListener {
-
   private final EmailService emailService;
 
-  public UserEventListener(EmailService emailService) {
-    this.emailService = emailService;
-  }
+  public UserEventListener(EmailService emailService) { this.emailService = emailService; }
 
   @EventListener
   public void onUserCreated(UserCreatedEvent event) {
-    User user = event.getUser();
-    emailService.sendWelcomeEmail(user.getEmail());
+    emailService.sendWelcomeEmail(event.getUser().getEmail());
   }
 }
 
-// Unit test for listener
 class UserEventListenerTest {
 
   @Test
-  void shouldSendWelcomeEmailWhenUserCreated() {
+  void shouldSendWelcomeEmailOnUserCreated() {
     EmailService emailService = mock(EmailService.class);
     UserEventListener listener = new UserEventListener(emailService);
 
-    User newUser = new User(1L, "Alice", "alice@example.com");
-    UserCreatedEvent event = new UserCreatedEvent(this, newUser);
-
-    listener.onUserCreated(event);
+    User user = new User(1L, "Alice", "alice@example.com");
+    listener.onUserCreated(new UserCreatedEvent(this, user));
 
     verify(emailService).sendWelcomeEmail("alice@example.com");
   }
 
   @Test
-  void shouldNotThrowExceptionWhenEmailServiceFails() {
+  void shouldNotThrowWhenEmailServiceFails() {
     EmailService emailService = mock(EmailService.class);
-    doThrow(new RuntimeException("Email service down"))
-      .when(emailService).sendWelcomeEmail(any());
+    doThrow(new RuntimeException("down")).when(emailService).sendWelcomeEmail(any());
 
     UserEventListener listener = new UserEventListener(emailService);
-    User newUser = new User(1L, "Alice", "alice@example.com");
-    UserCreatedEvent event = new UserCreatedEvent(this, newUser);
+    User user = new User(1L, "Alice", "alice@example.com");
 
-    // Should handle exception gracefully
-    assertThatCode(() -> listener.onUserCreated(event))
+    assertThatCode(() -> listener.onUserCreated(new UserCreatedEvent(this, user)))
       .doesNotThrowAnyException();
   }
 }
 ```
 
-## Testing Multiple Listeners
-
-### Event Propagation
-
-```java
-class UserCreatedEvent extends ApplicationEvent {
-  private final User user;
-  private final List<String> notifications = new ArrayList<>();
-
-  public UserCreatedEvent(Object source, User user) {
-    super(source);
-    this.user = user;
-  }
-
-  public void addNotification(String notification) {
-    notifications.add(notification);
-  }
-
-  public List<String> getNotifications() {
-    return notifications;
-  }
-}
-
-class MultiListenerTest {
-
-  @Test
-  void shouldNotifyMultipleListenersSequentially() {
-    EmailService emailService = mock(EmailService.class);
-    NotificationService notificationService = mock(NotificationService.class);
-    AnalyticsService analyticsService = mock(AnalyticsService.class);
-
-    UserEventListener emailListener = new UserEventListener(emailService);
-    UserEventListener notificationListener = new UserEventListener(notificationService);
-    UserEventListener analyticsListener = new UserEventListener(analyticsService);
-
-    User user = new User(1L, "Alice", "alice@example.com");
-    UserCreatedEvent event = new UserCreatedEvent(this, user);
-
-    emailListener.onUserCreated(event);
-    notificationListener.onUserCreated(event);
-    analyticsListener.onUserCreated(event);
-
-    verify(emailService).send(any());
-    verify(notificationService).notify(any());
-    verify(analyticsService).track(any());
-  }
-}
-```
-
-## Testing Conditional Event Listeners
-
-### `@`EventListener with Condition
-
-```java
-@Component
-public class ConditionalEventListener {
-
-  @EventListener(condition = "#event.user.age > 18")
-  public void onAdultUserCreated(UserCreatedEvent event) {
-    // Handle adult user
-  }
-}
-
-class ConditionalListenerTest {
-
-  @Test
-  void shouldProcessEventWhenConditionMatches() {
-    // Test logic for matching condition
-  }
-
-  @Test
-  void shouldSkipEventWhenConditionDoesNotMatch() {
-    // Test logic for non-matching condition
-  }
-}
-```
-
-## Testing Async Event Listeners
-
-### `@`Async with `@`EventListener
+### Async Listener Test
 
 ```java
 @Component
 public class AsyncEventListener {
-
   private final SlowService slowService;
 
   @EventListener
@@ -302,12 +195,9 @@ class AsyncEventListenerTest {
     AsyncEventListener listener = new AsyncEventListener(slowService);
 
     User user = new User(1L, "Alice", "alice@example.com");
-    UserCreatedEvent event = new UserCreatedEvent(this, user);
+    listener.onUserCreatedAsync(new UserCreatedEvent(this, user));
 
-    listener.onUserCreatedAsync(event);
-
-    // Event processed asynchronously
-    Thread.sleep(100); // Wait for async completion
+    Thread.sleep(200); // checkpoint: allow async executor to run
     verify(slowService).processUser(user);
   }
 }
@@ -315,41 +205,23 @@ class AsyncEventListenerTest {
 
 ## Best Practices
 
-- **Mock ApplicationEventPublisher** in unit tests
-- **Capture published events** using ArgumentCaptor
-- **Test listener side effects** explicitly
-- **Test error handling** in listeners
-- **Keep event listeners focused** on single responsibility
-- **Verify event data integrity** when capturing
-- **Test both sync and async** event processing
-
-## Common Pitfalls
-
-- Testing actual event publishing without mocking publisher
-- Not verifying listener invocation
-- Not capturing event details
-- Testing listener registration instead of logic
-- Not handling listener exceptions
+- Mock `ApplicationEventPublisher` — never let it post to a real context in unit tests
+- Capture events with `ArgumentCaptor` and assert field-level equality, not just type
+- Test listeners in isolation: construct them with mocked dependencies and call the handler method directly
+- Cover error paths: listeners must not propagate exceptions to publishers
+- Async listeners: prefer Awaitility over `Thread.sleep()` for deterministic waits
+- Keep events immutable and serializable — test both if events cross JVM boundaries
 
 ## Constraints and Warnings
 
-- **Do not test Spring framework behavior**: Focus on your event logic, not Spring's event publishing mechanism
-- **Avoid Thread.sleep() in production code**: Use it only in test scenarios for async event verification
-- **Event listeners should be idempotent**: Design listeners to handle duplicate events gracefully
-- **Beware of event ordering**: Spring does not guarantee listener execution order without `@`Order annotation
-- **Test event serialization**: If events are sent across JVM boundaries, test serialization/deserialization
-- **Memory considerations**: Be cautious with event-driven architecture in long-running processes; events can accumulate
-
-## Best Practices
-
-**Event not being captured**: Verify ArgumentCaptor type matches event class.
-
-**Listener not invoked**: Ensure event is actually published and listener is registered.
-
-**Async listener timing issues**: Use Thread.sleep() or Awaitility to wait for completion.
+- **Do not test Spring's own event infrastructure** — focus on your business logic and event payload
+- **`@Async` requires `@EnableAsync`** — tests using Thread.sleep may still pass even if the async proxy is not wired in the test; use a mock verify instead
+- **Spring does not guarantee listener order** — do not write tests that depend on execution sequence unless you add `@Order`
+- **Avoid `Thread.sleep()` in CI environments** — it makes tests flaky under load; replace with Awaitility `.atMost()` blocks
+- **Events crossing JVM boundaries need serialization tests** — null fields in remote listeners often mean missing `Serializable`
 
 ## References
 
-- [Spring ApplicationEvent](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/ApplicationEvent.html)
-- [Spring ApplicationEventPublisher](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/ApplicationEventPublisher.html)
-- [`@`EventListener Documentation](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/event/EventListener.html)
+- [Spring ApplicationEvent Javadoc](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/ApplicationEvent.html)
+- [ApplicationEventPublisher Javadoc](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/ApplicationEventPublisher.html)
+- [`@EventListener` Javadoc](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/event/EventListener.html)

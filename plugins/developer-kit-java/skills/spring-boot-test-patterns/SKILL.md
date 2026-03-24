@@ -1,6 +1,6 @@
 ---
 name: spring-boot-test-patterns
-description: Provides comprehensive testing patterns for Spring Boot applications including unit, integration, slice, and container-based testing with JUnit 5, Mockito, Testcontainers, and performance optimization. Use when implementing robust test suites for Spring Boot applications.
+description: Provides comprehensive testing patterns for Spring Boot applications covering unit, integration, slice, and container-based testing with JUnit 5, Mockito, Testcontainers, and performance optimization. Use when writing tests, @Test methods, @MockBean mocks, or implementing test suites for Spring Boot applications.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
@@ -12,14 +12,10 @@ Comprehensive guidance for writing robust test suites for Spring Boot applicatio
 
 ## When to Use
 
-- Writing unit tests for services, repositories, or utilities
-- Implementing integration tests with real databases using Testcontainers
-- Setting up performance-optimized test slices (`@DataJpaTest`, `@WebMvcTest`)
-- Configuring Spring Boot 3.5+ `@ServiceConnection` for container management
-- Testing REST APIs with MockMvc, TestRestTemplate, or WebTestClient
-- Optimizing test performance through context caching and container reuse
-- Setting up CI/CD pipelines for integration tests
-- Implementing comprehensive test strategies for monolithic or microservices applications
+- Writing unit tests for services or repositories with mocked dependencies
+- Implementing integration tests with real databases via Testcontainers
+- Testing REST APIs with `@WebMvcTest` or MockMvc
+- Configuring `@ServiceConnection` for container management in Spring Boot 3.5+
 
 ## Quick Reference
 
@@ -28,15 +24,12 @@ Comprehensive guidance for writing robust test suites for Spring Boot applicatio
 | **Unit Tests** | `@ExtendWith(MockitoExtension.class)` | < 50ms | Business logic without Spring context |
 | **Repository Tests** | `@DataJpaTest` | < 100ms | Database operations with minimal context |
 | **Controller Tests** | `@WebMvcTest` / `@WebFluxTest` | < 100ms | REST API layer testing |
-| **JSON Tests** | `@JsonTest` | < 50ms | Serialization/deserialization |
 | **Integration Tests** | `@SpringBootTest` | < 500ms | Full application context with containers |
 | **Testcontainers** | `@ServiceConnection` / `@Testcontainers` | Varies | Real database/message broker containers |
 
 ## Core Concepts
 
 ### Test Architecture Philosophy
-
-Spring Boot testing follows a layered approach:
 
 1. **Unit Tests** — Fast, isolated tests without Spring context (< 50ms)
 2. **Slice Tests** — Minimal Spring context for specific layers (< 100ms)
@@ -74,16 +67,14 @@ class UserServiceTest {
     @Test
     void shouldFindUserByIdWhenExists() {
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-
         Optional<User> result = userService.findById(1L);
-
         assertThat(result).isPresent();
         verify(userRepository).findById(1L);
     }
 }
 ```
 
-See [unit-testing.md](references/unit-testing.md) for patterns.
+See [unit-testing.md](references/unit-testing.md) for advanced patterns.
 
 ### 2. Slice Testing Pattern
 
@@ -105,7 +96,7 @@ class UserRepositoryIntegrationTest {
 }
 ```
 
-See [slice-testing.md](references/slice-testing.md) for slice patterns.
+See [slice-testing.md](references/slice-testing.md) for all slice patterns.
 
 ### 3. REST API Testing Pattern
 
@@ -129,7 +120,7 @@ class UserControllerTest {
 }
 ```
 
-### 4. Testcontainers with @ServiceConnection
+### 4. Testcontainers with `@ServiceConnection`
 
 Configure containers with Spring Boot 3.5+:
 
@@ -144,7 +135,8 @@ public class TestContainerConfig {
 }
 ```
 
-See [testcontainers-setup.md](references/testcontainers-setup.md) for configuration.
+Apply with `@Import(TestContainerConfig.class)` on test classes.
+See [testcontainers-setup.md](references/testcontainers-setup.md) for detailed configuration.
 
 ### 5. Add Dependencies
 
@@ -164,7 +156,7 @@ Include required testing dependencies:
 </dependency>
 ```
 
-See [test-dependencies.md](references/test-dependencies.md) for complete setup.
+See [test-dependencies.md](references/test-dependencies.md) for complete dependency list.
 
 ### 6. Configure CI/CD
 
@@ -176,77 +168,93 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      docker:
+        image: docker:20-dind
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up JDK 17
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
     - name: Run tests
       run: ./mvnw test
 ```
 
-See [ci-cd-configuration.md](references/ci-cd-configuration.md) for CI/CD patterns.
+See [ci-cd-configuration.md](references/ci-cd-configuration.md) for full CI/CD patterns.
 
-## Best Practices
+### Validation Checkpoints
 
-- **Choose the right test type**: `@DataJpaTest` for repositories, `@WebMvcTest` for controllers, `@SpringBootTest` only for full integration
-- **Use `@ServiceConnection`** on Spring Boot 3.5+ for cleaner container management
-- **Keep tests deterministic**: Always initialize test data explicitly in `@BeforeEach`
-- **Use meaningful assertions**: Leverage AssertJ for readable, fluent assertions
-- **Organize tests by layer**: Group related tests to optimize context caching
-- **Maximize context caching**: Group tests with similar configurations
-- **Reuse Testcontainers**: At JVM level for better performance
-- **Avoid `@DirtiesContext`**: Forces context rebuild, hurts performance
-- **Mock external dependencies**: Use real databases, mock external services
-- **Test performance targets**: Unit < 50ms, Slice < 100ms, Integration < 500ms
+After implementing tests, verify:
+- Container running: `docker ps` (look for testcontainer images)
+- Context loaded: check startup logs for "Started Application in X.XX seconds"
+- Test isolation: run tests individually and confirm no cross-contamination
 
-## Performance Optimization
+## Examples
 
-### Context Caching
-
-Group tests with similar configurations to maximize context reuse:
+### Full Integration Test with `@ServiceConnection`
 
 ```java
-@DataJpaTest
-@TestContainerConfig
-class UserRepositoryTest { } // Reuses same context
+@SpringBootTest
+@Import(TestContainerConfig.class)
+class OrderServiceIntegrationTest {
 
-@DataJpaTest
-@TestContainerConfig
-class OrderRepositoryTest { } // Reuses same context
-```
+    @Autowired
+    private OrderService orderService;
 
-### Container Reuse
+    @Autowired
+    private UserRepository userRepository;
 
-Reuse Testcontainers at JVM level:
+    @Test
+    void shouldCreateOrderForExistingUser() {
+        User user = userRepository.save(User.builder()
+            .email("order-test@example.com")
+            .build());
 
-```java
-static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>()
-    .withReuse(true);
+        Order order = orderService.createOrder(user.getId(), List.of(
+            new OrderItem("SKU-001", 2)
+        ));
 
-@BeforeAll
-static void startAll() {
-    POSTGRES.start();
+        assertThat(order.getId()).isNotNull();
+        assertThat(order.getStatus()).isEqualTo(OrderStatus.PENDING);
+    }
 }
 ```
 
-Enable with: `TESTCONTAINERS_REUSE_ENABLE=true`
+### `@DataJpaTest` with Real Database
 
-## Performance Targets
+```java
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@TestContainerConfig
+class UserRepositoryTest {
 
-| Test Type | Target Time | Strategy |
-|-----------|-------------|----------|
-| Unit tests | < 50ms | No Spring context, pure Mockito |
-| Slice tests | < 100ms | Minimal context, specific layer only |
-| Integration tests | < 500ms | Full context, container reuse |
+    @Autowired
+    private UserRepository userRepository;
 
-## Key Principles
+    @Test
+    void shouldFindByEmail() {
+        userRepository.save(User.builder()
+            .email("jpa-test@example.com")
+            .build());
+        assertThat(userRepository.findByEmail("jpa-test@example.com"))
+            .isPresent();
+    }
+}
+```
 
-1. Use test slices for focused, fast tests
-2. Prefer `@ServiceConnection` on Spring Boot 3.5+
-3. Keep tests deterministic with explicit setup
-4. Mock external dependencies, use real databases
-5. Avoid `@DirtiesContext` unless absolutely necessary
-6. Organize tests by layer to optimize context reuse
+See [workflow-patterns.md](references/workflow-patterns.md) for complete end-to-end examples.
+
+## Best Practices
+
+- **Use the right test type**: `@DataJpaTest` for repositories, `@WebMvcTest` for controllers, `@SpringBootTest` only for full integration
+- **Prefer `@ServiceConnection`** on Spring Boot 3.5+ for cleaner container management over `@DynamicPropertySource`
+- **Keep tests deterministic**: Initialize all test data explicitly in `@BeforeEach`
+- **Organize by layer**: Group tests by layer to maximize context caching
+- **Reuse Testcontainers** at JVM level (`withReuse(true)` + `TESTCONTAINERS_REUSE_ENABLE=true`)
+- **Avoid `@DirtiesContext`**: Forces context rebuild, significantly hurts performance
+- **Mock external services**, use real databases only when necessary
+- **Performance targets**: Unit < 50ms, Slice < 100ms, Integration < 500ms
 
 ## Constraints and Warnings
 
@@ -269,10 +277,3 @@ Enable with: `TESTCONTAINERS_REUSE_ENABLE=true`
 - **[api-reference.md](references/api-reference.md)** — Complete test annotations and utilities
 - **[best-practices.md](references/best-practices.md)** — Testing patterns and optimization
 - **[workflow-patterns.md](references/workflow-patterns.md)** — Complete integration test examples
-
-## Related Skills
-
-- `spring-boot-dependency-injection` — Unit testing with constructor injection
-- `spring-boot-rest-api-standards` — REST API patterns to test
-- `spring-boot-crud-patterns` — CRUD patterns to test
-- `unit-test-service-layer` — Advanced service layer testing techniques

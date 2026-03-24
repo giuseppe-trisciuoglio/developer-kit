@@ -1,6 +1,6 @@
 ---
 name: unit-test-config-properties
-description: Provides patterns for unit testing `@ConfigurationProperties` classes with `@ConfigurationPropertiesTest`. Use when validating application configuration binding and validation.
+description: Provides patterns for unit testing `@ConfigurationProperties` classes with `@ConfigurationPropertiesTest`. Validates property binding, tests validation constraints, verifies default values, checks type conversions, and mocks property sources for Spring Boot configuration properties. Use when testing application configuration binding, validating YAML or application.properties files, verifying environment-specific settings, or testing nested property structures.
 allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
@@ -8,34 +8,44 @@ allowed-tools: Read, Write, Bash, Glob, Grep
 
 ## Overview
 
-This skill provides patterns for unit testing `@ConfigurationProperties` bindings, environment-specific configurations, and property validation using JUnit 5. It covers testing property name mapping, type conversions, validation constraints, nested structures, and profile-specific configurations without full Spring context startup.
+This skill provides patterns for unit testing `@ConfigurationProperties` bindings, environment-specific configurations, and property validation using JUnit 5. Covers testing property name mapping, type conversions, validation constraints, nested structures, and profile-specific configurations without full Spring context startup.
+
+**Key validation checkpoints:**
+- Property prefix matches between `@ConfigurationProperties` and test properties
+- Validation triggers on `@Validated` classes with invalid values
+- Type conversions work for Duration, DataSize, collections, and maps
 
 ## When to Use
 
-Use this skill when:
-- Testing `@`ConfigurationProperties property binding
+- Testing `@ConfigurationProperties` property binding
 - Testing property name mapping and type conversions
-- Verifying configuration validation
-- Testing environment-specific configurations
-- Testing nested property structures
-- Want fast configuration tests without Spring context
+- Validating configuration with `@NotBlank`, `@Min`, `@Max`, `@Email` constraints
+- Testing environment-specific configurations (dev, prod)
+- Testing nested property structures and collections
+- Verifying default values when properties are not specified
+- Fast configuration tests without Spring context startup
 
 ## Instructions
 
-1. **Use ApplicationContextRunner**: Test property bindings without starting full Spring context
-2. **Test all property paths**: Verify each property including nested structures and collections
-3. **Test validation constraints**: Ensure `@`Validated properties fail with invalid values
-4. **Test type conversions**: Verify Duration, DataSize, and other special types convert correctly
-5. **Test default values**: Verify properties have correct defaults when not specified
-6. **Test profile-specific configs**: Use `@`Profile to test environment-specific configurations
-7. **Verify property prefixes**: Ensure the prefix in `@`ConfigurationProperties matches test properties
-8. **Test edge cases**: Include empty strings, null values, and type mismatches
+1. **Set up test dependencies**: Add `spring-boot-starter-test` and AssertJ dependencies
+2. **Use ApplicationContextRunner**: Test property bindings without starting full Spring context
+3. **Define property prefixes**: Ensure `@ConfigurationProperties(prefix = "...")` matches test property paths
+4. **Test all property paths**: Verify each property including nested structures and collections
+5. **Test validation constraints**: Use `context.hasFailed()` to verify `@Validated` properties reject invalid values
+6. **Test type conversions**: Verify Duration (`30s`), DataSize (`50MB`), collections, and maps convert correctly
+7. **Test default values**: Verify properties have correct defaults when not specified in test properties
+8. **Test profile-specific configs**: Use `@Profile` with `ApplicationContextRunner` for environment-specific configurations
+9. **Test edge cases**: Include empty strings, null values, and type mismatches
+
+**Troubleshooting flow:**
+- If properties don't bind → Check prefix matches (kebab-case to camelCase conversion)
+- If validation doesn't trigger → Verify `@Validated` annotation is present
+- If context fails to start → Check dependencies and `@ConfigurationProperties` class structure
 
 ## Examples
 
-## Setup: Configuration Testing
+### Setup: Test Dependencies
 
-### Maven
 ```xml
 <dependency>
   <groupId>org.springframework.boot</groupId>
@@ -48,33 +58,15 @@ Use this skill when:
   <scope>test</scope>
 </dependency>
 <dependency>
-  <groupId>org.junit.jupiter</groupId>
-  <artifactId>junit-jupiter</artifactId>
-  <scope>test</scope>
-</dependency>
-<dependency>
   <groupId>org.assertj</groupId>
   <artifactId>assertj-core</artifactId>
   <scope>test</scope>
 </dependency>
 ```
 
-### Gradle
-```kotlin
-dependencies {
-  annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-  testImplementation("org.springframework.boot:spring-boot-starter-test")
-  testImplementation("org.junit.jupiter:junit-jupiter")
-  testImplementation("org.assertj:assertj-core")
-}
-```
-
-## Basic Pattern: Testing ConfigurationProperties
-
-### Simple Property Binding
+### Basic Pattern: Property Binding
 
 ```java
-// Configuration properties class
 @ConfigurationProperties(prefix = "app.security")
 @Data
 public class SecurityProperties {
@@ -83,12 +75,6 @@ public class SecurityProperties {
   private int maxLoginAttempts;
   private boolean enableTwoFactor;
 }
-
-// Unit test
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.runner.ApplicationContextRunner;
-import static org.assertj.core.api.Assertions.*;
 
 class SecurityPropertiesTest {
 
@@ -104,7 +90,6 @@ class SecurityPropertiesTest {
       .withBean(SecurityProperties.class)
       .run(context -> {
         SecurityProperties props = context.getBean(SecurityProperties.class);
-
         assertThat(props.getJwtSecret()).isEqualTo("my-secret-key");
         assertThat(props.getJwtExpirationMs()).isEqualTo(3600000L);
         assertThat(props.getMaxLoginAttempts()).isEqualTo(5);
@@ -119,7 +104,6 @@ class SecurityPropertiesTest {
       .withBean(SecurityProperties.class)
       .run(context -> {
         SecurityProperties props = context.getBean(SecurityProperties.class);
-
         assertThat(props.getJwtSecret()).isEqualTo("key");
         assertThat(props.getMaxLoginAttempts()).isZero();
       });
@@ -127,82 +111,7 @@ class SecurityPropertiesTest {
 }
 ```
 
-## Testing Nested Configuration Properties
-
-### Complex Property Structure
-
-```java
-@ConfigurationProperties(prefix = "app.database")
-@Data
-public class DatabaseProperties {
-  private String url;
-  private String username;
-  private Pool pool = new Pool();
-  private List<Replica> replicas = new ArrayList<>();
-
-  @Data
-  public static class Pool {
-    private int maxSize = 10;
-    private int minIdle = 5;
-    private long connectionTimeout = 30000;
-  }
-
-  @Data
-  public static class Replica {
-    private String name;
-    private String url;
-    private int priority;
-  }
-}
-
-class NestedPropertiesTest {
-
-  @Test
-  void shouldBindNestedProperties() {
-    new ApplicationContextRunner()
-      .withPropertyValues(
-        "app.database.url=jdbc:mysql://localhost/db",
-        "app.database.username=admin",
-        "app.database.pool.maxSize=20",
-        "app.database.pool.minIdle=10",
-        "app.database.pool.connectionTimeout=60000"
-      )
-      .withBean(DatabaseProperties.class)
-      .run(context -> {
-        DatabaseProperties props = context.getBean(DatabaseProperties.class);
-
-        assertThat(props.getUrl()).isEqualTo("jdbc:mysql://localhost/db");
-        assertThat(props.getPool().getMaxSize()).isEqualTo(20);
-        assertThat(props.getPool().getConnectionTimeout()).isEqualTo(60000L);
-      });
-  }
-
-  @Test
-  void shouldBindListOfReplicas() {
-    new ApplicationContextRunner()
-      .withPropertyValues(
-        "app.database.replicas[0].name=replica-1",
-        "app.database.replicas[0].url=jdbc:mysql://replica1/db",
-        "app.database.replicas[0].priority=1",
-        "app.database.replicas[1].name=replica-2",
-        "app.database.replicas[1].url=jdbc:mysql://replica2/db",
-        "app.database.replicas[1].priority=2"
-      )
-      .withBean(DatabaseProperties.class)
-      .run(context -> {
-        DatabaseProperties props = context.getBean(DatabaseProperties.class);
-
-        assertThat(props.getReplicas()).hasSize(2);
-        assertThat(props.getReplicas().get(0).getName()).isEqualTo("replica-1");
-        assertThat(props.getReplicas().get(1).getPriority()).isEqualTo(2);
-      });
-  }
-}
-```
-
-## Testing Property Validation
-
-### Validate Configuration with Constraints
+### Validation Testing
 
 ```java
 @ConfigurationProperties(prefix = "app.server")
@@ -218,9 +127,6 @@ public class ServerProperties {
 
   @Positive
   private int threadPoolSize;
-
-  @Email
-  private String adminEmail;
 }
 
 class ConfigurationValidationTest {
@@ -242,100 +148,23 @@ class ConfigurationValidationTest {
   }
 
   @Test
-  void shouldFailValidationWhenPortOutOfRange() {
-    new ApplicationContextRunner()
-      .withPropertyValues(
-        "app.server.host=localhost",
-        "app.server.port=99999",
-        "app.server.threadPoolSize=10"
-      )
-      .withBean(ServerProperties.class)
-      .run(context -> {
-        assertThat(context).hasFailed();
-      });
-  }
-
-  @Test
   void shouldPassValidationWithValidConfiguration() {
     new ApplicationContextRunner()
       .withPropertyValues(
         "app.server.host=localhost",
         "app.server.port=8080",
-        "app.server.threadPoolSize=10",
-        "app.server.adminEmail=admin@example.com"
+        "app.server.threadPoolSize=10"
       )
       .withBean(ServerProperties.class)
       .run(context -> {
         assertThat(context).hasNotFailed();
-        ServerProperties props = context.getBean(ServerProperties.class);
-        assertThat(props.getHost()).isEqualTo("localhost");
+        assertThat(context.getBean(ServerProperties.class).getHost()).isEqualTo("localhost");
       });
   }
 }
 ```
 
-## Testing Profile-Specific Configurations
-
-### Environment-Specific Properties
-
-```java
-@Configuration
-@Profile("prod")
-class ProductionConfiguration {
-  @Bean
-  public SecurityProperties securityProperties() {
-    SecurityProperties props = new SecurityProperties();
-    props.setEnableTwoFactor(true);
-    props.setMaxLoginAttempts(3);
-    return props;
-  }
-}
-
-@Configuration
-@Profile("dev")
-class DevelopmentConfiguration {
-  @Bean
-  public SecurityProperties securityProperties() {
-    SecurityProperties props = new SecurityProperties();
-    props.setEnableTwoFactor(false);
-    props.setMaxLoginAttempts(999);
-    return props;
-  }
-}
-
-class ProfileBasedConfigurationTest {
-
-  @Test
-  void shouldLoadProductionConfiguration() {
-    new ApplicationContextRunner()
-      .withPropertyValues("spring.profiles.active=prod")
-      .withUserConfiguration(ProductionConfiguration.class)
-      .run(context -> {
-        SecurityProperties props = context.getBean(SecurityProperties.class);
-
-        assertThat(props.isEnableTwoFactor()).isTrue();
-        assertThat(props.getMaxLoginAttempts()).isEqualTo(3);
-      });
-  }
-
-  @Test
-  void shouldLoadDevelopmentConfiguration() {
-    new ApplicationContextRunner()
-      .withPropertyValues("spring.profiles.active=dev")
-      .withUserConfiguration(DevelopmentConfiguration.class)
-      .run(context -> {
-        SecurityProperties props = context.getBean(SecurityProperties.class);
-
-        assertThat(props.isEnableTwoFactor()).isFalse();
-        assertThat(props.getMaxLoginAttempts()).isEqualTo(999);
-      });
-  }
-}
-```
-
-## Testing Type Conversion
-
-### Property Type Binding
+### Type Conversion Testing
 
 ```java
 @ConfigurationProperties(prefix = "app.features")
@@ -345,137 +174,63 @@ public class FeatureProperties {
   private DataSize maxUploadSize = DataSize.ofMegabytes(100);
   private List<String> enabledFeatures;
   private Map<String, String> featureFlags;
-  private Charset fileEncoding = StandardCharsets.UTF_8;
 }
 
 class TypeConversionTest {
 
   @Test
-  void shouldConvertStringToDuration() {
+  void shouldConvertDurationFromString() {
     new ApplicationContextRunner()
       .withPropertyValues("app.features.cacheExpiry=30s")
       .withBean(FeatureProperties.class)
       .run(context -> {
-        FeatureProperties props = context.getBean(FeatureProperties.class);
-
-        assertThat(props.getCacheExpiry()).isEqualTo(Duration.ofSeconds(30));
+        assertThat(context.getBean(FeatureProperties.class).getCacheExpiry())
+          .isEqualTo(Duration.ofSeconds(30));
       });
   }
 
   @Test
-  void shouldConvertStringToDataSize() {
+  void shouldConvertCommaDelimitedList() {
     new ApplicationContextRunner()
-      .withPropertyValues("app.features.maxUploadSize=50MB")
+      .withPropertyValues("app.features.enabledFeatures=feature1,feature2")
       .withBean(FeatureProperties.class)
       .run(context -> {
-        FeatureProperties props = context.getBean(FeatureProperties.class);
-
-        assertThat(props.getMaxUploadSize()).isEqualTo(DataSize.ofMegabytes(50));
-      });
-  }
-
-  @Test
-  void shouldConvertCommaDelimitedListToList() {
-    new ApplicationContextRunner()
-      .withPropertyValues("app.features.enabledFeatures=feature1,feature2,feature3")
-      .withBean(FeatureProperties.class)
-      .run(context -> {
-        FeatureProperties props = context.getBean(FeatureProperties.class);
-
-        assertThat(props.getEnabledFeatures())
-          .containsExactly("feature1", "feature2", "feature3");
+        assertThat(context.getBean(FeatureProperties.class).getEnabledFeatures())
+          .containsExactly("feature1", "feature2");
       });
   }
 }
 ```
 
-## Testing Property Binding with Default Values
-
-### Verify Default Configuration
-
-```java
-@ConfigurationProperties(prefix = "app.cache")
-@Data
-public class CacheProperties {
-  private long ttlSeconds = 300;
-  private int maxSize = 1000;
-  private boolean enabled = true;
-  private String cacheType = "IN_MEMORY";
-}
-
-class DefaultValuesTest {
-
-  @Test
-  void shouldUseDefaultValuesWhenNotSpecified() {
-    new ApplicationContextRunner()
-      .withBean(CacheProperties.class)
-      .run(context -> {
-        CacheProperties props = context.getBean(CacheProperties.class);
-
-        assertThat(props.getTtlSeconds()).isEqualTo(300L);
-        assertThat(props.getMaxSize()).isEqualTo(1000);
-        assertThat(props.isEnabled()).isTrue();
-        assertThat(props.getCacheType()).isEqualTo("IN_MEMORY");
-      });
-  }
-
-  @Test
-  void shouldOverrideDefaultValuesWithProvidedProperties() {
-    new ApplicationContextRunner()
-      .withPropertyValues(
-        "app.cache.ttlSeconds=600",
-        "app.cache.cacheType=REDIS"
-      )
-      .withBean(CacheProperties.class)
-      .run(context -> {
-        CacheProperties props = context.getBean(CacheProperties.class);
-
-        assertThat(props.getTtlSeconds()).isEqualTo(600L);
-        assertThat(props.getCacheType()).isEqualTo("REDIS");
-        assertThat(props.getMaxSize()).isEqualTo(1000); // Default unchanged
-      });
-  }
-}
-```
+For **nested properties**, **profile-specific configurations**, **collection binding**, and **advanced validation patterns**, see `references/advanced-examples.md`.
 
 ## Best Practices
 
-- **Test all property bindings** including nested structures
-- **Test validation constraints** thoroughly
-- **Test both default and custom values**
-- **Use ApplicationContextRunner** for context-free testing
-- **Test profile-specific configurations** separately
-- **Verify type conversions** work correctly
-- **Test edge cases** (empty strings, null values, type mismatches)
-
-## Common Pitfalls
-
-- Not testing validation constraints
-- Forgetting to test default values
-- Not testing nested property structures
-- Testing with wrong property prefix
-- Not handling type conversion properly
+- **Test all property bindings** including nested structures and collections
+- **Test validation constraints** for all `@NotBlank`, `@Min`, `@Max`, `@Email`, `@Positive` annotations
+- **Test both default and custom values** to verify fallback behavior
+- **Use ApplicationContextRunner** for fast context-free testing
+- **Test profile-specific configurations** separately with `@Profile`
+- **Verify type conversions** for Duration, DataSize, collections, and maps
+- **Test edge cases**: empty strings, null values, type mismatches, out-of-range values
 
 ## Constraints and Warnings
 
-- **Property name matching**: Kebab-case in properties (app.my-prop) maps to camelCase in Java (myProp)
-- **Loose binding by default**: Spring Boot supports loose binding; enable strict binding if needed
-- **Validation requires `@`Validated**: Add `@`Validated to enable validation on configuration properties
-- **`@`ConstructorBinding limitations**: When using `@`ConstructorBinding, all parameters must be bindable
-- **List indexing**: List properties use [0], [1] notation; ensure sequential indexing
-- **Duration format**: Duration properties accept standard ISO-8601 format or simple syntax (10s, 1m)
-- **ApplicationContextRunner isolation**: Each ApplicationContextRunner creates a new context; there's no shared state
+- **Kebab-case to camelCase**: Property `app.my-property` maps to `myProperty` in Java
+- **Loose binding**: Spring Boot uses loose binding by default; use strict binding if needed
+- **`@Validated` required**: Add `@Validated` annotation to enable constraint validation
+- **`@ConstructorBinding`**: All parameters must be bindable when using constructor binding
+- **List indexing**: Use `[0]`, `[1]` notation; ensure sequential indexing for lists
+- **Duration format**: Accepts ISO-8601 (`PT30S`) or simple syntax (`30s`, `1m`, `2h`)
+- **Context isolation**: Each `ApplicationContextRunner` creates a new context with no shared state
+- **Profile activation**: Use `spring.profiles.active=profileName` in `withPropertyValues()` for profile tests
 
 ## Troubleshooting
 
-**Properties not binding**: Verify prefix and property names match exactly (including kebab-case to camelCase conversion).
-
-**Validation not triggered**: Ensure `@Validated` is present and validation dependencies are on classpath.
-
-**ApplicationContextRunner not found**: Verify `spring-boot-starter-test` is in test dependencies.
-
-## References
-
-- [Spring Boot ConfigurationProperties](https://docs.spring.io/spring-boot/docs/current/reference/html/configuration-metadata.html)
-- [ApplicationContextRunner Testing](https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/test/context/runner/ApplicationContextRunner.html)
-- [Spring Profiles](https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.profiles)
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| Properties not binding | Prefix mismatch | Verify `@ConfigurationProperties(prefix="...")` matches property paths |
+| Validation not triggered | Missing `@Validated` | Add `@Validated` annotation to configuration class |
+| Context fails to start | Missing dependencies | Ensure `spring-boot-starter-test` is in test scope |
+| Nested properties null | Inner class missing | Use `@Data` on nested classes or provide getters/setters |
+| Collection binding fails | Wrong indexing | Use `[0]`, `[1]` notation, not `(0)`, `(1)` |

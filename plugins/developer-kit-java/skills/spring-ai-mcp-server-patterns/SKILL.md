@@ -1,31 +1,20 @@
 ---
 name: spring-ai-mcp-server-patterns
-description: Provides Model Context Protocol (MCP) server implementation patterns with Spring AI. Use when building MCP servers to extend AI capabilities with custom tools, resources, and prompt templates using Spring's official AI framework.
+description: Provides Spring Boot MCP server patterns that create Model Context Protocol servers with Spring AI by defining tool handlers, exposing resources, configuring prompt templates, and setting up transports for AI function calling and tool calling. Use when building MCP servers to extend AI capabilities with Spring's official AI framework, implementing AI tools, custom function calling, or MCP client integration.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
 # Spring AI MCP Server Implementation Patterns
 
-Implement Model Context Protocol (MCP) servers with Spring AI to extend AI capabilities with standardized tools, resources, and prompt templates using Spring's native AI abstractions.
+Implements MCP servers with Spring AI for AI function calling, tool handlers, and MCP transport configuration.
 
 ## Overview
 
-This skill covers production-ready MCP server patterns using Spring AI:
-- **Tools**: Spring methods as AI-callable functions using `@Tool` annotation
-- **Resources**: Data sources accessible through MCP endpoints
-- **Prompts**: Reusable templates with `@PromptTemplate` annotation
-- **Transport**: Communication channels (stdio, HTTP, SSE)
-- **Security**: Authentication, authorization, and input validation
+Production-ready MCP server patterns: `@Tool` functions, `@PromptTemplate` resources, and stdio/HTTP/SSE transports with Spring AI security.
 
 ## When to Use
 
-Activate when user requests involve:
-- "Build an MCP server", "Spring AI MCP", "function calling with Spring"
-- "Expose Spring services as AI tools", "@Tool annotation"
-- "@PromptTemplate", "prompt template server"
-- "MCP transport", "stdio", "SSE transport for MCP"
-- "Secure MCP server", "role-based tool access"
-- "Migrate from LangChain4j MCP to Spring AI"
+MCP servers, Spring AI function calling, AI tools, tool calling, custom tool handlers, Spring Boot MCP, resource endpoints, or MCP transport configuration.
 
 ## Quick Reference
 

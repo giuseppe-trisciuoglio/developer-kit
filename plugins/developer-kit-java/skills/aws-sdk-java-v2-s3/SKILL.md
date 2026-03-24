@@ -6,7 +6,9 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 
 # AWS SDK for Java 2.x - Amazon S3
 
-Amazon S3 (Simple Storage Service) is object storage built to store and retrieve any amount of data from anywhere. This skill covers patterns for working with S3 including bucket operations, object uploads/downloads, presigned URLs, multipart transfers, and Spring Boot integration.
+## Overview
+
+Provides patterns for S3 operations: bucket management, object upload/download with multipart support, presigned URLs, S3 Transfer Manager, and S3-specific configurations using AWS SDK for Java 2.x.
 
 ## When to Use
 
@@ -100,6 +102,12 @@ PutObjectRequest request = PutObjectRequest.builder()
     .build();
 
 s3Client.putObject(request, RequestBody.fromFile(Paths.get(filePath)));
+
+// Validate upload completion
+HeadObjectResponse headResp = s3Client.headObject(HeadObjectRequest.builder()
+    .bucket(bucketName)
+    .key(key)
+    .build());
 ```
 
 ### 5. Download Object
@@ -177,6 +185,92 @@ try (S3TransferManager tm = S3TransferManager.create()) {
 - **Eventual Consistency**: List operations may have slight delays after uploads
 - **Presigned URLs**: Maximum expiration time is 7 days
 - **Multipart Uploads**: Parts must be at least 5MB except last part
+
+## Examples
+
+### Complete Upload Workflow with Validation
+
+```java
+// 1. Upload with validation
+PutObjectRequest putRequest = PutObjectRequest.builder()
+    .bucket(bucketName)
+    .key(key)
+    .contentType(contentType)
+    .build();
+
+s3Client.putObject(putRequest, RequestBody.fromFile(Paths.get(filePath)));
+
+// 2. Validate with headObject
+HeadObjectResponse headResp = s3Client.headObject(HeadObjectRequest.builder()
+    .bucket(bucketName)
+    .key(key)
+    .build());
+
+// 3. Verify metadata
+long fileSize = Files.size(Paths.get(filePath));
+if (headResp.contentLength() != fileSize) {
+    throw new IllegalStateException("Upload size mismatch");
+}
+```
+
+### Multipart Upload with Abort-on-Failure
+
+```java
+// 1. Initiate multipart upload
+CreateMultipartUploadRequest createRequest = CreateMultipartUploadRequest.builder()
+    .bucket(bucketName)
+    .key(key)
+    .build();
+
+CreateMultipartUploadResponse multipartUpload = s3Client.createMultipartUpload(createRequest);
+String uploadId = multipartUpload.uploadId();
+
+try {
+    // 2. Upload parts
+    List<CompletedPart> parts = new ArrayList<>();
+    int partNumber = 1;
+    byte[] fileBytes = Files.readAllBytes(Paths.get(filePath));
+    int chunkSize = 5 * 1024 * 1024; // 5MB minimum
+
+    for (int offset = 0; offset < fileBytes.length; offset += chunkSize) {
+        int length = Math.min(chunkSize, fileBytes.length - offset);
+        UploadPartRequest uploadPartRequest = UploadPartRequest.builder()
+            .bucket(bucketName)
+            .key(key)
+            .uploadId(uploadId)
+            .partNumber(partNumber)
+            .build();
+
+        UploadPartResponse partResponse = s3Client.uploadPart(uploadPartRequest,
+            RequestBody.fromBytes(Arrays.copyOfRange(fileBytes, offset, offset + length)));
+
+        parts.add(CompletedPart.builder()
+            .partNumber(partNumber)
+            .eTag(partResponse.eTag())
+            .build());
+        partNumber++;
+    }
+
+    // 3. Complete multipart upload
+    CompleteMultipartUploadRequest completeRequest = CompleteMultipartUploadRequest.builder()
+        .bucket(bucketName)
+        .key(key)
+        .uploadId(uploadId)
+        .multipartUpload(CompletedMultipartUpload.builder().parts(parts).build())
+        .build();
+    s3Client.completeMultipartUpload(completeRequest);
+
+} catch (Exception e) {
+    // 4. Abort on failure
+    AbortMultipartUploadRequest abortRequest = AbortMultipartUploadRequest.builder()
+        .bucket(bucketName)
+        .key(key)
+        .uploadId(uploadId)
+        .build();
+    s3Client.abortMultipartUpload(abortRequest);
+    throw new RuntimeException("Upload failed, cleanup performed", e);
+}
+```
 
 ## References
 

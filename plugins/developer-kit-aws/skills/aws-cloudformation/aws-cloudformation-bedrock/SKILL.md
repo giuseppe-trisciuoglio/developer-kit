@@ -8,30 +8,22 @@ allowed-tools: Read, Write, Bash
 
 ## Overview
 
-Create production-ready AI infrastructure using AWS CloudFormation templates for Amazon Bedrock. This skill covers Bedrock agents, knowledge bases for RAG implementations, data source connectors, guardrails for content moderation, prompt management, workflow orchestration with flows, and inference profiles for optimized model access.
+Creates production-ready AI infrastructure using AWS CloudFormation templates for Amazon Bedrock. Covers Bedrock agents, knowledge bases for RAG implementations, data source connectors, guardrails for content moderation, prompt management, workflow orchestration with flows, and inference profiles for optimized model access.
 
 ## When to Use
 
-Use this skill when:
-- Creating Bedrock agents with action groups and function definitions
-- Implementing Retrieval-Augmented Generation (RAG) with knowledge bases
-- Configuring data sources (S3, web crawl, custom connectors)
-- Setting up vector store configurations (OpenSearch, Pinecone, pgvector)
-- Creating content moderation guardrails
-- Managing prompt templates and versions
+- Creating Bedrock agents with action groups
+- Implementing RAG with knowledge bases
+- Configuring S3 or web crawl data sources
+- Setting up content moderation guardrails
+- Managing prompt templates
 - Orchestrating AI workflows with Bedrock Flows
 - Configuring inference profiles for multi-model access
-- Setting up application inference profiles for optimized model routing
-- Organizing templates with Parameters, Outputs, Mappings, Conditions
-- Implementing cross-stack references with export/import
+- Organizing templates with Parameters and cross-stack references
 
 ## Instructions
 
-Follow these steps to create Bedrock infrastructure with CloudFormation:
-
-### 1. Define Agent Parameters
-
-Specify foundation model, agent name, and description:
+### 1. Define Parameters
 
 ```yaml
 Parameters:
@@ -43,16 +35,9 @@ Parameters:
       - anthropic.claude-3-haiku-20240307-v1:0
       - amazon.titan-text-express-v1
     Description: Foundation model for agent
-
-  AgentName:
-    Type: String
-    Default: bedrock-agent
-    Description: Name of the Bedrock agent
 ```
 
-### 2. Create Agent Resource Role
-
-Configure IAM role with bedrock:InvokeModel permissions:
+### 2. Create Agent Role
 
 ```yaml
 Resources:
@@ -74,32 +59,54 @@ Resources:
               - Effect: Allow
                 Action:
                   - bedrock:InvokeModel
-                Resource: !Sub "arn:aws:bedrock:${AWS::Region}::foundation-model/${FoundationModel}"
+                Resource: !Sub "arn:aws:bedrock:${AWS::Region}:${AWS::AccountId}:foundation-model/${FoundationModel}"
 ```
 
-### 3. Set Up Knowledge Base
-
-Define vector store configuration and embedding model:
+### 3. Create Agent
 
 ```yaml
-Resources:
+  BedrockAgent:
+    Type: AWS::Bedrock::Agent
+    Properties:
+      AgentName: !Sub "${AWS::StackName}-agent"
+      AgentResourceRoleArn: !GetAtt AgentRole.Arn
+      FoundationModelArn: !Sub "arn:aws:bedrock:${AWS::Region}::foundation-model/${FoundationModel}"
+      AutoPrepare: true
+      Instruction: |
+        You are a helpful assistant. Use the knowledge base to answer questions.
+```
+
+### 4. Create Knowledge Base
+
+```yaml
+  KnowledgeBaseRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: bedrock.amazonaws.com
+            Action: sts:AssumeRole
+
   KnowledgeBase:
     Type: AWS::Bedrock::KnowledgeBase
     Properties:
       Name: !Sub "${AWS::StackName}-kb"
-      RoleArn: !Ref KnowledgeBaseRole
+      RoleArn: !GetAtt KnowledgeBaseRole.Arn
       KnowledgeBaseConfiguration:
         Type: VECTOR
         VectorKnowledgeBaseConfiguration:
-          EmbeddingModelArn: !Ref EmbeddingModel
+          EmbeddingModelArn: !Sub "arn:aws:bedrock:${AWS::Region}::embedding-model/amazon.titan-embed-text-v1"
 ```
 
-### 4. Configure Data Sources
-
-Connect S3 buckets or other data sources to knowledge base:
+### 5. Create Data Source
 
 ```yaml
-Resources:
+  DataBucket:
+    Type: AWS::S3::Bucket
+
   S3DataSource:
     Type: AWS::Bedrock::DataSource
     Properties:
@@ -113,69 +120,235 @@ Resources:
             - documents/
 ```
 
-### 5. Add Guardrails
+### 6. Add Guardrail
 
-Implement content moderation policies:
+```yaml
+  Guardrail:
+    Type: AWS::Bedrock::Guardrail
+    Properties:
+      Name: !Sub "${AWS::StackName}-guardrail"
+      BlockedInputMessaging: "I cannot help with that request."
+      ContentPolicyConfig:
+        filtersConfig:
+          - type: PROFANITY
+          - type: MISCONDUCT
+```
+
+### 7. Create Action Group
+
+```yaml
+  ActionLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: python3.12
+      Handler: index.handler
+      Role: !GetAtt ActionLambdaRole.Arn
+      Code:
+        ZipFile: |
+          def handler(event, context):
+              return {"statusCode": 200, "body": "{\"result\": \"success\"}"}
+
+  ActionGroup:
+    Type: AWS::Bedrock::AgentActionGroup
+    Properties:
+      ActionGroupName: api-operations
+      ActionGroupState: ENABLED
+      AgentId: !GetAtt BedrockAgent.AgentId
+      ActionGroupExecutor:
+        Lambda: !Ref ActionLambdaFunction
+      FunctionSchema:
+        functionConfigurations:
+          - function: |
+              { "name": "get_inventory", "description": "Get current inventory status", "parameters": { "type": "object", "properties": { "sku": { "type": "string" } }, "required": [] } }
+```
+
+### 8. Validate Before Deploy
+
+Always validate the template before deployment:
+
+```bash
+aws cloudformation validate-template --template-body file://bedrock-template.yaml
+```
+
+### 9. Verify After Deploy
+
+```bash
+# Check agent status
+aws bedrock-agent get-agent --agent-id $(aws cloudformation describe-stacks --stack-name STACK_NAME --query 'Stacks[0].Outputs[?OutputKey==`AgentId`].OutputValue' --output text)
+
+# Check knowledge base sync status
+aws bedrock-agent list-knowledge-bases --agent-id AGENT_ID
+
+# Test guardrail
+aws bedrock-runtime apply_guardrail --guardrail-identifier GUARDRAIL_ID --source SOURCE
+```
+
+## Examples
+
+### Minimal RAG Agent Template
+
+Complete working template for a RAG-enabled agent:
+
+```yaml
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Bedrock RAG Agent with Knowledge Base"
+
+Parameters:
+  FoundationModel:
+    Type: String
+    Default: anthropic.claude-3-sonnet-20240229-v1:0
+
+Resources:
+  # IAM Role for Agent
+  AgentRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${AWS::StackName}-agent-role"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: bedrock.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: InvokeModel
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: bedrock:InvokeModel
+                Resource: "*"
+
+  # IAM Role for Knowledge Base
+  KnowledgeBaseRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${AWS::StackName}-kb-role"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: bedrock.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: S3Access
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: s3:GetObject
+                Resource: !Sub "${DataBucket.Arn}/*"
+
+  # S3 Bucket for Documents
+  DataBucket:
+    Type: AWS::S3::Bucket
+
+  # Knowledge Base
+  KnowledgeBase:
+    Type: AWS::Bedrock::KnowledgeBase
+    Properties:
+      Name: !Sub "${AWS::StackName}-kb"
+      RoleArn: !GetAtt KnowledgeBaseRole.Arn
+      KnowledgeBaseConfiguration:
+        Type: VECTOR
+        VectorKnowledgeBaseConfiguration:
+          EmbeddingModelArn: !Sub "arn:aws:bedrock:${AWS::Region}::embedding-model/amazon.titan-embed-text-v1"
+
+  # Data Source
+  DataSource:
+    Type: AWS::Bedrock::DataSource
+    Properties:
+      KnowledgeBaseId: !Ref KnowledgeBase
+      Name: !Sub "${AWS::StackName}-ds"
+      Type: S3
+      DataSourceConfiguration:
+        S3Configuration:
+          BucketArn: !GetAtt DataBucket.Arn
+
+  # Bedrock Agent
+  BedrockAgent:
+    Type: AWS::Bedrock::Agent
+    Properties:
+      AgentName: !Sub "${AWS::StackName}-agent"
+      AgentResourceRoleArn: !GetAtt AgentRole.Arn
+      FoundationModelArn: !Sub "arn:aws:bedrock:${AWS::Region}::foundation-model/${FoundationModel}"
+      AutoPrepare: true
+      Instruction: |
+        You are a helpful assistant. Use the knowledge base to answer user questions accurately.
+
+Outputs:
+  AgentId:
+    Description: Bedrock Agent ID
+    Value: !GetAtt BedrockAgent.AgentId
+  KnowledgeBaseId:
+    Description: Knowledge Base ID
+    Value: !Ref KnowledgeBase
+```
+
+### Guardrail with Content Filtering
 
 ```yaml
 Resources:
   Guardrail:
     Type: AWS::Bedrock::Guardrail
     Properties:
-      Name: content-moderation
-      BlockedInputMessaging:
-        Text: "I cannot help with that request."
-      ContentPolicyConfig:
-        FiltersConfig:
-          HarmfulContent: {}
-```
-
-### 6. Create Action Groups
-
-Define Lambda functions for agent API operations:
-
-```yaml
-Resources:
-  ActionGroup:
-    Type: AWS::Bedrock::AgentActionGroup
-    Properties:
-      ActionGroupName: api-operations
-      ActionGroupState: ENABLED
-      ParentAgentId: !Ref BedrockAgent
-      FunctionSchema:
-        Functions:
-          - Name: GetInventory
-            Description: Get current inventory status
-            Parameters:
-              type: object
-        ActionExecutor:
-          Lambda: !Ref ActionLambdaFunction
-```
-
-### 7. Configure Flows
-
-Build workflow orchestration:
-
-```yaml
-Resources:
-  Flow:
-    Type: AWS::Bedrock::Flow
-    Properties:
-      Name: !Sub "${AWS::StackName}-flow"
-      Definition:
-        entities:
-          - id: agent-1
-            type: Agent
-            name: DataProcessor
-          - id: lambda-1
-            type: Lambda
-            name: DataValidator
-        connections:
-          - from: lambda-1
-            to: agent-1
+      Name: !Sub "${AWS::StackName}-guardrail"
+      blockedInputMessaging: "Content blocked by safety filters."
+      blockedOutputMessaging: "Response filtered for safety."
+      contentPolicyConfig:
+        filtersConfig:
+          - type: PROFANITY
+            inputStrength: HIGH
+            outputStrength: HIGH
+          - type: MISCONDUCT
+            inputStrength: HIGH
+            outputStrength: HIGH
+      sensitiveInformationPolicyConfig:
+        piiEntitiesConfig:
+          - type: EMAIL
+            action: ANONYMIZE
+          - type: SSN
+            action: BLOCK
 ```
 
 ## Best Practices
+
+### Security
+- Use least privilege IAM policies for agent and knowledge base roles
+- Restrict web crawl data sources to trusted internal domains
+- Encrypt sensitive data in knowledge bases
+- Parameterize all TemplateURL values for nested stacks
+
+### Cost Optimization
+- Select appropriate model size for task complexity
+- Configure retrieval filtering to reduce token usage
+- Set chunk size limits to control storage costs
+- Monitor usage with CloudWatch dashboards
+
+### Performance
+- Optimize chunk size for embedding quality
+- Use provisioned throughput for high-traffic vector stores
+- Configure appropriate knowledge base sync intervals
+- Implement caching for frequently accessed content
+
+### Validation
+- Always run `aws cloudformation validate-template` before deploy
+- Verify agent status after stack creation completes
+- Test guardrails with sample inputs
+- Monitor knowledge base sync status in CloudWatch
+
+## Constraints and Warnings
+
+For detailed limits, see [constraints.md](references/constraints.md):
+
+- **Regional limits**: Not all models available in all regions
+- **Agent initialization**: AutoPrepare may take several minutes
+- **Knowledge base sync**: S3 sync is near-instant; web crawl takes longer
+- **Web crawl security**: Always restrict to trusted domains to prevent prompt injection
+- **Token limits**: Configure MaxTokens parameter for your use case
+- **Quota management**: Request quota increases via AWS Support if needed
 
 ### Security
 
@@ -219,15 +392,14 @@ Resources:
 
 ## References
 
-For detailed implementation guidance, see:
-
-- **[constraints.md](references/constraints.md)** - Resource limits (agent limits, knowledge base limits, guardrail limits, flow limits), model availability constraints (regional availability, model updates, rate limiting, token limits), operational constraints (agent initialization, knowledge base sync, vector store limits, RAG accuracy), security constraints (PII protection, agent permissions, VPC endpoints, environment variable security, web crawl security, nested template security, input validation), and cost considerations (on-demand pricing, knowledge base storage, guardrail usage, token usage)
+- **[constraints.md](references/constraints.md)** - Resource limits, regional constraints, operational limits, and cost considerations
+- **[reference.md](references/reference.md)** - API reference and resource properties
+- **[examples.md](references/examples.md)** - Additional usage examples
 
 ## Related Resources
 
 - [Amazon Bedrock Documentation](https://docs.aws.amazon.com/bedrock/)
-- [AWS CloudFormation User Guide](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/)
-- [Bedrock Agents](https://docs.aws.amazon.com/bedrock/latest/userguide/agents.html)
+- [CloudFormation Bedrock Resource Types](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-bedrock-agent.html)
+- [Bedrock Agents User Guide](https://docs.aws.amazon.com/bedrock/latest/userguide/agents.html)
 - [Bedrock Knowledge Bases](https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html)
 - [Bedrock Guardrails](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html)
-- [Bedrock Flows](https://docs.aws.amazon.com/bedrock/latest/userguide/flows.html)

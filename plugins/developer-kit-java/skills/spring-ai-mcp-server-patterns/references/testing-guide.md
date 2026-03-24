@@ -142,7 +142,7 @@ class McpServerDatabaseIntegrationTest {
 }
 ```
 
-## Slice Test with @WebMvcTest
+## Slice Test with `@WebMvcTest`
 
 ```java
 @WebMvcTest(controllers = McpController.class)

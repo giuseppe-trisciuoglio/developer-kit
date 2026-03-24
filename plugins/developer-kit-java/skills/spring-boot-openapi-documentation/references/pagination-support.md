@@ -40,7 +40,7 @@ public Page<Book> getBooksPaginated(
 }
 ```
 
-### Pageable with @ParameterObject
+### Pageable with `@ParameterObject`
 
 ```java
 @GetMapping("/search")

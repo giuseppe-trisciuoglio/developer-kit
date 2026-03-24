@@ -6,26 +6,15 @@ allowed-tools: Read, Write, Bash
 
 # AWS CloudFormation DynamoDB Patterns
 
-Create production-ready NoSQL database infrastructure using AWS CloudFormation templates.
+Provides production-ready NoSQL database infrastructure patterns using AWS CloudFormation templates with DynamoDB tables, GSIs, LSIs, auto-scaling, encryption, TTL, and streams.
 
 ## Overview
 
-Create production-ready NoSQL database infrastructure using AWS CloudFormation templates. This skill covers DynamoDB tables, primary keys, secondary indexes (GSI/LSI), capacity modes, auto-scaling, encryption, TTL, streams, and best practices for parameters, outputs, and cross-stack references.
+Covers DynamoDB tables, primary keys, secondary indexes (GSI/LSI), capacity modes, auto-scaling, encryption, TTL, streams, and best practices for parameters, outputs, and cross-stack references.
 
 ## When to Use
 
-Use this skill when:
-- Creating new DynamoDB tables with CloudFormation
-- Configuring primary keys (partition key, sort key)
-- Creating Global Secondary Indexes (GSI) and Local Secondary Indexes (LSI)
-- Setting up capacity modes (on-demand or provisioned)
-- Implementing auto-scaling with Application Auto Scaling
-- Enabling point-in-time recovery and backup
-- Configuring encryption at rest and in transit
-- Setting up TTL for automatic data expiration
-- Enabling DynamoDB Streams for change data capture
-- Organizing templates with Parameters, Outputs, Mappings, Conditions
-- Implementing cross-stack references with export/import
+Creating DynamoDB tables, configuring keys and indexes, setting capacity modes, implementing auto-scaling, enabling encryption/TTL/streams, and organizing CloudFormation templates.
 
 ## Instructions
 
@@ -39,6 +28,10 @@ Follow these steps to create DynamoDB tables with CloudFormation:
 6. **Enable Streams**: Configure stream for change data capture
 7. **Add Auto Scaling**: Implement Application Auto Scaling for provisioned capacity
 8. **Create Backup**: Enable point-in-time recovery
+9. **Validate Template**: Run `aws cloudformation validate-template` before deployment
+10. **Deploy Stack**: Use `aws cloudformation create-stack` or `update-stack`
+11. **Monitor Events**: Check `aws cloudformation describe-stack-events` for failures or `ROLLBACK` status
+12. **Handle Rollback**: On failure, review events for resource errors, fix the template, and re-deploy
 
 ## Quick Reference
 

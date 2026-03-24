@@ -1,6 +1,25 @@
 # AWS4 Draw.io Shape Reference
 
-Complete catalog of AWS Architecture Icon shapes for use in draw.io diagrams.
+Complete catalog of AWS Architecture Icon shapes for draw.io diagrams.
+
+## AWS Service Color Codes
+
+Each AWS service category uses official colors for `resourceIcon` shapes. All `resourceIcon` shapes **must** use `strokeColor=#ffffff` and `gradientDirection=north`.
+
+| Category | fillColor | gradientColor | strokeColor | Services |
+|----------|-----------|---------------|-------------|----------|
+| **Compute** | `#D05C17` | `#F78E04` | `#ffffff` | EC2, ECS, EKS, Fargate, Auto Scaling |
+| **Compute (dedicated)** | `#ED7100` | none | none | Lambda (`lambda_function`), ALB (`applicationLoadBalancer`) |
+| **Storage** | `#277116` | `#60A337` | `#ffffff` | S3, EBS, EFS, Glacier |
+| **Database** | `#3334B9` | `#4D72F3` | `#ffffff` | RDS, DynamoDB, ElastiCache, Aurora, Redshift |
+| **Networking** | `#5A30B5` | `#945DF2` | `#ffffff` | CloudFront, Route 53, ELB, API Gateway, NAT GW, IGW, VPN GW |
+| **Security** | `#C7131F` | `#F54749` | `#ffffff` | IAM, Cognito, KMS, WAF, Shield, Secrets Manager |
+| **Analytics** | `#5A30B5` | `#945DF2` | `#ffffff` | Kinesis, Athena, Glue, EMR, Lake Formation |
+| **Application Integration** | `#BC1356` | `#F54749` | `#ffffff` | SQS, SNS, EventBridge, Step Functions |
+| **Management** | `#BC1356` | `#F54749` | `#ffffff` | CloudWatch, CloudFormation, Systems Manager, CloudTrail |
+| **Machine Learning** | `#116D5B` | `#4AB29A` | `#ffffff` | SageMaker, Bedrock, Comprehend, Lex, Rekognition |
+| **Developer Tools** | `#5A30B5` | `#945DF2` | `#ffffff` | CodePipeline, CodeBuild, CodeDeploy |
+| **General / External** | `#232F3E` | none | none | Users, Mobile Client, Corporate DC (dedicated shapes) |
 
 ## Group Containers
 

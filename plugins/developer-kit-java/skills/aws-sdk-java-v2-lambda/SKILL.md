@@ -12,13 +12,10 @@ AWS Lambda is a compute service that runs code without managing servers. Use thi
 
 ## When to Use
 
-- Invoking Lambda functions programmatically
-- Creating or updating Lambda functions
-- Managing Lambda function configurations
-- Working with Lambda environment variables
-- Managing Lambda layers and aliases
-- Implementing asynchronous Lambda invocations
-- Integrating Lambda with Spring Boot
+- Invoking Lambda functions from Java applications
+- Deploying and updating Lambda functions via SDK
+- Managing function configurations and layers
+- Integrating Lambda with Spring Boot applications
 
 ## Quick Reference
 
@@ -103,6 +100,15 @@ CreateFunctionRequest createRequest = CreateFunctionRequest.builder()
 
 lambdaClient.createFunction(createRequest);
 
+// Verify function is active before proceeding
+GetFunctionRequest getRequest = GetFunctionRequest.builder()
+    .functionName("my-function")
+    .build();
+GetFunctionResponse getResponse = lambdaClient.getFunction(getRequest);
+if (!"Active".equals(getResponse.configuration().state())) {
+    throw new IllegalStateException("Function not active: " + getResponse.configuration().stateReason());
+}
+
 // Update code
 UpdateFunctionCodeRequest updateCodeRequest = UpdateFunctionCodeRequest.builder()
     .functionName("my-function")
@@ -110,6 +116,12 @@ UpdateFunctionCodeRequest updateCodeRequest = UpdateFunctionCodeRequest.builder(
     .build();
 
 lambdaClient.updateFunctionCode(updateCodeRequest);
+
+// Wait for deployment to complete
+Waiter<GetFunctionConfigurationRequest> waiter = lambdaClient.waiter();
+waiter.waitUntilFunctionUpdatedActive(GetFunctionConfigurationRequest.builder()
+    .functionName("my-function")
+    .build());
 ```
 
 See [function-management.md](references/function-management.md) for complete patterns.
@@ -233,29 +245,21 @@ See [examples.md](references/examples.md) for more examples.
 
 ## Best Practices
 
-- **Reuse Lambda clients**: Create once and reuse across invocations
-- **Set appropriate timeouts**: Match client timeout to Lambda function timeout
-- **Use async invocation**: For fire-and-forget scenarios
-- **Handle errors properly**: Check for function errors and status codes
-- **Use environment variables**: For function configuration
-- **Implement retry logic**: For transient failures with exponential backoff
-- **Monitor invocations**: Use CloudWatch metrics and logs
-- **Version functions**: Use aliases and versions for production
-- **Use VPC**: For accessing resources in private subnets
-- **Optimize payload size**: Keep payloads small for better performance
+- **Reuse clients**: Create `LambdaClient`/`LambdaAsyncClient` once; they are thread-safe
+- **Use async client**: For fire-and-forget invocations, use `LambdaAsyncClient` with `CompletableFuture`
+- **Verify deployments**: Always wait for function state to be `Active` after create/update operations
+- **Limit payload size**: Keep request/response payloads under 256KB for async, 6MB for sync invocations
+- **Configure timeouts**: Set client read timeout slightly higher than Lambda function timeout
+- **Use latest runtime**: Specify `Runtime.JAVA17` or newer for improved cold start performance
 
 ## Constraints and Warnings
 
-- **Payload Size**: Limited to 6MB for sync, 256KB for async invocation
-- **Timeout**: Maximum function timeout is 15 minutes
-- **Memory**: Memory configuration affects CPU and network performance
-- **Concurrency**: Account-level concurrency limits can cause throttling
-- **Cold Starts**: New invocations may have delays for initialization
-- **VPC**: VPC functions need proper security group and subnet configuration
-- **Layers**: Lambda layers count towards deployment package size limit
-- **Reserved Concurrency**: Prevents throttling but limits maximum scaling
-- **Event Source Mappings**: Some event sources require special configuration
-- **Cost**: Unexpected usage can lead to high bills; set budgets and alerts
+- **Payload Limit**: 6MB (sync), 256KB (async invocation)
+- **Timeout**: Max 900 seconds (15 minutes) per invocation
+- **Cold Starts**: JVM-based functions have longer cold starts; use GraalVM Native Image for improvement
+- **Deployment Size**: Function code + layers must not exceed 50MB (zipped) or 250MB (unzipped)
+- **Concurrency**: Default 1000 per region; use reserved concurrency to guarantee capacity
+- **Cost**: Monitor with CloudWatch metrics; set billing alerts to prevent runaway costs
 
 ## References
 

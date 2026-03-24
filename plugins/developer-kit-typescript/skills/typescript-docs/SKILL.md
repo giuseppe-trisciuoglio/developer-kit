@@ -8,14 +8,21 @@ allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 
 Generate production-ready TypeScript documentation with layered architecture for multiple audiences. Supports API docs with TypeDoc, ADRs, and framework-specific patterns.
 
+## Overview
+
+Use JSDoc annotations for inline documentation, TypeDoc for API reference generation, and ADRs for tracking design choices.
+
+**Key capabilities:**
+- TypeDoc configuration and API documentation generation
+- JSDoc patterns for all TypeScript constructs
+- ADR creation and maintenance
+- Framework-specific patterns (NestJS, React, Express, Angular, Vue)
+- ESLint validation rules for documentation quality
+- GitHub Actions pipeline setup
+
 ## When to Use
 
-- "generate TypeScript API docs" - Create TypeDoc configuration and generate documentation
-- "document this TypeScript module" - Add comprehensive JSDoc to a module
-- "create ADR for TypeScript decision" - Document architectural decisions
-- "setup documentation pipeline" - Configure automated documentation generation
-- "document React component" - Create component documentation with examples
-- "create API reference" - Generate comprehensive API documentation
+Use this skill when creating API documentation, architectural decision records, code examples, or framework-specific patterns for NestJS, Express, React, Angular, or Vue.
 
 ## Quick Reference
 
@@ -138,6 +145,106 @@ jobs:
     "jsdoc/require-param-description": "error",
     "jsdoc/require-returns-description": "error",
     "jsdoc/require-example": "warn"
+  }
+}
+```
+
+**If validation fails:** review ESLint errors, fix JSDoc comments (add missing descriptions, add `@param`/`@returns`/`@throws` where absent), re-run `eslint --ext .ts src/` until all errors pass before committing.
+
+## Examples
+
+### Documenting a React Hook
+
+```typescript
+/**
+ * Custom hook for fetching paginated data
+ *
+ * @remarks
+ * This hook manages loading states, error handling, and automatic
+ * refetching when the page or filter changes.
+ *
+ * @example
+ * ```tsx
+ * function UserList() {
+ *   const { data, isLoading, error } = usePaginatedData('/api/users', {
+ *     page: currentPage,
+ *     limit: 10
+ *   });
+ *
+ *   if (isLoading) return <Spinner />;
+ *   if (error) return <ErrorMessage error={error} />;
+ *   return <UserTable users={data.items} />;
+ * }
+ * ```
+ *
+ * @param endpoint - API endpoint to fetch from
+ * @param options - Pagination and filter options
+ * @returns Paginated response with items and metadata
+ */
+export function usePaginatedData<T>(
+  endpoint: string,
+  options: PaginationOptions
+): UsePaginatedDataResult<T> {
+  // Implementation
+}
+```
+
+### Documenting a Utility Function
+
+```typescript
+/**
+ * Validates email addresses using RFC 5322 specification
+ *
+ * @param email - Email address to validate
+ * @returns True if email format is valid
+ *
+ * @example
+ * ```typescript
+ * isValidEmail('user@example.com'); // true
+ * isValidEmail('invalid-email');      // false
+ * ```
+ *
+ * @performance
+ * O(n) where n is the email string length
+ *
+ * @see {@link https://tools.ietf.org/html/rfc5322} RFC 5322 Specification
+ */
+export function isValidEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+```
+
+### NestJS Controller Documentation
+
+```typescript
+/**
+ * REST API endpoints for user management
+ *
+ * @remarks
+ * All endpoints require authentication via Bearer token.
+ * Rate limiting: 100 requests per minute per user.
+ *
+ * @example
+ * ```bash
+ * curl -H "Authorization: Bearer <token>" https://api.example.com/users/123
+ * ```
+ *
+ * @security
+ * - All endpoints use HTTPS
+ * - JWT tokens expire after 1 hour
+ * - Sensitive data is redacted from logs
+ */
+@Controller('users')
+export class UsersController {
+  /**
+   * Retrieves a user by ID
+   * @param id - User UUID
+   * @returns User profile (password excluded)
+   */
+  @Get(':id')
+  async getUser(@Param('id') id: string): Promise<UserProfile> {
+    // Implementation
   }
 }
 ```

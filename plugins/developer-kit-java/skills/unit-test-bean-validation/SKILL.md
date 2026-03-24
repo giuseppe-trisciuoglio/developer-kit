@@ -1,41 +1,39 @@
 ---
 name: unit-test-bean-validation
-description: Provides patterns for unit testing Jakarta Bean Validation (`@Valid`, `@NotNull`, `@Min`, `@Max`, etc.) with custom validators and constraint violations. Validates logic without Spring context. Use when ensuring data integrity and validation rules are correct.
+description: Provides patterns for unit testing Jakarta Bean Validation (JSR-380), including @Valid, @NotNull, @Min, @Max, @Email constraints with Hibernate Validator. Generates custom validator tests, constraint violation assertions, validation groups, and parameterized validation tests. Validates data integrity logic without Spring context. Use when writing validation tests, bean validation tests, or testing custom constraint validators.
 allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
-# Unit Testing Bean Validation and Custom Validators
+# Unit Testing Jakarta Bean Validation
 
 ## Overview
 
-This skill provides patterns for unit testing Jakarta Bean Validation annotations and custom validator implementations using JUnit 5. It covers testing built-in constraints (`@NotNull`, `@Email`, `@Min`, `@Max`), creating custom validators, cross-field validation, validation groups, and parameterized testing scenarios.
+This skill provides executable patterns for unit testing Jakarta Bean Validation annotations and custom validators using JUnit 5. Covers built-in constraints (`@NotNull`, `@Email`, `@Min`, `@Max`, `@Size`), custom `@Constraint` implementations, cross-field validation, and validation groups. Tests run in isolation without Spring context.
 
-## When to Use This Skill
+## When to Use
 
-Use this skill when:
-- Testing Jakarta Bean Validation (`@`NotNull, `@`Email, `@`Min, etc.)
-- Testing custom `@`Constraint validators
-- Verifying constraint violation error messages
-- Testing cross-field validation logic
-- Want fast validation tests without Spring context
-- Testing complex validation scenarios and edge cases
+- Writing unit tests for Jakarta Bean Validation or JSR-380 constraints
+- Testing custom `@Constraint` validators and constraint violation messages
+- Testing bean validation logic in DTOs and request objects
+- Verifying cross-field validation (e.g., password matching)
+- Testing conditional validation with validation groups
+- Fast validation tests without Spring Boot context
 
 ## Instructions
 
-1. **Add validation dependencies**: Include jakarta.validation-api and hibernate-validator in your test classpath
-2. **Create a Validator instance**: Use `Validation.buildDefaultValidatorFactory().getValidator()` in `@`BeforeEach
-3. **Test valid scenarios**: Always test that valid objects pass validation without violations
-4. **Test each constraint separately**: Create focused tests for individual validation rules
-5. **Extract violation details**: Use assertions to verify property path, message, and invalid value
-6. **Test custom validators**: Write dedicated tests for each custom constraint implementation
-7. **Use parameterized tests**: Apply `@`ParameterizedTest for testing multiple invalid inputs efficiently
-8. **Test validation groups**: Verify conditional validation based on validation groups
+1. **Add dependencies**: Include `jakarta.validation-api` and `hibernate-validator` in test scope
+2. **Create base test class**: Build `Validator` once in `@BeforeEach` using `Validation.buildDefaultValidatorFactory()`
+3. **Test valid cases first**: Verify objects pass without violations
+4. **Test invalid cases**: Assert constraint violations include correct property path and message
+5. **Extract violation details**: Use `getPropertyPath()`, `getMessage()`, `getInvalidValue()`
+6. **Test custom validators**: See `references/custom-validators.md` for patterns
+7. **Use parameterized tests**: Test multiple inputs efficiently with `@ParameterizedTest`
+8. **Group validation tests**: Use validation groups for conditional rules (see `references/advanced-patterns.md`)
 
 ## Examples
 
-## Setup: Bean Validation
+### Maven Setup
 
-### Maven
 ```xml
 <dependency>
   <groupId>jakarta.validation</groupId>
@@ -47,453 +45,135 @@ Use this skill when:
   <scope>test</scope>
 </dependency>
 <dependency>
-  <groupId>org.junit.jupiter</groupId>
-  <artifactId>junit-jupiter</artifactId>
-  <scope>test</scope>
-</dependency>
-<dependency>
   <groupId>org.assertj</groupId>
   <artifactId>assertj-core</artifactId>
   <scope>test</scope>
 </dependency>
 ```
 
-### Gradle
-```kotlin
-dependencies {
-  implementation("jakarta.validation:jakarta.validation-api")
-  testImplementation("org.hibernate.validator:hibernate-validator")
-  testImplementation("org.junit.jupiter:junit-jupiter")
-  testImplementation("org.assertj:assertj-core")
-}
-```
-
-## Basic Pattern: Testing Validation Constraints
-
-### Setup Validator
+### Common Test Setup
 
 ```java
-import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
-import jakarta.validation.Validation;
+import jakarta.validation.*;
 import jakarta.validation.ConstraintViolation;
+import jakarta.validation.path.Path;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.*;
 
-class UserValidationTest {
-
-  private Validator validator;
+class BaseValidationTest {
+  protected Validator validator;
 
   @BeforeEach
-  void setUp() {
-    ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-    validator = factory.getValidator();
-  }
-
-  @Test
-  void shouldPassValidationWithValidUser() {
-    User user = new User("Alice", "alice@example.com", 25);
-    
-    Set<ConstraintViolation<User>> violations = validator.validate(user);
-    
-    assertThat(violations).isEmpty();
-  }
-
-  @Test
-  void shouldFailValidationWhenNameIsNull() {
-    User user = new User(null, "alice@example.com", 25);
-    
-    Set<ConstraintViolation<User>> violations = validator.validate(user);
-    
-    assertThat(violations)
-      .hasSize(1)
-      .extracting(ConstraintViolation::getMessage)
-      .contains("must not be blank");
+  void setUpValidator() {
+    validator = Validation.buildDefaultValidatorFactory().getValidator();
   }
 }
 ```
 
-## Testing Individual Constraint Annotations
-
-### Test `@`NotNull, `@`NotBlank, `@`Email
+### Testing Basic Constraints
 
 ```java
-class UserDtoTest {
+class UserDtoTest extends BaseValidationTest {
 
-  private Validator validator;
+  @Test
+  void shouldPassValidationWithValidUser() {
+    UserDto user = new UserDto("Alice", "alice@example.com", 25);
+    assertThat(validator.validate(user)).isEmpty();
+  }
 
-  @BeforeEach
-  void setUp() {
-    validator = Validation.buildDefaultValidatorFactory().getValidator();
+  @Test
+  void shouldFailWhenNameIsNull() {
+    UserDto user = new UserDto(null, "alice@example.com", 25);
+    assertThat(validator.validate(user))
+      .extracting(ConstraintViolation::getMessage)
+      .contains("must not be blank");
   }
 
   @Test
   void shouldFailWhenEmailIsInvalid() {
-    UserDto dto = new UserDto("Alice", "invalid-email");
-    
-    Set<ConstraintViolation<UserDto>> violations = validator.validate(dto);
-    
+    UserDto user = new UserDto("Alice", "invalid-email", 25);
+    Set<ConstraintViolation<UserDto>> violations = validator.validate(user);
     assertThat(violations)
       .extracting(ConstraintViolation::getPropertyPath)
       .extracting(Path::toString)
       .contains("email");
-    assertThat(violations)
-      .extracting(ConstraintViolation::getMessage)
-      .contains("must be a valid email address");
   }
 
   @Test
-  void shouldFailWhenNameIsBlank() {
-    UserDto dto = new UserDto("   ", "alice@example.com");
-    
-    Set<ConstraintViolation<UserDto>> violations = validator.validate(dto);
-    
-    assertThat(violations)
-      .extracting(ConstraintViolation::getPropertyPath)
-      .extracting(Path::toString)
-      .contains("name");
-  }
-
-  @Test
-  void shouldFailWhenAgeIsNegative() {
-    UserDto dto = new UserDto("Alice", "alice@example.com", -5);
-    
-    Set<ConstraintViolation<UserDto>> violations = validator.validate(dto);
-    
-    assertThat(violations)
+  void shouldFailWhenAgeIsBelowMinimum() {
+    UserDto user = new UserDto("Alice", "alice@example.com", -1);
+    assertThat(validator.validate(user))
       .extracting(ConstraintViolation::getMessage)
       .contains("must be greater than or equal to 0");
   }
 
   @Test
-  void shouldPassWhenAllConstraintsSatisfied() {
-    UserDto dto = new UserDto("Alice", "alice@example.com", 25);
-    
-    Set<ConstraintViolation<UserDto>> violations = validator.validate(dto);
-    
-    assertThat(violations).isEmpty();
+  void shouldFailWhenMultipleConstraintsViolated() {
+    UserDto user = new UserDto(null, "invalid", -5);
+    assertThat(validator.validate(user)).hasSize(3);
   }
 }
 ```
 
-## Testing `@`Min, `@`Max, `@`Size Constraints
+### Testing Custom Validators
 
-```java
-class ProductDtoTest {
+For custom constraint patterns, see `references/custom-validators.md`:
+- Creating `@Constraint` annotations
+- Implementing `ConstraintValidator`
+- Cross-field validation (password matching)
+- Stateless validator best practices
 
-  private Validator validator;
+### Testing Validation Groups
 
-  @BeforeEach
-  void setUp() {
-    validator = Validation.buildDefaultValidatorFactory().getValidator();
-  }
-
-  @Test
-  void shouldFailWhenPriceIsBelowMinimum() {
-    ProductDto product = new ProductDto("Laptop", -100.0);
-    
-    Set<ConstraintViolation<ProductDto>> violations = validator.validate(product);
-    
-    assertThat(violations)
-      .extracting(ConstraintViolation::getMessage)
-      .contains("must be greater than 0");
-  }
-
-  @Test
-  void shouldFailWhenQuantityExceedsMaximum() {
-    ProductDto product = new ProductDto("Laptop", 1000.0, 999999);
-    
-    Set<ConstraintViolation<ProductDto>> violations = validator.validate(product);
-    
-    assertThat(violations)
-      .extracting(ConstraintViolation::getMessage)
-      .contains("must be less than or equal to 10000");
-  }
-
-  @Test
-  void shouldFailWhenDescriptionTooLong() {
-    String longDescription = "x".repeat(1001);
-    ProductDto product = new ProductDto("Laptop", 1000.0, longDescription);
-    
-    Set<ConstraintViolation<ProductDto>> violations = validator.validate(product);
-    
-    assertThat(violations)
-      .extracting(ConstraintViolation::getMessage)
-      .contains("size must be between 0 and 1000");
-  }
-}
-```
-
-## Testing Custom Validators
-
-### Create and Test Custom Constraint
-
-```java
-// Custom constraint annotation
-@Target(ElementType.FIELD)
-@Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = PhoneNumberValidator.class)
-public @interface ValidPhoneNumber {
-  String message() default "invalid phone number format";
-  Class<?>[] groups() default {};
-  Class<? extends Payload>[] payload() default {};
-}
-
-// Custom validator implementation
-public class PhoneNumberValidator implements ConstraintValidator<ValidPhoneNumber, String> {
-  private static final String PHONE_PATTERN = "^\\d{3}-\\d{3}-\\d{4}$";
-
-  @Override
-  public boolean isValid(String value, ConstraintValidatorContext context) {
-    if (value == null) return true; // null values handled by @NotNull
-    return value.matches(PHONE_PATTERN);
-  }
-}
-
-// Unit test for custom validator
-class PhoneNumberValidatorTest {
-
-  private Validator validator;
-
-  @BeforeEach
-  void setUp() {
-    validator = Validation.buildDefaultValidatorFactory().getValidator();
-  }
-
-  @Test
-  void shouldAcceptValidPhoneNumber() {
-    Contact contact = new Contact("Alice", "555-123-4567");
-    
-    Set<ConstraintViolation<Contact>> violations = validator.validate(contact);
-    
-    assertThat(violations).isEmpty();
-  }
-
-  @Test
-  void shouldRejectInvalidPhoneNumberFormat() {
-    Contact contact = new Contact("Alice", "5551234567"); // No dashes
-    
-    Set<ConstraintViolation<Contact>> violations = validator.validate(contact);
-    
-    assertThat(violations)
-      .extracting(ConstraintViolation::getMessage)
-      .contains("invalid phone number format");
-  }
-
-  @Test
-  void shouldRejectPhoneNumberWithLetters() {
-    Contact contact = new Contact("Alice", "ABC-DEF-GHIJ");
-    
-    Set<ConstraintViolation<Contact>> violations = validator.validate(contact);
-    
-    assertThat(violations).isNotEmpty();
-  }
-
-  @Test
-  void shouldAllowNullPhoneNumber() {
-    Contact contact = new Contact("Alice", null);
-    
-    Set<ConstraintViolation<Contact>> violations = validator.validate(contact);
-    
-    assertThat(violations).isEmpty();
-  }
-}
-```
-
-## Testing Cross-Field Validation
-
-### Custom Multi-Field Constraint
-
-```java
-// Custom constraint for cross-field validation
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = PasswordMatchValidator.class)
-public @interface PasswordsMatch {
-  String message() default "passwords do not match";
-  Class<?>[] groups() default {};
-  Class<? extends Payload>[] payload() default {};
-}
-
-// Validator implementation
-public class PasswordMatchValidator implements ConstraintValidator<PasswordsMatch, ChangePasswordRequest> {
-  @Override
-  public boolean isValid(ChangePasswordRequest value, ConstraintValidatorContext context) {
-    if (value == null) return true;
-    return value.getNewPassword().equals(value.getConfirmPassword());
-  }
-}
-
-// Unit test
-class PasswordValidationTest {
-
-  private Validator validator;
-
-  @BeforeEach
-  void setUp() {
-    validator = Validation.buildDefaultValidatorFactory().getValidator();
-  }
-
-  @Test
-  void shouldPassWhenPasswordsMatch() {
-    ChangePasswordRequest request = new ChangePasswordRequest("oldPass", "newPass123", "newPass123");
-    
-    Set<ConstraintViolation<ChangePasswordRequest>> violations = validator.validate(request);
-    
-    assertThat(violations).isEmpty();
-  }
-
-  @Test
-  void shouldFailWhenPasswordsDoNotMatch() {
-    ChangePasswordRequest request = new ChangePasswordRequest("oldPass", "newPass123", "differentPass");
-    
-    Set<ConstraintViolation<ChangePasswordRequest>> violations = validator.validate(request);
-    
-    assertThat(violations)
-      .extracting(ConstraintViolation::getMessage)
-      .contains("passwords do not match");
-  }
-}
-```
-
-## Testing Validation Groups
-
-### Conditional Validation
-
-```java
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public interface CreateValidation {}
-
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public interface UpdateValidation {}
-
-class UserDto {
-  @NotNull(groups = {CreateValidation.class})
-  private String name;
-
-  @Min(value = 1, groups = {CreateValidation.class, UpdateValidation.class})
-  private int age;
-}
-
-class ValidationGroupsTest {
-
-  private Validator validator;
-
-  @BeforeEach
-  void setUp() {
-    validator = Validation.buildDefaultValidatorFactory().getValidator();
-  }
-
-  @Test
-  void shouldRequireNameOnlyDuringCreation() {
-    UserDto user = new UserDto(null, 25);
-    
-    Set<ConstraintViolation<UserDto>> violations = validator.validate(user, CreateValidation.class);
-    
-    assertThat(violations)
-      .extracting(ConstraintViolation::getPropertyPath)
-      .extracting(Path::toString)
-      .contains("name");
-  }
-
-  @Test
-  void shouldAllowNullNameDuringUpdate() {
-    UserDto user = new UserDto(null, 25);
-    
-    Set<ConstraintViolation<UserDto>> violations = validator.validate(user, UpdateValidation.class);
-    
-    assertThat(violations).isEmpty();
-  }
-}
-```
-
-## Testing Parameterized Validation Scenarios
-
-```java
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-
-class EmailValidationTest {
-
-  private Validator validator;
-
-  @BeforeEach
-  void setUp() {
-    validator = Validation.buildDefaultValidatorFactory().getValidator();
-  }
-
-  @ParameterizedTest
-  @ValueSource(strings = {
-    "user@example.com",
-    "john.doe+tag@example.co.uk",
-    "admin123@subdomain.example.com"
-  })
-  void shouldAcceptValidEmails(String email) {
-    UserDto user = new UserDto("Alice", email);
-    
-    Set<ConstraintViolation<UserDto>> violations = validator.validate(user);
-    
-    assertThat(violations).isEmpty();
-  }
-
-  @ParameterizedTest
-  @ValueSource(strings = {
-    "invalid-email",
-    "user@",
-    "@example.com",
-    "user name@example.com"
-  })
-  void shouldRejectInvalidEmails(String email) {
-    UserDto user = new UserDto("Alice", email);
-    
-    Set<ConstraintViolation<UserDto>> violations = validator.validate(user);
-    
-    assertThat(violations).isNotEmpty();
-  }
-}
-```
+For validation groups and parameterized tests, see `references/advanced-patterns.md`:
+- Defining validation group interfaces
+- Conditional validation with `groups` parameter
+- `@ParameterizedTest` with `@ValueSource` and `@CsvSource`
+- Debugging failed validation tests
 
 ## Best Practices
 
-- **Validate at unit test level** before testing service/controller layers
-- **Test both valid and invalid cases** for every constraint
-- **Use custom validators** for business-specific validation rules
-- **Test error messages** to ensure they're user-friendly
-- **Test edge cases**: null, empty string, whitespace-only strings
-- **Use validation groups** for conditional validation rules
-- **Keep validator logic simple** - complex validation belongs in service tests
+- **Test both valid and invalid**: Every constraint needs both passing and failing test cases
+- **Assert violation details**: Verify property path, message, and constraint type
+- **Test edge cases**: null, empty string, whitespace-only, boundary values
+- **Keep validators stateless**: Custom validators must not maintain state
+- **Use clear messages**: Constraint messages should be user-friendly
+- **Group related tests**: Extend `BaseValidationTest` to share validator setup
+- **Test error messages**: Ensure messages match requirements
 
 ## Common Pitfalls
 
-- Forgetting to test null values
-- Not extracting violation details (message, property, constraint type)
-- Testing validation at service/controller level instead of unit tests
+- Forgetting to test null values (most constraints ignore null by default)
+- Not verifying the property path in constraint violations
+- Testing validation at service/controller level instead of unit level
 - Creating overly complex custom validators
-- Not documenting constraint purposes in error messages
+- Missing `@NotNull` for mandatory fields combined with other constraints
 
 ## Constraints and Warnings
 
-- **Constraints ignore null by default**: Except `@`NotNull, most constraints ignore null values; combine with `@`NotNull for mandatory fields
-- **Validator is thread-safe**: Validator instances can be shared across tests, but create new ones for isolation if needed
-- **Message localization**: Test with different locales if your application supports internationalization
-- **Cascading validation**: Use `@`Valid on nested objects to enable cascading validation
-- **Performance consideration**: Validation has overhead; don't over-validate in critical paths
-- **Custom validators must be stateless**: Validator implementations should not maintain state between invocations
-- **Test in isolation**: Validation tests should not depend on Spring context or database
+- **Null handling**: Most constraints ignore null by default — combine `@NotNull` with other constraints for mandatory fields
+- **Thread safety**: `Validator` instances are thread-safe and can be shared
+- **Message localization**: Test with different locales if i18n is required
+- **Cascading validation**: Use `@Valid` on nested objects for recursive validation
+- **Custom validators**: Must be stateless and return `true` for null values
+- **Test isolation**: Validation unit tests should not depend on Spring context or database
 
 ## Troubleshooting
 
-**ValidatorFactory not found**: Ensure `jakarta.validation-api` and `hibernate-validator` are on classpath.
+**ValidatorFactory not found**: Ensure `jakarta.validation-api` and `hibernate-validator` are on test classpath.
 
-**Custom validator not invoked**: Verify `@Constraint(validatedBy = YourValidator.class)` is correctly specified.
+**Custom validator not invoked**: Verify `@Constraint(validatedBy = YourValidator.class)` annotation is correct.
 
-**Null handling confusion**: By default, `@NotNull` checks null, other constraints ignore null (use `@NotNull` with others for mandatory fields).
+**Null values pass validation**: This is expected behavior — constraints ignore null unless `@NotNull` is present.
+
+**Wrong violation count**: Use `hasSize()` to verify exact count, check all fields in the object.
+
+**Property path incorrect**: Ensure the field, not the getter, has the constraint annotation.
 
 ## References
 
 - [Jakarta Bean Validation Spec](https://jakarta.ee/specifications/bean-validation/)
-- [Hibernate Validator Documentation](https://hibernate.org/validator/)
-- [Custom Constraints](https://docs.jboss.org/hibernate/stable/validator/reference/en-US/html_single/#validator-customconstraints)
+- [Hibernate Validator](https://hibernate.org/validator/)
+- Custom validators and cross-field validation: `references/custom-validators.md`
+- Validation groups and parameterized tests: `references/advanced-patterns.md`

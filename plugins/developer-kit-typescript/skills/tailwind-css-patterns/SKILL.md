@@ -8,15 +8,17 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 
 Expert guide for building modern, responsive user interfaces with Tailwind CSS utility-first framework. Covers v4.1+ features including CSS-first configuration, custom utilities, and enhanced developer experience.
 
+## Overview
+
+Provides actionable patterns for responsive, accessible UIs with Tailwind CSS v4.1+. Covers utility composition, dark mode, component patterns, and performance optimization.
+
 ## When to Use
 
-- Styling React/HTML components with utility classes
-- Building responsive layouts with breakpoints
-- Implementing flexbox and grid layouts
-- Managing spacing, colors, and typography
-- Creating custom design systems
-- Optimizing for mobile-first design
-- Building dark mode interfaces
+- Styling React/Vue/Svelte components
+- Building responsive layouts and grids
+- Implementing design systems
+- Adding dark mode support
+- Optimizing CSS workflow
 
 ## Quick Reference
 
@@ -52,13 +54,12 @@ Expert guide for building modern, responsive user interfaces with Tailwind CSS u
 
 ## Instructions
 
-1. **Start Mobile-First**: Write base styles for mobile, add responsive prefixes for larger screens
+1. **Start Mobile-First**: Write base styles for mobile, add responsive prefixes (`sm:`, `md:`, `lg:`) for larger screens
 2. **Use Design Tokens**: Leverage Tailwind's spacing, color, and typography scales
 3. **Compose Utilities**: Combine multiple utilities for complex styles
 4. **Extract Components**: Create reusable component classes for repeated patterns
 5. **Configure Theme**: Customize design tokens in `tailwind.config.js` or using `@theme`
-6. **Optimize for Production**: Configure content paths for CSS purging
-7. **Test Responsive**: Verify layouts at all breakpoint sizes
+6. **Verify Changes**: Test at each breakpoint using DevTools responsive mode. Check for visual regressions and accessibility issues before committing.
 
 ## Examples
 
@@ -99,23 +100,39 @@ function ProductCard({ product }: { product: Product }) {
 
 ## Best Practices
 
-1. **Mobile-First**: Start with mobile styles, add responsive prefixes for larger screens
-2. **Consistent Spacing**: Use Tailwind's spacing scale (4, 8, 12, 16, etc.)
-3. **Color Palette**: Stick to Tailwind's color system for consistency
-4. **Component Extraction**: Extract repeated patterns into components
-5. **Utility Composition**: Prefer utility classes over `@apply`
-6. **Semantic HTML**: Use proper HTML elements with Tailwind classes
-7. **Performance**: Configure content paths for optimal CSS purging
-8. **Accessibility**: Include focus styles, ARIA labels, and respect user preferences
+1. **Consistent Spacing**: Use Tailwind's spacing scale (4, 8, 12, 16, etc.)
+2. **Color Palette**: Stick to Tailwind's color system for consistency
+3. **Component Extraction**: Extract repeated patterns into reusable components
+4. **Utility Composition**: Prefer utility classes over `@apply` for maintainability
+5. **Semantic HTML**: Use proper HTML elements with Tailwind classes
+6. **Performance**: Ensure content paths include all template files for optimal purging
+7. **Accessibility**: Include focus styles, ARIA labels, and respect user preferences (reduced-motion)
+
+## Troubleshooting
+
+### Classes Not Applying
+- **Check content paths**: Ensure all template files are included in `content: []` in config
+- **Verify build**: Run `npm run build` to regenerate purged CSS
+- **Dev mode**: Use `npx tailwindcss -o` with `--watch` flag for live updates
+
+### Responsive Styles Not Working
+- **Order matters**: Responsive prefixes must come before non-responsive (e.g., `md:flex` not `flex md:flex`)
+- **Check breakpoint values**: Verify breakpoints match your design requirements
+- **DevTools**: Use browser DevTools responsive mode to test at each breakpoint
+
+### Dark Mode Issues
+- **Verify config**: Ensure `darkMode: 'class'` or `'media'` is set correctly
+- **Toggle implementation**: Use `document.documentElement.classList.toggle('dark')` for class strategy
+- **Initial flash**: Add `dark` class to `<html>` before body renders
 
 ## Constraints and Warnings
 
-- **Class Proliferation**: Long class strings reduce readability; extract components when needed
-- **Purge Configuration**: Configure content paths correctly for production builds
+- **Class Proliferation**: Long class strings reduce readability; extract into components
+- **Content Paths**: Misconfigured paths cause classes to be purged in production
 - **Arbitrary Values**: Use sparingly; prefer design tokens for consistency
 - **Specificity Issues**: Avoid `@apply` with complex selectors
-- **Dark Mode**: Requires proper configuration (class or media strategy)
-- **Browser Support**: Check Tailwind docs for browser compatibility
+- **Dark Mode**: Requires correct configuration (`class` or `media` strategy)
+- **Browser Support**: Check Tailwind docs for compatibility notes
 
 ## References
 

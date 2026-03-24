@@ -12,24 +12,23 @@ Create production-ready CDN infrastructure using AWS CloudFormation templates. T
 
 ## When to Use
 
-Use this skill when:
-- Creating new CloudFront distributions with CloudFormation
-- Configuring multiple origins (ALB, S3, API Gateway, Lambda@Edge, VPC Origins)
-- Implementing caching strategies with CacheBehaviors and Cache Policies
-- Configuring custom domains with ACM certificates
-- Implementing SecurityHeaders (CSP, HSTS, XSS protection)
-- Configuring CloudFront Functions and Lambda@Edge
-- Managing Geo-restrictions and Price Classes
-- Integrating WAF with CloudFront
-- Organizing templates with Parameters, Outputs, Mappings, Conditions
-- Implementing cross-stack references with export/import
-- Using Transform for macros and reuse
+- Creating CloudFront distributions with CloudFormation
+- Configuring origins (ALB, S3, Lambda@Edge, VPC Origins) with path patterns
+- Implementing caching with CacheBehaviors and Cache Policies
+- Configuring custom domains with ACM and SecurityHeaders
+- Integrating WAF with CloudFront distributions
 
 ## Instructions
 
 Follow these steps to create CloudFront distributions with CloudFormation:
 
 ### 1. Define Distribution Parameters
+
+**Validate before deploying:**
+```bash
+aws cloudformation validate-template --template-body file://template.yaml
+cfn-lint template.yaml
+```
 
 Specify domain names, ACM certificates, price class, and origin settings:
 
@@ -291,6 +290,101 @@ Outputs:
   - Dynamic content: 0 seconds (no caching)
 - Enable compression for text-based content
 - Use versioned paths for cache busting
+
+## Constraints and Warnings
+
+- **ACM certificates**: Must be in `us-east-1` (N. Virginia) for CloudFront
+- **Limits**: Max 200 distributions per AWS account, 25 origins per distribution, 25 cache behaviors per distribution
+- **Deployment time**: CloudFront distributions take up to 30 minutes to deploy; plan accordingly
+- **Certificate requirements**: Max 100 alternate domain names per distribution; include default domain for SSL
+- **OAI deprecation**: Prefer Origin Access Control (OAC) over Origin Access Identity (OAI) for S3 origins
+- **Lambda@Edge limits**: 128MB memory, 30s timeout for viewer request/response; separate limits apply for origin requests
+- **Change sets**: Always use change sets before deploying to preview resource changes and avoid accidental deletions
+- **Drift detection**: CloudFormation does not detect drift for CloudFront distributions — manage all settings in templates
+
+## Examples
+
+### Minimal S3 Static Site Distribution
+
+```yaml
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "cdn-static-${AWS::AccountId}"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+
+  OriginAccessControl:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub "${AWS::StackName}-oac"
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        DefaultRootObject: index.html
+        Origins:
+          - Id: S3Origin
+            DomainName: !GetAtt S3Bucket.RegionalDomainName
+            AccessControlId: !Ref OriginAccessControl
+        DefaultCacheBehavior:
+          TargetOriginId: S3Origin
+          ViewerProtocolPolicy: redirect-to-https
+          Compress: true
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+        PriceClass: PriceClass_All
+        HttpVersion: http2and3
+
+Outputs:
+  DistributionDomainName:
+    Value: !GetAtt CloudFrontDistribution.DomainName
+```
+
+### Multi-Origin with Cache Behaviors
+
+```yaml
+Resources:
+  CachePolicyApi:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        Name: !Sub "${AWS::StackName}-api"
+        DefaultTTL: 300
+        MaxTTL: 600
+        MinTTL: 60
+
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Origins:
+          - Id: S3Origin
+            DomainName: !GetAtt StaticBucket.RegionalDomainName
+            AccessControlId: !Ref OriginAccessControl
+          - Id: ApiOrigin
+            DomainName: !GetAtt ApiLoadBalancer.DNSName
+            CustomOriginConfig:
+              OriginProtocolPolicy: https-only
+              HTTPPort: 80
+              HTTPSPort: 443
+        CacheBehaviors:
+          - PathPattern: "/api/*"
+            TargetOriginId: ApiOrigin
+            CachePolicyId: !GetAtt CachePolicyApi.Id
+            ViewerProtocolPolicy: https-only
+          - PathPattern: "/static/*"
+            TargetOriginId: S3Origin
+            CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+```
 
 ## References
 

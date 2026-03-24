@@ -274,7 +274,7 @@ class DocumentPermissionEvaluatorTest {
 @PreAuthorize("(hasRole('ADMIN') or #isOwner) and !isLocked(#userId)")
 ```
 
-## Testing @PostAuthorize
+## Testing `@PostAuthorize`
 
 ```java
 @Service
@@ -305,7 +305,7 @@ void shouldDenyAccessToOtherMessage() {
 }
 ```
 
-## Testing @PostFilter and @PreFilter
+## Testing `@PostFilter` and `@PreFilter`
 
 ```java
 @Service

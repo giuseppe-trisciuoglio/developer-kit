@@ -25,25 +25,63 @@ Use this skill when:
 Follow these steps to test Spring Security authorization:
 
 ### 1. Set Up Security Testing Dependencies
-Add spring-security-test to your test dependencies along with JUnit 5 and AssertJ. See [references/setup.md](references/setup.md) for detailed configuration.
+Add spring-security-test to your test dependencies:
 
-### 2. Enable Method Security in Configuration
-Use `@EnableGlobalMethodSecurity(prePostEnabled = true)` to activate `@PreAuthorize` annotations.
+```xml
+<dependency>
+  <groupId>org.springframework.security</groupId>
+  <artifactId>spring-security-test</artifactId>
+  <scope>test</scope>
+</dependency>
+```
 
-### 3. Create Test with @WithMockUser
-Apply `@WithMockUser` annotation to simulate authenticated users with specific roles and authorities.
+### 2. Enable Method Security in Test Configuration
+```java
+@Configuration
+@EnableMethodSecurity
+class TestSecurityConfig { }
+```
 
-### 4. Test Both Allow and Deny Scenarios
-For each security rule, test that authorized users can access the method and unauthorized users receive AccessDeniedException.
+### 3. Test with `@WithMockUser`
+```java
+@Test
+@WithMockUser(roles = "ADMIN")
+void shouldAllowAdminAccess() {
+  assertThatCode(() -> service.deleteUser(1L))
+    .doesNotThrowAnyException();
+}
 
-### 5. Test Expression-Based Authorization
-Verify complex expressions like `authentication.principal.username == #owner` work correctly.
+@Test
+@WithMockUser(roles = "USER")
+void shouldDenyUserAccess() {
+  assertThatThrownBy(() -> service.deleteUser(1L))
+    .isInstanceOf(AccessDeniedException.class);
+}
+```
 
-### 6. Test Custom Permission Evaluators
-Unit test custom PermissionEvaluator implementations by creating Authentication objects and calling hasPermission directly.
+### 4. Test Custom Permission Evaluators
+```java
+@Test
+void shouldGrantPermissionToOwner() {
+  Authentication auth = new UsernamePasswordAuthenticationToken(
+    "alice", null, List.of(new SimpleGrantedAuthority("ROLE_USER"))
+  );
+  Document doc = new Document(1L, "Test", new User("alice"));
 
-### 7. Verify Method Interactions
-Mock external dependencies and verify that security checks don't interfere with business logic.
+  boolean result = evaluator.hasPermission(auth, doc, "WRITE");
+  assertThat(result).isTrue();
+}
+```
+
+### 5. Validate Security is Active
+If tests pass unexpectedly, add this assertion to verify security is enforced:
+```java
+@Test
+void shouldRejectUnauthorizedWhenSecurityEnabled() {
+  assertThatThrownBy(() -> service.deleteUser(1L))
+    .isInstanceOf(AccessDeniedException.class);
+}
+```
 
 ## Quick Reference
 
@@ -57,7 +95,7 @@ Mock external dependencies and verify that security checks don't interfere with 
 
 ## Examples
 
-### Basic @PreAuthorize Test
+### Basic `@PreAuthorize` Test
 
 ```java
 @Service
@@ -92,14 +130,16 @@ public UserProfile getUserProfile(Long userId) {
   // get profile
 }
 
-// Test
+// For custom principal properties, use @WithUserDetails with a custom UserDetailsService
 @Test
-@WithMockUser(username = "alice", id = "1")
+@WithUserDetails("alice")
 void shouldAllowUserToAccessOwnProfile() {
   assertThatCode(() -> service.getUserProfile(1L))
     .doesNotThrowAnyException();
 }
 ```
+
+> **Validation tip**: If a security test passes unexpectedly, verify that `@EnableMethodSecurity` is active on the test configuration — a missing annotation causes all `@PreAuthorize` checks to be bypassed silently.
 
 See [references/basic-testing.md](references/basic-testing.md) for more basic patterns and [references/advanced-authorization.md](references/advanced-authorization.md) for complex expressions and custom evaluators.
 

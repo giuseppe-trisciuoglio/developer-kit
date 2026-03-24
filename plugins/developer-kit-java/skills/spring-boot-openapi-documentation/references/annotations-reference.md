@@ -2,7 +2,7 @@
 
 ## Core Annotations
 
-### @Tag
+### `@Tag`
 
 Groups operations under a logical tag.
 
@@ -28,7 +28,7 @@ public class BookController { }
 - `description`: Tag description
 - `externalDocs`: External documentation reference
 
-### @Operation
+### `@Operation`
 
 Describes a single API operation.
 
@@ -58,7 +58,7 @@ Describes a single API operation.
 - `responses`: Response definitions
 - `parameters`: Parameter definitions
 
-### @ApiResponse / @ApiResponses
+### `@ApiResponse` / `@ApiResponses`
 
 Documents HTTP response codes.
 
@@ -87,7 +87,7 @@ Documents HTTP response codes.
 - `headers`: Response headers
 - `extensions`: Custom extensions
 
-### @Parameter
+### `@Parameter`
 
 Documents operation parameters.
 
@@ -124,9 +124,9 @@ public Book getBook(
 - `explode`: Explode array/object parameters
 - `style`: Parameter style (matrix, label, form, simple, spaceDelimited, pipeDelimited, deepObject)
 
-### @RequestBody (OpenAPI)
+### `@RequestBody` (OpenAPI)
 
-Documents request body (not to be confused with Spring's @RequestBody).
+Documents request body (not to be confused with Spring's `@RequestBody`).
 
 ```java
 @PostMapping
@@ -146,7 +146,7 @@ public Book create(
 ) { }
 ```
 
-### @Schema
+### `@Schema`
 
 Documents model schemas.
 
@@ -210,7 +210,7 @@ private String title;
 - `nullable`: Whether nullable
 - `deprecated`: Mark as deprecated
 
-### @SecurityRequirement
+### `@SecurityRequirement`
 
 Applies security requirements.
 
@@ -238,7 +238,7 @@ public class BookController { }
 @Operation(security = {})
 ```
 
-### @Hidden
+### `@Hidden`
 
 Hides from documentation.
 
@@ -254,7 +254,7 @@ public String internal() { }
 public class InternalController { }
 ```
 
-### @ParameterObject
+### `@ParameterObject`
 
 Documents complex objects as parameters.
 
@@ -296,7 +296,7 @@ public Page<Book> getPaginated(
 
 ## Advanced Annotations
 
-### @ArraySchema
+### `@ArraySchema`
 
 Documents array schemas.
 
@@ -320,7 +320,7 @@ List<Book> books;
 List<Book> books;
 ```
 
-### @Content
+### `@Content`
 
 Detailed content documentation.
 
@@ -344,7 +344,7 @@ Detailed content documentation.
 )
 ```
 
-### @ExampleObject
+### `@ExampleObject`
 
 Example values.
 
@@ -357,7 +357,7 @@ Example values.
 )
 ```
 
-### @ExternalDocumentation
+### `@ExternalDocumentation`
 
 External documentation references.
 
@@ -370,7 +370,7 @@ External documentation references.
 
 ## Composition Annotations
 
-### @DiscriminatorObject
+### `@DiscriminatorObject`
 
 For polymorphic types.
 

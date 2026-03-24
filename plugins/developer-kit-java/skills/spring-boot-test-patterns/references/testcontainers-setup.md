@@ -1,6 +1,6 @@
 # Testcontainers Configuration
 
-## Spring Boot 3.5+ @ServiceConnection
+## Spring Boot 3.5+ `@ServiceConnection`
 
 ```java
 @TestConfiguration
@@ -26,7 +26,7 @@ public class TestContainerConfig {
 
 Apply with `@Import(TestContainerConfig.class)` on test classes.
 
-## Traditional @DynamicPropertySource
+## Traditional `@DynamicPropertySource`
 
 ```java
 @Testcontainers

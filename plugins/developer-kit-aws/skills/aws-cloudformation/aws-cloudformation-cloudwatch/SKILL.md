@@ -8,21 +8,16 @@ allowed-tools: Read, Write, Bash
 
 ## Overview
 
-Create production-ready monitoring and observability infrastructure using AWS CloudFormation templates. This skill covers CloudWatch metrics, alarms, dashboards, log groups, log insights, anomaly detection, synthesized canaries, Application Signals, and best practices for parameters, outputs, and cross-stack references.
+Creates CloudWatch monitoring infrastructure using CloudFormation templates: metrics, alarms, dashboards, log groups, anomaly detection, synthesized canaries, and Application Signals.
 
 ## When to Use
 
-Use this skill when:
-- Creating custom CloudWatch metrics
-- Configuring CloudWatch alarms for thresholds and anomaly detection
-- Creating CloudWatch dashboards for multi-region visualization
-- Implementing log groups with retention and encryption
-- Configuring log subscriptions and cross-account log aggregation
-- Implementing synthesized canaries for synthetic monitoring
-- Enabling Application Signals for application performance monitoring
-- Organizing templates with Parameters, Outputs, Mappings, Conditions
-- Implementing cross-stack references with export/import
-- Using Transform for macros and reuse
+- Creating CloudWatch metrics and alarms for production infrastructure
+- Building CloudWatch dashboards for multi-region visualization
+- Implementing log groups with retention, encryption, and metric filters
+- Configuring anomaly detection and composite alarms
+- Setting up cross-stack references with Parameters and Outputs
+- Validating and deploying monitoring stacks with CloudFormation
 
 ## Instructions
 
@@ -229,7 +224,178 @@ Resources:
         | limit 100
 ```
 
+### 9. Validate Template
+
+Before deploying, validate the CloudFormation template:
+
+```bash
+aws cloudformation validate-template --template-body file://template.yaml
+```
+
+For parameterized templates, test with sample values:
+
+```bash
+aws cloudformation validate-template \
+  --template-body file://monitoring.yaml \
+  --capabilities CAPABILITY_IAM
+```
+
+### 10. Deploy and Verify
+
+Deploy the stack and verify resources:
+
+```bash
+# Deploy stack
+aws cloudformation create-stack \
+  --stack-name my-monitoring-stack \
+  --template-body file://monitoring.yaml \
+  --parameters file://parameters.json \
+  --capabilities CAPABILITY_IAM
+
+# Wait for completion
+aws cloudformation wait stack-create-complete \
+  --stack-name my-monitoring-stack
+
+# Verify alarms are in OK state
+aws cloudwatch describe-alarms --stack-name my-monitoring-stack
+
+# Check dashboard accessibility
+aws cloudwatch get-dashboard --dashboard-name my-monitoring-stack-dashboard
+```
+
+Test alarm actions before production:
+
+```bash
+# Set alarm to testing state
+aws cloudwatch set-alarm-state \
+  --alarm-name my-alarm \
+  --state-value ALARM \
+  --state-reason "Testing alarm action"
+```
+
 ## Best Practices
+
+- Use composite alarms to reduce noise and avoid false positives
+- Set meaningful thresholds based on baseline metrics
+- Configure appropriate evaluation periods (3-5 datapoints)
+- Enable anomaly detection for metrics with variable patterns
+- Use metric math for derived metrics (error rates, latency percentiles)
+- Set appropriate log retention based on compliance needs
+- Encrypt log groups with sensitive data using KMS
+- Test alarm actions with `set-alarm-state` before production
+
+## Examples
+
+### Example 1: Complete Monitoring Stack
+
+```yaml
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Complete CloudWatch monitoring setup
+
+Parameters:
+  Environment:
+    Type: String
+    Default: prod
+    AllowedValues: [dev, staging, prod]
+
+Resources:
+  # SNS Topic for notifications
+  AlarmTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: !Sub "${Environment}-alarms"
+
+  # Alarm for high CPU
+  CpuAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub "${AWS::StackName}-cpu-high"
+      MetricName: CPUUtilization
+      Namespace: AWS/EC2
+      Statistic: Average
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: 80
+      ComparisonOperator: GreaterThanThreshold
+      AlarmActions:
+        - !Ref AlarmTopic
+
+  # Dashboard
+  Dashboard:
+    Type: AWS::CloudWatch::Dashboard
+    Properties:
+      DashboardName: !Ref AWS::StackName
+      DashboardBody: !Sub |
+        {
+          "widgets": [{
+            "type": "metric",
+            "properties": {
+              "metrics": [["AWS/EC2", "CPUUtilization"]],
+              "period": 300,
+              "stat": "Average"
+            }
+          }]
+        }
+```
+
+### Example 2: Log-Based Metrics with Filters
+
+```yaml
+Resources:
+  AppLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/app/${Environment}"
+      RetentionInDays: 30
+
+  ErrorMetricFilter:
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      LogGroupName: !Ref AppLogGroup
+      FilterPattern: '"ERROR"'
+      MetricTransformations:
+        - MetricValue: "1"
+          MetricNamespace: !Sub "${AWS::StackName}/App"
+          MetricName: ErrorCount
+
+  ErrorAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub "${AWS::StackName}-errors"
+      MetricName: ErrorCount
+      MetricNamespace: !Sub "${AWS::StackName}/App"
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+```
+
+## Constraints and Warnings
+
+### Resource Limits
+- Maximum 5000 alarms per account
+- Maximum 50 metric filters per log group
+- Dashboard body limited to 512KB
+- Maximum 200 metrics per alarm expression
+
+### Security Considerations
+- Enable encryption on log groups containing sensitive data
+- Use IAM policies to restrict alarm action permissions
+- Avoid hardcoding thresholds in templates; use Parameters
+- Protect SNS topics with encryption and access policies
+
+### Operational Warnings
+- High-resolution alarms (10s/30s) incur higher costs
+- Missing data treatment affects alarm state; configure explicitly
+- Composite alarms can mask individual alarm states
+- Metric filters are immutable after creation; recreate to change
+
+### Cost Optimization
+- Use standard resolution (5-minute period) unless necessary
+- Set appropriate retention periods (shorter = cheaper)
+- Delete unused dashboards and custom metrics
+- Monitor CloudWatch charges with budgets and alerts
 
 ### Monitoring Strategy
 
@@ -248,15 +414,6 @@ Resources:
 - Set up cross-account log aggregation for centralized analysis
 - Use CloudWatch Logs Insights for troubleshooting
 - Configure log subscriptions to Lambda/Kinesis for real-time processing
-
-### Cost Optimization
-
-- Use standard resolution metrics when possible (not high-resolution)
-- Set appropriate log retention periods (longer = more expensive)
-- Limit metric filters to essential patterns
-- Use composite alarms to reduce total alarm count
-- Monitor CloudWatch usage with budgets and alarms
-- Consider using CloudWatch Logs Insights instead of frequent metric filters
 
 ### Alarm Configuration
 

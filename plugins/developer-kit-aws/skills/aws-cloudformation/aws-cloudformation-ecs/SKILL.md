@@ -8,22 +8,15 @@ allowed-tools: Read, Write, Bash
 
 ## Overview
 
-Create production-ready ECS infrastructure using AWS CloudFormation templates. This skill covers ECS clusters, task definitions, services, container definitions, auto scaling, blue/green deployments, CodeDeploy integration, ALB integration, service discovery, monitoring, logging, best practices for parameters, outputs, and cross-stack references.
+Provides CloudFormation patterns for ECS clusters, task definitions, services, container definitions, auto scaling, blue/green deployments, ALB integration, monitoring, and cross-stack references.
 
 ## When to Use
 
-Use this skill when:
-- Creating ECS clusters with CloudFormation
-- Configuring Fargate and EC2 launch types
-- Implementing task definitions and container definitions
-- Managing ECS services with ALB/NLB integration
-- Implementing blue/green deployments with CodeDeploy
-- Configuring auto scaling for ECS services
-- Setting up service discovery with Cloud Map
-- Managing container image repositories with ECR
-- Implementing monitoring, logging, and tracing
-- Organizing ECS infrastructure with parameters and outputs
-- Implementing capacity providers and scaling strategies
+- Creating or updating ECS clusters with CloudFormation
+- Configuring Fargate/EC2 launch types and capacity providers
+- Deploying services with ALB/NLB integration or blue/green deployments
+- Implementing auto scaling for ECS services
+- Setting up monitoring with Container Insights
 
 ## Instructions
 
@@ -133,6 +126,11 @@ Resources:
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: ecs
           Memory: !Ref TaskMemory
+```
+
+**Validate task definition syntax before proceeding:**
+```bash
+aws cloudformation validate-template --template-body file://template.yaml
 ```
 
 ### 4. Configure Execution Roles
@@ -278,72 +276,129 @@ Resources:
     Properties:
       LogGroupName: !Sub "/ecs/${AWS::StackName}"
       RetentionInDays: 7
+```
 
-  ECSCluster:
-    Type: AWS::ECS::Cluster
-    Properties:
-      ClusterName: !Sub "${AWS::StackName}-cluster"
-      ClusterSettings:
-        - Name: containerInsights
-          Value: enabled
+**Before deployment:** Create a change set to preview changes:
+```bash
+aws cloudformation create-change-set \
+  --stack-name my-ecs-stack \
+  --template-body file://template.yaml \
+  --change-set-type CREATE
+aws cloudformation execute-change-set --change-set-name <arn>
 ```
 
 ## Best Practices
 
-### Cluster Configuration
-
-- Use Fargate for simplified infrastructure management
-- Spread services across multiple AZs for high availability
-- Enable Container Insights for monitoring
-- Use capacity providers for cost optimization (Fargate Spot)
-- Configure appropriate vCPU and memory based on workload requirements
-- Implement graceful shutdown for task termination
-
-### Task Definition Management
-
-- Use specific versions for immutable deployments
-- Keep task definitions under 1 KB for CloudFormation limit
-- Define resource limits (CPU, memory) for all containers
-- Use environment variables for configuration
-- Implement health checks for container applications
-- Store container images in ECR for security
+### Task Definition
+- Use `Family` naming for version tracking and immutable deployments
+- Keep task definition under 1 KB (CloudFormation limit) by referencing external configs
+- Configure `HealthCheck` in container definitions for ECS health monitoring
+- Set both `Cpu` and `Memory` at task level for Fargate
 
 ### Service Deployment
+- Enable `DeploymentCircuitBreaker` for automatic rollback on failures
+- Use `HealthCheckGracePeriodSeconds` matching application startup time
+- Configure `MinimumHealthyPercent` (100) and `MaximumPercent` (200) for zero-downtime updates
+- Reference task definition by logical ID only—ECS automatically uses latest revision
 
-- Use blue/green deployments for zero-downtime updates
-- Configure deployment circuit breakers for automatic rollback
-- Set appropriate health check grace periods
-- Implement rolling updates with minimum healthy percentage
-- Use CodeDeploy for complex deployment strategies
-- Test task definitions in development environment first
+### Networking
+- Always use `awsvpc` network mode for Fargate
+- Place tasks in private subnets with NAT gateway for outbound access
+- Configure security groups to allow only required ports (not 0.0.0.0/0)
 
-### Security
+### Scaling
+- Use Fargate Spot with base capacity of 1 on-demand for cost optimization
+- Set `MaxHealthyDuration` on capacity provider strategy for Spot interruption handling
+- Monitor `STEADY_STATE` failures in CloudWatch for task startup issues
 
-- Use awsvpc network mode for Fargate
-- Apply least privilege IAM policies to task roles
-- Encrypt data in transit using TLS/SSL
-- Use private subnets for application tasks
-- Rotate secrets and credentials regularly
-- Scan container images for vulnerabilities
-- Implement security group rules for network traffic
+## Constraints and Warnings
 
-### Scaling and Performance
+### Resource Limits
+- Task definition size limit: 1 KB when using CloudFormation (use ParameterStore/Secrets Manager for large configs)
+- Maximum 10 containers per task definition in Fargate
+- CPU must be specified for Fargate tasks (256-4096 units, in 1024 increments)
+- Memory must be allocated (512-30720 MB depending on CPU)
 
-- Use auto scaling based on CPU, memory, or custom metrics
-- Configure appropriate minimum and maximum capacity
-- Use Fargate Spot for cost savings on interruptible workloads
-- Optimize container image size for faster startup
-- Use Application Load Balancer for traffic distribution
-- Implement service discovery for inter-service communication
+### Operational Limits
+- ENI limits apply per subnet—plan for at least 1 ENI per task in each AZ
+- Fargate Spot tasks receive 2-minute interruption notice—implement graceful shutdown signals (SIGTERM)
+- Service updates require new task definition revision—cannot modify existing versions
+- `DesiredCount` updates during deployment may conflict with auto scaling policies
 
-### Monitoring and Logging
+### CloudFormation-Specific
+- Cross-stack references required for VPC IDs, Subnet IDs, and Security Group IDs passed between stacks
+- Use `!GetAtt` for referencing stack outputs in same template
+- Ensure IAM role ARNs use `Fn::Sub` with stack name for portability
 
-- Enable CloudWatch Container Insights for metrics
-- Configure CloudWatch Logs for application logs
-- Set up CloudWatch alarms for service metrics
-- Use X-Ray tracing for distributed tracing
-- Monitor task placement and resource utilization
-- Implement centralized logging with CloudWatch Logs Insights
+## Examples
+
+### Minimal Fargate Service
+```yaml
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Minimal ECS Fargate service
+
+Resources:
+  Cluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: !Sub "${AWS::StackName}-cluster"
+
+  TaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub "${AWS::StackName}-task"
+      NetworkMode: awsvpc
+      RequiresCompatibilities: [FARGATE]
+      Cpu: 256
+      Memory: 512
+      ContainerDefinitions:
+        - Name: app
+          Image: nginx:latest
+          PortMappings:
+            - ContainerPort: 80
+
+  Service:
+    Type: AWS::ECS::Service
+    Properties:
+      Cluster: !Ref Cluster
+      ServiceName: !Sub "${AWS::StackName}-svc"
+      TaskDefinition: !Ref TaskDefinition
+      DesiredCount: 2
+      LaunchType: FARGATE
+      DeploymentCircuitBreaker:
+        Enable: true
+        Rollback: true
+```
+
+### ECS with ALB Integration
+```yaml
+Resources:
+  Service:
+    Type: AWS::ECS::Service
+    Properties:
+      Cluster: !Ref ECSCluster
+      TaskDefinition: !Ref TaskDefinition
+      DesiredCount: 2
+      LaunchType: FARGATE
+      HealthCheckGracePeriodSeconds: 30
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          Subnets: [!Ref PrivateSubnet1, !Ref PrivateSubnet2]
+          SecurityGroups: [!Ref TaskSecurityGroup]
+      LoadBalancers:
+        - TargetGroupArn: !Ref TargetGroup
+          ContainerName: app
+          ContainerPort: 8080
+
+  TargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Port: 80
+      Protocol: HTTP
+      VpcId: !Ref VPC
+      TargetType: ip
+      HealthCheckPath: /health
+```
 
 ## References
 

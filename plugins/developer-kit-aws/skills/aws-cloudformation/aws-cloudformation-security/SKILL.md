@@ -12,17 +12,13 @@ Create production-ready security infrastructure using AWS CloudFormation templat
 
 ## When to Use
 
-Use this skill when:
-- Implementing AWS KMS for encryption at rest and in transit
-- Managing secrets with AWS Secrets Manager
-- Applying IAM least privilege policies and roles
-- Securing VPC configurations with security groups and NACLs
+- Implementing KMS encryption at rest and in transit
+- Managing secrets with Secrets Manager and automatic rotation
+- Applying IAM least privilege policies and permission boundaries
+- Securing VPC with security groups, NACLs, and VPC endpoints
 - Managing TLS/SSL certificates with ACM
-- Implementing secure parameter handling in CloudFormation
+- Encrypting CloudWatch Logs and S3 buckets
 - Creating secure cross-stack references and outputs
-- Encrypting CloudWatch Logs for compliance
-- Implementing defense in depth strategies
-- Applying security best practices across AWS resources
 
 ## Instructions
 
@@ -61,6 +57,8 @@ Resources:
       TargetKeyId: !Ref EncryptionKey
 ```
 
+**Validate:** `aws kms get-key-policy --key-id <key-id> --output text`
+
 ### 2. Manage Secrets with Secrets Manager
 
 Store and retrieve sensitive data securely:
@@ -91,6 +89,8 @@ Resources:
         AutomaticallyAfterDays: 30
 ```
 
+**Validate:** `aws secretsmanager describe-secret --secret-id <secret-name>`
+
 ### 3. Apply IAM Least Privilege
 
 Create roles and policies with minimal required permissions:
@@ -119,6 +119,8 @@ Resources:
                   - s3:GetObject
                 Resource: !Sub "${DataBucket.Arn}/*"
 ```
+
+**Validate:** `aws iam simulate-principal-policy --policy-source-arn <role-arn> --action-names s3:GetObject --resource-arns <bucket-arn>`
 
 ### 4. Secure VPC Configuration
 
@@ -159,6 +161,8 @@ Resources:
         To: 443
 ```
 
+**Validate:** `aws ec2 describe-security-groups --group-ids <sg-id> --query 'SecurityGroups[0].IpPermissions'`
+
 ### 5. Request ACM Certificates
 
 Manage TLS/SSL certificates for secure communication:
@@ -191,6 +195,8 @@ Resources:
         - !Ref Certificate
 ```
 
+**Validate:** `aws acm describe-certificate --certificate-arn <arn> --query 'Certificate.Status'`
+
 ### 6. Implement Secure Parameters
 
 Use SecureString for sensitive parameter values:
@@ -213,6 +219,8 @@ Resources:
       MasterUsername: admin
       MasterUserPassword: !Ref DatabasePasswordParameter
 ```
+
+**Validate:** `aws ssm get-parameter --name <param-name> --with-decryption --query 'Parameter.Type'`
 
 ### 7. Create Secure Outputs
 
@@ -239,6 +247,8 @@ Outputs:
   #   Value: !GetAtt DatabaseSecret.SecretString
 ```
 
+**Validate:** `aws cloudformation list-exports --query "Exports[?Name=='<stack-name>-KMSKeyArn']"`
+
 ### 8. Encrypt CloudWatch Logs
 
 Enable encryption for log groups:
@@ -253,74 +263,102 @@ Resources:
       KmsKeyId: !Ref EncryptionKey
 ```
 
+**Validate:** `aws logs describe-log-groups --log-group-name-prefix <prefix> --query 'logGroups[0].kmsKeyId'`
+
 ## Best Practices
 
-### KMS Key Management
+- **KMS**: Use separate keys per data classification; enable annual key rotation; use customer-managed keys for compliance
+- **Secrets**: Rotate automatically (30 days for databases); never store secrets in plain text; use IAM policies for access control
+- **IAM**: Apply least privilege; use roles not access keys; enable MFA; implement permission boundaries
+- **Network**: Prefer security groups over NACLs; use VPC endpoints; restrict by specific CIDR ranges
+- **Certificates**: Use ACM for automatic renewal; DNS validation is faster than email
+- **Encryption**: Encrypt at rest and in transit; TLS 1.2+ required; use SSE-KMS for S3
 
-- Use separate keys for different data classifications
-- Enable automatic key rotation annually
-- Apply key policies limiting access to specific services
-- Use customer-managed keys for compliance requirements
-- Monitor key usage with CloudWatch metrics
-- Back up key material outside AWS (for customer-managed keys)
+## Examples
 
-### Secrets Management
+### Complete KMS and Secrets Stack
 
-- Rotate secrets automatically (every 30 days for databases)
-- Use Secrets Manager for credentials, API keys, and certificates
-- Apply least privilege access to secrets
-- Enable CloudTrail logging for secret access
-- Use IAM policies to control secret access
-- Never store secrets in plain text or in code
+```yaml
+Resources:
+  # KMS Key with proper policy
+  AppKey:
+    Type: AWS::KMS::Key
+    Properties:
+      KeyPolicy:
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub "arn:aws:iam::${AWS::AccountId}:root"
+            Action: kms:*
+            Resource: "*"
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action:
+              - kms:Decrypt
+              - kms:GenerateDataKey
+            Resource: "*"
 
-### IAM Security
+  # Secrets Manager with rotation
+  DbSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      SecretString: !Sub '{"password":"${DbPassword}"}'
+      KmsKeyId: !Ref AppKey
+      RotationRules:
+        AutomaticallyAfterDays: 30
+```
 
-- Apply least privilege: grant only necessary permissions
-- Use IAM roles for applications, not access keys
-- Rotate IAM credentials regularly
-- Enable MFA for root account and IAM users
-- Use IAM Access Analyzer for permission auditing
-- Implement permission boundaries for delegated administration
+### IAM Least Privilege Role
 
-### Network Security
+```yaml
+Resources:
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: AccessPolicy
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action: s3:GetObject
+                Resource: !Sub "${Bucket.Arn}/*"
+```
 
-- Use security groups as primary network control
-- Apply NACLs for subnet-level traffic control
-- Implement defense in depth with multiple layers
-- Use VPC endpoints for private AWS service access
-- Enable VPC Flow Logs for network monitoring
-- Restrict security group rules to specific CIDR ranges
+For comprehensive examples with VPC security groups, ACM certificates, and complete encrypted infrastructure stacks, see [examples.md](references/examples.md).
 
-### Certificate Management
+## Constraints and Warnings
 
-- Use ACM for certificate lifecycle management
-- Enable automatic certificate renewal
-- Request certificates well before deployment deadlines
-- Use DNS validation for faster certificate provisioning
-- Monitor certificate expiration with CloudWatch alarms
-- Implement certificate rotation for services
+### Resource Limits
+- Security groups: max 60 inbound + 60 outbound rules
+- NACLs: max 20 inbound + 20 outbound rules per subnet
+- VPCs: max 5 per region (soft limit)
+- Key rotation: annual for KMS customer-managed keys
 
-### Data Encryption
+### Security Constraints
+- NACLs are **stateless**: return traffic must be explicitly allowed
+- Default security groups cannot be deleted
+- Security group references cannot span VPC peering (use CIDR)
+- Cross-account access requires both IAM and resource policies
 
-- Encrypt data at rest and in transit
-- Use AWS-managed keys for standard encryption
-- Use customer-managed keys for compliance requirements
-- Enable SSL/TLS for all network communications
-- Use S3 bucket policies for encrypted data access
-- Implement encryption in transit with TLS 1.2+
+### Operational Warnings
+- Secrets rotation requires Lambda function with proper IAM permissions
+- KMS key deletion requires pending window (7-30 days)
+- ACM certificates need DNS validation before issuance
+- VPC CIDR blocks cannot overlap with peered VPCs
+
+For detailed constraints including cost considerations and quota management, see [constraints.md](references/constraints.md).
 
 ## References
 
 For detailed implementation guidance, see:
 
-- **[constraints.md](references/constraints.md)** - Resource limits (security group rules, VPC limits, NACL rules), security constraints (default security groups, VPC peering, NACL stateless behavior), operational constraints (CIDR overlap, ENI limits, Elastic IP limits), network constraints (Transit Gateway, VPN, Direct Connect), cost considerations (NAT Gateway, traffic mirroring, flow logs, PrivateLink), and access control constraints (IAM vs resource policies, permission boundaries, session policies)
-
-## Related Resources
-
-- [AWS KMS Documentation](https://docs.aws.amazon.com/kms/)
-- [AWS Secrets Manager Documentation](https://docs.aws.amazon.com/secretsmanager/)
-- [AWS IAM Documentation](https://docs.aws.amazon.com/IAM/latest/UserGuide/)
-- [VPC Security Documentation](https://docs.aws.amazon.com/vpc/)
-- [ACM Certificate Documentation](https://docs.aws.amazon.com/acm/)
-- [CloudFormation Security Best Practices](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/best-practices.html)
-- [AWS Security Hub Documentation](https://docs.aws.amazon.com/securityhub/)
+- **[examples.md](references/examples.md)** - Complete KMS stacks, Secrets Manager with rotation, IAM least privilege roles, VPC security groups, ACM certificates, and encrypted infrastructure
+- **[constraints.md](references/constraints.md)** - Resource limits, security constraints, operational constraints, network constraints, cost considerations, and access control constraints
