@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.7.2] - 2026-03-24
+
+### Changed
+
+- **Skills Optimization — Token & Length Reduction** (global):
+  - Reduced size and token consumption across multiple skills to improve performance and stay within line limits
+  - Refactored `aws-lambda-php-integration` (`developer-kit-php`) — reduced to 94 lines
+  - Refactored `better-auth` (`developer-kit-typescript`) to meet line limit
+  - Refactored `clean-architecture` (`developer-kit-typescript`) — exceeded line limit, now compliant
+  - Refactored `nextjs-app-router` (`developer-kit-typescript`) — reduced SKILL.md to 302 lines
+  - Refactored `nextjs-authentication` (`developer-kit-typescript`) — split docs into focused reference files
+  - Refactored `nextjs-data-fetching` (`developer-kit-typescript`) — split docs into focused reference files
+  - Refactored `drizzle-orm-patterns` (`developer-kit-typescript`) to meet line limit
+
+- **Version Alignment** (global):
+  - Bumped marketplace and all plugin manifests to `2.7.2`
+
+### Fixed
+
+- **AWS Lambda PHP Integration** (`developer-kit-php`):
+  - Fixed `aws-lambda-integration` skill registration and linking on the PHP plugin
+
+- **Command Review List** (global):
+  - Added missing command review list entry
+
 ## [2.7.1] - 2026-03-23
 
 ### Added
@@ -1105,7 +1130,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.7.1...HEAD
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.7.2...HEAD
+[2.7.2]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.7.1...v2.7.2
 [2.7.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.3...v2.7.1
 [2.6.3]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.2...v2.6.3
 [2.6.2]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.1...v2.6.2
