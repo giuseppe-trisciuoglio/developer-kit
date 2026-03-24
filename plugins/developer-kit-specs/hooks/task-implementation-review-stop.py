@@ -86,8 +86,12 @@ def build_reason(task_file: str | None, lang: str | None) -> str:
 
     return (
         "The latest `/specs:task-implementation` cannot stop yet. "
-        f"Run `{review_command}`, fix every review finding before concluding, rerun the relevant verification, "
-        "and if the implementation changed or clarified the specification update the spec with "
+        "CRITICAL — context preservation: before proceeding, run `/compact` to free context space. "
+        "If `/compact` is unavailable or context is still large, delegate the entire review workflow "
+        "to a subagent via the Task tool (agent_type: 'general-purpose') passing it all the context "
+        "it needs (task file path, spec folder, language) so it can perform the review independently. "
+        f"The review workflow: run `{review_command}`, fix every review finding, rerun verification, "
+        "then if the implementation changed or clarified the specification update the spec with "
         f"`{sync_command}`. If no spec update is needed, state that explicitly before stopping."
     )
 
