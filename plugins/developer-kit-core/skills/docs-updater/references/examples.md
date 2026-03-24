@@ -282,6 +282,28 @@ git diff CHANGELOG.md
 # (Use markdown linter if available)
 ```
 
+## Best Practices
+
+1. **Always verify before writing**: Show the user what will change before applying updates
+2. **Follow Keep a Changelog**: Maintain consistent changelog formatting
+3. **Categorize properly**: Use correct categories (Added, Changed, Fixed, etc.)
+4. **Be specific**: Include plugin/component names in changelog entries
+5. **Preserve structure**: Maintain existing documentation structure and style
+6. **Reference commits**: Include commit hashes for traceability when helpful
+7. **Handle breaking changes**: Clearly highlight breaking changes with migration notes
+8. **Update version refs**: Keep version numbers consistent across documentation
+
+## Constraints and Warnings
+
+1. **Requires git tags**: This skill only works if the repository has at least one release tag
+2. **Read-only analysis**: The skill analyzes changes but asks before writing
+3. **Manual review required**: Generated changelog entries should be reviewed for accuracy
+4. **Conventional commits**: Works best with projects using conventional commit format
+5. **Does not create tags**: This skill updates docs but does not create release tags
+6. **No auto-commit**: Documentation changes are prepared but not committed automatically
+7. **Project-specific patterns**: Some projects may have custom changelog formats to respect
+8. **File paths**: All file paths use forward slashes (Unix style) for cross-platform compatibility
+
 ## Tips for Best Results
 
 1. **Use Conventional Commits**: Follow conventional commit format for better categorization

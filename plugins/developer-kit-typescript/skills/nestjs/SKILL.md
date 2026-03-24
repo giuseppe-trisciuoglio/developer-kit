@@ -1,6 +1,6 @@
 ---
 name: nestjs
-description: Provides comprehensive NestJS framework patterns with Drizzle ORM integration. Use when building NestJS applications, setting up APIs, implementing authentication, working with databases, or integrating Drizzle ORM. Covers controllers, providers, modules, middleware, guards, interceptors, testing, microservices, GraphQL, and database patterns.
+description: Provides comprehensive NestJS framework patterns with Drizzle ORM integration for building scalable server-side applications. Generates REST/GraphQL APIs, implements authentication guards, creates database schemas, and sets up microservices. Use when building NestJS applications, setting up APIs, implementing authentication, working with databases, or integrating Drizzle ORM.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
@@ -8,88 +8,172 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 
 ## Overview
 
-This skill provides comprehensive guidance for building NestJS applications with TypeScript, including integration with Drizzle ORM for database operations.
+Provides NestJS patterns with Drizzle ORM for building production-ready server-side applications. Covers CRUD modules, JWT authentication, database operations, migrations, testing, microservices, and GraphQL integration.
 
 ## When to Use
+
 - Building REST APIs or GraphQL servers with NestJS
-- Setting up authentication and authorization
-- Implementing middleware, guards, or interceptors
-- Working with databases (Drizzle ORM)
-- Creating microservices architecture
+- Setting up authentication and authorization with JWT
+- Implementing database operations with Drizzle ORM
+- Creating microservices with TCP/Redis transport
 - Writing unit and integration tests
-- Setting up OpenAPI/Swagger documentation
+- Running database migrations with drizzle-kit
 
 ## Instructions
 
-1. **Start with Module Structure**: Define your feature modules with clear boundaries
-2. **Implement Controllers**: Create controllers to handle HTTP requests and define routes
-3. **Create Services**: Build business logic in injectable service classes
-4. **Configure Database**: Set up Drizzle ORM with proper schema definitions
-5. **Add Validation**: Implement DTOs with class-validator for input validation
-6. **Implement Guards**: Add authentication and authorization guards as needed
-7. **Write Tests**: Create unit and e2e tests for all components
-8. **Configure OpenAPI**: Add Swagger decorators for API documentation
+1. **Install dependencies**: `npm i drizzle-orm pg && npm i -D drizzle-kit tsx`
+2. **Define schema**: Create `src/db/schema.ts` with Drizzle table definitions
+3. **Create DatabaseService**: Inject Drizzle client as a NestJS provider
+4. **Build CRUD module**: Controller → Service → Repository pattern
+5. **Add validation**: Use class-validator DTOs with ValidationPipe
+6. **Implement guards**: Create JWT/Roles guards for route protection
+7. **Write tests**: Use `@nestjs/testing` with mocked repositories
+8. **Run migrations**: `npx drizzle-kit generate` → **Verify SQL** → `npx drizzle-kit migrate`
 
 ## Examples
 
-### Complete CRUD Module
+### Complete CRUD Module with Drizzle
 
 ```typescript
-// 1. Define the entity schema (with Drizzle)
-export const products = pgTable('products', {
+// src/db/schema.ts
+export const users = pgTable('users', {
   id: serial('id').primaryKey(),
   name: text('name').notNull(),
-  price: real('price').notNull(),
+  email: text('email').notNull().unique(),
   createdAt: timestamp('created_at').defaultNow(),
 });
 
-// 2. Create the DTO
-export class CreateProductDto {
-  @IsString()
-  @IsNotEmpty()
-  name: string;
-
-  @IsNumber()
-  @Min(0)
-  price: number;
+// src/users/dto/create-user.dto.ts
+export class CreateUserDto {
+  @IsString() @IsNotEmpty() name: string;
+  @IsEmail() email: string;
 }
 
-// 3. Implement the service
+// src/users/user.repository.ts
 @Injectable()
-export class ProductsService {
+export class UserRepository {
   constructor(private db: DatabaseService) {}
 
-  async create(dto: CreateProductDto) {
-    return this.db.database.insert(products).values(dto).returning();
+  async findAll() {
+    return this.db.database.select().from(users);
+  }
+
+  async create(data: typeof users.$inferInsert) {
+    return this.db.database.insert(users).values(data).returning();
   }
 }
 
-// 4. Create the controller
-@Controller('products')
-export class ProductsController {
-  constructor(private service: ProductsService) {}
+// src/users/users.service.ts
+@Injectable()
+export class UsersService {
+  constructor(private repo: UserRepository) {}
+
+  async create(dto: CreateUserDto) {
+    return this.repo.create(dto);
+  }
+}
+
+// src/users/users.controller.ts
+@Controller('users')
+export class UsersController {
+  constructor(private service: UsersService) {}
 
   @Post()
-  create(@Body() dto: CreateProductDto) {
+  create(@Body() dto: CreateUserDto) {
     return this.service.create(dto);
+  }
+}
+
+// src/users/users.module.ts
+@Module({
+  controllers: [UsersController],
+  providers: [UsersService, UserRepository, DatabaseService],
+  exports: [UsersService],
+})
+export class UsersModule {}
+```
+
+### JWT Authentication Guard
+
+```typescript
+@Injectable()
+export class JwtAuthGuard implements CanActivate {
+  constructor(private jwtService: JwtService) {}
+
+  canActivate(context: ExecutionContext) {
+    const token = context.switchToHttp().getRequest()
+      .headers.authorization?.split(' ')[1];
+    if (!token) return false;
+    try {
+      const decoded = this.jwtService.verify(token);
+      context.switchToHttp().getRequest().user = decoded;
+      return true;
+    } catch {
+      return false;
+    }
   }
 }
 ```
 
+### Database Transactions
+
+```typescript
+async transferFunds(fromId: number, toId: number, amount: number) {
+  return this.db.database.transaction(async (tx) => {
+    await tx.update(accounts)
+      .set({ balance: sql`${accounts.balance} - ${amount}` })
+      .where(eq(accounts.id, fromId));
+    await tx.update(accounts)
+      .set({ balance: sql`${accounts.balance} + ${amount}` })
+      .where(eq(accounts.id, toId));
+  });
+}
+```
+
+### Unit Testing with Mocks
+
+```typescript
+describe('UsersService', () => {
+  let service: UsersService;
+  let repo: jest.Mocked<UserRepository>;
+
+  beforeEach(async () => {
+    const module = await Test.createTestingModule({
+      providers: [
+        UsersService,
+        { provide: UserRepository, useValue: { findAll: jest.fn(), create: jest.fn() } },
+      ],
+    }).compile();
+    service = module.get(UsersService);
+    repo = module.get(UserRepository);
+  });
+
+  it('should create user', async () => {
+    const dto = { name: 'John', email: 'john@example.com' };
+    repo.create.mockResolvedValue({ id: 1, ...dto, createdAt: new Date() });
+    expect(await service.create(dto)).toMatchObject(dto);
+  });
+});
+```
+
 ## Constraints and Warnings
 
-- **Database Connections**: Always use connection pooling for production
-- **Async Operations**: All database operations are async; handle errors properly
-- **DTOs Required**: Never accept raw objects in controllers; always use DTOs
-- **Module Imports**: Be careful with circular dependencies between modules
-- **Guards Order**: Auth guards should run before role guards
-- **Transaction Scope**: Keep transactions as short as possible to avoid deadlocks
-- **Environment Variables**: Never hardcode database credentials or secrets
+- **DTOs required**: Always use DTOs with class-validator, never accept raw objects
+- **Transactions**: Keep transactions short; avoid nested transactions
+- **Guards order**: JWT guard must run before Roles guard
+- **Environment variables**: Never hardcode DATABASE_URL or JWT_SECRET
+- **Migrations**: Run `drizzle-kit generate` after schema changes before deploying
+- **Circular dependencies**: Use `forwardRef()` carefully; prefer module restructuring
+
+## Best Practices
+
+- Validate all inputs with global `ValidationPipe`
+- Use transactions for multi-table operations
+- Document APIs with OpenAPI/Swagger decorators
 
 ## References
 
-For detailed patterns and examples, see:
-- [patterns.md](references/patterns.md) - Core architecture, database integration, auth, validation, exception handling, advanced patterns
-- [testing.md](references/testing.md) - Unit and E2E testing patterns
-- [migrations.md](references/migrations.md) - Database migrations with Drizzle
-- [best-practices.md](references/best-practices.md) - Comprehensive best practices
+Advanced patterns and detailed examples available in:
+- `references/reference.md` - Core patterns, guards, interceptors, microservices, GraphQL
+- `references/drizzle-reference.md` - Drizzle ORM installation, configuration, queries
+- `references/workflow-optimization.md` - Development workflows, parallel execution strategies

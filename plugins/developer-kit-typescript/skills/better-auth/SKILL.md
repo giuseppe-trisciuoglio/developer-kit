@@ -1,6 +1,6 @@
 ---
 name: better-auth
-description: Provides Better Auth authentication integration patterns for NestJS backend and Next.js frontend with Drizzle ORM and PostgreSQL. Use when implementing authentication - Setting up Better Auth with NestJS backend, Integrating Next.js App Router frontend, Configuring Drizzle ORM schema with PostgreSQL, Implementing social login (GitHub, Google, etc.), Adding plugins (2FA, Organization, SSO, Magic Link, Passkey), Email/password authentication with session management, Creating protected routes and middleware
+description: Provides Better Auth integration patterns for NestJS backend and Next.js frontend with Drizzle ORM and PostgreSQL. Use when setting up Better Auth with NestJS backend, integrating Next.js App Router frontend, configuring Drizzle ORM schema, implementing social login (GitHub, Google), adding plugins (2FA, Organization, SSO, Magic Link, Passkey), implementing email/password authentication with session management, or creating protected routes and middleware.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
@@ -8,23 +8,18 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 
 ## Overview
 
-Better Auth is a comprehensive authentication framework for TypeScript that provides type-safe authentication with support for multiple providers, 2FA, SSO, organizations, and more. This skill covers complete integration patterns for NestJS backend with Drizzle ORM and PostgreSQL, plus Next.js App Router frontend integration.
+Better Auth is a type-safe authentication framework for TypeScript supporting multiple providers, 2FA, SSO, organizations, and passkeys. This skill covers integration patterns for NestJS backend with Drizzle ORM + PostgreSQL and Next.js App Router frontend.
 
 ## When to Use
 
 - Setting up Better Auth with NestJS backend
-- Integrating Next.js App Router frontend with Better Auth
-- Configuring Drizzle ORM schema with PostgreSQL for authentication
-- Implementing social login (GitHub, Google, Facebook, Microsoft, etc.)
-- Adding Multi-Factor Authentication (MFA/2FA) with TOTP
-- Implementing passkey (WebAuthn) passwordless authentication
-- Managing trusted devices for streamlined authentication
-- Using backup codes for 2FA account recovery
-- Adding authentication plugins (2FA, Organization, SSO, Magic Link, Passkey)
-- Email/password authentication with secure session management
-- Creating protected routes and authentication middleware
-- Implementing role-based access control (RBAC)
-- Building multi-tenant applications with organizations
+- Integrating Next.js App Router frontend
+- Configuring Drizzle ORM schema with PostgreSQL
+- Implementing social login (GitHub, Google, Facebook, Microsoft)
+- Adding MFA/2FA with TOTP, passkey passwordless auth, or magic links
+- Managing trusted devices and backup codes for account recovery
+- Building multi-tenant apps with organizations or SSO
+- Creating protected routes with session management
 
 ## Quick Start
 
@@ -32,184 +27,270 @@ Better Auth is a comprehensive authentication framework for TypeScript that prov
 
 ```bash
 # Backend (NestJS)
-npm install better-auth @auth/drizzle-adapter
-npm install drizzle-orm pg
+npm install better-auth @auth/drizzle-adapter drizzle-orm pg
 npm install -D drizzle-kit
 
 # Frontend (Next.js)
 npm install better-auth
 ```
 
-### Basic Setup
+### 4-Phase Setup
 
-1. Configure Better Auth instance (backend)
-2. Set up Drizzle schema with Better Auth tables
-3. Create auth module in NestJS
-4. Configure Next.js auth client
-5. Set up middleware for protected routes
+1. **Database**: Install Drizzle, configure schema, run migrations
+2. **Backend**: Create Better Auth instance with NestJS module
+3. **Frontend**: Configure auth client, create pages, add middleware
+4. **Plugins**: Add 2FA, passkey, organizations as needed
 
-## Architecture
-
-### Backend (NestJS)
-
-```
-src/
-├── auth/
-│   ├── auth.module.ts           # Auth module configuration
-│   ├── auth.controller.ts       # Auth HTTP endpoints
-│   ├── auth.service.ts          # Business logic
-│   ├── auth.guard.ts            # Route protection
-│   └── schema.ts                # Drizzle auth schema
-├── database/
-│   ├── database.module.ts       # Database module
-│   └── database.service.ts      # Drizzle connection
-└── main.ts
-```
-
-### Frontend (Next.js)
-
-```
-app/
-├── (auth)/
-│   ├── sign-in/
-│   │   └── page.tsx            # Sign in page
-│   └── sign-up/
-│       └── page.tsx            # Sign up page
-├── (dashboard)/
-│   ├── dashboard/
-│   │   └── page.tsx            # Protected page
-│   └── layout.tsx              # With auth check
-├── api/
-│   └── auth/
-│       └── [...auth]/route.ts  # Auth API route
-├── layout.tsx                   # Root layout
-└── middleware.ts                # Auth middleware
-lib/
-├── auth.ts                      # Better Auth client
-└── utils.ts
-```
+See `references/nestjs-setup.md` for complete backend setup, `references/plugins.md` for plugin configuration.
 
 ## Instructions
 
 ### Phase 1: Database Setup
 
-1. **Install Dependencies**
+1. **Install dependencies**
    ```bash
    npm install drizzle-orm pg @auth/drizzle-adapter better-auth
    npm install -D drizzle-kit
    ```
 
-2. **Configure Drizzle**
-   - Create `drizzle.config.ts`
-   - Set up database connection
-   - Define schema with Better Auth tables
+2. **Create Drizzle config** (`drizzle.config.ts`)
+   ```typescript
+   import { defineConfig } from 'drizzle-kit';
+   export default defineConfig({
+     schema: './src/auth/schema.ts',
+     out: './drizzle',
+     dialect: 'postgresql',
+     dbCredentials: { url: process.env.DATABASE_URL! },
+   });
+   ```
 
-3. **Generate and Run Migrations**
+3. **Generate and run migrations**
    ```bash
    npx drizzle-kit generate
    npx drizzle-kit migrate
    ```
 
+   **Checkpoint**: Verify tables created: `psql $DATABASE_URL -c "\dt"` should show `user`, `account`, `session`, `verification_token` tables.
+
 ### Phase 2: Backend Setup (NestJS)
 
-1. **Create Database Module**
-   - Set up Drizzle connection
-   - Provide database service
+1. **Create database module** - Set up Drizzle connection service
 
-2. **Configure Better Auth**
-   - Create auth instance with Drizzle adapter
-   - Configure providers (GitHub, Google, etc.)
-   - Set up session management
+2. **Configure Better Auth instance**
+   ```typescript
+   // src/auth/auth.instance.ts
+   import { betterAuth } from 'better-auth';
+   import { drizzleAdapter } from '@auth/drizzle-adapter';
+   import * as schema from './schema';
 
-3. **Create Auth Module**
-   - Auth controller with endpoints
-   - Auth service with business logic
-   - Auth guard for protection
+   export const auth = betterAuth({
+     database: drizzleAdapter(schema, { provider: 'postgresql' }),
+     emailAndPassword: { enabled: true },
+     socialProviders: {
+       github: {
+         clientId: process.env.AUTH_GITHUB_CLIENT_ID!,
+         clientSecret: process.env.AUTH_GITHUB_CLIENT_SECRET!,
+       }
+     }
+   });
+   ```
+
+3. **Create auth controller**
+   ```typescript
+   @Controller('auth')
+   export class AuthController {
+     @All('*')
+     async handleAuth(@Req() req: Request, @Res() res: Response) {
+       return auth.handler(req);
+     }
+   }
+   ```
+
+   **Checkpoint**: Test endpoint `GET /auth/get-session` returns `{ session: null }` when unauthenticated (no error).
 
 ### Phase 3: Frontend Setup (Next.js)
 
-1. **Configure Auth Client**
-   - Set up Better Auth client
-   - Configure server actions
+1. **Configure auth client** (`lib/auth.ts`)
+   ```typescript
+   import { createAuthClient } from 'better-auth/client';
+   export const authClient = createAuthClient({
+     baseURL: process.env.NEXT_PUBLIC_APP_URL!
+   });
+   ```
 
-2. **Create Auth Pages**
-   - Sign in page
-   - Sign up page
-   - Error handling
+2. **Add middleware** (`middleware.ts`)
+   ```typescript
+   import { auth } from '@/lib/auth';
+   export default auth((req) => {
+     if (!req.auth && req.nextUrl.pathname.startsWith('/dashboard')) {
+       return Response.redirect(new URL('/sign-in', req.nextUrl.origin));
+     }
+   });
+   export const config = { matcher: ['/dashboard/:path*'] };
+   ```
 
-3. **Add Middleware**
-   - Protect routes
-   - Handle redirects
+3. **Create sign-in page** with form or social buttons
+
+   **Checkpoint**: Navigating to `/dashboard` when logged out should redirect to `/sign-in`.
 
 ### Phase 4: Advanced Features
 
-1. **Social Providers**
-   - Configure OAuth apps
-   - Add provider callbacks
+Add plugins from `references/plugins.md`:
 
-2. **Plugins**
-   - Two-Factor Authentication (2FA)
-   - Organizations
-   - SSO
-   - Magic Links
-   - Passkeys
+- **2FA**: `twoFactor({ issuer: 'AppName', otpOptions: { sendOTP } })`
+- **Passkey**: `passkey({ rpID: 'domain.com', rpName: 'App' })`
+- **Organizations**: `organization({ avatar: { enabled: true } })`
+- **Magic Link**: `magicLink({ sendMagicLink })`
+- **SSO**: `sso({ saml: { enabled: true } })`
+
+   **Checkpoint**: After adding plugins, re-run migrations and verify new tables exist.
 
 ## Examples
 
-See [references/examples.md](./references/examples.md) for detailed implementation examples including:
+### Example 1: Server Component with Session
 
-- Complete NestJS Auth Setup
-- Next.js Middleware for Route Protection
-- Server Component with Session
-- Two-Factor Authentication
-- Passkey Authentication
-- Backup Codes for 2FA Recovery
+**Input**: Display user data in a Next.js Server Component.
+
+```tsx
+// app/dashboard/page.tsx
+import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
+
+export default async function DashboardPage() {
+  const session = await auth();
+
+  if (!session) {
+    redirect('/sign-in');
+  }
+
+  return (
+    <div>
+      <h1>Welcome, {session.user.name}</h1>
+      <p>Email: {session.user.email}</p>
+    </div>
+  );
+}
+```
+
+**Output**: Renders user info for authenticated users; redirects unauthenticated to sign-in.
+
+### Example 2: 2FA TOTP Verification with Trusted Device
+
+**Input**: User has 2FA enabled and wants to sign in, marking device as trusted.
+
+```typescript
+// Server: Configure 2FA with OTP sending
+export const auth = betterAuth({
+  plugins: [
+    twoFactor({
+      issuer: 'MyApp',
+      otpOptions: {
+        async sendOTP({ user, otp }, ctx) {
+          await sendEmail({
+            to: user.email,
+            subject: 'Your verification code',
+            body: `Code: ${otp}`
+          });
+        }
+      }
+    })
+  ]
+});
+
+// Client: Verify TOTP and trust device
+const verify2FA = async (code: string) => {
+  const { data } = await authClient.twoFactor.verifyTotp({
+    code,
+    trustDevice: true  // Device trusted for 30 days
+  });
+
+  if (data) {
+    router.push('/dashboard');
+  }
+};
+```
+
+**Output**: User authenticated; device trusted for 30 days without 2FA prompt.
+
+### Example 3: Passkey Registration and Login
+
+**Input**: Enable passkey (WebAuthn) authentication for passwordless login.
+
+```typescript
+// Server
+import { passkey } from '@better-auth/passkey';
+export const auth = betterAuth({
+  plugins: [
+    passkey({
+      rpID: 'example.com',
+      rpName: 'My App',
+    })
+  ]
+});
+
+// Client: Register passkey
+const registerPasskey = async () => {
+  const { data } = await authClient.passkey.register({
+    name: 'My Device'
+  });
+};
+
+// Client: Sign in with autofill
+const signInWithPasskey = async () => {
+  await authClient.signIn.passkey({
+    autoFill: true,  // Browser suggests passkey
+  });
+};
+```
+
+**Output**: Users can register and authenticate with biometrics, PIN, or security keys.
+
+For more examples (backup codes, organizations, magic link, conditional UI), see `references/plugins.md` and `references/passkey.md`.
 
 ## Best Practices
 
-See [references/best-practices.md](./references/best-practices.md) for comprehensive best practices including:
-
-- Environment variable security
-- Secret generation
-- Session security
-- Rate limiting
-- CSRF protection
-- Type safety guidelines
+1. **Environment Variables**: Store all secrets in `.env`, add to `.gitignore`
+2. **Secret Generation**: Use `openssl rand -base64 32` for `BETTER_AUTH_SECRET`
+3. **HTTPS Required**: OAuth callbacks need HTTPS (use `ngrok` for local testing)
+4. **Session Expiration**: Configure based on security requirements (7 days default)
+5. **Database Indexing**: Add indexes on `email`, `userId` for performance
+6. **Error Handling**: Return generic errors without exposing sensitive details
+7. **Rate Limiting**: Add to auth endpoints to prevent brute force attacks
+8. **Type Safety**: Use `npx better-auth typegen` for full TypeScript coverage
 
 ## Constraints and Warnings
 
-See [references/best-practices.md](./references/best-practices.md#constraints-and-warnings) for:
+### Security Notes
 
-- Security notes (secrets, HTTPS, OAuth)
-- Known limitations
-- Troubleshooting guide
+- **Never commit secrets**: Add `.env` to `.gitignore`; never commit OAuth secrets or DB credentials
+- **Validate redirect URLs**: Always validate OAuth redirect URLs to prevent open redirects
+- **Hash passwords**: Better Auth handles password hashing automatically; never implement custom hashing
+- **Session storage**: For production, use Redis or another scalable session store
+- **HTTPS Only**: Always use HTTPS for authentication in production
+- **Email Verification**: Always implement email verification for password-based auth
 
-## References
+### Known Limitations
 
-For detailed implementation guidance, see the reference files:
-
-| Reference | Description |
-|-----------|-------------|
-| [examples.md](./references/examples.md) | Detailed implementation examples (8 scenarios) |
-| [patterns.md](./references/patterns.md) | Common patterns, version requirements, environment variables |
-| [best-practices.md](./references/best-practices.md) | Security guidelines, troubleshooting, constraints |
-| [nestjs-setup.md](./references/nestjs-setup.md) | Complete NestJS backend setup guide |
-| [nextjs-setup.md](./references/nextjs-setup.md) | Complete Next.js frontend setup guide |
-| [mfa-2fa.md](./references/mfa-2fa.md) | Multi-factor authentication details |
-| [passkey.md](./references/passkey.md) | Passkey authentication setup |
-| [plugins.md](./references/plugins.md) | Plugin configuration guide |
-| [schema.md](./references/schema.md) | Database schema reference |
-| [social-providers.md](./references/social-providers.md) | OAuth provider setup |
+- Better Auth requires Node.js 18+ for Next.js App Router support
+- Some OAuth providers require specific redirect URL formats
+- Passkeys require HTTPS and compatible browsers
+- Organization features require additional database tables
 
 ## Resources
 
 ### Documentation
 
-- [Better Auth Documentation](https://www.better-auth.com)
-- [Drizzle ORM Documentation](https://orm.drizzle.team)
-- [NestJS Documentation](https://docs.nestjs.com)
-- [Next.js App Router Documentation](https://nextjs.org/docs/app)
+- [Better Auth](https://www.better-auth.com) - Official documentation
+- [Drizzle ORM](https://orm.drizzle.team) - Database ORM
+- [NestJS](https://docs.nestjs.com) - Backend framework
+- [Next.js](https://nextjs.org/docs/app) - Frontend framework
 
-### Example Files
+### Reference Implementations
 
-See `assets/` directory for example code files and environment templates.
+- `references/nestjs-setup.md` - Complete NestJS backend setup
+- `references/nextjs-setup.md` - Complete Next.js frontend setup
+- `references/plugins.md` - Plugin configuration (2FA, passkey, organizations, SSO, magic link)
+- `references/mfa-2fa.md` - Detailed MFA/2FA guide
+- `references/passkey.md` - Detailed passkey implementation
+- `references/schema.md` - Drizzle schema reference
+- `references/social-providers.md` - Social provider configuration

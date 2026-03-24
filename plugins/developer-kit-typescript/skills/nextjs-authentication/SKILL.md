@@ -8,30 +8,15 @@ allowed-tools: Read, Write, Edit, Bash
 
 ## Overview
 
-This skill provides comprehensive authentication patterns for Next.js 15+ applications using the App Router architecture and Auth.js 5. It covers the complete authentication lifecycle from initial setup to production-ready implementations with role-based access control.
-
-Key capabilities include:
-- Auth.js 5 setup with Next.js App Router
-- Protected routes using Middleware
-- Session management in Server Components
-- Authentication checks in Server Actions
-- OAuth provider integration (GitHub, Google, etc.)
-- Role-based access control (RBAC)
-- JWT and database session strategies
+Provides authentication implementation patterns for Next.js 15+ App Router using Auth.js 5 (NextAuth.js), covering the complete authentication lifecycle from initial setup to production-ready role-based access control implementations.
 
 ## When to Use
 
-Use this skill when implementing authentication for Next.js 15+ with App Router:
-
-- Setting up Auth.js 5 (NextAuth.js) from scratch
+- Setting up Auth.js 5 from scratch or adding OAuth providers
 - Implementing protected routes with Middleware
-- Handling authentication in Server Components
-- Securing Server Actions with auth checks
-- Configuring OAuth providers (Google, GitHub, Discord, etc.)
+- Handling authentication in Server Components and Server Actions
 - Implementing role-based access control (RBAC)
-- Managing sessions with JWT or database strategy
-- Creating credential-based authentication
-- Handling sign-in/sign-out flows
+- Creating credential-based or OAuth sign-in/sign-out flows
 
 ## Instructions
 
@@ -293,29 +278,171 @@ declare module "next-auth/jwt" {
 }
 ```
 
-## Constraints and Warnings
-
-- Middleware runs on Edge runtime - cannot use Node.js database drivers
-- Server Components cannot set cookies - use Server Actions instead
-- Always verify authentication in Server Actions, not just middleware
-- See [references/best-practices.md](references/best-practices.md) for complete security guidelines
-
 ## Examples
 
-See [references/examples.md](references/examples.md) for comprehensive code examples:
-- Complete protected dashboard
-- Role-based admin panel
-- Secure Server Action with form
-- OAuth sign-in button
-- Credentials provider login
+### Example 1: Complete Protected Dashboard
+
+**Input:** User needs a dashboard accessible only to authenticated users
+
+**Implementation:**
+
+```tsx
+// app/dashboard/page.tsx
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+import { getUserTodos } from "@/app/lib/data";
+
+export default async function DashboardPage() {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
+
+  const todos = await getUserTodos(session.user.id);
+
+  return (
+    <main>
+      <h1>Welcome, {session.user.name}</h1>
+      <p>Email: {session.user.email}</p>
+      <TodoList todos={todos} />
+    </main>
+  );
+}
+```
+
+**Output:** Dashboard renders only for authenticated users, with their specific data.
+
+### Example 2: Role-Based Admin Panel
+
+**Input:** Admin panel should be accessible only to users with "admin" role
+
+**Implementation:**
+
+```tsx
+// app/admin/page.tsx
+import { auth } from "@/auth";
+import { unauthorized } from "next/navigation";
+
+export default async function AdminPage() {
+  const session = await auth();
+
+  if (session?.user?.role !== "admin") {
+    unauthorized();
+  }
+
+  return (
+    <main>
+      <h1>Admin Panel</h1>
+      <p>Welcome, administrator {session.user.name}</p>
+    </main>
+  );
+}
+```
+
+**Output:** Only admin users see the panel; others get 401 error.
+
+### Example 3: Secure Server Action with Form
+
+**Input:** Form submission should only work for authenticated users
+
+**Implementation:**
+
+```tsx
+// app/components/create-todo-form.tsx
+"use server";
+
+import { auth } from "@/auth";
+import { revalidatePath } from "next/cache";
+
+export async function createTodo(formData: FormData) {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    throw new Error("Unauthorized");
+  }
+
+  const title = formData.get("title") as string;
+
+  await db.todo.create({
+    data: {
+      title,
+      userId: session.user.id,
+    },
+  });
+
+  revalidatePath("/dashboard");
+}
+
+// Usage in component
+export function CreateTodoForm() {
+  return (
+    <form action={createTodo}>
+      <input name="title" placeholder="New todo..." required />
+      <button type="submit">Add Todo</button>
+    </form>
+  );
+}
+```
+
+**Output:** Todo created only for authenticated user; unauthorized requests throw error.
 
 ## Best Practices
 
-See [references/best-practices.md](references/best-practices.md) for detailed guidance on:
-- Server Components vs Client Components
-- Security considerations
-- Common mistakes to avoid
-- Performance optimization tips
+1. **Use Server Components by default** - Access session directly without client-side JavaScript
+2. **Minimize Client Components** - Only use `useSession()` for reactive session updates
+3. **Cache session checks** - Use React's `cache()` for repeated lookups in the same render
+4. **Middleware for optimistic checks** - Redirect quickly, but always re-verify in Server Actions
+5. **Treat Server Actions like API endpoints** - Always authenticate before mutations
+6. **Never hardcode secrets** - Use environment variables for all credentials
+7. **Implement proper error handling** - Return appropriate HTTP status codes
+8. **Use TypeScript type extensions** - Extend NextAuth types for custom fields
+9. **Separate auth logic** - Create a DAL (Data Access Layer) for consistent checks
+10. **Test authentication flows** - Mock `auth()` function in unit tests
+
+## Constraints and Warnings
+
+### Critical Limitations
+
+- **Middleware runs on Edge runtime** - Cannot use Node.js APIs like database drivers
+- **Server Components cannot set cookies** - Use Server Actions for cookie operations
+- **Session callback timing** - Only called on session creation/access, not every request
+
+### Common Mistakes
+
+```tsx
+// ❌ WRONG: Setting cookies in Server Component
+export default async function Page() {
+  cookies().set("key", "value"); // Won't work
+}
+
+// ✅ CORRECT: Use Server Action
+async function setCookieAction() {
+  "use server";
+  cookies().set("key", "value");
+}
+```
+
+```typescript
+// ❌ WRONG: Database queries in Middleware
+export default auth(async (req) => {
+  const user = await db.user.findUnique(); // Won't work in Edge
+});
+
+// ✅ CORRECT: Use only Edge-compatible APIs
+export default auth(async (req) => {
+  const session = req.auth; // This works
+});
+```
+
+### Security Considerations
+
+- Always verify authentication in Server Actions - middleware alone is not enough
+- Use `unauthorized()` for unauthenticated access, `redirect()` for other cases
+- Store sensitive tokens in `httpOnly` cookies
+- Validate all user input before processing
+- Use HTTPS in production
+- Set appropriate cookie `sameSite` attributes
 
 ## References
 
@@ -323,5 +450,3 @@ See [references/best-practices.md](references/best-practices.md) for detailed gu
 - [references/oauth-providers.md](references/oauth-providers.md) - Provider-specific configurations (GitHub, Google, Discord, Auth0, etc.)
 - [references/database-adapter.md](references/database-adapter.md) - Database session management with Prisma, Drizzle, and custom adapters
 - [references/testing-patterns.md](references/testing-patterns.md) - Testing authentication flows with Vitest and Playwright
-- [references/examples.md](references/examples.md) - Comprehensive code examples
-- [references/best-practices.md](references/best-practices.md) - Best practices and security guidelines

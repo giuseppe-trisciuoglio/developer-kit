@@ -6,55 +6,24 @@ allowed-tools: Read, Write, Edit, Bash
 
 # Next.js Data Fetching
 
-Provides practical guidance for data fetching in Next.js App Router applications. Use this skill to choose between server and client fetching, configure caching and revalidation, and pair data access with reliable loading and error handling.
-
 ## Overview
 
-Default to data fetching in async Server Components. Move to client-side libraries only when the UX needs browser-driven refresh, optimistic updates, or long-lived interactive state.
-
-Keep `SKILL.md` focused on the decision flow below, then load the relevant reference files for implementation details.
+Provides patterns for data fetching in Next.js App Router: server-side fetching, SWR/React Query integration, ISR, revalidation, error boundaries, and loading states.
 
 ## When to Use
 
-Use this skill when you need to:
-
-- Implement data fetching in a Next.js App Router application
-- Choose between Server Components and Client Components for data access
-- Set up parallel or sequential fetching strategies
-- Configure ISR, cache tags, or `cache: 'no-store'`
-- Add SWR or React Query for client-driven data flows
-- Handle loading states, Suspense boundaries, and error boundaries
-- Use Server Actions for mutations that refresh cached data
-
-## How to Use This Skill
-
-1. Start with the decision guide to pick the right fetching model.
-2. Load the reference file that matches the work area:
-   - Server, parallel, or sequential fetching -> `references/data-fetching.md`
-   - ISR, cache tags, or revalidation -> `references/caching-strategies.md`
-   - SWR or client-driven fetching -> `references/client-fetching.md`
-   - Advanced React Query patterns -> `references/react-query.md`
-   - Loading states or error boundaries -> `references/error-loading-states.md`
-   - Mutations with Server Actions -> `references/server-actions.md`
-3. Apply the smallest viable pattern for the feature.
-4. Verify that caching, loading, and error behavior match the use case.
-
-## Quick Decision Guide
-
-| Scenario | Default choice |
-|----------|----------------|
-| Static or cacheable content | Server Component + `fetch()` + `revalidate` |
-| Multiple independent requests | Parallel fetching with `Promise.all()` |
-| Requests with data dependency | Sequential fetching |
-| User-specific or real-time data | Client Component + SWR or React Query |
-| Mutation followed by refresh | Server Action + `revalidateTag()` or `revalidatePath()` |
-| Data that must never be cached | `fetch(..., { cache: 'no-store' })` |
+- Implementing data fetching in Next.js App Router
+- Choosing between Server Components and Client Components
+- Setting up SWR or React Query for client-side caching
+- Configuring ISR, time-based, or on-demand revalidation
+- Handling loading and error states
+- Building forms with Server Actions
 
 ## Instructions
 
-### 1. Default to Server Component fetching
+### Server Component Fetching
 
-Fetch directly in async Server Components for the initial render whenever browser state is not required.
+Fetch directly in async Server Components:
 
 ```tsx
 async function getPosts() {
@@ -65,126 +34,298 @@ async function getPosts() {
 
 export default async function PostsPage() {
   const posts = await getPosts();
-  return <PostsList posts={posts} />;
+  return (
+    <ul>
+      {posts.map((post) => (
+        <li key={post.id}>{post.title}</li>
+      ))}
+    </ul>
+  );
 }
 ```
 
-Use parallel fetching for independent requests, and switch to sequential fetching only when one request depends on the result of another. See [references/data-fetching.md](references/data-fetching.md) for full patterns and examples.
+### Parallel Data Fetching
 
-### 2. Choose caching intentionally
+Use `Promise.all()` for independent requests:
 
-Use time-based revalidation for cacheable content, tags for selective invalidation, and `no-store` for truly dynamic data.
+```tsx
+async function getDashboardData() {
+  const [user, posts, analytics] = await Promise.all([
+    fetch('/api/user').then(r => r.json()),
+    fetch('/api/posts').then(r => r.json()),
+    fetch('/api/analytics').then(r => r.json()),
+  ]);
+  return { user, posts, analytics };
+}
+
+export default async function DashboardPage() {
+  const { user, posts, analytics } = await getDashboardData();
+  // Render dashboard
+}
+```
+
+### Sequential Data Fetching (When Dependencies Exist)
+
+```tsx
+async function getUserPosts(userId: string) {
+  const user = await fetch(`/api/users/${userId}`).then(r => r.json());
+  const posts = await fetch(`/api/users/${userId}/posts`).then(r => r.json());
+  return { user, posts };
+}
+```
+
+### Time-based Revalidation (ISR)
 
 ```tsx
 async function getPosts() {
   const res = await fetch('https://api.example.com/posts', {
-    next: { revalidate: 60, tags: ['posts'] },
+    next: { revalidate: 60 } // Revalidate every 60 seconds
   });
   return res.json();
 }
 ```
 
-Prefer explicit cache behavior over defaults so the rendering model stays obvious. See [references/caching-strategies.md](references/caching-strategies.md) for ISR, tag revalidation, and dynamic rendering patterns.
+### On-Demand Revalidation
 
-### 3. Use client fetching only when the UX needs it
+```tsx
+// app/api/revalidate/route.ts
+import { revalidateTag } from 'next/cache';
+import { NextRequest } from 'next/server';
 
-Reach for SWR or React Query when the component needs polling, background refresh, optimistic updates, or user-driven cache coordination.
+export async function POST(request: NextRequest) {
+  const tag = request.nextUrl.searchParams.get('tag');
+  if (tag) {
+    revalidateTag(tag);
+    return Response.json({ revalidated: true });
+  }
+  return Response.json({ revalidated: false }, { status: 400 });
+}
+```
+
+Tag data for selective revalidation:
+
+```tsx
+async function getPosts() {
+  const res = await fetch('https://api.example.com/posts', {
+    next: { tags: ['posts'], revalidate: 3600 }
+  });
+  return res.json();
+}
+```
+
+### Opt-out of Caching
+
+```tsx
+async function getRealTimeData() {
+  const res = await fetch('https://api.example.com/data', {
+    cache: 'no-store'
+  });
+  return res.json();
+}
+
+// Or:
+export const dynamic = 'force-dynamic';
+```
+
+## Client-Side Data Fetching
+
+### SWR Integration
+
+Install: `npm install swr`
 
 ```tsx
 'use client';
 
 import useSWR from 'swr';
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
+const fetcher = (url: string) => fetch(url).then(r => r.json());
 
 export function Posts() {
-  const { data, error, isLoading } = useSWR('/api/posts', fetcher);
+  const { data, error, isLoading } = useSWR('/api/posts', fetcher, {
+    refreshInterval: 5000,
+    revalidateOnFocus: true,
+  });
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Failed to load posts</div>;
 
-  return <PostsList posts={data} />;
+  return (
+    <ul>
+      {data.map((post: any) => (
+        <li key={post.id}>{post.title}</li>
+      ))}
+    </ul>
+  );
 }
 ```
 
-Start simple with SWR for lightweight refresh needs. Use React Query when you need richer cache orchestration, hydration, or mutation workflows. See [references/client-fetching.md](references/client-fetching.md) and [references/react-query.md](references/react-query.md).
+### React Query Integration
 
-### 4. Pair data fetching with loading and error UI
-
-Add `loading.tsx`, Suspense boundaries, or error boundaries so failures and slow requests degrade gracefully.
+Install: `npm install @tanstack/react-query`
 
 ```tsx
+// app/providers.tsx
+'use client';
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useState } from 'react';
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 60 * 1000,
+        refetchOnWindowFocus: false,
+      },
+    },
+  }));
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      {children}
+    </QueryClientProvider>
+  );
+}
+```
+
+See [react-query.md](references/react-query.md) for mutations, optimistic updates, infinite queries, and advanced patterns.
+
+## Error Boundaries
+
+Wrap client-side data fetching in Error Boundaries to handle failures gracefully:
+
+See [error-boundaries.md](references/error-boundaries.md) for full `ErrorBoundary` implementations (basic, with reset callback) and usage examples with data fetching.
+
+## Server Actions
+
+Use Server Actions for mutations with cache revalidation:
+
+See [server-actions.md](references/server-actions.md) for complete examples including form validation with `useActionState`, error handling, and cache invalidation.
+
+## Loading States
+
+### loading.tsx Pattern
+
+```tsx
+// app/posts/loading.tsx
+export default function PostsLoading() {
+  return (
+    <div className="space-y-4">
+      {[...Array(5)].map((_, i) => (
+        <div key={i} className="h-16 bg-gray-200 animate-pulse rounded" />
+      ))}
+    </div>
+  );
+}
+```
+
+### Suspense Boundaries
+
+```tsx
+// app/posts/page.tsx
 import { Suspense } from 'react';
 import { PostsList } from './PostsList';
 import { PostsSkeleton } from './PostsSkeleton';
 
 export default function PostsPage() {
   return (
-    <Suspense fallback={<PostsSkeleton />}>
-      <PostsList />
-    </Suspense>
+    <div>
+      <h1>Posts</h1>
+      <Suspense fallback={<PostsSkeleton />}>
+        <PostsList />
+      </Suspense>
+    </div>
   );
 }
 ```
 
-Treat loading and error handling as part of the fetching design, not as an afterthought. See [references/error-loading-states.md](references/error-loading-states.md) for reusable patterns.
-
-### 5. Use Server Actions for mutations
-
-Handle writes in Server Actions, then invalidate the relevant cache entries.
-
-```tsx
-'use server';
-
-import { revalidateTag } from 'next/cache';
-
-export async function createPost(formData: FormData) {
-  await fetch('https://api.example.com/posts', {
-    method: 'POST',
-    body: JSON.stringify({
-      title: formData.get('title'),
-      content: formData.get('content'),
-    }),
-  });
-
-  revalidateTag('posts');
-}
-```
-
-Keep the mutation close to the cache invalidation strategy so reads and writes stay aligned. See [references/server-actions.md](references/server-actions.md) for full form patterns.
-
 ## Best Practices
 
-- Prefer Server Components for the first render whenever possible.
-- Parallelize independent requests with `Promise.all()`.
-- Pick cache settings based on data volatility, not convenience.
-- Use client-side libraries only for interactive or continuously refreshed data.
-- Add explicit loading and error states for every non-trivial fetch flow.
-- Revalidate cache entries immediately after successful mutations.
+1. **Default to Server Components** — Fetch in Server Components for better performance
+2. **Use parallel fetching** — `Promise.all()` for independent requests to reduce latency
+3. **Choose appropriate caching**:
+   - Static data: long revalidation intervals
+   - Dynamic data: short revalidation or `cache: 'no-store'`
+   - User-specific data: use dynamic rendering
+4. **Handle errors gracefully** — Wrap client data fetching in error boundaries
+5. **Implement loading states** — Use `loading.tsx` or Suspense boundaries
+6. **Prefer SWR/React Query for**: real-time data, user interactions, background updates
+7. **Use Server Actions for**: form submissions, mutations requiring cache revalidation
 
 ## Constraints and Warnings
 
-- Server Components cannot use hooks such as `useState`, `useEffect`, SWR, or React Query.
-- Client Components must include the `'use client'` directive.
-- Avoid shared caching for user-specific data.
-- Treat Server Actions as server-side write paths and validate inputs accordingly.
-- Keep server and client rendering aligned to avoid hydration mismatches.
+### Critical Constraints
+
+- Server Components cannot use hooks (`useState`, `useEffect`) or client data fetching libraries
+- Client Components must include the `'use client'` directive
+- The `fetch` API in Next.js extends standard Web fetch with Next.js-specific caching options
+- Server Actions require `'use server'` and can only be called from Client Components or form actions
+
+### Common Pitfalls
+
+1. **Fetching in loops** — Avoid sequential fetches in Server Components; use parallel fetching
+2. **Cache poisoning** — Do not use `force-cache` for user-specific or personalized data
+3. **Memory leaks** — Clean up subscriptions in Client Components when using real-time data
+4. **Hydration mismatches** — Ensure server and client render the same initial state with React Query hydration
 
 ## Examples
 
-### Example 1: Cacheable content page
+### Example 1: Blog with ISR
 
-Use a Server Component with `revalidate` when the page can tolerate bounded staleness.
+**Input:** Create a blog page that fetches posts and updates every hour.
 
-### Example 2: Interactive dashboard
+```tsx
+// app/blog/page.tsx
+async function getPosts() {
+  const res = await fetch('https://api.example.com/posts', {
+    next: { revalidate: 3600 }
+  });
+  return res.json();
+}
 
-Use parallel server fetching for the initial render, then add SWR or React Query only to the widgets that need live refresh or mutation handling.
+export default async function BlogPage() {
+  const posts = await getPosts();
+  return (
+    <main>
+      <h1>Blog Posts</h1>
+      {posts.map(post => (
+        <article key={post.id}>
+          <h2>{post.title}</h2>
+          <p>{post.excerpt}</p>
+        </article>
+      ))}
+    </main>
+  );
+}
+```
 
-## References
+**Output:** Page statically generated at build time, revalidated every hour.
 
-- [references/data-fetching.md](references/data-fetching.md) - Server Component, parallel, and sequential fetching patterns
-- [references/caching-strategies.md](references/caching-strategies.md) - ISR, tag invalidation, on-demand revalidation, and `no-store`
-- [references/client-fetching.md](references/client-fetching.md) - SWR setup, React Query basics, and client-fetching decisions
-- [references/react-query.md](references/react-query.md) - Advanced React Query hydration, mutations, infinite queries, and invalidation
-- [references/error-loading-states.md](references/error-loading-states.md) - Error boundaries, `loading.tsx`, and Suspense patterns
-- [references/server-actions.md](references/server-actions.md) - Server Actions for mutations and cache refresh workflows
+### Example 2: Dashboard with Parallel Fetching
+
+**Input:** Build a dashboard showing user profile, stats, and recent activity in parallel.
+
+```tsx
+// app/dashboard/page.tsx
+async function getDashboardData() {
+  const [user, stats, activity] = await Promise.all([
+    fetch('/api/user').then(r => r.json()),
+    fetch('/api/stats').then(r => r.json()),
+    fetch('/api/activity').then(r => r.json()),
+  ]);
+  return { user, stats, activity };
+}
+
+export default async function DashboardPage() {
+  const { user, stats, activity } = await getDashboardData();
+  return (
+    <div className="dashboard">
+      <UserProfile user={user} />
+      <StatsCards stats={stats} />
+      <ActivityFeed activity={activity} />
+    </div>
+  );
+}
+```
+
+**Output:** All three requests execute concurrently, minimizing total load time.

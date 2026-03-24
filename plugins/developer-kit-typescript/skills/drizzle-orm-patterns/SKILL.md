@@ -20,43 +20,54 @@ Expert guide for building type-safe database applications with Drizzle ORM. Cove
 - Setting up migrations with Drizzle Kit
 - Working with PostgreSQL, MySQL, SQLite, MSSQL, or CockroachDB
 
+## Quick Reference
+
+| Database | Table Function | Import |
+|----------|---------------|--------|
+| PostgreSQL | `pgTable()` | `drizzle-orm/pg-core` |
+| MySQL | `mysqlTable()` | `drizzle-orm/mysql-core` |
+| SQLite | `sqliteTable()` | `drizzle-orm/sqlite-core` |
+| MSSQL | `mssqlTable()` | `drizzle-orm/mssql-core` |
+
+| Operation | Method | Example |
+|-----------|--------|---------|
+| Insert | `db.insert()` | `db.insert(users).values({...})` |
+| Select | `db.select()` | `db.select().from(users).where(eq(...))` |
+| Update | `db.update()` | `db.update(users).set({...}).where(...)` |
+| Delete | `db.delete()` | `db.delete(users).where(...)` |
+| Transaction | `db.transaction()` | `db.transaction(async (tx) => {...})` |
+
 ## Instructions
 
 1. **Identify your database dialect** - Choose PostgreSQL, MySQL, SQLite, MSSQL, or CockroachDB
 2. **Define your schema** - Use the appropriate table function (pgTable, mysqlTable, etc.)
-3. **Set up relations** - Define relations using `relations()` or `defineRelations()` for complex relationships
+3. **Set up relations** - Define relations using `relations()` or `defineRelations()`
 4. **Initialize the database client** - Create your Drizzle client with proper credentials
 5. **Write queries** - Use the query builder for type-safe CRUD operations
 6. **Handle transactions** - Wrap multi-step operations in transactions when needed
 7. **Set up migrations** - Configure Drizzle Kit for schema management
 
-## Quick Reference
+## Examples
 
-### Basic Schema Definition
+### Example 1: Basic Schema and Query
 
 ```typescript
-import { pgTable, serial, text, integer, timestamp } from 'drizzle-orm/pg-core';
-import { relations } from 'drizzle-orm';
+import { pgTable, serial, text } from 'drizzle-orm/pg-core';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { eq } from 'drizzle-orm';
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
   name: text('name').notNull(),
   email: text('email').notNull().unique(),
-  createdAt: timestamp('created_at').defaultNow(),
 });
 
-export const posts = pgTable('posts', {
-  id: serial('id').primaryKey(),
-  title: text('title').notNull(),
-  authorId: integer('author_id').references(() => users.id),
-});
+const db = drizzle(process.env.DATABASE_URL);
 
-export const usersRelations = relations(users, ({ many }) => ({
-  posts: many(posts),
-}));
+const [user] = await db.select().from(users).where(eq(users.id, 1));
 ```
 
-### CRUD Operations
+### Example 2: CRUD Operations
 
 ```typescript
 import { eq } from 'drizzle-orm';
@@ -67,9 +78,6 @@ const [newUser] = await db.insert(users).values({
   email: 'john@example.com',
 }).returning();
 
-// Select
-const [user] = await db.select().from(users).where(eq(users.id, 1));
-
 // Update
 await db.update(users)
   .set({ name: 'John Updated' })
@@ -79,11 +87,12 @@ await db.update(users)
 await db.delete(users).where(eq(users.id, 1));
 ```
 
-### Transaction with Rollback
+### Example 3: Transaction with Rollback
 
 ```typescript
 await db.transaction(async (tx) => {
-  const [from] = await tx.select().from(accounts).where(eq(accounts.userId, fromId));
+  const [from] = await tx.select().from(accounts)
+    .where(eq(accounts.userId, fromId));
 
   if (from.balance < amount) {
     tx.rollback();
@@ -95,44 +104,35 @@ await db.transaction(async (tx) => {
 });
 ```
 
-## References
-
-For detailed patterns and examples, see:
-
-- [references/patterns.md](references/patterns.md) - Detailed patterns for schema definition, CRUD operations, relations, joins, aggregations, transactions, and migrations
-- [references/examples.md](references/examples.md) - Complete working examples for common use cases
-- [references/best-practices.md](references/best-practices.md) - Best practices, constraints, and warnings
-
-## Examples
-
-See [references/examples.md](references/examples.md) for complete working examples including:
-- Complete schema with relations
-- CRUD operations
-- Transaction with rollback
-- Complex queries with joins
-- Pagination implementation
-- Aggregation queries
-- Soft delete pattern
-- Full-featured repository pattern
+See [references/transactions.md](references/transactions.md) for advanced transaction patterns.
 
 ## Best Practices
 
-See [references/best-practices.md](references/best-practices.md) for comprehensive best practices including:
-- Type safety with `$inferInsert` / `$inferSelect`
-- Relations definition patterns
-- Transaction usage
-- Migration strategies
-- Index recommendations
-- Soft delete implementation
-- Pagination strategies
-- Query optimization
+1. **Type Safety**: Always use TypeScript and leverage `$inferInsert` / `$inferSelect`
+2. **Relations**: Define relations using the relations() API for nested queries
+3. **Transactions**: Use transactions for multi-step operations that must succeed together
+4. **Migrations**: Use `generate` + `migrate` in production, `push` for development
+5. **Indexes**: Add indexes on frequently queried columns and foreign keys
+6. **Soft Deletes**: Use `deletedAt` timestamp instead of hard deletes when possible
+7. **Pagination**: Use cursor-based pagination for large datasets
+8. **Query Optimization**: Use `.limit()` and `.where()` to fetch only needed data
 
 ## Constraints and Warnings
 
-See [references/best-practices.md#constraints-and-warnings](references/best-practices.md#constraints-and-warnings) for important considerations including:
-- Foreign key constraint patterns
-- Transaction rollback behavior
-- Returning clause compatibility
-- Batch operation limits
-- Migration safety in production
-- Soft delete query requirements
+- **Foreign Key Constraints**: Always define references using arrow functions `() => table.column` to avoid circular dependency issues
+- **Transaction Rollback**: Calling `tx.rollback()` throws an exception - use try/catch if needed
+- **Returning Clauses**: Not all databases support `.returning()` - check your dialect compatibility
+- **Batch Operations**: Large batch inserts may hit database limits - chunk into smaller batches
+- **Migrations in Production**: Always test migrations in staging before applying to production
+
+## References
+
+### Core Concepts
+- **[references/schema-definition.md](references/schema-definition.md)** - Complete schema definition for all databases (PostgreSQL, MySQL, SQLite), column types, indexes, and constraints
+- **[references/relations.md](references/relations.md)** - One-to-one, one-to-many, many-to-many relations with v1 and v2 syntax
+- **[references/queries-joins-aggregations.md](references/queries-joins-aggregations.md)** - CRUD operations, query operators, joins, aggregations, and pagination
+
+### Advanced Topics
+- **[references/transactions.md](references/transactions.md)** - Transaction patterns, rollback handling, nested transactions
+- **[references/migrations.md](references/migrations.md)** - Drizzle Kit configuration, CLI commands, migration workflow
+- **[references/common-patterns.md](references/common-patterns.md)** - Soft delete, upsert, batch operations, full-text search, audit trails
