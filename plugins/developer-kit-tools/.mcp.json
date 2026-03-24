@@ -3,6 +3,26 @@
     "notebooklm-mcp": {
       "command": "uvx",
       "args": ["--from", "notebooklm-mcp-cli", "notebooklm-mcp"]
+    },
+    "sonarqube-mcp": {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "-i",
+        "-e",
+        "SONARQUBE_TOKEN",
+        "-e",
+        "SONARQUBE_URL",
+        "-e",
+        "SONARQUBE_ORG",
+        "mcp/sonarqube"
+      ],
+      "env": {
+        "SONARQUBE_TOKEN": "${SONARQUBE_TOKEN}",
+        "SONARQUBE_URL": "${SONARQUBE_URL}",
+        "SONARQUBE_ORG": "${SONARQUBE_ORG}"
+      }
     }
   }
 }

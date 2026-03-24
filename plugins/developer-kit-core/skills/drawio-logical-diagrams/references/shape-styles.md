@@ -233,6 +233,33 @@ When placing elements inside a container, reference the container ID in the `par
 | `&` | `&amp;` |
 | Line break | `&#xa;` or `<br>` with html=1 |
 
+## Shape Examples
+
+### Process Box
+```xml
+<mxCell id="2" value="Process Name" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" vertex="1" parent="1"><mxGeometry x="200" y="100" width="120" height="60" as="geometry"/></mxCell>
+```
+
+### Decision Diamond
+```xml
+<mxCell id="3" value="Decision?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="1"><mxGeometry x="280" y="200" width="80" height="80" as="geometry"/></mxCell>
+```
+
+### Start/End Oval
+```xml
+<mxCell id="4" value="Start" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="1"><mxGeometry x="200" y="300" width="80" height="40" as="geometry"/></mxCell>
+```
+
+### Data Store (Cylinder)
+```xml
+<mxCell id="5" value="Database" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;fillColor=#e1f5fe;strokeColor=#0277bd;fontSize=12;" vertex="1" parent="1"><mxGeometry x="400" y="100" width="60" height="80" as="geometry"/></mxCell>
+```
+
+### Connector/Arrow
+```xml
+<mxCell id="10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeColor=#666666;strokeWidth=2;" edge="1" parent="1" source="2" target="3"><mxGeometry relative="1" as="geometry"/></mxCell>
+```
+
 ## Coordinate Guidelines
 
 ### Element Sizes

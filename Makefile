@@ -23,7 +23,7 @@ SHELL := /bin/bash
 .PHONY: all help check-deps list-plugins list-components list-agents list-commands list-skills list-rules \
         install install-claude install-opencode install-copilot install-codex \
         install-rules uninstall status backup clean security-scan security-scan-changed \
-        skill-lint skill-security skill-review plugin-validate plugin-bump-version
+        skill-lint skill-security skill-review skill-review-all plugin-validate plugin-bump-version
 
 # ═══════════════════════════════════════════════════════════════
 # COLORS & OUTPUT FORMATTING
@@ -181,6 +181,7 @@ help:
 	@echo "  make skill-lint SKILL=path            Validate one skill with the skill validator"
 	@echo "  make skill-security SKILL=path        Run MCP security validation on one skill"
 	@echo "  make skill-review SKILL=path          Review one skill with tessl"
+	@echo "  make skill-review-all                 Review all project skills with tessl"
 	@echo "  make plugin-validate                  Validate all components in the repository"
 	@echo "  make plugin-bump-version              Bump versions in marketplace.json, plugin.json, and tile.json"
 	@echo "    Examples: make plugin-bump-version BUMP=minor"
@@ -906,6 +907,45 @@ skill-review:
 	fi; \
 	echo -e "$(BLUE)ℹ Running tessl skill review on $$skill_dir$(NC)"; \
 	tessl skill review "$$skill_dir"
+
+skill-review-all: check-deps
+	@if ! command -v tessl >/dev/null 2>&1; then \
+		echo -e "$(RED)✗ 'tessl' command not found in PATH$(NC)"; \
+		exit 1; \
+	fi
+	@total=0; failed=0; \
+	echo -e "$(BLUE)ℹ Running tessl skill review on all project skills$(NC)"; \
+	for plugin_json in $(PLUGIN_JSON_FILES); do \
+		plugin_name=$$(jq -r '.name' "$$plugin_json" 2>/dev/null); \
+		plugin_dir=$$(dirname "$$plugin_json"); \
+		base_dir=$$(dirname "$$plugin_dir"); \
+		skills=$$(jq -r '.skills[]? // empty' "$$plugin_json" 2>/dev/null); \
+		if [ -n "$$skills" ]; then \
+			echo ""; \
+			echo -e "$(YELLOW)$$plugin_name:$(NC)"; \
+			for skill_pattern in $$skills; do \
+				for skill_dir in $$base_dir/$$skill_pattern; do \
+					if [ -d "$$skill_dir" ] && [ -f "$$skill_dir/SKILL.md" ]; then \
+						total=$$((total + 1)); \
+						echo -e "$(BLUE)ℹ Running tessl skill review on $$skill_dir$(NC)"; \
+						if ! tessl skill review "$$skill_dir"; then \
+							failed=$$((failed + 1)); \
+						fi; \
+					fi; \
+				done; \
+			done; \
+		fi; \
+	done; \
+	echo ""; \
+	if [ "$$total" -eq 0 ]; then \
+		echo -e "$(YELLOW)⚠ No skills found to review$(NC)"; \
+		exit 0; \
+	fi; \
+	if [ "$$failed" -gt 0 ]; then \
+		echo -e "$(RED)✗ Tessl review failed for $$failed of $$total skill(s)$(NC)"; \
+		exit 1; \
+	fi; \
+	echo -e "$(GREEN)✓ Tessl review passed for all $$total skill(s)$(NC)"
 
 plugin-validate:
 	@echo -e "$(BLUE)ℹ Running repository-wide component validation$(NC)"

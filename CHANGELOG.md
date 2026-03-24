@@ -7,43 +7,111 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-
-- **New Plugin: developer-kit-specs** - Specifications-driven development workflow plugin
-  - Extracted specs-related commands from developer-kit-core for better separation of concerns
-  - New namespace `/specs:*` for all specification commands
-  - Complete workflow: brainstorming → specification → tasks → implementation → review
+## [2.7.2] - 2026-03-24
 
 ### Changed
 
-- **Breaking Change**: Specification commands namespace change
-  - Old namespace (removed): `/developer-kit:devkit.brainstorm`, `/developer-kit:devkit.spec-to-tasks`, etc.
-  - New namespace: `/specs:brainstorm`, `/specs:spec-to-tasks`, `/specs:task-manage`, etc.
+- **Skills Optimization — Token & Length Reduction** (global):
+  - Reduced size and token consumption across multiple skills to improve performance and stay within line limits
+  - Refactored `aws-lambda-php-integration` (`developer-kit-php`) — reduced to 94 lines
+  - Refactored `better-auth` (`developer-kit-typescript`) to meet line limit
+  - Refactored `clean-architecture` (`developer-kit-typescript`) — exceeded line limit, now compliant
+  - Refactored `nextjs-app-router` (`developer-kit-typescript`) — reduced SKILL.md to 302 lines
+  - Refactored `nextjs-authentication` (`developer-kit-typescript`) — split docs into focused reference files
+  - Refactored `nextjs-data-fetching` (`developer-kit-typescript`) — split docs into focused reference files
+  - Refactored `drizzle-orm-patterns` (`developer-kit-typescript`) to meet line limit
 
-- **Command Renames** (developer-kit-specs):
-  - `spec-quality` → `spec-sync-context` - Synchronizes technical context (KG, Tasks, Codebase)
-  - `spec-review` → `spec-quality-check` - Reviews specification content quality
-  - `spec-sync` → `spec-sync-with-code` - Synchronizes specification with implementation
+- **Version Alignment** (global):
+  - Bumped marketplace and all plugin manifests to `2.7.2`
 
-- **Plugin Restructure**:
-  - Moved 9 specification commands from `developer-kit-core` to `developer-kit-specs`
-  - Moved `knowledge-graph` skill to `developer-kit-specs`
-  - Updated all plugin documentation to reflect new command locations
+### Fixed
 
-### Migration Guide
+- **AWS Lambda PHP Integration** (`developer-kit-php`):
+  - Fixed `aws-lambda-integration` skill registration and linking on the PHP plugin
 
-To use the specification-driven development workflow:
+- **Command Review List** (global):
+  - Added missing command review list entry
 
-1. Install both plugins:
-   ```bash
-   /plugin install developer-kit-core
-   /plugin install developer-kit-specs
-   ```
+## [2.7.1] - 2026-03-23
 
-2. Update your workflow commands:
-   - `/specs:brainstorm` instead of `/developer-kit:devkit.brainstorm`
-   - `/specs:spec-to-tasks` instead of `/developer-kit:devkit.spec-to-tasks`
-   - `/specs:task-manage` instead of `/developer-kit:devkit.task-manage`
+### Added
+
+- **SonarQube MCP Integration** (`developer-kit-tools`):
+  - New `sonarqube-mcp` skill for SonarQube-assisted analysis workflows
+  - Plugin-level `.mcp.json` configuration registering the `sonarqube-mcp` MCP server
+  - Environment-driven MCP wiring for `SONARQUBE_TOKEN`, `SONARQUBE_URL`, and `SONARQUBE_ORG`
+  - Quality gate monitoring, issue discovery/triaging, and pre-push code analysis patterns
+  - Reference documentation: `best-practices.md`, `llm-context.md`, `metrics.md`, `severity-levels.md`
+
+- **Knowledge Graph Skill** (`developer-kit-core`):
+  - New `knowledge-graph` skill for managing persistent Knowledge Graphs in specifications
+  - Provides schema definition with entities, relationships, and graph structure
+  - Includes comprehensive query examples for common operations
+  - Documents integration patterns with existing workflows
+  - Reference files: `schema.md`, `query-examples.md`, `integration-patterns.md`
+
+- **ADR Drafting Skill** (`developer-kit-core`):
+  - New `adr-drafting` skill for drafting Architecture Decision Records
+  - Repository-aware naming and storage guidance (`docs/architecture/adr/`)
+  - Standard ADR template with Title, Status, Context, Decision, and Consequences sections
+  - Reference files: `template.md`, `examples.md`
+
+- **Specification Workflow Expansion** (`developer-kit-core`):
+  - Added `devkit.quick-spec` command for lightweight 4-phase specifications
+  - Added `devkit.spec-review` command for interactive specification quality assessment
+  - Added `devkit.spec-sync` command to reconcile specifications with implementation state
+  - Added `devkit.task-implementation` command for guided single-task execution
+  - All spec commands organized into `commands/specs/` subfolder
+
+- **Specs Quality Command** (`developer-kit-core`):
+  - New `devkit.spec-quality` command for maintaining specification context quality
+  - Synchronizes Knowledge Graph, Tasks, and Codebase after implementations
+  - Automatically integrated into `spec-to-tasks` and `feature-development` workflows
+  - Supports options: `--update-kg-only`, `--task=TASK-XXX`, `--dry-run`
+
+- **AWS CDK Skill** (`developer-kit-typescript`):
+  - New AWS CDK infrastructure-as-code skill for TypeScript
+  - Patterns for stack definitions, constructs, and deployment workflows
+
+- **Skill Review & Optimize Workflow** (global):
+  - Evolved from `skill-review` to `skill-review-and-optimize` with AI-powered optimization
+  - Added apply workflow for `/apply-optimize` comment triggers
+  - Added GitHub Action for automated skill review on PRs
+
+### Changed
+
+- **Core Command Organization** (`developer-kit-core`):
+  - Reorganized specification commands into `commands/specs/`
+  - Moved documentation commands into `commands/documentation/`
+  - Updated core documentation to reflect the expanded specification workflow
+
+- **Feature Development Command** (`developer-kit-core`):
+  - Enhanced integration with Knowledge Graph for better context management
+  - Improved workflow coordination with spec-quality command
+
+- **Spec to Tasks Command** (`developer-kit-core`):
+  - Enhanced task generation with Knowledge Graph integration
+  - Improved technical context extraction from codebase analysis
+
+- **Memory Management Skill Rename** (`developer-kit-core`):
+  - Renamed `claude-md-management` to `memory-md-management`
+  - Updated manifest registrations and documentation references
+
+- **Prompt Engineering Skill** (`developer-kit-ai`):
+  - Improved skill structure with concrete examples
+  - Added explicit validation checkpoints and failure-mode diagnosis
+  - Consolidated quality assurance into concise quality gates
+
+- **Version Alignment** (global):
+  - Bumped marketplace and plugin manifests to `2.7.0`
+  - Updated marketplace plugin entries to keep all published versions aligned
+
+- **Documentation Refresh** (global):
+  - Updated top-level and plugin documentation to reflect the current specification workflow
+
+- **Rules Updates**:
+  - Minor updates to rule files across `developer-kit-java`, `developer-kit-php`, `developer-kit-python`, and `developer-kit-typescript`
+  - Consistency improvements and validator/reference updates
 
 ## [2.6.3] - 2026-03-18
 
@@ -1062,7 +1130,9 @@ To use the specification-driven development workflow:
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.3...HEAD
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.7.2...HEAD
+[2.7.2]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.7.1...v2.7.2
+[2.7.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.3...v2.7.1
 [2.6.3]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.2...v2.6.3
 [2.6.2]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.1...v2.6.2
 [2.6.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.0...v2.6.1
