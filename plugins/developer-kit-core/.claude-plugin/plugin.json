@@ -24,7 +24,8 @@
     "./agents/general-refactor-expert.md",
     "./agents/general-software-architect.md",
     "./agents/general-debugger.md",
-    "./agents/document-generator-expert.md"
+    "./agents/document-generator-expert.md",
+    "./agents/learn-analyst.md"
   ],
   "commands": [
     "./commands/specs/devkit.brainstorm.md",
@@ -59,6 +60,7 @@
     "./skills/docs-updater",
     "./skills/drawio-logical-diagrams",
     "./skills/github-issue-workflow",
-    "./skills/knowledge-graph"
+    "./skills/knowledge-graph",
+    "./skills/learn"
   ]
 }
