@@ -1,6 +1,6 @@
 {
   "name": "developer-kit",
-  "version": "2.7.0",
+  "version": "2.7.2",
   "description": "Core agents and commands required by all Developer Kit plugins",
   "author": {
     "name": "Giuseppe Trisciuoglio",
@@ -24,7 +24,8 @@
     "./agents/general-refactor-expert.md",
     "./agents/general-software-architect.md",
     "./agents/general-debugger.md",
-    "./agents/document-generator-expert.md"
+    "./agents/document-generator-expert.md",
+    "./agents/learn-analyst.md"
   ],
   "commands": [
     "./commands/specs/devkit.brainstorm.md",
@@ -54,10 +55,12 @@
     "./commands/devkit.verify-skill.md"
   ],
   "skills": [
+    "./skills/adr-drafting",
     "./skills/memory-md-management",
+    "./skills/docs-updater",
     "./skills/drawio-logical-diagrams",
     "./skills/github-issue-workflow",
-    "./skills/docs-updater",
-    "./skills/knowledge-graph"
+    "./skills/knowledge-graph",
+    "./skills/learn"
   ]
 }

@@ -1,6 +1,6 @@
 ---
 name: unit-test-caching
-description: Provides patterns for unit testing caching behavior using Spring Cache annotations (`@Cacheable`, `@CachePut`, `@CacheEvict`). Use when validating cache configuration and cache hit/miss scenarios.
+description: "Provides patterns for unit testing Spring Cache annotations (@Cacheable, @CachePut, @CacheEvict). Generates test code that mocks cache managers, verifies cache hit/miss behavior, tests cache key generation with SpEL expressions, validates eviction strategies, and checks conditional caching scenarios. Triggers: caching tests, test Spring cache, mock cache, Spring Boot caching, cache hit/miss verification, @Cacheable testing."
 allowed-tools: Read, Write, Bash, Glob, Grep
 ---
 
@@ -8,32 +8,34 @@ allowed-tools: Read, Write, Bash, Glob, Grep
 
 ## Overview
 
-This skill provides patterns for unit testing Spring caching annotations (`@Cacheable`, `@CacheEvict`, `@CachePut`) without full Spring context. It covers testing cache behavior, hits/misses, invalidation strategies, cache key generation, and conditional caching using in-memory cache managers.
+This skill provides patterns for unit testing Spring caching annotations (`@Cacheable`, `@CacheEvict`, `@CachePut`) without full Spring context. It covers cache hits/misses, invalidation, key generation, and conditional caching using in-memory `ConcurrentMapCacheManager`.
 
 ## When to Use
 
-Use this skill when:
-- Testing `@`Cacheable method caching
-- Testing `@`CacheEvict cache invalidation
-- Testing `@`CachePut cache updates
-- Verifying cache key generation
-- Testing conditional caching
-- Want fast caching tests without Redis or cache infrastructure
+- Writing unit tests for `@Cacheable` method behavior
+- Verifying `@CacheEvict` cache invalidation works correctly
+- Testing `@CachePut` cache updates
+- Validating cache key generation from SpEL expressions
+- Testing conditional caching with `unless`/`condition` parameters
+- Mocking cache managers in fast unit tests without Redis
 
 ## Instructions
 
-1. **Use in-memory CacheManager**: Use ConcurrentMapCacheManager for tests instead of Redis or other external caches
-2. **Verify repository call counts**: Use `times(n)` to verify cache hits/misses by counting repository invocations
-3. **Test both cache and eviction scenarios**: Verify data is cached on first call and evicted when appropriate
-4. **Test cache key generation**: Ensure SpEL expressions in `@Cacheable(key = "...")` produce correct keys
-5. **Test conditional caching**: Verify `unless` and `condition` parameters work correctly
-6. **Clear cache between tests**: Reset cache state in `@`BeforeEach or use `@`DirtiesContext
-7. **Mock service dependencies**: Use mocks for repositories and other services the caching layer uses
-8. **Verify cache behavior explicitly**: Don't rely on timing; verify actual cache hit/miss behavior
+1. **Configure in-memory CacheManager**: Use `ConcurrentMapCacheManager` for tests
+2. **Set up test fixtures**: Mock repository and create service instance in `@BeforeEach`
+3. **Verify repository call counts**: Use `times(n)` assertions to confirm cache behavior
+4. **Test cache hit**: Call method twice, verify repository called once
+5. **Test cache miss**: Verify repository called on each invocation
+6. **Test eviction**: After `@CacheEvict`, verify repository called again on next read
+7. **Test key generation**: Verify compound keys from SpEL expressions
+8. **Validate conditional caching**: Test `unless` (null results) and `condition` (parameter-based)
+
+**Validation checkpoints:**
+- Run test → If cache not working: verify `@EnableCaching` annotation present
+- If proxy issues: ensure method calls go through Spring proxy (no direct `this` calls)
+- If key mismatches: log actual cache key and compare with `@Cacheable(key="...")` expression
 
 ## Examples
-
-## Setup: Caching Testing
 
 ### Maven
 ```xml
@@ -46,16 +48,6 @@ Use this skill when:
   <artifactId>spring-boot-starter-test</artifactId>
   <scope>test</scope>
 </dependency>
-<dependency>
-  <groupId>org.mockito</groupId>
-  <artifactId>mockito-core</artifactId>
-  <scope>test</scope>
-</dependency>
-<dependency>
-  <groupId>org.assertj</groupId>
-  <artifactId>assertj-core</artifactId>
-  <scope>test</scope>
-</dependency>
 ```
 
 ### Gradle
@@ -63,20 +55,15 @@ Use this skill when:
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter-cache")
   testImplementation("org.springframework.boot:spring-boot-starter-test")
-  testImplementation("org.mockito:mockito-core")
-  testImplementation("org.assertj:assertj-core")
 }
 ```
 
-## Basic Pattern: Testing `@`Cacheable
-
-### Cache Hit and Miss Behavior
+### Testing `@Cacheable` (Cache Hit/Miss)
 
 ```java
-// Service with caching
+// Service
 @Service
 public class UserService {
-
   private final UserRepository userRepository;
 
   public UserService(UserRepository userRepository) {
@@ -89,36 +76,15 @@ public class UserService {
   }
 }
 
-// Test caching behavior
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import static org.mockito.Mockito.*;
-import static org.assertj.core.api.Assertions.*;
-
-@Configuration
-@EnableCaching
-class CacheTestConfig {
-  @Bean
-  public CacheManager cacheManager() {
-    return new ConcurrentMapCacheManager("users");
-  }
-}
-
+// Test
 class UserServiceCachingTest {
 
   private UserRepository userRepository;
   private UserService userService;
-  private CacheManager cacheManager;
 
   @BeforeEach
   void setUp() {
     userRepository = mock(UserRepository.class);
-    cacheManager = new ConcurrentMapCacheManager("users");
     userService = new UserService(userRepository);
   }
 
@@ -127,35 +93,33 @@ class UserServiceCachingTest {
     User user = new User(1L, "Alice");
     when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
+    // First call - hits database
     User firstCall = userService.getUserById(1L);
+    // Second call - hits cache
     User secondCall = userService.getUserById(1L);
 
     assertThat(firstCall).isEqualTo(secondCall);
-    verify(userRepository, times(1)).findById(1L); // Called only once due to cache
+    verify(userRepository, times(1)).findById(1L); // Only once due to cache
   }
 
   @Test
-  void shouldReturnCachedValueOnSecondCall() {
-    User user = new User(1L, "Alice");
-    when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+  void shouldInvokeRepositoryOnCacheMiss() {
+    when(userRepository.findById(1L)).thenReturn(Optional.of(new User(1L, "Bob")));
 
-    userService.getUserById(1L); // First call - hits database
-    User cachedResult = userService.getUserById(1L); // Second call - hits cache
+    userService.getUserById(1L);
+    userService.getUserById(1L);
 
-    assertThat(cachedResult).isEqualTo(user);
-    verify(userRepository, times(1)).findById(1L);
+    verify(userRepository, times(2)).findById(1L); // No caching occurred
   }
 }
 ```
 
-## Testing `@`CacheEvict
-
-### Cache Invalidation
+### Testing `@CacheEvict`
 
 ```java
+// Service
 @Service
 public class ProductService {
-
   private final ProductRepository productRepository;
 
   public ProductService(ProductRepository productRepository) {
@@ -171,23 +135,17 @@ public class ProductService {
   public void deleteProduct(Long id) {
     productRepository.deleteById(id);
   }
-
-  @CacheEvict(value = "products", allEntries = true)
-  public void clearAllProducts() {
-    // Clear entire cache
-  }
 }
 
+// Test
 class ProductCacheEvictTest {
 
   private ProductRepository productRepository;
   private ProductService productService;
-  private CacheManager cacheManager;
 
   @BeforeEach
   void setUp() {
     productRepository = mock(ProductRepository.class);
-    cacheManager = new ConcurrentMapCacheManager("products");
     productService = new ProductService(productRepository);
   }
 
@@ -197,45 +155,39 @@ class ProductCacheEvictTest {
     when(productRepository.findById(1L)).thenReturn(Optional.of(product));
 
     productService.getProductById(1L); // Cache the product
-
     productService.deleteProduct(1L); // Evict from cache
 
-    User cachedAfterEvict = userService.getUserById(1L);
-    
-    // After eviction, repository should be called again
+    // Repository called again after eviction
+    productService.getProductById(1L);
     verify(productRepository, times(2)).findById(1L);
   }
 
   @Test
-  void shouldClearAllEntriesFromCache() {
+  void shouldClearAllEntriesWithAllEntriesTrue() {
     Product product1 = new Product(1L, "Laptop", 999.99);
     Product product2 = new Product(2L, "Mouse", 29.99);
-    when(productRepository.findById(1L)).thenReturn(Optional.of(product1));
-    when(productRepository.findById(2L)).thenReturn(Optional.of(product2));
+    when(productRepository.findById(anyLong())).thenAnswer(i ->
+      Optional.of(new Product(i.getArgument(0), "Product", 10.0)));
 
     productService.getProductById(1L);
     productService.getProductById(2L);
 
-    productService.clearAllProducts(); // Clear all cache entries
+    // Use reflection or clear() on ConcurrentMapCache
+    productService.clearAllProducts();
 
     productService.getProductById(1L);
     productService.getProductById(2L);
 
-    // Repository called twice for each product
-    verify(productRepository, times(2)).findById(1L);
-    verify(productRepository, times(2)).findById(2L);
+    verify(productRepository, times(4)).findById(anyLong());
   }
 }
 ```
 
-## Testing `@`CachePut
-
-### Cache Update
+### Testing `@CachePut`
 
 ```java
 @Service
 public class OrderService {
-
   private final OrderRepository orderRepository;
 
   public OrderService(OrderRepository orderRepository) {
@@ -266,46 +218,43 @@ class OrderCachePutTest {
 
   @Test
   void shouldUpdateCacheWhenOrderIsUpdated() {
-    Order originalOrder = new Order(1L, "Pending", 100.0);
-    Order updatedOrder = new Order(1L, "Shipped", 100.0);
+    Order original = new Order(1L, "Pending", 100.0);
+    Order updated = new Order(1L, "Shipped", 100.0);
 
-    when(orderRepository.findById(1L)).thenReturn(Optional.of(originalOrder));
-    when(orderRepository.save(updatedOrder)).thenReturn(updatedOrder);
+    when(orderRepository.findById(1L)).thenReturn(Optional.of(original));
+    when(orderRepository.save(updated)).thenReturn(updated);
 
     orderService.getOrder(1L);
-    Order result = orderService.updateOrder(updatedOrder);
+    orderService.updateOrder(updated);
 
-    assertThat(result.getStatus()).isEqualTo("Shipped");
-    
-    // Next call should return updated version from cache
+    // Next call returns updated version from cache
     Order cachedOrder = orderService.getOrder(1L);
     assertThat(cachedOrder.getStatus()).isEqualTo("Shipped");
   }
 }
 ```
 
-## Testing Conditional Caching
-
-### Cache with Conditions
+### Testing Conditional Caching
 
 ```java
 @Service
 public class DataService {
-
   private final DataRepository dataRepository;
 
   public DataService(DataRepository dataRepository) {
     this.dataRepository = dataRepository;
   }
 
+  // Don't cache null results
   @Cacheable(value = "data", unless = "#result == null")
   public Data getData(Long id) {
     return dataRepository.findById(id).orElse(null);
   }
 
+  // Only cache when id > 0
   @Cacheable(value = "users", condition = "#id > 0")
   public User getUser(Long id) {
-    return userRepository.findById(id).orElse(null);
+    return dataRepository.findById(id).map(u -> new User(u.getId(), u.getName())).orElse(null);
   }
 }
 
@@ -315,47 +264,41 @@ class ConditionalCachingTest {
   void shouldNotCacheNullResults() {
     DataRepository dataRepository = mock(DataRepository.class);
     when(dataRepository.findById(999L)).thenReturn(Optional.empty());
-
     DataService service = new DataService(dataRepository);
 
     service.getData(999L);
     service.getData(999L);
 
-    // Should call repository twice because null results are not cached
-    verify(dataRepository, times(2)).findById(999L);
+    verify(dataRepository, times(2)).findById(999L); // Called twice - no caching
   }
 
   @Test
   void shouldNotCacheWhenConditionIsFalse() {
-    UserRepository userRepository = mock(UserRepository.class);
-    User user = new User(1L, "Alice");
-    when(userRepository.findById(-1L)).thenReturn(Optional.of(user));
+    DataRepository dataRepository = mock(DataRepository.class);
+    when(dataRepository.findById(-1L)).thenReturn(Optional.of(new Data(-1L, "Test")));
 
-    DataService service = new DataService(null);
+    DataService service = new DataService(dataRepository);
 
     service.getUser(-1L);
     service.getUser(-1L);
 
-    // Should call repository twice because id <= 0 doesn't match condition
-    verify(userRepository, times(2)).findById(-1L);
+    verify(dataRepository, times(2)).findById(-1L); // Condition "#id > 0" = false
   }
 }
 ```
 
-## Testing Cache Keys
-
-### Verify Cache Key Generation
+### Testing Cache Keys with SpEL
 
 ```java
 @Service
 public class InventoryService {
-
   private final InventoryRepository inventoryRepository;
 
   public InventoryService(InventoryRepository inventoryRepository) {
     this.inventoryRepository = inventoryRepository;
   }
 
+  // Compound key: productId-warehouseId
   @Cacheable(value = "inventory", key = "#productId + '-' + #warehouseId")
   public InventoryItem getInventory(Long productId, Long warehouseId) {
     return inventoryRepository.findByProductAndWarehouse(productId, warehouseId);
@@ -365,17 +308,20 @@ public class InventoryService {
 class CacheKeyTest {
 
   @Test
-  void shouldGenerateCorrectCacheKey() {
+  void shouldUseCorrectCacheKeyForDifferentCombinations() {
     InventoryRepository repository = mock(InventoryRepository.class);
     InventoryItem item = new InventoryItem(1L, 1L, 100);
     when(repository.findByProductAndWarehouse(1L, 1L)).thenReturn(item);
 
     InventoryService service = new InventoryService(repository);
 
-    service.getInventory(1L, 1L); // Cache: "1-1"
-    service.getInventory(1L, 1L); // Hit cache: "1-1"
-    service.getInventory(2L, 1L); // Miss cache: "2-1"
+    // Same key: "1-1" - should cache
+    service.getInventory(1L, 1L);
+    service.getInventory(1L, 1L); // Cache hit
+    verify(repository, times(1)).findByProductAndWarehouse(1L, 1L);
 
+    // Different key: "2-1" - cache miss
+    service.getInventory(2L, 1L); // Cache miss
     verify(repository, times(2)).findByProductAndWarehouse(any(), any());
   }
 }
@@ -383,42 +329,32 @@ class CacheKeyTest {
 
 ## Best Practices
 
-- **Use in-memory CacheManager** for unit tests
-- **Verify repository calls** to confirm cache hits/misses
-- **Test both positive and negative** cache scenarios
-- **Test cache invalidation** thoroughly
-- **Test conditional caching** with various conditions
-- **Keep cache configuration simple** in tests
-- **Mock dependencies** that services use
-
-## Common Pitfalls
-
-- Testing actual cache infrastructure instead of caching logic
-- Not verifying repository call counts
-- Forgetting to test cache eviction
-- Not testing conditional caching
-- Not resetting cache between tests
+- **Mock repository calls**: Use `verify(mock, times(n))` to assert cache behavior
+- **Test both hit and miss scenarios**: Don't just test the happy path
+- **Clear cache state**: Reset between tests to avoid flaky results
+- **Use `ConcurrentMapCacheManager`**: Fast, no external dependencies
+- **Verify eviction**: Always test that `@CacheEvict` actually invalidates cached data
 
 ## Constraints and Warnings
 
-- **`@`Cacheable requires a proxy**: Spring's caching works via proxies; direct method calls bypass caching
-- **Cache key collisions**: Be aware that different parameters can produce the same cache key if key generation is not specific
-- **Serialization requirements**: Cached objects must be serializable when using distributed caches
-- **Memory usage**: In-memory caches can consume significant memory; consider TTL and max-size settings
-- **`@`CachePut vs `@`Cacheable**: `@`CachePut always executes the method, while `@`Cacheable skips execution on cache hit
-- **Null caching**: By default, null results are cached unless `unless = "#result == null"` is specified
-- **Thread safety**: Cache operations should be thread-safe; verify behavior under concurrent access
+- **`@Cacheable` requires proxy**: Direct method calls (`this.method()`) bypass caching - use dependency injection
+- **Cache key collisions**: Compound keys from SpEL must be unique per dataset
+- **Null caching**: Null results are cached by default - use `unless = "#result == null"` to exclude
+- **`@CachePut` always executes**: Unlike `@Cacheable`, it always runs the method
+- **Memory usage**: In-memory caches grow unbounded - consider TTL for long-running tests
+- **Thread safety**: `ConcurrentMapCacheManager` is thread-safe; distributed caches may require additional config
 
 ## Troubleshooting
 
-**Cache not working in tests**: Ensure `@EnableCaching` is in test configuration.
-
-**Wrong cache key generated**: Use `SpEL` syntax correctly in `@Cacheable(key = "...")`.
-
-**Cache not evicting**: Verify `@CacheEvict` key matches stored key exactly.
+| Issue | Solution |
+|-------|----------|
+| Cache not working | Verify `@EnableCaching` on test config |
+| Proxy bypass | Use autowired/constructor injection, not direct `this` calls |
+| Key mismatch | Log cache key with `cache.getNativeKey()` to debug SpEL |
+| Flaky tests | Clear cache in `@BeforeEach` before each test |
 
 ## References
 
 - [Spring Caching Documentation](https://docs.spring.io/spring-framework/docs/current/reference/html/integration.html#cache)
-- [Spring Cache Abstractions](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/cache/annotation/Cacheable.html)
-- [SpEL in Caching](https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#expressions)
+- [Cacheable Annotation](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/cache/annotation/Cacheable.html)
+- [SpEL Expressions](https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#expressions)
