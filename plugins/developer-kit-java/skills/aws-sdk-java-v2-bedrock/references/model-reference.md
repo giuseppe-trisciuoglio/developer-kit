@@ -285,6 +285,42 @@
 | **Context Window** | 200K | 8K | 8K | N/A |
 | **Open Source** | ❌ | ✅ | ❌ | ✅ |
 
+## Common Model ID Constants
+
+```java
+// Claude Models
+public static final String CLAUDE_SONNET_45 = "anthropic.claude-sonnet-4-5-20250929-v1:0";
+public static final String CLAUDE_HAIKU_45 = "anthropic.claude-haiku-4-5-20251001-v1:0";
+public static final String CLAUDE_OPUS_41 = "anthropic.claude-opus-4-1-20250805-v1:0";
+public static final String CLAUDE_37_SONNET = "anthropic.claude-3-7-sonnet-20250219-v1:0";
+public static final String CLAUDE_35_SONNET_V2 = "anthropic.claude-3-5-sonnet-20241022-v2:0";
+public static final String CLAUDE_35_HAIKU = "anthropic.claude-3-5-haiku-20241022-v1:0";
+
+// Llama Models
+public static final String LLAMA_33_70B = "meta.llama3-3-70b-instruct-v1:0";
+public static final String LLAMA_32_11B = "meta.llama3-2-11b-instruct-v1:0";
+public static final String LLAMA_31_405B = "meta.llama3-1-405b-instruct-v1:0";
+public static final String LLAMA_31_70B = "meta.llama3-1-70b-instruct-v1:0";
+public static final String LLAMA_31_8B = "meta.llama3-1-8b-instruct-v1:0";
+
+// Amazon Titan Models
+public static final String TITAN_TEXT_EXPRESS = "amazon.titan-text-express-v1";
+public static final String TITAN_TEXT_LITE = "amazon.titan-text-lite-v1";
+public static final String TITAN_EMBEDDINGS = "amazon.titan-embed-text-v1";
+public static final String TITAN_IMAGE_GENERATOR = "amazon.titan-image-generator-v1";
+
+// Amazon Nova Models
+public static final String NOVA_PREMIER = "amazon.nova-premier-v1:0";
+public static final String NOVA_PRO = "amazon.nova-pro-v1:0";
+public static final String NOVA_LITE = "amazon.nova-lite-v1:0";
+public static final String NOVA_CANVAS = "amazon.nova-canvas-v1:0";
+
+// Other Models
+public static final String STABLE_DIFFUSION_XL = "stability.stable-diffusion-xl-v1";
+public static final String MISTRAL_LARGE_2407 = "mistral.mistral-large-2407-v1:0";
+public static final String COHERE_COMMAND = "cohere.command-text-v14";
+```
+
 ## Model Configuration Templates
 
 ### Text Generation Template

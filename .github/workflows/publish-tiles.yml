@@ -24,5 +24,5 @@ jobs:
       - uses: tesslio/publish@main
         with:
           token: ${{ secrets.TESSL_API_TOKEN }}
-          review: 'true'
-          review-threshold: '50'
+          # Skill review already runs in the dedicated PR workflow.
+          review: 'false'
