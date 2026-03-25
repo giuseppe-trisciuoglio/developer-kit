@@ -45,7 +45,7 @@ This command ONLY operates in Task Mode. If no `--task=` parameter is provided, 
 - **Understand before acting**: Read and comprehend task requirements first
 - **Read files identified by agents**: When launching agents, ask them to return lists of the most important files to
   read. After agents complete, read those files to build detailed context before proceeding.
-- **Follow acceptance criteria**: Implement exactly what is specified in the task
+- **Follow acceptance criteria and DoD**: Implement exactly what is specified in the task and complete the documented Definition of Done
 - **Use TodoWrite**: Track all progress throughout
 - **No time estimates**: DO NOT provide or request time estimates or implementation timelines at any phase
 
@@ -89,14 +89,16 @@ This command implements a specific task following a focused workflow:
    - Task ID and title from YAML frontmatter
    - Description
    - Acceptance criteria
+   - Definition of Ready (DoR) and Definition of Done (DoD) sections
    - Dependencies from YAML frontmatter
    - Reference to specification file
+   - If either section is missing, stop and instruct the user to update the task document before implementation
 
 ---
 
 ## T-2: Git State Check
 
-**Goal**: Ensure working directory is clean before implementation
+**Goal**: Validate DoR items related to repository state and baseline quality before implementation
 
 **Actions**:
 
@@ -109,6 +111,7 @@ This command implements a specific task following a focused workflow:
      - If user proceeds anyway, document the uncommitted state and continue at user's risk
    - Only proceed with implementation if no uncommitted changes exist OR user explicitly accepts the risk
 2. **Run lint and tests** (after git check passes):
+   - Treat these checks as explicit DoR validation for local readiness and baseline health.
    - Detect available lint/test commands by checking `package.json` (scripts), `Makefile`, `pom.xml`, `build.gradle`, `pyproject.toml`, `composer.json`, etc.
    - Run lint first (e.g., `npm run lint`, `make lint`, `./mvnw checkstyle:check`, `ruff check .`), then tests (e.g., `npm test`, `make test`, `./mvnw test -q`, `pytest`, `php artisan test`)
    - If lint or tests fail:
@@ -123,22 +126,23 @@ This command implements a specific task following a focused workflow:
 
 ## T-3: Dependency Check
 
-**Goal**: Verify dependencies are met
+**Goal**: Validate DoR items related to task dependencies
 
 **Actions**:
 
-1. Check if task has dependencies
+1. Check if task has dependencies and compare them against the task's DoR section
 2. If dependencies exist:
    - Read task list to check completion status
    - If dependencies not completed:
      - Ask user via AskUserQuestion: proceed anyway or complete dependencies first
-3. Proceed based on user decision
+3. Record whether dependency-related DoR items are satisfied before implementation begins
+4. Proceed based on user decision
 
 ---
 
 ## T-3.5: Knowledge Graph Validation
 
-**Goal**: Validate task dependencies against actual codebase state
+**Goal**: Validate DoR technical context against actual codebase state
 
 **Actions**:
 
@@ -202,7 +206,7 @@ This command implements a specific task following a focused workflow:
 
 ## T-3.6: Contract Validation
 
-**Goal**: Verify that task expectations (expects) are satisfied by completed dependencies (provides)
+**Goal**: Verify DoR contract expectations are satisfied by completed dependencies (provides)
 
 **Prerequisite**: T-3: Dependency Check completed
 
@@ -263,14 +267,15 @@ This command implements a specific task following a focused workflow:
 
 ## T-4: Implementation
 
-**Goal**: Implement the task following acceptance criteria
+**Goal**: Implement the task according to acceptance criteria and the documented DoD
 
 **Actions**:
 
-1. Read acceptance criteria from task
+1. Read acceptance criteria and DoD items from the task
 2. Focus implementation on meeting criteria:
    - Implement description requirements
    - Ensure all acceptance criteria are met
+   - Satisfy each DoD item with concrete evidence in code, tests, or task metadata
 3. Use appropriate sub-agents based on --lang
 4. Write clean, focused code
 
@@ -278,13 +283,14 @@ This command implements a specific task following a focused workflow:
 
 ## T-5: Verification
 
-**Goal**: Verify implementation meets acceptance criteria
+**Goal**: Verify implementation meets acceptance criteria and DoD
 
 **Actions**:
 
 1. Run tests (if available)
 2. Verify each acceptance criterion is met
-3. If criteria not met, iterate on implementation
+3. Verify each DoD item is satisfied; do not mark the task complete until every documented DoD item has evidence
+4. If criteria are not met, iterate on implementation
 
 ---
 
@@ -294,16 +300,19 @@ This command implements a specific task following a focused workflow:
 
 **Actions**:
 
-1. Mark task as completed:
+1. Confirm completion before marking the task done:
+   - Ensure all DoD items are satisfied and documented
+   - If the task has explicit DoR/DoD checklists, update them to reflect the validated state
+2. Mark task as completed:
    - Update the task file YAML frontmatter:
      - Set `status: completed`
      - Add `completed_date: YYYY-MM-DD`
-   - Change `[ ]` to `[x]` in the task's acceptance criteria checkboxes
+   - Change `[ ]` to `[x]` in the task's acceptance criteria and DoD checkboxes where evidence exists
    - Add completion note with date in the task file
 
-2. Summarize:
+3. Summarize:
    - What was implemented
-   - Acceptance criteria verified
+   - Acceptance criteria and DoD items verified
    - Any notes for next tasks
 
 ---

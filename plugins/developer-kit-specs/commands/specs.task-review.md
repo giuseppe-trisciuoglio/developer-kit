@@ -16,6 +16,7 @@ This command reviews a completed task to ensure:
 2. **Spec Compliance**: The implementation aligns with the functional specification
 3. **Code Quality**: The code passes code review standards
 4. **Acceptance Criteria**: All acceptance criteria are met
+5. **Definition of Done**: The documented completion conditions are fully satisfied
 
 **Input**: `docs/specs/[id]/tasks/TASK-XXX.md` (from devkit.spec-to-tasks)
 **Output**: Review report with pass/fail status and findings
@@ -62,7 +63,7 @@ You are reviewing an implemented task to verify it meets specifications and pass
 
 ## Core Principles
 
-- **Thorough verification**: Check every acceptance criterion
+- **Thorough verification**: Check every acceptance criterion and every DoD item
 - **Spec alignment**: Ensure implementation matches functional requirements
 - **Code quality**: Verify code passes review standards
 - **Evidence-based**: Base findings on actual code, not assumptions
@@ -88,8 +89,10 @@ You are reviewing an implemented task to verify it meets specifications and pass
    - Task ID and title
    - Description
    - Acceptance criteria
+   - Definition of Ready (DoR) and Definition of Done (DoD) sections
    - Dependencies
    - Reference to specification file
+   - If either section is missing, stop the review and require the task document to be updated before continuing
 5. Read the functional specification file (from task's spec reference)
 6. Verify both files exist and are valid
 7. If files not found, ask user for correct path via AskUserQuestion
@@ -125,23 +128,24 @@ You are reviewing an implemented task to verify it meets specifications and pass
 
 ---
 
-## Phase 3: Acceptance Criteria Validation
+## Phase 3: Acceptance Criteria and DoD Validation
 
-**Goal**: Verify all acceptance criteria are met
+**Goal**: Verify all acceptance criteria and DoD items are met
 
 **Actions**:
 
 1. List all acceptance criteria from the task file
-2. For each criterion:
-   - Identify code/tests that validate this criterion
-   - Check if tests exist and pass
-   - Verify the criterion is actually met
-3. Mark each criterion as:
+2. List all DoD items from the task file
+3. For each acceptance criterion and DoD item:
+   - Identify code/tests/review evidence that validate it
+   - Check if tests exist and pass when relevant
+   - Verify the requirement is actually met
+4. Mark each item as:
    - ✅ Met (with evidence)
    - ❌ Not met (with explanation)
    - ⚠️ Partially met (with details)
 
-4. **Update traceability-matrix.md**:
+5. **Update traceability-matrix.md**:
    - Read `docs/specs/[id]/traceability-matrix.md` (extract from task frontmatter `spec:` field)
    - For this task (TASK-XXX), update the matrix:
      - Fill in "Test Files" column with test file names created for this task
@@ -220,6 +224,7 @@ You are reviewing an implemented task to verify it meets specifications and pass
 |----------|--------|
 | Implementation | ✅ Complete / ⚠️ Partial / ❌ Incomplete |
 | Acceptance Criteria | ✅ All Met / ⚠️ Partial / ❌ Failed |
+| Definition of Done | ✅ All Met / ⚠️ Partial / ❌ Failed |
 | Spec Compliance | ✅ Compliant / ⚠️ Deviations / ❌ Non-compliant |
 | Code Review | ✅ Passed / ⚠️ Issues Found / ❌ Failed |
 
@@ -234,6 +239,13 @@ You are reviewing an implemented task to verify it meets specifications and pass
 |-----------|--------|----------|
 | Criterion 1 | ✅/⚠️/❌ | [evidence] |
 | Criterion 2 | ✅/⚠️/❌ | [evidence] |
+
+## Definition of Done
+
+| DoD Item | Status | Evidence |
+|----------|--------|----------|
+| DoD item 1 | ✅/⚠️/❌ | [evidence] |
+| DoD item 2 | ✅/⚠️/❌ | [evidence] |
 
 ## Specification Compliance
 

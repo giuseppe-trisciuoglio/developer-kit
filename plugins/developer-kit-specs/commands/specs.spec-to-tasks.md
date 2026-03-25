@@ -548,6 +548,8 @@ Provide a comprehensive summary that will inform task generation.
    - **Title**: Concise, descriptive name (e.g., "User login functionality")
    - **Description**: What the task covers functionally
    - **Acceptance Criteria**: 2-4 testable conditions
+   - **Definition of Ready (DoR)**: Clear preconditions for starting (dependencies complete, technical context understood, blockers resolved)
+   - **Definition of Done (DoD)**: Clear completion conditions covering implementation, tests, and task handoff
    - **Dependencies**: List task IDs this depends on (if any)
 
 3. Map dependencies explicitly:
@@ -626,6 +628,21 @@ dependencies: [TASK-YYY if applicable]
 
 **Functional Description**: [Functional description of what this task covers]
 
+## Acceptance Criteria
+
+- [ ] [Functional criterion 1]
+- [ ] [Functional criterion 2]
+- [ ] [Functional criterion 3 if needed]
+
+## Definition of Ready (DoR)
+
+Before starting this task, ensure:
+- [ ] Dependencies are completed or explicitly marked as not required.
+- [ ] Technical context, patterns, and integration points are understood.
+- [ ] Files to create/modify are identified and accessible.
+- [ ] Required tooling, commands, and local prerequisites are available.
+- [ ] Open questions or blockers have been resolved.
+
 ## Technical Context (from Codebase Analysis)
 
 - **Existing Patterns to Follow**: [patterns from codebase analysis]
@@ -670,6 +687,15 @@ This section describes **what** to test, not **how** to implement test code.
 **Test Acceptance Criteria**:
    - [ ] All tests described above are implemented and pass.
    - [ ] Test coverage for classes with business logic is >= 80%.
+
+## Definition of Done (DoD)
+
+This task is complete when:
+- [ ] Functional description is implemented end-to-end.
+- [ ] All acceptance criteria are met with evidence in code or tests.
+- [ ] Tests in this task are implemented or updated and passing.
+- [ ] Required files are created or modified following the documented technical context.
+- [ ] Any handoff expectations for dependent tasks are documented.
 
 **Dependencies**: [TASK-YYY if applicable, otherwise "None"]
 
@@ -884,6 +910,17 @@ dependencies: []
 
 **Functional Description**: Implement user registration with email validation
 
+## Acceptance Criteria
+- [ ] Users can register with a valid email and password.
+- [ ] Duplicate email registrations are rejected.
+- [ ] Passwords are persisted only after encoding.
+
+## Definition of Ready (DoR)
+- [ ] No prerequisite tasks are pending.
+- [ ] Existing registration patterns and security conventions are understood.
+- [ ] Required files and Spring test tooling are available locally.
+- [ ] Validation and duplicate-email behavior are clear from the specification.
+
 ## Technical Context (from Codebase Analysis)
 - **Existing Patterns to Follow**: REST controllers in src/main/java/.../controller/
 - **APIs to Integrate With**: Existing UserRepository
@@ -926,6 +963,12 @@ This section describes **what** to test, not **how** to implement test code.
 **Test Acceptance Criteria**:
    - [ ] All tests described above are implemented and pass.
    - [ ] Test coverage for UserService is >= 80%.
+
+## Definition of Done (DoD)
+- [ ] Registration flow is implemented end-to-end.
+- [ ] All acceptance criteria are satisfied with passing tests.
+- [ ] Controller, service, and security configuration changes follow existing conventions.
+- [ ] The task file is updated so downstream tasks can rely on the registration endpoint.
 
 **Implementation Command**:
 /specs:task-implementation --lang=spring --task="docs/specs/001-user-auth/tasks/TASK-001.md"

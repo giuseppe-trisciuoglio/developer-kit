@@ -116,6 +116,12 @@ description: "[What this task implements]"
 acceptance_criteria:
   - "[Criterion 1]"
   - "[Criterion 2]"
+definition_of_ready:
+  - "[Precondition 1]"
+  - "[Precondition 2]"
+definition_of_done:
+  - "[Completion condition 1]"
+  - "[Completion condition 2]"
 dependencies: []
   # - "TASK-YYY"  # if depends on other tasks
 files_to_create:
@@ -135,6 +141,16 @@ implementation_command: "/specs:task-implementation --lang=[lang] --task=\"docs/
 
 - [ ] [Criterion 1]
 - [ ] [Criterion 2]
+
+## Definition of Ready (DoR)
+
+- [ ] [Precondition 1]
+- [ ] [Precondition 2]
+
+## Definition of Done (DoD)
+
+- [ ] [Completion condition 1]
+- [ ] [Completion condition 2]
 
 ## Files
 
@@ -161,6 +177,12 @@ description: "[What this task implements]"
 acceptance_criteria:
   - "[Criterion 1]"
   - "[Criterion 2]"
+definition_of_ready:
+  - "[Precondition 1]"
+  - "[Precondition 2]"
+definition_of_done:
+  - "[Completion condition 1]"
+  - "[Completion condition 2]"
 dependencies: []
   # - "TASK-YYY"  # if depends on other tasks
 files_to_create:
@@ -228,6 +250,16 @@ context_hash: "[SHA-256 hash for change detection]"
 - [ ] [Criterion 1]
 - [ ] [Criterion 2]
 
+## Definition of Ready (DoR)
+
+- [ ] [Precondition 1]
+- [ ] [Precondition 2]
+
+## Definition of Done (DoD)
+
+- [ ] [Completion condition 1]
+- [ ] [Completion condition 2]
+
 ## Files
 
 **To Create**:
@@ -253,7 +285,7 @@ context_hash: "[SHA-256 hash for change detection]"
 
 ### Context Hash Generation
 
-The `context_hash` field is used for change detection. Generate SHA-256 hash of: task title + description + acceptance_criteria + files_to_create + files_to_modify.
+The `context_hash` field is used for change detection. Generate SHA-256 hash of: task title + description + acceptance_criteria + definition_of_ready + definition_of_done + files_to_create + files_to_modify.
 
 Regenerate whenever these fields change to detect task drift.
 

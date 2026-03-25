@@ -26,9 +26,11 @@
     "./commands/specs.spec-sync-with-code.md",
     "./commands/specs.spec-sync-context.md",
     "./commands/specs.quick-spec.md",
-    "./commands/specs.spec-quality-check.md"
+    "./commands/specs.spec-quality-check.md",
+    "./commands/specs.ralph-loop.md"
   ],
   "skills": [
-    "./skills/knowledge-graph"
+    "./skills/knowledge-graph",
+    "./skills/ralph-loop"
   ]
 }
