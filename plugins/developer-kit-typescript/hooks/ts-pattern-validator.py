@@ -2,11 +2,11 @@
 """TypeScript Architectural Pattern Validator Hook.
 
 Detects common anti-patterns and NestJS architectural violations in TypeScript
-files written by Claude Code. Emits advisory warnings (non-blocking) so the
-developer can make an informed decision without halting the workflow.
+files written or edited by Claude Code. Emits advisory warnings (non-blocking)
+so the developer can make an informed decision without halting the workflow.
 
-Hook event: PostToolUse (Write)
-Input:  JSON via stdin  { "tool_name": "Write", "tool_input": { "file_path": "...", "content": "..." } }
+Hook event: PostToolUse (Write | Edit | MultiEdit)
+Input:  JSON via stdin with tool_name and tool_input
 Output: Exit 0 = no issues | Exit 1 = advisory warnings (stdout shown to Claude)
 
 Zero external dependencies — pure Python 3 standard library only.
@@ -167,18 +167,32 @@ def _check_controller_db_access(file_path: str, content: str) -> list[str]:
 # ─── Entry Point ─────────────────────────────────────────────────────────────
 
 
+def _extract_content(tool_name: str, tool_input: dict) -> str:
+    """Return the new content being written/edited, based on tool type."""
+    if tool_name == "Write":
+        return tool_input.get("content", "")
+    if tool_name == "Edit":
+        return tool_input.get("new_string", "")
+    if tool_name == "MultiEdit":
+        return "\n".join(
+            edit.get("new_string", "") for edit in tool_input.get("edits", [])
+        )
+    return ""
+
+
 def main() -> None:
     try:
         data = json.load(sys.stdin)
     except (json.JSONDecodeError, ValueError):
         sys.exit(0)
 
-    if data.get("tool_name") != "Write":
+    tool_name = data.get("tool_name", "")
+    if tool_name not in ("Write", "Edit", "MultiEdit"):
         sys.exit(0)
 
     tool_input = data.get("tool_input", {})
     file_path: str = tool_input.get("file_path", "")
-    content: str = tool_input.get("content", "")
+    content: str = _extract_content(tool_name, tool_input)
 
     if not file_path or not content:
         sys.exit(0)

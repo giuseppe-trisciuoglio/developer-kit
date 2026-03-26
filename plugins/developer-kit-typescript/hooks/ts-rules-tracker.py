@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """TypeScript Rules Tracker Hook.
 
-Fires after Claude writes a TypeScript file. Finds .claude/rules/ entries
-whose 'paths:' frontmatter matches the written file and persists them to a
-per-session state file so the Prompt hook can pick them up.
+Fires after Claude writes or edits a TypeScript file. Finds .claude/rules/
+entries whose 'paths:' frontmatter matches the modified file and persists them
+to a per-session state file so the Prompt hook can pick them up.
 
-Hook event: PostToolUse (Write)
-Input:  JSON via stdin  { "tool_name": "Write", "tool_input": { "file_path": "...", "content": "..." } }
+Hook event: PostToolUse (Write | Edit | MultiEdit)
+Input:  JSON via stdin with tool_name and tool_input
 Output: always Exit 0 — side effect only (writes state file)
 
 Zero external dependencies — pure Python 3 standard library only.
@@ -112,7 +112,7 @@ def main() -> None:
     except (json.JSONDecodeError, ValueError):
         sys.exit(0)
 
-    if data.get("tool_name") != "Write":
+    if data.get("tool_name") not in ("Write", "Edit", "MultiEdit"):
         sys.exit(0)
 
     file_path: str = data.get("tool_input", {}).get("file_path", "")

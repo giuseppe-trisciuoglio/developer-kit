@@ -4,8 +4,8 @@
 Injects project context (git branch, recent commits, pending TODOs) into
 Claude's context window at the start of each development session.
 
-Hook event: PreToolUse (any tool, first invocation only per session)
-Input:  JSON via stdin  { "tool_name": "...", "tool_input": {...} }
+Hook event: SessionStart
+Input:  JSON via stdin  { "session_id": "...", "transcript_path": "..." }
 Output: Exit 0 = silent proceed | Exit 1 = inject context message to Claude
 
 Zero external dependencies — pure Python 3 standard library only.
@@ -18,9 +18,6 @@ import sys
 from pathlib import Path
 
 # ─── Configuration ────────────────────────────────────────────────────────────
-
-# Temporary marker file prefix — keyed by process group to scope to session
-_MARKER_PREFIX = "/tmp/.ts-session-ctx-"
 
 # Maximum characters for TODO.md content to avoid flooding the context
 _TODO_MAX_CHARS = 600
@@ -44,29 +41,6 @@ _FRAMEWORK_DEPS: list[tuple[str, str]] = [
     ("express", "Express"),
     ("hono", "Hono"),
 ]
-
-
-# ─── Session Marker ───────────────────────────────────────────────────────────
-
-
-def _session_key() -> str:
-    """Return a stable per-session identifier (process group ID)."""
-    try:
-        return str(os.getpgrp())
-    except AttributeError:
-        return str(os.getpid())
-
-
-def _is_first_call() -> bool:
-    """Return True (and create the marker) if this is the first hook call in the session."""
-    marker = Path(f"{_MARKER_PREFIX}{_session_key()}")
-    if marker.exists():
-        return False
-    try:
-        marker.touch()
-    except OSError:
-        pass
-    return True
 
 
 # ─── Context Collectors ───────────────────────────────────────────────────────
@@ -158,12 +132,9 @@ def _todo_section(cwd: str) -> str:
 
 def main() -> None:
     try:
-        json.load(sys.stdin)  # consume input
-    except (json.JSONDecodeError, ValueError):
+        sys.stdin.read()  # consume input (SessionStart sends minimal JSON)
+    except Exception:
         pass
-
-    if not _is_first_call():
-        sys.exit(0)
 
     cwd = os.environ.get("CLAUDE_CWD", os.getcwd())
 
