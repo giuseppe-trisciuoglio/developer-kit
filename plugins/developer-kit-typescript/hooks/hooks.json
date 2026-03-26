@@ -26,6 +26,22 @@
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/ts-pattern-validator.py",
             "statusMessage": "Checking TypeScript architectural patterns..."
+          },
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/ts-rules-tracker.py",
+            "statusMessage": "Indexing project rules for written file..."
+          }
+        ]
+      }
+    ],
+    "Prompt": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/ts-rules-verifier.py",
+            "statusMessage": "Checking pending project-rules verifications..."
           }
         ]
       }
