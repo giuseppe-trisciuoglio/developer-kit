@@ -78,5 +78,6 @@
     "./skills/zod-validation-utilities",
     "./skills/aws-cdk"
   ],
-  "lspServers": "./.lsp.json"
+  "lspServers": "./.lsp.json",
+  "hooks": "./hooks/hooks.json"
 }
