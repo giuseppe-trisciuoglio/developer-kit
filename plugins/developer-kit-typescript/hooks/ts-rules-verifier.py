@@ -13,6 +13,7 @@ Output: Exit 0 = nothing pending | Exit 1 = inject verification directive to Cla
 Zero external dependencies — pure Python 3 standard library only.
 """
 
+import hashlib
 import json
 import os
 import sys
@@ -20,7 +21,7 @@ from pathlib import Path
 from typing import Optional
 
 # Must match ts-rules-tracker.py
-_STATE_PREFIX = "/tmp/.ts-rules-pending-"
+_STATE_FILENAME_PREFIX = ".ts-rules-pending-"
 
 
 # ─── State File ───────────────────────────────────────────────────────────────
@@ -28,12 +29,14 @@ _STATE_PREFIX = "/tmp/.ts-rules-pending-"
 
 def _session_key() -> str:
     cwd = os.environ.get("CLAUDE_CWD", os.getcwd())
-    import hashlib
-    return hashlib.md5(cwd.encode()).hexdigest()[:12]
+    return hashlib.sha256(cwd.encode()).hexdigest()[:12]
 
 
 def _state_path() -> Path:
-    return Path(f"{_STATE_PREFIX}{_session_key()}.json")
+    cwd = Path(os.environ.get("CLAUDE_CWD", os.getcwd()))
+    state_dir = cwd / ".claude"
+    state_dir.mkdir(parents=True, exist_ok=True)
+    return state_dir / f"{_STATE_FILENAME_PREFIX}{_session_key()}.json"
 
 
 def _consume_state() -> list[dict]:

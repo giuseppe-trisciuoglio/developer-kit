@@ -14,6 +14,7 @@ Zero external dependencies — pure Python 3 standard library only.
 
 import json
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -140,6 +141,26 @@ def _get_modified_ts_files(cwd: Path) -> list[str]:
         return []
 
 
+# ─── Tool Resolution ──────────────────────────────────────────────────────────
+
+
+def _resolve_bin(tool: str, cwd: Path) -> list[str]:
+    """Resolve a tool command, preferring local node_modules/.bin over npx.
+
+    Returns the command prefix to invoke the tool. Prefers the local binary to
+    avoid npx downloading packages implicitly (supply-chain risk).
+    """
+    local = cwd / "node_modules" / ".bin" / tool
+    if local.exists():
+        return [str(local)]
+    if shutil.which(tool):
+        return [tool]
+    npx = shutil.which("npx")
+    if npx:
+        return [npx, tool]
+    return []
+
+
 # ─── Tool Runners ─────────────────────────────────────────────────────────────
 
 
@@ -164,21 +185,30 @@ def _run(cmd: list[str], cwd: Path) -> tuple[bool, str]:
 def _run_tsc(cwd: Path) -> tuple[bool, str]:
     if not _find_tsconfig(cwd):
         return True, ""
-    return _run(["npx", "--yes", "tsc", "--noEmit", "--pretty", "false"], cwd)
+    cmd = _resolve_bin("tsc", cwd)
+    if not cmd:
+        return True, ""
+    return _run([*cmd, "--noEmit", "--pretty", "false"], cwd)
 
 
 def _run_eslint(files: list[str], cwd: Path) -> tuple[bool, str]:
     if not files or not _has_eslint(cwd):
         return True, ""
+    cmd = _resolve_bin("eslint", cwd)
+    if not cmd:
+        return True, ""
     return _run(
-        ["npx", "--yes", "eslint", "--max-warnings=0", "--format=compact", *files],
+        [*cmd, "--max-warnings=0", "--format=compact", *files],
         cwd,
     )
 
 
 def _run_nx_lint(cwd: Path) -> tuple[bool, str]:
+    cmd = _resolve_bin("nx", cwd)
+    if not cmd:
+        return True, ""
     return _run(
-        ["npx", "--yes", "nx", "affected", "--target=lint", "--parallel=3"],
+        [*cmd, "affected", "--target=lint", "--parallel=3"],
         cwd,
     )
 
@@ -186,8 +216,11 @@ def _run_nx_lint(cwd: Path) -> tuple[bool, str]:
 def _run_prettier(files: list[str], cwd: Path) -> tuple[bool, str]:
     if not files or not _has_prettier(cwd):
         return True, ""
+    cmd = _resolve_bin("prettier", cwd)
+    if not cmd:
+        return True, ""
     return _run(
-        ["npx", "--yes", "prettier", "--check", *files],
+        [*cmd, "--check", *files],
         cwd,
     )
 

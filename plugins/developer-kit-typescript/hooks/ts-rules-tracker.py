@@ -12,14 +12,15 @@ Output: always Exit 0 — side effect only (writes state file)
 Zero external dependencies — pure Python 3 standard library only.
 """
 
+import hashlib
 import json
 import os
 import sys
 from pathlib import Path
 from typing import Optional
 
-# Shared state file path — must match ts-rules-verifier.py
-_STATE_PREFIX = "/tmp/.ts-rules-pending-"
+# State directory lives under $CLAUDE_CWD/.claude/ (project-local, not world-readable)
+_STATE_FILENAME_PREFIX = ".ts-rules-pending-"
 
 TS_EXTENSIONS: tuple[str, ...] = (".ts", ".tsx", ".js", ".jsx")
 
@@ -77,13 +78,14 @@ def _matches_any(file_path: str, patterns: list[str]) -> bool:
 
 def _session_key() -> str:
     cwd = os.environ.get("CLAUDE_CWD", os.getcwd())
-    # Use a short hash of CLAUDE_CWD — stable across all hooks in the same session
-    import hashlib
-    return hashlib.md5(cwd.encode()).hexdigest()[:12]
+    return hashlib.sha256(cwd.encode()).hexdigest()[:12]
 
 
 def _state_path() -> Path:
-    return Path(f"{_STATE_PREFIX}{_session_key()}.json")
+    cwd = Path(os.environ.get("CLAUDE_CWD", os.getcwd()))
+    state_dir = cwd / ".claude"
+    state_dir.mkdir(parents=True, exist_ok=True)
+    return state_dir / f"{_STATE_FILENAME_PREFIX}{_session_key()}.json"
 
 
 def _load_state() -> list[dict]:
@@ -98,7 +100,9 @@ def _load_state() -> list[dict]:
 
 def _save_state(entries: list[dict]) -> None:
     try:
-        _state_path().write_text(json.dumps(entries, indent=2), encoding="utf-8")
+        sp = _state_path()
+        sp.write_text(json.dumps(entries, indent=2), encoding="utf-8")
+        os.chmod(sp, 0o600)
     except OSError:
         pass
 
