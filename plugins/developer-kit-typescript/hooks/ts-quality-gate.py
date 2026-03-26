@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """TypeScript Quality Gate Hook.
 
-Runs type checking (tsc) and linting (eslint) on recently modified TypeScript
-files at the end of a Claude Code session. Supports plain TypeScript projects
-as well as Nx monorepos.
+Runs type checking (tsc), linting (eslint), and format checking (prettier)
+on recently modified TypeScript files at the end of a Claude Code session.
+Supports plain TypeScript projects as well as Nx monorepos.
 
 Hook event: Stop
 Input:  JSON via stdin  { "stop_reason": "end_turn", ... }
@@ -76,6 +76,32 @@ def _has_eslint(cwd: Path) -> bool:
 
 def _is_nx(cwd: Path) -> bool:
     return (cwd / "nx.json").exists()
+
+
+def _has_prettier(cwd: Path) -> bool:
+    """Return True if a Prettier config file is present in cwd."""
+    config_names = (
+        ".prettierrc",
+        ".prettierrc.js",
+        ".prettierrc.cjs",
+        ".prettierrc.mjs",
+        ".prettierrc.json",
+        ".prettierrc.yaml",
+        ".prettierrc.yml",
+        "prettier.config.js",
+        "prettier.config.mjs",
+        "prettier.config.cjs",
+    )
+    if any((cwd / name).exists() for name in config_names):
+        return True
+    pkg = cwd / "package.json"
+    if pkg.exists():
+        try:
+            data = json.loads(pkg.read_text(encoding="utf-8"))
+            return "prettier" in data
+        except Exception:
+            pass
+    return False
 
 
 # ─── Modified File Detection ──────────────────────────────────────────────────
@@ -157,6 +183,15 @@ def _run_nx_lint(cwd: Path) -> tuple[bool, str]:
     )
 
 
+def _run_prettier(files: list[str], cwd: Path) -> tuple[bool, str]:
+    if not files or not _has_prettier(cwd):
+        return True, ""
+    return _run(
+        ["npx", "--yes", "prettier", "--check", *files],
+        cwd,
+    )
+
+
 # ─── Entry Point ─────────────────────────────────────────────────────────────
 
 
@@ -169,7 +204,7 @@ def main() -> None:
     cwd = Path(os.environ.get("CLAUDE_CWD", os.getcwd()))
 
     # Nothing to do if no TypeScript project detected
-    if not _find_tsconfig(cwd) and not _has_eslint(cwd):
+    if not _find_tsconfig(cwd) and not _has_eslint(cwd) and not _has_prettier(cwd):
         sys.exit(0)
 
     modified = _get_modified_ts_files(cwd)
@@ -194,6 +229,16 @@ def main() -> None:
         nx_ok, nx_out = _run_nx_lint(cwd)
         if not nx_ok and nx_out:
             warnings.append(f"Nx lint issues:\n{nx_out}")
+
+    # --- Prettier format check on modified files ---
+    if modified:
+        prettier_ok, prettier_out = _run_prettier(modified, cwd)
+        if not prettier_ok and prettier_out:
+            warnings.append(
+                f"Prettier formatting issues ({len(modified)} file(s) checked):\n"
+                f"{prettier_out}\n"
+                f"Run: npx prettier --write <file> to fix."
+            )
 
     # --- Report ---
     if errors:
