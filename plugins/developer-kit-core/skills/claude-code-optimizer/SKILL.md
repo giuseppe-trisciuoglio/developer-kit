@@ -1,66 +1,114 @@
 ---
 name: claude-code-optimizer
-description: Ottimizza il consumo di token e la knowledge di progetto per Claude Code. Da utilizzare quando si lavora su progetti con file CLAUDE.md troppo grandi, problemi di latenza o necessità di migliorare la rilevanza del contesto.
+description: Optimizes token consumption and project knowledge for Claude Code. Use when working on projects with overly large CLAUDE.md files, latency issues, or a need to improve context relevance.
+allowed-tools: [Bash, Edit]
 ---
 
 # Claude Code Optimizer
 
-Questa skill fornisce strategie e strumenti per ridurre il consumo di token in Claude Code fino al 60%, migliorando contemporaneamente la velocità di risposta e la qualità della conoscenza del progetto.
+## Overview
 
-## Obiettivi di Ottimizzazione
+This skill provides strategies and tools to reduce token consumption in Claude Code by up to 60%, while simultaneously improving response speed and project knowledge quality. It achieves this through tiered documentation, session-start hooks, and structured reference materials.
 
-L'obiettivo principale è mantenere il contesto rilevante ed efficiente seguendo questi parametri:
-- **CLAUDE.md**: Le prime 200 righe devono contenere meno di 1.000 token.
-- **Latenza**: Ridurre il tempo della prima risposta a 3-5 secondi.
-- **Rilevanza**: Aumentare la pertinenza del contesto all'85% o superiore.
+## When to Use
 
-## Strategie Chiave
+Use this skill when working on projects with:
+- Large `CLAUDE.md` files that are causing high token consumption.
+- Slow response times from Claude Code.
+- A need to improve the relevance of the context provided to Claude Code.
+- The goal of reducing operational costs associated with LLM usage.
 
-### 1. Documentazione a Livelli (Tiered Documentation)
+## Instructions
 
-Non caricare tutta la documentazione in `CLAUDE.md`. Mantieni il file principale snello e usa collegamenti a documenti specifici.
+Follow the recommended workflow and strategies outlined below to implement token optimization for your Claude Code projects. Utilize the included scripts and templates to streamline the process.
 
-| Livello | File | Scopo | Target Token |
+## Optimization Goals
+
+The primary goal is to maintain relevant and efficient context by following these parameters:
+- **CLAUDE.md**: The first 200 lines must contain less than 1,000 tokens.
+- **Latency**: Reduce first response time to 3-5 seconds.
+- **Relevance**: Increase context relevance to 85% or higher.
+
+## Key Strategies
+
+### 1. Tiered Documentation
+
+Do not load all documentation into `CLAUDE.md`. Keep the main file lean and use links to specific documents.
+
+| Level | File | Purpose | Target Tokens |
 |---------|------|-------|--------------|
-| **Critico** | `CLAUDE.md` | Regole fondamentali, architettura macro, comandi essenziali. | < 800 |
-| **Componente** | `docs/*.md` | Dettagli API, Schema Database, Testing, Deployment. | 500 - 1.500 |
-| **Riferimento** | Link esterni | Documentazione esterna o file di configurazione grezzi. | 0 (solo link) |
+| **Critical** | `CLAUDE.md` | Fundamental rules, macro architecture, essential commands. | < 800 |
+| **Component** | `docs/*.md` | API Details, Database Schema, Testing, Deployment. | 500 - 1,500 |
+| **Reference** | External links | External documentation or raw configuration files. | 0 (link only) |
 
 ### 2. Session-Start Hook
 
-Implementa un hook di inizio sessione per fornire a Claude Code un contesto immediato e dinamico senza sprecare token in file statici.
+Implement a session-start hook to provide Claude Code with immediate and dynamic context without wasting tokens on static files.
 
-1. Crea la directory: `mkdir -p .claude/hooks`
-2. Crea il file: `.claude/hooks/session-start.sh` (usa il template in `templates/session-start.sh.template`)
-3. Rendi eseguibile: `chmod +x .claude/hooks/session-start.sh`
+1. Create the directory: `mkdir -p .claude/hooks`
+2. Create the file: `.claude/hooks/session-start.sh` (use the template in `references/session-start.sh.template`)
+3. Make executable: `chmod +x .claude/hooks/session-start.sh`
 
-L'hook dovrebbe mostrare:
-- Stato dei servizi (es. Docker, Database).
-- Contesto Git (branch attuale, ultimo commit).
-- Suggerimenti di documentazione basati sui file modificati recentemente.
+The hook should display:
+- Service status (e.g., Docker, Database).
+- Git context (current branch, last commit).
+- Documentation suggestions based on recently changed files.
 
-### 3. Hub di Navigazione e Quick Reference
+### 3. Navigation Hub and Quick Reference
 
-Crea file dedicati per compiti comuni e risoluzione dei problemi per evitare che Claude debba "indovinare" o cercare in tutto il repository.
+Create dedicated files for common tasks and troubleshooting to prevent Claude from "guessing" or searching the entire repository.
 
-- **`docs/INDEX.md`**: Un punto di partenza organizzato per "Cosa voglio fare...".
-- **`docs/QUICK_REF.md`**: Comandi rapidi, tabelle di troubleshooting e regole critiche ("Mai fare X").
+- **`docs/INDEX.md`**: An organized starting point for "What I want to do...".
+- **`docs/QUICK_REF.md`**: Quick commands, troubleshooting tables, and critical rules ("Never do X").
 
-## Flusso di Lavoro Consigliato
+## Recommended Workflow
 
-1. **Audit**: Usa lo script `scripts/estimate_tokens.sh` per valutare lo stato attuale di `CLAUDE.md`.
-2. **Refactoring**: Sposta le sezioni dettagliate (es. lista completa endpoint API) da `CLAUDE.md` a file in `docs/`.
-3. **Priorità**: Sposta le "Critical Rules" nelle prime 40 righe di `CLAUDE.md`.
-4. **Automazione**: Configura il `session-start.sh` hook per automatizzare il controllo dello stato del progetto.
+1. **Audit**: Use the `scripts/estimate_tokens.sh` script to assess the current state of `CLAUDE.md`.
+2. **Refactoring**: Move detailed sections (e.g., complete API endpoint list) from `CLAUDE.md` to files in `docs/`.
+3. **Prioritization**: Move "Critical Rules" to the first 40 lines of `CLAUDE.md`.
+4. **Automation**: Configure the `session-start.sh` hook to automate project status checks.
 
-## Risorse Incluse
+## Examples
 
-- `scripts/estimate_tokens.sh`: Script per stimare i token e verificare il target di ottimizzazione.
-- `templates/session-start.sh.template`: Template per l'hook di sessione.
-- `templates/docs_templates.md`: Strutture suggerite per `INDEX.md` e `QUICK_REF.md`.
+**Scenario 1: Auditing current token usage**
+Run the `estimate_tokens.sh` script in your project root to get an immediate overview of your `CLAUDE.md` token count.
 
-## Errori da Evitare
+```bash
+./scripts/estimate_tokens.sh
+```
 
-- **Non duplicare le informazioni**: Se un'informazione di troubleshooting è in `docs/API.md`, non ripeterla in `CLAUDE.md`. Usa un link.
-- **Non nascondere info critiche**: Le regole di sicurezza e commit devono essere all'inizio di `CLAUDE.md`.
-- **Non caricare tutto subito**: Claude Code è più intelligente con meno contesto ma più mirato.
+**Scenario 2: Implementing a session-start hook**
+Copy the `session-start.sh.template` to `.claude/hooks/session-start.sh` and customize it to include relevant project status checks and smart context detection.
+
+```bash
+mkdir -p .claude/hooks
+cp references/session-start.sh.template .claude/hooks/session-start.sh
+chmod +x .claude/hooks/session-start.sh
+```
+
+**Scenario 3: Structuring documentation**
+Move detailed API documentation from `CLAUDE.md` to `docs/API.md` and link to it from `CLAUDE.md`. Create a `docs/INDEX.md` using the provided template to guide navigation.
+
+## Included Resources
+
+- `scripts/estimate_tokens.sh`: Script to estimate tokens and verify optimization targets.
+- `references/session-start.sh.template`: Template for the session hook.
+- `references/docs-templates.md`: Suggested structures for `INDEX.md` and `QUICK_REF.md`.
+
+## Constraints and Warnings
+
+- Ensure that `session-start.sh` is executable (`chmod +x`).
+- Avoid placing sensitive information directly in `CLAUDE.md` or other publicly accessible documentation.
+- Regularly review and update documentation to maintain relevance.
+
+## Best Practices
+
+- Keep `CLAUDE.md` concise and focused on critical, high-level information.
+- Use a consistent naming convention for documentation files in the `docs/` directory.
+- Automate token estimation and context relevance checks as part of your CI/CD pipeline.
+
+## Errors to Avoid
+
+- **Do not duplicate information**: If troubleshooting information is in `docs/API.md`, do not repeat it in `CLAUDE.md`. Use a link.
+- **Do not hide critical info**: Security and commit rules must be at the beginning of `CLAUDE.md`.
+- **Do not load everything upfront**: Claude Code is smarter with less, but more targeted, context.
