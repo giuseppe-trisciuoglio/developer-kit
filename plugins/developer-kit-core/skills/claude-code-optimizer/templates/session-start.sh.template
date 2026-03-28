@@ -1,0 +1,32 @@
+#!/bin/bash
+# Session Start Hook for Claude Code
+# Location: .claude/hooks/session-start.sh
+set -euo pipefail
+
+echo "🚀 $(basename "$PWD") Status"
+echo "________________________________"
+
+# Check database (Example: PostgreSQL)
+if docker ps | grep -q postgres; then
+    echo "✅ Database: Connected"
+else
+    echo "❌ Database: Not running (docker-compose up -d)"
+fi
+
+# Show git context
+echo "📍 Branch: $(git branch --show-current)"
+echo "📝 Last: $(git log -1 --oneline)"
+
+# Smart context detection
+detect_context() {
+    local changed=$(git diff --name-only HEAD~1 2>/dev/null)
+    case "$changed" in
+        *test*|*spec*) echo "💡 Testing: docs/TESTING.md" ;;
+        *api/*|*routes/*) echo "💡 API: docs/API.md" ;;
+        *prisma/*|*migrations/*) echo "💡 Database: docs/DATABASE.md" ;;
+        *Dockerfile*|*k8s/*) echo "💡 Deploy: docs/DEPLOYMENT.md" ;;
+    esac
+}
+detect_context
+
+echo "________________________________"
