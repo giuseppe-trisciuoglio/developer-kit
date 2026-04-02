@@ -303,17 +303,17 @@ This command implements a specific task following a focused workflow:
 1. Confirm completion before marking the task done:
    - Ensure all DoD items are satisfied and documented
    - If the task has explicit DoR/DoD checklists, update them to reflect the validated state
-2. Mark task as completed:
+2. Mark task as implemented (not completed yet — review comes first):
    - Update the task file YAML frontmatter:
-     - Set `status: completed`
-     - Add `completed_date: YYYY-MM-DD`
+     - Set `status: implemented`
+     - Add `implemented_date: YYYY-MM-DD`
    - Change `[ ]` to `[x]` in the task's acceptance criteria and DoD checkboxes where evidence exists
    - Add completion note with date in the task file
 
 3. Summarize:
    - What was implemented
    - Acceptance criteria and DoD items verified
-   - Any notes for next tasks
+   - **Next Step**: Run `/specs:task-review` to verify the implementation, then `/specs:code-cleanup` to finalize
 
 ---
 
@@ -537,6 +537,8 @@ After generating tasks with `/specs:spec-to-tasks`, implement individual tasks:
 → Validating dependencies...
 → Knowledge Graph validation: ✓ All dependencies exist
 → Contract validation: ✓ All expectations satisfied
+→ Task implemented successfully
+→ Next: Run `/specs:task-review` then `/specs:code-cleanup`
 
 # Or with errors - Dependency not met
 → Task identified: TASK-002 "Password reset"

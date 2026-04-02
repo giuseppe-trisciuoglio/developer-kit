@@ -30,8 +30,8 @@ Each task includes:
 ### Workflow Position
 
 ```
-Idea → Functional Specification → Architecture & Ontology Definition → Tasks → Implementation
-              (brainstorm)         (this: Phase 1.5)                   (this)   (task-implementation)
+Idea → Functional Specification → Architecture & Ontology Definition → Tasks → Implementation → Review → Code Cleanup → Done
+              (brainstorm)         (this: Phase 1.5)                   (this)   (task-implementation)  (task-review)   (code-cleanup)
 ```
 
 ## Usage

@@ -9,6 +9,7 @@ This plugin provides a complete workflow for:
 - **Task Generation**: Convert functional specifications into executable tasks
 - **Task Management**: Add, split, update, and manage tasks after generation
 - **Task Review**: Verify implemented tasks meet specifications
+- **Code Cleanup**: Remove technical debt and finalize tasks after review approval
 - **Automatic stop gate after task implementation**: Forces review, fixes, and spec sync handling before Claude stops
 - **Spec Quality Check**: Review and validate specification content quality
 - **Spec Sync Context**: Synchronize technical context (Knowledge Graph, Tasks, Codebase)
@@ -17,8 +18,8 @@ This plugin provides a complete workflow for:
 ## Workflow
 
 ```
-Idea → Functional Specification → Tasks → Implementation → Review
-       (brainstorm)              (spec-to-tasks)          (task-review)
+Idea → Functional Specification → Tasks → Implementation → Review → Code Cleanup → Done
+       (brainstorm)              (spec-to-tasks)          (task-review)   (code-cleanup)
 ```
 
 ## Specification Maintenance Note
@@ -56,6 +57,7 @@ Example to include in the CLAUDE.md or AGENTS.md for specification maintenance:
 - `/specs:task-manage --action=[add|split|update|list]` - Manage tasks after generation
 - `/specs:task-implementation --lang=[lang] [task-file]` - Implement a specific task
 - `/specs:task-review --lang=[lang] [task-file]` - Review implemented task
+- `/specs:code-cleanup --lang=[lang] [task-file]` - Clean up code after review approval
 
 ### Synchronization
 
@@ -91,7 +93,10 @@ Example to include in the CLAUDE.md or AGENTS.md for specification maintenance:
 # 7. Review implementation
 /specs:task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
 
-# 8. Sync specification with implementation (if deviations detected)
+# 8. Clean up code after review approval
+/specs:code-cleanup --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
+
+# 9. Sync specification with implementation (if deviations detected)
 /specs:spec-sync-with-code docs/specs/001-user-auth/
 ```
 

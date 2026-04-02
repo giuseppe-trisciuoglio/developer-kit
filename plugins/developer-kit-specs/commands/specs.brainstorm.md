@@ -18,7 +18,7 @@ it will be implemented.
 The new workflow:
 
 ```
-Idea → Functional Specification (docs/specs/[id]/) → Architecture & Ontology Definition → Tasks (docs/specs/[id]/tasks/) → Implementation
+Idea → Functional Specification (docs/specs/[id]/) → Architecture & Ontology Definition → Tasks (docs/specs/[id]/tasks/) → Implementation → Review → Code Cleanup → Done
                                                       (docs/specs/architecture.md)
                                                       (docs/specs/ontology.md)
 ```

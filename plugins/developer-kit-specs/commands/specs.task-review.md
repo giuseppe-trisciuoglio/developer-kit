@@ -24,8 +24,8 @@ This command reviews a completed task to ensure:
 ### Workflow Position
 
 ```
-Idea → Functional Specification → Tasks → Implementation → Review
-              (devkit.brainstorm)   (this)   (devkit.task-implementation)  (this)
+Idea → Functional Specification → Tasks → Implementation → Review → Code Cleanup → Done
+              (brainstorm)           (spec-to-tasks)       (task-implementation)  (task-review)   (code-cleanup)
 ```
 
 ## Usage
@@ -48,6 +48,7 @@ Idea → Functional Specification → Tasks → Implementation → Review
 | Argument | Required | Description |
 |----------|----------|-------------|
 | `--lang` | No | Target language/framework: `java`, `spring`, `typescript`, `nestjs`, `react`, `python`, `general` |
+| `--no-confirm` | No | Skip user confirmation and auto-callback. Use when running inside automated loops (e.g., Ralph Loop). |
 | `task-file-path` | Yes | Path to the task file (e.g., `docs/specs/001-user-auth/tasks/TASK-001.md`) |
 
 ## Current Context
@@ -296,19 +297,28 @@ You are reviewing an implemented task to verify it meets specifications and pass
 
 **Actions**:
 
-1. Present the review report to the user
-2. Ask for confirmation via AskUserQuestion:
+1. **If `--no-confirm` was passed**: SKIP this phase entirely. Do NOT use `AskUserQuestion`. Do NOT invoke `task-implementation` automatically. Simply save the review report and terminate so the caller (e.g., Ralph Loop) can read the report and decide the next step.
+
+2. Present the review report to the user
+3. Ask for confirmation via AskUserQuestion:
    - **Option A**: Review complete, task approved
    - **Option B**: Issues found, needs revision
    - **Option C**: Need additional verification
 
-3. If issues found:
+4. If issues found:
    - List specific issues that need fixing
    - Save findings to the review report at `docs/specs/[id]/tasks/TASK-XXX--review.md`
    - Invoke `/specs:task-implementation --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"`
    - Reference the review report path so implementation can read the detailed findings
    - Track unresolved items
    - **Note**: Before re-implementing, consider running `/devkit.spec-review [spec-folder]` to verify the spec is still accurate if issues suggest spec-level problems
+
+5. If review approved (no issues or all issues fixed):
+   - Update task status to `reviewed` in the task file YAML frontmatter
+   - Recommend proceeding to code cleanup:
+   ```
+   /specs:code-cleanup --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
+   ```
 
 ---
 
@@ -326,7 +336,9 @@ You are reviewing an implemented task to verify it meets specifications and pass
     - **Acceptance Criteria**: All met / Partial / Failed
     - **Code Review Status**: Passed / Issues / Failed
     - **Review Report**: `docs/specs/[id]/tasks/TASK-XXX--review.md`
-    - **Next Step**: Fix issues or proceed to next task
+    - **Next Step**: 
+      - If approved: Run `/specs:code-cleanup` to finalize the task
+      - If issues found: Return to `/specs:task-implementation` to fix issues
 
 ---
 
