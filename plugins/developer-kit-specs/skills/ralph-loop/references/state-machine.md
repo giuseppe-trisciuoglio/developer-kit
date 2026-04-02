@@ -6,6 +6,12 @@ This document describes the Ralph Loop state machine so it can be implemented by
 
 **One /loop invocation = one step.** The state machine is implemented as a state file (`fix_plan.json`). Each invocation reads the current state, executes one step, updates the state, and stops.
 
+## Automation Rules
+
+- **NO human confirmation**: After completing a step, update `fix_plan.json` and stop immediately. Do NOT prompt the user with "Do you want to proceed?" or present confirmation options.
+- **Use `--no-confirm` on sub-commands**: When invoking `task-review` (or any other interactive command) inside the loop, always pass `--no-confirm` so it does not block waiting for user input.
+- **Trust the file**: The next loop invocation will read `fix_plan.json` and continue automatically.
+
 ## State File
 
 All state lives in `docs/specs/[id]/_ralph_loop/fix_plan.json`.
@@ -52,19 +58,24 @@ All state lives in `docs/specs/[id]/_ralph_loop/fix_plan.json`.
 init ──────────────────────────► choose_task ────────────────────► complete
                                    │                                           ▲
                                    ▼                                           │
-                           implementation ◄── retry (max 3)                   │
+                           implementation                                      │
                                    │                                           │
                                    ▼                                           │
-                                  review ────────────────────────────────────┤
+                                  review ─────── issues ───► fix ◄────────────┤
+                                   │                         │                │
+                              clean ▼                         ▼                │
+                                 cleanup ─────────────────────────────────────┤
                                    │                                           │
                                    ▼                                           │
-                                  sync ──────────────────────────────────────┤
+                                  sync ───────────────────────────────────────┤
                                    │                                           │
                                    ▼                                           │
                              update_done ─────────────────────────────────────┘
                                    │
                                    ▼
                                 failed (stop)
+                                 ↑
+                                 └─ retry > 3
 ```
 
 ## Step Handlers
@@ -143,31 +154,83 @@ Ralph Loop | Step: implementation | Task: TASK-037
 **When**: `state.step = "review"`
 
 **Actions**:
-1. Run task-review:
+1. Run task-review with `--no-confirm` to prevent interactive blocking:
    ```
-   /specs:task-review --lang=LANG "TASK-FILE"
+   /specs:task-review --no-confirm --lang=LANG "TASK-FILE"
    ```
    Or for non-Claude CLIs, verify implementation manually:
    - Read acceptance criteria from task file
    - Check each criterion is met
    - Run tests
    - Run code review
-2. If review passes (all criteria met, no issues):
-   - Set `state.step = "sync"`
-3. If review fails (issues found):
+2. Read the generated review report (`TASK-FILE--review.md`) to determine pass/fail
+3. If review passes (all criteria met, no issues):
+   - Set `state.step = "cleanup"`
+4. If review fails (issues found):
    - Increment `state.retry_count`
    - If `retry_count >= 3`:
      - Set `state.step = "failed"`
      - Set `state.error = "review failed after 3 retries"`
    - Else:
-     - Set `state.step = "implementation"` (retry)
-4. Save and stop
+     - Set `state.step = "fix"`
+5. Save and stop. Do NOT ask the user for confirmation.
 
 **Output**:
 ```
 Ralph Loop | Step: review | Task: TASK-037 | Retry: 1/3
-→ Running /specs:task-review --lang=spring "docs/specs/001-feature/tasks/TASK-037.md"
-→ Clean → Next: sync
+→ Running /specs:task-review --no-confirm --lang=spring "docs/specs/001-feature/tasks/TASK-037.md"
+→ Reading review report
+→ Clean → Next: cleanup
+```
+
+### fix
+
+**When**: `state.step = "fix"`
+
+**Actions**:
+1. Read the review report for the current task:
+   ```
+   docs/specs/[id]/tasks/TASK-XXX--review.md
+   ```
+2. Fix the issues reported in the review report:
+   - For Claude Code: run `/specs:task-implementation --lang=LANG --task="TASK-FILE"` (the task implementation command should read the review report and apply fixes)
+   - For non-Claude CLIs: manually edit files to address each finding
+3. If fixes succeed:
+   - Set `state.step = "review"`
+4. If fixes fail:
+   - Set `state.step = "failed"`
+   - Set `state.error = "fix failed"`
+5. Save and stop
+
+**Output**:
+```
+Ralph Loop | Step: fix | Task: TASK-037 | Retry: 1/3
+→ Reading review report: docs/specs/001-feature/tasks/TASK-037--review.md
+→ Fixes applied → Next: review
+```
+
+### cleanup
+
+**When**: `state.step = "cleanup"`
+
+**Actions**:
+1. Run code-cleanup with `--no-confirm`:
+   ```
+   /specs:code-cleanup --no-confirm --lang=LANG --task="TASK-FILE"
+   ```
+   Or for non-Claude CLIs:
+   - Remove debug logs and temporary comments
+   - Optimize imports
+   - Format code
+   - Verify documentation
+2. Set `state.step = "sync"`
+3. Save and stop
+
+**Output**:
+```
+Ralph Loop | Step: cleanup | Task: TASK-037
+→ Running /specs:code-cleanup --no-confirm --lang=spring --task="docs/specs/001-feature/tasks/TASK-037.md"
+→ Cleanup complete → Next: sync
 ```
 
 ### sync
@@ -305,8 +368,20 @@ case "$STEP" in
 
   review)
     echo "→ [REVIEW: Run task-review for $TASK]"
+    # In real implementation: check results, on issues go to fix, on clean go to cleanup
+    jq '.state.step = "cleanup"' "$FIX_PLAN" > tmp.json && mv tmp.json "$FIX_PLAN"
+    ;;
+
+  cleanup)
+    echo "→ [CLEANUP: Run code-cleanup for $TASK]"
     # In real implementation: call the actual command
     jq '.state.step = "sync"' "$FIX_PLAN" > tmp.json && mv tmp.json "$FIX_PLAN"
+    ;;
+
+  fix)
+    echo "→ [FIX: Apply fixes for $TASK based on review report]"
+    # In real implementation: call the actual command or edit files
+    jq '.state.step = "review"' "$FIX_PLAN" > tmp.json && mv tmp.json "$FIX_PLAN"
     ;;
 
   sync)

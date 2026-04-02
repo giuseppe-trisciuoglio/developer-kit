@@ -86,19 +86,52 @@ Execute Step: CURRENT_STEP
 
 ```
 1. Read fix_plan.json to get current_task and current_task_file
-2. Run task-review:
-   /specs:task-review --lang=LANG "TASK_FILE"
-3. If review passes (all criteria met, no issues):
-   - Set state.step = "sync"
-4. If review fails (issues found):
+2. Run task-review with --no-confirm:
+   /specs:task-review --no-confirm --lang=LANG "TASK_FILE"
+3. Read the review report TASK-FILE--review.md
+4. If review passes (all criteria met, no issues):
+   - Set state.step = "cleanup"
+5. If review fails (issues found):
    - Increment state.retry_count
    - If retry_count >= 3:
      - Set state.step = "failed"
      - Set state.error = "review failed after 3 retries"
    - Else:
-     - Set state.step = "implementation" (retry same task)
-5. Save fix_plan.json
-6. Print: "Review: TASK-ID | Clean → sync | Issues → implementation (retry N/3)"
+     - Set state.step = "fix"
+6. Save fix_plan.json
+7. Print: "Review: TASK-ID | Clean → cleanup | Issues → fix (retry N/3)"
+```
+
+---
+
+## Step: cleanup
+
+```
+1. Read fix_plan.json to get current_task and current_task_file
+2. Run code-cleanup with --no-confirm:
+   /specs:code-cleanup --no-confirm --lang=LANG --task="TASK_FILE"
+3. Set state.step = "sync"
+4. Save fix_plan.json
+5. Print: "Cleanup: TASK-ID complete | Next: sync"
+```
+
+---
+
+## Step: fix
+
+```
+1. Read fix_plan.json to get current_task
+2. Read the review report: docs/specs/[id]/tasks/TASK-XXX--review.md
+3. Fix the reported issues:
+   - Run /specs:task-implementation --lang=LANG --task="TASK_FILE"
+   - Or manually apply edits to address findings
+4. If fixes succeed:
+   - Set state.step = "review"
+5. If fixes fail:
+   - Set state.step = "failed"
+   - Set state.error = "fix failed"
+6. Save fix_plan.json
+7. Print: "Fix: TASK-ID applied | Next: review"
 ```
 
 ---
@@ -174,6 +207,8 @@ Fix the issues manually, then resume:
 3. **Trust the state machine**: Follow the step order exactly
 4. **Retry on review failure**: Max 3 retries before failing
 5. **Range filtering**: Always filter by task_range
+6. **Strict state validation**: Valid states are ONLY: `init`, `choose_task`, `implementation`, `review`, `fix`, `cleanup`, `sync`, `update_done`, `complete`, `failed`. If `state.step` is anything else, STOP and report a format error.
+7. **NO human confirmation**: After any step, update fix_plan.json and STOP. Do NOT ask the user for confirmation. Use `--no-confirm` on sub-commands to prevent interactive prompts.
 
 ## Ralph's Golden Rule
 

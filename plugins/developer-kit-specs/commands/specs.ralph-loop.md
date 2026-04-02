@@ -13,7 +13,7 @@ Do NOT generate shell scripts. Do NOT create prompt.md files. Do NOT interpret t
 
 ## Overview
 
-State machine for SDD task automation. One `/loop` = one step. State persisted in `fix_plan.json`. Claude Code interprets this command as executable logic — read the skill for hardcoded behavior.
+State machine for SDD task automation. One `/loop` = one step. State persisted in `fix_plan.json`. Valid states: `init`, `choose_task`, `implementation`, `review`, `fix`, `cleanup`, `sync`, `update_done`, `complete`, `failed`. Claude Code interprets this command as executable logic — read the skill for hardcoded behavior.
 
 ## Usage
 
@@ -44,6 +44,8 @@ State machine for SDD task automation. One `/loop` = one step. State persisted i
 **No multi-step**: Do NOT combine implementation + review + sync in one call.
 **No script generation**: Do NOT generate shell scripts or prompt files.
 **One thing per loop**: Execute only the current step, save state, stop.
+**Strict state validation**: If `state.step` is not one of the valid states, STOP and report a format error. Do NOT guess the next step from task files.
+**NO human confirmation**: Never ask the user for confirmation after a step. Update `fix_plan.json` and STOP immediately. Use `--no-confirm` flags on sub-commands (e.g., `task-review --no-confirm`) to prevent interactive prompts from blocking the loop.
 
 ## Examples
 

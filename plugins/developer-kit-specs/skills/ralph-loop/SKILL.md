@@ -1,6 +1,6 @@
 ---
 name: ralph-loop
-description: "Ralph Wiggum-inspired automation loop for specification-driven development. Use when: user runs /loop command, user asks to automate task implementation, user wants to iterate through spec tasks step-by-step, or user wants to run development workflow automation with context window management. One /loop invocation = one step. State machine: init → choose_task → implementation → review → sync → update_done. Supports --from-task and --to-task for task range filtering. State persisted in fix_plan.json."
+description: "Ralph Wiggum-inspired automation loop for specification-driven development. Use when: user runs /loop command, user asks to automate task implementation, user wants to iterate through spec tasks step-by-step, or user wants to run development workflow automation with context window management. One /loop invocation = one step. State machine: init → choose_task → implementation → review → fix → cleanup → sync → update_done. Supports --from-task and --to-task for task range filtering. State persisted in fix_plan.json."
 allowed-tools: Read, Write, Edit, Bash, Grep, Glob, TodoWrite, AskUserQuestion
 ---
 
@@ -41,8 +41,17 @@ fix_plan.json state machine:
 │                                                             │
 │  state: "review"                                          │
 │    → Run /specs:task-review for current task             │
-│    → Issues found → state: "implementation" (retry ≤ 3)  │
-│    → Clean → state: "sync"                               │
+│    → Issues found → state: "fix" (retry ≤ 3)             │
+│    → Clean → state: "cleanup"                            │
+│                                                             │
+│  state: "cleanup"                                         │
+│    → Run /specs:code-cleanup for current task            │
+│    → state: "sync"                                       │
+│                                                             │
+│  state: "fix"                                             │
+│    → Fix issues from review report                        │
+│    → On success → state: "review"                        │
+│    → On failure → state: "failed"                        │
 │                                                             │
 │  state: "sync"                                            │
 │    → Run /specs:spec-sync-with-code --after-task=[id]    │
@@ -84,7 +93,13 @@ fix_plan.json state machine:
 
 **`implementation`**: Run `/specs:task-implementation --lang=[lang] --task="[file]"`. On success → step `review`. On failure → step `failed`.
 
-**`review`**: Run `/specs:task-review --lang=[lang] "[file]"`. If issues → step `implementation` (retry, max 3). If clean → step `sync`.
+**`review`**: Run `/specs:task-review --no-confirm --lang=[lang] "[file]"`. Then read the generated review report. If issues found → step `fix` (retry, max 3). If clean → step `cleanup`.
+
+**`cleanup`**: Run `/specs:code-cleanup --no-confirm --lang=[lang] --task="[file]"`. Then → step `sync`.
+
+**`fix`**: Read the review report (`[current_task]--review.md`), fix the reported issues, then set step to `review`. On failure → step `failed`.
+
+**`fix`**: Read the review report (`[current_task]--review.md`), fix the reported issues, then set step to `review`. On failure → step `failed`.
 
 **`sync`**: Run `/specs:spec-sync-with-code [spec-folder/] --after-task=[id]`. Then → step `update_done`.
 
@@ -129,9 +144,11 @@ jq '.state.step = "review" | .state.current_task = "TASK-036" | .state.last_upda
 ## Constraints and Warnings
 
 - **Context explosion**: Do NOT implement + review + sync in one invocation — context will overflow
-- **Max retries**: Review failures retry implementation up to 3 times, then fail
+- **Max retries**: Review failures retry up to 3 times, then fail
 - **Git state**: Ensure clean git state before starting; commit after each task completion
 - **Test infrastructure**: Loop requires tests to pass — without tests, backpressure is ineffective
+- **Strict state validation**: Valid `state.step` values are ONLY: `init`, `choose_task`, `implementation`, `review`, `fix`, `sync`, `update_done`, `complete`, `failed`. If you encounter any other value, STOP and report a format error. Do NOT infer the next step from task metadata.
+- **NO human confirmation**: After completing any step, update `fix_plan.json` and STOP immediately. Do NOT ask the user "Do you want to proceed?" or present confirmation options. The loop is automated — one invocation = one step, no human gates between steps.
 
 ## CLI-Agnostic
 
