@@ -18,7 +18,9 @@ it will be implemented.
 The new workflow:
 
 ```
-Idea → Functional Specification (docs/specs/[id]/) → Tasks (docs/specs/[id]/tasks/) → Implementation
+Idea → Functional Specification (docs/specs/[id]/) → Architecture & Ontology Definition → Tasks (docs/specs/[id]/tasks/) → Implementation
+                                                      (docs/specs/architecture.md)
+                                                      (docs/specs/ontology.md)
 ```
 
 **Output**: `docs/specs/[id]/YYYY-MM-DD--feature-name.md`
@@ -399,6 +401,63 @@ Task(
 - This file will track all non-trivial decisions made during implementation
 - Future phases (task-implementation, task-review) will append entries to this file
 
+8.6. **Initialize or enrich the project ontology (`docs/specs/ontology.md`)**:
+
+   Domain terms identified during brainstorming are part of the functional understanding (Ubiquitous Language). This step captures them in a shared, project-level ontology file.
+
+   - **Check if `docs/specs/ontology.md` exists**:
+
+   - **If the file does NOT exist**:
+     1. Collect domain terms that emerged during the brainstorming dialogue (from Phases 2-5)
+     2. Use **AskUserQuestion** to present the identified terms and ask the user to confirm, add, or remove terms:
+        ```
+        During brainstorming, the following domain terms emerged:
+        - [Term 1]: [proposed definition]
+        - [Term 2]: [proposed definition]
+        - ...
+
+        Should I create the project ontology (docs/specs/ontology.md) with these terms?
+        ```
+        - Options:
+          - "Yes, create with these terms" (recommended)
+          - "Yes, but let me adjust the terms first"
+          - "Skip ontology creation for now"
+     3. If the user confirms, create `docs/specs/ontology.md` using this template:
+        ```markdown
+        # Project Ontology — Ubiquitous Language
+
+        **Created**: [current date YYYY-MM-DD]
+        **Last Updated**: [current date YYYY-MM-DD]
+
+        ## Domain Glossary
+
+        | Term | Definition | Bounded Context |
+        |------|-----------|-----------------|
+        | [Term 1] | [Definition] | [Context where this term applies] |
+        | [Term 2] | [Definition] | [Context where this term applies] |
+
+        ## Bounded Contexts
+
+        | Context | Description | Key Terms |
+        |---------|-------------|-----------|
+        | [Context 1] | [Description] | [Terms specific to this context] |
+
+        ## Conceptual Mapping
+
+        [Relationships between key domain entities — to be refined during task generation]
+        ```
+
+   - **If the file ALREADY exists**:
+     1. Read the existing `docs/specs/ontology.md`
+     2. Compare domain terms from the brainstorming session against existing glossary entries
+     3. If NEW terms were identified that are not in the glossary:
+        - Use **AskUserQuestion** to present the new terms and ask if they should be added
+        - If confirmed, append the new terms to the Domain Glossary table
+        - Update the `Last Updated` date
+     4. If no new terms: skip silently
+
+   - **Note**: The ontology is a living document. It will be further refined by `/specs:spec-to-tasks` when technical decisions are made.
+
 9. Update todos
 
 ---
@@ -533,15 +592,19 @@ Phase 4: Optional Codebase Exploration (for integration context only)
 Phase 5: Functional Specification Presentation (validated incrementally)
 ↓
 Phase 6: Documentation (document-generator-expert agent)
+       + Ontology initialization (docs/specs/ontology.md)
 ↓
 Phase 7: Specification Review (quality verification)
 ↓
 [Creates: docs/specs/[id]/YYYY-MM-DD--feature-name.md]
+[Creates/Updates: docs/specs/ontology.md (domain terms)]
 ↓
 [Recommends: devkit.spec-to-tasks]
 ↓
 /specs:spec-to-tasks --lang=[language] docs/specs/[id]/
 ↓
+[Ensures: docs/specs/architecture.md exists]
+[Refines: docs/specs/ontology.md]
 [Creates: docs/specs/[id]/YYYY-MM-DD--feature-name--tasks.md]
 [Creates: docs/specs/[id]/tasks/TASK-XXX.md]
 ↓
@@ -585,6 +648,7 @@ Throughout the process, maintain a todo list like:
 [ ] Section 4: Acceptance Criteria
 [ ] Section 5: Integration Requirements
 [ ] Phase 6: Functional Specification Generation
+[ ] Phase 6.1: Ontology Initialization/Enrichment (docs/specs/ontology.md)
 [ ] Phase 7: Specification Review
 [ ] Phase 8: Next Steps Recommendation
 [ ] Phase 9: Summary

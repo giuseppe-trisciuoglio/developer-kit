@@ -30,8 +30,8 @@ Each task includes:
 ### Workflow Position
 
 ```
-Idea → Functional Specification → Tasks → Implementation
-              (devkit.brainstorm)   (this)   (devkit.task-implementation)
+Idea → Functional Specification → Architecture & Ontology Definition → Tasks → Implementation
+              (brainstorm)         (this: Phase 1.5)                   (this)   (task-implementation)
 ```
 
 ## Usage
@@ -123,6 +123,182 @@ You are converting a functional specification into executable tasks. Follow a sy
          - "Continue anyway" (proceed at user risk)
          - "Run spec-review first" (recommended: `/devkit.spec-review docs/specs/[id]/`)
    - If Clarifications section exists OR no vague terms found: proceed without warning
+
+---
+
+## Phase 1.5: Architecture & Ontology Definition
+
+**Goal**: Ensure the project-level architecture and ontology documents exist and are consistent before generating tasks. This phase bridges the gap between WHAT (functional specification) and HOW (technical tasks).
+
+**Context**: The architecture and ontology documents live at the `docs/specs/` level (shared across all specifications):
+- `docs/specs/architecture.md` — Formalizes technological and infrastructural choices
+- `docs/specs/ontology.md` — Establishes common domain language (Ubiquitous Language)
+
+### Step 1: Architecture Definition (`docs/specs/architecture.md`)
+
+1. **Check if `docs/specs/architecture.md` exists**:
+
+   - **If the file does NOT exist**:
+     1. Inform the user: "No project architecture document found. Before generating tasks, we need to define the project architecture."
+     2. Use **AskUserQuestion** to gather architecture information through targeted questions:
+
+        **Question 1 — Software Stack**:
+        ```
+        What is the primary technology stack for this project?
+        ```
+        - Options (adapt based on `--lang` parameter if provided):
+          - "Java / Spring Boot"
+          - "TypeScript / NestJS"
+          - "TypeScript / React"
+          - "Python / Django or FastAPI"
+          - "PHP / Laravel or Symfony"
+          - Freeform: allow custom answer
+
+        **Question 2 — Data Architecture**:
+        ```
+        What database and data management approach does the project use?
+        ```
+        - Options:
+          - "PostgreSQL (relational)"
+          - "MySQL (relational)"
+          - "MongoDB (document-based)"
+          - "Multiple databases (polyglot persistence)"
+          - Freeform: allow custom answer
+
+        **Question 3 — Infrastructure**:
+        ```
+        What hosting and infrastructure approach is used?
+        ```
+        - Options:
+          - "AWS (EC2, ECS, Lambda, etc.)"
+          - "Docker / Docker Compose (local or self-hosted)"
+          - "Kubernetes"
+          - "Serverless (AWS Lambda, GCP Cloud Functions)"
+          - "Not yet decided"
+          - Freeform: allow custom answer
+
+     3. Create `docs/specs/architecture.md` using the gathered information:
+        ```markdown
+        # Project Architecture
+
+        **Created**: [current date YYYY-MM-DD]
+        **Last Updated**: [current date YYYY-MM-DD]
+
+        ## Software Stack
+
+        | Component | Technology | Notes |
+        |-----------|-----------|-------|
+        | Language | [e.g., TypeScript] | [version if known] |
+        | Framework | [e.g., NestJS] | [version if known] |
+        | Key Libraries | [e.g., Drizzle ORM, Passport] | |
+
+        ## Data Architecture
+
+        | Component | Technology | Notes |
+        |-----------|-----------|-------|
+        | Primary Database | [e.g., PostgreSQL] | |
+        | Caching | [e.g., Redis, none] | |
+        | ORM / Data Access | [e.g., Drizzle, Hibernate] | |
+        | Migrations | [e.g., Flyway, Drizzle Kit] | |
+
+        ## Infrastructure
+
+        | Component | Technology | Notes |
+        |-----------|-----------|-------|
+        | Hosting | [e.g., AWS ECS] | |
+        | CI/CD | [e.g., GitHub Actions] | |
+        | Containerization | [e.g., Docker] | |
+        | Orchestration | [e.g., Kubernetes, none] | |
+
+        ## Architecture Decisions
+
+        > Significant modifications to this architecture document must be tracked
+        > via **ADR (Architecture Decision Records)** using the `adr-drafting` skill.
+        >
+        > ADR location: `docs/architecture/adr/` (or project-specific convention)
+        ```
+
+     4. Log the creation and present to the user for final confirmation
+
+   - **If the file ALREADY exists**:
+     1. Read `docs/specs/architecture.md`
+     2. Load the architecture context into memory for use in task generation (Phase 4)
+     3. Briefly summarize what was loaded:
+        ```
+        Loaded project architecture:
+        - Stack: [language/framework]
+        - Database: [database]
+        - Infrastructure: [hosting]
+        ```
+     4. **Check for conflicts**: If the `--lang` parameter conflicts with the architecture document (e.g., `--lang=spring` but architecture says TypeScript), warn the user via **AskUserQuestion**:
+        - "The `--lang` parameter ([lang]) doesn't match the architecture document ([architecture stack]). Which should I use?"
+        - Options: "Use --lang parameter", "Use architecture document", "Update architecture document"
+
+### Step 2: Ontology Definition (`docs/specs/ontology.md`)
+
+1. **Check if `docs/specs/ontology.md` exists**:
+
+   - **If the file does NOT exist**:
+     1. Extract domain terms from the specification loaded in Phase 1
+     2. Use **AskUserQuestion** to present identified terms and gather additional ones:
+        ```
+        I identified the following domain terms from the specification:
+        - [Term 1]: [proposed definition]
+        - [Term 2]: [proposed definition]
+        - ...
+
+        Should I create the project ontology with these terms? You can also add or adjust terms.
+        ```
+        - Options:
+          - "Yes, create with these terms" (recommended)
+          - "Yes, but let me adjust the terms first"
+          - "Skip ontology creation for now"
+     3. If confirmed, create `docs/specs/ontology.md`:
+        ```markdown
+        # Project Ontology — Ubiquitous Language
+
+        **Created**: [current date YYYY-MM-DD]
+        **Last Updated**: [current date YYYY-MM-DD]
+
+        ## Domain Glossary
+
+        | Term | Definition | Bounded Context |
+        |------|-----------|-----------------|
+        | [Term 1] | [Definition] | [Context where this term applies] |
+        | [Term 2] | [Definition] | [Context where this term applies] |
+
+        ## Bounded Contexts
+
+        | Context | Description | Key Terms |
+        |---------|-------------|-----------|
+        | [Context 1] | [Description of this bounded context] | [Key terms] |
+
+        ## Conceptual Mapping
+
+        [Relationships between key domain entities]
+        ```
+
+   - **If the file ALREADY exists**:
+     1. Read `docs/specs/ontology.md`
+     2. Load the ontology context into memory for use in task generation
+     3. Extract domain terms from the current specification
+     4. Compare against existing glossary entries
+     5. If NEW terms are identified:
+        - Append them to the Domain Glossary table
+        - Update the `Last Updated` date
+        - Inform the user of the additions
+     6. If no new terms: continue silently
+
+### Step 3: Context Summary
+
+After both documents are processed, produce a brief summary:
+
+```
+Architecture & Ontology Context:
+- Architecture: [loaded/created] — [stack summary]
+- Ontology: [loaded/created/skipped] — [N terms in glossary]
+- Both documents will inform task generation in Phase 4.
+```
 
 ---
 
@@ -539,6 +715,19 @@ Provide a comprehensive summary that will inform task generation.
    - Example: "Follow existing Repository Pattern - extend JpaRepository"
    - Example: "Integrate with existing HotelService.searchHotels() method"
 
+1.1. **If Architecture context is available** (from Phase 1.5):
+   - Use the technology stack to inform implementation details in each task
+   - Ensure tasks reference the correct frameworks, libraries, and patterns from `docs/specs/architecture.md`
+   - If tasks require new infrastructure components not in the architecture document, flag them for ADR tracking using the `adr-drafting` skill
+   - Example: "Use NestJS module pattern as defined in architecture.md"
+   - Example: "Follow PostgreSQL with Drizzle ORM as specified in architecture"
+
+1.2. **If Ontology context is available** (from Phase 1.5):
+   - Use domain terms from `docs/specs/ontology.md` consistently in task titles, descriptions, and acceptance criteria
+   - Ensure task descriptions use the canonical term from the glossary (avoid synonyms not defined in the ontology)
+   - If a task introduces NEW domain concepts not in the ontology, add them to `docs/specs/ontology.md` and update the `Last Updated` date
+   - Example: If ontology defines "Reservation" (not "Booking"), use "Reservation" in all task descriptions
+
 2. For each requirement group, create one or more tasks:
    - Each task should be implementable in 1-2 hours max
    - Tasks should have clear, testable completion criteria
@@ -649,6 +838,8 @@ Before starting this task, ensure:
 - **APIs to Integrate With**: [existing APIs or services]
 - **Shared Components**: [existing utilities, services, or modules to use]
 - **Conventions**: [coding conventions, naming, structure, framework-specific patterns]
+- **Architecture Reference**: [relevant entries from docs/specs/architecture.md — stack, data layer, infrastructure]
+- **Domain Terms**: [relevant terms from docs/specs/ontology.md — use canonical names consistently]
 
 ## Implementation Details (File names only, no code)
 
@@ -812,6 +1003,8 @@ Each task has its own detailed file with technical context:
 1. Mark all todos complete
 2. Summarize:
     - **Specification Used**: Path to input specification
+    - **Architecture**: Loaded or created `docs/specs/architecture.md` — [stack summary]
+    - **Ontology**: Loaded, created, or skipped `docs/specs/ontology.md` — [N terms]
     - **Codebase Analyzed**: Yes (language: [language])
     - **Key Findings**: [patterns, integration points, conventions]
     - **Tasks Generated**: Number of tasks created
@@ -1028,6 +1221,7 @@ Throughout the process, maintain a todo list like:
 
 ```
 [ ] Phase 1: Specification Analysis
+[ ] Phase 1.5: Architecture & Ontology Definition
 [ ] Phase 2: Requirement Extraction
 [ ] Phase 3: Codebase Analysis
 [ ] Phase 4: Technical Task Decomposition

@@ -21,9 +21,10 @@ This command addresses the **content quality** of specifications, integrating wi
 ### Workflow Position
 
 ```
-Idea → Specification → Spec Quality Check (this) → Tasks → Implementation
-           ↓              ↓
-        Clarify        Improve Quality
+Idea → Specification → Architecture & Ontology → Spec Quality Check (this) → Tasks → Implementation
+           ↓                ↓                         ↓
+        Clarify        Define stack &            Verify consistency
+                       domain language
 ```
 
 ### Dimensions of Quality
@@ -50,6 +51,18 @@ The command evaluates four main dimensions:
    - Edge cases identified
    - Error handling documented
    - Explicit constraints and limitations
+
+5. **Architecture Alignment** (if `docs/specs/architecture.md` exists)
+   - Specification requirements consistent with defined technology stack
+   - No implicit technical assumptions that contradict the architecture
+   - Integration points compatible with infrastructure choices
+   - Data requirements aligned with data architecture
+
+6. **Ontology Consistency** (if `docs/specs/ontology.md` exists)
+   - Domain terms in the specification match ontology definitions
+   - No ambiguous synonyms (terms used interchangeably without definition)
+   - Bounded contexts are respected (same term not used with different meanings)
+   - New domain concepts flagged for ontology addition
 
 ## Usage
 
@@ -101,6 +114,10 @@ The command evaluates four main dimensions:
    - `brainstorming-notes.md` - Brainstorming notes (secondary)
    - `tasks/` - Existing tasks (for coverage verification)
    - `knowledge-graph.json` - Technical context (optional)
+6. **Load project-level architecture and ontology documents** (if they exist):
+   - Check for `docs/specs/architecture.md` — if found, load for architecture alignment checks
+   - Check for `docs/specs/ontology.md` — if found, load for terminology consistency checks
+   - These are project-level shared documents, NOT per-spec files
 
 ---
 
@@ -117,6 +134,8 @@ The command evaluates four main dimensions:
 2. If present, also read:
    - `user-request.md` to verify traceability
    - Existing tasks to verify coverage
+   - `docs/specs/architecture.md` to verify architecture alignment (project-level, loaded in Phase 1)
+   - `docs/specs/ontology.md` to verify terminology consistency (project-level, loaded in Phase 1)
 3. Perform a **structured Quality Scan** using this taxonomy:
 
 ### Quality Scan Taxonomy
@@ -179,6 +198,19 @@ For each category, mark the status: **Clear**, **Partial**, or **Missing**
 - [ ] Quantified vague adjectives
 - [ ] Documented pending decisions
 
+#### Architecture Alignment (if `docs/specs/architecture.md` exists)
+- [ ] Requirements compatible with defined technology stack
+- [ ] Data requirements aligned with data architecture choices
+- [ ] Integration points compatible with infrastructure
+- [ ] No implicit technical assumptions contradicting architecture
+- [ ] Performance/scalability expectations realistic for chosen stack
+
+#### Ontology Consistency (if `docs/specs/ontology.md` exists)
+- [ ] Domain terms match ontology definitions
+- [ ] No undefined synonyms used interchangeably
+- [ ] Bounded context boundaries respected
+- [ ] New domain concepts identified for ontology addition
+
 ---
 
 ## Phase 3: Question Prioritization
@@ -193,7 +225,7 @@ For each category, mark the status: **Clear**, **Partial**, or **Missing**
    - Each question must be answerable with:
      - **Multi-choice** (2-5 mutually exclusive options), OR
      - **Short answer** (max 5 words)
-   - Only include questions that impact: architecture, data modeling, task decomposition, test design, UX, operational readiness, compliance
+   - Only include questions that impact: architecture, data modeling, task decomposition, test design, UX, operational readiness, compliance, **architecture alignment, domain terminology**
    - Exclude: stylistic preferences, implementation details, already answered questions
 3. Order by impact × uncertainty (heuristic)
 4. Balance category coverage
@@ -270,6 +302,8 @@ For each category, mark the status: **Clear**, **Partial**, or **Missing**
 | Edge case/negative flow | Add to Edge Cases / Error Handling |
 | Inconsistent terminology | Normalize term, add "(formerly X)" |
 | Placeholder/TODO | Resolve or quantify |
+| Architecture misalignment | Flag for `docs/specs/architecture.md` update or ADR |
+| Undefined domain term | Add term to `docs/specs/ontology.md` glossary |
 
 **Integration rules**:
 - Preserve existing formatting
@@ -314,6 +348,8 @@ For each category, mark the status: **Clear**, **Partial**, or **Missing**
    | Requirements Traceability | Resolved/Clear/Deferred/Outstanding | ... |
    | Acceptance Criteria | Resolved/Clear/Deferred/Outstanding | ... |
    | Edge Cases Coverage | Resolved/Clear/Deferred/Outstanding | ... |
+   | Architecture Alignment | Resolved/Clear/Deferred/Outstanding/N/A | ... |
+   | Ontology Consistency | Resolved/Clear/Deferred/Outstanding/N/A | ... |
 
 3. **Status definitions**:
    - **Resolved**: Was Partial/Missing, has been addressed
