@@ -946,3 +946,55 @@ install-kimi: check-deps
 		done; \
 	echo "  Total commands converted to skills: $$commands_count"
 	@echo ""
+	@echo ""
+
+# ═══════════════════════════════════════════════════════════════
+# PLUGIN VERSION BUMP
+# ═══════════════════════════════════════════════════════════════
+
+plugin-bump-version: check-deps
+	@echo ""
+	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
+	@echo -e "$(BLUE)Bumping Plugin Versions$(NC)"
+	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
+	@echo ""
+	@if [ -n "$(VERSION)" ]; then \
+		NEW_VERSION="$(VERSION)"; \
+		echo -e "$(CYAN)Using specified version: $$NEW_VERSION$(NC)"; \
+	else \
+		CURRENT_VERSION=$$(jq -r '.version // "0.0.0"' $(MARKETPLACE_JSON) 2>/dev/null || echo "0.0.0"); \
+		echo -e "$(CYAN)Current version: $$CURRENT_VERSION$(NC)"; \
+		MAJOR=$$(echo $$CURRENT_VERSION | cut -d. -f1); \
+		MINOR=$$(echo $$CURRENT_VERSION | cut -d. -f2); \
+		PATCH=$$(echo $$CURRENT_VERSION | cut -d. -f3); \
+		if [ "$(BUMP)" = "major" ]; then \
+			NEW_VERSION=$$((MAJOR + 1)).0.0; \
+			echo -e "$(CYAN)Bumping MAJOR version$(NC)"; \
+		elif [ "$(BUMP)" = "minor" ]; then \
+			NEW_VERSION=$$MAJOR.$$((MINOR + 1)).0; \
+			echo -e "$(CYAN)Bumping MINOR version$(NC)"; \
+		else \
+			NEW_VERSION=$$MAJOR.$$MINOR.$$((PATCH + 1)); \
+			echo -e "$(CYAN)Bumping PATCH version$(NC)"; \
+		fi; \
+	fi; \
+	echo ""; \
+	echo -e "$(BLUE)ℹ Updating marketplace.json...$(NC)"; \
+	jq --arg ver "$$NEW_VERSION" '.version = $$ver' $(MARKETPLACE_JSON) > $(MARKETPLACE_JSON).tmp && mv $(MARKETPLACE_JSON).tmp $(MARKETPLACE_JSON); \
+	echo -e "$(GREEN)✓ Updated marketplace.json$(NC)"; \
+	echo -e "$(BLUE)ℹ Updating tile.json...$(NC)"; \
+	jq --arg ver "$$NEW_VERSION" '.version = $$ver' $(TILE_JSON) > $(TILE_JSON).tmp && mv $(TILE_JSON).tmp $(TILE_JSON); \
+	echo -e "$(GREEN)✓ Updated tile.json$(NC)"; \
+	echo -e "$(BLUE)ℹ Updating plugin.json files...$(NC)"; \
+	for plugin_json in $(PLUGIN_JSON_FILES); do \
+		jq --arg ver "$$NEW_VERSION" '.version = $$ver' "$$plugin_json" > "$$plugin_json.tmp" && mv "$$plugin_json.tmp" "$$plugin_json"; \
+		echo -e "$(GREEN)  ✓ $$(basename $$(dirname $$(dirname "$$plugin_json"))): $$NEW_VERSION$(NC)"; \
+	done; \
+	echo -e "$(GREEN)✓ All plugin.json files updated$(NC)"; \
+	echo ""; \
+	echo -e "$(GREEN)✓ Version bump complete: $$NEW_VERSION$(NC)"
+	@echo ""
+
+# ═══════════════════════════════════════════════════════════════
+# SECURITY SCAN
+# ═══════════════════════════════════════════════════════════════
