@@ -1,6 +1,6 @@
 {
   "name": "developer-kit-ai",
-  "version": "2.7.2",
+  "version": "2.8.0",
   "description": "AI/ML capabilities including prompt engineering, RAG, and chunking strategies",
   "author": {
     "name": "Giuseppe Trisciuoglio",
