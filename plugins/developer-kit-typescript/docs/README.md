@@ -160,13 +160,72 @@ developer-kit-typescript/
 - Architecture review
 - Documentation generation
 
-### UI Frameworks
-- **shadcn-ui**: Modern React component library
-- **Tailwind CSS**: Utility-first CSS framework
-- Component composition patterns
-- Responsive design
+## Claude Code Hooks
+
+The TypeScript plugin ships with four Claude Code hooks that run automatically during development sessions. All hooks are written in pure Python 3 (no external dependencies) and follow the same exit-code contract as the core plugin.
+
+| Hook script | Event | Blocking? | Purpose |
+|---|---|---|---|
+| `ts-session-context.py` | `PreToolUse` (first call) | No | Injects git branch, commits, and TODO.md into context |
+| `ts-file-validator.py` | `PostToolUse` (Write) | **Yes** (exit 2) | Enforces kebab-case naming for `.ts`/`.tsx` files |
+| `ts-pattern-validator.py` | `PostToolUse` (Write) | No (advisory) | Warns on anti-patterns and missing NestJS decorators |
+| `ts-quality-gate.py` | `Stop` | **Yes** (exit 2) | Runs `tsc --noEmit` and `eslint` on modified files |
+
+### Exit Code Semantics
+
+| Code | Meaning | Behavior |
+|---|---|---|
+| `0` | Success | Proceed silently |
+| `1` | Warning / context | Show stdout to Claude; continue |
+| `2` | Error / violation | Show stderr to Claude; **block** until fixed |
+
+### Session Context (`ts-session-context.py`)
+
+Fires once per session (first `PreToolUse` event) and outputs:
+
+- Active git branch and last 5 commits
+- Uncommitted changes summary
+- Project name, version, and detected frameworks (NestJS, Next.js, React, Nx, etc.)
+- Contents of `TODO.md` if present
+
+### File Naming Validator (`ts-file-validator.py`)
+
+Fires after every `Write` call that produces a `.ts` or `.tsx` file. **Blocks** (exit 2) if the base filename is not `kebab-case`:
+
+```
+# ✅ Valid
+user-profile.service.ts
+auth-token.controller.ts
+create-user.dto.ts
+
+# ❌ Blocked — must be renamed
+UserProfile.service.ts   → user-profile.service.ts
+authToken.controller.ts  → auth-token.controller.ts
+```
+
+`index.ts`, declaration files (`.d.ts`), and files inside `node_modules`, `dist`, `build` etc. are exempt.
+
+### Architectural Pattern Validator (`ts-pattern-validator.py`)
+
+Fires after every `Write` call on a TypeScript file. Emits non-blocking advisories (exit 1) for:
+
+- **Missing NestJS decorators** — e.g., a `.controller.ts` without `@Controller`
+- **Anti-patterns**: `any`, `@ts-ignore`, `@ts-nocheck`, `require()`, `console.*` in production code
+- **Direct instantiation**: `new SomeService()` / `new SomeRepository()`
+- **Business logic in controllers**: direct ORM/DB access in `.controller.ts`
+
+### Quality Gate (`ts-quality-gate.py`)
+
+Fires on every `Stop` event. Runs against the TypeScript project in `CLAUDE_CWD`:
+
+1. `npx tsc --noEmit` — type-checks the whole project
+2. `npx eslint <modified-files>` — lints only the files modified in the current session
+3. `npx nx affected --target=lint` — for Nx monorepos
+
+Exits with code 2 (blocking) if type errors or lint errors are found, code 1 for warnings, code 0 on clean.
 
 ---
+
 
 ## See Also
 
