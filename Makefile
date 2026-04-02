@@ -6,6 +6,7 @@
 #   - Copilot CLI (GitHub Copilot - agents + skills, NO commands)
 #   - OpenCode CLI (agents + commands + skills)
 #   - Codex CLI (skills only, NO agents)
+#   - Kimi CLI (skills only, NO agents)
 #
 # Usage:
 #   make help                  Show all available targets
@@ -21,7 +22,7 @@
 
 SHELL := /bin/bash
 .PHONY: all help check-deps list-plugins list-components list-agents list-commands list-skills list-rules \
-        install install-claude install-opencode install-copilot install-codex \
+        install install-claude install-opencode install-copilot install-codex install-kimi \
         install-rules uninstall status backup clean security-scan security-scan-changed \
         skill-lint skill-security skill-review skill-review-all plugin-validate plugin-bump-version
 
@@ -63,6 +64,9 @@ COPILOT_SKILLS    := $(COPILOT_CONFIG)/skills
 CODEX_CONFIG      := $(HOME)/.codex
 CODEX_SKILLS      := $(CODEX_CONFIG)/skills
 CODEX_AGENTS_MD   := $(CODEX_CONFIG)/AGENTS.md
+
+KIMI_CONFIG       := $(HOME)/.agents
+KIMI_SKILLS       := $(KIMI_CONFIG)/skills
 
 # ═══════════════════════════════════════════════════════════════
 # PLUGIN DISCOVERY
@@ -160,6 +164,7 @@ help:
 	@echo "  make install-opencode     Install for OpenCode CLI (global)"
 	@echo "  make install-copilot      Install for GitHub Copilot CLI (global)"
 	@echo "  make install-codex        Install for Codex CLI (global)"
+	@echo "  make install-kimi         Install for Kimi CLI (global)"
 	@echo "  make install              Install for all detected CLIs"
 	@echo ""
 	@echo -e "$(GREEN)Management:$(NC)"
@@ -448,6 +453,19 @@ status:
 		echo -e "  ✗ $(RED)Not configured$(NC)"; \
 	fi
 	@echo ""
+	@echo -e "$(GREEN)Kimi CLI:$(NC)"
+	@if [ -d "$(KIMI_CONFIG)" ]; then \
+		echo "  ✓ Config directory exists: $(KIMI_CONFIG)"; \
+		if [ -d "$(KIMI_SKILLS)" ] && ls "$(KIMI_SKILLS)" >/dev/null 2>&1; then \
+			echo -e "  ✓ $(GREEN)Developer Kit skills installed$(NC)"; \
+			echo "    Skills: $$(ls -1d "$(KIMI_SKILLS)"/* 2>/dev/null | wc -l | tr -d ' ')"; \
+		else \
+			echo "  ○ Developer Kit skills not installed"; \
+		fi; \
+	else \
+		echo -e "  ✗ $(RED)Not configured$(NC)"; \
+	fi
+	@echo ""
 
 # ═══════════════════════════════════════════════════════════════
 # BACKUP
@@ -483,6 +501,10 @@ backup:
 	@if [ -d "$(CODEX_SKILLS)" ]; then \
 		cp -r "$(CODEX_SKILLS)" "$(BACKUP_DIR)/codex-skills" 2>/dev/null || true; \
 		echo -e "$(GREEN)✓ Backed up Codex skills (including converted commands)$(NC)"; \
+	fi
+	@if [ -d "$(KIMI_SKILLS)" ]; then \
+		cp -r "$(KIMI_SKILLS)" "$(BACKUP_DIR)/kimi-skills" 2>/dev/null || true; \
+		echo -e "$(GREEN)✓ Backed up Kimi skills$(NC)"; \
 	fi
 	@echo ""
 	@echo "  Backup location: $(BACKUP_DIR)"
@@ -552,10 +574,19 @@ uninstall:
 			if [ -d "$(CODEX_SKILLS)/$$cmd_skill" ]; then \
 				rm -rf "$(CODEX_SKILLS)/$$cmd_skill"; \
 				echo -e "$(GREEN)✓ Removed Codex skill (converted from command): $$cmd_skill$(NC)"; \
-			fi; \
-		done; \
-	fi
+				fi; \
+			done; \
+		fi; \
+	if [ -d "$(KIMI_SKILLS)" ]; then \
+		for cmd_skill in $$installed_commands_skills; do \
+			if [ -d "$(KIMI_SKILLS)/$$cmd_skill" ]; then \
+				rm -rf "$(KIMI_SKILLS)/$$cmd_skill"; \
+				echo -e "$(GREEN)✓ Removed Kimi skill (converted from command): $$cmd_skill$(NC)"; \
+				fi; \
+			done; \
+		fi
 	@echo ""
+	@echo -e "$(GREEN)✓ Uninstallation complete$(NC)"
 	@echo -e "$(GREEN)✓ Uninstallation complete$(NC)"
 	@echo ""
 
@@ -570,6 +601,7 @@ install: backup
 	@$(MAKE) -s install-opencode-if-exists
 	@$(MAKE) -s install-copilot-if-exists
 	@$(MAKE) -s install-codex-if-exists
+	@$(MAKE) -s install-kimi-if-exists
 	@echo ""
 	@$(call success "Installation complete!")
 	@$(MAKE) -s status
@@ -593,6 +625,13 @@ install-codex-if-exists:
 		$(MAKE) -s install-codex; \
 	else \
 		$(call warning "Skipping Codex CLI (not configured)"); \
+	fi
+
+install-kimi-if-exists:
+	@if [ -d "$(KIMI_CONFIG)" ]; then \
+		$(MAKE) -s install-kimi; \
+	else \
+		$(call warning "Skipping Kimi CLI (not configured)"); \
 	fi
 
 # ═══════════════════════════════════════════════════════════════
@@ -852,148 +891,58 @@ install-codex: check-deps
 	@echo ""
 
 # ═══════════════════════════════════════════════════════════════
-# SKILL VALIDATION
+# KIMI CLI INSTALLATION
 # ═══════════════════════════════════════════════════════════════
 
-skill-lint:
-	@if [ -z "$(SKILL)" ]; then \
-		echo -e "$(RED)✗ Usage: make skill-lint SKILL=plugins/<plugin>/skills/<skill-dir>$(NC)"; \
-		exit 1; \
-	fi
-	@skill_input="$(SKILL)"; \
-	if [ -d "$$skill_input" ]; then \
-		skill_entry="$$skill_input/SKILL.md"; \
-	else \
-		skill_entry="$$skill_input"; \
-	fi; \
-	if [ ! -f "$$skill_entry" ]; then \
-		echo -e "$(RED)✗ Skill entrypoint not found: $$skill_entry$(NC)"; \
-		exit 1; \
-	fi; \
-	echo -e "$(BLUE)ℹ Running skill validator on $$skill_entry$(NC)"; \
-	$(VALIDATOR_CLI) --files "$$skill_entry" -v
-
-skill-security:
-	@if [ -z "$(SKILL)" ]; then \
-		echo -e "$(RED)✗ Usage: make skill-security SKILL=plugins/<plugin>/skills/<skill-dir>$(NC)"; \
-		exit 1; \
-	fi
-	@skill_input="$(SKILL)"; \
-	if [ ! -e "$$skill_input" ]; then \
-		echo -e "$(RED)✗ Skill path not found: $$skill_input$(NC)"; \
-		exit 1; \
-	fi; \
-	echo -e "$(BLUE)ℹ Running MCP security validation on $$skill_input$(NC)"; \
-	$(MCP_SCAN_CLI) --path "$$skill_input" -v
-
-skill-review:
-	@if [ -z "$(SKILL)" ]; then \
-		echo -e "$(RED)✗ Usage: make skill-review SKILL=plugins/<plugin>/skills/<skill-dir>$(NC)"; \
-		exit 1; \
-	fi
-	@if ! command -v tessl >/dev/null 2>&1; then \
-		echo -e "$(RED)✗ 'tessl' command not found in PATH$(NC)"; \
-		exit 1; \
-	fi
-	@skill_input="$(SKILL)"; \
-	if [ -f "$$skill_input" ]; then \
-		skill_dir="$$(dirname "$$skill_input")"; \
-	else \
-		skill_dir="$$skill_input"; \
-	fi; \
-	if [ ! -d "$$skill_dir" ]; then \
-		echo -e "$(RED)✗ Skill directory not found: $$skill_dir$(NC)"; \
-		exit 1; \
-	fi; \
-	echo -e "$(BLUE)ℹ Running tessl skill review on $$skill_dir$(NC)"; \
-	tessl skill review "$$skill_dir"
-
-skill-review-all: check-deps
-	@if ! command -v tessl >/dev/null 2>&1; then \
-		echo -e "$(RED)✗ 'tessl' command not found in PATH$(NC)"; \
-		exit 1; \
-	fi
-	@total=0; failed=0; \
-	echo -e "$(BLUE)ℹ Running tessl skill review on all project skills$(NC)"; \
+install-kimi: check-deps
+	@echo ""
+	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
+	@echo -e "$(BLUE)Installing Developer Kit for Kimi CLI$(NC)"
+	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
+	@echo ""
+	@mkdir -p $(KIMI_SKILLS)
+	@echo -e "$(CYAN)Installing skills...$(NC)"
+	@skills_count=0; \
 	for plugin_json in $(PLUGIN_JSON_FILES); do \
-		plugin_name=$$(jq -r '.name' "$$plugin_json" 2>/dev/null); \
 		plugin_dir=$$(dirname "$$plugin_json"); \
 		base_dir=$$(dirname "$$plugin_dir"); \
+		plugin_name=$$(jq -r '.name' "$$plugin_json" 2>/dev/null); \
 		skills=$$(jq -r '.skills[]? // empty' "$$plugin_json" 2>/dev/null); \
 		if [ -n "$$skills" ]; then \
-			echo ""; \
-			echo -e "$(YELLOW)$$plugin_name:$(NC)"; \
 			for skill_pattern in $$skills; do \
 				for skill_dir in $$base_dir/$$skill_pattern; do \
-					if [ -d "$$skill_dir" ] && [ -f "$$skill_dir/SKILL.md" ]; then \
-						total=$$((total + 1)); \
-						echo -e "$(BLUE)ℹ Running tessl skill review on $$skill_dir$(NC)"; \
-						if ! tessl skill review "$$skill_dir"; then \
-							failed=$$((failed + 1)); \
-						fi; \
+					if [ -d "$$skill_dir" ]; then \
+						skill_name=$$(basename "$$skill_dir"); \
+						cp -r "$$skill_dir" "$(KIMI_SKILLS)/$$skill_name"; \
+						echo "  ✓ $$plugin_name: $$skill_name"; \
+						skills_count=$$((skills_count + 1)); \
 					fi; \
 				done; \
 			done; \
 		fi; \
 	done; \
-	echo ""; \
-	if [ "$$total" -eq 0 ]; then \
-		echo -e "$(YELLOW)⚠ No skills found to review$(NC)"; \
-		exit 0; \
-	fi; \
-	if [ "$$failed" -gt 0 ]; then \
-		echo -e "$(RED)✗ Tessl review failed for $$failed of $$total skill(s)$(NC)"; \
-		exit 1; \
-	fi; \
-	echo -e "$(GREEN)✓ Tessl review passed for all $$total skill(s)$(NC)"
-
-plugin-validate:
-	@echo -e "$(BLUE)ℹ Running repository-wide component validation$(NC)"
-	@$(VALIDATOR_CLI) --all -v
-
-# ═══════════════════════════════════════════════════════════════
-# VERSION BUMP
-# ═══════════════════════════════════════════════════════════════
-
-plugin-bump-version:
-	@VERSION="$(VERSION)" BUMP="$(BUMP)" python3 scripts/bump_plugin_versions.py
-
-# ═══════════════════════════════════════════════════════════════
-# CLAUDE CODE INTERACTIVE INSTALLATION
-# ═══════════════════════════════════════════════════════════════
-# TO BE IMPLEMENTED - This will be a comprehensive interactive installer
-# ═══════════════════════════════════════════════════════════════
-
-install-claude: check-deps
+	echo "  Total skills installed: $$skills_count"
 	@echo ""
-	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
-	@echo -e "$(BLUE)      Claude Code Interactive Developer Kit Installer          $(NC)"
-	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
-	@echo ""
-	@echo -e "$(YELLOW)⚠ This installer is designed for Claude Code only.$(NC)"
-	@echo ""
-	@bash $(DEVKIT_DIR)/scripts/install-claude.sh "$(PLUGIN_JSON_FILES)"
-
-# ═══════════════════════════════════════════════════════════════
-# CLEAN
-# ═══════════════════════════════════════════════════════════════
-
-# ═══════════════════════════════════════════════════════════════
-# SECURITY SCANNING
-# ═══════════════════════════════════════════════════════════════
-
-security-scan:
-	@$(MCP_SCAN_CLI) --all -v
-
-security-scan-changed:
-	@$(MCP_SCAN_CLI) --changed -v
-
-# ═══════════════════════════════════════════════════════════════
-# CLEAN
-# ═══════════════════════════════════════════════════════════════
-
-clean:
-	@echo -e "$(BLUE)Cleaning generated files...$(NC)"
-	@rm -f $(DEVKIT_DIR)/*.tmp
-	@$(call success "Clean complete")
+	@echo -e "$(CYAN)Converting commands to skills...$(NC)"
+	@commands_count=0; \
+		for plugin_json in $(PLUGIN_JSON_FILES); do \
+			plugin_dir=$$(dirname "$$plugin_json"); \
+			base_dir=$$(dirname "$$plugin_dir"); \
+			plugin_name=$$(jq -r '.name' "$$plugin_json" 2>/dev/null); \
+			commands=$$(jq -r '.commands[]? // empty' "$$plugin_json" 2>/dev/null); \
+			if [ -n "$$commands" ]; then \
+				for cmd in $$commands; do \
+					cmd_path="$$base_dir/$$cmd"; \
+					if [ -f "$$cmd_path" ]; then \
+						cmd_name=$$(basename "$$cmd" .md); \
+						cmd_skill_dir="$(KIMI_SKILLS)/$$cmd_name"; \
+						mkdir -p "$$cmd_skill_dir"; \
+						cp "$$cmd_path" "$$cmd_skill_dir/SKILL.md"; \
+						echo "  ✓ $$plugin_name: $$cmd_name (converted from command)"; \
+						commands_count=$$((commands_count + 1)); \
+					fi; \
+				done; \
+			fi; \
+		done; \
+	echo "  Total commands converted to skills: $$commands_count"
 	@echo ""
