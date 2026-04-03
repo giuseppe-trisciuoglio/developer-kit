@@ -8,7 +8,7 @@ Welcome to the Developer Kit Python Plugin documentation. This plugin provides c
 
 ### Skills Guides
 
-- **[Architecture Skills](./guide-skills-architecture.md)** - Clean Architecture and DDD skills (1 skill)
+- **[Architecture Skills](./guide-skills-architecture.md)** - Clean Architecture and DDD skills (2 skills)
 
 ### Component Guides
 

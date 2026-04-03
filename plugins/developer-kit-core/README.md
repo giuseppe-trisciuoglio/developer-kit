@@ -19,19 +19,7 @@ The `developer-kit` plugin provides foundational agents and commands used across
 
 ## Commands
 
-### Specification Workflow
-- `devkit.brainstorm` - Full 9-phase idea generation and specification exploration
-- `devkit.quick-spec` - Lightweight 4-phase spec for bug fixes and small features
-- `devkit.spec-review` - Interactive specification quality assessment (max 5 questions)
-- `devkit.spec-quality` - Maintain specification context quality (Knowledge Graph sync)
-- `devkit.spec-to-tasks` - Convert functional specifications into executable tasks
-- `devkit.spec-sync` - Synchronize specification with implementation state
-- `devkit.task-implementation` - Guided task implementation (11-step workflow)
-
-### Task Management
-- `devkit.task-manage` - Post-generation task management (list, split, add, mark-optional, update)
-- `devkit.task-review` - Verify implemented tasks meet specifications
-- `devkit.task-implementation` - Guided single-task implementation with Knowledge Graph validation
+> **Note**: Specification-driven development commands (brainstorm, spec-to-tasks, task-management) have been moved to the [developer-kit-specs](../developer-kit-specs/) plugin.
 
 ### Core Workflows
 - `devkit.refactor` - Refactoring coordination
@@ -59,13 +47,37 @@ The `developer-kit` plugin provides foundational agents and commands used across
 
 ## Skills
 
-- **adr-drafting** - Draft new Architecture Decision Records (ADRs) for significant architectural changes
-- **memory-md-management** - Project memory file management and optimization
+- **claude-md-management** - CLAUDE.md file management and optimization
 - **drawio-logical-diagrams** - Professional logical flow diagrams and system architecture diagrams in draw.io XML format
 - **github-issue-workflow** - GitHub issue creation and management with workflow automation
 - **docs-updater** - Automated documentation updates by analyzing git changes between releases
-- **knowledge-graph** - Knowledge Graph management for specifications with schema, query patterns, and integration examples
+
+> **Note**: The `knowledge-graph` skill has been moved to the [developer-kit-specs](../developer-kit-specs/) plugin as it's specifically designed for specifications-driven development workflows.
 
 ## Dependencies
 
 None - this is the foundational plugin.
+
+## Related Plugins
+
+### [developer-kit-specs](../developer-kit-specs/)
+
+Specifications-driven development workflow for transforming ideas into functional specifications and executable tasks.
+
+**Key Commands:**
+- `/specs:brainstorm` - Full specification creation for complex features
+- `/specs:spec-to-tasks` - Convert functional specifications into executable tasks
+- `/specs:task-manage` - Post-generation task management (list, split, add, update)
+- `/specs:task-review` - Verify implemented tasks meet specifications
+
+**Skills:**
+- `knowledge-graph` - Persistent Knowledge Graph for specifications with caching and validation
+
+The `developer-kit-specs` plugin provides a complete workflow for:
+- Transforming ideas into pure functional specifications (WHAT, not HOW)
+- Converting specifications into executable tasks with context linkage
+- Managing tasks throughout the implementation lifecycle
+- Reviewing implementations against original specifications
+
+For teams using specifications-driven development, install both `developer-kit-core` and `developer-kit-specs`.
+

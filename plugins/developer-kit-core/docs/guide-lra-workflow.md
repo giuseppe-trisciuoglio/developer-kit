@@ -515,9 +515,9 @@ git reset --hard HEAD~1
 
 ## Related Resources
 
-- **Command Reference**: See [guide-commands.md](guide-commands.md) for all LRA commands
+- **Command Reference**: See [guide-commands.md](./guide-commands.md) for all LRA commands
 - **Anthropic Research**: [Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
-- **Agent Guide**: See [guide-agents.md](guide-agents.md) for agent capabilities
+- **Agent Guide**: See [guide-agents.md](./guide-agents.md) for agent capabilities
 
 ---
 

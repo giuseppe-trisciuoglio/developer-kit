@@ -1,29 +1,30 @@
 ---
-description: "Provides interactive specification quality review by asking targeted questions (max 5) to identify ambiguities, gaps, and improvement areas. Integrates responses directly into the specification. Complementary to spec-quality which handles technical synchronization."
-argument-hint: "[ spec-folder | spec-file ]"
+description: "Provides interactive specification quality assessment by asking targeted questions (max 5) to identify ambiguities, gaps, and improvement areas. Integrates responses directly into the specification. Complementary to spec-sync-context which handles technical synchronization."
+argument-hint: "[ --spec=\"docs/specs/XXX-feature\" ]"
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash, AskUserQuestion, TodoWrite
 model: inherit
 ---
 
-# Spec Review - Quality Assessment
+# Spec Quality Check - Content Quality Assessment
 
 Evaluates the quality of a functional specification by identifying ambiguities, gaps, and improvement areas through an interactive clarification process.
 
 ## Overview
 
-This command addresses the **content quality** of specifications, integrating with `devkit.spec-quality` which handles technical synchronization:
+This command addresses the **content quality** of specifications, integrating with `/specs:spec-sync-context` which handles technical synchronization:
 
 | Command | Focus |
 |---------|-------|
-| **devkit.spec-review** | Content quality: completeness, clarity, traceability, coverage |
-| **devkit.spec-quality** | Technical synchronization: Knowledge Graph, tasks, codebase |
+| **/specs:spec-quality-check** (this) | Content quality: completeness, clarity, traceability, coverage |
+| **/specs:spec-sync-context** | Technical synchronization: Knowledge Graph, tasks, codebase |
 
 ### Workflow Position
 
 ```
-Idea → Specification → Spec Review (this) → Tasks → Implementation
-           ↓              ↓
-        Clarify        Improve Quality
+Idea → Specification → Architecture & Ontology → Spec Quality Check (this) → Tasks → Implementation
+           ↓                ↓                         ↓
+        Clarify        Define stack &            Verify consistency
+                       domain language
 ```
 
 ### Dimensions of Quality
@@ -51,17 +52,29 @@ The command evaluates four main dimensions:
    - Error handling documented
    - Explicit constraints and limitations
 
+5. **Architecture Alignment** (if `docs/specs/architecture.md` exists)
+   - Specification requirements consistent with defined technology stack
+   - No implicit technical assumptions that contradict the architecture
+   - Integration points compatible with infrastructure choices
+   - Data requirements aligned with data architecture
+
+6. **Ontology Consistency** (if `docs/specs/ontology.md` exists)
+   - Domain terms in the specification match ontology definitions
+   - No ambiguous synonyms (terms used interchangeably without definition)
+   - Bounded contexts are respected (same term not used with different meanings)
+   - New domain concepts flagged for ontology addition
+
 ## Usage
 
 ```bash
 # Basic usage - review a spec folder
-/developer-kit:devkit.spec-review docs/specs/001-hotel-search-aggregation/
+/specs:spec-quality-check docs/specs/001-hotel-search-aggregation/
 
 # Review a specific spec file
-/developer-kit:devkit.spec-review docs/specs/001-hotel-search-aggregation/2026-03-07--hotel-search.md
+/specs:spec-quality-check docs/specs/001-hotel-search-aggregation/2026-03-07--hotel-search.md
 
 # Review from current directory (auto-detect)
-/developer-kit:devkit.spec-review
+/specs:spec-quality-check
 ```
 
 ## Arguments
@@ -101,6 +114,10 @@ The command evaluates four main dimensions:
    - `brainstorming-notes.md` - Brainstorming notes (secondary)
    - `tasks/` - Existing tasks (for coverage verification)
    - `knowledge-graph.json` - Technical context (optional)
+6. **Load project-level architecture and ontology documents** (if they exist):
+   - Check for `docs/specs/architecture.md` — if found, load for architecture alignment checks
+   - Check for `docs/specs/ontology.md` — if found, load for terminology consistency checks
+   - These are project-level shared documents, NOT per-spec files
 
 ---
 
@@ -117,6 +134,8 @@ The command evaluates four main dimensions:
 2. If present, also read:
    - `user-request.md` to verify traceability
    - Existing tasks to verify coverage
+   - `docs/specs/architecture.md` to verify architecture alignment (project-level, loaded in Phase 1)
+   - `docs/specs/ontology.md` to verify terminology consistency (project-level, loaded in Phase 1)
 3. Perform a **structured Quality Scan** using this taxonomy:
 
 ### Quality Scan Taxonomy
@@ -179,6 +198,19 @@ For each category, mark the status: **Clear**, **Partial**, or **Missing**
 - [ ] Quantified vague adjectives
 - [ ] Documented pending decisions
 
+#### Architecture Alignment (if `docs/specs/architecture.md` exists)
+- [ ] Requirements compatible with defined technology stack
+- [ ] Data requirements aligned with data architecture choices
+- [ ] Integration points compatible with infrastructure
+- [ ] No implicit technical assumptions contradicting architecture
+- [ ] Performance/scalability expectations realistic for chosen stack
+
+#### Ontology Consistency (if `docs/specs/ontology.md` exists)
+- [ ] Domain terms match ontology definitions
+- [ ] No undefined synonyms used interchangeably
+- [ ] Bounded context boundaries respected
+- [ ] New domain concepts identified for ontology addition
+
 ---
 
 ## Phase 3: Question Prioritization
@@ -193,7 +225,7 @@ For each category, mark the status: **Clear**, **Partial**, or **Missing**
    - Each question must be answerable with:
      - **Multi-choice** (2-5 mutually exclusive options), OR
      - **Short answer** (max 5 words)
-   - Only include questions that impact: architecture, data modeling, task decomposition, test design, UX, operational readiness, compliance
+   - Only include questions that impact: architecture, data modeling, task decomposition, test design, UX, operational readiness, compliance, **architecture alignment, domain terminology**
    - Exclude: stylistic preferences, implementation details, already answered questions
 3. Order by impact × uncertainty (heuristic)
 4. Balance category coverage
@@ -270,6 +302,8 @@ For each category, mark the status: **Clear**, **Partial**, or **Missing**
 | Edge case/negative flow | Add to Edge Cases / Error Handling |
 | Inconsistent terminology | Normalize term, add "(formerly X)" |
 | Placeholder/TODO | Resolve or quantify |
+| Architecture misalignment | Flag for `docs/specs/architecture.md` update or ADR |
+| Undefined domain term | Add term to `docs/specs/ontology.md` glossary |
 
 **Integration rules**:
 - Preserve existing formatting
@@ -314,6 +348,8 @@ For each category, mark the status: **Clear**, **Partial**, or **Missing**
    | Requirements Traceability | Resolved/Clear/Deferred/Outstanding | ... |
    | Acceptance Criteria | Resolved/Clear/Deferred/Outstanding | ... |
    | Edge Cases Coverage | Resolved/Clear/Deferred/Outstanding | ... |
+   | Architecture Alignment | Resolved/Clear/Deferred/Outstanding/N/A | ... |
+   | Ontology Consistency | Resolved/Clear/Deferred/Outstanding/N/A | ... |
 
 3. **Status definitions**:
    - **Resolved**: Was Partial/Missing, has been addressed
@@ -322,8 +358,8 @@ For each category, mark the status: **Clear**, **Partial**, or **Missing**
    - **Outstanding**: Still Partial/Missing but low impact
 
 4. Recommend next steps:
-   - If Outstanding/Deferred: consider running `/developer-kit:devkit.spec-review` after planning
-   - If all Clear: proceed to `/developer-kit:devkit.spec-to-tasks`
+   - If Outstanding/Deferred: consider running `/specs:spec-quality-check` after planning
+   - If all Clear: proceed to `/specs:spec-to-tasks`
 
 ---
 
@@ -339,7 +375,7 @@ Verify that the path contains a resolvable spec file (`YYYY-MM-DD--feature-name.
 ```
 No critical ambiguities detected worth formal clarification.
 The specification is complete and clear.
-Proceed with: /developer-kit:devkit.spec-to-tasks [spec-folder]
+Proceed with: /specs:spec-to-tasks [spec-folder]
 ```
 
 ### File write failed
@@ -355,7 +391,7 @@ The clarification has been recorded in memory but not persisted.
 ### Example 1: Spec with performance ambiguity
 
 ```bash
-/developer-kit:devkit.spec-review docs/specs/003-notification-system/
+/specs:spec-quality-check docs/specs/003-notification-system/
 ```
 
 **Interactive flow**:
@@ -386,7 +422,7 @@ You can reply with "A", "B", "C", "yes" for recommendation, or your own answer.
 ### Example 2: Already complete spec
 
 ```bash
-/developer-kit:devkit.spec-review docs/specs/001-hotel-search-aggregation/
+/specs:spec-quality-check docs/specs/001-hotel-search-aggregation/
 ```
 
 **Output**:
@@ -403,7 +439,7 @@ Quality Scan Results:
 No critical ambiguities detected worth formal clarification.
 The specification is well-formed and ready for task generation.
 
-Next step: /developer-kit:devkit.spec-to-tasks docs/specs/001-hotel-search-aggregation/
+Next step: /specs:spec-to-tasks docs/specs/001-hotel-search-aggregation/
 ```
 
 ---
@@ -412,44 +448,44 @@ Next step: /developer-kit:devkit.spec-to-tasks docs/specs/001-hotel-search-aggre
 
 ### Before devkit.spec-to-tasks
 
-Run `spec-review` to ensure the specification is complete before generating tasks:
+Run `spec-quality-check` to ensure the specification is complete before generating tasks:
 
 ```bash
 # Step 1: Review and improve spec quality
-/developer-kit:devkit.spec-review docs/specs/005-checkout-flow/
+/specs:spec-quality-check docs/specs/005-checkout-flow/
 
 # Step 2: Generate tasks from improved spec
-/developer-kit:devkit.spec-to-tasks --lang=spring docs/specs/005-checkout-flow/
+/specs:spec-to-tasks --lang=spring docs/specs/005-checkout-flow/
 ```
 
 ### After devkit.brainstorm
 
-Run `spec-review` to validate the specification generated from brainstorming:
+Run `spec-quality-check` to validate the specification generated from brainstorming:
 
 ```bash
 # Step 1: Generate spec from idea
-/developer-kit:devkit.brainstorm "Implement user authentication with JWT"
+/specs:brainstorm "Implement user authentication with JWT"
 
 # Step 2: Review the generated spec
-/developer-kit:devkit.spec-review docs/specs/002-user-auth/
+/specs:spec-quality-check docs/specs/002-user-auth/
 
 # Step 3: Proceed to tasks
-/developer-kit:devkit.spec-to-tasks --lang=spring docs/specs/002-user-auth/
+/specs:spec-to-tasks --lang=spring docs/specs/002-user-auth/
 ```
 
-### With devkit.spec-quality
+### With spec-sync-context
 
 The two commands are complementary:
 
 ```bash
-# spec-review: improve content quality
-/developer-kit:devkit.spec-review docs/specs/003-api-gateway/
+# spec-quality-check: improve content quality
+/specs:spec-quality-check docs/specs/003-api-gateway/
 
-# spec-quality: sync technical context
-/developer-kit:devkit.spec-quality docs/specs/003-api-gateway/
+# spec-sync-context: sync technical context
+/specs:spec-sync-context docs/specs/003-api-gateway/
 
 # spec-to-tasks: generate tasks with high quality context
-/developer-kit:devkit.spec-to-tasks --lang=nestjs docs/specs/003-api-gateway/
+/specs:spec-to-tasks --lang=nestjs docs/specs/003-api-gateway/
 ```
 
 ---
@@ -478,4 +514,4 @@ Update status progressively.
 - Clarification sessions are tracked with dates
 - Recommendations are based on industry-standard best practices
 - The command doesn't modify the general structure of the specification, only adds clarifications
-- For heavier structural changes, use `/developer-kit:devkit.brainstorm` to regenerate
+- For heavier structural changes, use `/specs:brainstorm` to regenerate

@@ -1,6 +1,6 @@
 ---
 description: "Provides capability to manage tasks after generation. Use when needing to add, split, update, or modify tasks in an existing specification."
-argument-hint: "--action=[add|split|mark-optional|mark-required|update|regenerate-index|list] [ --task=task-file-path ] [ --spec=spec-file-path ]"
+argument-hint: "--action=[add|split|mark-optional|mark-required|update|regenerate-index|list] [ --task=\"docs/specs/XXX-feature/tasks/TASK-XXX.md\" ] [ --spec=\"docs/specs/XXX-feature\" ]"
 allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, TodoWrite, AskUserQuestion
 ---
 
@@ -26,23 +26,23 @@ This command provides task management capabilities after initial task generation
 
 ```bash
 # Add a new task
-/developer-kit:devkit.task-manage --action=add --spec=docs/specs/001-feature/ --lang=spring
+/specs:task-manage --action=add --spec=docs/specs/001-feature/ --lang=spring
 
 # Split a complex task
-/developer-kit:devkit.task-manage --action=split --task=docs/specs/001-feature/tasks/TASK-007.md
+/specs:task-manage --action=split --task=docs/specs/001-feature/tasks/TASK-007.md
 
 # Mark task as optional/required
-/developer-kit:devkit.task-manage --action=mark-optional --task=docs/specs/001-feature/tasks/TASK-003.md
-/developer-kit:devkit.task-manage --action=mark-required --task=docs/specs/001-feature/tasks/TASK-003.md
+/specs:task-manage --action=mark-optional --task=docs/specs/001-feature/tasks/TASK-003.md
+/specs:task-manage --action=mark-required --task=docs/specs/001-feature/tasks/TASK-003.md
 
 # Update task details
-/developer-kit:devkit.task-manage --action=update --task=docs/specs/001-feature/tasks/TASK-005.md
+/specs:task-manage --action=update --task=docs/specs/001-feature/tasks/TASK-005.md
 
 # Regenerate task index
-/developer-kit:devkit.task-manage --action=regenerate-index --spec=docs/specs/001-feature/
+/specs:task-manage --action=regenerate-index --spec=docs/specs/001-feature/
 
 # List all tasks
-/developer-kit:devkit.task-manage --action=list --spec=docs/specs/001-feature/
+/specs:task-manage --action=list --spec=docs/specs/001-feature/
 ```
 
 ## Arguments
@@ -57,6 +57,11 @@ This command provides task management capabilities after initial task generation
 ---
 
 You are managing existing task files. Follow the appropriate process based on the requested action.
+
+> **IMPORTANT**: When suggesting how to implement a task, ALWAYS use `/specs:task-implementation`, NEVER use `/developer-kit:devkit.feature-development`. The correct command is:
+> ```
+> /specs:task-implementation --lang=[lang] --task="[task-file-path]"
+> ```
 
 ## Action: Add
 
@@ -111,13 +116,19 @@ description: "[What this task implements]"
 acceptance_criteria:
   - "[Criterion 1]"
   - "[Criterion 2]"
+definition_of_ready:
+  - "[Precondition 1]"
+  - "[Precondition 2]"
+definition_of_done:
+  - "[Completion condition 1]"
+  - "[Completion condition 2]"
 dependencies: []
   # - "TASK-YYY"  # if depends on other tasks
 files_to_create:
   - "[file path]"
 files_to_modify:
   - "[file path]"
-implementation_command: "/developer-kit:devkit.task-implementation --lang=[lang] --task=\"docs/specs/[id]/tasks/TASK-XXX.md\""
+implementation_command: "/specs:task-implementation --lang=[lang] --task=\"docs/specs/[id]/tasks/TASK-XXX.md\""
 ---
 
 # TASK-XXX: [Task Title]
@@ -131,6 +142,16 @@ implementation_command: "/developer-kit:devkit.task-implementation --lang=[lang]
 - [ ] [Criterion 1]
 - [ ] [Criterion 2]
 
+## Definition of Ready (DoR)
+
+- [ ] [Precondition 1]
+- [ ] [Precondition 2]
+
+## Definition of Done (DoD)
+
+- [ ] [Completion condition 1]
+- [ ] [Completion condition 2]
+
 ## Files
 
 **To Create**:
@@ -140,7 +161,7 @@ implementation_command: "/developer-kit:devkit.task-implementation --lang=[lang]
 - `[file path]`
 
 **Implementation Command**:
-/developer-kit:devkit.task-implementation --lang=[lang] --task="docs/specs/[id]/tasks/TASK-XXX.md"
+/specs:task-implementation --lang=[lang] --task="docs/specs/[id]/tasks/TASK-XXX.md"
 ```
 
 #### Template B: Full (For complex tasks requiring detailed tracking)
@@ -156,13 +177,19 @@ description: "[What this task implements]"
 acceptance_criteria:
   - "[Criterion 1]"
   - "[Criterion 2]"
+definition_of_ready:
+  - "[Precondition 1]"
+  - "[Precondition 2]"
+definition_of_done:
+  - "[Completion condition 1]"
+  - "[Completion condition 2]"
 dependencies: []
   # - "TASK-YYY"  # if depends on other tasks
 files_to_create:
   - "[file path]"
 files_to_modify:
   - "[file path]"
-implementation_command: "/developer-kit:devkit.task-implementation --lang=[lang] --task=\"docs/specs/[id]/tasks/TASK-XXX.md\""
+implementation_command: "/specs:task-implementation --lang=[lang] --task=\"docs/specs/[id]/tasks/TASK-XXX.md\""
 business_goals:
   - "[Business goal this task serves]"
 data_contracts:
@@ -223,6 +250,16 @@ context_hash: "[SHA-256 hash for change detection]"
 - [ ] [Criterion 1]
 - [ ] [Criterion 2]
 
+## Definition of Ready (DoR)
+
+- [ ] [Precondition 1]
+- [ ] [Precondition 2]
+
+## Definition of Done (DoD)
+
+- [ ] [Completion condition 1]
+- [ ] [Completion condition 2]
+
 ## Files
 
 **To Create**:
@@ -243,12 +280,12 @@ context_hash: "[SHA-256 hash for change detection]"
 - [Security consideration]
 
 **Implementation Command**:
-/developer-kit:devkit.task-implementation --lang=[lang] --task="docs/specs/[id]/tasks/TASK-XXX.md"
+/specs:task-implementation --lang=[lang] --task="docs/specs/[id]/tasks/TASK-XXX.md"
 ```
 
 ### Context Hash Generation
 
-The `context_hash` field is used for change detection. Generate SHA-256 hash of: task title + description + acceptance_criteria + files_to_create + files_to_modify.
+The `context_hash` field is used for change detection. Generate SHA-256 hash of: task title + description + acceptance_criteria + definition_of_ready + definition_of_done + files_to_create + files_to_modify.
 
 Regenerate whenever these fields change to detect task drift.
 
@@ -496,10 +533,10 @@ Complex:   [█░░░░░░░░░] Z tasks (requires splitting)
 
 ```bash
 # Task 1
-/developer-kit:devkit.task-implementation --lang=[lang] --task="docs/specs/[id]/tasks/TASK-001.md"
+/specs:task-implementation --lang=[lang] --task="docs/specs/[id]/tasks/TASK-001.md"
 
 # Task 2
-/developer-kit:devkit.task-implementation --lang=[lang] --task="docs/specs/[id]/tasks/TASK-002.md"
+/specs:task-implementation --lang=[lang] --task="docs/specs/[id]/tasks/TASK-002.md"
 ```
 
 ## Next Actions
@@ -516,35 +553,35 @@ Complex:   [█░░░░░░░░░] Z tasks (requires splitting)
 
 ```bash
 # Add a new task to a specification
-/developer-kit:devkit.task-manage --action=add --spec=docs/specs/001-user-auth/ --lang=spring
+/specs:task-manage --action=add --spec=docs/specs/001-user-auth/ --lang=spring
 ```
 
 ### Example 2: Split a complex task
 
 ```bash
 # Split a complex task into subtasks
-/developer-kit:devkit.task-manage --action=split --task=docs/specs/001-user-auth/tasks/TASK-007.md
+/specs:task-manage --action=split --task=docs/specs/001-user-auth/tasks/TASK-007.md
 ```
 
 ### Example 3: Mark task as optional
 
 ```bash
 # Mark a task as optional
-/developer-kit:devkit.task-manage --action=mark-optional --task=docs/specs/001-user-auth/tasks/TASK-003.md
+/specs:task-manage --action=mark-optional --task=docs/specs/001-user-auth/tasks/TASK-003.md
 ```
 
 ### Example 4: Regenerate task index
 
 ```bash
 # Regenerate the task index file
-/developer-kit:devkit.task-manage --action=regenerate-index --spec=docs/specs/001-user-auth/
+/specs:task-manage --action=regenerate-index --spec=docs/specs/001-user-auth/
 ```
 
 ### Example 5: List all tasks
 
 ```bash
 # List all tasks with complexity
-/developer-kit:devkit.task-manage --action=list --spec=docs/specs/001-user-auth/
+/specs:task-manage --action=list --spec=docs/specs/001-user-auth/
 ```
 
 ---

@@ -27,7 +27,7 @@ The Developer Kit Java Plugin provides:
 
 - **Java Agents**: 9 specialized agents for Spring Boot, general Java, and LangChain4J development
 - **Java Commands**: 11 commands for code review, testing, generation, refactoring, security, and dependency management
-- **Java Skills**: 51 skills covering Spring Boot, JUnit testing, LangChain4J, AWS SDK, Spring AI, Qdrant, Clean Architecture, and more
+- **Java Skills**: 52 skills covering Spring Boot, JUnit testing, LangChain4J, AWS SDK, Spring AI, Qdrant, Clean Architecture, and more
 
 ---
 

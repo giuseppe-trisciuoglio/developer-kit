@@ -1,11 +1,11 @@
 ---
-description: "Synchronizes functional specification with current implementation state. Detects deviations between spec and code, proposes specification updates based on decision-log and completed tasks. Closes the SDD triangle (Spec <-> Test <-> Code)."
-argument-hint: "[ spec-folder ] [--after-task=TASK-XXX]"
+description: "Synchronizes functional specification with current implementation state. Use this command after implementing tasks or when spec drift is detected. Detects deviations between spec and code, proposes specification updates based on decision-log and completed tasks. Closes the SDD triangle (Spec <-> Test <-> Code)."
+argument-hint: "[ --spec=\"docs/specs/XXX-feature\" ] [ --after-task=\"TASK-XXX\" ]"
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash, AskUserQuestion, TodoWrite
 model: inherit
 ---
 
-# Spec Sync
+# Spec Sync With Code
 
 Synchronizes the functional specification with the current implementation state, detecting and proposing updates based on the decision-log and completed tasks.
 
@@ -26,7 +26,7 @@ The current workflow is unidirectional: Spec → Tasks → Code. Decisions made 
 ### Workflow Position
 
 ```
-Idea → Spec → Tasks → Implementation → Spec Sync (this)
+Idea → Spec → Tasks → Implementation → Spec Sync With Code (this)
            ↑                              ↓
            └──────────────────────────────┘
                Update spec with decisions
@@ -36,13 +36,13 @@ Idea → Spec → Tasks → Implementation → Spec Sync (this)
 
 ```bash
 # Sync spec after implementation drift detected
-/developer-kit:devkit.spec-sync docs/specs/001-hotel-search-aggregation/
+/specs:spec-sync-with-code docs/specs/001-hotel-search-aggregation/
 
 # Sync after specific task completed
-/developer-kit:devkit.spec-sync docs/specs/001-hotel-search-aggregation/ --after-task=TASK-001
+/specs:spec-sync-with-code docs/specs/001-hotel-search-aggregation/ --after-task=TASK-001
 
 # Sync for current spec folder (auto-detected)
-/developer-kit:devkit.spec-sync
+/specs:spec-sync-with-code
 ```
 
 ## Arguments
@@ -139,14 +139,100 @@ Idea → Spec → Tasks → Implementation → Spec Sync (this)
    - Z scope reductions
 
    Options:
-   - "Approve all updates" - Apply all changes to spec
+   - "Approve all updates" - Apply all changes to spec and create missing tasks
+   - "Approve spec only" - Apply spec changes, skip task creation
    - "Review selectively" - Review each change individually
-   - "Skip for now" - Don't update spec
+   - "Skip for now" - Don't update spec or create tasks
    ```
 
-4. **If user chooses "Review selectively"**:
+4. **If user chooses "Approve all updates" or "Approve spec only"**:
+   - First apply spec updates (Phase 4)
+   - If "Approve all updates": Proceed to Phase 3.5 for automatic task creation
+   - If "Approve spec only": Skip task creation
+
+5. **If user chooses "Review selectively"**:
    - Present each change category one by one
    - Ask for approval on each
+   - Track which changes need task creation
+
+---
+
+## Phase 3.5: Automatic Task Creation (Conditional)
+
+**Goal**: Create missing tasks for detected GAPs
+
+**Trigger**: Only runs when user chooses "Approve all updates" in Phase 3
+
+**Actions**:
+
+1. **Analyze deviations for task creation**:
+   - For each scope expansion: Create task for new feature/component
+   - For each requirement refinement: Create task for updated requirement
+   - For each scope reduction: Mark related tasks as optional or superseded
+   - Skip refinements that don't require new implementation (e.g., documentation clarifications)
+
+2. **Generate task proposals**:
+   ```markdown
+   ## Task Creation Proposals
+
+   ### New Tasks to Create
+   | Deviation | Suggested Task Title | Priority |
+   |-----------|---------------------|----------|
+   | Scope Expansion: Pagination | Implement pagination for search results | High |
+   | Scope Expansion: Rating filter | Add rating filter to search | Medium |
+   ```
+
+3. **Present task creation options via AskUserQuestion**:
+   ```
+   GAPs Found: N deviations require new tasks
+
+   Options:
+   - "Create all tasks" - Generate tasks for all deviations (recommended)
+   - "Review each" - Review and approve each task individually
+   - "Skip task creation" - Only update spec, don't create tasks
+   ```
+
+4. **If user chooses "Create all tasks"**:
+   - For each deviation requiring a task:
+     a. Generate task title from deviation
+     b. Generate task description from deviation context
+     c. Generate acceptance criteria from deviation details
+     d. Determine dependencies from related existing tasks
+     e. Use `/specs:task-manage` pattern to create task file:
+        - Read task index to get next task ID
+        - Create task file with template
+        - Add to task index
+   - Show created task list with implementation commands
+
+5. **If user chooses "Review each"**:
+   - Present each task proposal individually
+   - Ask for approval before creating each task
+   - Allow modifications to task title/description/criteria
+
+6. **If user chooses "Skip task creation"**:
+   - Log pending tasks for future creation
+   - Continue with spec updates only
+
+### Task Creation from Deviation
+
+For each deviation type, create task as follows:
+
+**Scope Expansion**:
+- Title: "Implement [feature from deviation]"
+- Description: Describe the expanded feature
+- Acceptance Criteria: Derived from deviation details
+- Dependencies: Related existing tasks
+
+**Requirement Refinement**:
+- Title: "Update [component] for [refinement]"
+- Description: Describe the updated requirement
+- Acceptance Criteria: New acceptance criteria from refinement
+- Dependencies: Related existing tasks
+
+**Scope Reduction**:
+- Find tasks that implement dropped features
+- Update those tasks to status "superseded" with reason
+- No new task creation needed
 
 ---
 
@@ -219,10 +305,11 @@ Idea → Spec → Tasks → Implementation → Spec Sync (this)
 2. Summarize:
    - **Spec Updated**: Yes/No (changes applied)
    - **Deviations Detected**: N total (X added, Y modified, Z dropped)
+   - **Tasks Created**: N new tasks created (if approved)
    - **Decisions Referenced**: N DEC entries analyzed
    - **Revision History**: Added to spec
    - **Backup Created**: Path to backup file
-   - **Next Step**: Continue with remaining tasks or re-run spec-to-tasks
+   - **Next Step**: Continue with remaining tasks or implement newly created tasks
 
 ---
 
@@ -231,21 +318,21 @@ Idea → Spec → Tasks → Implementation → Spec Sync (this)
 This command integrates with the SDD workflow:
 
 ```
-/developer-kit:devkit.brainstorm
+/specs:brainstorm
     ↓
 [Creates: docs/specs/[id]/YYYY-MM-DD--feature-name.md]
     ↓
-/developer-kit:devkit.spec-to-tasks --lang=[language] docs/specs/[id]/
+/specs:spec-to-tasks --lang=[language] docs/specs/[id]/
     ↓
 [Creates: docs/specs/[id]/tasks/TASK-XXX.md]
     ↓
-/developer-kit:devkit.task-implementation --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
+/specs:task-implementation --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
     ↓
 [Implements task, may deviate from spec]
     ↓
 T-6.6: Spec Deviation Check detects deviation
     ↓
-/developer-kit:devkit.spec-sync docs/specs/[id]/  ← This command
+/specs:spec-sync-with-code docs/specs/[id]/  ← This command
     ↓
 [Spec updated with deviations from decision-log.md]
 ```
@@ -258,12 +345,32 @@ The spec-sync command can be automatically invoked:
 2. **From spec-quality**: When drift is detected during quality check
 3. **From task-review**: When review reveals spec-level issues
 
+### Automatic Task Creation
+
+When deviations are detected, the command can now automatically create missing tasks:
+
+```
+/specs:spec-sync-with-code docs/specs/[id]/
+    ↓
+[Detects: Scope Expansions, Requirement Refinements, Scope Reductions]
+    ↓
+[User approves: "Approve all updates"]
+    ↓
+Phase 3.5: Automatic Task Creation
+    ↓
+[Creates: TASK-XXX.md for each deviation requiring implementation]
+    ↓
+Phase 4: Apply Updates to Spec
+```
+
 ### Manual Triggers
 
 Run spec-sync manually when:
 - After completing several tasks to bring spec up to date
 - Before starting a new feature phase
 - When decision-log.md has many entries not reflected in spec
+- After a normal chat session that used `docs/specs/[id]/` as implementation context and clarified, narrowed, or expanded what should be built
+- When recommendations made during the session changed task notes, acceptance criteria, decisions, or any other spec artifact even if `/specs:task-implementation` was not used
 
 ---
 
@@ -273,7 +380,7 @@ Run spec-sync manually when:
 
 ```bash
 # Task T-003 added pagination not in original spec
-/developer-kit:devkit.spec-sync docs/specs/001-hotel-search/ --after-task=TASK-003
+/specs:spec-sync-with-code docs/specs/001-hotel-search/ --after-task=TASK-003
 ```
 
 Output:
@@ -290,8 +397,13 @@ Proposed Updates:
 + Add "Pagination" section to Functional Requirements
 + Update "Search Performance" with timeout clarification
 
+Task Creation Analysis:
+- Scope Expansion "Pagination" → Requires new task
+- Requirement Refinement "Search timeout" → No new task needed
+
 Options:
-- "Approve all updates" (recommended)
+- "Approve all updates" (recommended) - Apply spec changes AND create missing tasks
+- "Approve spec only" - Apply spec changes, skip task creation
 - "Review selectively"
 - "Skip for now"
 ```
@@ -300,7 +412,7 @@ Options:
 
 ```bash
 # Sync entire spec after multiple tasks completed
-/developer-kit:devkit.spec-sync docs/specs/001-user-auth/
+/specs:spec-sync-with-code docs/specs/001-user-auth/
 ```
 
 ### Example 3: Auto-Detect Spec Folder
@@ -308,7 +420,7 @@ Options:
 ```bash
 # Run from within spec directory
 cd docs/specs/001-hotel-search-aggregation/
-/developer-kit:devkit.spec-sync
+/specs:spec-sync-with-code
 ```
 
 ---
@@ -321,6 +433,7 @@ Maintain todo list:
 [ ] Phase 1: Discovery
 [ ] Phase 2: Deviation Detection
 [ ] Phase 3: Spec Update Proposal
+[ ] Phase 3.5: Automatic Task Creation (conditional)
 [ ] Phase 4: Apply Updates
 [ ] Phase 5: Sync Verification
 [ ] Phase 6: Summary

@@ -83,10 +83,11 @@ make install              # Auto-install for all detected CLIs
 
 ### What's New in Multi-Plugin Architecture
 
-The Developer Kit now uses a **plugin-based architecture** with 10 separate plugins:
+The Developer Kit now uses a **plugin-based architecture** with 11 separate plugins:
 
-- **developer-kit** - Core agents, commands, and skills (6 agents, 17 commands, 3 skills)
-- **developer-kit-java** - Java/Spring Boot/LangChain4J/AWS Lambda integration (9 agents, 11 commands, 49 skills)
+- **developer-kit-core** - Core agents, commands, and skills (6 agents, 17 commands, 3 skills)
+- **developer-kit-specs** - Specifications-driven development workflow (9 commands, 1 skill)
+- **developer-kit-java** - Java/Spring Boot/LangChain4J/AWS Lambda integration (9 agents, 11 commands, 52 skills)
 - **developer-kit-typescript** - TypeScript/NestJS/React/Next.js/Drizzle/Monorepo (13 agents, 3 commands, 22 skills)
 - **developer-kit-python** - Python/AWS Lambda capabilities (4 agents, 2 skills)
 - **developer-kit-php** - PHP/WordPress/AWS Lambda (5 agents, 3 skills)
@@ -96,12 +97,13 @@ The Developer Kit now uses a **plugin-based architecture** with 10 separate plug
 - **developer-kit-project-management** - LRA workflow (1 command)
 - **github-spec-kit** - GitHub specifications (3 commands)
 
-**Total Components:** 43 agents, 36 commands, 96 skills across all plugins
+**Total Components:** 43 agents, 45 commands, 109 skills across all plugins
 
 | Plugin | Agents | Commands | Skills |
 |--------|--------|----------|--------|
-| developer-kit | 6 | 17 | 3 |
-| developer-kit-java | 9 | 11 | 49 |
+| developer-kit-core | 6 | 17 | 3 |
+| developer-kit-specs | 0 | 9 | 1 |
+| developer-kit-java | 9 | 11 | 52 |
 | developer-kit-typescript | 13 | 3 | 22 |
 | developer-kit-python | 4 | 0 | 2 |
 | developer-kit-php | 5 | 0 | 3 |
@@ -110,7 +112,7 @@ The Developer Kit now uses a **plugin-based architecture** with 10 separate plug
 | developer-kit-devops | 2 | 0 | 0 |
 | developer-kit-project-management | 0 | 1 | 0 |
 | github-spec-kit | 0 | 3 | 0 |
-| **Total** | **43** | **36** | **96** |
+| **Total** | **43** | **45** | **109** |
 
 **Plugin Discovery:** The Makefile automatically scans `plugins/*/.claude-plugin/plugin.json` files to discover all available plugins and their components (agents, commands, skills).
 
@@ -399,8 +401,8 @@ TARGET_DIR="$TARGET_PROJECT/.claude"
 # Create directory structure
 mkdir -p "$TARGET_DIR"/{agents,commands,skills}
 
-# Install developer-kit (core plugin)
-PLUGIN_DIR="plugins/developer-kit"
+# Install developer-kit-core (core plugin)
+PLUGIN_DIR="plugins/developer-kit-core"
 
 # Copy agents (6 agents)
 cp $PLUGIN_DIR/agents/*.md "$TARGET_DIR/agents/"

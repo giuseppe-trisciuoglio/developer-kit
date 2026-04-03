@@ -1,6 +1,6 @@
 # LangChain4J Skills Guide
 
-Quick reference to 8 LangChain4J skills for building AI-powered applications. See individual skill files for complete details.
+Quick reference to 9 LangChain4J skills for building AI-powered applications. See individual skill files for complete details.
 
 ---
 

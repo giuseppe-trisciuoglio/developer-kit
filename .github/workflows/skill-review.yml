@@ -1,4 +1,4 @@
-name: Skill Review & Optimize
+name: Skill Review
 on:
   pull_request:
     paths: ['**/SKILL.md']
@@ -11,7 +11,7 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
-      - uses: tesslio/skill-review-and-optimize@d81583861aaf29d1da7f10e6539efef4e27b0dd5
+      - uses: tesslio/skill-review-and-optimize@main
         with:
-          optimize: 'true'
+          optimize: 'false'
           tessl-token: ${{ secrets.TESSL_API_TOKEN }}

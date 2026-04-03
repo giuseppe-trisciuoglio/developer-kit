@@ -28,7 +28,7 @@ The Developer Kit AWS Plugin provides:
 ### General AWS Skills
 
 - **AWS SAM Bootstrap**: AWS Serverless Application Model (SAM) bootstrap patterns for new and existing projects
-  - Supports Python 3.10-3.14, Node.js 20/22/24, Java 25, and .NET 8-10 runtimes
+  - Supports Python 3.10-3.13, Node.js 20/22, Java 21, and .NET 8 runtimes
   - Includes `sam init` guidance, migration checklist, template examples, and `samconfig.toml` configuration
 - **AWS Architecture Diagrams**: Professional AWS architecture diagram creation in draw.io format
 - **AWS Cost Optimization**: Structured cost optimization guidance using five pillars (right-sizing, elasticity, pricing models, storage optimization, monitoring) and twelve actionable best practices
@@ -115,7 +115,7 @@ The AWS plugin includes CloudFormation skills for:
 
 - [Core Plugin Documentation](../../developer-kit-core/docs/) - Core guides and installation
 - [Java Plugin Documentation](../../developer-kit-java/docs/) - Java AWS SDK integration
-- [DevOps Plugin Documentation](../../developer-kit-devops/docs/) - Docker and GitHub Actions guides
+- [DevOps Plugin Documentation](../../developer-kit-devops/) - Docker and GitHub Actions guides
 
 ---
 
@@ -123,5 +123,5 @@ The AWS plugin includes CloudFormation skills for:
 
 The AWS plugin focuses on CloudFormation infrastructure as code. For AWS SDK integration from applications, see:
 
-- **[Java Plugin](../../developer-kit-java/docs/)** - AWS SDK for Java integration (S3, DynamoDB, RDS, Lambda, SNS/SQS, Bedrock, KMS, Secrets Manager, RDS, Messaging)
+- **[Java Plugin](../../developer-kit-java/docs/)** - AWS SDK for Java integration (S3, DynamoDB, Lambda, SNS/SQS, Bedrock, KMS, Secrets Manager, RDS, Messaging)
 - The Java plugin contains 10 AWS Java SDK skills for programmatic AWS access from Java applications

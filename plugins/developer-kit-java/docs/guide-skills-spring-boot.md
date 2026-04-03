@@ -1,6 +1,6 @@
 # Spring Boot Skills Guide
 
-Quick reference to 13 Spring Boot skills for production-ready applications. See individual skill files for complete details.
+Quick reference to 14 Spring Boot skills for production-ready applications. See individual skill files for complete details.
 
 ---
 

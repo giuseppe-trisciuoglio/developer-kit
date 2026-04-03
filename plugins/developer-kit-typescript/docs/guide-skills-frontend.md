@@ -36,7 +36,7 @@ Frontend skills in the Developer Kit provide comprehensive patterns for modern w
 
 ### `react`
 
-**Location**: `skills/react/SKILL.md`
+**Location**: `skills/react-patterns/SKILL.md`
 
 **Purpose**: React development patterns and best practices for building modern, scalable user interfaces.
 
@@ -204,7 +204,7 @@ Frontend skills in the Developer Kit provide comprehensive patterns for modern w
 
 ### `tailwind-css`
 
-**Location**: `skills/tailwind-css/SKILL.md`
+**Location**: `skills/tailwind-css-patterns/SKILL.md`
 
 **Purpose**: Utility-first CSS framework patterns for rapid UI development.
 

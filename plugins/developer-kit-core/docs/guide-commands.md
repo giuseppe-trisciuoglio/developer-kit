@@ -67,29 +67,9 @@ The Developer Kit is organized into specialized plugins, each containing domain-
 
 **Plugin**: [developer-kit-core](../)
 
-General purpose commands for brainstorming, feature development, refactoring, debugging, documentation, and workflow management.
+General purpose commands for feature development, refactoring, debugging, documentation, GitHub integration, and workflow management.
 
-### Specification Workflow Commands
-
-The Developer Kit provides a comprehensive workflow for transforming ideas into implemented features:
-
-| Command | Purpose | Phases |
-|---------|---------|--------|
-| `/developer-kit:devkit.brainstorm` | Full specification creation for complex features | 9 phases |
-| `/developer-kit:devkit.quick-spec` | Lightweight spec for bug fixes and small features | 4 phases |
-| `/developer-kit:devkit.spec-review` | Interactive spec quality assessment | 7 phases |
-| `/developer-kit:devkit.spec-quality` | Knowledge Graph synchronization | - |
-| `/developer-kit:devkit.spec-to-tasks` | Convert specs to executable tasks | - |
-| `/developer-kit:devkit.spec-sync` | Sync spec with implementation state | 6 phases |
-| `/developer-kit:devkit.task-implementation` | Guided single-task implementation | 11 steps |
-
-### Task Management Commands
-
-| Command | Purpose |
-|---------|---------|
-| `/developer-kit:devkit.task-manage` | Manage tasks (add, split, update, mark optional/required, list) |
-| `/developer-kit:devkit.task-review` | Verify implementation against specifications |
-| `/developer-kit:devkit.task-implementation` | Execute single tasks with Knowledge Graph validation |
+> **Note**: Specification-driven development commands have been moved to the [developer-kit-specs](../developer-kit-specs/) plugin.
 
 ### Development Commands
 
@@ -133,6 +113,38 @@ The Developer Kit provides a comprehensive workflow for transforming ideas into 
 | `/developer-kit:devkit.verify-skill` | Validates a skill against DevKit standards |
 
 **Documentation**: [Core Command Guide](./guide-commands.md)
+
+---
+
+### Specs Plugin Commands
+
+**Plugin**: [developer-kit-specs](../developer-kit-specs/)
+
+Specifications-driven development workflow for transforming ideas into functional specifications and executable tasks.
+
+> **Note**: These commands were previously part of `developer-kit-core` but have been extracted into a dedicated plugin for better separation of concerns.
+
+#### Specification Workflow Commands
+
+| Command | Purpose | Phases |
+|---------|---------|--------|
+| `/specs:brainstorm` | Full specification creation for complex features | 9 phases |
+| `/specs:quick-spec` | Lightweight spec for bug fixes and small features | 4 phases |
+| `/specs:spec-quality-check` | Interactive spec quality assessment | 7 phases |
+| `/specs:spec-sync-context` | Knowledge Graph and technical context synchronization | - |
+| `/specs:spec-to-tasks` | Convert specs to executable tasks | - |
+| `/specs:spec-sync-with-code` | Sync spec with implementation state | 6 phases |
+| `/specs:task-implementation` | Guided single-task implementation | 11 steps |
+
+#### Task Management Commands
+
+| Command | Purpose |
+|---------|---------|
+| `/specs:task-manage` | Manage tasks (add, split, update, mark optional/required, list) |
+| `/specs:task-review` | Verify implementation against specifications |
+| `/specs:task-implementation` | Execute single tasks with Knowledge Graph validation |
+
+**Documentation**: [Specs Command Guide](../developer-kit-specs/docs/guide-commands.md)
 
 ---
 
@@ -216,70 +228,70 @@ The Developer Kit supports two parallel workflows depending on feature complexit
 
 ```bash
 # 1. Full specification creation (9 phases)
-/developer-kit:devkit.brainstorm "Add user authentication with JWT tokens"
+/specs:brainstorm "Add user authentication with JWT tokens"
 
 # 2. Optional: Review and improve spec quality
-/developer-kit:devkit.spec-review docs/specs/002-user-auth/
+/specs:spec-quality-check docs/specs/002-user-auth/
 
 # 3. Sync technical context (Knowledge Graph)
-/developer-kit:devkit.spec-quality docs/specs/002-user-auth/
+/specs:spec-sync-context docs/specs/002-user-auth/
 
 # 4. Convert specification to tasks
-/developer-kit:devkit.spec-to-tasks --lang=spring docs/specs/002-user-auth/
+/specs:spec-to-tasks --lang=spring docs/specs/002-user-auth/
 
 # 5. Review and manage tasks
-/developer-kit:devkit.task-manage --action=list --spec=docs/specs/002-user-auth/
-/developer-kit:devkit.task-manage --action=split --task=docs/specs/002-user-auth/tasks/TASK-007.md
+/specs:task-manage --action=list --spec=docs/specs/002-user-auth/
+/specs:task-manage --action=split --task=docs/specs/002-user-auth/tasks/TASK-007.md
 
 # 6. Implement tasks (11-step workflow)
-/developer-kit:devkit.task-implementation --lang=spring --task="TASK-001"
+/specs:task-implementation --lang=spring --task="TASK-001"
 # Includes: Git check, KG validation, contract validation, implementation, verification
 
 # 7. Sync spec with implementation (if deviations detected)
-/developer-kit:devkit.spec-sync docs/specs/002-user-auth/
+/specs:spec-sync-with-code docs/specs/002-user-auth/
 
 # 8. Review implementation
-/developer-kit:devkit.task-review --lang=spring "docs/specs/002-user-auth/tasks/TASK-001.md"
+/specs:task-review --lang=spring "docs/specs/002-user-auth/tasks/TASK-001.md"
 ```
 
 #### Quick Spec Workflow (Bug Fixes / Small Features)
 
 ```bash
 # 1. Quick specification (4 phases)
-/developer-kit:devkit.quick-spec "Fix memory leak in session cleanup"
+/specs:quick-spec "Fix memory leak in session cleanup"
 
 # 2. Based on criteria count:
 #    - 1-2 criteria: Direct implementation
 #    - 3+ criteria: Generate task list
-/developer-kit:devkit.spec-to-tasks --lang=spring docs/specs/003-quick-fix/
+/specs:spec-to-tasks --lang=spring docs/specs/003-quick-fix/
 
 # 3. Implement with guided workflow
-/developer-kit:devkit.task-implementation --lang=spring --task="TASK-001"
+/specs:task-implementation --lang=spring --task="TASK-001"
 ```
 
 ### Feature Development Workflow (Legacy)
 
 ```bash
 # 1. Brainstorm the feature
-/developer-kit:devkit.brainstorm "Add user authentication"
+/specs:brainstorm "Add user authentication"
 
 # 2. Convert specification to tasks (with context)
-/developer-kit:devkit.spec-to-tasks --lang=spring docs/specs/001-user-auth/
+/specs:spec-to-tasks --lang=spring docs/specs/001-user-auth/
 # Generates: tasks with context linkage, traceability matrix
 
 # 3. Review context and traceability
-/developer-kit:devkit.task-manage --action=list --spec=docs/specs/001-user-auth/
+/specs:task-manage --action=list --spec=docs/specs/001-user-auth/
 # Shows: complexity scores, context coverage, business goals
 
 # 4. Manage tasks if needed
-/developer-kit:devkit.task-manage --action=split --task=docs/specs/001-user-auth/tasks/TASK-007.md
+/specs:task-manage --action=split --task=docs/specs/001-user-auth/tasks/TASK-007.md
 # Preserves: context chain when splitting
 
 # 5. Develop the feature (alternative: use task-implementation)
 /developer-kit:devkit.feature-development --lang=spring "docs/specs/001-user-auth/tasks/TASK-001.md"
 
 # 6. Review implementation (with intent alignment)
-/developer-kit:devkit.task-review --lang=spring "docs/specs/001-user-auth/tasks/TASK-001.md"
+/specs:task-review --lang=spring "docs/specs/001-user-auth/tasks/TASK-001.md"
 # Validates: against original user request + technical constraints
 
 # 7. Generate tests
@@ -400,20 +412,20 @@ Task review validates:
 
 | Task | Recommended Command | Plugin |
 |------|---------------------|--------|
-| Full spec for complex feature | `/developer-kit:devkit.brainstorm` | Core |
-| Quick spec for bug fix/small feature | `/developer-kit:devkit.quick-spec` | Core |
-| Review spec quality (max 5 questions) | `/developer-kit:devkit.spec-review` | Core |
-| Sync Knowledge Graph | `/developer-kit:devkit.spec-quality` | Core |
-| Convert spec to tasks | `/developer-kit:devkit.spec-to-tasks` | Core |
-| Sync spec with implementation | `/developer-kit:devkit.spec-sync` | Core |
+| Full spec for complex feature | `/specs:brainstorm` | Specs |
+| Quick spec for bug fix/small feature | `/specs:quick-spec` | Specs |
+| Review spec quality (max 5 questions) | `/specs:spec-quality-check` | Specs |
+| Sync Knowledge Graph and technical context | `/specs:spec-sync-context` | Specs |
+| Convert spec to tasks | `/specs:spec-to-tasks` | Specs |
+| Sync spec with implementation | `/specs:spec-sync-with-code` | Specs |
 
 ### Task Implementation
 
 | Task | Recommended Command | Plugin |
 |------|---------------------|--------|
-| Implement single task (11 steps) | `/developer-kit:devkit.task-implementation` | Core |
-| Manage tasks (add/split/update) | `/developer-kit:devkit.task-manage` | Core |
-| Review task implementation | `/developer-kit:devkit.task-review` | Core |
+| Implement single task (11 steps) | `/specs:task-implementation` | Specs |
+| Manage tasks (add/split/update) | `/specs:task-manage` | Specs |
+| Review task implementation | `/specs:task-review` | Specs |
 | Develop new feature | `/developer-kit:devkit.feature-development` | Core |
 
 ### General Development
@@ -448,3 +460,13 @@ Task review validates:
 - [Complete Agents Guide](./guide-agents.md) - All available agents
 - [LRA Workflow Guide](./guide-lra-workflow.md) - Long-running agent workflow
 - [Installation Guide](./installation.md) - Installation instructions
+- [Developer Kit Specs Plugin](../developer-kit-specs/) - Specifications-driven development workflow
+
+## Migration Notes
+
+**Version 2.6.1+**: Specification-driven development commands have been extracted from `developer-kit-core` into the dedicated `developer-kit-specs` plugin:
+
+- **Old commands** (removed): `/developer-kit:devkit.brainstorm`, `/developer-kit:devkit.spec-to-tasks`, `/developer-kit:devkit.task-manage`, etc.
+- **New commands** (specs plugin): `/specs:brainstorm`, `/specs:spec-to-tasks`, `/specs:task-manage`, etc.
+
+If you were using the specification workflow commands, please install the `developer-kit-specs` plugin alongside `developer-kit-core`. The functionality remains identical, but the commands are now better organized for improved discoverability and maintenance.

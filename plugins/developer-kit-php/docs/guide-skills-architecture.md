@@ -102,4 +102,4 @@ src/Modules/Order/
 
 ---
 
-**Note**: For complete patterns and examples, see the skill file at `skills/clean-architecture/SKILL.md`
+**Note**: For complete patterns and examples, see the skill file at `../skills/clean-architecture/SKILL.md`

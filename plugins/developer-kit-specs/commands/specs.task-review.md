@@ -1,6 +1,6 @@
 ---
 description: "Provides capability to verify that implemented tasks meet specifications and pass code review. Use when needing to validate a completed task from devkit.task-implementation against its specification."
-argument-hint: "[ --lang=java|spring|typescript|nestjs|react|python|general ] [ task-file-path ]"
+argument-hint: "[ --lang=java|spring|typescript|nestjs|react|python|general ] [ --task=\"docs/specs/XXX-feature/tasks/TASK-XXX.md\" ]"
 allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, TodoWrite, AskUserQuestion
 model: inherit
 ---
@@ -16,6 +16,7 @@ This command reviews a completed task to ensure:
 2. **Spec Compliance**: The implementation aligns with the functional specification
 3. **Code Quality**: The code passes code review standards
 4. **Acceptance Criteria**: All acceptance criteria are met
+5. **Definition of Done**: The documented completion conditions are fully satisfied
 
 **Input**: `docs/specs/[id]/tasks/TASK-XXX.md` (from devkit.spec-to-tasks)
 **Output**: Review report with pass/fail status and findings
@@ -23,23 +24,23 @@ This command reviews a completed task to ensure:
 ### Workflow Position
 
 ```
-Idea → Functional Specification → Tasks → Implementation → Review
-              (devkit.brainstorm)   (this)   (devkit.task-implementation)  (this)
+Idea → Functional Specification → Tasks → Implementation → Review → Code Cleanup → Done
+              (brainstorm)           (spec-to-tasks)       (task-implementation)  (task-review)   (code-cleanup)
 ```
 
 ## Usage
 
 ```bash
 # Review a specific task
-/developer-kit:devkit.task-review docs/specs/001-user-auth/tasks/TASK-001.md
+/specs:task-review docs/specs/001-user-auth/tasks/TASK-001.md
 
 # With language specification for code review
-/developer-kit:devkit.task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
-/developer-kit:devkit.task-review --lang=typescript docs/specs/001-user-auth/tasks/TASK-001.md
-/developer-kit:devkit.task-review --lang=nestjs docs/specs/001-user-auth/tasks/TASK-001.md
-/developer-kit:devkit.task-review --lang=react docs/specs/001-user-auth/tasks/TASK-001.md
-/developer-kit:devkit.task-review --lang=python docs/specs/001-user-auth/tasks/TASK-001.md
-/developer-kit:devkit.task-review --lang=general docs/specs/001-user-auth/tasks/TASK-001.md
+/specs:task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
+/specs:task-review --lang=typescript docs/specs/001-user-auth/tasks/TASK-001.md
+/specs:task-review --lang=nestjs docs/specs/001-user-auth/tasks/TASK-001.md
+/specs:task-review --lang=react docs/specs/001-user-auth/tasks/TASK-001.md
+/specs:task-review --lang=python docs/specs/001-user-auth/tasks/TASK-001.md
+/specs:task-review --lang=general docs/specs/001-user-auth/tasks/TASK-001.md
 ```
 
 ## Arguments
@@ -47,6 +48,7 @@ Idea → Functional Specification → Tasks → Implementation → Review
 | Argument | Required | Description |
 |----------|----------|-------------|
 | `--lang` | No | Target language/framework: `java`, `spring`, `typescript`, `nestjs`, `react`, `python`, `general` |
+| `--no-confirm` | No | Skip user confirmation and auto-callback. Use when running inside automated loops (e.g., Ralph Loop). |
 | `task-file-path` | Yes | Path to the task file (e.g., `docs/specs/001-user-auth/tasks/TASK-001.md`) |
 
 ## Current Context
@@ -62,7 +64,7 @@ You are reviewing an implemented task to verify it meets specifications and pass
 
 ## Core Principles
 
-- **Thorough verification**: Check every acceptance criterion
+- **Thorough verification**: Check every acceptance criterion and every DoD item
 - **Spec alignment**: Ensure implementation matches functional requirements
 - **Code quality**: Verify code passes review standards
 - **Evidence-based**: Base findings on actual code, not assumptions
@@ -88,8 +90,10 @@ You are reviewing an implemented task to verify it meets specifications and pass
    - Task ID and title
    - Description
    - Acceptance criteria
+   - Definition of Ready (DoR) and Definition of Done (DoD) sections
    - Dependencies
    - Reference to specification file
+   - If either section is missing, stop the review and require the task document to be updated before continuing
 5. Read the functional specification file (from task's spec reference)
 6. Verify both files exist and are valid
 7. If files not found, ask user for correct path via AskUserQuestion
@@ -125,23 +129,24 @@ You are reviewing an implemented task to verify it meets specifications and pass
 
 ---
 
-## Phase 3: Acceptance Criteria Validation
+## Phase 3: Acceptance Criteria and DoD Validation
 
-**Goal**: Verify all acceptance criteria are met
+**Goal**: Verify all acceptance criteria and DoD items are met
 
 **Actions**:
 
 1. List all acceptance criteria from the task file
-2. For each criterion:
-   - Identify code/tests that validate this criterion
-   - Check if tests exist and pass
-   - Verify the criterion is actually met
-3. Mark each criterion as:
+2. List all DoD items from the task file
+3. For each acceptance criterion and DoD item:
+   - Identify code/tests/review evidence that validate it
+   - Check if tests exist and pass when relevant
+   - Verify the requirement is actually met
+4. Mark each item as:
    - ✅ Met (with evidence)
    - ❌ Not met (with explanation)
    - ⚠️ Partially met (with details)
 
-4. **Update traceability-matrix.md**:
+5. **Update traceability-matrix.md**:
    - Read `docs/specs/[id]/traceability-matrix.md` (extract from task frontmatter `spec:` field)
    - For this task (TASK-XXX), update the matrix:
      - Fill in "Test Files" column with test file names created for this task
@@ -220,6 +225,7 @@ You are reviewing an implemented task to verify it meets specifications and pass
 |----------|--------|
 | Implementation | ✅ Complete / ⚠️ Partial / ❌ Incomplete |
 | Acceptance Criteria | ✅ All Met / ⚠️ Partial / ❌ Failed |
+| Definition of Done | ✅ All Met / ⚠️ Partial / ❌ Failed |
 | Spec Compliance | ✅ Compliant / ⚠️ Deviations / ❌ Non-compliant |
 | Code Review | ✅ Passed / ⚠️ Issues Found / ❌ Failed |
 
@@ -234,6 +240,13 @@ You are reviewing an implemented task to verify it meets specifications and pass
 |-----------|--------|----------|
 | Criterion 1 | ✅/⚠️/❌ | [evidence] |
 | Criterion 2 | ✅/⚠️/❌ | [evidence] |
+
+## Definition of Done
+
+| DoD Item | Status | Evidence |
+|----------|--------|----------|
+| DoD item 1 | ✅/⚠️/❌ | [evidence] |
+| DoD item 2 | ✅/⚠️/❌ | [evidence] |
 
 ## Specification Compliance
 
@@ -284,19 +297,28 @@ You are reviewing an implemented task to verify it meets specifications and pass
 
 **Actions**:
 
-1. Present the review report to the user
-2. Ask for confirmation via AskUserQuestion:
+1. **If `--no-confirm` was passed**: SKIP this phase entirely. Do NOT use `AskUserQuestion`. Do NOT invoke `task-implementation` automatically. Simply save the review report and terminate so the caller (e.g., Ralph Loop) can read the report and decide the next step.
+
+2. Present the review report to the user
+3. Ask for confirmation via AskUserQuestion:
    - **Option A**: Review complete, task approved
    - **Option B**: Issues found, needs revision
    - **Option C**: Need additional verification
 
-3. If issues found:
+4. If issues found:
    - List specific issues that need fixing
    - Save findings to the review report at `docs/specs/[id]/tasks/TASK-XXX--review.md`
-   - Invoke `/developer-kit:devkit.task-implementation --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"`
+   - Invoke `/specs:task-implementation --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"`
    - Reference the review report path so implementation can read the detailed findings
    - Track unresolved items
    - **Note**: Before re-implementing, consider running `/devkit.spec-review [spec-folder]` to verify the spec is still accurate if issues suggest spec-level problems
+
+5. If review approved (no issues or all issues fixed):
+   - Update task status to `reviewed` in the task file YAML frontmatter
+   - Recommend proceeding to code cleanup:
+   ```
+   /specs:code-cleanup --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
+   ```
 
 ---
 
@@ -314,7 +336,9 @@ You are reviewing an implemented task to verify it meets specifications and pass
     - **Acceptance Criteria**: All met / Partial / Failed
     - **Code Review Status**: Passed / Issues / Failed
     - **Review Report**: `docs/specs/[id]/tasks/TASK-XXX--review.md`
-    - **Next Step**: Fix issues or proceed to next task
+    - **Next Step**: 
+      - If approved: Run `/specs:code-cleanup` to finalize the task
+      - If issues found: Return to `/specs:task-implementation` to fix issues
 
 ---
 
@@ -323,19 +347,19 @@ You are reviewing an implemented task to verify it meets specifications and pass
 This command completes the verification loop:
 
 ```
-/developer-kit:devkit.brainstorm
+/specs:brainstorm
     ↓
 [Creates: docs/specs/[id]/YYYY-MM-DD--feature-name.md]
     ↓
-/developer-kit:devkit.spec-to-tasks --lang=[language] docs/specs/[id]/
+/specs:spec-to-tasks --lang=[language] docs/specs/[id]/
     ↓
 [Creates: docs/specs/[id]/tasks/TASK-XXX.md]
     ↓
-/developer-kit:devkit.task-implementation--lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
+/specs:task-implementation--lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
     ↓
 [Implements task]
     ↓
-/developer-kit:devkit.task-review --lang=[language] "docs/specs/[id]/tasks/TASK-XXX.md"
+/specs:task-review --lang=[language] "docs/specs/[id]/tasks/TASK-XXX.md"
     ↓
 [Verifies implementation, generates review report]
     ↓
@@ -351,19 +375,19 @@ This command completes the verification loop:
 
 ```bash
 # Review a completed task
-/developer-kit:devkit.task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
+/specs:task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
 ```
 
 ### Example 2: Review Checkout Task
 
 ```bash
-/developer-kit:devkit.task-review --lang=typescript docs/specs/005-checkout/tasks/TASK-003.md
+/specs:task-review --lang=typescript docs/specs/005-checkout/tasks/TASK-003.md
 ```
 
 ### Example 3: Review API Integration Task
 
 ```bash
-/developer-kit:devkit.task-review --lang=python docs/specs/010-payment/tasks/TASK-002.md
+/specs:task-review --lang=python docs/specs/010-payment/tasks/TASK-002.md
 ```
 
 ---

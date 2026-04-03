@@ -75,4 +75,4 @@ Agents can be invoked in several ways:
 - [RAG Skill](../skills/rag/) - Retrieval-Augmented Generation skill
 - [Chunking Strategy Skill](../skills/chunking-strategy/) - Document chunking strategies
 - [Core Agent Guide](../../developer-kit-core/docs/guide-agents.md) - All agents across plugins
-- [Java Plugin](../../developer-kit-java/docs/) - LangChain4J and Spring AI integration
+- [Java Plugin](../../developer-kit-java/docs/guide-skills-langchain4j.md) - LangChain4J and Spring AI integration

@@ -163,5 +163,5 @@ Agents can be invoked in several ways:
 
 ## See Also
 
-- [WordPress Skill](../skills/wordpress/wordpress-sage-theme/) - WordPress Sage theme skill
+- [WordPress Skill](../skills/wordpress/wordpress-sage-theme/SKILL.md) - WordPress Sage theme skill
 - [Core Agent Guide](../../developer-kit-core/docs/guide-agents.md) - All agents across plugins

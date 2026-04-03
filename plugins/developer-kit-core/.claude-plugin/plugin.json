@@ -1,6 +1,6 @@
 {
   "name": "developer-kit",
-  "version": "2.7.2",
+  "version": "2.8.0",
   "description": "Core agents and commands required by all Developer Kit plugins",
   "author": {
     "name": "Giuseppe Trisciuoglio",
@@ -28,15 +28,6 @@
     "./agents/learn-analyst.md"
   ],
   "commands": [
-    "./commands/specs/devkit.brainstorm.md",
-    "./commands/specs/devkit.task-implementation.md",
-    "./commands/specs/devkit.spec-to-tasks.md",
-    "./commands/specs/devkit.spec-sync.md",
-    "./commands/specs/devkit.spec-quality.md",
-    "./commands/specs/devkit.quick-spec.md",
-    "./commands/specs/devkit.spec-review.md",
-    "./commands/specs/devkit.task-review.md",
-    "./commands/specs/devkit.task-manage.md",
     "./commands/devkit.refactor.md",
     "./commands/devkit.feature-development.md",
     "./commands/devkit.fix-debugging.md",
@@ -60,7 +51,6 @@
     "./skills/docs-updater",
     "./skills/drawio-logical-diagrams",
     "./skills/github-issue-workflow",
-    "./skills/knowledge-graph",
     "./skills/learn"
   ]
 }

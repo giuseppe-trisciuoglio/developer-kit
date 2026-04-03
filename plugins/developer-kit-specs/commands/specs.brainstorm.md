@@ -18,7 +18,9 @@ it will be implemented.
 The new workflow:
 
 ```
-Idea → Functional Specification (docs/specs/[id]/) → Tasks (docs/specs/[id]/tasks/) → Implementation
+Idea → Functional Specification (docs/specs/[id]/) → Architecture & Ontology Definition → Tasks (docs/specs/[id]/tasks/) → Implementation → Review → Code Cleanup → Done
+                                                      (docs/specs/architecture.md)
+                                                      (docs/specs/ontology.md)
 ```
 
 **Output**: `docs/specs/[id]/YYYY-MM-DD--feature-name.md`
@@ -41,13 +43,13 @@ Use this command when starting a new feature to define clear functional requirem
 ## Usage
 
 ```bash
-/developer-kit:devkit.brainstorm [idea-description]
+/specs:brainstorm [idea-description]
 ```
 
 After generating the functional specification, continue with:
 
 ```bash
-/developer-kit:devkit.spec-to-tasks docs/specs/[id]/
+/specs:spec-to-tasks docs/specs/[id]/
 ```
 
 ## Arguments
@@ -116,13 +118,13 @@ incrementally, generate professional documentation, review the document, and rec
 
 4. **Determine workflow tier based on idea complexity**:
     - **Quick** (bug fix, small change, <3 files, well-understood solution):
-        - Recommend switching to `/developer-kit:devkit.quick-spec` for faster turnaround
+        - Recommend switching to `/specs:quick-spec` for faster turnaround
         - Ask via AskUserQuestion:
             - Options:
                 - "Continue with full brainstorming" (for comprehensive spec)
                 - "Switch to quick spec" (recommended for bug fixes/small changes)
     - **Standard** (feature, moderate scope, 3-10 files): Continue with brainstorm
-    - **Full** (greenfield, complex, >10 files or multiple modules): Continue with brainstorm + recommend spec-review
+    - **Full** (greenfield, complex, >10 files or multiple modules): Continue with brainstorm + recommend spec-quality-check
       after
 
 ---
@@ -399,6 +401,63 @@ Task(
 - This file will track all non-trivial decisions made during implementation
 - Future phases (task-implementation, task-review) will append entries to this file
 
+8.6. **Initialize or enrich the project ontology (`docs/specs/ontology.md`)**:
+
+   Domain terms identified during brainstorming are part of the functional understanding (Ubiquitous Language). This step captures them in a shared, project-level ontology file.
+
+   - **Check if `docs/specs/ontology.md` exists**:
+
+   - **If the file does NOT exist**:
+     1. Collect domain terms that emerged during the brainstorming dialogue (from Phases 2-5)
+     2. Use **AskUserQuestion** to present the identified terms and ask the user to confirm, add, or remove terms:
+        ```
+        During brainstorming, the following domain terms emerged:
+        - [Term 1]: [proposed definition]
+        - [Term 2]: [proposed definition]
+        - ...
+
+        Should I create the project ontology (docs/specs/ontology.md) with these terms?
+        ```
+        - Options:
+          - "Yes, create with these terms" (recommended)
+          - "Yes, but let me adjust the terms first"
+          - "Skip ontology creation for now"
+     3. If the user confirms, create `docs/specs/ontology.md` using this template:
+        ```markdown
+        # Project Ontology — Ubiquitous Language
+
+        **Created**: [current date YYYY-MM-DD]
+        **Last Updated**: [current date YYYY-MM-DD]
+
+        ## Domain Glossary
+
+        | Term | Definition | Bounded Context |
+        |------|-----------|-----------------|
+        | [Term 1] | [Definition] | [Context where this term applies] |
+        | [Term 2] | [Definition] | [Context where this term applies] |
+
+        ## Bounded Contexts
+
+        | Context | Description | Key Terms |
+        |---------|-------------|-----------|
+        | [Context 1] | [Description] | [Terms specific to this context] |
+
+        ## Conceptual Mapping
+
+        [Relationships between key domain entities — to be refined during task generation]
+        ```
+
+   - **If the file ALREADY exists**:
+     1. Read the existing `docs/specs/ontology.md`
+     2. Compare domain terms from the brainstorming session against existing glossary entries
+     3. If NEW terms were identified that are not in the glossary:
+        - Use **AskUserQuestion** to present the new terms and ask if they should be added
+        - If confirmed, append the new terms to the Domain Glossary table
+        - Update the `Last Updated` date
+     4. If no new terms: skip silently
+
+   - **Note**: The ontology is a living document. It will be further refined by `/specs:spec-to-tasks` when technical decisions are made.
+
 9. Update todos
 
 ---
@@ -471,14 +530,14 @@ Task(
 
 1. The functional specification is complete. The next step is to convert it to executable tasks:
 
-   **For converting specification to tasks**: Recommend `/developer-kit:devkit.spec-to-tasks`
+   **For converting specification to tasks**: Recommend `/specs:spec-to-tasks`
     - Use when: Converting functional specification to trackable tasks
     - Arguments: `--lang=[language] docs/specs/[id]/`
 
 2. **Use the AskUserQuestion tool to present the recommendation**:
 
    Present options:
-    - **Option A**: Run spec-review first, then generate tasks (recommended)
+    - **Option A**: Run spec-quality-check first, then generate tasks (recommended)
     - **Option B**: Skip review and go directly to task generation (warning: may have quality issues)
     - **Option C**: Exit and review the specification manually
 
@@ -487,12 +546,12 @@ Task(
 3. Include the pre-filled commands:
 
 ```bash
-# Recommended: Run spec-review first, then generate tasks
-/developer-kit:devkit.spec-review docs/specs/[id]/
-/developer-kit:devkit.spec-to-tasks --lang=[java|spring|typescript|nestjs|react|python|general] docs/specs/[id]/
+# Recommended: Run spec-quality-check first, then generate tasks
+/specs:spec-quality-check docs/specs/[id]/
+/specs:spec-to-tasks --lang=[java|spring|typescript|nestjs|react|python|general] docs/specs/[id]/
 
 # Alternative: Skip review and generate tasks directly
-/developer-kit:devkit.spec-to-tasks --lang=[java|spring|typescript|nestjs|react|python|general] docs/specs/[id]/
+/specs:spec-to-tasks --lang=[java|spring|typescript|nestjs|react|python|general] docs/specs/[id]/
 ```   - The functional specification has been saved at `docs/specs/[id]/YYYY-MM-DD--feature-name.md`
    - The task list will be saved at `docs/specs/[id]/YYYY-MM-DD--feature-name--tasks.md`
    - Individual tasks will be in `docs/specs/[id]/tasks/TASK-XXX.md`
@@ -526,26 +585,30 @@ This brainstorming command produces a **functional specification** that feeds in
 
 ```
 
-/developer-kit:devkit.brainstorm
+/specs:brainstorm
 ↓
 Phase 4: Optional Codebase Exploration (for integration context only)
 ↓
 Phase 5: Functional Specification Presentation (validated incrementally)
 ↓
 Phase 6: Documentation (document-generator-expert agent)
+       + Ontology initialization (docs/specs/ontology.md)
 ↓
 Phase 7: Specification Review (quality verification)
 ↓
 [Creates: docs/specs/[id]/YYYY-MM-DD--feature-name.md]
+[Creates/Updates: docs/specs/ontology.md (domain terms)]
 ↓
 [Recommends: devkit.spec-to-tasks]
 ↓
-/developer-kit:devkit.spec-to-tasks --lang=[language] docs/specs/[id]/
+/specs:spec-to-tasks --lang=[language] docs/specs/[id]/
 ↓
+[Ensures: docs/specs/architecture.md exists]
+[Refines: docs/specs/ontology.md]
 [Creates: docs/specs/[id]/YYYY-MM-DD--feature-name--tasks.md]
 [Creates: docs/specs/[id]/tasks/TASK-XXX.md]
 ↓
-/developer-kit:devkit.task-implementation --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
+/specs:task-implementation --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
 ↓
 [Implements single task]
 
@@ -563,7 +626,7 @@ The functional specification created by this command serves as:
 
 ### Re-entering Brainstorming
 
-If implementation reveals specification issues, you can re-run `/developer-kit:devkit.brainstorm`:
+If implementation reveals specification issues, you can re-run `/specs:brainstorm`:
 - The previous specification will be preserved in its folder
 - A new specification will be created with the current date
 - You can reference the previous specification during the new brainstorming session
@@ -585,6 +648,7 @@ Throughout the process, maintain a todo list like:
 [ ] Section 4: Acceptance Criteria
 [ ] Section 5: Integration Requirements
 [ ] Phase 6: Functional Specification Generation
+[ ] Phase 6.1: Ontology Initialization/Enrichment (docs/specs/ontology.md)
 [ ] Phase 7: Specification Review
 [ ] Phase 8: Next Steps Recommendation
 [ ] Phase 9: Summary
@@ -609,51 +673,51 @@ Update the status as you progress through each phase and section.
 ### Example 1: Simple Feature Idea
 
 ```bash
-/developer-kit:devkit.brainstorm Add user authentication with JWT tokens
+/specs:brainstorm Add user authentication with JWT tokens
 ```
 
 ### Example 2: Complex Feature
 
 ```bash
-/developer-kit:devkit.brainstorm Implement real-time notifications using WebSockets
+/specs:brainstorm Implement real-time notifications using WebSockets
 ```
 
 ### Example 3: Refactoring
 
 ```bash
-/developer-kit:devkit.brainstorm Refactor the payment processing module to be more maintainable
+/specs:brainstorm Refactor the payment processing module to be more maintainable
 ```
 
 ### Example 4: Bug Fix Design
 
 ```bash
-/developer-kit:devkit.brainstorm Design a fix for the race condition in order processing
+/specs:brainstorm Design a fix for the race condition in order processing
 ```
 
 ### Example 5: Performance Improvement
 
 ```bash
-/developer-kit:devkit.brainstorm Design a caching strategy to reduce API response times
+/specs:brainstorm Design a caching strategy to reduce API response times
 ```
 
 ### Example 6: Integration
 
 ```bash
-/developer-kit:devkit.brainstorm Integrate Stripe payment processing for subscriptions
+/specs:brainstorm Integrate Stripe payment processing for subscriptions
 ```
 
 ### Example 7: Full Workflow (after brainstorming)
 
 ```bash
 # Step 1: Brainstorm and generate functional specification
-/developer-kit:devkit.brainstorm Design a microservices architecture for the reporting module
+/specs:brainstorm Design a microservices architecture for the reporting module
 
 # Step 2: Convert specification to tasks
-/developer-kit:devkit.spec-to-tasks --lang=spring docs/specs/001-reporting-module/
+/specs:spec-to-tasks --lang=spring docs/specs/001-reporting-module/
 
 # Step 3: Implement specific tasks
-/developer-kit:devkit.task-implementation --lang=spring --task="docs/specs/001-reporting-module/tasks/TASK-001.md"
-/developer-kit:devkit.task-implementation --lang=spring --task="docs/specs/001-reporting-module/tasks/TASK-002.md"
+/specs:task-implementation --lang=spring --task="docs/specs/001-reporting-module/tasks/TASK-001.md"
+/specs:task-implementation --lang=spring --task="docs/specs/001-reporting-module/tasks/TASK-002.md"
 ```
 
 This separates WHAT (functional specification) from HOW (implementation), following the "divide et impera" principle.
