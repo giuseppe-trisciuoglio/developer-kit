@@ -24,7 +24,8 @@ SHELL := /bin/bash
 .PHONY: all help check-deps list-plugins list-components list-agents list-commands list-skills list-rules \
         install install-claude install-opencode install-copilot install-codex install-kimi \
         install-rules uninstall status backup clean security-scan security-scan-changed \
-        skill-lint skill-security skill-review skill-review-all plugin-validate plugin-bump-version
+        skill-lint skill-security skill-review skill-review-all plugin-validate plugin-bump-version \
+        install-specs-codex-loop
 
 # ═══════════════════════════════════════════════════════════════
 # COLORS & OUTPUT FORMATTING
@@ -172,6 +173,7 @@ help:
 	@echo "  make uninstall            Remove all Developer Kit installations"
 	@echo "  make backup               Create backup of current configs"
 	@echo "  make clean                Remove generated files"
+	@echo "  make install-specs-codex-loop  Install specs_codex_loop symlink in /usr/local/bin"
 	@echo ""
 	@echo -e "$(GREEN)Information:$(NC)"
 	@echo "  make check-deps           Check if required dependencies are installed"
@@ -946,6 +948,26 @@ install-kimi: check-deps
 		done; \
 	echo "  Total commands converted to skills: $$commands_count"
 	@echo ""
+	@echo ""
+
+# ═══════════════════════════════════════════════════════════════
+# UTILITY INSTALLATION
+# ═══════════════════════════════════════════════════════════════
+
+install-specs-codex-loop:
+	@echo ""
+	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
+	@echo -e "$(BLUE)Installing specs_codex_loop utility$(NC)"
+	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
+	@echo ""
+	@if [ ! -d "/usr/local/bin" ]; then \
+		echo -e "$(RED)✗ /usr/local/bin does not exist. Please create it or use sudo.$(NC)"; \
+		exit 1; \
+	fi
+	@ln -sf "$(DEVKIT_DIR)/scripts/loop_codex.py" "/usr/local/bin/specs_codex_loop"
+	@chmod +x "/usr/local/bin/specs_codex_loop"
+	@$(call success,Installed specs_codex_loop → /usr/local/bin/specs_codex_loop)
+	@echo "  Usage: specs_codex_loop --spec=docs/specs/... --action=loop --full-auto"
 	@echo ""
 
 # ═══════════════════════════════════════════════════════════════
