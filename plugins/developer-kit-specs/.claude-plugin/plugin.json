@@ -1,6 +1,6 @@
 {
   "name": "developer-kit-specs",
-  "version": "2.8.0",
+  "version": "2.8.1",
   "description": "Specifications-driven development workflow for transforming ideas into functional specifications and executable tasks",
   "author": {
     "name": "Giuseppe Trisciuoglio",
@@ -33,6 +33,5 @@
     "./skills/knowledge-graph",
     "./skills/ralph-loop",
     "./skills/specs-code-cleanup"
-  ],
-  "hooks": "./hooks/hooks.json"
+  ]
 }

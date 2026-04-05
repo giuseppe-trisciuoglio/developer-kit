@@ -157,9 +157,13 @@ def main() -> None:
 
     header = "=== TypeScript Project Context ==="
     body = "\n\n".join(sections)
-    print(f"{header}\n{body}")
+    message = f"{header}\n{body}"
 
-    sys.exit(1)  # Exit 1: show context to Claude without blocking the tool
+    # Output JSON format required by Claude Code hooks
+    output = {"type": "notification", "message": message}
+    print(json.dumps(output))
+
+    sys.exit(0)
 
 
 if __name__ == "__main__":

@@ -234,44 +234,42 @@ For each category, mark the status: **Clear**, **Partial**, or **Missing**
 
 ## Phase 4: Sequential Questioning Loop
 
-**Goal**: Present questions one at a time and integrate responses
+**Goal**: Present questions one at a time using AskUserQuestion tool and integrate responses
 
 **Actions**:
 
 1. **For each question in the queue**:
-   - Present **EXACTLY ONE question** at a time
+   - Present **EXACTLY ONE question** at a time using the AskUserQuestion tool
 
 2. **For multi-choice questions**:
-   - Analyze all options and determine the most suitable one
-   - Present the **prominent recommendation** with reasoning
-   - Format as Markdown table
-
-   ```
-   **Recommended:** Option [X] - <1-2 sentence reasoning>
-
-   | Option | Description |
-   |--------|-------------|
-   | A | <Option A Description> |
-   | B | <Option B Description> |
-   | C | <Option C Description> |
-   | Short | Provide a different short answer (<=5 words) |
-
-   You can reply with the option letter (e.g., "A"), accept the recommendation by saying "yes" or "recommended", or provide your own short answer.
-   ```
+   - Analyze all options and determine the most suitable one (the recommendation)
+   - Structure for AskUserQuestion with:
+     - `question`: The clarification question
+     - `header`: Short category label (max 12 chars, e.g., "Performance", "Data Model")
+     - `options`: Array of 2-4 option objects with:
+       - `label`: Option identifier (e.g., "A: < 1 second")
+       - `description`: Full explanation with the recommendation marked as "(Recommended)" at the end
+     - `multiSelect`: false
+   - The first option should be the recommendation
+   - Include an "Other" option as the last choice for custom answers
 
 3. **For short-answer questions**:
-   - Provide the **suggested answer** based on best practices
-   ```
-   **Suggested:** <proposed answer> - <brief reasoning>
+   - Provide the suggested answer as the first option
+   - Structure for AskUserQuestion with:
+     - `question`: The clarification question
+     - `header`: Short category label (max 12 chars)
+     - `options`: Array with:
+       - First option: The suggested answer marked "(Recommended)" at the end
+       - Second option: "Other" for custom input
+     - `multiSelect`: false
 
-   Format: Short answer (<=5 words). You can accept the suggestion by saying "yes" or "suggested", or provide your own answer.
+4. **Tool invocation pattern**:
    ```
-
-4. **After the user responds**:
-   - If "yes"/"recommended"/"suggested": use the recommendation
-   - Otherwise: validate the response is appropriate
-   - If ambiguous: ask for disambiguation (doesn't count as a new question)
-   - Once satisfactory: proceed to the next question
+   Use AskUserQuestion to present the question structured as described above
+   Wait for user selection/response
+   If user selects "Other": accept their custom input (max 5 words for short-answer)
+   If user selects the recommended option: use the recommendation
+   ```
 
 5. **Immediate integration after each response**:
    - Create `## Clarifications` section if it doesn't exist (after overview)
@@ -282,7 +280,7 @@ For each category, mark the status: **Clear**, **Partial**, or **Missing**
 
 6. **Stop conditions**:
    - All critical ambiguities resolved
-   - User signals completion ("done", "good", "no more")
+   - User signals completion via AskUserQuestion
    - Reached 5 questions
 
 ---
@@ -407,16 +405,17 @@ Quality Scan Results:
 
 [1/5] Question 1 of 5
 
-**Recommended:** Option B - "Real-time" in notification systems typically means < 5 seconds for user-facing notifications. This is a standard industry benchmark.
+The AskUserQuestion tool will present:
 
-| Option | Description |
-|--------|-------------|
-| A | < 1 second for all notifications |
-| B | < 5 seconds for user-facing, < 30s for background |
-| C | < 10 seconds for all notifications |
-| Short | Provide different answer (<=5 words) |
+**Question:** How should "real-time" be defined for this notification system?
 
-You can reply with "A", "B", "C", "yes" for recommendation, or your own answer.
+**Options:**
+- **< 5 seconds for user-facing, < 30s for background** (Recommended) - Industry standard for user-facing notifications with relaxed SLA for background processing
+- **< 1 second for all notifications** - Ultra-low latency, requires significant infrastructure investment
+- **< 10 seconds for all notifications** - Relaxed SLA suitable for non-critical notifications
+- **Other** - Provide your own definition
+
+After user selection, the response is integrated into the specification.
 ```
 
 ### Example 2: Already complete spec

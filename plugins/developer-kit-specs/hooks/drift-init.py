@@ -263,7 +263,9 @@ def main() -> None:
     task_file_path = resolve_task_path(task_identifier, cwd)
     if not task_file_path:
         # Task file not found → emit Initialization Notice and exit
-        print(f"[Drift Guard] Task file not found: {task_identifier}")
+        message = f"[Drift Guard] Task file not found: {task_identifier}"
+        output = {"type": "notification", "message": message}
+        print(json.dumps(output))
         sys.exit(0)
 
     # 3. Extract "Files to Create" section

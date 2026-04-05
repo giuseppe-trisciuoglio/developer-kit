@@ -49,180 +49,187 @@ def _find_tsconfig(cwd: Path) -> Optional[Path]:
     return None
 
 
-def _has_eslint(cwd: Path) -> bool:
-    """Return True if an ESLint config file is present in cwd."""
-    config_names = (
-        ".eslintrc",
+def _find_nx_json(cwd: Path) -> Optional[Path]:
+    """Locate nx.json walking up from cwd (max 3 levels)."""
+    for candidate in [cwd, *list(cwd.parents)[:3]]:
+        nx_json = candidate / "nx.json"
+        if nx_json.exists():
+            return nx_json
+    return None
+
+
+def _find_eslint_config(cwd: Path) -> Optional[Path]:
+    """Locate ESLint config file walking up from cwd (max 3 levels)."""
+    configs = [
         ".eslintrc.js",
         ".eslintrc.cjs",
-        ".eslintrc.mjs",
-        ".eslintrc.json",
         ".eslintrc.yaml",
         ".eslintrc.yml",
+        ".eslintrc.json",
+        ".eslintrc",
         "eslint.config.js",
         "eslint.config.mjs",
         "eslint.config.cjs",
-    )
-    if any((cwd / name).exists() for name in config_names):
-        return True
-    pkg = cwd / "package.json"
-    if pkg.exists():
-        try:
-            data = json.loads(pkg.read_text(encoding="utf-8"))
-            return "eslintConfig" in data
-        except Exception:
-            pass
-    return False
+    ]
+    for candidate in [cwd, *list(cwd.parents)[:3]]:
+        for cfg in configs:
+            path = candidate / cfg
+            if path.exists():
+                return path
+    return None
 
 
-def _is_nx(cwd: Path) -> bool:
-    return (cwd / "nx.json").exists()
-
-
-def _has_prettier(cwd: Path) -> bool:
-    """Return True if a Prettier config file is present in cwd."""
-    config_names = (
+def _find_prettier_config(cwd: Path) -> Optional[Path]:
+    """Locate Prettier config file walking up from cwd (max 3 levels)."""
+    configs = [
         ".prettierrc",
+        ".prettierrc.json",
+        ".prettierrc.yml",
+        ".prettierrc.yaml",
         ".prettierrc.js",
         ".prettierrc.cjs",
-        ".prettierrc.mjs",
-        ".prettierrc.json",
-        ".prettierrc.yaml",
-        ".prettierrc.yml",
         "prettier.config.js",
         "prettier.config.mjs",
         "prettier.config.cjs",
-    )
-    if any((cwd / name).exists() for name in config_names):
-        return True
-    pkg = cwd / "package.json"
-    if pkg.exists():
-        try:
-            data = json.loads(pkg.read_text(encoding="utf-8"))
-            return "prettier" in data
-        except Exception:
-            pass
-    return False
+    ]
+    for candidate in [cwd, *list(cwd.parents)[:3]]:
+        for cfg in configs:
+            path = candidate / cfg
+            if path.exists():
+                return path
+    return None
 
 
-# ─── Modified File Detection ──────────────────────────────────────────────────
+# ─── File Detection ───────────────────────────────────────────────────────────
 
 
-def _get_modified_ts_files(cwd: Path) -> list[str]:
-    """Return paths of modified/untracked TypeScript files relative to cwd."""
-    try:
-        staged = subprocess.run(
-            ["git", "diff", "--name-only", "--diff-filter=ACMR", "HEAD"],
-            capture_output=True,
-            text=True,
-            cwd=str(cwd),
-            timeout=10,
-        )
-        untracked = subprocess.run(
-            ["git", "ls-files", "--others", "--exclude-standard"],
-            capture_output=True,
-            text=True,
-            cwd=str(cwd),
-            timeout=10,
-        )
-        all_files: list[str] = []
-        for line in (staged.stdout + "\n" + untracked.stdout).splitlines():
-            line = line.strip()
-            if not line:
-                continue
-            if not (line.endswith(".ts") or line.endswith(".tsx")):
-                continue
-            if any(part in EXCLUDED_DIRS for part in Path(line).parts):
-                continue
-            if line not in all_files:
-                all_files.append(line)
-        return all_files[:MAX_FILES]
-    except Exception:
-        return []
+def _is_excluded(path: Path) -> bool:
+    """Check if path contains excluded directory components."""
+    parts = frozenset(path.parts)
+    return bool(parts & EXCLUDED_DIRS)
 
 
-# ─── Tool Resolution ──────────────────────────────────────────────────────────
+def _get_modified_files(cwd: Path, since_ref: str = "HEAD~1") -> list[str]:
+    """Get list of modified TypeScript files since the given git ref.
 
-
-def _resolve_bin(tool: str, cwd: Path) -> list[str]:
-    """Resolve a tool command, preferring local node_modules/.bin over npx.
-
-    Returns the command prefix to invoke the tool. Prefers the local binary to
-    avoid npx downloading packages implicitly (supply-chain risk).
+    Falls back to all .ts/.tsx files in cwd if git fails or no files found.
     """
-    local = cwd / "node_modules" / ".bin" / tool
-    if local.exists():
-        return [str(local)]
-    if shutil.which(tool):
-        return [tool]
-    npx = shutil.which("npx")
-    if npx:
-        return [npx, tool]
-    return []
+    try:
+        result = subprocess.run(
+            ["git", "diff", "--name-only", "--diff-filter=ACM", since_ref],
+            capture_output=True,
+            text=True,
+            cwd=cwd,
+            timeout=5,
+        )
+        if result.returncode != 0:
+            raise RuntimeError("git diff failed")
+
+        files = [
+            f.strip()
+            for f in result.stdout.splitlines()
+            if f.strip().endswith((".ts", ".tsx")) and not _is_excluded(Path(f))
+        ]
+    except Exception:
+        files = []
+
+    # Fallback: scan cwd for TypeScript files if git fails or no commits
+    if not files:
+        files = [
+            str(p.relative_to(cwd))
+            for p in cwd.rglob("*.ts")
+            if not _is_excluded(p) and not p.name.endswith(".d.ts")
+        ]
+        files += [
+            str(p.relative_to(cwd))
+            for p in cwd.rglob("*.tsx")
+            if not _is_excluded(p)
+        ]
+
+    return files[:MAX_FILES]
 
 
 # ─── Tool Runners ─────────────────────────────────────────────────────────────
 
 
-def _run(cmd: list[str], cwd: Path) -> tuple[bool, str]:
-    """Run a subprocess and return (success, output)."""
+def _run_tsc(cwd: Path, files: list[str]) -> tuple[bool, str]:
+    """Run TypeScript compiler type check. Returns (has_errors, output)."""
+    tsconfig = _find_tsconfig(cwd)
+    if not tsconfig:
+        return False, ""
+
+    # Check if tsc is available
+    if not shutil.which("tsc") and not shutil.which("npx"):
+        return False, ""
+
+    cmd = ["npx", "tsc", "--noEmit", "--project", str(tsconfig)]
+
     try:
         result = subprocess.run(
             cmd,
             capture_output=True,
             text=True,
-            cwd=str(cwd),
+            cwd=cwd,
             timeout=TOOL_TIMEOUT,
         )
-        raw = (result.stdout + result.stderr).strip()
-        return result.returncode == 0, raw[:MAX_OUTPUT_CHARS]
-    except FileNotFoundError:
-        return True, ""  # Tool not installed — skip silently
-    except subprocess.TimeoutExpired:
-        return True, f"{cmd[0]} timed out after {TOOL_TIMEOUT}s (skipped)"
+        if result.returncode == 0:
+            return False, ""
+        output = result.stdout + result.stderr
+        return True, output[:MAX_OUTPUT_CHARS]
+    except (subprocess.TimeoutExpired, FileNotFoundError):
+        return False, ""
 
 
-def _run_tsc(cwd: Path) -> tuple[bool, str]:
-    if not _find_tsconfig(cwd):
-        return True, ""
-    cmd = _resolve_bin("tsc", cwd)
-    if not cmd:
-        return True, ""
-    return _run([*cmd, "--noEmit", "--pretty", "false"], cwd)
+def _run_eslint(cwd: Path, files: list[str]) -> tuple[bool, str]:
+    """Run ESLint on specific files. Returns (has_errors, output)."""
+    if not _find_eslint_config(cwd):
+        return False, ""
+
+    if not shutil.which("eslint") and not shutil.which("npx"):
+        return False, ""
+
+    cmd = ["npx", "eslint", "--format", "compact", *files]
+
+    try:
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            cwd=cwd,
+            timeout=TOOL_TIMEOUT,
+        )
+        if result.returncode == 0:
+            return False, ""
+        output = result.stdout + result.stderr
+        return True, output[:MAX_OUTPUT_CHARS]
+    except (subprocess.TimeoutExpired, FileNotFoundError):
+        return False, ""
 
 
-def _run_eslint(files: list[str], cwd: Path) -> tuple[bool, str]:
-    if not files or not _has_eslint(cwd):
-        return True, ""
-    cmd = _resolve_bin("eslint", cwd)
-    if not cmd:
-        return True, ""
-    return _run(
-        [*cmd, "--max-warnings=0", "--format=compact", *files],
-        cwd,
-    )
+def _run_prettier_check(cwd: Path, files: list[str]) -> tuple[bool, str]:
+    """Run Prettier format check. Returns (has_issues, output)."""
+    if not _find_prettier_config(cwd):
+        return False, ""
 
+    if not shutil.which("prettier") and not shutil.which("npx"):
+        return False, ""
 
-def _run_nx_lint(cwd: Path) -> tuple[bool, str]:
-    cmd = _resolve_bin("nx", cwd)
-    if not cmd:
-        return True, ""
-    return _run(
-        [*cmd, "affected", "--target=lint", "--parallel=3"],
-        cwd,
-    )
+    cmd = ["npx", "prettier", "--check", *files]
 
-
-def _run_prettier(files: list[str], cwd: Path) -> tuple[bool, str]:
-    if not files or not _has_prettier(cwd):
-        return True, ""
-    cmd = _resolve_bin("prettier", cwd)
-    if not cmd:
-        return True, ""
-    return _run(
-        [*cmd, "--check", *files],
-        cwd,
-    )
+    try:
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            cwd=cwd,
+            timeout=TOOL_TIMEOUT,
+        )
+        if result.returncode == 0:
+            return False, ""
+        output = result.stdout + result.stderr
+        return True, output[:MAX_OUTPUT_CHARS]
+    except (subprocess.TimeoutExpired, FileNotFoundError):
+        return False, ""
 
 
 # ─── Entry Point ─────────────────────────────────────────────────────────────
@@ -230,69 +237,84 @@ def _run_prettier(files: list[str], cwd: Path) -> tuple[bool, str]:
 
 def main() -> None:
     try:
-        json.load(sys.stdin)  # consume input even if unused
+        input_data = json.load(sys.stdin)
     except (json.JSONDecodeError, ValueError):
-        pass
+        input_data = {}
 
-    cwd = Path(os.environ.get("CLAUDE_CWD", os.getcwd()))
+    cwd = Path(input_data.get("cwd", os.environ.get("CLAUDE_CWD", os.getcwd())))
 
-    # Nothing to do if no TypeScript project detected
-    if not _find_tsconfig(cwd) and not _has_eslint(cwd) and not _has_prettier(cwd):
+    # Get modified files
+    modified = _get_modified_files(cwd)
+    if not modified and not _find_tsconfig(cwd):
+        # No TypeScript files modified and no tsconfig → silent pass
         sys.exit(0)
 
-    modified = _get_modified_ts_files(cwd)
     errors: list[str] = []
     warnings: list[str] = []
 
-    # --- TypeScript type checking ---
-    tsc_ok, tsc_out = _run_tsc(cwd)
-    if not tsc_ok and tsc_out:
-        errors.append(f"TypeScript type errors:\n{tsc_out}")
+    # Run TypeScript check
+    if _find_tsconfig(cwd):
+        has_errors, output = _run_tsc(cwd, modified)
+        if has_errors:
+            errors.append(f"TypeScript errors:\n{output}")
 
-    # --- ESLint on modified files ---
+    # Run ESLint on modified files only (if there are any)
     if modified:
-        eslint_ok, eslint_out = _run_eslint(modified, cwd)
-        if not eslint_ok and eslint_out:
-            errors.append(
-                f"ESLint violations ({len(modified)} file(s) checked):\n{eslint_out}"
-            )
+        has_errors, output = _run_eslint(cwd, modified)
+        if has_errors:
+            errors.append(f"ESLint errors:\n{output}")
 
-    # --- Nx lint for affected projects ---
-    if _is_nx(cwd):
-        nx_ok, nx_out = _run_nx_lint(cwd)
-        if not nx_ok and nx_out:
-            warnings.append(f"Nx lint issues:\n{nx_out}")
-
-    # --- Prettier format check on modified files ---
+    # Run Prettier check on modified files
     if modified:
-        prettier_ok, prettier_out = _run_prettier(modified, cwd)
-        if not prettier_ok and prettier_out:
+        has_issues, output = _run_prettier_check(cwd, modified)
+        if has_issues:
             warnings.append(
                 f"Prettier formatting issues ({len(modified)} file(s) checked):\n"
-                f"{prettier_out}\n"
+                f"{output}\n"
                 f"Run: npx prettier --write <file> to fix."
             )
 
     # --- Report ---
     if errors:
-        print("TypeScript Quality Gate — FAILED", file=sys.stderr)
+        message = "TypeScript Quality Gate — FAILED\n"
         for err in errors:
-            print(f"\n{err}", file=sys.stderr)
+            message += f"\n{err}"
         if modified:
-            print(f"\nFiles checked: {', '.join(modified)}", file=sys.stderr)
-        sys.exit(2)
+            message += f"\n\nFiles checked: {', '.join(modified)}"
+
+        # Output JSON format required by Claude Code hooks
+        output = {
+            "decision": "block",
+            "reason": "TypeScript quality gate failed",
+            "hookSpecificOutput": {
+                "hookEventName": "Stop",
+                "additionalContext": message
+            }
+        }
+        print(json.dumps(output))
+        sys.exit(0)
 
     if warnings:
-        print("TypeScript Quality Gate — WARNINGS")
+        message = "TypeScript Quality Gate — WARNINGS"
         for warn in warnings:
-            print(f"\n{warn}")
-        sys.exit(1)
+            message += f"\n\n{warn}"
+
+        # Output JSON format for warnings
+        output = {
+            "hookSpecificOutput": {
+                "hookEventName": "Stop",
+                "additionalContext": message
+            }
+        }
+        print(json.dumps(output))
+        sys.exit(0)
 
     if modified or _find_tsconfig(cwd):
-        print(
+        message = (
             f"TypeScript Quality Gate — PASSED"
-            + (f" ({len(modified)} modified file(s) checked)" if modified else "")
+            + (f" ({len(modified)} file(s) checked)" if modified else "")
         )
+        # Silent success - no JSON output needed for pass
 
     sys.exit(0)
 

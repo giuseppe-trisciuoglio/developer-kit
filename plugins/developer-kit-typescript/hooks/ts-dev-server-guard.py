@@ -85,12 +85,20 @@ def main() -> None:
 
     # Tmux not installed — show advisory so Claude can decide
     if not _tmux_available():
-        print(
+        message = (
             "⚠️  Dev server detected outside tmux. Logs may be lost when the session ends.\n"
             "   To preserve logs, install tmux (brew install tmux / apt install tmux)\n"
             "   then re-run the command. Proceeding without tmux."
         )
-        sys.exit(1)
+        # Output JSON format for advisory
+        output = {
+            "hookSpecificOutput": {
+                "hookEventName": "PreToolUse",
+                "additionalContext": message
+            }
+        }
+        print(json.dumps(output))
+        sys.exit(0)
 
     # ── Transform: wrap command in a named tmux session ────────────────────
     cwd = os.environ.get("CLAUDE_CWD", os.getcwd())

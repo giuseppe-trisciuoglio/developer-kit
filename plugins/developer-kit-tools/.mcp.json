@@ -1,28 +1,10 @@
 {
   "mcpServers": {
     "notebooklm-mcp": {
-      "command": "uvx",
-      "args": ["--from", "notebooklm-mcp-cli", "notebooklm-mcp"]
+      "command": "${CLAUDE_PLUGIN_ROOT}/scripts/wrap-notebooklm-mcp.sh"
     },
     "sonarqube-mcp": {
-      "command": "docker",
-      "args": [
-        "run",
-        "--rm",
-        "-i",
-        "-e",
-        "SONARQUBE_TOKEN",
-        "-e",
-        "SONARQUBE_URL",
-        "-e",
-        "SONARQUBE_ORG",
-        "mcp/sonarqube"
-      ],
-      "env": {
-        "SONARQUBE_TOKEN": "${SONARQUBE_TOKEN}",
-        "SONARQUBE_URL": "${SONARQUBE_URL}",
-        "SONARQUBE_ORG": "${SONARQUBE_ORG}"
-      }
+      "command": "${CLAUDE_PLUGIN_ROOT}/scripts/wrap-sonarqube-mcp.sh"
     }
   }
 }

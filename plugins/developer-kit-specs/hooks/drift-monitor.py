@@ -137,7 +137,7 @@ def is_already_alerted(file_path: str, state: dict) -> bool:
 
 
 def emit_alert(file_path: str, state: dict) -> None:
-    """Emit informational alert to stdout.
+    """Emit informational alert to stdout as JSON.
 
     Alert format: [Drift Guard] Unplanned file detected: <path>
                   Active task: <task_id>
@@ -152,9 +152,13 @@ def emit_alert(file_path: str, state: dict) -> None:
     if len(expected_files) > 5:
         preview_str += f", ... ({len(expected_files) - 5} more)"
 
-    print(f"[Drift Guard] Unplanned file detected: {file_path}")
-    print(f"[Drift Guard] Active task: {task_id}")
-    print(f"[Drift Guard] Expected files (partial): {preview_str}")
+    message = (
+        f"[Drift Guard] Unplanned file detected: {file_path}\n"
+        f"[Drift Guard] Active task: {task_id}\n"
+        f"[Drift Guard] Expected files (partial): {preview_str}"
+    )
+    output = {"type": "notification", "message": message}
+    print(json.dumps(output))
 
 
 # ─── Entry Point ─────────────────────────────────────────────────────────────

@@ -142,8 +142,16 @@ def main() -> None:
         )
         # Brief advisory so Claude knows the file was reformatted
         rel = resolved.relative_to(cwd) if resolved.is_absolute() and resolved.is_relative_to(cwd) else resolved
-        print(f"[Prettier] Auto-formatted: {rel}")
-        sys.exit(1)  # Exit 1: show advisory to Claude
+        message = f"[Prettier] Auto-formatted: {rel}"
+        # Output JSON format for advisory
+        output = {
+            "hookSpecificOutput": {
+                "hookEventName": "PostToolUse",
+                "additionalContext": message
+            }
+        }
+        print(json.dumps(output))
+        sys.exit(0)
     except (subprocess.TimeoutExpired, OSError):
         sys.exit(0)
 
