@@ -45,7 +45,7 @@ fix_plan.json state machine:
 │    → Clean → state: "cleanup"                            │
 │                                                             │
 │  state: "cleanup"                                         │
-│    → Run /specs:code-cleanup for current task            │
+│    → Run /developer-kit-specs:specs-code-cleanup for current task            │
 │    → state: "sync"                                       │
 │                                                             │
 │  state: "fix"                                             │
@@ -95,7 +95,7 @@ fix_plan.json state machine:
 
 **`review`**: Run `/specs:task-review --no-confirm --lang=[lang] "[file]"`. Then read the generated review report. If issues found → step `fix` (retry, max 3). If clean → step `cleanup`.
 
-**`cleanup`**: Run `/specs:code-cleanup --no-confirm --lang=[lang] --task="[file]"`. Then → step `sync`.
+**`cleanup`**: Run `/developer-kit-specs:specs-code-cleanup --no-confirm --lang=[lang] --task="[file]"`. Then → step `sync`.
 
 **`fix`**: Read the review report (`[current_task]--review.md`), fix the reported issues, then set step to `review`. On failure → step `failed`.
 

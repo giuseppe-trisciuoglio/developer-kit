@@ -1020,3 +1020,113 @@ plugin-bump-version: check-deps
 # ═══════════════════════════════════════════════════════════════
 # SECURITY SCAN
 # ═══════════════════════════════════════════════════════════════
+
+# ═══════════════════════════════════════════════════════════════
+# SECURITY SCAN
+# ═══════════════════════════════════════════════════════════════
+
+security-scan:
+	@$(MCP_SCAN_CLI) --all -v
+
+security-scan-changed:
+	@$(MCP_SCAN_CLI) --changed -v
+
+# ═══════════════════════════════════════════════════════════════
+# SKILL VALIDATION
+# ═══════════════════════════════════════════════════════════════
+
+skill-lint:
+	@if [ -z "$(SKILL)" ]; then \
+		echo -e "$(RED)✗ Usage: make skill-lint SKILL=plugins/<plugin>/skills/<skill-dir>$(NC)"; \
+		exit 1; \
+	fi
+	@skill_input="$(SKILL)"; \
+	if [ -d "$$skill_input" ]; then \
+		skill_entry="$$skill_input/SKILL.md"; \
+	else \
+		skill_entry="$$skill_input"; \
+	fi; \
+	if [ ! -f "$$skill_entry" ]; then \
+		echo -e "$(RED)✗ Skill entrypoint not found: $$skill_entry$(NC)"; \
+		exit 1; \
+	fi; \
+	echo -e "$(BLUE)ℹ Running skill validator on $$skill_entry$(NC)"; \
+	$(VALIDATOR_CLI) --files "$$skill_entry" -v
+
+skill-security:
+	@if [ -z "$(SKILL)" ]; then \
+		echo -e "$(RED)✗ Usage: make skill-security SKILL=plugins/<plugin>/skills/<skill-dir>$(NC)"; \
+		exit 1; \
+	fi
+	@skill_input="$(SKILL)"; \
+	if [ ! -e "$$skill_input" ]; then \
+		echo -e "$(RED)✗ Skill path not found: $$skill_input$(NC)"; \
+		exit 1; \
+	fi; \
+	echo -e "$(BLUE)ℹ Running MCP security validation on $$skill_input$(NC)"; \
+	$(MCP_SCAN_CLI) --path "$$skill_input" -v
+
+skill-review:
+	@if [ -z "$(SKILL)" ]; then \
+		echo -e "$(RED)✗ Usage: make skill-review SKILL=plugins/<plugin>/skills/<skill-dir>$(NC)"; \
+		exit 1; \
+	fi
+	@if ! command -v tessl >/dev/null 2>&1; then \
+		echo -e "$(RED)✗ 'tessl' command not found in PATH$(NC)"; \
+		exit 1; \
+	fi
+	@skill_input="$(SKILL)"; \
+	if [ -f "$$skill_input" ]; then \
+		skill_dir="$$(dirname "$$skill_input")"; \
+	else \
+		skill_dir="$$skill_input"; \
+	fi; \
+	if [ ! -d "$$skill_dir" ]; then \
+		echo -e "$(RED)✗ Skill directory not found: $$skill_dir$(NC)"; \
+		exit 1; \
+	fi; \
+	echo -e "$(BLUE)ℹ Running tessl skill review on $$skill_dir$(NC)"; \
+	tessl skill review "$$skill_dir"
+
+skill-review-all: check-deps
+	@if ! command -v tessl >/dev/null 2>&1; then \
+		echo -e "$(RED)✗ 'tessl' command not found in PATH$(NC)"; \
+		exit 1; \
+	fi
+	@total=0; failed=0; \
+	echo -e "$(BLUE)ℹ Running tessl skill review on all project skills$(NC)"; \
+	for plugin_json in $(PLUGIN_JSON_FILES); do \
+		plugin_name=$$(jq -r '.name' "$$plugin_json" 2>/dev/null); \
+		plugin_dir=$$(dirname "$$plugin_json"); \
+		base_dir=$$(dirname "$$plugin_dir"); \
+		skills=$$(jq -r '.skills[]? // empty' "$$plugin_json" 2>/dev/null); \
+		if [ -n "$$skills" ]; then \
+			echo ""; \
+			echo -e "$(YELLOW)$$plugin_name:$(NC)"; \
+			for skill_pattern in $$skills; do \
+				for skill_dir in $$base_dir/$$skill_pattern; do \
+					if [ -d "$$skill_dir" ] && [ -f "$$skill_dir/SKILL.md" ]; then \
+						total=$$((total + 1)); \
+						echo -e "$(BLUE)ℹ Running tessl skill review on $$skill_dir$(NC)"; \
+						if ! tessl skill review "$$skill_dir"; then \
+							failed=$$((failed + 1)); \
+						fi; \
+					fi; \
+			done; \
+			done; \
+		fi; \
+	done; \
+	echo ""; \
+	if [ "$$total" -eq 0 ]; then \
+		echo -e "$(YELLOW)⚠ No skills found to review$(NC)"; \
+		exit 0; \
+	fi; \
+	if [ "$$failed" -gt 0 ]; then \
+		echo -e "$(RED)✗ Tessl review failed for $$failed of $$total skill(s)$(NC)"; \
+		exit 1; \
+	fi; \
+	echo -e "$(GREEN)✓ Tessl review passed for all $$total skill(s)$(NC)"
+
+plugin-validate:
+	@echo -e "$(BLUE)ℹ Running repository-wide component validation$(NC)"
+	@$(VALIDATOR_CLI) --all -v

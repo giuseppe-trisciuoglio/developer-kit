@@ -1,0 +1,39 @@
+{
+  "description": "Drift Guard hooks for tracking code fidelity during specification-driven development sessions",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/drift-init.py",
+            "statusMessage": "Initializing Drift Guard tracking..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/drift-monitor.py",
+            "statusMessage": "Monitoring for unplanned file changes..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/drift-report.py",
+            "statusMessage": "Generating Drift Guard fidelity report..."
+          }
+        ]
+      }
+    ]
+  }
+}
