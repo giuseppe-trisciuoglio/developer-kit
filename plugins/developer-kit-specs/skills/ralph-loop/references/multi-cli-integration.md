@@ -1,54 +1,242 @@
 # Multi-CLI Ralph Loop Integration
 
-This document explains how to run the Ralph Loop across all supported CLI environments using the **state machine approach**: one invocation = one step, state persisted in `fix_plan.json`.
+This document explains how to run the Ralph Loop across all supported CLI environments using the **Python orchestrator script**.
 
-## State Machine Architecture
+## Architecture
+
+The Ralph Loop uses a Python script (`ralph_loop.py`) as the central orchestrator:
+
+1. **Script manages state**: Reads/writes `fix_plan.json`
+2. **Script generates commands**: Shows the correct command for your CLI
+3. **You execute commands**: Run the shown command in your CLI
+4. **Script updates state**: Run the script again to advance
 
 ```
-Each /loop invocation:
-1. Read fix_plan.json → get current step
-2. Execute exactly ONE step
-3. Update fix_plan.json with new state
-4. Stop
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│  ralph_loop.py  │────▶│  fix_plan.json  │────▶│  Your CLI       │
+│  (orchestrator) │     │  (state file)   │     │  (Claude/Codex/ │
+│                 │     │                 │     │  Copilot/Kimi)  │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+         ▲                                               │
+         │                                               ▼
+         └──────────────────────────────────────────────┘
+                    (you run script again)
 ```
 
-See `references/state-machine.md` for complete state machine documentation.
+## Supported CLIs
 
-## Ralph Loop Across CLIs
+| CLI | Agent Code | Command Prefix | Example |
+|-----|------------|----------------|---------|
+| Claude Code | `claude` | `/` | `/specs:task-implementation` |
+| Codex CLI | `codex` | (none) | `task-implementation` |
+| Copilot CLI | `copilot` | (none) | `task-implementation` |
+| Kimi CLI | `kimi` | `/` | `/specs:task-implementation` |
 
-| CLI | Invocation Method | Command |
-|-----|-----------------|---------|
-| Claude Code | Built-in `/loop` | `/loop 5m /developer-kit-specs:specs.ralph-loop --action=loop --spec=...` |
-| Claude Code | Shell loop | `while :; do cat prompt.md \| claude; done` |
-| Copilot CLI | Shell loop | `while :; do cat prompt.md \| copilot; done` |
-| Codex CLI | Shell loop | `while :; do cat prompt.md \| codex; done` |
-| Gemini CLI | Shell loop | `while :; do cat prompt.md \| gemini; done` |
-| OpenCode CLI | Interactive | `opencode < prompt.md` |
+## Basic Usage (All CLIs)
 
-## Claude Code (Recommended)
-
-### With /loop
+### 1. Initialize
 
 ```bash
-# Initialize and start
-/loop 5m /developer-kit-specs:specs.ralph-loop --action=start --spec=docs/specs/001-feature/ --from-task=TASK-036 --to-task=TASK-041
-
-# Continue looping
-/loop 5m /developer-kit-specs:specs.ralph-loop --action=loop --spec=docs/specs/001-feature/ --from-task=TASK-036 --to-task=TASK-041
+# Use python3 on macOS, python on Windows/Linux
+python3 plugins/developer-kit-specs/skills/ralph-loop/scripts/ralph_loop.py \
+  --action=start \
+  --spec=docs/specs/001-feature/ \
+  --from-task=TASK-036 \
+  --to-task=TASK-041 \
+  --agent=claude
 ```
 
-Claude Code's `/loop` skill repeatedly invokes the skill every 5 minutes (or custom interval). The state machine ensures each invocation does exactly one step. The loop stops automatically when `state.step = "complete"`.
-
-### Without /loop
+### 2. Run Loop
 
 ```bash
-# Manual iteration
-/developer-kit-specs:specs.ralph-loop --action=loop --spec=docs/specs/001-feature/
+python3 ralph_loop.py --action=loop --spec=docs/specs/001-feature/
 ```
 
-## All Other CLIs (Shell Loop)
+Output shows the command to execute:
+```
+🔄 Ralph Loop | Iteration 0 | Step: implementation
+→ Implementation: TASK-036
 
-The shell approach uses `prompt.md` which contains the state machine instructions. Each invocation runs one step:
+Execute:
+  /specs:task-implementation --task=TASK-036
+
+After execution, update state:
+  python3 ralph_loop.py --action=loop --spec=docs/specs/001-feature/
+```
+
+### 3. Execute Shown Command
+
+In your CLI, run the shown command:
+```bash
+/specs:task-implementation --task=TASK-036
+```
+
+### 4. Continue Loop
+
+Run the loop command again:
+```bash
+python3 ralph_loop.py --action=loop --spec=docs/specs/001-feature/
+```
+
+## CLI-Specific Examples
+
+### Claude Code
+
+```bash
+# Initialize
+python3 ralph_loop.py --action=start \
+  --spec=docs/specs/001-feature/ \
+  --from-task=TASK-036 --to-task=TASK-041 \
+  --agent=claude
+
+# With /loop for automation
+/loop 5m python3 ralph_loop.py --action=loop --spec=docs/specs/001-feature/
+```
+
+Commands will be formatted as: `/specs:task-implementation --task=TASK-036`
+
+### Codex CLI
+
+```bash
+# Initialize
+python3 ralph_loop.py --action=start \
+  --spec=docs/specs/001-feature/ \
+  --from-task=TASK-036 --to-task=TASK-041 \
+  --agent=codex
+
+# Loop
+python3 ralph_loop.py --action=loop --spec=docs/specs/001-feature/
+```
+
+Commands will be formatted as: `task-implementation --task=TASK-036`
+
+### Copilot CLI
+
+```bash
+# Initialize
+python3 ralph_loop.py --action=start \
+  --spec=docs/specs/001-feature/ \
+  --agent=copilot
+
+# Loop
+python3 ralph_loop.py --action=loop --spec=docs/specs/001-feature/
+```
+
+### Kimi CLI
+
+```bash
+# Initialize
+python3 ralph_loop.py --action=start \
+  --spec=docs/specs/001-feature/ \
+  --agent=kimi
+
+# Loop
+python3 ralph_loop.py --action=loop --spec=docs/specs/001-feature/
+```
+
+Commands will be formatted as: `/specs:task-implementation --task=TASK-036`
+
+## Multi-Agent Support
+
+### Default Agent
+
+Set default agent for all tasks:
+```bash
+python3 ralph_loop.py --action=start --spec=... --agent=codex
+```
+
+### Per-Task Agent
+
+Override per task in task file frontmatter:
+```yaml
+---
+id: TASK-036
+title: Refactor service
+agent: codex
+---
+```
+
+## Automation Scripts
+
+### Bash Loop
+
+```bash
+#!/bin/bash
+# ralph-loop.sh - Run until complete
+
+SPEC="docs/specs/001-feature"
+PYTHON="python3"  # Use python3 on macOS
+
+while true; do
+  # Run one step
+  OUTPUT=$($PYTHON ralph_loop.py --action=loop --spec="$SPEC" 2>&1)
+  echo "$OUTPUT"
+
+  # Check if complete or failed
+  if echo "$OUTPUT" | grep -q "COMPLETE"; then
+    echo "✅ All done!"
+    break
+  fi
+  if echo "$OUTPUT" | grep -q "FAILED"; then
+    echo "❌ Loop failed!"
+    exit 1
+  fi
+
+  # The script shows the command to execute
+  # In automation, you would need to execute it programmatically
+  # For manual use, execute the shown command then continue
+  echo "Execute the shown command, then press Enter to continue..."
+  read
+done
+```
+
+### With Claude Code /loop
+
+```bash
+# This will run the loop every 5 minutes
+/loop 5m python3 plugins/developer-kit-specs/skills/ralph-loop/scripts/ralph_loop.py \
+  --action=loop \
+  --spec=docs/specs/001-feature/
+```
+
+Note: With `/loop`, you'll see the command to execute each iteration. Execute it manually, then the next `/loop` will continue.
+
+## State File
+
+All state lives in `fix_plan.json`:
+
+```json
+{
+  "spec_id": "001-feature",
+  "spec_folder": "docs/specs/001-feature/",
+  "task_range": {
+    "from": "TASK-036",
+    "to": "TASK-041",
+    "total_in_range": 6
+  },
+  "default_agent": "claude",
+  "tasks": [...],
+  "pending": ["TASK-036", "TASK-037"],
+  "done": [],
+  "state": {
+    "step": "implementation",
+    "current_task": "TASK-036",
+    "current_task_file": "docs/specs/001-feature/tasks/TASK-036.md",
+    "current_task_lang": "java",
+    "iteration": 0,
+    "retry_count": 0,
+    "last_updated": "2026-04-05T10:30:00",
+    "range_progress": {
+      "done_in_range": 0,
+      "total_in_range": 6
+    }
+  }
+}
+```
+
+## Legacy Shell Loop (Deprecated)
+
+For non-Claude CLIs without the Python script, you can use a shell loop with `prompt.md`:
 
 ```bash
 cd docs/specs/001-feature/_ralph_loop/
@@ -56,133 +244,73 @@ cd docs/specs/001-feature/_ralph_loop/
 # Claude Code
 while :; do cat prompt.md | claude; done
 
-# GitHub Copilot CLI
+# Copilot CLI
 while :; do cat prompt.md | copilot; done
 
 # Codex CLI
 while :; do cat prompt.md | codex; done
-
-# Gemini CLI
-while :; do cat prompt.md | gemini; done
-
-# OpenCode CLI
-while :; do cat prompt.md | opencode; done
 ```
 
-## State File
+**Note**: The Python orchestrator is the recommended approach for all CLIs.
 
-All state lives in `docs/specs/[id]/_ralph_loop/fix_plan.json`. The key field is `state.step`:
+## Command Reference
 
-```json
-{
-  "state": {
-    "step": "init|choose_task|implementation|review|fix|cleanup|sync|update_done|complete|failed",
-    "current_task": "TASK-036",
-    "iteration": 3,
-    "task_range": {
-      "from": "TASK-036",
-      "to": "TASK-041",
-      "total_in_range": 6
-    }
-  }
-}
-```
+### Script Commands
 
-## Generated Files
+| Action | Description |
+|--------|-------------|
+| `--action=start` | Initialize fix_plan.json from task files |
+| `--action=loop` | Execute one step, show command to run |
+| `--action=status` | Show current state and progress |
+| `--action=resume` | Resume from current state |
 
-After `--action=start`, these files are created in `docs/specs/[id]/_ralph_loop/`:
+### Generated Commands by Agent
 
-- `fix_plan.json` — State machine state
-- `prompt.md` — Step-by-step instructions for shell loop
-- `run-ralph.sh` — Auto-detect CLI and run one step
-- `run-claude.sh` — Claude Code specific
-- `run-copilot.sh` — Copilot CLI specific
-- `run-codex.sh` — Codex CLI specific
-- `run-gemini.sh` — Gemini CLI specific
-- `run-opencode.sh` — OpenCode CLI specific
+| Step | Claude/Kimi | Codex/Copilot |
+|------|-------------|---------------|
+| Implementation | `/specs:task-implementation --task=TASK-036` | `task-implementation --task=TASK-036` |
+| Review | `/specs:task-review --task=TASK-036` | `task-review --task=TASK-036` |
+| Cleanup | `/developer-kit-specs:specs-code-cleanup --task=TASK-036` | `specs-code-cleanup --task=TASK-036` |
+| Sync | `/specs:spec-sync-with-code --after-task=TASK-036` | `spec-sync-with-code --after-task=TASK-036` |
 
-## prompt.md Content
+## Best Practices
 
-The `prompt.md` contains deterministic instructions that any LLM CLI can follow:
+1. **Use Python script for state management**: Don't manually edit `fix_plan.json`
+2. **Execute shown commands**: The script generates the correct command for your CLI
+3. **One step at a time**: Don't try to combine steps — context will explode
+4. **Check status regularly**: Use `--action=status` to see progress
+5. **Git commits**: The script auto-commits after each completed task
 
-```
-Ralph Loop State Machine — One Step Per Invocation
-================================================
-Read fix_plan.json → Execute current step → Update state → Stop
+## Troubleshooting
 
-Current State:
-- Step: implementation
-- Task: TASK-037
-- Range: TASK-036 → TASK-041
-- Iteration: 3
+### "fix_plan.json not found"
 
-Execute Step: implementation
----------------------------
-1. Read the task file for TASK-037
-2. Run task-implementation:
-   /specs:task-implementation --lang=[lang] --task="[task-file]"
-3. If success: update fix_plan.json with step="review"
-4. If failure: update fix_plan.json with step="failed"
-5. Stop immediately — DO NOT ask the user for confirmation
-```
+Run `--action=start` first.
 
-The prompt.md is generated by `--action=start` with the current state filled in.
+### Wrong command format
 
-## CLI-Specific Notes
+Check `--agent` matches your CLI (`claude`, `codex`, `copilot`, or `kimi`).
 
-### Claude Code
-- Use `/loop` skill for automatic scheduling
-- The `specs.ralph-loop` skill implements the full state machine
-- State persisted in fix_plan.json between invocations
+### Task not found
 
-### Copilot CLI
-- No `/loop` skill — use shell loop
-- Pass current step explicitly in prompt
+Ensure task files are in `tasks/TASK-XXX.md` format with YAML frontmatter.
 
-### Codex CLI
-- GPT-5.3-codex model
-- Good for autonomous implementation
-- Follow state machine strictly
+## Migration from Shell Loop
 
-### Gemini CLI
-- Google's Gemini models
-- Check available flags for piped input
+If you were using the shell loop approach:
 
-### OpenCode CLI
-- Supports both agents and commands
-- May share plugin configuration
+1. **Before**: `while :; do cat prompt.md | claude; done`
+2. **After**: 
+   ```bash
+   python3 ralph_loop.py --action=start --spec=...
+   python3 ralph_loop.py --action=loop --spec=...
+   # Execute shown command
+   python3 ralph_loop.py --action=loop --spec=...
+   ```
 
-## Preventing Interactive Blocks
-
-The most common failure mode in automated loops is an agent waiting for user confirmation. To prevent this:
-
-- **Always use `--no-confirm`** when invoking `/specs:task-review` from the loop
-- **Never use `AskUserQuestion`** inside a loop step
-- **Stop immediately** after updating `fix_plan.json` — do not present "Continue?" prompts
-- If a sub-command does not support `--no-confirm`, wrap it in a non-interactive prompt that forbids questions
-
-## Ralph's Original Approach (CLI-Agnostic)
-
-Geoffrey Huntley's Ralph is a pure shell loop. Adapted for specs:
-
-```bash
-while :; do
-  echo "Ralph Loop — Reading state..."
-  STEP=$(jq -r '.state.step' fix_plan.json)
-  echo "Step: $STEP"
-
-  case "$STEP" in
-    complete) echo "Done!"; break ;;
-    failed) echo "Failed!"; break ;;
-    *)
-      cat prompt.md | claude
-      ;;
-  esac
-done
-```
-
-## Anti-Patterns
-
-- **Multiple steps per invocation**: Don't try to implement + review + sync in one go — the context will explode
-- **No state persistence**: Don't keep all history in context — read from fix_plan.json
-- **Ignoring the state**: Follow the state machine exactly
+The Python script provides:
+- Better state management
+- Multi-agent support
+- Command formatting per CLI
+- Progress tracking
+- Git integration

@@ -25,7 +25,7 @@ SHELL := /bin/bash
         install install-claude install-opencode install-copilot install-codex install-kimi \
         install-rules uninstall status backup clean security-scan security-scan-changed \
         skill-lint skill-security skill-review skill-review-all plugin-validate plugin-bump-version \
-        install-specs-codex-loop
+        install-agents-loop
 
 # ═══════════════════════════════════════════════════════════════
 # COLORS & OUTPUT FORMATTING
@@ -174,6 +174,7 @@ help:
 	@echo "  make backup               Create backup of current configs"
 	@echo "  make clean                Remove generated files"
 	@echo "  make install-specs-codex-loop  Install specs_codex_loop symlink in /usr/local/bin"
+	@echo "  make install-agents-loop        Install agents_loop symlink in /usr/local/bin"
 	@echo ""
 	@echo -e "$(GREEN)Information:$(NC)"
 	@echo "  make check-deps           Check if required dependencies are installed"
@@ -716,6 +717,7 @@ install-opencode: check-deps
 				for skill_dir in $$base_dir/$$skill_pattern; do \
 					if [ -d "$$skill_dir" ]; then \
 						skill_name=$$(basename "$$skill_dir"); \
+						rm -rf "$(OPENCODE_SKILLS)/$$skill_name"; \
 						cp -r "$$skill_dir" "$(OPENCODE_SKILLS)/$$skill_name"; \
 						echo "  ✓ $$plugin_name: $$skill_name"; \
 						skills_count=$$((skills_count + 1)); \
@@ -915,6 +917,7 @@ install-kimi: check-deps
 				for skill_dir in $$base_dir/$$skill_pattern; do \
 					if [ -d "$$skill_dir" ]; then \
 						skill_name=$$(basename "$$skill_dir"); \
+						rm -rf "$(KIMI_SKILLS)/$$skill_name"; \
 						cp -r "$$skill_dir" "$(KIMI_SKILLS)/$$skill_name"; \
 						echo "  ✓ $$plugin_name: $$skill_name"; \
 						skills_count=$$((skills_count + 1)); \
@@ -954,20 +957,35 @@ install-kimi: check-deps
 # UTILITY INSTALLATION
 # ═══════════════════════════════════════════════════════════════
 
-install-specs-codex-loop:
+install-agents-loop:
 	@echo ""
 	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
-	@echo -e "$(BLUE)Installing specs_codex_loop utility$(NC)"
+	@echo -e "$(BLUE)Installing agents_loop utility$(NC)"
 	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
 	@echo ""
 	@if [ ! -d "/usr/local/bin" ]; then \
 		echo -e "$(RED)✗ /usr/local/bin does not exist. Please create it or use sudo.$(NC)"; \
 		exit 1; \
 	fi
-	@ln -sf "$(DEVKIT_DIR)/scripts/loop_codex.py" "/usr/local/bin/specs_codex_loop"
-	@chmod +x "/usr/local/bin/specs_codex_loop"
-	@$(call success,Installed specs_codex_loop → /usr/local/bin/specs_codex_loop)
-	@echo "  Usage: specs_codex_loop --spec=docs/specs/... --action=loop --full-auto"
+	@ln -sf "$(DEVKIT_DIR)/scripts/agents_loop.py" "/usr/local/bin/agents_loop"
+	@chmod +x "/usr/local/bin/agents_loop"
+	@$(call success,Installed agents_loop → /usr/local/bin/agents_loop)
+	@echo "  Usage: agents_loop --spec=docs/specs/... [--agent=<agent>] [--model=<model>] [--yolo]"
+	@echo ""
+	@echo -e "$(CYAN)Supported agents:$(NC)"
+	@echo "  • claude   - Claude Code (--model sonnet|opus|haiku, --yolo uses --dangerously-skip-permissions)"
+	@echo "  • codex    - OpenAI Codex CLI (--model gpt-5.3-codex|o3, --yolo uses --dangerously-bypass-approvals-and-sandbox)"
+	@echo "  • copilot  - GitHub Copilot CLI (--model gpt-4, --yolo uses --allow-all)"
+	@echo "  • gemini   - Google Gemini CLI (-m gemini-2.5-pro, --yolo uses -y)"
+	@echo "  • kimi     - Kimi CLI (--model kimi-k1.5, --yolo uses --yolo)"
+	@echo "  • glm4     - GLM-4 CLI (--model glm-4-plus, --yolo uses --dangerously-skip-permissions)"
+	@echo "  • minimax  - MiniMax CLI (--model abab6.5s, --yolo uses --dangerously-skip-permissions)"
+	@echo ""
+	@echo "  Examples:"
+	@echo "    agents_loop --spec=docs/specs/001                              # uses codex (default)"
+	@echo "    agents_loop --spec=docs/specs/001 --agent=claude --model=sonnet --yolo"
+	@echo "    agents_loop --spec=docs/specs/001 --agent=gemini -m gemini-2.5-pro --yolo"
+	@echo "    agents_loop --spec=docs/specs/001 --agent=codex --model=o3 --yolo"
 	@echo ""
 
 # ═══════════════════════════════════════════════════════════════
@@ -1016,10 +1034,6 @@ plugin-bump-version: check-deps
 	echo ""; \
 	echo -e "$(GREEN)✓ Version bump complete: $$NEW_VERSION$(NC)"
 	@echo ""
-
-# ═══════════════════════════════════════════════════════════════
-# SECURITY SCAN
-# ═══════════════════════════════════════════════════════════════
 
 # ═══════════════════════════════════════════════════════════════
 # SECURITY SCAN

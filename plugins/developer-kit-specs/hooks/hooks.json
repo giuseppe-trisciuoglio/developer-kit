@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/drift-init.py",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/drift-init.py",
             "statusMessage": "Initializing Drift Guard tracking..."
           }
         ]
@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/drift-monitor.py",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/drift-monitor.py",
             "statusMessage": "Monitoring for unplanned file changes..."
           }
         ]
@@ -29,7 +29,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/drift-report.py",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/drift-report.py",
             "statusMessage": "Generating Drift Guard fidelity report..."
           }
         ]
