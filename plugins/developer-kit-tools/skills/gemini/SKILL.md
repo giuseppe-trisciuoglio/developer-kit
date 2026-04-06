@@ -127,7 +127,7 @@ Examples:
 gemini -p "Analyze this codebase architecture and list refactoring opportunities by impact."
 
 # Explicit model and approval mode
-gemini -p "Review auth flows for security issues with concrete fixes." -m gemini-2.5-pro --approval-mode plan
+gemini -p "Review auth flows for security issues with concrete fixes." -m gemini-3-pro --approval-mode plan
 
 # Structured output for automation
 gemini -p "Summarize key technical debt items as JSON array." --output-format json
@@ -181,7 +181,7 @@ gemini -p "Analyze this repository for security vulnerabilities. Report only hig
 ### Example 2: Documentation synthesis
 
 ```bash
-gemini -p "Read the available documentation and produce a concise architecture summary with component responsibilities and integration points." -m gemini-2.5-pro
+gemini -p "Read the available documentation and produce a concise architecture summary with component responsibilities and integration points." -m gemini-3-pro
 ```
 
 ### Example 3: Structured output for follow-up automation

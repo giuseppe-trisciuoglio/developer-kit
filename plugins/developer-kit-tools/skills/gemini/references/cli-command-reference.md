@@ -30,7 +30,7 @@ gemini -r latest -p "Continue analysis and focus on auth module"
 
 ```bash
 # Explicit model
-gemini -p "<english-prompt>" -m gemini-2.5-pro
+gemini -p "<english-prompt>" -m gemini-3-pro
 ```
 
 ## Approval Modes
@@ -73,7 +73,7 @@ gemini -p "<english-prompt>" --raw-output
 gemini -p "Analyze this codebase for high-confidence security vulnerabilities with file paths and fixes." --approval-mode plan
 
 # Large-context refactor analysis
-gemini -p "Propose a phased refactor plan for this monorepo. Include impacted modules and migration risks." -m gemini-2.5-pro --output-format json
+gemini -p "Propose a phased refactor plan for this monorepo. Include impacted modules and migration risks." -m gemini-3-pro --output-format json
 ```
 
 ## Troubleshooting

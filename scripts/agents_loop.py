@@ -181,7 +181,7 @@ def parse_args():
     )
     parser.add_argument(
         "--model",
-        help="Model to use (e.g. claude: sonnet/opus/haiku, codex: gpt-5.4/o3, gemini: gemini-2.5-pro, kimi: kimi-k1.5, glm4: glm-4-plus, minimax: abab6.5s, copilot: gpt-4).",
+        help="Model to use (e.g. claude: sonnet/opus/haiku, codex: gpt-5.4/o3, gemini: gemini-3-pro, kimi: kimi-k1.5, glm4: glm-4-plus, minimax: abab6.5s, copilot: gpt-4).",
     )
     parser.add_argument(
         "-C", "--workdir",

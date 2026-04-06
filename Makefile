@@ -976,7 +976,7 @@ install-agents-loop:
 	@echo "  • claude   - Claude Code (--model sonnet|opus|haiku, --yolo uses --dangerously-skip-permissions)"
 	@echo "  • codex    - OpenAI Codex CLI (--model gpt-5.3-codex|o3, --yolo uses --dangerously-bypass-approvals-and-sandbox)"
 	@echo "  • copilot  - GitHub Copilot CLI (--model gpt-4, --yolo uses --allow-all)"
-	@echo "  • gemini   - Google Gemini CLI (-m gemini-2.5-pro, --yolo uses -y)"
+	@echo "  • gemini   - Google Gemini CLI (-m gemini-3-pro, --yolo uses -y)"
 	@echo "  • kimi     - Kimi CLI (--model kimi-k1.5, --yolo uses --yolo)"
 	@echo "  • glm4     - GLM-4 CLI (--model glm-4-plus, --yolo uses --dangerously-skip-permissions)"
 	@echo "  • minimax  - MiniMax CLI (--model abab6.5s, --yolo uses --dangerously-skip-permissions)"
@@ -984,7 +984,7 @@ install-agents-loop:
 	@echo "  Examples:"
 	@echo "    agents_loop --spec=docs/specs/001                              # uses codex (default)"
 	@echo "    agents_loop --spec=docs/specs/001 --agent=claude --model=sonnet --yolo"
-	@echo "    agents_loop --spec=docs/specs/001 --agent=gemini -m gemini-2.5-pro --yolo"
+	@echo "    agents_loop --spec=docs/specs/001 --agent=gemini -m gemini-3-pro --yolo"
 	@echo "    agents_loop --spec=docs/specs/001 --agent=codex --model=o3 --yolo"
 	@echo ""
 
