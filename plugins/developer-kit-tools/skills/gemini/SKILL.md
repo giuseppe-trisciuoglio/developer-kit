@@ -1,6 +1,6 @@
 ---
 name: gemini
-description: Provides Gemini CLI delegation workflows for large-context analysis tasks, including English prompt formulation, execution flags, and safe result handling. Use when the user explicitly asks to use Gemini for a specific task such as broad codebase analysis or long-document processing. Triggers on "use gemini", "delegate to gemini", "run gemini cli", "ask gemini", "use gemini for this task".
+description: Provides Gemini CLI delegation workflows for large-context analysis and complex reasoning using Gemini 3.0 Flash and Gemini 3.0 Pro models, including English prompt formulation, execution flags, and safe result handling. Use when the user explicitly asks to use Gemini for tasks such as broad codebase analysis, fast iterations with Gemini 3 Flash, or deep architectural reasoning with Gemini 3 Pro. Triggers on "use gemini", "delegate to gemini", "run gemini cli", "ask gemini", "use gemini for this task", "use gemini 3 flash", "use gemini 3 pro".
 allowed-tools: Bash, Read, Write
 ---
 
