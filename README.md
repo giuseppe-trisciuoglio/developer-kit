@@ -68,8 +68,9 @@ Core agents, commands, and skills used by all other plugins.
 | `general-software-architect` | Feature architecture design            |
 | `general-debugger`           | Root cause analysis and debugging      |
 | `document-generator-expert`  | Professional document generation       |
+| `learn-analyst`              | Codebase analysis and rule discovery   |
 
-**Skills**: `claude-md-management`, `drawio-logical-diagrams`, `github-issue-workflow`, `docs-updater`
+**Skills**: `claude-md-management`, `drawio-logical-diagrams`, `github-issue-workflow`, `docs-updater`, `learn`
 
 **Hooks**: `prevent-destructive-commands` (Python 3 PreToolUse hook for blocking dangerous Bash commands)
 
@@ -93,18 +94,21 @@ Specifications-driven development workflow for transforming ideas into functiona
 | `spec-to-tasks`       | Converts functional specifications into executable tasks          |
 | `spec-sync-with-code` | Synchronizes specification with implementation state              |
 | `task-manage`         | Post-generation task management (list, split, add, update)        |
-| `task-review`         | Verifies implemented tasks meet specifications                    |
 | `task-implementation` | Guided single-task implementation with Knowledge Graph validation |
+| `task-tdd`            | Test-Driven implementation of a specific task                     |
+| `task-review`         | Verifies implemented tasks meet specifications                    |
+| `code-cleanup`        | Professional code cleanup after task review approval              |
+| `ralph-loop`          | Guided automation loop for spec-driven development                |
 
-**Skills**: `knowledge-graph` - Persistent Knowledge Graph for specifications with caching and validation
+**Skills**: `knowledge-graph` (caching/validation), `ralph-loop` (automation loop), `specs-code-cleanup` (hygiene)
 
-**Hooks**: `task-implementation-review-stop` - Stop hook that forces `/specs:task-review`, fixes, and optional spec sync after `/specs:task-implementation`
+**Hooks**: `task-implementation-review-stop` (stop gate), `drift-guard` (spec-to-code gap monitoring)
 
 **Note**: In specs-driven work, treat `docs/specs/` files as deliverables. If implementation or recommendations clarify or change the intended behavior, update the affected spec artifacts with `/specs:spec-sync-with-code` before concluding the workflow or chat session.
 
 **Commands**: `/specs:brainstorm`, `/specs:quick-spec`, `/specs:spec-quality-check`, `/specs:spec-sync-context`,
-`/specs:spec-to-tasks`, `/specs:spec-sync-with-code`, `/specs:task-manage`, `/specs:task-review`,
-`/specs:task-implementation`
+`/specs:spec-to-tasks`, `/specs:spec-sync-with-code`, `/specs:task-manage`, `/specs:task-implementation`,
+`/specs:task-tdd`, `/specs:task-review`, `/specs:code-cleanup`, `/specs:ralph-loop`
 
 ---
 

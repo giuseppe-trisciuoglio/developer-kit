@@ -9,6 +9,9 @@ This plugin provides a complete workflow for:
 - **Task Generation**: Convert functional specifications into executable tasks
 - **Task Management**: Add, split, update, and manage tasks after generation
 - **Task Review**: Verify implemented tasks meet specifications
+- **TDD Workflow**: Test-Driven Development integration for task implementation
+- **Drift Guard**: Real-time monitoring of specification-to-implementation drift
+- **Ralph Loop**: Guided automation loop for full specification lifecycle
 - **Code Cleanup**: Remove technical debt and finalize tasks after review approval
 - **Automatic stop gate after task implementation**: Forces review, fixes, and spec sync handling before Claude stops
 - **Spec Quality Check**: Review and validate specification content quality
@@ -18,8 +21,8 @@ This plugin provides a complete workflow for:
 ## Workflow
 
 ```
-Idea → Functional Specification → Tasks → Implementation → Review → Code Cleanup → Done
-       (brainstorm)              (spec-to-tasks)          (task-review)   (code-cleanup)
+Idea → Functional Specification → Tasks → TDD / Implementation → Review → Code Cleanup → Done
+       (brainstorm)              (spec-to-tasks)  (task-tdd)    (task-review)   (code-cleanup)
 ```
 
 ## Specification Maintenance Note
@@ -56,8 +59,13 @@ Example to include in the CLAUDE.md or AGENTS.md for specification maintenance:
 - `/specs:spec-to-tasks [spec-folder]` - Convert specs to executable tasks
 - `/specs:task-manage --action=[add|split|update|list]` - Manage tasks after generation
 - `/specs:task-implementation --lang=[lang] [task-file]` - Implement a specific task
+- `/specs:task-tdd --lang=[lang] [task-file]` - Test-Driven implementation of a task
 - `/specs:task-review --lang=[lang] [task-file]` - Review implemented task
 - `/specs:code-cleanup --lang=[lang] [task-file]` - Clean up code after review approval
+
+### Automation
+
+- `/specs:ralph-loop` - Guided automation loop for spec-driven development
 
 ### Synchronization
 
@@ -108,6 +116,36 @@ Persistent JSON file that stores discoveries from codebase analysis:
 - Location: `docs/specs/[ID-feature]/knowledge-graph.json`
 - Reduces redundant codebase exploration
 - Enables task validation against actual codebase state
+
+### ralph-loop
+
+Guided automation loop for specification-driven development:
+- Orchestrates task implementation, review, and cleanup
+- Maintains state across turns for long-running tasks
+- Integrates with spec-driven commands for consistent workflow
+
+### specs-code-cleanup
+
+Professional code cleanup after task review approval:
+- Removes debug logs and temporary comments
+- Optimizes imports and improves readability
+- Finalizes code before task completion
+
+## Hooks
+
+### drift-guard
+
+Monitors the consistency between specifications and implementation:
+- `drift-init`: Initializes drift monitoring for a specification
+- `drift-monitor`: Analyzes implementation changes against functional requirements
+- `drift-report`: Generates a report highlighting deviations or missing features
+
+### task-implementation-review-stop
+
+Forces review and fixes after task implementation:
+- Prevents the assistant from stopping before running `/specs:task-review`
+- Ensures fixes and optional spec synchronization are handled immediately
+- Maintains high quality standards for implemented tasks
 
 ## Requirements
 
