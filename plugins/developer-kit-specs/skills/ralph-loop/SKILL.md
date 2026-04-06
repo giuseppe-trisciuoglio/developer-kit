@@ -98,11 +98,23 @@ fix_plan.json state machine:
 └─────────────────────────────────────────────────────────────┘
 ```
 
+## File Location Requirements
+
+**⚠️ CRITICAL**: The `fix_plan.json` file MUST ALWAYS be located in:
+
+```
+docs/specs/[ID-feature]/_ralph_loop/fix_plan.json
+```
+
+This is enforced by the script to prevent LLMs from creating files in wrong locations.
+
+**Migration**: If you have an old `fix_plan.json` in the root of your spec folder, the script will automatically migrate it to `_ralph_loop/` on first run.
+
 ## Instructions
 
 ### Phase 1: Initialize
 
-Run the Python script with `--action=start` to scan task files and create `fix_plan.json`:
+Run the Python script with `--action=start` to scan task files and create `fix_plan.json` in the correct location:
 
 ```bash
 python3 plugins/developer-kit-specs/skills/ralph-loop/scripts/ralph_loop.py \
@@ -185,7 +197,7 @@ python3 plugins/developer-kit-specs/skills/ralph-loop/scripts/ralph_loop.py \
 | `--spec` | Spec folder path (e.g. `docs/specs/001-feature/`) |
 | `--from-task` | Start of task range (e.g. `TASK-036`) |
 | `--to-task` | End of task range (e.g. `TASK-041`) |
-| `--agent` | Default agent: `claude`, `codex`, `copilot`, `kimi` |
+| `--agent` | Default agent: `claude`, `codex`, `copilot`, `kimi`, `gemini`, `glm4`, `minimax` |
 | `--no-commit` | Skip git commits (for testing) |
 
 ## Step Details
@@ -287,7 +299,7 @@ agent: codex
 ---
 ```
 
-Supported agents: `claude`, `codex`, `copilot`, `kimi`
+Supported agents: `claude`, `codex`, `copilot`, `kimi`, `gemini`, `glm4`, `minimax`
 
 ## Using with /loop (Claude Code)
 
@@ -300,6 +312,8 @@ For automatic scheduling every 5 minutes:
 ```
 
 This will repeatedly run the loop, showing you the next command each time.
+
+**Note**: The Ralph Loop is now managed directly through the Python script. The deprecated `/specs:ralph-loop` command has been removed.
 
 ## Task File Format
 
@@ -392,6 +406,30 @@ python3 ralph_loop.py --action=start \
 ## Troubleshooting
 
 ### "fix_plan.json not found"
+
+Run `--action=start` first:
+```bash
+python3 ralph_loop.py --action=start --spec=docs/specs/001-feature/
+```
+
+The script will create `fix_plan.json` in the correct location:
+```
+docs/specs/001-feature/_ralph_loop/fix_plan.json
+```
+
+### "fix_plan.json in wrong location"
+
+If you see a warning about the file being in the wrong location, the script will guide you through migration:
+
+```bash
+# Manual migration if needed
+mkdir -p docs/specs/001-feature/_ralph_loop
+mv docs/specs/001-feature/fix_plan.json docs/specs/001-feature/_ralph_loop/fix_plan.json
+```
+
+The script will automatically migrate old files on first run.
+
+### "Invalid spec folder"
 
 Run `--action=start` first:
 ```bash

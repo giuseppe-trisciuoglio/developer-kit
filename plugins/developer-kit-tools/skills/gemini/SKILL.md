@@ -66,6 +66,21 @@ Before running Gemini:
 
 If scope is ambiguous, ask for clarification first.
 
+### Model Selection Guide
+
+Choose the appropriate model based on task complexity:
+
+| Model | Best For | Characteristics |
+|-------|----------|-----------------|
+| **gemini-3-flash** | Quick iterations, prototyping, cost-sensitive tasks | Fast, cost-effective, great for simple tasks and quick feedback |
+| **gemini-3-pro** | Complex reasoning, architectural design, production-quality outputs | Powerful, deeper reasoning, higher-quality output |
+
+**Selection tips**:
+- Start with `gemini-3-flash` for quick iterations and prototyping
+- Use `gemini-3-pro` for production-quality analysis and complex reasoning
+- Reserve `gemini-3-pro` for tasks where accuracy and depth are prioritized over speed
+- If unsure, default to `gemini-3-flash` for faster feedback cycles and iterate to `gemini-3-pro` if needed
+
 ### Step 2: Formulate Prompt in English
 
 Build a precise English prompt from the user request.

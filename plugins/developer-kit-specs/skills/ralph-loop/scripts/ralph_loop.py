@@ -28,19 +28,19 @@ from typing import Optional, List, Dict, Any
 SUPPORTED_AGENTS = {
     "claude": {
         "name": "Claude Code",
-        "cmd_prefix": "/",
-        "task_impl": "developer-kit-specs:task-implementation --spec={spec} --task={task}",
-        "task_review": "developer-kit-specs:task-review --spec={spec} --task={task}",
-        "spec_sync": "developer-kit-specs:spec-sync-with-code --spec={spec} --after-task={task}",
-        "code_cleanup": "specs-code-cleanup --spec={spec} --task={task}",
-        "ralph_loop": "ralph-loop --action=loop --spec={spec}",
+        "cmd_prefix": "",
+        "task_impl": "/developer-kit-specs:specs.task-implementation --spec={spec} --task={task}",
+        "task_review": "/developer-kit-specs:specs.task-review --spec={spec} --task={task}",
+        "spec_sync": "/developer-kit-specs:specs.spec-sync-with-code --spec={spec} --after-task={task}",
+        "code_cleanup": "/specs-code-cleanup --spec={spec} --task={task}",
+        "ralph_loop": "/ralph-loop --action=loop --spec={spec}",
     },
     "codex": {
         "name": "Codex CLI",
-        "cmd_prefix": "$specs.",
-        "task_impl": "task-implementation --spec={spec} --task={task}",
-        "task_review": "task-review --spec={spec} --task={task}",
-        "spec_sync": "spec-sync-with-code --spec={spec} --after-task={task}",
+        "cmd_prefix": "$",
+        "task_impl": "specs.task-implementation --spec={spec} --task={task}",
+        "task_review": "specs.task-review --spec={spec} --task={task}",
+        "spec_sync": "specs.spec-sync-with-code --spec={spec} --after-task={task}",
         "code_cleanup": "specs-code-cleanup --spec={spec} --task={task}",
         "ralph_loop": "ralph-loop --action=loop --spec={spec}",
     },
@@ -51,7 +51,7 @@ SUPPORTED_AGENTS = {
         "task_review": "task-review --spec={spec} --task={task}",
         "spec_sync": "spec-sync-with-code --spec={spec} --after-task={task}",
         "code_cleanup": "specs-code-cleanup --spec={spec} --task={task}",
-        "ralph_loop": "specs.ralph-loop --action=loop --spec={spec}",
+        "ralph_loop": "ralph-loop --action=loop --spec={spec}",
     },
     "kimi": {
         "name": "Kimi CLI",
@@ -74,20 +74,29 @@ SUPPORTED_AGENTS = {
     "glm4": {
         "name": "GLM-4 CLI",
         "cmd_prefix": "/",
-        "task_impl": "developer-kit-specs:task-implementation --spec={spec} --task={task}",
-        "task_review": "developer-kit-specs:task-review --spec={spec} --task={task}",
-        "spec_sync": "developer-kit-specs:spec-sync-with-code --spec={spec} --after-task={task}",
+        "task_impl": "developer-kit-specs:specs.task-implementation --spec={spec} --task={task}",
+        "task_review": "developer-kit-specs:specs.task-review --spec={spec} --task={task}",
+        "spec_sync": "developer-kit-specs:specs.spec-sync-with-code --spec={spec} --after-task={task}",
         "code_cleanup": "specs-code-cleanup --spec={spec} --task={task}",
-        "ralph_loop": "specs:ralph-loop --action=loop --spec={spec}",
+        "ralph_loop": "ralph-loop --action=loop --spec={spec}",
     },
     "minimax": {
         "name": "MiniMax CLI",
         "cmd_prefix": "/",
-        "task_impl": "developer-kit-specs:task-implementation --spec={spec} --task={task}",
-        "task_review": "developer-kit-specs:task-review --spec={spec} --task={task}",
-        "spec_sync": "developer-kit-specs:spec-sync-with-code --spec={spec} --after-task={task}",
+        "task_impl": "developer-kit-specs:specs.task-implementation --spec={spec} --task={task}",
+        "task_review": "developer-kit-specs:specs.task-review --spec={spec} --task={task}",
+        "spec_sync": "developer-kit-specs:specs.spec-sync-with-code --spec={spec} --after-task={task}",
         "code_cleanup": "specs-code-cleanup --spec={spec} --task={task}",
-        "ralph_loop": "specs:ralph-loop --action=loop --spec={spec}",
+        "ralph_loop": "ralph-loop --action=loop --spec={spec}",
+    },
+    "openrouter": {
+        "name": "OpenRouter CLI",
+        "cmd_prefix": "/",
+        "task_impl": "developer-kit-specs:specs.task-implementation --spec={spec} --task={task}",
+        "task_review": "developer-kit-specs:specs.task-review --spec={spec} --task={task}",
+        "spec_sync": "developer-kit-specs:specs.spec-sync-with-code --spec={spec} --after-task={task}",
+        "code_cleanup": "specs-code-cleanup --spec={spec} --task={task}",
+        "ralph_loop": "ralph-loop --action=loop --spec={spec}",
     },
 }
 
@@ -125,22 +134,57 @@ def parse_args():
     return parser.parse_args()
 
 
+def validate_spec_path(spec_path: str) -> bool:
+    """
+    Validates that the spec path follows the correct structure.
+
+    Correct format: docs/specs/[ID-feature]/ or [ID-feature]/
+    """
+    spec_dir = Path(spec_path).resolve()
+
+    # Check if path exists
+    if not spec_dir.exists():
+        return False
+
+    # Check if it's a directory
+    if not spec_dir.is_dir():
+        return False
+
+    # Check if it looks like a spec folder (should contain spec files or tasks/)
+    has_spec_files = any(spec_dir.glob("*.md"))
+    has_tasks_dir = (spec_dir / "tasks").exists()
+    has_ralph_dir = (spec_dir / "_ralph_loop").exists()
+
+    if not (has_spec_files or has_tasks_dir or has_ralph_dir):
+        return False
+
+    return True
+
+
 def get_fix_plan_path(spec_path: str) -> Path:
-    """Returns the path to fix_plan.json"""
+    """
+    Returns the path to fix_plan.json.
+
+    IMPORTANT: The file MUST ALWAYS be in docs/specs/[ID-feature]/_ralph_loop/fix_plan.json
+    This is the ONLY valid location to prevent LLMs from creating files in wrong locations.
+    """
     spec_dir = Path(spec_path)
 
-    # Check directly in spec directory (new format)
+    # The ONLY valid location: _ralph_loop subdirectory
+    ralph_path = spec_dir / "_ralph_loop" / "fix_plan.json"
+
+    # For backwards compatibility: if file exists in root, warn and migrate
     direct_path = spec_dir / "fix_plan.json"
     if direct_path.exists():
+        print(f"⚠️  WARNING: fix_plan.json found in wrong location: {direct_path}")
+        print(f"   Valid location is: {ralph_path}")
+        print(f"   Please move it manually:")
+        print(f"   mkdir -p {spec_dir}/_ralph_loop")
+        print(f"   mv {direct_path} {ralph_path}")
+        # Still return the old path for now to allow migration
         return direct_path
 
-    # Check in _ralph_loop subdirectory (legacy format)
-    ralph_path = spec_dir / "_ralph_loop" / "fix_plan.json"
-    if ralph_path.exists():
-        return ralph_path
-
-    # Default to direct path for creation
-    return direct_path
+    return ralph_path
 
 
 def load_fix_plan(spec_path: str) -> dict:
@@ -156,22 +200,36 @@ def load_fix_plan(spec_path: str) -> dict:
 
 
 def save_fix_plan(spec_path: str, data: dict):
-    """Saves fix_plan.json"""
-    fix_plan_path = get_fix_plan_path(spec_path)
+    """
+    Saves fix_plan.json to the correct location.
 
-    # If file exists in _ralph_loop, save there; otherwise save directly
-    if not fix_plan_path.exists() and Path(spec_path).exists():
-        ralph_dir = Path(spec_path) / "_ralph_loop"
-        if ralph_dir.exists():
-            fix_plan_path = ralph_dir / "fix_plan.json"
+    IMPORTANT: The file MUST ALWAYS be in docs/specs/[ID-feature]/_ralph_loop/fix_plan.json
+    This function enforces the correct directory structure.
+    """
+    spec_dir = Path(spec_path)
 
-    fix_plan_path.parent.mkdir(parents=True, exist_ok=True)
+    # ALWAYS use _ralph_loop subdirectory - this is the ONLY valid location
+    ralph_dir = spec_dir / "_ralph_loop"
+    fix_plan_path = ralph_dir / "fix_plan.json"
+
+    # Create _ralph_loop directory if it doesn't exist
+    ralph_dir.mkdir(parents=True, exist_ok=True)
+
+    # For backwards compatibility: if old file exists in root, migrate it
+    old_path = spec_dir / "fix_plan.json"
+    if old_path.exists() and not fix_plan_path.exists():
+        print(f"📦 Migrating fix_plan.json to correct location...")
+        import shutil
+        shutil.move(old_path, fix_plan_path)
+        print(f"   ✅ Migrated to: {fix_plan_path}")
 
     # Update timestamp
     data["state"]["last_updated"] = datetime.now().isoformat()
 
+    # Save with proper formatting
     with open(fix_plan_path, "w") as f:
         json.dump(data, f, indent=2)
+        f.write("\n")  # Add trailing newline
 
 
 def find_tasks_file(spec_path: str) -> Optional[Path]:
@@ -888,8 +946,113 @@ def action_resume(spec_path: str, args_agent: str = None, no_commit: bool = Fals
     action_loop(spec_path, args_agent, no_commit)
 
 
+def check_review_result(spec_path: str, task_id: str) -> tuple[bool, str]:
+    """
+    Check the review report to determine if review passed or failed.
+    
+    Returns:
+        tuple: (passed: bool, reason: str)
+        - passed: True if review passed, False if failed
+        - reason: Description of the result
+    """
+    spec_dir = Path(spec_path)
+    
+    # Look for review report file: tasks/TASK-XXX--review.md
+    review_file = spec_dir / "tasks" / f"{task_id}--review.md"
+    
+    if not review_file.exists():
+        # No review report found - assume not implemented
+        return False, f"Review report not found: {review_file}"
+    
+    try:
+        with open(review_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        # Check for common failure indicators in review reports
+        failure_indicators = [
+            "❌ not started",
+            "❌ not implemented",
+            "❌ fail",
+            "❌ failed",
+            "❌ missing",
+            "implementation status: ❌",
+            "implementation: not started",
+            "implementation: not implemented",
+            "acceptance criteria: 0/",
+            "acceptance criteria: 1/",
+            "acceptance criteria: 2/",
+            "acceptance criteria: 3/",
+            "acceptance criteria: 4/",
+            "passed: 0/",
+            "passed: 1/",
+            "passed: 2/",
+            "passed: 3/",
+            "passed: 4/",
+        ]
+        
+        success_indicators = [
+            "✅ implemented",
+            "✅ complete",
+            "✅ pass",
+            "✅ passed",
+            "implementation status: ✅",
+            "implementation: complete",
+            "implementation: done",
+            "acceptance criteria: 5/5",
+            "acceptance criteria: 4/4",
+            "acceptance criteria: 3/3",
+            "acceptance criteria: 100%",
+            "passed: 5/5",
+            "passed: 4/4",
+            "passed: 3/3",
+            "all criteria met",
+        ]
+        
+        content_lower = content.lower()
+        
+        # Check for explicit success indicators
+        for indicator in success_indicators:
+            if indicator.lower() in content_lower:
+                return True, f"Found success indicator: '{indicator}'"
+        
+        # Check for explicit failure indicators
+        for indicator in failure_indicators:
+            if indicator.lower() in content_lower:
+                return False, f"Found failure indicator: '{indicator}'"
+        
+        # Check acceptance criteria percentage
+        # Pattern: "X/Y soddisfatte" or "X/Y satisfied"
+        criteria_match = re.search(r'(\d+)\s*/\s*(\d+)\s*(?:soddisfatte|satisfied|pass)', content_lower)
+        if criteria_match:
+            passed = int(criteria_match.group(1))
+            total = int(criteria_match.group(2))
+            if passed >= total:
+                return True, f"All acceptance criteria met: {passed}/{total}"
+            else:
+                return False, f"Acceptance criteria not fully met: {passed}/{total}"
+        
+        # Check for "Not Started" or "Not Implemented"
+        if "not started" in content_lower or "not implemented" in content_lower:
+            return False, "Implementation not started"
+        
+        # Default: if we have a review file but can't determine, check for critical issues
+        # Look for error/warning counts
+        error_match = re.search(r'(\d+)\s*(?:error|errore|issue|problema)', content_lower)
+        if error_match:
+            error_count = int(error_match.group(1))
+            if error_count > 0:
+                return False, f"Found {error_count} error(s) in review"
+        
+        # If review exists and no clear failure indicators, assume it needs more scrutiny
+        # But default to passing to avoid infinite loops on ambiguous reviews
+        return True, "Review report exists with no clear failure indicators"
+        
+    except Exception as e:
+        return False, f"Error reading review report: {e}"
+
+
 def action_next(spec_path: str, args_agent: str = None, no_commit: bool = False):
-    """Manually advance to next step (assumes current step completed successfully)"""
+    """Manually advance to next step (checks review results before advancing)"""
     fix_plan = load_fix_plan(spec_path)
     state = fix_plan["state"]
     current_step = state["step"]
@@ -901,18 +1064,61 @@ def action_next(spec_path: str, args_agent: str = None, no_commit: bool = False)
         print("   Cannot advance further.")
         return
 
-    # Define step transitions
+    # Define standard step transitions
     step_transitions = {
         "init": "choose_task",
         "choose_task": "implementation",
         "implementation": "review",
-        "review": "cleanup",
         "fix": "review",
         "cleanup": "sync",
         "sync": "update_done",
         "update_done": "choose_task",
     }
+    
+    # Special handling for review step - check results before advancing
+    if current_step == "review":
+        current_task = state.get("current_task")
+        retry_count = state.get("retry_count", 0)
+        max_retries = 3
+        
+        if not current_task:
+            print("   ⚠️  No current task, returning to choose_task")
+            state["step"] = "choose_task"
+            save_fix_plan(spec_path, fix_plan)
+            return
+        
+        # Check review result
+        review_passed, reason = check_review_result(spec_path, current_task)
+        
+        if review_passed:
+            print(f"   ✅ Review passed: {reason}")
+            print(f"   Advanced: review → cleanup")
+            state["step"] = "cleanup"
+            state["retry_count"] = 0  # Reset retry count on success
+            save_fix_plan(spec_path, fix_plan)
+        else:
+            print(f"   ❌ Review failed: {reason}")
+            retry_count += 1
+            state["retry_count"] = retry_count
+            
+            if retry_count >= max_retries:
+                print(f"   ❌ Max retries ({max_retries}) exceeded")
+                print(f"   Advanced: review → failed")
+                state["step"] = "failed"
+                state["error"] = f"Review failed after {max_retries} retries: {reason}"
+                save_fix_plan(spec_path, fix_plan)
+            else:
+                print(f"   🔄 Retry {retry_count}/{max_retries}")
+                print(f"   Advanced: review → fix")
+                state["step"] = "fix"
+                save_fix_plan(spec_path, fix_plan)
+        
+        print(f"")
+        print("Run loop to see next command:")
+        print(f"  python3 ralph_loop.py --action=loop --spec={spec_path}")
+        return
 
+    # Standard transition for other steps
     next_step = step_transitions.get(current_step)
 
     if not next_step:
@@ -937,10 +1143,18 @@ def action_next(spec_path: str, args_agent: str = None, no_commit: bool = False)
 def main():
     args = parse_args()
 
-    # Check if spec folder exists
-    if not Path(args.spec).exists():
-        print(f"❌ Folder not found: {args.spec}")
+    # Validate spec folder structure
+    if not validate_spec_path(args.spec):
+        print(f"❌ Invalid spec folder: {args.spec}")
+        print(f"   Expected format: docs/specs/[ID-feature]/ or [ID-feature]/")
+        print(f"   Folder must exist and contain spec files or tasks/ directory")
         sys.exit(1)
+
+    # Ensure _ralph_loop directory exists for clean state
+    spec_dir = Path(args.spec).resolve()
+    ralph_dir = spec_dir / "_ralph_loop"
+    if not ralph_dir.exists():
+        ralph_dir.mkdir(parents=True, exist_ok=True)
 
     if args.action == "start":
         action_start(args.spec, args.from_task, args.to_task, args.agent)

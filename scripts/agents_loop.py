@@ -66,6 +66,18 @@ AGENTS = {
         "prompt_arg": True,
         "prompt_flag": "-p",
     },
+    "openrouter": {
+        "name": "OpenRouter CLI",
+        "cmd": ["openrouter"],
+        "stdin_mode": False,
+        "supports_flags": True,
+        "supports_model": True,
+        "supports_yolo": True,
+        "model_flag": "--model",
+        "yolo_flag": "--dangerously-skip-permissions",
+        "prompt_arg": True,
+        "prompt_flag": "-p",
+    },
     "kimi": {
         "name": "Kimi CLI",
         "cmd": ["kimi"],
@@ -130,7 +142,7 @@ def parse_args():
         "--agent",
         default="codex",
         choices=list(AGENTS.keys()),
-        help="AI agent to use: claude, kimi, codex, copilot, gemini, glm4, minimax (default: codex)",
+        help="AI agent to use: claude, kimi, codex, copilot, gemini, glm4, minimax, openrouter (default: codex)",
     )
     parser.add_argument(
         "--action",
