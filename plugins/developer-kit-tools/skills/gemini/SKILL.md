@@ -175,7 +175,7 @@ Use this structure when returning delegated results:
 ### Example 1: Large codebase security review
 
 ```bash
-gemini -p "Analyze this repository for security vulnerabilities. Report only high-confidence issues with file paths, severity, and patch recommendations." --approval-mode plan
+gemini -p "Analyze this repository for security vulnerabilities. Report only high-confidence issues with file paths, severity, and patch recommendations." -m gemini-3-flash --approval-mode plan
 ```
 
 ### Example 2: Documentation synthesis
@@ -187,7 +187,7 @@ gemini -p "Read the available documentation and produce a concise architecture s
 ### Example 3: Structured output for follow-up automation
 
 ```bash
-gemini -p "Return a JSON list of top 10 refactoring opportunities with fields: title, file, impact, effort." --output-format json
+gemini -p "Return a JSON list of top 10 refactoring opportunities with fields: title, file, impact, effort." -m gemini-3-flash --output-format json
 ```
 
 ## Best Practices
