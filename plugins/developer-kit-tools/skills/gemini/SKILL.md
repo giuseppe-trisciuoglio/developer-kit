@@ -181,7 +181,7 @@ gemini -p "Analyze this repository for security vulnerabilities. Report only hig
 ### Example 2: Documentation synthesis
 
 ```bash
-gemini -p "Read the available documentation and produce a concise architecture summary with component responsibilities and integration points." -m gemini-3-pro
+gemini -p "Read the available documentation and produce a concise architecture summary with component responsibilities and integration points." -m gemini-3-pro --approval-mode plan
 ```
 
 ### Example 3: Structured output for follow-up automation
