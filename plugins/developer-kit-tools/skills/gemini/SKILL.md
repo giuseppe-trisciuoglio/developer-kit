@@ -190,6 +190,24 @@ gemini -p "Read the available documentation and produce a concise architecture s
 gemini -p "Return a JSON list of top 10 refactoring opportunities with fields: title, file, impact, effort." -m gemini-3-flash --output-format json
 ```
 
+### Example 4: Quick boilerplate generation
+
+```bash
+gemini -p "Generate a minimal Express.js REST endpoint for POST /items with input validation and a unit test. Keep the implementation concise and ready to paste." -m gemini-3-flash
+```
+
+### Example 5: Cost-effective CSV summary (fast, low-cost)
+
+```bash
+gemini -p "Summarize this CSV file's key statistics: row count, missing-value counts, and top 5 columns by variance. Provide a 6-line bullet summary suitable for quick triage." -m gemini-3-flash --output-format json --approval-mode plan
+```
+
+### Example 6: Fast iteration for microcopy prototyping
+
+```bash
+gemini -p "Provide 3 short alternative microcopy options (<=20 words each) for an onboarding tooltip that explains account recovery. Include a one-line A/B test metric proposal for each option." -m gemini-3-flash
+```
+
 ## Best Practices
 
 - keep delegated prompts focused and explicit
