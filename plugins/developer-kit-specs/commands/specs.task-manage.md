@@ -320,8 +320,12 @@ Splits a complex task into smaller, more manageable subtasks.
      - Ensure each subtask has complexity < parent task complexity
 
 6. Mark original task as superseded:
-   - Update status to "superseded"
-   - Add `supersedes` reference to new subtasks
+   - Edit the parent task file and add to frontmatter:
+     ```yaml
+     status: superseded
+     ```
+   - The `superseded` status is automatically tracked by hooks
+   - Add `supersedes` reference to new subtasks in the frontmatter
 
 7. Update task index with new structure
 

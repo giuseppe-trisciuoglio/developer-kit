@@ -209,9 +209,27 @@ You are reviewing an implemented task to verify it meets specifications and pass
 **Actions**:
 
 1. Compile all findings into a review report
-2. Generate the report in markdown format:
+2. Generate the report in markdown format with YAML frontmatter:
 
 ```markdown
+---
+review_status: PASSED|FAILED|PARTIAL
+task_id: TASK-XXX
+task_title: [Task Title]
+spec_file: [spec-file.md]
+review_date: [ISO date]
+language: [language]
+summary:
+  implementation: COMPLETE|PARTIAL|INCOMPLETE
+  acceptance_criteria: ALL_MET|PARTIAL|FAILED
+  definition_of_done: ALL_MET|PARTIAL|FAILED
+  spec_compliance: COMPLIANT|DEVIATIONS|NON_COMPLIANT
+  code_review: PASSED|ISSUES|FAILED
+critical_issues: N
+major_issues: N
+minor_issues: N
+---
+
 # Task Review Report: TASK-XXX
 
 **Task**: [Task Title]
@@ -228,6 +246,8 @@ You are reviewing an implemented task to verify it meets specifications and pass
 | Definition of Done | ✅ All Met / ⚠️ Partial / ❌ Failed |
 | Spec Compliance | ✅ Compliant / ⚠️ Deviations / ❌ Non-compliant |
 | Code Review | ✅ Passed / ⚠️ Issues Found / ❌ Failed |
+
+**Overall Result**: ✅ PASSED / ❌ FAILED / ⚠️ PARTIAL
 
 ## Implementation Verification
 
@@ -314,8 +334,9 @@ You are reviewing an implemented task to verify it meets specifications and pass
    - **Note**: Before re-implementing, consider running `/devkit.spec-review [spec-folder]` to verify the spec is still accurate if issues suggest spec-level problems
 
 5. If review approved (no issues or all issues fixed):
-   - Update task status to `reviewed` in the task file YAML frontmatter
-   - Recommend proceeding to code cleanup:
+   - **Auto-update task status**: Check the boxes in the DoD/Review section of the task
+   - Status automatically updates to `reviewed` when all checkboxes are checked
+   - Proceed to code cleanup:
    ```
    /specs:code-cleanup --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
    ```

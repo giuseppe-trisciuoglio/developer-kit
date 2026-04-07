@@ -810,6 +810,7 @@ id: TASK-XXX
 title: "[Task Title]"
 spec: [resolved spec file path]
 lang: [java|spring|typescript|nestjs|react|python|general]
+status: pending
 dependencies: [TASK-YYY if applicable]
 ---
 
@@ -1231,6 +1232,59 @@ Throughout the process, maintain a todo list like:
 ```
 
 Update the status as you progress through each phase.
+
+---
+
+## Task Frontmatter Standardization
+
+All task files follow a standardized frontmatter schema defined in `hooks/task_schema.py`. This ensures consistent metadata across all tasks.
+
+### Standard Status Workflow
+
+Tasks use a standardized status workflow with automatic date tracking:
+
+```
+pending → in_progress → implemented → reviewed → completed
+              ↓
+          blocked (can return to in_progress)
+```
+
+| Status | Description | Dates Set |
+|--------|-------------|-----------|
+| `pending` | Initial state, ready to start | None |
+| `in_progress` | Work has started | `started_date` |
+| `implemented` | Coding complete, awaiting review | `implemented_date` |
+| `reviewed` | Review passed, awaiting cleanup | `reviewed_date` |
+| `completed` | Cleanup done, fully complete | `completed_date`, `cleanup_date` |
+| `superseded` | Replaced by other tasks | None |
+| `optional` | Not required for feature | None |
+| `blocked` | Cannot proceed | None |
+
+### Auto-Status Management
+
+Task status is automatically managed by Claude Code hooks:
+
+| User Action | Automatic Status Update |
+|-------------|------------------------|
+| Edit task file, check AC boxes | `pending` → `in_progress` → `implemented` |
+| Check all DoD boxes | `implemented` → `reviewed` |
+| Add Cleanup Summary section | `reviewed` → `completed` |
+
+**How it works:**
+- Hooks monitor `TASK-*.md` files on every save
+- Checkboxes are analyzed to determine progress
+- Frontmatter `status` and date fields update automatically
+- No manual status management needed
+
+**Manual override (if needed):**
+Simply edit the YAML frontmatter directly:
+```yaml
+---
+status: blocked  # or any valid status
+---
+```
+
+Valid statuses: `pending`, `in_progress`, `implemented`, `reviewed`, `completed`, `superseded`, `optional`, `blocked`
 
 ---
 

@@ -92,10 +92,11 @@ Review context for each finding. Remove confirmed debt and document what was rem
 
 ### Phase 8: Task Completion
 
-1. Update task YAML frontmatter:
-   - `status: completed`
-   - `completed_date: YYYY-MM-DD`
-   - `cleanup_date: YYYY-MM-DD`
+1. **Auto-update task status**:
+   - Add a `## Cleanup Summary` section to the task file
+   - Check any remaining boxes in the DoD section
+   - Hooks automatically update status to `completed` and set `completed_date` + `cleanup_date`
+   
 2. Append `## Cleanup Summary` to task file with:
    - Files cleaned
    - Changes made

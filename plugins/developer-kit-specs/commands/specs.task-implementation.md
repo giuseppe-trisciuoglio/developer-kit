@@ -303,12 +303,11 @@ This command implements a specific task following a focused workflow:
 1. Confirm completion before marking the task done:
    - Ensure all DoD items are satisfied and documented
    - If the task has explicit DoR/DoD checklists, update them to reflect the validated state
-2. Mark task as implemented (not completed yet — review comes first):
-   - Update the task file YAML frontmatter:
-     - Set `status: implemented`
-     - Add `implemented_date: YYYY-MM-DD`
-   - Change `[ ]` to `[x]` in the task's acceptance criteria and DoD checkboxes where evidence exists
-   - Add completion note with date in the task file
+
+2. **Auto-update task status**:
+   - Check all boxes in the Acceptance Criteria section (`[ ]` → `[x]`)
+   - Status automatically updates to `implemented` via hooks
+   - The `implemented_date` field is set automatically
 
 3. Summarize:
    - What was implemented
@@ -412,6 +411,7 @@ id: TASK-001
 title: "Task Title"
 spec: docs/specs/[ID-feature]/2026-03-07--feature-name.md
 lang: spring
+status: pending
 dependencies: []
 provides:
   - file: "src/main/java/com/example/Task.java"
@@ -428,18 +428,56 @@ expects:
 ```
 
 **Frontmatter Fields:**
-- `id`: Unique task identifier (e.g., TASK-001)
-- `title`: Human-readable task title
-- `spec`: Reference to the specification file
-- `lang`: Programming language/framework (spring, typescript, nestjs, etc.)
-- `dependencies`: Array of task IDs this task depends on
-- `provides`: What this task makes available (optional but recommended)
-- `expects`: What this task requires from dependencies (optional but recommended)
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `id` | Yes | Unique task identifier (e.g., TASK-001) |
+| `title` | Yes | Human-readable task title |
+| `spec` | Yes | Reference to the specification file |
+| `lang` | Yes | Programming language/framework (spring, typescript, nestjs, general, etc.) |
+| `status` | No | Current status: `pending`, `in_progress`, `implemented`, `reviewed`, `completed`, `superseded`, `optional`, `blocked` |
+| `started_date` | No | Date work started (YYYY-MM-DD) |
+| `implemented_date` | No | Date implementation finished (YYYY-MM-DD) |
+| `reviewed_date` | No | Date review completed (YYYY-MM-DD) |
+| `completed_date` | No | Date cleanup completed (YYYY-MM-DD) |
+| `cleanup_date` | No | Date code cleanup finished (YYYY-MM-DD) |
+| `dependencies` | No | Array of task IDs this task depends on |
+| `provides` | No | What this task makes available (see format below) |
+| `expects` | No | What this task requires from dependencies |
+| `complexity` | No | Complexity score (0-100) |
+| `optional` | No | Boolean - if true, task is optional |
+| `parent_task` | No | Parent task ID (for subtasks) |
+| `supersedes` | No | Array of task IDs this task supersedes |
 
 **provides/expects Format:**
 - `file`: Relative path to the source file
 - `symbols`: Array of symbols (classes, interfaces, functions, methods) provided/required
 - `type`: Type of component (entity, value-object, service, repository, controller, function, etc.)
+
+### Standardized Status Workflow
+
+Status values MUST be one of the following (auto-managed by hooks):
+
+```
+pending → in_progress → implemented → reviewed → completed
+              ↓
+          blocked (can return to in_progress)
+```
+
+**Status Transitions:**
+- `pending`: Initial state, no dates required
+- `in_progress`: Work started → sets `started_date`
+- `implemented`: Coding complete → sets `implemented_date`
+- `reviewed`: Review passed → sets `reviewed_date`
+- `completed`: Cleanup done → sets `completed_date` and `cleanup_date`
+- `superseded`: Task replaced by others
+- `optional`: Task is not required
+- `blocked`: Task cannot proceed (temporary state)
+
+**Status updates happen automatically when you:**
+- Edit the task file and save changes
+- Check/uncheck checkboxes in the task content
+- The hooks detect changes and update frontmatter accordingly
 
 ## Language/Framework Selection
 

@@ -173,6 +173,7 @@ help:
 	@echo "  make uninstall            Remove all Developer Kit installations"
 	@echo "  make backup               Create backup of current configs"
 	@echo "  make clean                Remove generated files"
+
 	@echo "  make install-specs-codex-loop  Install specs_codex_loop symlink in /usr/local/bin"
 	@echo "  make install-agents-loop        Install agents_loop symlink in /usr/local/bin"
 	@echo ""
@@ -636,6 +637,10 @@ install-kimi-if-exists:
 	else \
 		$(call warning "Skipping Kimi CLI (not configured)"); \
 	fi
+
+# ═══════════════════════════════════════════════════════════════
+# SPECS UTILITIES INSTALLATION
+# ═══════════════════════════════════════════════════════════════
 
 # ═══════════════════════════════════════════════════════════════
 # OPENCODE CLI INSTALLATION

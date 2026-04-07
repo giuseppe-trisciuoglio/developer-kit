@@ -147,6 +147,69 @@ Forces review and fixes after task implementation:
 - Ensures fixes and optional spec synchronization are handled immediately
 - Maintains high quality standards for implemented tasks
 
+## Auto-Status Hooks
+
+Task status is automatically managed by Claude Code hooks when you edit task files. No manual installation or script setup required.
+
+### How It Works
+
+When you edit any `TASK-*.md` file, hooks automatically:
+1. Detect the file change
+2. Analyze checkbox completion
+3. Update the `status` field in YAML frontmatter
+4. Set appropriate date fields
+
+### Status Transitions
+
+| Your Action | Automatic Status | Date Field Set |
+|-------------|------------------|----------------|
+| Check acceptance criteria boxes | `pending` → `in_progress` → `implemented` | `started_date`, `implemented_date` |
+| Check all DoD boxes | `implemented` → `reviewed` | `reviewed_date` |
+| Add Cleanup Summary section | `reviewed` → `completed` | `completed_date`, `cleanup_date` |
+
+### Example Workflow
+
+```bash
+# 1. Implement a task
+/specs:task-implementation --lang=spring --task="docs/specs/001/tasks/TASK-001.md"
+
+# 2. During implementation, check AC boxes in the task file
+# → Status automatically updates to 'implemented'
+
+# 3. Run review
+/specs:task-review --task="docs/specs/001/tasks/TASK-001.md"
+
+# 4. Check DoD boxes in the task file
+# → Status automatically updates to 'reviewed'
+
+# 5. Run cleanup
+/specs:code-cleanup --task="docs/specs/001/tasks/TASK-001.md"
+
+# 6. Add Cleanup Summary section
+# → Status automatically updates to 'completed'
+```
+
+### Manual Override
+
+If you need to manually set a status (e.g., `blocked`, `superseded`), simply edit the YAML frontmatter:
+
+```yaml
+---
+id: TASK-001
+status: blocked  # Manually set any valid status
+---
+```
+
+Valid statuses: `pending`, `in_progress`, `implemented`, `reviewed`, `completed`, `superseded`, `optional`, `blocked`
+
+### Hooks Included
+
+| Hook | Trigger | Purpose |
+|------|---------|---------|
+| `task-auto-status.py` | `Write/Edit` on `TASK-*.md` | Auto-update status based on content |
+| `task-validator.py` | `Write/Edit` on `TASK-*.md` | Validate frontmatter structure |
+| `drift-*.py` | Various | Monitor spec-to-code drift |
+
 ## Requirements
 
 This plugin requires the following plugins:

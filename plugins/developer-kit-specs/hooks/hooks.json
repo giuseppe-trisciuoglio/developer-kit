@@ -1,5 +1,5 @@
 {
-  "description": "Drift Guard hooks for tracking code fidelity during specification-driven development sessions",
+  "description": "Developer Kit Specs hooks: Drift Guard for spec fidelity and Task Auto-Status for automatic frontmatter management",
   "hooks": {
     "UserPromptSubmit": [
       {
@@ -20,6 +20,17 @@
             "type": "command",
             "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/drift-monitor.py",
             "statusMessage": "Monitoring for unplanned file changes..."
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "pattern": "TASK-\\d+\\.md$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/task-auto-status.py",
+            "statusMessage": "Auto-updating task status..."
           }
         ]
       }

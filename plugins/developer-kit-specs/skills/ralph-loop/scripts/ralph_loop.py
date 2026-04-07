@@ -28,12 +28,12 @@ from typing import Optional, List, Dict, Any
 SUPPORTED_AGENTS = {
     "claude": {
         "name": "Claude Code",
-        "cmd_prefix": "",
-        "task_impl": "/developer-kit-specs:specs.task-implementation --spec={spec} --task={task}",
-        "task_review": "/developer-kit-specs:specs.task-review --spec={spec} --task={task}",
-        "spec_sync": "/developer-kit-specs:specs.spec-sync-with-code --spec={spec} --after-task={task}",
-        "code_cleanup": "/specs-code-cleanup --spec={spec} --task={task}",
-        "ralph_loop": "/ralph-loop --action=loop --spec={spec}",
+        "cmd_prefix": "/",
+        "task_impl": "developer-kit-specs:specs.task-implementation --spec={spec} --task={task}",
+        "task_review": "developer-kit-specs:specs.task-review --spec={spec} --task={task}",
+        "spec_sync": "developer-kit-specs:specs.spec-sync-with-code --spec={spec} --after-task={task}",
+        "code_cleanup": "specs-code-cleanup --spec={spec} --task={task}",
+        "ralph_loop": "ralph-loop --action=loop --spec={spec}",
     },
     "codex": {
         "name": "Codex CLI",
@@ -46,10 +46,10 @@ SUPPORTED_AGENTS = {
     },
     "copilot": {
         "name": "GitHub Copilot CLI",
-        "cmd_prefix": "",
-        "task_impl": "task-implementation --spec={spec} --task={task}",
-        "task_review": "task-review --spec={spec} --task={task}",
-        "spec_sync": "spec-sync-with-code --spec={spec} --after-task={task}",
+        "cmd_prefix": "/",
+        "task_impl": "specs.task-implementation --spec={spec} --task={task}",
+        "task_review": "specs.task-review --spec={spec} --task={task}",
+        "spec_sync": "specs.spec-sync-with-code --spec={spec} --after-task={task}",
         "code_cleanup": "specs-code-cleanup --spec={spec} --task={task}",
         "ralph_loop": "ralph-loop --action=loop --spec={spec}",
     },
@@ -950,6 +950,9 @@ def check_review_result(spec_path: str, task_id: str) -> tuple[bool, str]:
     """
     Check the review report to determine if review passed or failed.
     
+    First tries to parse the YAML frontmatter for structured review_status field.
+    Falls back to text pattern matching if YAML frontmatter is not present.
+    
     Returns:
         tuple: (passed: bool, reason: str)
         - passed: True if review passed, False if failed
@@ -968,8 +971,38 @@ def check_review_result(spec_path: str, task_id: str) -> tuple[bool, str]:
         with open(review_file, 'r', encoding='utf-8') as f:
             content = f.read()
         
-        # Check for common failure indicators in review reports
+        content_lower = content.lower()
+        
+        # === METHOD 1: Parse YAML frontmatter (preferred, structured approach) ===
+        frontmatter_match = re.match(r'^---\s*\n(.*?)\n---\s*\n', content, re.DOTALL)
+        if frontmatter_match:
+            frontmatter = frontmatter_match.group(1)
+            
+            # Extract review_status from frontmatter
+            status_match = re.search(r'^review_status:\s*(\w+)', frontmatter, re.MULTILINE | re.IGNORECASE)
+            if status_match:
+                review_status = status_match.group(1).upper()
+                
+                if review_status == "PASSED":
+                    return True, "Review status: PASSED (from YAML frontmatter)"
+                elif review_status == "FAILED":
+                    # Check for critical/major issues count
+                    critical_match = re.search(r'^critical_issues:\s*(\d+)', frontmatter, re.MULTILINE | re.IGNORECASE)
+                    major_match = re.search(r'^major_issues:\s*(\d+)', frontmatter, re.MULTILINE | re.IGNORECASE)
+                    
+                    critical_count = int(critical_match.group(1)) if critical_match else 0
+                    major_count = int(major_match.group(1)) if major_match else 0
+                    
+                    return False, f"Review status: FAILED with {critical_count} critical, {major_count} major issues"
+                elif review_status == "PARTIAL":
+                    return False, "Review status: PARTIAL (needs more work)"
+                else:
+                    return False, f"Unknown review_status: {review_status}"
+        
+        # === METHOD 2: Fallback to text pattern matching (for legacy reviews) ===
+        # Check for common failure indicators in review reports (English + Italian)
         failure_indicators = [
+            # English
             "❌ not started",
             "❌ not implemented",
             "❌ fail",
@@ -988,9 +1021,31 @@ def check_review_result(spec_path: str, task_id: str) -> tuple[bool, str]:
             "passed: 2/",
             "passed: 3/",
             "passed: 4/",
+            # Italian
+            "❌ non implementato",
+            "❌ non iniziato",
+            "❌ fallito",
+            "❌ mancante",
+            "stato implementazione: ❌",
+            "implementazione: non iniziata",
+            "implementazione: non implementata",
+            "criteri di accettazione: 0/",
+            "criteri di accettazione: 1/",
+            "criteri di accettazione: 2/",
+            "criteri di accettazione: 3/",
+            "criteri di accettazione: 4/",
+            "esito: ❌",
+            "non conforme",
+            "non soddisfatti",
+            "task non implementato",
+            "needs revision",
+            "need revision",
+            "deve essere risolto",
+            "correggere",
         ]
         
         success_indicators = [
+            # English
             "✅ implemented",
             "✅ complete",
             "✅ pass",
@@ -1006,19 +1061,61 @@ def check_review_result(spec_path: str, task_id: str) -> tuple[bool, str]:
             "passed: 4/4",
             "passed: 3/3",
             "all criteria met",
+            "all tests passed",
+            "no issues found",
+            "review passed",
+            # Italian
+            "✅ implementato",
+            "✅ completato",
+            "✅ passato",
+            "✅ superato",
+            "stato implementazione: ✅",
+            "implementazione: completata",
+            "implementazione: completato",
+            "criteri di accettazione: 5/5",
+            "criteri di accettazione: 4/4",
+            "criteri di accettazione: 3/3",
+            "criteri di accettazione: 100%",
+            "criteri: 5/5",
+            "criteri: 4/4",
+            "criteri: 3/3",
+            "tutti i criteri soddisfatti",
+            "tutti i test passano",
+            "nessun problema trovato",
+            "nessun issue",
+            "review superata",
+            "esito: ✅",
         ]
         
-        content_lower = content.lower()
+        # Check for critical issues that should fail the review regardless of other indicators
+        critical_issue_patterns = [
+            r"critical.*issue",
+            r"issue.*critical",
+            r"problema.*critico",
+            r"critico",
+            r"blocking issue",
+            r"must fix",
+            r"deve essere corretto",
+            r"deve essere risolto",
+            r"blocking",
+            r"needs fix",
+            r"needs revision",
+            r"non conforme",
+        ]
+        
+        for pattern in critical_issue_patterns:
+            if re.search(pattern, content_lower):
+                return False, f"Found critical issue indicator: '{pattern}'"
+        
+        # Check for explicit failure indicators FIRST (take precedence over success)
+        for indicator in failure_indicators:
+            if indicator.lower() in content_lower:
+                return False, f"Found failure indicator: '{indicator}'"
         
         # Check for explicit success indicators
         for indicator in success_indicators:
             if indicator.lower() in content_lower:
                 return True, f"Found success indicator: '{indicator}'"
-        
-        # Check for explicit failure indicators
-        for indicator in failure_indicators:
-            if indicator.lower() in content_lower:
-                return False, f"Found failure indicator: '{indicator}'"
         
         # Check acceptance criteria percentage
         # Pattern: "X/Y soddisfatte" or "X/Y satisfied"
@@ -1035,17 +1132,8 @@ def check_review_result(spec_path: str, task_id: str) -> tuple[bool, str]:
         if "not started" in content_lower or "not implemented" in content_lower:
             return False, "Implementation not started"
         
-        # Default: if we have a review file but can't determine, check for critical issues
-        # Look for error/warning counts
-        error_match = re.search(r'(\d+)\s*(?:error|errore|issue|problema)', content_lower)
-        if error_match:
-            error_count = int(error_match.group(1))
-            if error_count > 0:
-                return False, f"Found {error_count} error(s) in review"
-        
-        # If review exists and no clear failure indicators, assume it needs more scrutiny
-        # But default to passing to avoid infinite loops on ambiguous reviews
-        return True, "Review report exists with no clear failure indicators"
+        # Default: FAIL rather than pass (safer - require explicit success indicators)
+        return False, "Review report exists but no clear success indicators found"
         
     except Exception as e:
         return False, f"Error reading review report: {e}"
