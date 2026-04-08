@@ -41,7 +41,17 @@ See `references/language-patterns.md` for language-specific formatter commands, 
 
 ### Phase 1: Task Verification
 
-1. Parse `$ARGUMENTS` for `--lang` and `--task`
+1. Parse `$ARGUMENTS` for parameters:
+   - `--lang` (optional): Target language/framework
+   - `--task` (required): Task ID or file path
+   - `--spec` (optional): Spec folder path (used with task ID)
+   
+   **Support two formats**:
+   - Format 1 (direct path): `--task=docs/specs/001-feature/tasks/TASK-001.md`
+   - Format 2 (spec+task): `--spec=docs/specs/001-feature --task=TASK-001`
+   
+   If Format 2 is used, construct the task file path as: `{spec}/tasks/{task}.md`
+
 2. Read the task file. Verify:
    - Status is `reviewed` or `implemented` (not `completed`)
    - Review report `TASK-XXX--review.md` exists and is approved

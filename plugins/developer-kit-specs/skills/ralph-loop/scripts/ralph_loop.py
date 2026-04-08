@@ -98,6 +98,15 @@ SUPPORTED_AGENTS = {
         "code_cleanup": "specs-code-cleanup --spec={spec} --task={task}",
         "ralph_loop": "ralph-loop --action=loop --spec={spec}",
     },
+    "qwen": {
+        "name": "Qwen Code",
+        "cmd_prefix": "/",
+        "task_impl": "developer-kit-specs:specs.task-implementation --spec={spec} --task={task}",
+        "task_review": "developer-kit-specs:specs.task-review --spec={spec} --task={task}",
+        "spec_sync": "developer-kit-specs:specs.spec-sync-with-code --spec={spec} --after-task={task}",
+        "code_cleanup": "specs-code-cleanup --spec={spec} --task={task}",
+        "ralph_loop": "ralph-loop --action=loop --spec={spec}",
+    },
 }
 
 

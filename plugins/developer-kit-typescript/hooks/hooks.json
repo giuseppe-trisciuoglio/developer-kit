@@ -75,8 +75,7 @@
           {
             "type": "command",
             "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/ts-quality-gate.py",
-            "statusMessage": "Running TypeScript quality checks (tsc + eslint)...",
-            "async": true
+            "statusMessage": "Running TypeScript quality checks (tsc + eslint)..."
           }
         ]
       }

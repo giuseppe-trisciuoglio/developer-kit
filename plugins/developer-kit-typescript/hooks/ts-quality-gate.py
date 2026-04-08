@@ -246,7 +246,7 @@ def main() -> None:
     # Get modified files
     modified = _get_modified_files(cwd)
     if not modified and not _find_tsconfig(cwd):
-        # No TypeScript files modified and no tsconfig → silent pass
+        # No TypeScript files modified and no tsconfig → pass silently
         sys.exit(0)
 
     errors: list[str] = []
@@ -282,39 +282,21 @@ def main() -> None:
         if modified:
             message += f"\n\nFiles checked: {', '.join(modified)}"
 
-        # Output JSON format required by Claude Code hooks
+        # Output JSON format required by Stop hooks
         output = {
             "decision": "block",
-            "reason": "TypeScript quality gate failed",
-            "hookSpecificOutput": {
-                "hookEventName": "Stop",
-                "additionalContext": message
-            }
+            "reason": f"TypeScript quality gate failed\n{message}"
         }
         print(json.dumps(output))
         sys.exit(0)
 
     if warnings:
-        message = "TypeScript Quality Gate — WARNINGS"
-        for warn in warnings:
-            message += f"\n\n{warn}"
-
-        # Output JSON format for warnings
-        output = {
-            "hookSpecificOutput": {
-                "hookEventName": "Stop",
-                "additionalContext": message
-            }
-        }
-        print(json.dumps(output))
+        # Warnings don't block, just log
         sys.exit(0)
 
     if modified or _find_tsconfig(cwd):
-        message = (
-            f"TypeScript Quality Gate — PASSED"
-            + (f" ({len(modified)} file(s) checked)" if modified else "")
-        )
-        # Silent success - no JSON output needed for pass
+        # Success, just log
+        sys.exit(0)
 
     sys.exit(0)
 

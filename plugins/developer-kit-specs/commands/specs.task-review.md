@@ -77,15 +77,21 @@ You are reviewing an implemented task to verify it meets specifications and pass
 
 **Goal**: Read and understand the task and its specifications
 
-**Input**: $ARGUMENTS (task file path)
+**Input**: $ARGUMENTS (task file path or --spec and --task parameters)
 
 **Actions**:
 
 1. Create todo list with all phases
 2. Parse $ARGUMENTS to extract:
    - `--lang` parameter (language/framework for code review)
-   - `task-file-path` (path to task file)
-3. Read the task file (`docs/specs/[id]/tasks/TASK-XXX.md`)
+   - `task-file-path` (path to task file) OR `--spec` and `--task` parameters
+3. **Support two argument formats**:
+   - Format 1 (direct path): `/specs:task-review docs/specs/001-feature/tasks/TASK-001.md`
+   - Format 2 (spec+task): `/specs:task-review --spec=docs/specs/001-feature --task=TASK-001`
+   
+   If `--spec` and `--task` are provided, construct the task file path as: `{spec}/tasks/{task}.md`
+   
+4. Read the task file (`docs/specs/[id]/tasks/TASK-XXX.md`)
 4. Extract:
    - Task ID and title
    - Description

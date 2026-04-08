@@ -1,5 +1,5 @@
 {
-  "description": "Developer Kit Specs hooks: Drift Guard for spec fidelity and Task Auto-Status for automatic frontmatter management",
+  "description": "Developer Kit Specs hooks: Drift Guard for spec fidelity, Task Auto-Status for automatic frontmatter management, and Task KPI Analyzer for quality metrics",
   "hooks": {
     "UserPromptSubmit": [
       {
@@ -31,11 +31,16 @@
             "type": "command",
             "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/task-auto-status.py",
             "statusMessage": "Auto-updating task status..."
+          },
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/task-kpi-analyzer.py",
+            "statusMessage": "Analyzing task quality KPIs..."
           }
         ]
       }
     ],
-    "Stop": [
+    "TaskCompleted": [
       {
         "hooks": [
           {

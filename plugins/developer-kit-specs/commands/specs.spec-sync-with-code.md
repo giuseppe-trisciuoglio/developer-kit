@@ -62,10 +62,11 @@ Idea → Spec → Tasks → Implementation → Spec Sync With Code (this)
 
 1. Create todo list with all phases
 2. Parse arguments:
-   - Extract `spec-folder` path
+   - Extract `spec-folder` path (positional argument or `--spec=` parameter)
    - Extract `--after-task` if provided
 3. Determine spec folder:
-   - If argument provided: use it
+   - If positional argument provided: use it
+   - If `--spec=` parameter provided: use it
    - If no argument: detect from current working directory
    - Resolve the specification file with this priority:
      1. `YYYY-MM-DD--feature-name.md`

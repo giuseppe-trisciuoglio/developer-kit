@@ -51,7 +51,7 @@ This command ONLY operates in Task Mode. If no `--task=` parameter is provided, 
 
 ---
 
-## Workflow: Task Implementation (11 Steps)
+## Workflow: Task Implementation (12 Steps)
 
 This command implements a specific task following a focused workflow:
 - T-1: Task Identification
@@ -59,6 +59,7 @@ This command implements a specific task following a focused workflow:
 - T-3: Dependency Check
 - T-3.5: Knowledge Graph Validation
 - T-3.6: Contract Validation
+- T-3.7: Review Feedback Check
 - T-4: Implementation
 - T-5: Verification
 - T-6: Task Completion
@@ -73,13 +74,21 @@ This command implements a specific task following a focused workflow:
 
 **Actions**:
 
-1. Parse $ARGUMENTS to extract task name:
-   - Extract value from `--task=` parameter
+1. Parse $ARGUMENTS to extract parameters:
+   - Extract value from `--task=` parameter (can be task ID or file path)
+   - Extract value from `--spec=` parameter (spec folder path)
+   - Extract value from `--lang=` parameter (optional)
    - Trim whitespace
-   - Example: "--task=User login" → "User login"
 
-2. Find the task file:
-   - If the task name is a file path (contains "/" or ends with ".md"): use it directly
+2. **Support two argument formats**:
+   - **Format 1** (direct path): `--task=docs/specs/001-feature/tasks/TASK-001.md`
+   - **Format 2** (spec+task): `--spec=docs/specs/001-feature --task=TASK-001`
+   
+   If Format 2 is used, construct the task file path as: `{spec}/tasks/{task}.md`
+
+3. Find the task file:
+   - If the task value is a file path (contains "/" or ends with ".md"): use it directly
+   - If `--spec` is provided with task ID: construct path `{spec}/tasks/{task}.md`
    - Otherwise, look for task files matching `docs/specs/*/tasks/TASK-*.md`
    - Match task by ID (e.g., "TASK-001") or title in the task frontmatter
    - If multiple found, ask user which one via AskUserQuestion
@@ -265,19 +274,115 @@ This command implements a specific task following a focused workflow:
 
 ---
 
+## T-3.7: Review Feedback Check (Ralph Loop Support)
+
+**Goal**: Load and address issues from previous review iterations (Ralph Loop mode)
+
+**Actions**:
+
+1. **Check for existing review file**:
+   - Construct review file path from task file:
+     - If task is `docs/specs/XXX/tasks/TASK-007.md`
+     - Look for `docs/specs/XXX/tasks/TASK-007--review.md`
+   - Pattern: Replace `.md` with `--review.md` in the task filename
+
+**Goal**: Load and address issues from previous review iterations (Ralph Loop mode)
+
+**Actions**:
+
+1. **Check for existing review file**:
+   - Construct review file path: `{task_base_name}--review.md`
+   - Example: if task is `TASK-007.md`, look for `TASK-007--review.md`
+   - Remove `.md` from task filename and append `--review.md`
+
+2. **If review file exists**:
+   - Read the review file content
+   - Extract `review_status` from YAML frontmatter:
+     - `needs_fix` → Issues need to be addressed
+     - `passed` → Review passed, no fixes needed
+     - `partial` → Some issues fixed, others remain
+   - Extract issues list from the review content
+   - Each issue should have:
+     - `file`: File affected
+     - `line`: Line number (optional)
+     - `severity`: `blocking`, `warning`, `suggestion`
+     - `description`: What needs to be fixed
+     - `fix_applied`: Whether this was already fixed
+
+3. **Process review feedback**:
+   - If `review_status` is `passed`: Log "Review passed previously, proceeding with implementation"
+   - If `review_status` is `needs_fix` or `partial`:
+     - Filter issues where `fix_applied: false` or not marked as resolved
+     - Group issues by file
+     - Log: "Found X issues from previous review that need fixing"
+     - Display issues to user with severity levels
+
+4. **Update implementation plan**:
+   - Add fixing review issues as part of T-4 Implementation phase
+   - Prioritize `blocking` issues first, then `warning`, then `suggestion`
+   - Use TodoWrite to track: "[ ] Fix X review issues (Y blocking, Z warnings)"
+
+5. **If no review file exists**:
+   - Normal flow - no previous review to consider
+   - Log: "No previous review found, proceeding with fresh implementation"
+
+**Review File Format** (`TASK-XXX--review.md`):
+
+```yaml
+---
+review_date: 2026-04-07
+review_status: needs_fix
+task_id: TASK-007
+overall_assessment: partial
+---
+
+## Critical Issues
+
+### Issue 1: [TITLE]
+- **File**: `src/main/java/com/example/Service.java`
+- **Line**: 45
+- **Severity**: blocking
+- **Category**: logic_error
+- **Description**: Null pointer exception risk
+- **Fix Applied**: false
+
+## Summary
+
+- **Total Issues**: 5
+- **Blocking**: 2
+- **Warnings**: 2
+- **Suggestions**: 1
+```
+
+**Naming Convention**:
+- Task file: `TASK-007.md`
+- Review file: `TASK-007--review.md` (double dash `--` before `review`)
+
+---
+
 ## T-4: Implementation
 
-**Goal**: Implement the task according to acceptance criteria and the documented DoD
+**Goal**: Implement the task according to acceptance criteria and the documented DoD, and fix any review issues from previous iterations
 
 **Actions**:
 
 1. Read acceptance criteria and DoD items from the task
-2. Focus implementation on meeting criteria:
+2. **If review feedback exists** (from T-3.7):
+   - Address all `blocking` issues first
+   - Address `warning` issues second
+   - Address `suggestion` issues if time permits
+   - For each issue:
+     - Read the affected file
+     - Apply the necessary fix
+     - Mark the issue as resolved in your tracking
+   - Update the review file with `fix_applied: true` for resolved issues (optional, T-6.6 will handle this)
+3. Focus implementation on meeting criteria:
    - Implement description requirements
    - Ensure all acceptance criteria are met
    - Satisfy each DoD item with concrete evidence in code, tests, or task metadata
-3. Use appropriate sub-agents based on --lang
-4. Write clean, focused code
+4. Use appropriate sub-agents based on --lang
+5. Write clean, focused code
+6. **Ralph Loop Mode**: If fixing review issues, focus only on the identified issues unless the user explicitly requests additional changes
 
 ---
 

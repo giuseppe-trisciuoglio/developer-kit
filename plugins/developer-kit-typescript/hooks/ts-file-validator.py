@@ -160,14 +160,10 @@ def main() -> None:
     error = _validate(file_path)
     if error:
         message = f"TypeScript file structure violation:\n  {error}\n\nCorrect the file name before proceeding."
-        # Output JSON format for blocking
+        # Output JSON format for blocking PostToolUse
         output = {
             "decision": "block",
-            "reason": "TypeScript file naming convention violation",
-            "hookSpecificOutput": {
-                "hookEventName": "PostToolUse",
-                "additionalContext": message
-            }
+            "reason": message
         }
         print(json.dumps(output))
         sys.exit(0)

@@ -244,11 +244,11 @@ def main() -> None:
     try:
         input_data = json.load(sys.stdin)
     except (json.JSONDecodeError, ValueError):
-        sys.exit(0)  # Malformed input → silent exit
+        sys.exit(0)
 
     # 2. Validate hook event
     if input_data.get("hook_event_name") != "TaskCompleted":
-        sys.exit(0)  # Wrong event → silent exit
+        sys.exit(0)
 
     # 3. Get current working directory
     cwd = input_data.get("cwd", os.getcwd())
@@ -257,12 +257,12 @@ def main() -> None:
     state_path = find_state_file(cwd)
 
     if not state_path:
-        # State not found → graceful degradation, silent exit
+        # State not found → graceful degradation
         sys.exit(0)
 
     state = load_state(state_path)
     if not state:
-        # Invalid state → graceful degradation, silent exit
+        # Invalid state → graceful degradation
         sys.exit(0)
 
     # 5. Get spec folder and task ID
@@ -285,7 +285,7 @@ def main() -> None:
         # Graceful degradation: fail silently if report cannot be written
         sys.exit(0)
 
-    # 10. Silent success (report generated)
+    # 10. Success (report generated)
     sys.exit(0)
 
 
