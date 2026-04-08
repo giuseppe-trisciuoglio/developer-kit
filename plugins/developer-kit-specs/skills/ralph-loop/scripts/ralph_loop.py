@@ -594,6 +594,15 @@ def action_loop(spec_path: str, args_agent: str = None, no_commit: bool = False)
     else:
         print(f"❌ Unknown state: {step}")
         print(f"   Valid states: init, choose_task, implementation, review, fix, cleanup, sync, update_done, complete, failed")
+        
+        # Provide helpful guidance for common errors
+        if "-" in step:
+            suggested = step.replace("-", "_")
+            print(f"\n💡 HINT: The state '{step}' uses a dash (-) instead of an underscore (_).")
+            print(f"   Did you mean: '{suggested}'?")
+            print(f"\n   To fix this, run:")
+            print(f"   sed -i 's/\"{step}\"/\"{suggested}\"/g' {get_fix_plan_path(spec_path)}")
+        
         sys.exit(1)
 
 
