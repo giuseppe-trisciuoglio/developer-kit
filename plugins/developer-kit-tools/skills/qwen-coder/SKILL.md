@@ -141,14 +141,44 @@ qwen -c <session-id> -p "Continue the refactoring from the previous session."
 qwen -p "Summarize key technical debt items as JSON array." --output-format json
 ```
 
-### 5) Return Results Safely
+### 5) Result Handling
+
+This section covers how to present Qwen Coder output and when to request user confirmation.
+
+#### 5.1) Output Presentation
 
 When reporting Qwen Coder output:
 
+- Present output in a clear, readable format
 - Summarize key findings and confidence level
-- Keep raw output available when needed
 - Separate observations from recommended actions
-- Explicitly ask user confirmation before applying suggested edits
+- Keep raw output available when needed
+- Include the model used and approval mode applied
+- State which permission profile was in effect
+
+#### 5.2) Confirmation Workflow
+
+Before applying any suggested modifications:
+
+1. Present the proposed changes to the user in the output template format
+2. Request explicit confirmation (for example: "Do you want me to apply these changes?")
+3. Wait for user direction before proceeding
+4. Do not auto-apply changes without user consent
+
+Exception: In `--approval-mode yolo` with explicit user request, changes may proceed automatically. Still inform the user of what was done.
+
+#### 5.3) Result Metadata
+
+Each delegation result shall include the following metadata:
+
+| Field | Description |
+|-------|-------------|
+| Task summary | What was delegated to Qwen Coder |
+| Command | The qwen command executed (without sensitive parameters) |
+| Model | Which model was used (for example qwen2.5-coder, qwq) |
+| Approval mode | The approval mode applied (plan, default, auto_edit, yolo) |
+| Key findings | Observations and results from Qwen Coder |
+| Suggested next actions | Recommended follow-up steps (if applicable) |
 
 ## Output Template
 
