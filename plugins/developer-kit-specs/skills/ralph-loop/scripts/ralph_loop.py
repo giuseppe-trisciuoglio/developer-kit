@@ -610,13 +610,40 @@ def handle_choose_task(spec_path: str, fix_plan: dict, agent_config: dict):
     next_task = get_next_pending_task(fix_plan)
 
     if not next_task:
-        fix_plan["state"]["step"] = "complete"
-        save_fix_plan(spec_path, fix_plan)
-        print("→ No more tasks in range")
-        print("═══════════════════════════════════════════════════════")
-        print("Ralph Loop COMPLETE")
-        print("═══════════════════════════════════════════════════════")
-        return
+        # Check for misalignment: pending list not empty but no pending tasks found
+        pending_list = fix_plan.get("pending", [])
+        if pending_list:
+            # Misalignment detected: pending list has items but task statuses don't match
+            print("⚠️  WARNING: Task status misalignment detected!")
+            print(f"   Pending list has {len(pending_list)} task(s), but no pending tasks found in task list.")
+            
+            # Get the first task from pending list
+            first_pending_id = pending_list[0]
+            tasks = fix_plan.get("tasks", [])
+            
+            for task in tasks:
+                if task["id"] == first_pending_id:
+                    next_task = task
+                    # Fix the status if it's incorrectly marked as completed
+                    if task["status"] == "completed":
+                        task["status"] = "pending"
+                        print(f"   Fixed {first_pending_id}: status 'completed' → 'pending'")
+                        # Save immediately to persist the fix
+                        save_fix_plan(spec_path, fix_plan)
+                    print(f"   Using first pending task: {first_pending_id}")
+                    break
+            
+            if not next_task:
+                print(f"   ⚠️  Task {first_pending_id} not found in task list!")
+        
+        if not next_task:
+            fix_plan["state"]["step"] = "complete"
+            save_fix_plan(spec_path, fix_plan)
+            print("→ No more tasks in range")
+            print("═══════════════════════════════════════════════════════")
+            print("Ralph Loop COMPLETE")
+            print("═══════════════════════════════════════════════════════")
+            return
 
     task_id = next_task["id"]
     task_title = next_task.get("title", "")
