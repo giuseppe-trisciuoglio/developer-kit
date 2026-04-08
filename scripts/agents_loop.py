@@ -217,6 +217,7 @@ AGENTS = {
         "yolo_flag": "--allow-all",
         "prompt_arg": True,
         "prompt_flag": "-p",
+        "default_model": "gpt-5-mini",
     },
     "gemini": {
         "name": "Gemini CLI",
@@ -460,11 +461,14 @@ def extract_command_from_output(stdout: str, agent: str) -> Optional[str]:
             return cmd
     
     # Fallback: search for command patterns
+    # NOTE: Patterns require at least one letter to avoid matching progress indicators like "/26"
     for line in lines:
         if agent in ("claude", "kimi", "gemini", "qwen"):
-            match = re.search(r'(/[\w:-]+[^\n`]+)', line)
+            # Slash-prefixed commands: require first char after / to be a letter
+            match = re.search(r'(/[a-zA-Z][\w:-]*[^\n`]*)', line)
         else:
-            match = re.search(r'([\w-]+:[\w-]+[^\n`]+)', line) or re.search(r'(task-\w+[^\n`]+)', line)
+            # Other agents: require at least one letter in the command (not just numbers)
+            match = re.search(r'([\w-]*[a-zA-Z][\w-]*:[\w:-]+[^\n`]*)', line) or re.search(r'(task-[a-zA-Z]\w*[^\n`]*)', line)
         if match:
             cmd = match.group(1).strip()
             if agent in ("codex", "copilot") and cmd.startswith('/'):
@@ -551,10 +555,13 @@ def run_agent(agent: str, prompt: str, args) -> int:
         if args.workdir and args.workdir != ".":
             cmd.extend(["-C", args.workdir])
 
-    # Add model flag if supported and provided
-    if args.model and agent_config.get("supports_model"):
+    # Add model flag if supported
+    if agent_config.get("supports_model"):
         model_flag = agent_config.get("model_flag", "--model")
-        cmd.extend([model_flag, args.model])
+        # Use explicitly provided model, or agent's default_model, or skip
+        model_to_use = args.model or agent_config.get("default_model")
+        if model_to_use:
+            cmd.extend([model_flag, model_to_use])
 
     # Add streaming flags for agents that support it (for real-time output)
     if agent_config.get("supports_streaming"):
@@ -1277,24 +1284,31 @@ def main():
         command = extract_command_from_output(stdout, effective_agent)
         
         if not command:
-            print("  ⚠️  Could not extract command. Retrying...", file=sys.stderr)
-            time.sleep(args.delay)
-            iteration += 1
-            continue
+            # Some steps (like update_done) don't require external command execution
+            # They just update state. If no command found, just advance state.
+            if step in ("update_done", "init", "choose_task", "complete", "failed"):
+                print(f"  ℹ️  Step '{step}' doesn't require external command execution")
+                print("  → Proceeding to advance state...")
+            else:
+                print("  ⚠️  Could not extract command. Retrying...", file=sys.stderr)
+                time.sleep(args.delay)
+                iteration += 1
+                continue
         
-        # Step 3: Execute with effective agent
-        print(f"  → Executing with {AGENTS[effective_agent]['name']}...")
-        print(f"  📝 Command preview: {command[:100]}{'...' if len(command) > 100 else ''}")
-        
-        exit_code = run_agent(effective_agent, command, args)
-        
-        if exit_code != 0:
-            print(f"  ⚠️  Agent exited with code {exit_code}", file=sys.stderr)
-            print(f"  💡 Tip: Use --verbose to see full output, or check .agents_loop_logs/ for details")
-            print(f"  ⏳ Retrying same step in {args.delay}s...")
-            time.sleep(args.delay)
-            iteration += 1
-            continue
+        # Step 3: Execute with effective agent (only if there's a command to execute)
+        if command:
+            print(f"  → Executing with {AGENTS[effective_agent]['name']}...")
+            print(f"  📝 Command preview: {command[:100]}{'...' if len(command) > 100 else ''}")
+            
+            exit_code = run_agent(effective_agent, command, args)
+            
+            if exit_code != 0:
+                print(f"  ⚠️  Agent exited with code {exit_code}", file=sys.stderr)
+                print(f"  💡 Tip: Use --verbose to see full output, or check .agents_loop_logs/ for details")
+                print(f"  ⏳ Retrying same step in {args.delay}s...")
+                time.sleep(args.delay)
+                iteration += 1
+                continue
         
         # Step 3.5: KPI Quality Check (after review step)
         # Check if current step was 'review' and verify quality threshold
