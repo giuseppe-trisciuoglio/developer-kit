@@ -208,6 +208,24 @@ gemini -p "Summarize this CSV file's key statistics: row count, missing-value co
 gemini -p "Provide 3 short alternative microcopy options (<=20 words each) for an onboarding tooltip that explains account recovery. Include a one-line A/B test metric proposal for each option." -m gemini-3-flash
 ```
 
+### Example 7: Architectural design analysis
+
+```bash
+gemini -p "Analyze the current system architecture and propose a detailed migration strategy to a microservices architecture. Include component boundaries, communication patterns, data ownership, and estimated risks for each migration step." -m gemini-3-pro --approval-mode plan
+```
+
+### Example 8: Comprehensive security audit
+
+```bash
+gemini -p "Perform a thorough security audit of the authentication and authorization layer. Identify potential vulnerabilities, rate-limiting gaps, token handling weaknesses, and injection vectors. Provide severity ratings and specific remediation steps for each finding." -m gemini-3-pro --approval-mode plan
+```
+
+### Example 9: Production-quality module generation
+
+```bash
+gemini -p "Generate a production-ready TypeScript module for paginated API responses. Include input validation, error handling, retry logic with exponential backoff, and comprehensive unit tests with mocks. Follow best practices for error types, logging, and type safety." -m gemini-3-pro --approval-mode auto_edit
+```
+
 ## Best Practices
 
 - keep delegated prompts focused and explicit
