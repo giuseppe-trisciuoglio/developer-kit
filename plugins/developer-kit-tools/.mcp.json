@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "notebooklm-mcp": {
+      "command": "${CLAUDE_PLUGIN_ROOT}/scripts/wrap-notebooklm-mcp.sh"
+    },
+    "sonarqube-mcp": {
+      "command": "${CLAUDE_PLUGIN_ROOT}/scripts/wrap-sonarqube-mcp.sh"
+    }
+  }
+}
