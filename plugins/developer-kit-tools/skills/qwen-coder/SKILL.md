@@ -208,28 +208,148 @@ Use this structure when returning delegated results:
 
 ## Examples
 
-### Example 1: Code refactoring with Qwen2.5-Coder
+### Example 1: Code analysis with QwQ deep reasoning
 
-```bash
-qwen -p "Refactor the payment service to reduce duplication. Keep public API unchanged, add error handling, and output a patch-style response." -m qwen2.5-coder --approval-mode default
+**Input:**
+
+```text
+Analyze the authentication module and identify security vulnerabilities.
 ```
 
-### Example 2: Security review with QwQ
+**Command:**
 
 ```bash
-qwen -p "Review authentication module for security vulnerabilities. Report only high-confidence issues with severity and remediation steps." -m qwq --approval-mode plan
+qwen -p "Analyze the authentication module for security vulnerabilities. Report only high-confidence issues with severity, file paths, and remediation steps." -m qwq --approval-mode plan
 ```
 
-### Example 3: Continue previous session
+**Expected behavior:**
 
-```bash
-qwen -c <session-id> -p "Continue the refactoring from the previous session, focusing on test coverage."
+```text
+Returns a structured analysis with high-confidence security findings, including severity ratings and specific remediation recommendations.
 ```
 
-### Example 4: Structured JSON output
+### Example 2: Code refactoring with Qwen2.5-Coder
+
+**Input:**
+
+```text
+Refactor the payment service to reduce code duplication while keeping the public API unchanged.
+```
+
+**Command:**
 
 ```bash
-qwen -p "List top 5 refactoring opportunities with fields: title, file, impact, effort. Return as JSON array." -m qwen2.5-coder --output-format json
+qwen -p "Refactor the payment service in src/services/payment.ts to reduce duplication. Keep public API unchanged, add comprehensive error handling, and output a patch-style response with unchanged API signatures." -m qwen2.5-coder --approval-mode default
+```
+
+**Expected behavior:**
+
+```text
+Proposes concrete code changes (patch-style), extracts duplication into shared helpers, and maintains original API contracts.
+```
+
+### Example 3: Documentation generation
+
+**Input:**
+
+```text
+Generate documentation for the UserService class including usage examples.
+```
+
+**Command:**
+
+```bash
+qwen -p "Generate comprehensive documentation for the UserService class. Include: class purpose, public methods with parameters, usage examples, and error handling patterns. Format as markdown." -m qwen2.5-coder --approval-mode plan
+```
+
+**Expected behavior:**
+
+```text
+Returns markdown-formatted documentation with JSDoc-style comments, method signatures, and practical usage examples.
+```
+
+### Example 4: Code generation with model selection
+
+**Input:**
+
+```text
+Generate a REST API endpoint for CRUD operations on items.
+```
+
+**Command:**
+
+```bash
+qwen -p "Generate a production-ready REST API endpoint for CRUD operations on items. Include input validation, error handling, and unit tests. Use Express.js framework." -m qwen2.5-coder --approval-mode auto_edit
+```
+
+**Expected behavior:**
+
+```text
+Generates complete, runnable code for POST/GET/PUT/DELETE endpoints with proper middleware, validation, and test scaffolding.
+```
+
+### Example 5: Session resume for continued work
+
+**Input:**
+
+```text
+Continue the previous Qwen session to add test coverage to the refactored code.
+```
+
+**Command:**
+
+```bash
+qwen -c <session-id> -p "Continue from the previous session. Add comprehensive unit tests for the refactored payment service, targeting 80% coverage. Include mocks for external dependencies." -m qwen2.5-coder --approval-mode default
+```
+
+**Expected behavior:**
+
+```text
+Resumes the previous session context and continues work, adding test files with appropriate mocks and assertions.
+```
+
+### Example 6: Multi-model comparison for quality check
+
+**Input:**
+
+```text
+Compare Qwen2.5-Coder and QwQ outputs for the same refactoring task.
+```
+
+**Command:**
+
+```bash
+# First run with Qwen2.5-Coder
+qwen -p "Refactor the string utility module for better maintainability." -m qwen2.5-coder --approval-mode plan --output-format text
+
+# Then run with QwQ for comparison
+qwen -p "Refactor the string utility module for better maintainability." -m qwq --approval-mode plan --output-format text
+```
+
+**Expected behavior:**
+
+```text
+Provides side-by-side comparison: Qwen2.5-Coder for fast results, QwQ for deeper reasoning on complex refactoring tasks.
+```
+
+### Example 7: Structured JSON output for automation
+
+**Input:**
+
+```text
+List the top 5 refactoring opportunities as JSON for our tracking system.
+```
+
+**Command:**
+
+```bash
+qwen -p "Analyze this codebase and return the top 5 refactoring opportunities as a JSON array. Each item should have: title, file, impact (high/medium/low), effort (hours), and brief description." -m qwen2.5-coder --output-format json
+```
+
+**Expected behavior:**
+
+```text
+Returns valid JSON array with 5 refactoring items, parseable for integration with project management tools.
 ```
 
 ## Best Practices
