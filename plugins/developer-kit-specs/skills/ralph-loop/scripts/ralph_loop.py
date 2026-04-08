@@ -523,6 +523,8 @@ def action_start(spec_path: str, from_task: Optional[str], to_task: Optional[str
             "current_task_lang": None,
             "iteration": 0,
             "retry_count": 0,
+            "review_file_retry": 0,    # separate counter for file validation failures
+            "review_file_error": None, # last file validation error message
             "last_updated": datetime.now().isoformat(),
             "error": None,
             "range_progress": {
@@ -723,6 +725,8 @@ def handle_review(spec_path: str, fix_plan: dict, agent_config: dict):
         return
 
     retry_count = fix_plan["state"].get("retry_count", 0)
+    review_file_error = fix_plan["state"].get("review_file_error")
+    review_file_retry = fix_plan["state"].get("review_file_retry", 0)
 
     # Check for task-specific agent
     task_agent = None
@@ -735,6 +739,23 @@ def handle_review(spec_path: str, fix_plan: dict, agent_config: dict):
         agent_config = task_agent
 
     print(f"→ Review: {current_task} | Retry: {retry_count}/3")
+
+    # If there was a review file error from the previous --action=next, surface it to the agent
+    if review_file_error:
+        print(f"")
+        print(f"⚠️  REVIEW FILE ERROR (attempt {review_file_retry}/3):")
+        print(f"   {review_file_error}")
+        print(f"")
+        print(f"   The review file MUST be created with this exact frontmatter structure:")
+        print(f"   ---")
+        print(f"   review_status: PASSED   # or FAILED")
+        print(f"   critical_issues: 0      # required if FAILED")
+        print(f"   major_issues: 0         # required if FAILED")
+        print(f"   ---")
+        print(f"")
+        print(f"   Expected file path: tasks/{current_task}--review.md")
+        print(f"")
+
     print("")
     print("Execute:")
     cmd = format_command(agent_config, "task_review", spec=spec_path, task=current_task)
@@ -991,6 +1012,52 @@ def action_resume(spec_path: str, args_agent: str = None, no_commit: bool = Fals
     action_loop(spec_path, args_agent, no_commit)
 
 
+def validate_review_file(spec_path: str, task_id: str) -> tuple[bool, str]:
+    """
+    Structural pre-validation of the review file before semantic check.
+    Verifies: file exists, has frontmatter delimiters, has valid review_status field.
+    Returns: (True, "") if valid, (False, "<error message>") if not.
+    """
+    spec_dir = Path(spec_path)
+    review_file = spec_dir / "tasks" / f"{task_id}--review.md"
+
+    if not review_file.exists():
+        return False, (
+            f"Review file not found: tasks/{task_id}--review.md. "
+            f"The agent must create this file with a valid YAML frontmatter."
+        )
+
+    try:
+        with open(review_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+    except Exception as e:
+        return False, f"Cannot read review file: {e}"
+
+    frontmatter_match = re.match(r'^---\s*\n(.*?)\n---\s*\n', content, re.DOTALL)
+    if not frontmatter_match:
+        return False, (
+            f"Review file tasks/{task_id}--review.md has no valid YAML frontmatter. "
+            f"The file must start with '---' delimiters containing the frontmatter block."
+        )
+
+    frontmatter = frontmatter_match.group(1)
+    status_match = re.search(r'^review_status:\s*(\w+)', frontmatter, re.MULTILINE | re.IGNORECASE)
+    if not status_match:
+        return False, (
+            f"Review file tasks/{task_id}--review.md is missing the 'review_status' field. "
+            f"Required frontmatter: review_status: PASSED|FAILED"
+        )
+
+    review_status = status_match.group(1).upper()
+    if review_status not in {"PASSED", "FAILED"}:
+        return False, (
+            f"Invalid review_status value '{review_status}' in tasks/{task_id}--review.md. "
+            f"Allowed values: PASSED or FAILED."
+        )
+
+    return True, ""
+
+
 def check_review_result(spec_path: str, task_id: str) -> tuple[bool, str]:
     """
     Check the review report to determine if review passed or failed.
@@ -1220,20 +1287,51 @@ def action_next(spec_path: str, args_agent: str = None, no_commit: bool = False)
             save_fix_plan(spec_path, fix_plan)
             return
         
-        # Check review result
+        max_file_retries = 3
+
+        # === PRE-VALIDATION: structural check before semantic review ===
+        file_valid, file_error = validate_review_file(spec_path, current_task)
+
+        if not file_valid:
+            # Do NOT increment retry_count — this is not a review failure
+            review_file_retry = state.get("review_file_retry", 0) + 1
+            state["review_file_retry"] = review_file_retry
+            state["review_file_error"] = file_error
+
+            print(f"   ⚠️  Review file invalid (attempt {review_file_retry}/{max_file_retries}): {file_error}")
+
+            if review_file_retry >= max_file_retries:
+                print(f"   ❌ Max file retries ({max_file_retries}) exceeded - review file never created correctly")
+                state["step"] = "failed"
+                state["error"] = f"Review file validation failed after {max_file_retries} attempts: {file_error}"
+            else:
+                print(f"   🔄 Staying on 'review' — agent must create/fix the review file")
+                # state["step"] remains "review" — no assignment needed
+
+            save_fix_plan(spec_path, fix_plan)
+            print(f"")
+            print("Run loop to see next command:")
+            print(f"  python3 ralph_loop.py --action=loop --spec={spec_path}")
+            return
+
+        # File is structurally valid — reset file retry counters
+        state["review_file_retry"] = 0
+        state["review_file_error"] = None
+
+        # === SEMANTIC CHECK: check review content ===
         review_passed, reason = check_review_result(spec_path, current_task)
-        
+
         if review_passed:
             print(f"   ✅ Review passed: {reason}")
             print(f"   Advanced: review → cleanup")
             state["step"] = "cleanup"
-            state["retry_count"] = 0  # Reset retry count on success
+            state["retry_count"] = 0
             save_fix_plan(spec_path, fix_plan)
         else:
             print(f"   ❌ Review failed: {reason}")
             retry_count += 1
             state["retry_count"] = retry_count
-            
+
             if retry_count >= max_retries:
                 print(f"   ❌ Max retries ({max_retries}) exceeded")
                 print(f"   Advanced: review → failed")
@@ -1245,7 +1343,7 @@ def action_next(spec_path: str, args_agent: str = None, no_commit: bool = False)
                 print(f"   Advanced: review → fix")
                 state["step"] = "fix"
                 save_fix_plan(spec_path, fix_plan)
-        
+
         print(f"")
         print("Run loop to see next command:")
         print(f"  python3 ralph_loop.py --action=loop --spec={spec_path}")

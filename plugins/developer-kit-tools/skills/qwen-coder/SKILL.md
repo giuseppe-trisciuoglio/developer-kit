@@ -55,6 +55,10 @@ qwen auth status
 If `qwen` is unavailable, inform the user and stop execution until Qwen Coder CLI is installed.
 If authentication is invalid, provide authentication setup instructions and stop execution.
 
+## Reference
+
+- Command reference: `references/cli-command-reference.md`
+
 ## Instructions
 
 ### 1) Confirm Delegation Scope

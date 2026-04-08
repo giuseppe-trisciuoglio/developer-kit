@@ -27,6 +27,7 @@
     "./skills/notebooklm",
     "./skills/copilot-cli",
     "./skills/codex",
-    "./skills/sonarqube-mcp"
+    "./skills/sonarqube-mcp",
+    "./skills/qwen-coder"
   ]
 }
