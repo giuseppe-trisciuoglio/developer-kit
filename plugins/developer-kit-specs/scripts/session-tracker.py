@@ -20,7 +20,7 @@ import argparse
 import json
 import re
 import sys
-from collections import Counter, deque
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
@@ -77,18 +77,46 @@ def redact_secrets(text: str) -> str:
 
 
 def read_last_n_lines(file_path: str, n: int = MAX_LINES) -> list[str]:
-    """Read last N lines from a file efficiently using deque.
+    """Read last N lines from a file by seeking from the end.
 
-    Only reads N lines into memory, never the full file.
+    Only reads the tail portion of the file needed, never iterates
+    the full content from start to finish.
     Returns empty list on any error.
     """
     try:
         path = Path(file_path)
         if not path.exists() or not path.is_file():
             return []
-        with open(path, "r", encoding="utf-8", errors="replace") as f:
-            tail = deque(f, maxlen=n)
-        return list(tail)
+
+        file_size = path.stat().st_size
+        if file_size == 0:
+            return []
+
+        with open(path, "rb") as f:
+            # Read backwards in blocks until we have enough newlines
+            block_size = 8192
+            newline_count = 0
+            position = file_size
+            chunks: list[bytes] = []
+
+            while newline_count <= n and position > 0:
+                read_size = min(block_size, position)
+                position -= read_size
+                f.seek(position)
+                chunk = f.read(read_size)
+                chunks.insert(0, chunk)
+                newline_count += chunk.count(b"\n")
+
+            # Decode collected chunks
+            content = b"".join(chunks).decode("utf-8", errors="replace")
+            all_lines = content.splitlines()
+
+            # If we didn't read from position 0, the first line is partial
+            if position > 0 and all_lines:
+                all_lines = all_lines[1:]
+
+            # Return the last N lines
+            return all_lines[-n:] if len(all_lines) > n else all_lines
     except (OSError, IOError):
         return []
 

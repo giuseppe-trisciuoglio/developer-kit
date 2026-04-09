@@ -4,6 +4,22 @@ This file tracks development sessions, recording what was changed and why.
 
 ---
 
+## 2026-04-09 — Session 73bf42df
+**Branch:** feature/improved-specs-flow
+**Orario:** 22:42
+
+### Task eseguiti
+- Fix performance issue in TASK-003: session-tracker.py read_last_n_lines() function
+
+### File modificati
+- `plugins/developer-kit-specs/scripts/session-tracker.py` (modificato)
+- `docs/specs/005-session-tracking-hook/tasks/TASK-003--review.md` (modificato)
+
+### Rationale
+La funzione `read_last_n_lines()` in session-tracker.py utilizzava `deque(f, maxlen=n)` che, pur restituendo solo le ultime n righe, leggeva comunque l'intero contenuto del file prima di troncare. Questo violava il requisito esplicito di leggere **solo** le ultime 100 righe del transcript senza mai iterare il file completo. È stato implementato un seek-based tail reader che legge all'indietro dal fondo del file in blocchi di 8KB, accedendo solo alla porzione necessaria del file. Tutti i 33 test passano e il review file è stato aggiornato da FAILED a PASSED, completando TASK-003.
+
+---
+
 ## 2026-04-09 — Session 89cddc6c
 **Branch:** feature/improved-specs-flow
 **Orario:** 22:27
