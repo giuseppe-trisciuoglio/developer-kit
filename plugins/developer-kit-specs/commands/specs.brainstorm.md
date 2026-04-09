@@ -18,9 +18,11 @@ it will be implemented.
 The new workflow:
 
 ```
-Idea → Functional Specification (docs/specs/[id]/) → Architecture & Ontology Definition → Tasks (docs/specs/[id]/tasks/) → Implementation → Review → Code Cleanup → Done
-                                                      (docs/specs/architecture.md)
-                                                      (docs/specs/ontology.md)
+Idea → Scope Assessment → Functional Specification (docs/specs/[id]/) → Architecture & Ontology → Tasks → Implementation → Review → Cleanup → Done
+         (Phase 1.5)          (WHAT, not HOW)                             (docs/specs/)               (spec-to-tasks)
+                                                                          
+If scope is TOO LARGE:
+  Idea → Split into Spec A, Spec B, Spec C → Brainstorm each separately → Multiple focused specifications
 ```
 
 **Output**: `docs/specs/[id]/YYYY-MM-DD--feature-name.md`
@@ -95,6 +97,7 @@ incrementally, generate professional documentation, review the document, and rec
 - **Be flexible**: Go back and clarify when something doesn't make sense
 - **Use TodoWrite**: Track all progress throughout
 - **No time estimates**: DO NOT provide or request time estimates
+- **Scope awareness**: Validate idea scope early; if too large, guide user to split into multiple focused specifications
 
 ---
 
@@ -126,6 +129,108 @@ incrementally, generate professional documentation, review the document, and rec
     - **Standard** (feature, moderate scope, 3-10 files): Continue with brainstorm
     - **Full** (greenfield, complex, >10 files or multiple modules): Continue with brainstorm + recommend spec-quality-check
       after
+
+---
+
+## Phase 1.5: Complexity Assessment & Scope Validation
+
+**Goal**: Assess idea complexity early and guide user to split if scope is too large for a single specification
+
+**Actions**:
+
+1. **Estimate implementation scope** based on the idea description and context from Phase 1:
+   - Count distinct user stories / use cases mentioned
+   - Identify separate functional domains or bounded contexts
+   - Note integration points with external systems
+   - Assess data model complexity (entities, relationships)
+   - Evaluate user interaction complexity (flows, edge cases)
+
+2. **Classify scope size** using these indicators:
+
+   **Small Scope** (proceed normally - will generate 3-8 tasks):
+   - Single user story or use case
+   - One functional domain
+   - 0-2 integration points
+   - Simple data model (1-3 entities)
+   - Straightforward user flow
+   - Examples: "Add password reset", "Implement search filter", "Add user profile photo upload"
+
+   **Medium Scope** (proceed normally - will generate 8-15 tasks):
+   - 2-4 user stories
+   - One focused functional domain
+   - 2-4 integration points
+   - Moderate data model (4-8 entities)
+   - Multiple user flows but related
+   - Examples: "User authentication with roles", "Product catalog with categories"
+
+   **Large Scope** (WARNING - will likely generate >15 tasks - see step 3):
+   - 5+ user stories
+   - Multiple functional domains or bounded contexts
+   - 5+ integration points
+   - Complex data model (9+ entities)
+   - Multiple independent user flows
+   - Examples: "Complete e-commerce platform", "User management with auth, profiles, preferences, notifications, and analytics"
+
+3. **If Large Scope detected**:
+
+   - STOP and inform the user with this message:
+
+   ```
+   Scope Assessment: Large
+
+   Your idea covers multiple functional domains and would likely generate more than 15 implementation tasks.
+   This is too large for a single specification and implementation cycle.
+
+   Recommended approach: Create 2 or more focused specifications, each with clear scope.
+
+   Benefits of splitting:
+   - Each specification has a clear, testable functional boundary
+   - Implementation cycles are manageable and focused
+   - Easier to prioritize and deliver incrementally
+   - Better traceability from requirements to code
+   ```
+
+   - **Identify natural split points** in the idea:
+     - Look for bounded contexts (e.g., "authentication" vs "user profiles" vs "notifications")
+     - Identify core vs extended features (must-have vs nice-to-have)
+     - Find independent functional domains that can be implemented separately
+     - Consider phased delivery (Phase 1, Phase 2, etc.)
+
+   - **Use AskUserQuestion** to present split options:
+
+   ```
+   I recommend splitting this idea into [N] focused specifications:
+
+   Option 1: Split by Functional Domain
+   - Spec A: [domain name] - [brief description, core functionality]
+   - Spec B: [domain name] - [brief description, core functionality]
+   - Spec C: [domain name] - [brief description, if applicable]
+
+   Option 2: Split by Priority/Phase
+   - Spec A: Core functionality (must-have for initial release) - [list key features]
+   - Spec B: Extended features (phase 2) - [list key features]
+
+   How would you like to proceed?
+   ```
+
+   - Options via AskUserQuestion:
+     - "Split by functional domain" (create Spec A first)
+     - "Split by priority/phase" (create Core Spec first)
+     - "Let me reconsider the scope" (user refines idea)
+     - "Continue with single specification anyway" (not recommended - proceed at user risk)
+
+   - **If user chooses to split**:
+     - Focus brainstorming ONLY on the first specification (Spec A / Core)
+     - Clearly state: "This brainstorming session is for [Spec A name] only"
+     - After completing this spec, recommend running brainstorming again for Spec B
+     - Log in decision-log.md: "Scope split into [N] specifications per user choice"
+
+   - **If user chooses "continue anyway"**:
+     - Proceed with single specification
+     - Log warning in decision-log.md: "User chose to continue with large scope despite split recommendation"
+     - Add note: "This specification may exceed 15-task limit and could be rejected by spec-to-tasks command"
+
+4. **If Small or Medium Scope**: Proceed to Phase 2 without interruption
 
 ---
 
@@ -567,13 +672,17 @@ Task(
 1. Mark all todos complete
 2. Summarize:
     - **Original Idea**: What was brainstormed
+    - **Scope Assessment**: Small / Medium / Large (and user choice if large)
+    - **Scope Split Decision**: [If applicable: "User chose to split into N specifications - focusing on Spec A: [name]" OR "User chose to continue with single specification despite large scope warning"]
     - **Approach Selected**: Which approach was chosen and why
     - **Integration Context**: Key integration requirements (if any)
     - **Functional Specification Created**: Key aspects of the specification
     - **Spec ID**: `[id]` (e.g., `001-hotel-search-aggregation`)
     - **Document Location**: `docs/specs/[id]/YYYY-MM-DD--feature-name.md`
     - **Specification Review**: Review outcome and any revisions made
-    - **Recommended Next Step**: Generate task list with `devkit.spec-to-tasks`
+    - **Recommended Next Step**: 
+      - If scope was split: "Complete this specification's implementation, then run /specs:brainstorm for Spec B: [name]"
+      - Otherwise: "Generate task list with /specs:spec-to-tasks"
 
 ---
 
@@ -638,6 +747,7 @@ Throughout the process, maintain a todo list like:
 ```
 
 [ ] Phase 1: Context Discovery
+[ ] Phase 1.5: Complexity Assessment & Scope Validation (split if scope too large)
 [ ] Phase 2: Idea Refinement
 [ ] Phase 3: Functional Approach Exploration
 [ ] Phase 4: Contextual Codebase Exploration (Optional)
@@ -656,6 +766,12 @@ Throughout the process, maintain a todo list like:
 ```
 
 Update the status as you progress through each phase and section.
+
+**CRITICAL**: Phase 1.5 MUST assess scope size before proceeding:
+- If scope is too large (>15 estimated tasks), guide user to split into multiple specifications
+- Present split options clearly (by domain or by priority)
+- If user chooses to split: focus ONLY on first spec, recommend brainstorming for remaining specs
+- If user chooses to continue anyway: log warning and note potential rejection by spec-to-tasks
 
 ---
 
