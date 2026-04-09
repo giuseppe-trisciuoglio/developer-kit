@@ -28,6 +28,10 @@
     "./commands/specs.quick-spec.md",
     "./commands/specs.spec-quality-check.md"
   ],
+  "agents": [
+    "./agents/evaluator-agent.md",
+    "./agents/session-tracking-agent.md"
+  ],
   "skills": [
     "./skills/knowledge-graph",
     "./skills/ralph-loop",

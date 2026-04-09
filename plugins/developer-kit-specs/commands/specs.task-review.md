@@ -150,7 +150,7 @@ You are reviewing an implemented task to verify it meets specifications and pass
 4. Mark each item as:
    - ✅ Met (with evidence)
    - ❌ Not met (with explanation)
-   - ⚠️ Partially met (with details)
+   - ⚠️ Partially met (with details) — treated as FAILED for `review_status`
 
 5. **Update traceability-matrix.md**:
    - Read `docs/specs/[id]/traceability-matrix.md` (extract from task frontmatter `spec:` field)
@@ -215,24 +215,27 @@ You are reviewing an implemented task to verify it meets specifications and pass
 **Actions**:
 
 1. Compile all findings into a review report
-2. Generate the report in markdown format with YAML frontmatter:
+2. Determine `review_status` using this rule:
+   - **PASSED**: ALL acceptance criteria ✅ AND ALL DoD items ✅ AND no critical/major code issues
+   - **FAILED**: ANY criterion is ❌ or ⚠️, OR ANY DoD item is ❌ or ⚠️, OR critical/major code issues found
+3. Generate the report in markdown format with YAML frontmatter:
 
 ```markdown
 ---
-review_status: PASSED|FAILED|PARTIAL
+review_status: PASSED   # or FAILED
 task_id: TASK-XXX
 task_title: [Task Title]
 spec_file: [spec-file.md]
 review_date: [ISO date]
 language: [language]
 summary:
-  implementation: COMPLETE|PARTIAL|INCOMPLETE
-  acceptance_criteria: ALL_MET|PARTIAL|FAILED
-  definition_of_done: ALL_MET|PARTIAL|FAILED
+  implementation: COMPLETE|INCOMPLETE
+  acceptance_criteria: ALL_MET|FAILED
+  definition_of_done: ALL_MET|FAILED
   spec_compliance: COMPLIANT|DEVIATIONS|NON_COMPLIANT
   code_review: PASSED|ISSUES|FAILED
-critical_issues: N
-major_issues: N
+critical_issues: N   # required if FAILED
+major_issues: N      # required if FAILED
 minor_issues: N
 ---
 
@@ -253,7 +256,7 @@ minor_issues: N
 | Spec Compliance | ✅ Compliant / ⚠️ Deviations / ❌ Non-compliant |
 | Code Review | ✅ Passed / ⚠️ Issues Found / ❌ Failed |
 
-**Overall Result**: ✅ PASSED / ❌ FAILED / ⚠️ PARTIAL
+**Overall Result**: ✅ PASSED / ❌ FAILED
 
 ## Implementation Verification
 
