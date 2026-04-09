@@ -1,78 +1,99 @@
-# AI Plugin Agents Guide
-
-This guide provides comprehensive documentation for all AI specialized agents available in the Developer Kit AI Plugin.
-
----
+# AI Plugin — Agents Guide
 
 ## Overview
 
-The AI Plugin provides specialized agents for AI development, prompt engineering, and AI system integration. These agents have deep expertise in AI/ML concepts, prompt optimization, and AI application patterns.
+The AI plugin provides one specialized agent for prompt engineering and AI system design. This agent is invoked automatically by Claude Code when tasks involve prompt creation, optimization, or AI application development.
 
-### Available Agents
-
-- **Prompt Engineering**: 1 agent for prompt optimization and pattern design
-
----
-
-## AI Agents
+## Available Agents
 
 ### `prompt-engineering-expert`
 
-**File**: `agents/prompt-engineering-expert.md`
+**File:** `../agents/prompt-engineering-expert.md`
+**Model:** `sonnet`
+**Allowed Tools:** `Read`, `Write`, `Edit`, `Glob`, `Grep`, `Bash`
 
-**Purpose**: Prompt optimization and pattern design specialist for building effective AI prompts and AI-powered applications.
+An expert agent for advanced prompting techniques, LLM optimization, and AI system design. Specializes in chain-of-thought, constitutional AI, and production-grade prompt strategies.
 
-**When to use:**
-- Designing effective prompts for AI models
-- Optimizing prompt performance
-- Implementing prompt patterns
-- Building AI-powered features
-- Troubleshooting AI prompt issues
+## When to Use
 
-**Key Capabilities:**
-- Prompt optimization strategies
-- Few-shot learning patterns
-- Chain-of-thought reasoning
-- Prompt template systems
-- System prompt design
-- AI application patterns
+Invoke or trigger this agent when:
 
----
+- Designing a new prompt from requirements
+- Optimizing an existing prompt for better performance
+- Implementing few-shot examples or chain-of-thought reasoning
+- Creating system prompts for consistent AI behavior
+- Building multi-step reasoning or code analysis prompts
+- Scaling prompt systems across an application
 
-## Agent Usage Guidelines
+## Core Capabilities
 
-### When to Use AI Plugin Agents
+| Domain | Capabilities |
+|--------|-------------|
+| **Advanced Prompting** | Chain-of-thought, constitutional AI, few-shot, meta-prompting, self-consistency, PALM |
+| **Document & Information** | Semantic search, cross-reference analysis, summarization, information extraction |
+| **Code Comprehension** | Architecture analysis, security detection, documentation, testing patterns |
+| **Multi-Agent Systems** | Role definition, collaboration protocols, workflow orchestration |
+| **Production Optimization** | Token efficiency, latency tuning, A/B testing, monitoring |
+| **Model-Specific Tuning** | Claude, GPT-4, Gemini, open-source models, multimodal models |
 
-AI Plugin agents are most effective for:
-- **Prompt Engineering**: Designing and optimizing AI prompts
-- **AI Development**: Building AI-powered applications
-- **Prompt Patterns**: Implementing proven prompt patterns
-- **AI Integration**: Integrating AI capabilities into applications
+## How to Invoke
 
-### How to Invoke Agents
+### Automatic
 
-Agents can be invoked in several ways:
+Claude Code automatically selects this agent when your request matches its capabilities. No explicit invocation needed.
 
-1. **Automatic Selection**: Claude automatically selects the appropriate agent based on task context
-2. **Direct Invocation**: Use agent name in conversation (e.g., "Ask the prompt-engineering-expert...")
-3. **Tool Selection**: When using the Task tool, specify the subagent_type parameter
+### Manual
 
-### Agent Selection Guide
+Use the agent by name in conversation:
 
-| Task | Recommended Agent |
-|------|-------------------|
-| Design prompts | `prompt-engineering-expert` |
-| Optimize prompts | `prompt-engineering-expert` |
-| Implement prompt patterns | `prompt-engineering-expert` |
-| Build AI features | `prompt-engineering-expert` |
+```
+Use the prompt-engineering-expert agent to design a system prompt for a code review assistant.
+```
 
----
+### Via Task Tool
+
+```json
+{
+  "subagent_type": "developer-kit-ai:prompt-engineering-expert",
+  "prompt": "Design a prompt for..."
+}
+```
+
+## Agent Output Format
+
+The agent provides structured responses with:
+
+1. **Analysis** — Current prompt assessment, failure modes, optimization opportunities
+2. **Recommendations** — Specific techniques to apply with rationale
+3. **Implementation** — Complete prompt text ready for use
+4. **Considerations** — Model-specific notes, edge cases, safety guidelines
+
+## Integration with Other Skills
+
+The agent works seamlessly with the plugin's skills:
+
+- **`prompt-engineering`** — Pattern reference files for CoT, few-shot, templates
+- **`rag`** — Document-grounded prompting with source citation
+- **`chunking-strategy`** — Context-window optimization for large documents
+
+It also references LangChain4j skills from the Java plugin for context-enhanced prompting and RAG integration.
+
+## Agent Selection Guide
+
+| Task | Agent | Notes |
+|------|-------|-------|
+| Write a new prompt | `prompt-engineering-expert` | Specify target model and task type |
+| Optimize an existing prompt | `prompt-engineering-expert` | Include current prompt in context |
+| Add few-shot examples | `prompt-engineering-expert` | Specify domain and edge cases |
+| Implement chain-of-thought | `prompt-engineering-expert` | Identify complexity level |
+| Build a RAG prompt | `prompt-engineering` skill | Use RAG skill for pipeline context |
+| Choose chunking strategy | `chunking-strategy` skill | Pipeline context informs prompt design |
 
 ## See Also
 
-- [AI Commands Guide](./guide-commands.md) - AI plugin commands
-- [Prompt Engineering Skill](../skills/prompt-engineering/) - Comprehensive prompt engineering skill
-- [RAG Skill](../skills/rag/) - Retrieval-Augmented Generation skill
-- [Chunking Strategy Skill](../skills/chunking-strategy/) - Document chunking strategies
-- [Core Agent Guide](../../developer-kit-core/docs/guide-agents.md) - All agents across plugins
-- [Java Plugin](../../developer-kit-java/docs/guide-skills-langchain4j.md) - LangChain4J and Spring AI integration
+- [AI Commands Guide](./guide-commands.md) — `/devkit.prompt-optimize` command
+- [Prompt Engineering Skill](../skills/prompt-engineering/) — Skill with 5 reference files
+- [RAG Skill](../skills/rag/) — RAG pipeline implementation
+- [Chunking Strategy Skill](../skills/chunking-strategy/) — Document preprocessing
+- [Core Agent Guide](../../developer-kit-core/docs/guide-agents.md) — All agents across plugins
+- [Java Plugin — LangChain4j Guide](../../developer-kit-java/docs/guide-skills-langchain4j.md) — LangChain4j integration

@@ -1,169 +1,130 @@
-# AI Plugin Commands Guide
-
-This guide documents all commands available in the Developer Kit AI Plugin, organized by category with brief descriptions, usage, and practical examples.
-
----
-
-## Table of Contents
-
-1. [Overview](#overview)
-2. [Prompt Engineering Commands](#prompt-engineering-commands)
-3. [Command Usage Guidelines](#command-usage-guidelines)
-4. [See Also](#see-also)
-
----
+# AI Plugin — Commands Guide
 
 ## Overview
 
-The AI Plugin provides specialized commands for AI development, prompt engineering, and AI system integration. These commands leverage advanced techniques for optimizing prompts and building effective AI-powered applications.
+The AI plugin provides one command for prompt optimization. It uses advanced techniques (chain-of-thought, few-shot, constitutional AI) to transform basic instructions into production-ready prompts.
 
-### Available Commands
+## Available Commands
 
-- **Prompt Engineering**: 1 command for prompt optimization using advanced techniques
+| Command | Description |
+|---------|-------------|
+| `/developer-kit-ai:devkit.prompt-optimize` | Optimize prompts at three levels: `basic`, `standard`, `advanced` |
 
 ---
 
-## Prompt Engineering Commands
+## `/developer-kit-ai:devkit.prompt-optimize`
 
-### `/developer-kit-ai:devkit.prompt-optimize`
+Optimizes prompts using advanced LLM techniques. The command delegates to the `prompt-engineering-expert` agent.
 
-**Purpose**: Expert prompt optimization using advanced techniques (Chain-of-Thought, Few-Shot, Constitutional AI) for LLM performance enhancement.
+### Syntax
 
-**Usage:**
-```bash
+```
 /developer-kit-ai:devkit.prompt-optimize [prompt-text] [target-model] [optimization-level]
 ```
 
-**Arguments:**
-- `prompt-text` - The prompt to optimize (required)
-- `target-model` - Target LLM model (default: `claude-sonnet-4-6`)
-- `optimization-level` - Level of optimization depth (default: `standard`)
+### Arguments
 
-**Optimization Levels:**
-- `basic` - Quick improvements (structure, clarity, basic CoT)
-- `standard` - Comprehensive enhancement (CoT, few-shot, safety)
-- `advanced` - Production-ready (full optimization with testing framework)
+| Argument | Default | Description |
+|----------|---------|-------------|
+| `prompt-text` | *(required)* | The prompt text to optimize |
+| `target-model` | `claude-sonnet-4-6` | Target LLM model family |
+| `optimization-level` | `standard` | Depth of optimization: `basic`, `standard`, or `advanced` |
 
-**Common use cases:**
-- Optimizing prompts for better AI model performance
-- Converting basic instructions to production-ready prompts
-- Adding Chain-of-Thought reasoning patterns
-- Implementing Few-Shot learning examples
-- Ensuring safety and ethical considerations in prompts
+### Optimization Levels
 
-**Advanced Techniques Applied:**
-- **Chain-of-Thought (CoT)**: Step-by-step reasoning for complex tasks
-- **Few-Shot Learning**: Strategic examples with edge cases
-- **Constitutional AI**: Self-critique and safety principles
-- **Structured Output**: JSON/XML formats for consistency
-- **Meta-Prompting**: Dynamic prompt generation
+| Level | Techniques Applied | Output |
+|-------|-------------------|--------|
+| `basic` | Structure improvement, clarity enhancements, basic chain-of-thought | Quick win optimizations |
+| `standard` | CoT, few-shot examples, safety principles, structured output | Comprehensive prompt with report |
+| `advanced` | Full optimization suite + testing framework, A/B validation strategy | Production-ready prompt with deployment guide |
 
-**Model-Specific Optimization:**
-- **Claude 3.5/4**: XML tags, thinking blocks, constitutional alignment
-- **GPT-4/GPT-4o**: Structured sections, JSON mode, function calling
-- **Gemini Pro/Ultra**: Bold headers, process-oriented instructions
+### Output
 
-**Examples:**
+The command produces three deliverables saved to the working directory:
+
+1. **`optimized-prompt.md`** — Complete prompt text ready for immediate use
+2. **Optimization Report** — Original assessment, applied techniques, impact metrics
+3. **Implementation Guidelines** — Model parameters, safety considerations, monitoring recommendations
+
+### Examples
+
 ```bash
-# Basic optimization with default settings
+# Basic optimization (default model, default level)
 /developer-kit-ai:devkit.prompt-optimize "Analyze this code and suggest improvements"
 
-# Standard optimization for Claude
+# Standard optimization for Claude Sonnet
 /developer-kit-ai:devkit.prompt-optimize "Write a function to process orders" claude-sonnet-4-6 standard
 
-# Advanced optimization for GPT-4
-/developer-kit-ai:devkit.prompt-optimize "Create a comprehensive code review system" gpt-4 advanced
+# Advanced optimization for GPT-4 (production-ready)
+/developer-kit-ai:devkit.prompt-optimize "Create a code review system" gpt-4 advanced
 
-# Production-ready prompt with testing framework
-/developer-kit-ai:devkit.prompt-optimize "Build an AI assistant for customer support" claude-4 advanced
+# Advanced optimization with explicit model
+/developer-kit-ai:devkit.prompt-optimize "Build a customer support AI" claude-sonnet-4-6 advanced
 ```
 
-**Output:**
-The command generates:
-1. **Complete Optimized Prompt** - Full text ready for immediate implementation, saved to `optimized-prompt.md`
-2. **Optimization Report** - Original prompt assessment, applied techniques, impact metrics
-3. **Implementation Guidelines** - Model parameters, safety considerations, monitoring recommendations
+### Specialized Patterns by Task Type
 
-**Specialized Optimization Patterns:**
-
-| Task Type | Optimization Focus |
+| Task Type | Applied Techniques |
 |-----------|-------------------|
-| Document Analysis | RAG integration, source citation, cross-reference analysis |
-| Code Comprehension | Architecture analysis, security detection, refactoring recommendations |
-| Multi-Step Reasoning | Tree-of-thoughts exploration, self-consistency verification, error handling |
-
----
-
-## Command Usage Guidelines
-
-### How to Invoke Commands
-
-Commands are invoked using the slash syntax in Claude Code with the plugin prefix:
-
-```bash
-/developer-kit-ai:{command-name} [arguments]
-```
-
-### Best Practices
-
-1. **Start with clear intent**: Provide a well-described prompt to optimize
-2. **Choose appropriate optimization level**: Use `basic` for quick fixes, `advanced` for production systems
-3. **Specify target model**: Different models benefit from different optimization strategies
-4. **Review the output**: Check the optimized prompt and implementation guidelines
-5. **Iterate**: Use the optimization as a starting point and refine as needed
-6. **Test thoroughly**: Especially for production-ready prompts, validate with real use cases
-
----
+| **Document Analysis** | RAG integration, source citation, cross-reference extraction |
+| **Code Comprehension** | Architecture patterns, security detection, refactoring recommendations |
+| **Multi-Step Reasoning** | Tree-of-thoughts, self-consistency verification, error recovery |
+| **Classification** | Few-shot with edge cases, confidence scoring, calibration prompts |
 
 ## Common Workflows
 
-### Prompt Optimization Workflow
+### Prompt Iteration Workflow
 
 ```bash
-# 1. Start with basic optimization
+# 1. Start with basic to get quick wins
 /developer-kit-ai:devkit.prompt-optimize "Your initial prompt" claude-sonnet-4-6 basic
 
-# 2. Review output and identify improvements
+# 2. Review the output and identify gaps
 
-# 3. Run advanced optimization with refined requirements
-/developer-kit-ai:devkit.prompt-optimize "Refined prompt with context" claude-sonnet-4-6 advanced
+# 3. Upgrade to advanced with refined requirements
+/developer-kit-ai:devkit.prompt-optimize "Refined prompt with more context" claude-sonnet-4-6 advanced
 
-# 4. Test the optimized prompt with target model
+# 4. Test the optimized prompt with real inputs
 
-# 5. Iterate based on results
+# 5. Iterate based on test results
 ```
 
 ### Production Prompt Development
 
 ```bash
-# 1. Draft initial prompt concept
+# 1. Define prompt requirements in natural language
 # 2. Run advanced optimization
-/developer-kit-ai:devkit.prompt-optimize "Production prompt description" claude-4 advanced
+/developer-kit-ai:devkit.prompt-optimize "Production prompt description" claude-sonnet-4-6 advanced
 
-# 3. Review optimization report
-# 4. Test with edge cases
-# 5. Monitor and iterate based on real-world performance
+# 3. Review the optimization report
+# 4. Test with edge cases and adversarial inputs
+# 5. Deploy with monitoring and A/B testing framework
 ```
 
----
+## Best Practices
+
+1. **Start with `standard`** — `basic` is useful for quick tweaks, but `standard` gives you the full optimization report
+2. **Specify the target model** — Different models benefit from different techniques; always set this explicitly
+3. **Provide context** — The more specific your prompt description, the better the optimization
+4. **Review all three outputs** — The optimized prompt, the report, and the implementation guidelines are all useful
+5. **Test with domain inputs** — Validate the optimized prompt on representative data before production
+6. **Iterate** — Use the report's recommendations to refine and re-optimize
 
 ## Command Selection Guide
 
 | Task | Command |
 |------|---------|
-| Optimize prompt for performance | `/developer-kit-ai:devkit.prompt-optimize` |
-| Add Chain-of-Thought reasoning | `/developer-kit-ai:devkit.prompt-optimize` (standard/advanced) |
-| Create Few-Shot examples | `/developer-kit-ai:devkit.prompt-optimize` (standard/advanced) |
-| Production-ready prompt with testing | `/developer-kit-ai:devkit.prompt-optimize` (advanced) |
-| Model-specific optimization | `/developer-kit-ai:devkit.prompt-optimize [prompt] [model]` |
-
----
+| Quick prompt improvement | `/developer-kit-ai:devkit.prompt-optimize` with `basic` |
+| Comprehensive optimization | `/developer-kit-ai:devkit.prompt-optimize` with `standard` |
+| Production-ready prompt | `/developer-kit-ai:devkit.prompt-optimize` with `advanced` |
+| Model-specific tuning | Set `[target-model]` argument explicitly |
+| Adding CoT / few-shot | Use `standard` or `advanced` level |
 
 ## See Also
 
-- [AI Agents Guide](./guide-agents.md) - AI plugin agents
-- [Prompt Engineering Skill](../skills/prompt-engineering/) - Comprehensive prompt engineering skill
-- [RAG Skill](../skills/rag/) - Retrieval-Augmented Generation skill
-- [Chunking Strategy Skill](../skills/chunking-strategy/) - Document chunking strategies
-- [Core Command Guide](../../developer-kit-core/docs/guide-commands.md) - All commands across plugins
-- [Java Plugin](../../developer-kit-java/docs/guide-skills-langchain4j.md) - LangChain4J and Spring AI integration
+- [AI Agents Guide](./guide-agents.md) — `prompt-engineering-expert` agent
+- [Prompt Engineering Skill](../skills/prompt-engineering/) — Skill with reference files for CoT, few-shot, templates, optimization
+- [RAG Skill](../skills/rag/) — RAG pipeline implementation for document-grounded prompts
+- [Chunking Strategy Skill](../skills/chunking-strategy/) — Document preprocessing for context-window optimization
+- [Core Command Guide](../../developer-kit-core/docs/guide-commands.md) — All commands across plugins
+- [Java Plugin — LangChain4j Guide](../../developer-kit-java/docs/guide-skills-langchain4j.md) — LangChain4j RAG integration
