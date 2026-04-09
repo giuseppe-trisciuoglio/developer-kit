@@ -62,8 +62,9 @@ The `developer-kit-typescript` plugin provides comprehensive support for TypeScr
 - **dynamodb-toolbox-patterns** - DynamoDB-Toolbox v2 patterns for type-safe schema modeling, `.build()` commands, query/scan access patterns, batch/transactions, and single-table design
 - **nestjs-drizzle-crud-generator** - Automated NestJS CRUD module generation with Drizzle ORM
 
-### AWS Lambda Integration
+### AWS Cloud & Lambda
 - **aws-lambda-typescript-integration** - AWS Lambda integration patterns for TypeScript with NestJS adapters and Serverless Framework
+- **aws-cdk** - AWS CDK infrastructure-as-code patterns for TypeScript projects
 
 ### Design System
 - **tailwind-design-system** - Tailwind CSS design system patterns and token management
@@ -97,10 +98,13 @@ Standardized coding rules that auto-activate via `globs:` path-scoped matching f
 ### Data & ORM
 - **drizzle-orm-conventions** (`**/*.schema.ts`) — Schema design, migrations, query patterns
 - **shared-dto-conventions** (`**/*.dto.ts`) — DTO design, validation, serialization
+- **zod-validation-patterns** (`**/*.ts`) — Zod schema patterns for runtime validation
 
 ### Monorepo & Infrastructure
 - **nx-monorepo-conventions** (`**/*.ts`) — Nx workspace organization, library boundaries, affected commands
 - **i18n-conventions** (`**/*.{ts,tsx}`) — Internationalization patterns and translation management
+- **lambda-conventions** (`**/*.ts`) — AWS Lambda handler patterns and best practices
+- **server-feature-conventions** (`**/*.ts`) — Serverless feature module organization
 
 ## Dependencies
 

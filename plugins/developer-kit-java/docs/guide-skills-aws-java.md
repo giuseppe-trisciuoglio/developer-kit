@@ -226,7 +226,7 @@ Bedrock: model invocation, streaming, guardrails.
 ## Technology Stack
 
 - **AWS SDK**: Java v2 (non-blocking)
-- **Spring Boot**: 3.5.x+ (optional)
+- **Spring Boot**: 3.x/4.x (optional)
 - **Database**: RDS Aurora, DynamoDB
 - **Storage**: S3
 - **Messaging**: SQS, SNS

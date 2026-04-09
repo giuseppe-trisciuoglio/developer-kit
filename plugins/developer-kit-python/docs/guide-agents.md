@@ -1,142 +1,165 @@
 # Python Plugin Agents Guide
 
-This guide provides comprehensive documentation for all Python specialized agents available in the Developer Kit Python Plugin.
-
----
+Comprehensive documentation for all Python specialized agents in the Developer Kit Python Plugin.
 
 ## Overview
 
-The Python Plugin provides specialized agents for Python development, including code review, refactoring, security assessment, and architecture design. These agents have deep expertise in Python best practices, PEP standards, and Python frameworks.
+The Python Plugin provides 4 specialized agents for Python development. Each agent has deep expertise in Python best practices, PEP standards, and specific Python frameworks.
 
 ### Available Agents
 
-- **Python Code Review**: 1 agent for Python code quality review
-- **Python Refactoring**: 1 agent for Python code refactoring
-- **Python Security**: 1 agent for Python security assessment
-- **Python Architecture**: 1 agent for Python software architecture
+| Agent | Purpose |
+|-------|---------|
+| `python-code-review-expert` | Code quality review and PEP standards compliance |
+| `python-refactor-expert` | Clean code refactoring and design patterns |
+| `python-security-expert` | Security vulnerability assessment (OWASP, CVEs) |
+| `python-software-architect-expert` | Architecture design and scalability evaluation |
 
 ---
 
-## Python Development Agents
-
-### `python-code-review-expert`
+## python-code-review-expert
 
 **File**: `agents/python-code-review-expert.md`
 
-**Purpose**: Python code quality and best practices review with PEP standards compliance.
+Specializes in Python code quality review with PEP standards compliance.
 
-**When to use:**
+### When to Use
+
 - Reviewing Python code before commits
 - Ensuring PEP 8 compliance
 - Identifying Python anti-patterns
 - Validating Python idioms and patterns
 - Reviewing Python framework usage
 
-**Key Capabilities:**
+### Key Capabilities
+
 - PEP 8 style guide compliance
 - Python idioms and patterns review
-- Framework-specific best practices
+- Framework-specific best practices (FastAPI, Flask, Django)
 - Code complexity assessment
 - Python 3.8+ features utilization
 
+### Triggers
+
+- "Review this Python code"
+- "Check PEP compliance"
+- "Python code quality"
+- "lint python"
+
 ---
 
-### `python-refactor-expert`
+## python-refactor-expert
 
 **File**: `agents/python-refactor-expert.md`
 
-**Purpose**: Python code refactoring with clean code principles, PEP standards, and Python best practices.
+Specializes in Python code refactoring with clean code principles and design patterns.
 
-**When to use:**
+### When to Use
+
 - Refactoring Python code
 - Applying clean code principles
 - Implementing Python design patterns
 - Reducing code complexity
 - Migrating legacy Python code
 
-**Key Capabilities:**
+### Key Capabilities
+
 - PEP standards compliance
 - Clean code principles for Python
-- Design pattern implementation
+- Design pattern implementation (Repository, Factory, Strategy)
 - Code complexity reduction
 - Python 3.8+ features utilization
 
+### Triggers
+
+- "Refactor this Python code"
+- "Clean up Python code"
+- "Improve Python code structure"
+- "Python migration"
+
 ---
 
-### `python-security-expert`
+## python-security-expert
 
 **File**: `agents/python-security-expert.md`
 
-**Purpose**: Python security vulnerability assessment covering OWASP, CVEs, and secure coding practices.
+Specializes in Python security vulnerability assessment covering OWASP Top 10 and CVE scanning.
 
-**When to use:**
+### When to Use
+
 - Security auditing Python applications
 - Identifying OWASP vulnerabilities
 - Reviewing authentication implementation
 - Checking for dependency vulnerabilities
 - Validating cryptographic practices
 
-**Key Capabilities:**
+### Key Capabilities
+
 - OWASP vulnerability detection
 - Authentication and authorization review
 - Dependency vulnerability scanning (CVEs)
 - Cryptographic practice validation
 - Secure coding practices for Python
 
+### Triggers
+
+- "Security audit Python"
+- "Check for vulnerabilities"
+- "OWASP Python review"
+- "Python security"
+
 ---
 
-### `python-software-architect-expert`
+## python-software-architect-expert
 
 **File**: `agents/python-software-architect-expert.md`
 
-**Purpose**: Python architecture design specialist focusing on patterns, scalability, and architectural decisions.
+Specializes in Python architecture design focusing on patterns, scalability, and architectural decisions.
 
-**When to use:**
+### When to Use
+
 - Designing Python application architecture
 - Reviewing Python package structure
 - Planning refactoring efforts
 - Assessing scalability
 - Validating architectural decisions
 
-**Key Capabilities:**
-- Python architecture patterns
+### Key Capabilities
+
+- Python architecture patterns (Clean, Hexagonal, Event-Driven)
 - Package structure review
 - Design pattern assessment
 - Scalability evaluation
 - Architectural decision validation
 
+### Triggers
+
+- "Design Python architecture"
+- "Architecture review"
+- "Python scalability"
+- "DDD patterns"
+
 ---
 
-## Agent Usage Guidelines
+## Agent Selection Guide
 
-### When to Use Python Plugin Agents
+| Task | Recommended Agent |
+|------|-------------------|
+| Review Python code before commit | `python-code-review-expert` |
+| Refactor Python code | `python-refactor-expert` |
+| Security audit Python application | `python-security-expert` |
+| Design or review architecture | `python-software-architect-expert` |
 
-Python Plugin agents are most effective for:
-- **Code Quality**: Reviewing and refactoring Python code
-- **Security**: Auditing Python applications for vulnerabilities
-- **Architecture**: Designing and reviewing Python application architecture
-- **Best Practices**: Ensuring PEP standards compliance
-
-### How to Invoke Agents
+## How to Invoke
 
 Agents can be invoked in several ways:
 
 1. **Automatic Selection**: Claude automatically selects the appropriate agent based on task context
-2. **Direct Invocation**: Use agent name in conversation (e.g., "Ask the python-code-review-expert...")
-3. **Tool Selection**: When using the Task tool, specify the subagent_type parameter
-
-### Agent Selection Guide
-
-| Task | Recommended Agent |
-|------|-------------------|
-| Review Python code | `python-code-review-expert` |
-| Refactor Python code | `python-refactor-expert` |
-| Security audit | `python-security-expert` |
-| Architecture review | `python-software-architect-expert` |
-
----
+2. **Direct Invocation**: Use agent name in conversation (e.g., "Ask the python-code-review-expert to review this code")
+3. **Task Tool**: When using the Task tool, specify the subagent_type parameter
 
 ## See Also
 
 - [Core Agent Guide](../../developer-kit-core/docs/guide-agents.md) - All agents across plugins
-- [TypeScript Plugin Documentation](../../developer-kit-typescript/docs/) - TypeScript, NestJS, and React guides
+- [TypeScript Plugin Documentation](../../developer-kit-typescript/docs/) - TypeScript, NestJS, React guides
+- [Java Plugin Documentation](../../developer-kit-java/docs/) - Java and Spring Boot guides

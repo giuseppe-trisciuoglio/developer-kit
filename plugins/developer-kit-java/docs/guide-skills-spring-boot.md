@@ -268,10 +268,10 @@ OpenAPI/Swagger documentation: API docs, schema generation, SpringDoc.
 
 ## Stack & Versions
 
-- **Spring Boot**: 3.5.x+
+- **Spring Boot**: 3.x/4.x
 - **Java**: 17+ (records, sealed classes)
 - **Spring Data**: JPA, Neo4j
-- **Testing**: Testcontainers 1.19+, JUnit 5, Mockito
+- **Testing**: Testcontainers, JUnit 5, Mockito
 - **Resilience**: Resilience4j
 - **Documentation**: OpenAPI 3.0, SpringDoc
 

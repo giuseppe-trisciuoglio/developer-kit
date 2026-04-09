@@ -204,7 +204,7 @@ Testing AI systems: mock models, test containers, integration tests.
 ## Technology Stack
 
 - **LangChain4J**: Latest stable
-- **Spring Boot**: 3.5.x+
+- **Spring Boot**: 3.x/4.x
 - **Embeddings**: OpenAI, Hugging Face
 - **Vector Stores**: Qdrant, Milvus, Weaviate
 - **LLMs**: OpenAI, Anthropic Claude, Ollama

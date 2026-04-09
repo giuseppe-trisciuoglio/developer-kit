@@ -1,44 +1,45 @@
 # PHP Plugin Agents Guide
 
-This guide provides comprehensive documentation for all PHP specialized agents available in the Developer Kit PHP Plugin.
+Comprehensive guide for all PHP specialized agents available in the Developer Kit PHP Plugin.
 
 ---
 
 ## Overview
 
-The PHP Plugin provides specialized agents for PHP development, including code review, refactoring, security assessment, and architecture design. These agents have deep expertise in PHP best practices, frameworks, and WordPress development.
+The PHP Plugin provides 5 specialized agents for PHP development. Each agent has deep expertise in specific areas and uses the `sonnet` model for optimal performance.
 
-### Available Agents
+### Agent Summary
 
-- **PHP Code Review**: 1 agent for PHP code quality review
-- **PHP Refactoring**: 1 agent for PHP code refactoring
-- **PHP Security**: 1 agent for PHP security assessment
-- **PHP Architecture**: 1 agent for PHP software architecture
-- **WordPress Development**: 1 agent for WordPress development
+| Agent | Focus Area | Tools |
+|-------|------------|-------|
+| `php-code-review-expert` | Code quality, PSR standards | Read, Write, Edit, Glob, Grep, Bash |
+| `php-refactor-expert` | Code improvement, design patterns | Read, Write, Edit, Glob, Grep, Bash |
+| `php-security-expert` | Security, OWASP, DevSecOps | Read, Write, Edit, Glob, Grep, Bash |
+| `php-software-architect-expert` | Architecture, DDD, scalability | Read, Write, Edit, Glob, Grep, Bash |
+| `wordpress-development-expert` | WordPress, themes, plugins | Read, Write, Edit, Glob, Grep, Bash |
 
 ---
 
-## PHP Development Agents
+## Agent Details
 
 ### `php-code-review-expert`
 
 **File**: `agents/php-code-review-expert.md`
 
-**Purpose**: PHP code quality and best practices review with PSR standards compliance.
+Reviews PHP code for quality, standards compliance, and best practices.
 
 **When to use:**
-- Reviewing PHP code before commits
-- Ensuring PSR standards compliance
-- Identifying PHP anti-patterns
-- Validating PHP framework usage
-- Reviewing PHP code quality
+- Before committing PHP code to version control
+- During pull request reviews
+- When identifying code quality issues
+- When ensuring PSR standards compliance
 
-**Key Capabilities:**
-- PSR standards compliance
-- PHP framework best practices
-- Code quality assessment
+**Key capabilities:**
+- PSR-4 and PSR-12 compliance checking
+- Modern PHP 8.x features utilization
 - Anti-pattern detection
-- Modern PHP features utilization
+- Framework best practices (Laravel, Symfony)
+- Code complexity analysis
 
 ---
 
@@ -46,21 +47,20 @@ The PHP Plugin provides specialized agents for PHP development, including code r
 
 **File**: `agents/php-refactor-expert.md`
 
-**Purpose**: PHP code refactoring with clean code principles, PSR standards, and PHP best practices.
+Refactors PHP code using clean code principles and modern PHP patterns.
 
 **When to use:**
-- Refactoring PHP code
-- Applying clean code principles
-- Implementing PHP design patterns
-- Reducing code complexity
-- Migrating legacy PHP code
+- When improving existing PHP code
+- When migrating legacy PHP to modern patterns
+- When reducing code complexity
+- When applying design patterns
 
-**Key Capabilities:**
-- PSR standards compliance
-- Clean code principles for PHP
+**Key capabilities:**
+- SOLID principles application
 - Design pattern implementation
+- PHP 8.3+ features migration
 - Code complexity reduction
-- Modern PHP features (PHP 8.x)
+- Legacy code modernization
 
 ---
 
@@ -68,21 +68,20 @@ The PHP Plugin provides specialized agents for PHP development, including code r
 
 **File**: `agents/php-security-expert.md`
 
-**Purpose**: PHP security vulnerability assessment covering OWASP, CVEs, and secure coding practices.
+Security auditing and vulnerability assessment for PHP applications.
 
 **When to use:**
-- Security auditing PHP applications
-- Identifying OWASP vulnerabilities
-- Reviewing authentication implementation
-- Checking for dependency vulnerabilities
-- Validating secure coding practices
+- Before deploying PHP applications to production
+- When auditing authentication and authorization
+- When reviewing third-party dependencies
+- When ensuring OWASP compliance
 
-**Key Capabilities:**
-- OWASP vulnerability detection
+**Key capabilities:**
+- OWASP Top 10 vulnerability detection
 - Authentication and authorization review
 - Dependency vulnerability scanning (CVEs)
 - Cryptographic practice validation
-- Secure coding practices for PHP
+- Laravel/Symfony security patterns
 
 ---
 
@@ -90,21 +89,20 @@ The PHP Plugin provides specialized agents for PHP development, including code r
 
 **File**: `agents/php-software-architect-expert.md`
 
-**Purpose**: PHP architecture design specialist focusing on patterns, scalability, and architectural decisions.
+Software architecture design and assessment for PHP applications.
 
 **When to use:**
-- Designing PHP application architecture
-- Reviewing PHP package structure
-- Planning refactoring efforts
-- Assessing scalability
-- Validating architectural decisions
+- When designing new PHP applications
+- When planning refactoring efforts
+- When assessing application scalability
+- When reviewing architectural decisions
 
-**Key Capabilities:**
-- PHP architecture patterns
-- Package structure review
-- Design pattern assessment
-- Scalability evaluation
-- Architectural decision validation
+**Key capabilities:**
+- Clean Architecture design
+- Domain-Driven Design patterns
+- Hexagonal Architecture (Ports & Adapters)
+- Package structure analysis
+- Scalability assessment
 
 ---
 
@@ -112,56 +110,89 @@ The PHP Plugin provides specialized agents for PHP development, including code r
 
 **File**: `agents/wordpress-development-expert.md`
 
-**Purpose**: WordPress development specialist for themes, plugins, and custom WordPress solutions.
+WordPress development specialist for themes, plugins, and custom solutions.
 
 **When to use:**
-- Developing WordPress themes
-- Creating WordPress plugins
-- Custom WordPress development
-- WordPress API integration
-- WordPress performance optimization
+- When developing WordPress themes
+- When creating WordPress plugins
+- When working with Gutenberg blocks
+- When integrating WordPress APIs
 
-**Key Capabilities:**
+**Key capabilities:**
 - WordPress theme development
 - WordPress plugin development
+- Gutenberg block development
 - WordPress hooks and filters
+- REST API integration
 - Custom post types and taxonomies
-- WordPress API integration
-- Performance optimization
 
 ---
 
-## Agent Usage Guidelines
+## Agent Selection Guide
 
-### When to Use PHP Plugin Agents
-
-PHP Plugin agents are most effective for:
-- **Code Quality**: Reviewing and refactoring PHP code
-- **Security**: Auditing PHP applications for vulnerabilities
-- **Architecture**: Designing and reviewing PHP application architecture
-- **WordPress**: Developing WordPress themes and plugins
-
-### How to Invoke Agents
-
-Agents can be invoked in several ways:
-
-1. **Automatic Selection**: Claude automatically selects the appropriate agent based on task context
-2. **Direct Invocation**: Use agent name in conversation (e.g., "Ask the php-code-review-expert...")
-3. **Tool Selection**: When using the Task tool, specify the subagent_type parameter
-
-### Agent Selection Guide
+Use this table to select the right agent for your task:
 
 | Task | Recommended Agent |
 |------|-------------------|
-| Review PHP code | `php-code-review-expert` |
-| Refactor PHP code | `php-refactor-expert` |
-| Security audit | `php-security-expert` |
-| Architecture review | `php-software-architect-expert` |
-| WordPress development | `wordpress-development-expert` |
+| Review PHP code before commit | `php-code-review-expert` |
+| Improve code quality | `php-refactor-expert` |
+| Security vulnerability audit | `php-security-expert` |
+| Design application architecture | `php-software-architect-expert` |
+| Develop WordPress themes | `wordpress-development-expert` |
+| Develop WordPress plugins | `wordpress-development-expert` |
+| Migrate PHP 7 to PHP 8.x | `php-refactor-expert` |
+| Set up authentication | `php-security-expert` |
+| Implement DDD patterns | `php-software-architect-expert` |
+| WordPress REST API integration | `wordpress-development-expert` |
+
+---
+
+## How to Invoke Agents
+
+### Automatic Selection
+
+Claude automatically selects the appropriate agent based on your task context. Simply describe what you need:
+
+```
+Review my PHP authentication code for security issues
+```
+
+Claude will automatically invoke `php-security-expert` for security-related tasks.
+
+### Direct Invocation
+
+You can explicitly request a specific agent:
+
+```
+Ask the php-code-review-expert to review the User class
+```
+
+### Via Task Tool
+
+When creating background tasks, specify the agent:
+
+```
+Use the php-refactor-expert agent to refactor the Order service
+```
+
+---
+
+## Integration with Skills
+
+Agents work alongside skills for comprehensive development:
+
+| Agent | Complementary Skills |
+|-------|---------------------|
+| `php-code-review-expert` | `clean-architecture`, `language-best-practices` rule |
+| `php-refactor-expert` | `clean-architecture`, `aws-lambda-php-integration` |
+| `php-security-expert` | PHP security rules and patterns |
+| `php-software-architect-expert` | `clean-architecture` |
+| `wordpress-development-expert` | `wordpress-sage-theme` |
 
 ---
 
 ## See Also
 
-- [WordPress Skill](../skills/wordpress/wordpress-sage-theme/SKILL.md) - WordPress Sage theme skill
+- [Architecture Skills Guide](guide-skills-architecture.md) - Clean Architecture and DDD patterns
+- [WordPress Sage Theme Skill](../skills/wordpress/wordpress-sage-theme/SKILL.md) - Sage framework details
 - [Core Agent Guide](../../developer-kit-core/docs/guide-agents.md) - All agents across plugins
