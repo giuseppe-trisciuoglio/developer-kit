@@ -20,7 +20,7 @@ import argparse
 import json
 import re
 import sys
-from collections import Counter
+from collections import Counter, deque
 from pathlib import Path
 from typing import Any
 
@@ -34,6 +34,16 @@ FILE_TOOL_NAMES = {"Edit", "Write"}
 
 # Patterns indicating file deletion in Bash commands
 DELETE_PATTERNS = re.compile(r"\b(rm\s|rmdir\s|git\s+rm\s)", re.IGNORECASE)
+
+# Pattern to extract file path from rm/rmdir/git rm commands
+_DELETE_PATH_PATTERN = re.compile(
+    r"(?:\brm\b|\brmdir\b|\bgit\s+rm\b)"
+    r"(?:\s+-\w+)*"       # optional flags like -rf, -r, --cached
+    r"(?:\s+--\s*)?"       # optional --
+    r"\s+"
+    r"([^\s;|&]+)",        # capture the file path
+    re.IGNORECASE,
+)
 
 # ─── Secret Redaction ───────────────────────────────────────────────────────
 
@@ -67,14 +77,18 @@ def redact_secrets(text: str) -> str:
 
 
 def read_last_n_lines(file_path: str, n: int = MAX_LINES) -> list[str]:
-    """Read last N lines from a file. Returns empty list on any error."""
+    """Read last N lines from a file efficiently using deque.
+
+    Only reads N lines into memory, never the full file.
+    Returns empty list on any error.
+    """
     try:
         path = Path(file_path)
         if not path.exists() or not path.is_file():
             return []
         with open(path, "r", encoding="utf-8", errors="replace") as f:
-            all_lines = f.readlines()
-        return all_lines[-n:] if len(all_lines) > n else all_lines
+            tail = deque(f, maxlen=n)
+        return list(tail)
     except (OSError, IOError):
         return []
 
@@ -153,6 +167,12 @@ def _process_tool_entry(
         cmd = tool_input.get("command", "")
         if cmd and DELETE_PATTERNS.search(cmd):
             tool_counts["Delete"] += 1
+            # Extract deleted file path
+            match = _DELETE_PATH_PATTERN.search(cmd)
+            if match:
+                deleted_path = match.group(1).strip("'\"")
+                if deleted_path:
+                    file_paths.add(deleted_path)
 
 
 def extract_tool_operations(entries: list[dict]) -> dict[str, Any]:
