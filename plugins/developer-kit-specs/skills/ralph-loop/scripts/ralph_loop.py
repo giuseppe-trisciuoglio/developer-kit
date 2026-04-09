@@ -271,10 +271,10 @@ def find_task_files(spec_path: str) -> List[Path]:
     spec_dir = Path(spec_path)
     task_files = []
 
-    # Look in tasks subdirectory
+    # Look in tasks subdirectory (exclude --review and other auxiliary files)
     tasks_dir = spec_dir / "tasks"
     if tasks_dir.exists():
-        task_files.extend(sorted(tasks_dir.glob("TASK-*.md")))
+        task_files.extend(sorted(f for f in tasks_dir.glob("TASK-*.md") if "--" not in f.stem))
 
     return task_files
 
@@ -302,22 +302,22 @@ def parse_task_file(task_file: Path) -> dict:
     if frontmatter_match:
         frontmatter = frontmatter_match.group(1)
 
-        # Extract fields
+        # Extract fields (strip quotes in case YAML values are quoted)
         id_match = re.search(r'^id:\s*(.+)$', frontmatter, re.MULTILINE)
         if id_match:
-            task_data["id"] = id_match.group(1).strip()
+            task_data["id"] = id_match.group(1).strip().strip('"\'')
 
         title_match = re.search(r'^title:\s*(.+)$', frontmatter, re.MULTILINE)
         if title_match:
-            task_data["title"] = title_match.group(1).strip()
+            task_data["title"] = title_match.group(1).strip().strip('"\'')
 
         status_match = re.search(r'^status:\s*(.+)$', frontmatter, re.MULTILINE)
         if status_match:
-            task_data["status"] = status_match.group(1).strip()
+            task_data["status"] = status_match.group(1).strip().strip('"\'')
 
         lang_match = re.search(r'^lang(?:uage)?:\s*(.+)$', frontmatter, re.MULTILINE)
         if lang_match:
-            task_data["lang"] = lang_match.group(1).strip()
+            task_data["lang"] = lang_match.group(1).strip().strip('"\'')
 
         deps_match = re.search(r'^dependencies:\s*\[(.*?)\]', frontmatter, re.MULTILINE | re.DOTALL)
         if deps_match:
@@ -384,7 +384,7 @@ def filter_tasks_by_range(tasks: List[dict], from_task: Optional[str], to_task: 
 def get_next_pending_task(fix_plan: dict) -> Optional[dict]:
     """Finds the next pending task with satisfied dependencies"""
     tasks = fix_plan.get("tasks", [])
-    completed_tasks = {t["id"] for t in tasks if t["status"] in ["done", "completed"]}
+    completed_tasks = {t["id"] for t in tasks if t["status"] in ["done", "completed", "implemented", "reviewed"]}
 
     for task in tasks:
         if task["status"] not in ["pending", "in_progress"]:
@@ -496,7 +496,7 @@ def action_start(spec_path: str, from_task: Optional[str], to_task: Optional[str
 
     # Separate into categories
     pending = [t["id"] for t in filtered_tasks if t["status"] in ["pending", "in_progress"]]
-    done = [t["id"] for t in filtered_tasks if t["status"] in ["done", "completed"]]
+    done = [t["id"] for t in filtered_tasks if t["status"] in ["done", "completed", "implemented", "reviewed"]]
 
     # Create fix_plan with full structure
     fix_plan = {
