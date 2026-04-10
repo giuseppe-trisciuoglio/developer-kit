@@ -155,7 +155,7 @@ You MAY adjust the evaluation **only if** you have documented evidence:
 
 Create report in `TASK-XXX--evaluation.md`:
 
-```yaml
+```markdown
 ---
 evaluation_status: PASSED|FAILED|NEEDS_IMPROVEMENT
 task_id: TASK-XXX
