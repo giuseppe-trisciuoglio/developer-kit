@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **New Plugin: developer-kit-specs** — Specifications-Driven Development (SDD) workflow:
+  - 10 commands for the complete SDD lifecycle: `brainstorm`, `quick-spec`, `spec-to-tasks`, `task-manage`, `task-implementation`, `task-tdd`, `task-review`, `spec-sync-with-code`, `spec-sync-context`, `spec-quality-check`
+  - 2 agents: `evaluator-agent` (KPI-driven quality evaluation), `session-tracking-agent` (audit trail)
+  - 4 skills: `knowledge-graph`, `ralph-loop`, `specs-code-cleanup`, `task-quality-kpi`
+  - TDD integration with RED/GREEN phases and language-specific test templates (8 languages)
+  - Ralph Loop automation for multi-agent task execution (claude, codex, copilot, gemini, glm4, kimi, minimax)
+  - KPI evaluation framework with weighted scoring (Spec Compliance 30%, Code Quality 25%, Test Coverage 25%, Contract Fulfillment 20%)
+  - Drift Guard for real-time spec-to-implementation monitoring
+  - Automatic hooks: task auto-status, KPI analysis, drift tracking, session audit trail
+  - Language support: Java/Spring, TypeScript/NestJS/React, Python, PHP, and general
+
 ## [2.7.2] - 2026-03-24
 
 ### Changed

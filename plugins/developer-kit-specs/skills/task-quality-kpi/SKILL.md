@@ -78,7 +78,15 @@ docs/specs/[ID]/tasks/TASK-XXX--kpi.json
 | Test Coverage | 25% | Verification and confidence |
 | Contract Fulfillment | 20% | Integration with other tasks |
 
-## Usage
+## When to Use
+
+- Reading KPI data for task quality evaluation
+- Understanding quality metrics and scoring breakdown
+- Deciding whether to iterate or approve based on quantitative data
+- Integrating KPI checks into automated loops (`agents_loop.py`)
+- Generating evidence-based evaluation reports
+
+## Instructions
 
 ### 1. Reading KPI Data (Primary Use)
 
