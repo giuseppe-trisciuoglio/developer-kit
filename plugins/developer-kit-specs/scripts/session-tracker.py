@@ -67,7 +67,8 @@ _SECRET_PATTERNS: list[re.Pattern] = [
     re.compile(r"(glpat-)[a-zA-Z0-9\-]{20,}"),  # GitLab PAT
     re.compile(r"(AKIA)[0-9A-Z]{16}"),  # AWS access key ID
     re.compile(
-        r"(-----BEGIN (?:RSA |EC |DSA )?PRIVATE KEY-----)[\s\S]*?(-----END[^\n-]*)", re.IGNORECASE
+        r"(-----BEGIN (?:RSA |EC |DSA )?PRIVATE KEY-----)[\s\S]*?(-----END[^\n-]*)",
+        re.IGNORECASE,
     ),
     re.compile(
         r"(-----BEGIN (?:RSA |EC |DSA )?PRIVATE KEY-----)[^\n]*", re.IGNORECASE
@@ -174,7 +175,10 @@ def extract_user_messages(entries: list[dict]) -> list[str]:
         )
 
         is_user = (
-            entry_type == "user" or role == "user" or msg_role == "user" or entry_type == "human"
+            entry_type == "user"
+            or role == "user"
+            or msg_role == "user"
+            or entry_type == "human"
         )
         if not is_user:
             continue
@@ -246,7 +250,9 @@ def extract_tool_operations(entries: list[dict]) -> dict[str, Any]:
                         tool_name = block.get("name", "")
                         tool_input = block.get("input", {})
                         if tool_name:
-                            _process_tool_entry(tool_name, tool_input, tool_counts, file_paths)
+                            _process_tool_entry(
+                                tool_name, tool_input, tool_counts, file_paths
+                            )
 
     return {
         "tool_operations": {

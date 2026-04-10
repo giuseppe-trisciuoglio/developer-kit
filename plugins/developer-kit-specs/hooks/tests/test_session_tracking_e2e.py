@@ -25,7 +25,6 @@ import os
 import re
 import subprocess
 import sys
-import tempfile
 import time
 from datetime import datetime
 from pathlib import Path
@@ -454,7 +453,9 @@ class TestAC003FirstRun:
         transcript_path = _make_transcript(entries, str(tmp_path))
         data = _extract_data_from_transcript(transcript_path)
 
-        _write_tracking_entry(tracking_log, "first00112233", data, date_str="2026-04-10")
+        _write_tracking_entry(
+            tracking_log, "first00112233", data, date_str="2026-04-10"
+        )
 
         content = Path(tracking_log).read_text(encoding="utf-8")
         assert "Sessione first001" in content
@@ -473,7 +474,9 @@ class TestAC003FirstRun:
         transcript_path = _make_transcript(entries, str(tmp_path))
         data = _extract_data_from_transcript(transcript_path)
 
-        _write_tracking_entry(tracking_log, "toptest00001122", data, date_str="2026-04-10")
+        _write_tracking_entry(
+            tracking_log, "toptest00001122", data, date_str="2026-04-10"
+        )
 
         content = Path(tracking_log).read_text(encoding="utf-8")
         first_line = content.strip().split("\n")[0]
@@ -605,7 +608,9 @@ class TestAC006NonBlocking:
 
     def test_missing_transcript_returns_empty_lines(self):
         """Non-existent transcript → read_last_n_lines returns empty list."""
-        lines = session_tracker.read_last_n_lines("/nonexistent/path/to/transcript.jsonl")
+        lines = session_tracker.read_last_n_lines(
+            "/nonexistent/path/to/transcript.jsonl"
+        )
         assert lines == []
 
     def test_empty_transcript_returns_empty_lines(self, tmp_path):
@@ -657,7 +662,9 @@ class TestAC006NonBlocking:
         for hook_entry in stop_hooks:
             for h in hook_entry.get("hooks", []):
                 if h.get("type") == "agent":
-                    assert h.get("async") is True, "Stop hook agent must have async: true"
+                    assert (
+                        h.get("async") is True
+                    ), "Stop hook agent must have async: true"
 
 
 # ─── AC-007: Git Commits Included ─────────────────────────────────────────────
@@ -1102,9 +1109,7 @@ class TestAgentFileStructure:
 
     def _get_field(self, content: str, field: str) -> Optional[str]:
         """Extract a scalar field from YAML frontmatter using regex."""
-        match = re.search(
-            rf"^{re.escape(field)}:\s*(.+)$", content, re.MULTILINE
-        )
+        match = re.search(rf"^{re.escape(field)}:\s*(.+)$", content, re.MULTILINE)
         if not match:
             return None
         value = match.group(1).strip()
@@ -1162,9 +1167,9 @@ class TestAgentFileStructure:
     def test_agent_prompt_instructs_idempotency(self):
         """Agent prompt must instruct update-by-SHORT_ID (idempotency)."""
         content = self._load_content()
-        assert "SHORT_ID" in content or "idempoten" in content.lower(), (
-            "Agent prompt must reference idempotency by SHORT_ID"
-        )
+        assert (
+            "SHORT_ID" in content or "idempoten" in content.lower()
+        ), "Agent prompt must reference idempotency by SHORT_ID"
 
     def test_agent_prompt_references_tracking_log(self):
         """Agent prompt must reference tracking_log.md."""
