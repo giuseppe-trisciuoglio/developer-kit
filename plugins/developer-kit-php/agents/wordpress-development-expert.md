@@ -99,25 +99,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Use proper naming conventions
 class My_Custom_Plugin {
-    
+
     private static ?My_Custom_Plugin $instance = null;
-    
+
     public static function get_instance(): My_Custom_Plugin {
         if ( null === self::$instance ) {
             self::$instance = new self();
         }
         return self::$instance;
     }
-    
+
     private function __construct() {
         $this->init_hooks();
     }
-    
+
     private function init_hooks(): void {
         add_action( 'init', array( $this, 'load_textdomain' ) );
         add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
     }
-    
+
     public function load_textdomain(): void {
         load_plugin_textdomain(
             'my-custom-plugin',
@@ -125,7 +125,7 @@ class My_Custom_Plugin {
             dirname( plugin_basename( __FILE__ ) ) . '/languages'
         );
     }
-    
+
     public function enqueue_assets(): void {
         wp_enqueue_style(
             'my-custom-plugin-style',
@@ -133,7 +133,7 @@ class My_Custom_Plugin {
             array(),
             '1.0.0'
         );
-        
+
         wp_enqueue_script(
             'my-custom-plugin-script',
             plugins_url( 'assets/js/script.js', __FILE__ ),
@@ -141,7 +141,7 @@ class My_Custom_Plugin {
             '1.0.0',
             true
         );
-        
+
         wp_localize_script(
             'my-custom-plugin-script',
             'myPluginData',
@@ -179,7 +179,7 @@ add_action( 'plugins_loaded', array( 'My_Custom_Plugin', 'get_instance' ) );
 
         handleClick: function( event ) {
             event.preventDefault();
-            
+
             $.ajax( {
                 url: myPluginData.ajaxUrl,
                 type: 'POST',
@@ -258,7 +258,7 @@ printf(
 wp_nonce_field( 'my_action', 'my_nonce' );
 
 // Verify nonce in handler
-if ( ! isset( $_POST['my_nonce'] ) || 
+if ( ! isset( $_POST['my_nonce'] ) ||
      ! wp_verify_nonce( $_POST['my_nonce'], 'my_action' ) ) {
     wp_die( esc_html__( 'Security check failed.', 'text-domain' ) );
 }
@@ -316,12 +316,12 @@ function my_plugin_register_post_types(): void {
         'hierarchical'       => false,
         'menu_position'      => 20,
         'menu_icon'          => 'dashicons-portfolio',
-        'supports'           => array( 
-            'title', 
-            'editor', 
-            'thumbnail', 
-            'excerpt', 
-            'custom-fields' 
+        'supports'           => array(
+            'title',
+            'editor',
+            'thumbnail',
+            'excerpt',
+            'custom-fields'
         ),
     );
 
@@ -409,7 +409,7 @@ $wpdb->delete(
 // Create custom table on activation
 function my_plugin_create_tables(): void {
     global $wpdb;
-    
+
     $table_name      = $wpdb->prefix . 'custom_table';
     $charset_collate = $wpdb->get_charset_collate();
 
@@ -451,7 +451,7 @@ add_action( 'init', 'my_plugin_register_blocks' );
  */
 function my_plugin_render_block( array $attributes, string $content ): string {
     $title = $attributes['title'] ?? '';
-    
+
     ob_start();
     ?>
     <div class="my-custom-block">
@@ -583,7 +583,7 @@ function my_plugin_register_rest_routes(): void {
             ),
         )
     );
-    
+
     register_rest_route(
         'my-plugin/v1',
         '/items/(?P<id>[\d]+)',
@@ -628,10 +628,10 @@ function my_plugin_can_manage(): bool {
 function my_plugin_get_items( WP_REST_Request $request ): WP_REST_Response {
     $per_page = $request->get_param( 'per_page' );
     $page     = $request->get_param( 'page' );
-    
+
     // Fetch items from database
     $items = array(); // Your logic here
-    
+
     return new WP_REST_Response( $items, 200 );
 }
 
@@ -640,19 +640,19 @@ function my_plugin_get_items( WP_REST_Request $request ): WP_REST_Response {
  */
 function my_plugin_create_item( WP_REST_Request $request ): WP_REST_Response {
     $title = $request->get_param( 'title' );
-    
+
     // Create item logic
     $item_id = 0; // Your logic here
-    
+
     if ( ! $item_id ) {
         return new WP_REST_Response(
             array( 'message' => __( 'Failed to create item.', 'text-domain' ) ),
             500
         );
     }
-    
+
     return new WP_REST_Response(
-        array( 
+        array(
             'id'      => $item_id,
             'message' => __( 'Item created successfully.', 'text-domain' ),
         ),
@@ -773,15 +773,15 @@ theme-name/
 function my_plugin_get_cached_data(): array {
     $cache_key = 'my_plugin_data';
     $data      = get_transient( $cache_key );
-    
+
     if ( false === $data ) {
         // Fetch fresh data
         $data = my_plugin_fetch_expensive_data();
-        
+
         // Cache for 1 hour
         set_transient( $cache_key, $data, HOUR_IN_SECONDS );
     }
-    
+
     return $data;
 }
 
@@ -789,14 +789,14 @@ function my_plugin_get_cached_data(): array {
 function my_plugin_get_settings(): array {
     $cache_key   = 'my_plugin_settings';
     $cache_group = 'my_plugin';
-    
+
     $settings = wp_cache_get( $cache_key, $cache_group );
-    
+
     if ( false === $settings ) {
         $settings = get_option( 'my_plugin_settings', array() );
         wp_cache_set( $cache_key, $settings, $cache_group );
     }
-    
+
     return $settings;
 }
 ```
@@ -809,14 +809,14 @@ function my_plugin_enqueue_assets(): void {
     if ( ! is_singular( 'project' ) ) {
         return;
     }
-    
+
     wp_enqueue_style(
         'my-plugin-style',
         plugins_url( 'assets/css/style.min.css', __FILE__ ),
         array(),
         filemtime( plugin_dir_path( __FILE__ ) . 'assets/css/style.min.css' )
     );
-    
+
     wp_enqueue_script(
         'my-plugin-script',
         plugins_url( 'assets/js/script.min.js', __FILE__ ),
@@ -917,19 +917,19 @@ define( 'SAVEQUERIES', true );
 <?xml version="1.0"?>
 <ruleset name="My Plugin Coding Standards">
     <description>WordPress Coding Standards for My Plugin</description>
-    
+
     <rule ref="WordPress"/>
     <rule ref="WordPress-Core"/>
     <rule ref="WordPress-Docs"/>
     <rule ref="WordPress-Extra"/>
-    
+
     <config name="minimum_supported_wp_version" value="6.0"/>
     <config name="testVersion" value="8.0-"/>
-    
+
     <arg name="extensions" value="php"/>
     <arg name="colors"/>
     <arg value="sp"/>
-    
+
     <file>./</file>
     <exclude-pattern>/vendor/*</exclude-pattern>
     <exclude-pattern>/node_modules/*</exclude-pattern>

@@ -48,7 +48,7 @@ def process_order(request: OrderRequest | None) -> Order | None:
         return None
     if not request.items:
         return None
-    
+
     return create_order(request)
 ```
 
@@ -60,11 +60,11 @@ def calculate_total(items: list[OrderItem], customer: Customer) -> Decimal:
     subtotal = sum(
         item.price * item.quantity for item in items
     )
-    
+
     tax = subtotal * Decimal("0.08") if subtotal > 100 else subtotal * Decimal("0.05")
-    
+
     shipping = Decimal("10") if subtotal < 50 else Decimal("0")
-    
+
     return subtotal + tax + shipping
 
 # After
@@ -78,7 +78,7 @@ def calculate_total(items: list[OrderItem], customer: Customer) -> Decimal:
     subtotal = _calculate_subtotal(items)
     tax = _calculate_tax(subtotal)
     shipping = _calculate_shipping(subtotal)
-    
+
     return subtotal + tax + shipping
 
 def _calculate_subtotal(items: list[OrderItem]) -> Decimal:
@@ -99,7 +99,7 @@ Extract magic numbers and strings to configuration:
 class OrderService:
     def __init__(self, repository: OrderRepository):
         self.repository = repository
-    
+
     def find_recent_orders(self, customer_id: int) -> list[Order]:
         orders = self.repository.find_by_customer_id(customer_id)
         cutoff = datetime.now() - timedelta(days=30)
@@ -116,23 +116,23 @@ class OrderSettings(BaseSettings):
     minimum_total: Decimal = Decimal("100")
     recent_days_threshold: int = 30
     max_results: int = 50
-    
+
     class Config:
         env_prefix = "ORDER_"
 
 class OrderService:
     def __init__(
-        self, 
+        self,
         repository: OrderRepository,
         settings: OrderSettings
     ):
         self.repository = repository
         self.settings = settings
-    
+
     def find_recent_orders(self, customer_id: int) -> list[Order]:
         cutoff = datetime.now() - timedelta(days=self.settings.recent_days_threshold)
         orders = self.repository.find_by_customer_id(customer_id)
-        
+
         return [
             order for order in orders
             if order.total > self.settings.minimum_total
@@ -249,7 +249,7 @@ class UserResponse(BaseModel):
     first_name: str
     last_name: str
     created_at: datetime
-    
+
     class Config:
         from_attributes = True
 
@@ -347,7 +347,7 @@ class CreateUserRequest(BaseModel):
     email: EmailStr
     first_name: str = Field(min_length=2, max_length=50)
     last_name: str = Field(min_length=2, max_length=50)
-    
+
     class Config:
         frozen = True  # Immutable
 ```

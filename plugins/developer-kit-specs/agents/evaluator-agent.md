@@ -273,12 +273,12 @@ IF overall_score >= threshold AND critical_issues == 0:
     → APPROVE
     → Update task status to "reviewed"
     → Proceed to cleanup
-    
+
 ELIF overall_score >= threshold - 0.5 AND critical_issues == 0:
     → CONDITIONAL APPROVE
     → Note minor issues for future improvement
     → Proceed with caution
-    
+
 ELIF overall_score < threshold OR critical_issues > 0:
     → REQUEST FIXES
     → Create specific fix targets:

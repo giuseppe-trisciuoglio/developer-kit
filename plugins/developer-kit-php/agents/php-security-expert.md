@@ -104,11 +104,11 @@ function safePath(string $baseDir, string $filename): string
 {
     $basePath = realpath($baseDir);
     $fullPath = realpath($baseDir . DIRECTORY_SEPARATOR . $filename);
-    
+
     if ($fullPath === false || !str_starts_with($fullPath, $basePath)) {
         throw new SecurityException('Path traversal detected');
     }
-    
+
     return $fullPath;
 }
 
@@ -132,20 +132,20 @@ public function upload(Request $request): JsonResponse
             'max:10240', // 10MB
         ],
     ]);
-    
+
     $file = $request->file('file');
     $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
-    
+
     // Validate actual file content
     $mimeType = mime_content_type($file->getPathname());
     $allowedMimes = ['image/jpeg', 'image/png', 'application/pdf'];
-    
+
     if (!in_array($mimeType, $allowedMimes, true)) {
         throw new ValidationException('Invalid file type');
     }
-    
+
     Storage::disk('uploads')->putFileAs('', $file, $filename);
-    
+
     return response()->json(['filename' => $filename]);
 }
 ```
@@ -173,17 +173,17 @@ class JwtService
         private readonly string $privateKey,
         private readonly string $publicKey,
     ) {}
-    
+
     public function createAccessToken(array $payload): string
     {
         $now = time();
         $payload['iat'] = $now;
         $payload['exp'] = $now + ($this->config->accessTokenExpireMinutes * 60);
         $payload['type'] = 'access';
-        
+
         return JWT::encode($payload, $this->privateKey, $this->config->algorithm);
     }
-    
+
     public function verifyToken(string $token): array
     {
         return (array) JWT::decode(
@@ -223,21 +223,21 @@ class PostVoter extends Voter
         return in_array($attribute, ['VIEW', 'EDIT', 'DELETE'])
             && $subject instanceof Post;
     }
-    
+
     protected function voteOnAttribute(
         string $attribute,
         mixed $subject,
         TokenInterface $token
     ): bool {
         $user = $token->getUser();
-        
+
         if (!$user instanceof User) {
             return false;
         }
-        
+
         return match ($attribute) {
             'VIEW' => true,
-            'EDIT', 'DELETE' => $subject->getAuthor() === $user 
+            'EDIT', 'DELETE' => $subject->getAuthor() === $user
                 || $user->hasRole('ROLE_ADMIN'),
             default => false,
         };
@@ -252,10 +252,10 @@ class PostPolicy
 {
     public function update(User $user, Post $post): bool
     {
-        return $user->id === $post->user_id 
+        return $user->id === $post->user_id
             || $user->hasRole('admin');
     }
-    
+
     public function delete(User $user, Post $post): bool
     {
         return $user->hasRole('admin');
@@ -266,7 +266,7 @@ class PostPolicy
 public function update(Request $request, Post $post): JsonResponse
 {
     $this->authorize('update', $post);
-    
+
     // Update logic
 }
 ```
@@ -328,12 +328,12 @@ readonly class CreateUserRequest
         #[Assert\NotBlank]
         #[Assert\Email(mode: 'strict')]
         public string $email,
-        
+
         #[Assert\NotBlank]
         #[Assert\Length(min: 3, max: 50)]
         #[Assert\Regex(pattern: '/^[a-zA-Z0-9_]+$/')]
         public string $username,
-        
+
         #[Assert\NotBlank]
         #[Assert\Length(min: 12)]
         #[Assert\PasswordStrength(minScore: PasswordStrength::STRENGTH_STRONG)]
@@ -364,7 +364,7 @@ parameters:
         - src
         - app
     ignoreErrors: []
-    
+
 includes:
     - vendor/phpstan/phpstan-strict-rules/rules.neon
 ```
@@ -393,25 +393,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
           tools: composer
-      
+
       - name: Install dependencies
         run: composer install --no-progress --prefer-dist
-      
+
       - name: Composer Audit
         run: composer audit
-      
+
       - name: PHPStan Analysis
         run: vendor/bin/phpstan analyse --no-progress
-      
+
       - name: Psalm Security Analysis
         run: vendor/bin/psalm --taint-analysis
-      
+
       - name: OWASP Dependency Check
         uses: dependency-check/Dependency-Check_Action@main
         with:
@@ -431,13 +431,13 @@ repos:
         language: system
         types: [php]
         pass_filenames: false
-      
+
       - id: composer-audit
         name: Composer Audit
         entry: composer audit
         language: system
         pass_filenames: false
-      
+
       - id: secret-detection
         name: Detect Secrets
         entry: detect-secrets-hook
@@ -453,7 +453,7 @@ repos:
 return [
     'key' => env('APP_KEY'),
     'debug' => (bool) env('APP_DEBUG', false),
-    
+
     // Never commit sensitive data
     'api_secret' => env('API_SECRET'),
 ];
@@ -471,13 +471,13 @@ readonly class SecurityConfig
     public function __construct(
         #[SensitiveParameter]
         private string $databaseUrl,
-        
+
         #[SensitiveParameter]
         private string $jwtSecretKey,
-        
+
         #[SensitiveParameter]
         private string $apiKey,
-        
+
         public array $corsOrigins = [],
         public array $allowedHosts = ['*'],
         public bool $debug = false,
@@ -493,7 +493,7 @@ class SecurityHeadersMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         $response = $next($request);
-        
+
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('X-Frame-Options', 'DENY');
         $response->headers->set('X-XSS-Protection', '1; mode=block');
@@ -501,7 +501,7 @@ class SecurityHeadersMiddleware
         $response->headers->set('Content-Security-Policy', "default-src 'self'");
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
         $response->headers->set('Permissions-Policy', 'geolocation=(), microphone=()');
-        
+
         return $response;
     }
 }
@@ -515,11 +515,11 @@ class SecurityHeadersSubscriber implements EventSubscriberInterface
             ResponseEvent::class => 'onResponse',
         ];
     }
-    
+
     public function onResponse(ResponseEvent $event): void
     {
         $response = $event->getResponse();
-        
+
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('X-Frame-Options', 'DENY');
         // ... additional headers
@@ -543,13 +543,13 @@ class UserService
     public function __construct(
         private readonly UserPasswordHasherInterface $passwordHasher,
     ) {}
-    
+
     public function createUser(string $plainPassword): User
     {
         $user = new User();
         $hashedPassword = $this->passwordHasher->hashPassword($user, $plainPassword);
         $user->setPassword($hashedPassword);
-        
+
         return $user;
     }
 }
@@ -604,15 +604,15 @@ class SanitizeProcessor implements ProcessorInterface
         'authorization',
         'credit_card',
     ];
-    
+
     public function __invoke(array $record): array
     {
         $record['context'] = $this->sanitize($record['context']);
         $record['extra'] = $this->sanitize($record['extra']);
-        
+
         return $record;
     }
-    
+
     private function sanitize(array $data): array
     {
         foreach ($data as $key => $value) {
@@ -622,10 +622,10 @@ class SanitizeProcessor implements ProcessorInterface
                 $data[$key] = '***REDACTED***';
             }
         }
-        
+
         return $data;
     }
-    
+
     private function isSensitive(string $key): bool
     {
         foreach (self::SENSITIVE_KEYS as $sensitiveKey) {

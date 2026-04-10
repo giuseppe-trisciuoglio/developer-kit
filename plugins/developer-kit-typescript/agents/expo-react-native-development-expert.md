@@ -97,10 +97,10 @@ await db.runAsync(
 
 // Vector similarity search
 const results = await db.getAllAsync(`
-  SELECT id, distance 
-  FROM documents 
-  WHERE embedding MATCH ? 
-  ORDER BY distance 
+  SELECT id, distance
+  FROM documents
+  WHERE embedding MATCH ?
+  ORDER BY distance
   LIMIT 10
 `, [JSON.stringify(queryVector)]);
 ```
@@ -910,7 +910,7 @@ describe('Button', () => {
   it('calls onPress when pressed', () => {
     const onPress = jest.fn();
     render(<Button title="Press me" onPress={onPress} />);
-    
+
     fireEvent.press(screen.getByText('Press me'));
     expect(onPress).toHaveBeenCalledTimes(1);
   });
@@ -923,7 +923,7 @@ describe('Button', () => {
   it('is disabled when disabled prop is true', () => {
     const onPress = jest.fn();
     render(<Button title="Press me" onPress={onPress} disabled />);
-    
+
     fireEvent.press(screen.getByText('Press me'));
     expect(onPress).not.toHaveBeenCalled();
   });
@@ -942,7 +942,7 @@ describe('Navigation', () => {
     });
 
     fireEvent.press(screen.getByText('Go to Profile'));
-    
+
     expect(screen.getByText('Profile Screen')).toBeTruthy();
   });
 });
