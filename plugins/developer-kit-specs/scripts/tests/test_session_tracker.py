@@ -137,7 +137,10 @@ class TestExtractUserMessages:
 
     def test_handles_content_block_format(self):
         entries = [
-            {"type": "user", "message": {"role": "user", "content": [{"type": "text", "text": "block msg"}]}},
+            {
+                "type": "user",
+                "message": {"role": "user", "content": [{"type": "text", "text": "block msg"}]},
+            },
         ]
         result = session_tracker.extract_user_messages(entries)
         assert len(result) == 1
@@ -152,7 +155,11 @@ class TestExtractToolOperations:
 
     def test_counts_write_operations(self):
         entries = [
-            {"type": "tool_use", "tool_name": "Write", "tool_input": {"file_path": "/tmp/a.py", "content": "x"}},
+            {
+                "type": "tool_use",
+                "tool_name": "Write",
+                "tool_input": {"file_path": "/tmp/a.py", "content": "x"},
+            },
         ]
         result = session_tracker.extract_tool_operations(entries)
         assert result["tool_operations"]["Write"] == 1
@@ -160,7 +167,11 @@ class TestExtractToolOperations:
 
     def test_counts_edit_operations(self):
         entries = [
-            {"type": "tool_use", "tool_name": "Edit", "tool_input": {"file_path": "/tmp/b.py", "old_string": "x", "new_string": "y"}},
+            {
+                "type": "tool_use",
+                "tool_name": "Edit",
+                "tool_input": {"file_path": "/tmp/b.py", "old_string": "x", "new_string": "y"},
+            },
         ]
         result = session_tracker.extract_tool_operations(entries)
         assert result["tool_operations"]["Edit"] == 1
@@ -169,7 +180,11 @@ class TestExtractToolOperations:
     def test_counts_delete_operations_with_path(self):
         """Delete operations should count AND capture file path."""
         entries = [
-            {"type": "tool_use", "tool_name": "Bash", "tool_input": {"command": "rm -rf /tmp/old.py"}},
+            {
+                "type": "tool_use",
+                "tool_name": "Bash",
+                "tool_input": {"command": "rm -rf /tmp/old.py"},
+            },
         ]
         result = session_tracker.extract_tool_operations(entries)
         assert result["tool_operations"]["Delete"] == 1
@@ -178,7 +193,11 @@ class TestExtractToolOperations:
     def test_delete_git_rm_captures_path(self):
         """git rm should also capture the deleted file path."""
         entries = [
-            {"type": "tool_use", "tool_name": "Bash", "tool_input": {"command": "git rm src/old.java"}},
+            {
+                "type": "tool_use",
+                "tool_name": "Bash",
+                "tool_input": {"command": "git rm src/old.java"},
+            },
         ]
         result = session_tracker.extract_tool_operations(entries)
         assert result["tool_operations"]["Delete"] == 1
@@ -209,7 +228,11 @@ class TestExtractToolOperations:
                 "type": "assistant",
                 "message": {
                     "content": [
-                        {"type": "tool_use", "name": "Write", "input": {"file_path": "/tmp/c.py", "content": "z"}},
+                        {
+                            "type": "tool_use",
+                            "name": "Write",
+                            "input": {"file_path": "/tmp/c.py", "content": "z"},
+                        },
                     ],
                 },
             },
@@ -313,11 +336,27 @@ class TestEndToEnd:
         """Test with a realistic transcript containing all operation types."""
         entries = [
             {"type": "user", "content": "Create a new file"},
-            {"type": "tool_use", "tool_name": "Write", "tool_input": {"file_path": "src/main.py", "content": "print('hello')"}},
+            {
+                "type": "tool_use",
+                "tool_name": "Write",
+                "tool_input": {"file_path": "src/main.py", "content": "print('hello')"},
+            },
             {"type": "user", "content": "Now edit it"},
-            {"type": "tool_use", "tool_name": "Edit", "tool_input": {"file_path": "src/main.py", "old_string": "hello", "new_string": "world"}},
+            {
+                "type": "tool_use",
+                "tool_name": "Edit",
+                "tool_input": {
+                    "file_path": "src/main.py",
+                    "old_string": "hello",
+                    "new_string": "world",
+                },
+            },
             {"type": "user", "content": "Remove old file"},
-            {"type": "tool_use", "tool_name": "Bash", "tool_input": {"command": "rm -f src/old.py"}},
+            {
+                "type": "tool_use",
+                "tool_name": "Bash",
+                "tool_input": {"command": "rm -f src/old.py"},
+            },
             {"type": "user", "content": "My api_key='sk-secret123456789abcdef012345'"},
         ]
         path = _make_transcript(entries)
@@ -371,8 +410,18 @@ class TestEndToEnd:
         """Secrets in transcript should be redacted in output."""
         entries = [
             {"type": "user", "content": "password = 'hunter2password1234567890ab'"},
-            {"type": "user", "content": "token='ghp_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123'"},
-            {"type": "tool_use", "tool_name": "Write", "tool_input": {"file_path": "/tmp/cfg.py", "content": "key='sk-longkey123456789abcdef0123456789'"}},
+            {
+                "type": "user",
+                "content": "token='ghp_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123'",
+            },
+            {
+                "type": "tool_use",
+                "tool_name": "Write",
+                "tool_input": {
+                    "file_path": "/tmp/cfg.py",
+                    "content": "key='sk-longkey123456789abcdef0123456789'",
+                },
+            },
         ]
         path = _make_transcript(entries)
         try:
@@ -414,9 +463,9 @@ class TestEndToEnd:
         """Malformed lines should be skipped gracefully."""
         tmp = tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False, encoding="utf-8")
         tmp.write('{"type": "user", "content": "valid"}\n')
-        tmp.write('NOT JSON\n')
+        tmp.write("NOT JSON\n")
         tmp.write('{"type": "user", "content": "also valid"}\n')
-        tmp.write('\n')
+        tmp.write("\n")
         tmp.write('{"broken\n')
         tmp.close()
         try:
@@ -462,6 +511,7 @@ class TestCLI:
             with patch("sys.argv", ["session-tracker.py", f"--transcript-path={path}"]):
                 import io
                 from contextlib import redirect_stdout
+
                 f = io.StringIO()
                 with redirect_stdout(f):
                     with pytest.raises(SystemExit) as exc_info:
@@ -481,6 +531,7 @@ class TestCLI:
         with patch("sys.argv", ["session-tracker.py", "--transcript-path=/nonexistent/file.jsonl"]):
             import io
             from contextlib import redirect_stdout
+
             f = io.StringIO()
             with redirect_stdout(f):
                 with pytest.raises(SystemExit) as exc_info:
@@ -497,9 +548,13 @@ class TestCLI:
         entries = [{"type": "user", "content": "test"}]
         path = _make_transcript(entries)
         try:
-            with patch("sys.argv", ["session-tracker.py", f"--transcript-path={path}", "--session-id=longid123456789"]):
+            with patch(
+                "sys.argv",
+                ["session-tracker.py", f"--transcript-path={path}", "--session-id=longid123456789"],
+            ):
                 import io
                 from contextlib import redirect_stdout
+
                 f = io.StringIO()
                 with redirect_stdout(f):
                     with pytest.raises(SystemExit) as exc_info:

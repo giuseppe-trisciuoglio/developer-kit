@@ -38,10 +38,10 @@ DELETE_PATTERNS = re.compile(r"\b(rm\s|rmdir\s|git\s+rm\s)", re.IGNORECASE)
 # Pattern to extract file path from rm/rmdir/git rm commands
 _DELETE_PATH_PATTERN = re.compile(
     r"(?:\brm\b|\brmdir\b|\bgit\s+rm\b)"
-    r"(?:\s+-\w+)*"       # optional flags like -rf, -r, --cached
-    r"(?:\s+--\s*)?"       # optional --
+    r"(?:\s+-\w+)*"  # optional flags like -rf, -r, --cached
+    r"(?:\s+--\s*)?"  # optional --
     r"\s+"
-    r"([^\s;|&]+)",        # capture the file path
+    r"([^\s;|&]+)",  # capture the file path
     re.IGNORECASE,
 )
 
@@ -62,12 +62,16 @@ _SECRET_PATTERNS: list[re.Pattern] = [
     # Bearer tokens
     re.compile(r"(Bearer\s+)[A-Za-z0-9\-._~+/]+=*", re.IGNORECASE),
     # Common key formats — capture prefix so the key value itself is redacted
-    re.compile(r"(sk-)[a-zA-Z0-9]{20,}"),               # OpenAI-style
-    re.compile(r"(ghp_)[a-zA-Z0-9]{36,}"),               # GitHub PAT
-    re.compile(r"(glpat-)[a-zA-Z0-9\-]{20,}"),           # GitLab PAT
-    re.compile(r"(AKIA)[0-9A-Z]{16}"),                   # AWS access key ID
-    re.compile(r"(-----BEGIN (?:RSA |EC |DSA )?PRIVATE KEY-----)[\s\S]*?(-----END[^\n-]*)", re.IGNORECASE),
-    re.compile(r"(-----BEGIN (?:RSA |EC |DSA )?PRIVATE KEY-----)[^\n]*", re.IGNORECASE),  # Partial PEM (no END)
+    re.compile(r"(sk-)[a-zA-Z0-9]{20,}"),  # OpenAI-style
+    re.compile(r"(ghp_)[a-zA-Z0-9]{36,}"),  # GitHub PAT
+    re.compile(r"(glpat-)[a-zA-Z0-9\-]{20,}"),  # GitLab PAT
+    re.compile(r"(AKIA)[0-9A-Z]{16}"),  # AWS access key ID
+    re.compile(
+        r"(-----BEGIN (?:RSA |EC |DSA )?PRIVATE KEY-----)[\s\S]*?(-----END[^\n-]*)", re.IGNORECASE
+    ),
+    re.compile(
+        r"(-----BEGIN (?:RSA |EC |DSA )?PRIVATE KEY-----)[^\n]*", re.IGNORECASE
+    ),  # Partial PEM (no END)
 ]
 
 
@@ -163,14 +167,24 @@ def extract_user_messages(entries: list[dict]) -> list[str]:
     for entry in entries:
         entry_type = entry.get("type", "")
         role = entry.get("role", "")
-        msg_role = entry.get("message", {}).get("role", "") if isinstance(entry.get("message"), dict) else ""
+        msg_role = (
+            entry.get("message", {}).get("role", "")
+            if isinstance(entry.get("message"), dict)
+            else ""
+        )
 
-        is_user = entry_type == "user" or role == "user" or msg_role == "user" or entry_type == "human"
+        is_user = (
+            entry_type == "user" or role == "user" or msg_role == "user" or entry_type == "human"
+        )
         if not is_user:
             continue
 
         # Content can be in entry.content or entry.message.content
-        raw_content = entry.get("message", {}).get("content") if isinstance(entry.get("message"), dict) else None
+        raw_content = (
+            entry.get("message", {}).get("content")
+            if isinstance(entry.get("message"), dict)
+            else None
+        )
         if raw_content is None:
             raw_content = entry.get("content")
 
@@ -303,7 +317,10 @@ def main() -> None:
         result = build_result(
             session_id=args.session_id,
             user_messages=[],
-            tool_data={"tool_operations": {"Write": 0, "Edit": 0, "Delete": 0}, "modified_files": []},
+            tool_data={
+                "tool_operations": {"Write": 0, "Edit": 0, "Delete": 0},
+                "modified_files": [],
+            },
         )
         output_json(result)
         sys.exit(0)
