@@ -3,6 +3,11 @@ name: session-tracking-agent
 description: "Generates session tracking entries in tracking_log.md after each Claude Code response. Reads the session transcript, derives change rationale, and writes an idempotent log entry identified by short session ID. Invoked by the Stop event hook in developer-kit-specs."
 tools: Read, Write, Bash(git:*)
 model: sonnet
+skills:
+  - knowledge-graph
+  - ralph-loop
+  - specs-code-cleanup
+  - task-quality-kpi
 ---
 
 # Session Tracking Agent
