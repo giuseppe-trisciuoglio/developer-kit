@@ -1,6 +1,6 @@
 {
   "name": "giuseppe-trisciuoglio/developer-kit",
-  "version": "2.8.0",
+  "version": "2.8.1",
   "private": false,
   "summary": "Comprehensive developer toolkit providing reusable skills for Java/Spring Boot, TypeScript/NestJS/React/Next.js, Python, PHP, AWS CloudFormation, AI/RAG, DevOps, and more.",
   "skills": {

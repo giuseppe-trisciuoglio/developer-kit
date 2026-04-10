@@ -259,6 +259,30 @@ class TestRedactSecrets:
         result = session_tracker.redact_secrets(text)
         assert result == text
 
+    def test_redacts_unquoted_password(self):
+        text = "password=hunter2"
+        result = session_tracker.redact_secrets(text)
+        assert "hunter2" not in result
+        assert "[REDACTED]" in result
+
+    def test_redacts_unquoted_token(self):
+        text = "token: abc123"
+        result = session_tracker.redact_secrets(text)
+        assert "abc123" not in result
+        assert "[REDACTED]" in result
+
+    def test_redacts_unquoted_api_key(self):
+        text = "api_key=mysecretvalue"
+        result = session_tracker.redact_secrets(text)
+        assert "mysecretvalue" not in result
+        assert "[REDACTED]" in result
+
+    def test_redacts_unquoted_credential(self):
+        text = "credential = unquotedsecret"
+        result = session_tracker.redact_secrets(text)
+        assert "unquotedsecret" not in result
+        assert "[REDACTED]" in result
+
 
 # ─── Unit Tests: Session ID ──────────────────────────────────────────────────
 
@@ -360,6 +384,29 @@ class TestEndToEnd:
             combined = " ".join(user_msgs)
             assert "hunter2" not in combined
             assert "ghp_ABCD" not in combined
+        finally:
+            _cleanup(path)
+
+    def test_unquoted_secrets_not_in_transcript_output(self):
+        """Unquoted secrets in transcript must be redacted from user_messages."""
+        entries = [
+            {"type": "user", "content": "password=hunter2"},
+            {"type": "user", "content": "token: abc123"},
+            {"type": "user", "content": "api_key=mysecretvalue"},
+            {"type": "user", "content": "credential = unquotedsecret"},
+        ]
+        path = _make_transcript(entries)
+        try:
+            lines = session_tracker.read_last_n_lines(path)
+            parsed = [session_tracker.parse_jsonl_line(l) for l in lines]
+            parsed = [p for p in parsed if p is not None]
+            user_msgs = session_tracker.extract_user_messages(parsed)
+            combined = " ".join(user_msgs)
+            assert "hunter2" not in combined
+            assert "abc123" not in combined
+            assert "mysecretvalue" not in combined
+            assert "unquotedsecret" not in combined
+            assert combined.count("[REDACTED]") >= 4
         finally:
             _cleanup(path)
 

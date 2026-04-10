@@ -54,6 +54,11 @@ _SECRET_PATTERNS: list[re.Pattern] = [
         r"""[A-Za-z0-9\-._~+/!@#$%^&*()]+=*["']""",
         re.IGNORECASE,
     ),
+    # Unquoted key=value / key: value patterns (no surrounding quotes)
+    re.compile(
+        r"""(api[_-]?key|password|passwd|token|secret|credential|auth[_-]?token|access[_-]?key|private[_-]?key)\s*[:=]\s*(?!["'])[^\s"',;\n]{4,}""",
+        re.IGNORECASE,
+    ),
     # Bearer tokens
     re.compile(r"(Bearer\s+)[A-Za-z0-9\-._~+/]+=*", re.IGNORECASE),
     # Common key formats — capture prefix so the key value itself is redacted
