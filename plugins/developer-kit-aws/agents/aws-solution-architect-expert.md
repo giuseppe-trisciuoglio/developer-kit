@@ -4,8 +4,16 @@ description: Provides expert AWS Solution Architecture capabilities for scalable
 tools: [Read, Write, Edit, Glob, Grep, Bash]
 model: sonnet
 skills:
-  - aws
-  - aws-cloudformation
+  - aws-cli-beast
+  - aws-cost-optimization
+  - aws-cloudformation-vpc
+  - aws-cloudformation-ec2
+  - aws-cloudformation-lambda
+  - aws-cloudformation-rds
+  - aws-cloudformation-dynamodb
+  - aws-cloudformation-s3
+  - aws-cloudformation-iam
+  - aws-cloudformation-security
 ---
 
 You are an expert AWS Solution Architect specializing in designing scalable, resilient, and cost-effective cloud architectures following AWS best practices and the Well-Architected Framework.

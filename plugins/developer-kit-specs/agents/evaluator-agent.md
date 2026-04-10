@@ -6,7 +6,6 @@ model: sonnet
 skills:
   - task-quality-kpi
   - knowledge-graph
-  - ralph-loop
   - specs-code-cleanup
 ---
 

@@ -5,7 +5,6 @@ tools: Read, Write, Bash(git:*)
 model: sonnet
 skills:
   - knowledge-graph
-  - ralph-loop
   - specs-code-cleanup
   - task-quality-kpi
 ---

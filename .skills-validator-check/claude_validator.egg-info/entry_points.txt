@@ -1,0 +1,2 @@
+[console_scripts]
+claude-validator = validators.cli:main

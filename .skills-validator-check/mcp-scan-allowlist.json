@@ -1,0 +1,139 @@
+{
+  "_description": "Per-component allowlist for mcp-scan warnings. Maps component paths (relative to repo root) to allowed warning codes with justifications. The 'domains' field lists the external domains referenced by the skill — if a skill adds a new domain not in this list, the warning will NOT be suppressed and the check will fail. Placeholder domains (example.com, myapp.com, acme.com, etc.) and localhost are excluded from validation.",
+  "_placeholder_domains": [
+    "localhost",
+    "example.com",
+    "docs.example.com",
+    "myapp.com",
+    "acme.com",
+    "my-app.example.com",
+    "dev-my-app.example.com",
+    "staging-my-app.example.com",
+    "api.example.com",
+    "registry.company.com",
+    "team.company.com"
+  ],
+  "components": [
+    {
+      "path": "plugins/developer-kit-ai/skills/rag",
+      "allow": ["W011"],
+      "domains": [
+        "api.openai.com"
+      ],
+      "reason": "RAG skill by design teaches document ingestion from external sources (file system, database, API). This is inherent to the RAG pattern."
+    },
+    {
+      "path": "plugins/developer-kit-aws/skills/aws-cloudformation/aws-cloudformation-bedrock",
+      "allow": ["W011", "W012"],
+      "domains": [
+        "docs.aws.amazon.com"
+      ],
+      "reason": "Bedrock skill documents web data source configuration (WebDataSource/WebConfiguration) for knowledge bases. Example URLs (docs.example.com) are documentation placeholders, not real targets."
+    },
+    {
+      "path": "plugins/developer-kit-aws/skills/aws-cloudformation/aws-cloudformation-task-ecs-deploy-gh",
+      "allow": ["W012"],
+      "domains": [
+        "token.actions.githubusercontent.com"
+      ],
+      "reason": "GitHub Actions deployment skill references standard GitHub-hosted actions (actions/checkout@v4) which are trusted first-party dependencies."
+    },
+    {
+      "path": "plugins/developer-kit-java/skills/aws-sdk-java-v2-messaging",
+      "allow": ["W011"],
+      "domains": [
+        "docs.aws.amazon.com",
+        "github.com",
+        "sqs.us-east-1.amazonaws.com"
+      ],
+      "reason": "Messaging skill teaches SQS/SNS message handling patterns. Receiving and deserializing message payloads is the core purpose of the skill."
+    },
+    {
+      "path": "plugins/developer-kit-java/skills/aws-sdk-java-v2-s3",
+      "allow": ["W011"],
+      "domains": [
+        "docs.aws.amazon.com",
+        "sdk.amazonaws.com"
+      ],
+      "reason": "S3 skill teaches AWS S3 object operations (upload, download, presigned URLs). The skill provides Java code patterns for S3 SDK - it documents how to work with S3 objects, which is the core purpose of S3 integration. No actual third-party content execution occurs."
+    },
+    {
+      "path": "plugins/developer-kit-java/skills/langchain4j-mcp-server-patterns",
+      "allow": ["W011", "W012"],
+      "domains": [
+        "langchain4j.com",
+        "modelcontextprotocol.org"
+      ],
+      "reason": "MCP server patterns skill teaches how to connect to MCP servers. External process execution (npm exec @modelcontextprotocol/*) and tool/resource listing are inherent to MCP integration documentation."
+    },
+    {
+      "path": "plugins/developer-kit-java/skills/langchain4j-testing-strategies",
+      "allow": ["W012"],
+      "domains": [],
+      "reason": "Testing strategies skill documents Testcontainers usage with well-known Docker images (ollama/ollama, qdrant/qdrant) for integration testing. No external HTTP domains — only Docker image references."
+    },
+    {
+      "path": "plugins/developer-kit-java/skills/qdrant",
+      "allow": ["W011"],
+      "domains": [
+        "github.com",
+        "langchain4j.dev",
+        "qdrant.github.io",
+        "qdrant.tech"
+      ],
+      "reason": "Qdrant RAG skill teaches document ingestion into vector stores. Ingesting user-provided documents is the core RAG pattern being documented."
+    },
+    {
+      "path": "plugins/developer-kit-java/skills/spring-ai-mcp-server-patterns",
+      "allow": ["W011"],
+      "domains": [
+        "api.weather.gov",
+        "docs.spring.io",
+        "modelcontextprotocol.org"
+      ],
+      "reason": "Spring AI MCP skill documents tools that interact with external APIs (REST, GraphQL). Fetching external content is inherent to the MCP tool patterns being taught."
+    },
+    {
+      "path": "plugins/developer-kit-tools/skills/notebooklm",
+      "allow": ["W011"],
+      "domains": [
+        "github.com"
+      ],
+      "reason": "NotebookLM skill teaches adding sources from URLs, YouTube, and Google Drive. Ingesting external content is the core purpose of the tool."
+    },
+    {
+      "path": "plugins/developer-kit-typescript/skills/aws-lambda-typescript-integration",
+      "allow": ["W011"],
+      "domains": [
+        "github.com"
+      ],
+      "reason": "Lambda integration skill documents S3 and SQS event handlers. Processing external event payloads is inherent to Lambda event-driven architecture."
+    },
+    {
+      "path": "plugins/developer-kit-typescript/skills/nextjs-app-router",
+      "allow": ["W011"],
+      "domains": [
+        "www.sitemaps.org",
+        "schema.org",
+        "twitter.com",
+        "linkedin.com"
+      ],
+      "reason": "Next.js App Router skill documents server-side data fetching patterns. External API calls (fetch) are fundamental to Next.js server components. Listed domains are for SEO/metadata examples."
+    },
+    {
+      "path": "plugins/developer-kit-typescript/skills/shadcn-ui",
+      "allow": ["W011"],
+      "domains": [
+        "ui.shadcn.com",
+        "shadcn.io",
+        "www.radix-ui.com",
+        "react-hook-form.com",
+        "tailwindcss.com",
+        "zod.dev",
+        "fonts.googleapis.com",
+        "github.com"
+      ],
+      "reason": "shadcn/ui skill documents installing components from the official shadcn registry (ui.shadcn.com). This is the standard installation mechanism for the framework."
+    }
+  ]
+}

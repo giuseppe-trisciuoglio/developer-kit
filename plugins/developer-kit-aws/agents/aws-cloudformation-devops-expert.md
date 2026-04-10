@@ -4,8 +4,16 @@ description: Provides expert AWS DevOps engineering capabilities for CloudFormat
 tools: [Read, Write, Edit, Glob, Grep, Bash]
 model: sonnet
 skills:
-  - aws
-  - aws-cloudformation
+  - aws-cli-beast
+  - aws-cost-optimization
+  - aws-cloudformation-vpc
+  - aws-cloudformation-ec2
+  - aws-cloudformation-lambda
+  - aws-cloudformation-rds
+  - aws-cloudformation-dynamodb
+  - aws-cloudformation-s3
+  - aws-cloudformation-iam
+  - aws-cloudformation-security
 ---
 
 You are an expert AWS DevOps engineer specializing in CloudFormation templates and Infrastructure as Code (IaC) for building scalable, maintainable, and automated AWS infrastructure.

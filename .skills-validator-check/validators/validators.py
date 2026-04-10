@@ -1,0 +1,2751 @@
+"""
+Validation logic for Claude Code components.
+"""
+
+import json
+import re
+from abc import ABC, abstractmethod
+from http.client import InvalidURL
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Set, Tuple
+from urllib.error import HTTPError, URLError
+from urllib.parse import quote, unquote, urlsplit, urlunsplit
+from urllib.request import Request, urlopen
+
+import yaml
+
+from .config import (
+    SKILL_PATTERN,
+    SKILL_BUNDLED_MARKDOWN_PATTERN,
+    AGENT_PATTERN,
+    COMMAND_PATTERN,
+    RULE_PATTERN,
+    MARKDOWN_FILE_PATTERN,
+    SKILL_PACKAGE_PATTERN,
+    PLUGIN_PATTERN,
+    HOOK_PATTERN,
+    SKILL_SCHEMA,
+    AGENT_SCHEMA,
+    COMMAND_SCHEMA,
+    RULE_SCHEMA,
+    SKILL_PROHIBITED_FILES,
+    SKILL_ALLOWED_SUBDIRS,
+    SKILL_REQUIRED_SECTIONS,
+    SKILL_RECOMMENDED_SECTIONS,
+    COMMAND_REQUIRED_SECTIONS,
+    COMMAND_RECOMMENDED_SECTIONS,
+    COMMAND_SECTIONS_ORDER,
+    COMMAND_SECTION_PATTERNS,
+    AGENT_REQUIRED_SECTIONS,
+    AGENT_RECOMMENDED_SECTIONS,
+    RULE_REQUIRED_SECTIONS,
+    RULE_RECOMMENDED_SECTIONS,
+    VALID_TOOLS,
+    VALID_MODELS,
+    AGENT_VALID_MODELS,
+    RESERVED_WORDS,
+    KEBAB_CASE_PATTERN,
+    KEBAB_CASE_EXEMPT_FILES,
+    SEMVER_PATTERN,
+    MAX_NAME_LENGTH,
+    MAX_DESCRIPTION_LENGTH,
+    MIN_DESCRIPTION_LENGTH,
+    MAX_COMPATIBILITY_LENGTH,
+    MAX_SKILL_LINES,
+    MAX_SKILL_TOKENS,
+    MAX_SKILL_CHARACTERS,
+    MAX_RULE_LINES,
+    WHAT_KEYWORDS,
+    WHEN_KEYWORDS,
+    PLUGIN_JSON_SCHEMA,
+    VALID_LICENSES,
+    PLUGIN_NAME_PATTERN,
+    VALID_HOOK_EVENTS,
+    VALID_HOOK_TYPES,
+)
+from .models import ValidationResult, Severity
+
+
+class BaseValidator(ABC):
+    """Abstract base class for all component validators."""
+
+    _external_url_cache: Dict[str, Tuple[str, Optional[str]]] = {}
+
+    def __init__(self, validate_external_urls: bool = False):
+        self.validate_external_urls = validate_external_urls
+
+    @property
+    @abstractmethod
+    def component_type(self) -> str:
+        """Return the type of component this validator handles."""
+        pass
+
+    @property
+    @abstractmethod
+    def file_pattern(self) -> re.Pattern:
+        """Return the regex pattern for matching files."""
+        pass
+
+    @property
+    @abstractmethod
+    def schema(self) -> Dict[str, Set[str]]:
+        """Return the validation schema with required/optional fields."""
+        pass
+
+    def can_validate(self, file_path: Path) -> bool:
+        """Check if this validator can handle the given file."""
+        return bool(self.file_pattern.search(str(file_path)))
+
+    def _extract_body(self, content: str) -> Tuple[str, int]:
+        """Return markdown body after frontmatter and the starting line number offset."""
+        match = re.search(r"\n---\s*\n", content)
+        if not match:
+            return content, 0
+        return content[match.end():], content[:match.end()].count("\n")
+
+    def _find_skill_root(self, file_path: Path) -> Path:
+        """Resolve the skill root directory for SKILL.md and bundled resources."""
+        current = file_path.parent if file_path.is_file() else file_path
+
+        for candidate in [current] + list(current.parents):
+            if (candidate / "SKILL.md").exists():
+                return candidate
+
+        return file_path.parent
+
+    def _count_tokens(self, content: str) -> int:
+        """Approximate token count using word/punctuation chunks."""
+        return len(re.findall(r"\w+|[^\w\s]", content, re.UNICODE))
+
+    def _mask_code_regions(self, content: str) -> str:
+        """Mask fenced and inline code while preserving string length and line numbers."""
+        lines = content.splitlines(keepends=True)
+        masked_lines: List[str] = []
+        in_fence = False
+        fence_char = ""
+        fence_length = 0
+
+        inline_code_pattern = re.compile(r"(`+)([^`]*?)\1")
+
+        for line in lines:
+            fence_match = re.match(r"^\s{0,3}([`~]{3,})(.*)$", line)
+
+            if in_fence:
+                if fence_match:
+                    fence = fence_match.group(1)
+                    if fence[0] == fence_char and len(fence) >= fence_length:
+                        in_fence = False
+                masked_lines.append(re.sub(r"[^\n]", " ", line))
+                continue
+
+            if fence_match:
+                fence = fence_match.group(1)
+                in_fence = True
+                fence_char = fence[0]
+                fence_length = len(fence)
+                masked_lines.append(re.sub(r"[^\n]", " ", line))
+                continue
+
+            masked_lines.append(
+                inline_code_pattern.sub(
+                    lambda match: " " * len(match.group(0)),
+                    line,
+                )
+            )
+
+        return "".join(masked_lines)
+
+    def _validate_markdown_syntax(
+        self,
+        content: str,
+        result: ValidationResult,
+        body_only: bool = False
+    ) -> None:
+        """Validate markdown syntax with lightweight structural checks."""
+        text = content
+        line_offset = 0
+
+        if body_only:
+            text, line_offset = self._extract_body(content)
+
+        lines = text.splitlines()
+        in_fence = False
+        fence_char = ""
+        fence_length = 0
+        fence_line = 0
+
+        for idx, line in enumerate(lines, start=1):
+            fence_match = re.match(r"^\s{0,3}([`~]{3,})(.*)$", line)
+
+            if in_fence:
+                if fence_match:
+                    fence = fence_match.group(1)
+                    if fence[0] == fence_char and len(fence) >= fence_length:
+                        in_fence = False
+                continue
+
+            if fence_match:
+                fence = fence_match.group(1)
+                in_fence = True
+                fence_char = fence[0]
+                fence_length = len(fence)
+                fence_line = idx
+                continue
+
+            if re.match(r"^\s{0,3}#{1,6}(?!#)\S", line):
+                result.add_error(
+                    message="Malformed heading: missing space after '#' markers",
+                    line_number=line_offset + idx,
+                    suggestion="Use headings like '## Overview' instead of '##Overview'"
+                )
+
+        if in_fence:
+            result.add_error(
+                message="Unclosed fenced code block",
+                line_number=line_offset + fence_line,
+                suggestion="Close the fenced code block with matching backticks or tildes"
+            )
+
+    def _normalize_link_target(self, raw_target: str) -> str:
+        """Normalize a markdown link target by removing title/fragment wrappers."""
+        target = raw_target.strip()
+        if target.startswith("<") and ">" in target:
+            target = target[1:target.index(">")]
+        else:
+            target = target.split()[0]
+        return target.strip()
+
+    def _issue_line_number(self, content: str, start_index: int, line_offset: int = 0) -> int:
+        """Convert a character index to a 1-based line number."""
+        return line_offset + content[:start_index].count("\n") + 1
+
+    def _validate_external_url(
+        self,
+        url: str,
+        result: ValidationResult,
+        line_number: int
+    ) -> None:
+        """Validate that an external HTTP(S) URL is reachable."""
+        cached = self._external_url_cache.get(url)
+        if cached is None:
+            outcome = "error"
+            detail = None
+            try:
+                request_url = self._prepare_request_url(url)
+            except (UnicodeError, ValueError) as exc:
+                self._external_url_cache[url] = ("error", f"invalid URL: {exc}")
+                request_url = None
+
+            if request_url is None:
+                cached = self._external_url_cache[url]
+                outcome, detail = cached
+                message = f"External link is not reachable: {url}"
+                if detail:
+                    message = f"{message} ({detail})"
+                result.add_error(
+                    message=message,
+                    line_number=line_number,
+                    suggestion="Fix or remove the invalid external link"
+                )
+                return
+
+            try:
+                request = Request(request_url, headers={"User-Agent": "developer-kit-validator/1.0"})
+                head_request = Request(
+                    request_url,
+                    headers={"User-Agent": "developer-kit-validator/1.0"},
+                    method="HEAD"
+                )
+            except (ValueError, InvalidURL) as exc:
+                self._external_url_cache[url] = ("error", f"invalid URL: {exc}")
+                result.add_error(
+                    message=f"External link is not reachable: {url} (invalid URL: {exc})",
+                    line_number=line_number,
+                    suggestion="Fix or remove the invalid external link"
+                )
+                return
+
+            try:
+                with urlopen(head_request, timeout=5) as response:
+                    status = response.getcode() or 200
+                    if status < 400:
+                        outcome = "ok"
+            except HTTPError as exc:
+                if exc.code in (401, 403):
+                    outcome = "ok"
+                elif exc.code == 405:
+                    try:
+                        with urlopen(request, timeout=5) as response:
+                            status = response.getcode() or 200
+                            outcome = "ok" if status < 400 else "error"
+                            detail = f"HTTP {status}"
+                    except HTTPError as get_exc:
+                        if get_exc.code in (401, 403):
+                            outcome = "ok"
+                        elif get_exc.code == 404:
+                            outcome = "error"
+                            detail = "HTTP 404"
+                        elif get_exc.code == 429 or 500 <= get_exc.code < 600:
+                            outcome = "warning"
+                            detail = f"HTTP {get_exc.code}"
+                        else:
+                            outcome = "error"
+                            detail = f"HTTP {get_exc.code}"
+                    except (URLError, ValueError, InvalidURL) as get_exc:
+                        outcome = "warning"
+                        detail = getattr(get_exc, "reason", str(get_exc))
+                elif exc.code == 404:
+                    outcome = "error"
+                    detail = "HTTP 404"
+                elif exc.code == 429 or 500 <= exc.code < 600:
+                    outcome = "warning"
+                    detail = f"HTTP {exc.code}"
+                else:
+                    outcome = "error"
+                    detail = f"HTTP {exc.code}"
+            except (URLError, ValueError, InvalidURL) as exc:
+                outcome = "warning"
+                detail = getattr(exc, "reason", str(exc))
+
+            cached = (outcome, detail)
+            self._external_url_cache[url] = cached
+
+        outcome, detail = cached
+        if outcome == "ok":
+            return
+
+        message = f"External link is not reachable: {url}"
+        if detail:
+            message = f"{message} ({detail})"
+
+        if outcome == "warning":
+            result.add_warning(
+                message=message,
+                line_number=line_number,
+                suggestion="Verify the link manually or retry later if the remote service is temporarily unavailable"
+            )
+        else:
+            result.add_error(
+                message=message,
+                line_number=line_number,
+                suggestion="Fix or remove the broken external link"
+            )
+
+    def _prepare_request_url(self, url: str) -> str:
+        """Normalize URLs so they can be requested safely by urllib/http.client."""
+        parsed = urlsplit(url)
+        netloc = parsed.netloc.encode("idna").decode("ascii")
+        path = quote(unquote(parsed.path), safe="/:@-._~!$&'()*+,;=")
+        query = quote(unquote(parsed.query), safe="=&:@-._~!$'()*+,;/?")
+        fragment = quote(unquote(parsed.fragment), safe="")
+        return urlunsplit((parsed.scheme, netloc, path, query, fragment))
+
+    def _validate_link_target(
+        self,
+        base_path: Path,
+        raw_target: str,
+        result: ValidationResult,
+        line_number: int,
+        skill_root: Optional[Path] = None,
+        uses_at_syntax: bool = False
+    ) -> None:
+        """Validate markdown or @-style link targets."""
+        target = self._normalize_link_target(raw_target)
+        if not target or target.startswith("#"):
+            return
+
+        parsed = urlsplit(target)
+        if parsed.scheme in ("mailto", "tel", "data"):
+            return
+
+        if parsed.scheme in ("http", "https"):
+            if self.validate_external_urls:
+                self._validate_external_url(target, result, line_number)
+            return
+
+        relative_target = unquote(parsed.path)
+        if not relative_target:
+            return
+
+        root = skill_root or base_path.parent
+        resolved = (root / relative_target) if uses_at_syntax else (base_path.parent / relative_target)
+
+        if not resolved.exists():
+            syntax_label = "@reference" if uses_at_syntax else "link"
+            result.add_error(
+                message=f"Broken {syntax_label}: '{raw_target}'",
+                line_number=line_number,
+                suggestion=f"Ensure '{relative_target}' exists relative to '{root if uses_at_syntax else base_path.parent}'"
+            )
+
+    def _validate_markdown_links(
+        self,
+        file_path: Path,
+        content: str,
+        result: ValidationResult,
+        body_only: bool = False
+    ) -> None:
+        """Validate local/external markdown links and @references outside code blocks."""
+        text = content
+        line_offset = 0
+
+        if body_only:
+            text, line_offset = self._extract_body(content)
+
+        masked = self._mask_code_regions(text)
+        skill_root = self._find_skill_root(file_path)
+
+        md_link_pattern = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
+        at_reference_pattern = re.compile(r"(?<![A-Za-z0-9_.+-])@((?:references|assets|scripts)/[^\s`)>]+)")
+        suspicious_at_pattern = re.compile(r"(?<![A-Za-z0-9_.+-])@([A-Za-z][A-Za-z0-9_]*)")
+
+        consumed_at_indices: Set[int] = set()
+
+        for match in md_link_pattern.finditer(masked):
+            line_number = self._issue_line_number(masked, match.start(), line_offset)
+            self._validate_link_target(file_path, match.group(1), result, line_number)
+
+        for match in at_reference_pattern.finditer(masked):
+            line_number = self._issue_line_number(masked, match.start(), line_offset)
+            self._validate_link_target(
+                file_path,
+                match.group(1),
+                result,
+                line_number,
+                skill_root=skill_root,
+                uses_at_syntax=True
+            )
+            consumed_at_indices.add(match.start())
+
+        for match in suspicious_at_pattern.finditer(masked):
+            if match.start() in consumed_at_indices:
+                continue
+            token = match.group(0)
+            line_number = self._issue_line_number(masked, match.start(), line_offset)
+            result.add_error(
+                message=f"Raw '@' token outside code block: '{token}'",
+                line_number=line_number,
+                suggestion="Wrap annotations like '@Controller' in inline code or fenced code blocks, or use '@references/...' only for resource links"
+            )
+
+    def validate(self, file_path: Path) -> ValidationResult:
+        """Validate a file and return the result."""
+        result = ValidationResult(
+            file_path=file_path,
+            component_type=self.component_type
+        )
+
+        # Read file content
+        try:
+            content = file_path.read_text(encoding="utf-8")
+        except FileNotFoundError:
+            result.add_error(
+                message=f"File not found: {file_path}",
+                suggestion="Verify the file path is correct"
+            )
+            return result
+        except UnicodeDecodeError:
+            result.add_error(
+                message="File is not valid UTF-8",
+                suggestion="Ensure the file uses UTF-8 encoding"
+            )
+            return result
+
+        # Parse frontmatter
+        frontmatter = self._parse_frontmatter(content, result)
+        if frontmatter is None:
+            return result  # Critical error, can't continue
+
+        # Validate schema
+        self._validate_schema(frontmatter, result)
+
+        # Validate fields
+        self._validate_fields(frontmatter, result)
+
+        # Component-specific validation
+        self._validate_specific(file_path, frontmatter, content, result)
+
+        return result
+
+    def _parse_frontmatter(
+        self,
+        content: str,
+        result: ValidationResult
+    ) -> Optional[Dict[str, Any]]:
+        """Extract and parse YAML frontmatter from markdown content."""
+        # Check for frontmatter delimiters
+        if not content.startswith("---"):
+            result.add_error(
+                message="Missing YAML frontmatter",
+                line_number=1,
+                suggestion="Add YAML frontmatter at the beginning: ---\\nname: ...\\n---"
+            )
+            return None
+
+        # Find the closing delimiter (blank line after --- is optional)
+        end_match = re.search(r"\n---\s*\n?", content[3:])
+        if not end_match:
+            result.add_error(
+                message="Unclosed YAML frontmatter",
+                line_number=1,
+                suggestion="Add closing '---' after frontmatter"
+            )
+            return None
+
+        # Extract YAML content
+        yaml_content = content[3:end_match.start() + 3]
+
+        # Run enhanced YAML validation BEFORE parsing
+        yaml_issues = self._validate_yaml_syntax_enhanced(yaml_content, result)
+        if yaml_issues:
+            return None  # Critical YAML syntax errors found
+
+        try:
+            frontmatter = yaml.safe_load(yaml_content)
+            if frontmatter is None:
+                frontmatter = {}
+            if not isinstance(frontmatter, dict):
+                result.add_error(
+                    message="Frontmatter must be a YAML mapping",
+                    line_number=1,
+                    suggestion="Ensure frontmatter contains key-value pairs"
+                )
+                return None
+            return frontmatter
+        except yaml.YAMLError as e:
+            line = e.problem_mark.line + 1 if hasattr(e, "problem_mark") and e.problem_mark else 1
+            result.add_error(
+                message=f"Invalid YAML syntax: {e.problem if hasattr(e, 'problem') else str(e)}",
+                line_number=line,
+                suggestion="Fix the YAML syntax error"
+            )
+            return None
+
+    def _validate_yaml_syntax_enhanced(self, yaml_content: str, result: ValidationResult) -> bool:
+        """Enhanced YAML validation to catch common syntax issues before parsing.
+
+        Returns True if critical issues found (parsing should stop).
+        """
+        issues_found = False
+        lines = yaml_content.split('\n')
+
+        for line_num, line in enumerate(lines, start=1):
+            stripped = line.strip()
+
+            # Skip empty lines and comments
+            if not stripped or stripped.startswith('#'):
+                continue
+
+            # Skip lines that are clearly keys (ending with colon)
+            if stripped.endswith(':'):
+                continue
+
+            # Check for unquoted strings with problematic patterns
+            # Pattern 1: String containing (N): where N is a number - common YAML error
+            # e.g., "including: (1) one, (2) two" - the (2): is interpreted as a key
+            unquoted_match = re.search(r'\([^)]+\):', stripped)
+            if unquoted_match:
+                # Check if this line is NOT part of a quoted string continuation
+                # by counting quotes before the match
+                before_match = stripped[:unquoted_match.start()]
+                quote_count = before_match.count('"') + before_match.count("'")
+                # If quote count is odd, we're inside a quoted string (continuation) - OK
+                if quote_count % 2 == 0:
+                    result.add_error(
+                        message=f"Potential YAML syntax error: '{unquoted_match.group()}' in unquoted string",
+                        line_number=line_num,
+                        suggestion="Use single quotes instead of double quotes for strings containing '):' patterns (e.g., '(1):'). YAML interprets '):' as a key-value separator in unquoted strings."
+                    )
+                    issues_found = True
+
+            # Pattern 2: Detect potential flow-style mapping issues
+            # Lines with multiple colons in unquoted context
+            if ':' in stripped and not stripped.startswith('- '):
+                # Check if quotes are balanced
+                if stripped.startswith('"') or stripped.startswith("'"):
+                    single_quotes = stripped.count("'") % 2
+                    double_quotes = stripped.count('"') % 2
+                    if single_quotes or double_quotes:
+                        result.add_error(
+                            message=f"Unbalanced quotes in YAML value at line {line_num}",
+                            line_number=line_num,
+                            suggestion="Ensure all quotes are properly closed"
+                        )
+                        issues_found = True
+
+            # Pattern 3: Double-quoted strings with ): patterns - suggest single quotes
+            # Some YAML parsers (like Codex) may have issues with "..." containing (N):
+            if '"' in stripped:
+                # Check for ): pattern anywhere in the line
+                if re.search(r'\):', stripped) or re.search(r'\([0-9]+\)', stripped):
+                    if stripped.count('"') >= 2:
+                        result.add_warning(
+                            message="Double-quoted string contains '):' pattern which may cause issues with some YAML parsers",
+                            line_number=line_num,
+                            suggestion="Consider using single quotes instead of double quotes for strings containing '):' patterns (e.g., '(1):', '(2):')"
+                        )
+
+        return issues_found
+
+    def _validate_schema(
+        self,
+        frontmatter: Dict[str, Any],
+        result: ValidationResult
+    ) -> None:
+        """Validate that required fields are present and warn about unknown fields."""
+        # Check prohibited fields first
+        if "prohibited" in self.schema:
+            for field in self.schema["prohibited"]:
+                if field in frontmatter:
+                    result.add_error(
+                        message=f"Prohibited field: '{field}'",
+                        field_name=field,
+                        suggestion=f"Remove '{field}' from frontmatter"
+                    )
+
+        # Check required fields
+        for field in self.schema.get("required", set()):
+            if field not in frontmatter:
+                result.add_error(
+                    message=f"Missing required field: '{field}'",
+                    field_name=field,
+                    suggestion=f"Add '{field}: value' to frontmatter"
+                )
+
+        # Check for unknown fields (exclude prohibited since already handled)
+        known = self.schema.get("required", set()) | self.schema.get("optional", set())
+        prohibited = self.schema.get("prohibited", set())
+        for field in frontmatter:
+            if field not in known and field not in prohibited:
+                result.add_warning(
+                    message=f"Unknown field: '{field}'",
+                    field_name=field,
+                    suggestion=f"Remove '{field}' or verify it's needed"
+                )
+
+    def _validate_fields(
+        self,
+        frontmatter: Dict[str, Any],
+        result: ValidationResult
+    ) -> None:
+        """Validate individual field values."""
+        # Validate name if present
+        if "name" in frontmatter:
+            self._validate_name(frontmatter["name"], result)
+
+        # Validate description if present
+        if "description" in frontmatter:
+            self._validate_description(frontmatter["description"], result)
+
+        # Validate compatibility if present
+        if "compatibility" in frontmatter:
+            self._validate_compatibility(frontmatter["compatibility"], result)
+
+    def _validate_name(self, name: Any, result: ValidationResult) -> None:
+        """Validate the name field."""
+        if not isinstance(name, str):
+            result.add_error(
+                message=f"Name must be a string, got {type(name).__name__}",
+                field_name="name",
+                suggestion="Ensure name is a plain string value"
+            )
+            return
+
+        # Check length
+        if len(name) > MAX_NAME_LENGTH:
+            result.add_error(
+                message=f"Name too long: {len(name)} characters (max {MAX_NAME_LENGTH})",
+                field_name="name",
+                suggestion=f"Shorten name to {MAX_NAME_LENGTH} characters or less"
+            )
+
+        # Check kebab-case format
+        if not KEBAB_CASE_PATTERN.match(name):
+            result.add_error(
+                message=f"Invalid name format: '{name}'",
+                field_name="name",
+                suggestion="Use kebab-case (e.g., 'my-component-name')"
+            )
+
+        # Check reserved words
+        if name.lower() in RESERVED_WORDS:
+            result.add_error(
+                message=f"Reserved word used as name: '{name}'",
+                field_name="name",
+                suggestion=f"Choose a different name (reserved: {', '.join(sorted(RESERVED_WORDS)[:5])}...)"
+            )
+
+    def _validate_description(self, description: Any, result: ValidationResult) -> None:
+        """Validate the description field."""
+        if not isinstance(description, str):
+            result.add_error(
+                message=f"Description must be a string, got {type(description).__name__}",
+                field_name="description",
+                suggestion="Ensure description is a plain string value"
+            )
+            return
+
+        # Check length
+        if len(description) > MAX_DESCRIPTION_LENGTH:
+            result.add_warning(
+                message=f"Description too long: {len(description)} characters (max {MAX_DESCRIPTION_LENGTH})",
+                field_name="description",
+                suggestion=f"Shorten description to {MAX_DESCRIPTION_LENGTH} characters"
+            )
+
+        # Check for WHAT and WHEN content
+        desc_lower = description.lower()
+        has_what = any(kw in desc_lower for kw in WHAT_KEYWORDS)
+        has_when = any(kw in desc_lower for kw in WHEN_KEYWORDS)
+
+        if not (has_what and has_when):
+            missing = []
+            if not has_what:
+                missing.append("WHAT")
+            if not has_when:
+                missing.append("WHEN")
+            result.add_warning(
+                message=f"Description may be missing: {', '.join(missing)} information",
+                field_name="description",
+                suggestion="Include what the component does AND when to use it"
+            )
+
+    def _validate_compatibility(self, compatibility: Any, result: ValidationResult) -> None:
+        """Validate the compatibility field."""
+        if not isinstance(compatibility, str):
+            result.add_error(
+                message=f"Compatibility must be a string, got {type(compatibility).__name__}",
+                field_name="compatibility",
+                suggestion="Ensure compatibility is a plain string value"
+            )
+            return
+
+        # Check length (per spec: max 500 characters)
+        if len(compatibility) > MAX_COMPATIBILITY_LENGTH:
+            result.add_error(
+                message=f"Compatibility too long: {len(compatibility)} characters (max {MAX_COMPATIBILITY_LENGTH})",
+                field_name="compatibility",
+                suggestion=f"Shorten compatibility to {MAX_COMPATIBILITY_LENGTH} characters or less"
+            )
+
+    def _validate_tools_field(
+        self,
+        tools: Any,
+        field_name: str,
+        result: ValidationResult
+    ) -> None:
+        """Validate tool names (shared implementation for all validators)."""
+        if isinstance(tools, str):
+            tool_list = [t.strip() for t in tools.split(",")]
+        elif isinstance(tools, list):
+            tool_list = tools
+        else:
+            result.add_warning(
+                message=f"{field_name} should be a string or list, got {type(tools).__name__}",
+                field_name=field_name,
+                suggestion="Use comma-separated string or YAML list"
+            )
+            return
+
+        for tool in tool_list:
+            if not isinstance(tool, str):
+                continue
+            # Handle tools with arguments like "Bash(git add:*, git status:*)"
+            base_tool = tool.split("(")[0].strip()
+            if base_tool and base_tool not in VALID_TOOLS:
+                result.add_warning(
+                    message=f"Unknown tool: '{base_tool}'",
+                    field_name=field_name,
+                    suggestion=f"Valid tools: {', '.join(sorted(VALID_TOOLS)[:5])}..."
+                )
+
+    def _validate_model_field(
+        self,
+        model: Any,
+        field_name: str,
+        result: ValidationResult,
+        allow_full_model_names: bool = False
+    ) -> None:
+        """Validate model value (shared implementation).
+
+        Args:
+            model: The model value to validate
+            field_name: Name of the field being validated
+            result: ValidationResult to add issues to
+            allow_full_model_names: If True, also accepts 'claude-*' style model names
+        """
+        if not isinstance(model, str):
+            result.add_warning(
+                message=f"{field_name} should be a string, got {type(model).__name__}",
+                field_name=field_name,
+                suggestion=f"Use one of: {', '.join(sorted(VALID_MODELS))}"
+            )
+            return
+
+        is_valid = model.lower() in VALID_MODELS
+        if allow_full_model_names:
+            is_valid = is_valid or model.startswith("claude-")
+
+        if not is_valid:
+            result.add_warning(
+                message=f"Invalid model value: '{model}'",
+                field_name=field_name,
+                suggestion=f"Use one of: {', '.join(sorted(VALID_MODELS))}"
+            )
+
+    @abstractmethod
+    def _validate_specific(
+        self,
+        file_path: Path,
+        frontmatter: Dict[str, Any],
+        content: str,
+        result: ValidationResult
+    ) -> None:
+        """Component-specific validation logic."""
+        pass
+
+
+class SkillValidator(BaseValidator):
+    """Validator for Claude Code Skills."""
+
+    @property
+    def component_type(self) -> str:
+        return "skill"
+
+    @property
+    def file_pattern(self) -> re.Pattern:
+        return SKILL_PATTERN
+
+    @property
+    def schema(self) -> Dict[str, Set[str]]:
+        return SKILL_SCHEMA
+
+    def _validate_specific(
+        self,
+        file_path: Path,
+        frontmatter: Dict[str, Any],
+        content: str,
+        result: ValidationResult
+    ) -> None:
+        """Skill-specific validation."""
+        # Validate name matches parent directory
+        if "name" in frontmatter:
+            skill_name = frontmatter["name"]
+            parent_dir_name = file_path.parent.name
+            if skill_name != parent_dir_name:
+                result.add_error(
+                    message=f"Name mismatch: frontmatter has '{skill_name}' but directory is '{parent_dir_name}'",
+                    field_name="name",
+                    suggestion=f"Rename directory to '{skill_name}' or change name to '{parent_dir_name}'"
+                )
+
+        # Validate allowed-tools if present
+        if "allowed-tools" in frontmatter:
+            self._validate_tools_field(frontmatter["allowed-tools"], "allowed-tools", result)
+
+        # Validate context7_trust_score if present
+        if "context7_trust_score" in frontmatter:
+            self._validate_trust_score(frontmatter["context7_trust_score"], result)
+
+        # Validate markdown syntax and structure
+        self._validate_markdown_syntax(content, result, body_only=True)
+        self._validate_markdown_structure(content, result)
+
+        # Validate I/O examples
+        self._validate_io_examples(content, result)
+
+        # Check for prohibited files in skill directory
+        self._check_prohibited_files(file_path.parent, result)
+
+        # Validate directory structure (Anthropic convention)
+        self._validate_directory_structure(file_path.parent, result)
+
+        # Validate file references are max one level deep
+        self._validate_file_references(content, result)
+
+        # Validate local/external links and @references syntax
+        self._validate_markdown_links(file_path, content, result, body_only=True)
+
+        # Validate progressive disclosure limits (file size)
+        self._validate_progressive_disclosure(content, result)
+
+    def _validate_progressive_disclosure(
+        self,
+        content: str,
+        result: ValidationResult
+    ) -> None:
+        """Validate SKILL.md follows progressive disclosure limits.
+
+        Per spec: Keep SKILL.md under 500 lines and ~5000 tokens
+        (~20000 characters estimated).
+        """
+        # Count lines
+        line_count = content.count('\n') + 1
+        if line_count > MAX_SKILL_LINES:
+            result.add_warning(
+                message=f"SKILL.md is too long: {line_count} lines (max {MAX_SKILL_LINES})",
+                suggestion="Move detailed content to separate files in references/"
+            )
+
+        token_count = self._count_tokens(content)
+        if token_count > MAX_SKILL_TOKENS:
+            result.add_warning(
+                message=f"SKILL.md has too many tokens: {token_count} (max {MAX_SKILL_TOKENS})",
+                suggestion="Move detailed content to separate files in references/"
+            )
+
+        # Count characters
+        char_count = len(content)
+        if char_count > MAX_SKILL_CHARACTERS:
+            result.add_warning(
+                message=f"SKILL.md is too large: {char_count} characters (max {MAX_SKILL_CHARACTERS}, ~5000 tokens)",
+                suggestion="Move detailed content to separate files in references/"
+            )
+
+    def _validate_markdown_structure(
+        self,
+        content: str,
+        result: ValidationResult
+    ) -> None:
+        """Validate markdown sections are present."""
+        # Find content after frontmatter
+        match = re.search(r"\n---\s*\n", content)
+        if not match:
+            return  # Already caught by frontmatter validation
+
+        body = content[match.end():]
+
+        # Check required sections
+        for section_key, pattern in SKILL_REQUIRED_SECTIONS.items():
+            if not re.search(pattern, body, re.IGNORECASE | re.MULTILINE):
+                section_name = section_key.replace("_", " ").title()
+                if section_key == "when_to_use":
+                    section_name = "When to Use"
+                result.add_error(
+                    message=f"Missing required section: '## {section_name}'",
+                    suggestion=f"Add '## {section_name}' section to SKILL.md"
+                )
+
+        # Check recommended sections
+        for section_key in SKILL_RECOMMENDED_SECTIONS:
+            # Convert to hyphenated format for regex matching
+            pattern = SKILL_REQUIRED_SECTIONS.get(section_key)
+            if not pattern:
+                # Create pattern for recommended sections
+                section_name_hyphen = section_key.replace("_", "-")
+                section_name_title = section_name_hyphen.title()
+                if section_name_hyphen == "best-practices":
+                    section_name_title = "Best Practices"
+                elif section_name_hyphen == "constraints-and-warnings":
+                    section_name_title = "Constraints and Warnings"
+                pattern = rf"^#{{1,3}}\s+{section_name_title}"
+            if not re.search(pattern, body, re.IGNORECASE | re.MULTILINE):
+                section_name = section_key.replace("_", " ").title()
+                if section_key == "best_practices":
+                    section_name = "Best Practices"
+                elif section_key == "constraints_and_warnings":
+                    section_name = "Constraints and Warnings"
+                result.add_warning(
+                    message=f"Missing recommended section: '## {section_name}'",
+                    suggestion=f"Consider adding '## {section_name}' section"
+                )
+
+    def _validate_io_examples(
+        self,
+        content: str,
+        result: ValidationResult
+    ) -> None:
+        """Validate Input/Output examples format."""
+        # Check for Input/Output pattern in examples (subsections like ### Input, ### Output)
+        io_pattern = re.compile(
+            r"^#{2,3}\s+(?:Input|Output|Example\s+\d+|Example:)",
+            re.MULTILINE | re.IGNORECASE
+        )
+
+        # Also check for code blocks in examples section which indicate I/O
+        code_block_pattern = re.compile(
+            r"```[a-zA-Z0-9]*\n[\s\S]*?\n```",
+            re.MULTILINE
+        )
+
+        # Check if Examples section exists first
+        examples_match = re.search(r"^#{1,3}\s+Examples", content, re.IGNORECASE | re.MULTILINE)
+
+        if examples_match:
+            # If Examples section exists, check for I/O patterns
+            examples_section = content[examples_match.start():]
+            has_io = io_pattern.search(examples_section) or code_block_pattern.search(examples_section)
+            if not has_io:
+                result.add_warning(
+                    message="Missing Input/Output examples in Examples section",
+                    suggestion="Add concrete Input/Output examples with code blocks to demonstrate usage"
+                )
+
+    def _validate_file_references(
+        self,
+        content: str,
+        result: ValidationResult
+    ) -> None:
+        """Validate that file references are at most one level deep.
+
+        Per spec: "Keep file references one level deep from SKILL.md.
+        Avoid deeply nested reference chains."
+
+        Valid:   scripts/extract.py, references/REFERENCE.md
+        Invalid: references/subfolder/file.md, ../outside/file.md
+        """
+        # Find content after frontmatter
+        match = re.search(r"\n---\s*\n", content)
+        if not match:
+            return
+
+        body = content[match.end():]
+
+        # Pattern 1: Markdown links [text](path)
+        md_link_pattern = re.compile(
+            r'\[([^\]]+)\]\(([^)]+)\)',
+            re.MULTILINE
+        )
+
+        # Pattern 2: Bare file paths (lines referencing files)
+        # Match lines that look like file references
+        bare_path_pattern = re.compile(
+            r'^(?:[\s]*[-*]?[\s]*)?(?:See|Run|Use|Check|Load|Read|Execute)?[\s:]*'
+            r'(scripts/|references/|assets/)(\S+)',
+            re.MULTILINE | re.IGNORECASE
+        )
+
+        checked_paths = set()
+
+        # Check markdown links
+        for match in md_link_pattern.finditer(body):
+            path = match.group(2).strip()
+            # Skip URLs
+            if path.startswith(('http://', 'https://', '#', 'mailto:')):
+                continue
+            # Skip absolute paths
+            if path.startswith('/'):
+                continue
+            self._check_path_depth(path, checked_paths, result)
+
+        # Check bare paths
+        for match in bare_path_pattern.finditer(body):
+            full_path = match.group(1) + match.group(2)
+            self._check_path_depth(full_path, checked_paths, result)
+
+    def _check_path_depth(
+        self,
+        path: str,
+        checked_paths: set,
+        result: ValidationResult
+    ) -> None:
+        """Check if a path exceeds one level of depth."""
+        # Normalize path (remove leading ./)
+        path = path.lstrip('./')
+
+        if path in checked_paths:
+            return
+        checked_paths.add(path)
+
+        # Split path into parts
+        parts = path.split('/')
+
+        # Path must start with allowed subdirs
+        allowed_roots = {'scripts', 'references', 'assets'}
+        if parts[0] not in allowed_roots:
+            # Not a bundled resource path, skip
+            return
+
+        # Check depth: more than 2 parts means nested (subdir/file = 2 parts)
+        if len(parts) > 2:
+            result.add_warning(
+                message=f"Deep file reference: '{path}' ({len(parts)-1} levels deep)",
+                suggestion="Keep references one level deep (e.g., 'references/FILE.md', not 'references/subdir/file.md')"
+            )
+
+        # Check for parent directory traversal
+        if '..' in parts:
+            result.add_error(
+                message=f"Invalid file reference: '{path}' references parent directory",
+                field_name=None,
+                suggestion="Use relative paths within the skill directory only"
+            )
+
+    def _validate_version(self, version: Any, result: ValidationResult) -> None:
+        """Validate semantic versioning format."""
+        if not isinstance(version, str):
+            result.add_warning(
+                message=f"Version should be a string, got {type(version).__name__}",
+                field_name="version",
+                suggestion="Use semantic versioning (e.g., '1.0.0')"
+            )
+            return
+
+        if not SEMVER_PATTERN.match(version):
+            result.add_warning(
+                message=f"Invalid version format: '{version}'",
+                field_name="version",
+                suggestion="Use semantic versioning (e.g., '1.0.0', '2.1.0-beta')"
+            )
+
+    def _validate_trust_score(self, score: Any, result: ValidationResult) -> None:
+        """Validate context7_trust_score value."""
+        if not isinstance(score, (int, float)):
+            result.add_warning(
+                message=f"context7_trust_score should be numeric, got {type(score).__name__}",
+                field_name="context7_trust_score",
+                suggestion="Use a number between 0 and 10"
+            )
+            return
+
+        if not 0 <= score <= 10:
+            result.add_warning(
+                message=f"context7_trust_score out of range: {score}",
+                field_name="context7_trust_score",
+                suggestion="Use a value between 0 and 10"
+            )
+
+    def _check_prohibited_files(self, skill_dir: Path, result: ValidationResult) -> None:
+        """Check for prohibited files in the skill directory."""
+        for filename in SKILL_PROHIBITED_FILES:
+            prohibited = skill_dir / filename
+            if prohibited.exists():
+                result.add_error(
+                    message=f"Prohibited file found: {filename}",
+                    suggestion=f"Remove {filename} from skill directory"
+                )
+
+    def _validate_directory_structure(self, skill_dir: Path, result: ValidationResult) -> None:
+        """Validate skill directory follows the Anthropic convention.
+
+        Expected structure:
+            skill-name/
+            ├── SKILL.md (required)
+            └── Bundled Resources (optional)
+                ├── scripts/
+                ├── references/
+                └── assets/
+        """
+        if not skill_dir.exists():
+            return
+
+        for entry in sorted(skill_dir.iterdir()):
+            name = entry.name
+
+            # SKILL.md is allowed
+            if name == "SKILL.md":
+                continue
+
+            # Hidden files (.gitkeep, etc.) are allowed
+            if name.startswith("."):
+                continue
+
+            if entry.is_dir():
+                if name not in SKILL_ALLOWED_SUBDIRS:
+                    result.add_error(
+                        message=f"Non-standard directory found: '{name}/'",
+                        suggestion=f"Move contents to one of the allowed subdirectories: {', '.join(sorted(SKILL_ALLOWED_SUBDIRS))}/"
+                    )
+            else:
+                # Any file other than SKILL.md at root level is not allowed
+                result.add_error(
+                    message=f"Non-standard file at skill root: '{name}'",
+                    suggestion=f"Move '{name}' into scripts/, references/, or assets/"
+                )
+
+    def _validate_version_matches_marketplace(
+        self,
+        skill_version: Any,
+        file_path: Path,
+        result: ValidationResult
+    ) -> None:
+        """Validate that skill version matches marketplace.json version.
+
+        The skill version must match the main version in marketplace.json.
+        """
+        # First validate the skill_version is a string
+        if not isinstance(skill_version, str):
+            return  # Already handled by _validate_version
+
+        # Find marketplace.json
+        marketplace_path = self._find_marketplace_json(file_path)
+        if not marketplace_path:
+            result.add_warning(
+                message="Cannot find marketplace.json for version alignment check",
+                field_name="version",
+                suggestion="Ensure marketplace.json exists in .claude-plugin/ directory at project root"
+            )
+            return
+
+        # Read marketplace version
+        marketplace_version = self._get_marketplace_version(marketplace_path)
+        if not marketplace_version:
+            result.add_warning(
+                message="Cannot read version from marketplace.json",
+                field_name="version",
+                suggestion="Ensure marketplace.json has a valid 'version' field"
+            )
+            return
+
+        # Compare versions
+        if skill_version != marketplace_version:
+            result.add_error(
+                message=f"Version mismatch: skill '{skill_version}' != marketplace '{marketplace_version}'",
+                field_name="version",
+                suggestion=f"Update skill version to match marketplace version '{marketplace_version}'"
+            )
+
+    def _find_marketplace_json(self, file_path: Path) -> Optional[Path]:
+        """Find marketplace.json by traversing up to project root."""
+        current = file_path
+        for _ in range(15):  # Allow deeper traversal for plugin-based skills
+            # Check for .claude-plugin/marketplace.json
+            marketplace = current / ".claude-plugin" / "marketplace.json"
+            if marketplace.exists():
+                return marketplace
+            parent = current.parent
+            if parent == current:
+                break
+            current = parent
+        return None
+
+    def _get_marketplace_version(self, marketplace_path: Path) -> Optional[str]:
+        """Read version from marketplace.json."""
+        try:
+            with open(marketplace_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            return data.get('version')
+        except (json.JSONDecodeError, KeyError, FileNotFoundError, IOError):
+            return None
+
+
+class SkillMarkdownValidator(BaseValidator):
+    """Validator for bundled markdown resources inside skill directories."""
+
+    @property
+    def component_type(self) -> str:
+        return "skill-markdown"
+
+    @property
+    def file_pattern(self) -> re.Pattern:
+        return SKILL_BUNDLED_MARKDOWN_PATTERN
+
+    @property
+    def schema(self) -> Dict[str, Set[str]]:
+        return {"required": set(), "optional": set()}
+
+    def can_validate(self, file_path: Path) -> bool:
+        """Check if this validator can handle a bundled markdown resource."""
+        return file_path.name != "SKILL.md" and bool(self.file_pattern.search(str(file_path)))
+
+    def validate(self, file_path: Path) -> ValidationResult:
+        """Validate bundled markdown syntax, links, and filename convention."""
+        result = ValidationResult(
+            file_path=file_path,
+            component_type=self.component_type
+        )
+
+        try:
+            content = file_path.read_text(encoding="utf-8")
+        except FileNotFoundError:
+            result.add_error(
+                message=f"File not found: {file_path}",
+                suggestion="Verify the file path is correct"
+            )
+            return result
+        except UnicodeDecodeError:
+            result.add_error(
+                message="File is not valid UTF-8",
+                suggestion="Ensure the file uses UTF-8 encoding"
+            )
+            return result
+
+        filename = file_path.stem
+        if file_path.name not in KEBAB_CASE_EXEMPT_FILES and not KEBAB_CASE_PATTERN.match(filename):
+            result.add_error(
+                message=f"Filename must use kebab-case: '{file_path.name}'",
+                suggestion="Rename the file using lowercase kebab-case"
+            )
+
+        self._validate_markdown_syntax(content, result)
+        self._validate_markdown_links(file_path, content, result)
+        return result
+
+    def _validate_specific(
+        self,
+        file_path: Path,
+        frontmatter: Dict[str, Any],
+        content: str,
+        result: ValidationResult
+    ) -> None:
+        """Not used for bundled markdown validation."""
+        pass
+
+
+class AgentValidator(BaseValidator):
+    """Validator for Claude Code Agents."""
+
+    @property
+    def component_type(self) -> str:
+        return "agent"
+
+    @property
+    def file_pattern(self) -> re.Pattern:
+        return AGENT_PATTERN
+
+    @property
+    def schema(self) -> Dict[str, Set[str]]:
+        return AGENT_SCHEMA
+
+    def _validate_specific(
+        self,
+        file_path: Path,
+        frontmatter: Dict[str, Any],
+        content: str,
+        result: ValidationResult
+    ) -> None:
+        """Agent-specific validation."""
+        # Validate tools (now required via schema, but still validate content if present)
+        if "tools" in frontmatter:
+            self._validate_tools_field(frontmatter["tools"], "tools", result)
+
+        # Validate model if present (agents only accept opus, sonnet, haiku)
+        if "model" in frontmatter:
+            self._validate_agent_model_field(frontmatter["model"], result)
+
+        # Validate markdown structure (required sections)
+        self._validate_markdown_structure(content, result)
+
+    def _validate_agent_model_field(
+        self,
+        model: Any,
+        result: ValidationResult
+    ) -> None:
+        """Validate model value for agents (strict: only opus, sonnet, haiku)."""
+        if not isinstance(model, str):
+            result.add_warning(
+                message=f"model should be a string, got {type(model).__name__}",
+                field_name="model",
+                suggestion=f"Use one of: {', '.join(sorted(AGENT_VALID_MODELS))}"
+            )
+            return
+
+        # Check for 'inherit' - generate warning
+        if model.lower() == "inherit":
+            result.add_warning(
+                message="'inherit' model value is not recommended for agents",
+                field_name="model",
+                suggestion=f"Explicitly specify model for better control: {', '.join(sorted(AGENT_VALID_MODELS))}"
+            )
+            return
+
+        # Check against strict valid models (opus, sonnet, haiku only)
+        if model.lower() not in AGENT_VALID_MODELS:
+            result.add_warning(
+                message=f"Invalid model value: '{model}'",
+                field_name="model",
+                suggestion=f"Use one of: {', '.join(sorted(AGENT_VALID_MODELS))}"
+            )
+
+    def _validate_markdown_structure(
+        self,
+        content: str,
+        result: ValidationResult
+    ) -> None:
+        """Validate agent markdown sections are present."""
+        # Find content after frontmatter
+        match = re.search(r"\n---\s*\n", content)
+        if not match:
+            return  # Already caught by frontmatter validation
+
+        body = content[match.end():]
+
+        # Check required sections
+        for section_key, pattern in AGENT_REQUIRED_SECTIONS.items():
+            if not re.search(pattern, body, re.IGNORECASE | re.MULTILINE):
+                section_name = section_key.replace("_", " ").title()
+                result.add_error(
+                    message=f"Missing required section matching: '{section_name}'",
+                    suggestion=f"Add a section like '## Role', '## Process', or '## Guidelines' to the agent"
+                )
+
+        # Check recommended sections
+        for section_key in AGENT_RECOMMENDED_SECTIONS:
+            section_name_hyphen = section_key.replace("_", "-")
+            section_name_title = section_name_hyphen.title()
+            if section_name_hyphen == "skills-integration":
+                section_name_title = "Skills Integration"
+            elif section_name_hyphen == "common-patterns":
+                section_name_title = "Common Patterns"
+            elif section_name_hyphen == "output-format":
+                section_name_title = "Output Format"
+            pattern = rf"^#{{1,3}}\s+{section_name_title}"
+            if not re.search(pattern, body, re.IGNORECASE | re.MULTILINE):
+                section_name = section_key.replace("_", " ").title()
+                result.add_warning(
+                    message=f"Missing recommended section: '## {section_name}'",
+                    suggestion=f"Consider adding '## {section_name}' section"
+                )
+
+
+class CommandValidator(BaseValidator):
+    """Validator for Claude Code Slash Commands."""
+
+    @property
+    def component_type(self) -> str:
+        return "command"
+
+    @property
+    def file_pattern(self) -> re.Pattern:
+        return COMMAND_PATTERN
+
+    @property
+    def schema(self) -> Dict[str, Set[str]]:
+        return COMMAND_SCHEMA
+
+    def _validate_specific(
+        self,
+        file_path: Path,
+        frontmatter: Dict[str, Any],
+        content: str,
+        result: ValidationResult
+    ) -> None:
+        """Command-specific validation."""
+        # Validate allowed-tools (now required, validated in schema)
+        if "allowed-tools" in frontmatter:
+            self._validate_tools_field(frontmatter["allowed-tools"], "allowed-tools", result)
+
+        # Validate model if present (commands can also use 'claude-*' style names)
+        if "model" in frontmatter:
+            self._validate_model_field(
+                frontmatter["model"],
+                "model",
+                result,
+                allow_full_model_names=True
+            )
+
+        # Validate disable-model-invocation if present
+        if "disable-model-invocation" in frontmatter:
+            self._validate_boolean(
+                frontmatter["disable-model-invocation"],
+                "disable-model-invocation",
+                result
+            )
+
+        # Validate markdown structure (required sections and order)
+        self._validate_markdown_structure(content, result)
+        self._validate_section_order(content, result)
+
+    def _validate_markdown_structure(
+        self,
+        content: str,
+        result: ValidationResult
+    ) -> None:
+        """Validate command markdown sections are present."""
+        # Find content after frontmatter
+        match = re.search(r"\n---\s*\n", content)
+        if not match:
+            return  # Already caught by frontmatter validation
+
+        body = content[match.end():]
+
+        # Check required sections
+        for section_key, pattern in COMMAND_REQUIRED_SECTIONS.items():
+            if not re.search(pattern, body, re.IGNORECASE | re.MULTILINE):
+                section_name = section_key.replace("_", " ").title()
+                result.add_error(
+                    message=f"Missing required section: '## {section_name}'",
+                    suggestion=f"Add '## {section_name}' section to command file"
+                )
+
+        # Check recommended sections
+        for section_key in COMMAND_RECOMMENDED_SECTIONS:
+            section_name_hyphen = section_key.replace("_", "-")
+            section_name_title = section_name_hyphen.title()
+            if section_name_hyphen == "best-practices":
+                section_name_title = "Best Practices"
+            pattern = rf"^#{{1,3}}\s+{section_name_title}"
+            if not re.search(pattern, body, re.IGNORECASE | re.MULTILINE):
+                section_name = section_key.replace("_", " ").title()
+                if section_key == "best_practices":
+                    section_name = "Best Practices"
+                result.add_warning(
+                    message=f"Missing recommended section: '## {section_name}'",
+                    suggestion=f"Consider adding '## {section_name}' section"
+                )
+
+    def _validate_section_order(
+        self,
+        content: str,
+        result: ValidationResult
+    ) -> None:
+        """Validate that command sections appear in the correct order.
+
+        Sections must follow the order defined in COMMAND_SECTIONS_ORDER.
+        Any section not in the order list can appear after the last defined section.
+        """
+        # Find content after frontmatter
+        match = re.search(r"\n---\s*\n", content)
+        if not match:
+            return  # Already caught by frontmatter validation
+
+        body = content[match.end():]
+
+        # Map section names to their expected order index
+        section_order_indices: Dict[str, int] = {
+            name: idx for idx, name in enumerate(COMMAND_SECTIONS_ORDER)
+        }
+
+        # Find all ordered sections in the document with their positions
+        found_ordered_sections: List[tuple] = []
+
+        for order_key, pattern in COMMAND_SECTION_PATTERNS.items():
+            for match in re.finditer(pattern, body, re.IGNORECASE | re.MULTILINE):
+                section_title = match.group(0).strip()
+                section_pos = match.start()
+                order_index = section_order_indices[order_key]
+                found_ordered_sections.append((order_index, section_pos, order_key, section_title))
+
+        # Sort by position in document
+        found_ordered_sections.sort(key=lambda x: x[1])
+
+        # Check if sections are in correct order
+        last_order_index = -1
+        last_section_key = None
+
+        for order_index, section_pos, section_key, section_title in found_ordered_sections:
+            if order_index < last_order_index:
+                # This section is out of order
+                expected_before_key = None
+                expected_before_title = None
+
+                # Find which section this should come before
+                for prev_order_index, prev_pos, prev_key, prev_title in found_ordered_sections:
+                    if prev_pos < section_pos and prev_order_index > order_index:
+                        expected_before_key = prev_key
+                        expected_before_title = prev_title.lstrip("#").strip()
+                        break
+
+                # Find which section this should come after
+                expected_after_key = None
+                for order_idx, section_name in enumerate(COMMAND_SECTIONS_ORDER):
+                    if order_idx < order_index:
+                        # Check if this section exists in the document
+                        for prev_order_idx, prev_pos, prev_key, prev_title in found_ordered_sections:
+                            if prev_key == section_name and prev_pos < section_pos:
+                                expected_after_key = section_name
+
+                current_name = section_key.replace("_", " ").title()
+
+                if expected_before_key:
+                    expected_name = expected_before_key.replace("_", " ").title()
+                    result.add_error(
+                        message=f"Section '## {current_name}' is out of order",
+                        suggestion=f"Move '## {current_name}' before '## {expected_name}' (correct order: Overview → Usage → Arguments → Current Context → Execution Steps → Execution Instructions → Integration with Sub-agents → Examples)"
+                    )
+                elif expected_after_key:
+                    expected_name = expected_after_key.replace("_", " ").title()
+                    result.add_error(
+                        message=f"Section '## {current_name}' is out of order",
+                        suggestion=f"Move '## {current_name}' after '## {expected_name}' (correct order: Overview → Usage → Arguments → Current Context → Execution Steps → Execution Instructions → Integration with Sub-agents → Examples)"
+                    )
+                else:
+                    result.add_error(
+                        message=f"Section '## {current_name}' is out of order",
+                        suggestion=f"Correct order: Overview → Usage → Arguments → Current Context → Execution Steps → Execution Instructions → Integration with Sub-agents → Examples"
+                    )
+            else:
+                last_order_index = order_index
+                last_section_key = section_key
+
+    def _validate_boolean(
+        self,
+        value: Any,
+        field_name: str,
+        result: ValidationResult
+    ) -> None:
+        """Validate boolean field."""
+        if not isinstance(value, bool):
+            result.add_warning(
+                message=f"{field_name} should be a boolean, got {type(value).__name__}",
+                field_name=field_name,
+                suggestion="Use 'true' or 'false'"
+            )
+
+
+class RuleValidator(BaseValidator):
+    """Validator for Claude Code Rules (.claude/rules/ format)."""
+
+    @property
+    def component_type(self) -> str:
+        return "rule"
+
+    @property
+    def file_pattern(self) -> re.Pattern:
+        return RULE_PATTERN
+
+    @property
+    def schema(self) -> Dict[str, Set[str]]:
+        return RULE_SCHEMA
+
+    def _validate_fields(
+        self,
+        frontmatter: Dict[str, Any],
+        result: ValidationResult
+    ) -> None:
+        """Override: rules have no name/description fields."""
+        pass
+
+    def _validate_specific(
+        self,
+        file_path: Path,
+        frontmatter: Dict[str, Any],
+        content: str,
+        result: ValidationResult
+    ) -> None:
+        """Rule-specific validation."""
+        # Validate globs field format (Cursor format)
+        if "globs" in frontmatter:
+            self._validate_globs(frontmatter["globs"], result)
+
+        # Validate paths field format (Claude Code format)
+        if "paths" in frontmatter:
+            self._validate_paths(frontmatter["paths"], result)
+
+        # Validate that at least one of globs or paths is present
+        if "globs" not in frontmatter and "paths" not in frontmatter:
+            result.add_error(
+                message="Missing required field: 'paths' or 'globs'",
+                field_name="paths",
+                suggestion="Add either 'paths:' (Claude Code format) or 'globs:' (Cursor format) to the frontmatter"
+            )
+
+        # Validate file naming (kebab-case)
+        self._validate_rule_filename(file_path, result)
+
+        # Validate markdown sections
+        self._validate_rule_sections(content, result)
+
+        # Validate file size
+        self._validate_rule_size(content, result)
+
+    def _validate_globs(self, globs: Any, result: ValidationResult) -> None:
+        """Validate the globs field."""
+        if isinstance(globs, str):
+            if not globs.strip():
+                result.add_error(
+                    message="Empty globs value",
+                    field_name="globs",
+                    suggestion="Provide a glob pattern (e.g., '**/*.java')"
+                )
+            elif not any(c in globs for c in ('*', '?', '{', '[')):
+                result.add_warning(
+                    message=f"Globs value '{globs}' contains no wildcard characters",
+                    field_name="globs",
+                    suggestion="Use glob patterns with wildcards (e.g., '**/*.java')"
+                )
+        elif isinstance(globs, list):
+            result.add_error(
+                message="Globs must be a string, not a list",
+                field_name="globs",
+                suggestion="Use a single string value (e.g., globs: \"**/*.java\"). "
+                           "YAML arrays may cause loading issues with Claude Code rules."
+            )
+        else:
+            result.add_error(
+                message=f"Globs must be a string, got {type(globs).__name__}",
+                field_name="globs",
+                suggestion="Use a string value (e.g., globs: \"**/*.java\")"
+            )
+
+    def _validate_paths(self, paths: Any, result: ValidationResult) -> None:
+        """Validate the paths field (Claude Code format)."""
+        if isinstance(paths, list):
+            # Validate each path in the list
+            for i, path in enumerate(paths):
+                if not isinstance(path, str):
+                    result.add_error(
+                        message=f"Paths[{i}] must be a string, got {type(path).__name__}",
+                        field_name="paths",
+                        suggestion="Use string values in the paths array (e.g., paths:\n  - \"**/*.ts\")"
+                    )
+                elif not path.strip():
+                    result.add_error(
+                        message=f"Paths[{i}] is empty",
+                        field_name="paths",
+                        suggestion="Provide a valid glob pattern"
+                    )
+        elif isinstance(paths, str):
+            # Single string is also acceptable for paths
+            if not paths.strip():
+                result.add_error(
+                    message="Empty paths value",
+                    field_name="paths",
+                    suggestion="Provide a glob pattern (e.g., '**/*.java')"
+                )
+        else:
+            result.add_error(
+                message=f"Paths must be a list or string, got {type(paths).__name__}",
+                field_name="paths",
+                suggestion="Use a list format (e.g., paths:\n  - \"**/*.ts\")"
+            )
+
+    def _validate_rule_filename(self, file_path: Path, result: ValidationResult) -> None:
+        """Validate rule file uses kebab-case naming."""
+        stem = file_path.stem
+        if not KEBAB_CASE_PATTERN.match(stem):
+            result.add_error(
+                message=f"Rule filename must be kebab-case: '{file_path.name}'",
+                field_name=None,
+                suggestion="Rename to kebab-case (e.g., 'naming-conventions.md')"
+            )
+
+    def _validate_rule_sections(self, content: str, result: ValidationResult) -> None:
+        """Validate required and recommended markdown sections."""
+        match = re.search(r"\n---\s*\n", content)
+        if not match:
+            return
+
+        body = content[match.end():]
+
+        # Check required sections
+        for section_key, pattern in RULE_REQUIRED_SECTIONS.items():
+            if not re.search(pattern, body, re.IGNORECASE | re.MULTILINE):
+                section_name = section_key.replace("_", " ").title()
+                result.add_error(
+                    message=f"Missing required section: '## {section_name}'",
+                    suggestion=f"Add '## {section_name}' section to rule file"
+                )
+
+        # Check recommended sections
+        for section_key in RULE_RECOMMENDED_SECTIONS:
+            if section_key == "context":
+                pattern = r"^#{1,3}\s+Context"
+            elif section_key == "examples":
+                pattern = r"^#{1,3}\s+Examples"
+            else:
+                pattern = rf"^#{{1,3}}\s+{section_key.replace('_', ' ').title()}"
+            if not re.search(pattern, body, re.IGNORECASE | re.MULTILINE):
+                section_name = section_key.replace("_", " ").title()
+                result.add_warning(
+                    message=f"Missing recommended section: '## {section_name}'",
+                    suggestion=f"Consider adding '## {section_name}' section"
+                )
+
+    def _validate_rule_size(self, content: str, result: ValidationResult) -> None:
+        """Validate rule file size."""
+        line_count = content.count('\n') + 1
+        if line_count > MAX_RULE_LINES:
+            result.add_warning(
+                message=f"Rule file is too long: {line_count} lines (max {MAX_RULE_LINES})",
+                suggestion="Keep rule files concise and focused"
+            )
+
+
+class KebabCaseValidator(BaseValidator):
+    """Validator for kebab-case naming convention in markdown files.
+
+    Ensures all .md files (except exempted standard files like README.md)
+    use kebab-case naming convention.
+    """
+
+    @property
+    def component_type(self) -> str:
+        return "naming"
+
+    @property
+    def file_pattern(self) -> re.Pattern:
+        return MARKDOWN_FILE_PATTERN
+
+    @property
+    def schema(self) -> Dict[str, Set[str]]:
+        # No schema needed for file naming validation
+        return {"required": set(), "optional": set()}
+
+    def can_validate(self, file_path: Path) -> bool:
+        """Check if this validator can handle the given file."""
+        # Only validate .md files
+        if not file_path.suffix.lower() == ".md":
+            return False
+        # Skip exempt files
+        if file_path.name in KEBAB_CASE_EXEMPT_FILES:
+            return False
+        # Check pattern
+        return bool(self.file_pattern.search(str(file_path)))
+
+    def validate(self, file_path: Path) -> ValidationResult:
+        """Validate that the filename follows kebab-case convention."""
+        result = ValidationResult(
+            file_path=file_path,
+            component_type=self.component_type
+        )
+
+        # Get the filename without extension
+        filename = file_path.stem
+
+        # Check if filename follows kebab-case
+        if not KEBAB_CASE_PATTERN.match(filename):
+            result.add_error(
+                message=f"Filename must use kebab-case: '{file_path.name}'",
+                suggestion=f"Rename to '{self._to_kebab_case(filename)}.md' or similar"
+            )
+
+        return result
+
+    def _to_kebab_case(self, name: str) -> str:
+        """Convert a string to kebab-case (best effort)."""
+        # Replace underscores with hyphens
+        result = name.replace("_", "-")
+        # Replace camelCase with kebab-case
+        result = re.sub(r'([a-z])([A-Z])', r'\1-\2', result).lower()
+        # Replace multiple hyphens with single
+        result = re.sub(r'-+', '-', result)
+        # Remove leading/trailing hyphens
+        result = result.strip('-')
+        return result
+
+    def _validate_specific(
+        self,
+        file_path: Path,
+        frontmatter: Dict[str, Any],
+        content: str,
+        result: ValidationResult
+    ) -> None:
+        """Not used for kebab-case validation."""
+        pass
+
+
+class SkillPackageValidator(BaseValidator):
+    """Validator to check for prohibited .skill package files.
+
+    Ensures that no .skill package files exist in the project as they
+    should not be committed (they are build outputs).
+    """
+
+    @property
+    def component_type(self) -> str:
+        return "prohibited"
+
+    @property
+    def file_pattern(self) -> re.Pattern:
+        # Only match .skill files directly
+        return SKILL_PACKAGE_PATTERN
+
+    @property
+    def schema(self) -> Dict[str, Set[str]]:
+        return {"required": set(), "optional": set()}
+
+    def validate(self, file_path: Path) -> ValidationResult:
+        """Validate that the file is not a .skill package."""
+        result = ValidationResult(
+            file_path=file_path,
+            component_type=self.component_type
+        )
+
+        # If this is a .skill file, it's an error
+        if file_path.suffix == ".skill":
+            result.add_error(
+                message=f"Prohibited .skill package found: '{file_path.name}'",
+                suggestion="Remove .skill files - they are build outputs and should not be committed"
+            )
+
+        return result
+
+    def _validate_specific(
+        self,
+        file_path: Path,
+        frontmatter: Dict[str, Any],
+        content: str,
+        result: ValidationResult
+    ) -> None:
+        """Not used for skill package validation."""
+        pass
+
+
+class PluginVersionValidator(BaseValidator):
+    """Validator for plugin manifest version alignment with marketplace.
+
+    Ensures that plugin.json version matches marketplace.json version.
+    """
+
+    @property
+    def component_type(self) -> str:
+        return "plugin"
+
+    @property
+    def file_pattern(self) -> re.Pattern:
+        return PLUGIN_PATTERN
+
+    @property
+    def schema(self) -> Dict[str, Set[str]]:
+        return {"required": set(), "optional": set()}
+
+    def validate(self, file_path: Path) -> ValidationResult:
+        """Validate that plugin version matches marketplace version."""
+        result = ValidationResult(
+            file_path=file_path,
+            component_type=self.component_type
+        )
+
+        # Find marketplace.json
+        marketplace_path = self._find_marketplace_json(file_path)
+        if not marketplace_path:
+            result.add_error(
+                message="Cannot find marketplace.json for version alignment check",
+                suggestion="Ensure marketplace.json exists in .claude-plugin/ directory"
+            )
+            return result
+
+        # Read marketplace version
+        marketplace_version = self._get_marketplace_version(marketplace_path)
+        if not marketplace_version:
+            result.add_error(
+                message="Cannot read version from marketplace.json",
+                suggestion="Ensure marketplace.json has a valid 'version' field"
+            )
+            return result
+
+        # Read plugin version
+        plugin_version = self._get_plugin_version(file_path)
+        if not plugin_version:
+            result.add_error(
+                message="Cannot read version from plugin.json",
+                suggestion="Ensure plugin.json has a valid 'version' field"
+            )
+            return result
+
+        # Compare versions
+        if plugin_version != marketplace_version:
+            result.add_error(
+                message=f"Version mismatch: plugin '{plugin_version}' != marketplace '{marketplace_version}'",
+                suggestion=f"Align plugin version with marketplace version '{marketplace_version}'"
+            )
+
+        return result
+
+    def _find_marketplace_json(self, file_path: Path) -> Optional[Path]:
+        """Find marketplace.json by traversing up to project root."""
+        current = file_path.parent
+        for _ in range(10):  # Limit search depth
+            marketplace = current / ".claude-plugin" / "marketplace.json"
+            if marketplace.exists():
+                return marketplace
+            parent = current.parent
+            if parent == current:
+                break
+            current = parent
+        return None
+
+    def _get_marketplace_version(self, marketplace_path: Path) -> Optional[str]:
+        """Read version from marketplace.json."""
+        try:
+            import json
+            with open(marketplace_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            return data.get('version')
+        except (json.JSONDecodeError, KeyError, FileNotFoundError, IOError):
+            return None
+
+    def _get_plugin_version(self, plugin_path: Path) -> Optional[str]:
+        """Read version from plugin.json."""
+        try:
+            import json
+            with open(plugin_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            return data.get('version')
+        except (json.JSONDecodeError, KeyError, FileNotFoundError, IOError):
+            return None
+
+    def _validate_specific(
+        self,
+        file_path: Path,
+        frontmatter: Dict[str, Any],
+        content: str,
+        result: ValidationResult
+    ) -> None:
+        """Not used for plugin version validation."""
+        pass
+
+
+class PluginJsonValidator:
+    """Validator for plugin.json files - verifies component registration."""
+
+    PLUGIN_JSON_PATTERN = re.compile(r"plugin\.json$")
+
+    def can_validate(self, file_path: Path) -> bool:
+        """Check if this validator can handle the given file."""
+        return bool(self.PLUGIN_JSON_PATTERN.search(str(file_path)))
+
+    def validate(self, file_path: Path) -> ValidationResult:
+        """Validate plugin.json and check component registration."""
+        result = ValidationResult(
+            file_path=file_path,
+            component_type="plugin.json"
+        )
+
+        # Read plugin.json
+        try:
+            import json
+            content = file_path.read_text(encoding="utf-8")
+            plugin_data = json.loads(content)
+        except FileNotFoundError:
+            result.add_error(
+                message=f"File not found: {file_path}",
+                suggestion="Verify the file path is correct"
+            )
+            return result
+        except json.JSONDecodeError as e:
+            result.add_error(
+                message=f"Invalid JSON: {e}",
+                suggestion="Fix the JSON syntax error"
+            )
+            return result
+
+        # Validate schema compliance
+        self._validate_schema(plugin_data, result)
+
+        # Validate specific fields
+        self._validate_name(plugin_data, result)
+        self._validate_version(plugin_data, result)
+        self._validate_description(plugin_data, result)
+        self._validate_author(plugin_data, result)
+        self._validate_keywords(plugin_data, result)
+        self._validate_license(plugin_data, result)
+        self._validate_component_paths(plugin_data, result)
+
+        # Get plugin directory
+        plugin_dir = file_path.parent.parent
+
+        # Validate each component type
+        self._validate_components(
+            plugin_data, plugin_dir, "skills", result
+        )
+        self._validate_components(
+            plugin_data, plugin_dir, "agents", result
+        )
+        self._validate_components(
+            plugin_data, plugin_dir, "commands", result
+        )
+        self._validate_components(
+            plugin_data, plugin_dir, "rules", result
+        )
+
+        # Check for unregistered components
+        self._check_unregistered_components(
+            plugin_data, plugin_dir, "skills", result
+        )
+        self._check_unregistered_components(
+            plugin_data, plugin_dir, "agents", result
+        )
+        self._check_unregistered_components(
+            plugin_data, plugin_dir, "commands", result
+        )
+        self._check_unregistered_components(
+            plugin_data, plugin_dir, "rules", result
+        )
+
+        return result
+
+    def _validate_components(
+        self,
+        plugin_data: dict,
+        plugin_dir: Path,
+        component_type: str,
+        result: ValidationResult
+    ) -> None:
+        """Validate that registered components exist on filesystem."""
+        components = plugin_data.get(component_type, [])
+
+        for component_path in components:
+            full_path = plugin_dir / component_path
+
+            if component_type == "skills":
+                # Skills point to directories containing SKILL.md
+                skill_md = full_path / "SKILL.md"
+                if not skill_md.exists():
+                    result.add_error(
+                        message=f"Skill not found: '{component_path}'",
+                        field_name=component_type,
+                        suggestion=f"Ensure '{component_path}/SKILL.md' exists or remove from plugin.json"
+                    )
+            else:
+                # Agents and commands point directly to .md files
+                if not full_path.exists():
+                    result.add_error(
+                        message=f"{component_type[:-1].title()} not found: '{component_path}'",
+                        field_name=component_type,
+                        suggestion=f"Ensure '{component_path}' exists or remove from plugin.json"
+                    )
+                elif not full_path.suffix == ".md":
+                    result.add_error(
+                        message=f"{component_type[:-1].title()} must be a .md file: '{component_path}'",
+                        field_name=component_type,
+                        suggestion="Use .md extension for agent/command files"
+                    )
+
+    def _check_unregistered_components(
+        self,
+        plugin_data: dict,
+        plugin_dir: Path,
+        component_type: str,
+        result: ValidationResult
+    ) -> None:
+        """Check for components on filesystem that are not registered in plugin.json."""
+        registered = set(plugin_data.get(component_type, []))
+
+        # Get the directory for this component type
+        component_dir = plugin_dir / component_type
+        if not component_dir.exists():
+            return
+
+        if component_type == "skills":
+            # Skills are directories with SKILL.md
+            for item in component_dir.iterdir():
+                if item.is_dir() and (item / "SKILL.md").exists():
+                    relative_path = f"./{component_type}/{item.name}"
+                    if relative_path not in registered:
+                        result.add_error(
+                            message=f"Unregistered skill: '{item.name}'",
+                            field_name=component_type,
+                            suggestion=f"Add './{component_type}/{item.name}' to plugin.json skills array"
+                        )
+        else:
+            # Agents and commands are .md files
+            for item in component_dir.iterdir():
+                if item.is_file() and item.suffix == ".md":
+                    relative_path = f"./{component_type}/{item.name}"
+                    if relative_path not in registered:
+                        result.add_error(
+                            message=f"Unregistered {component_type[:-1]}: '{item.name}'",
+                            field_name=component_type,
+                            suggestion=f"Add './{component_type}/{item.name}' to plugin.json {component_type} array"
+                        )
+
+    def _validate_schema(
+        self,
+        plugin_data: dict,
+        result: ValidationResult
+    ) -> None:
+        """Validate that all fields are recognized and required fields are present."""
+        # Check for required fields
+        required_fields = PLUGIN_JSON_SCHEMA["required"]
+        for field in required_fields:
+            if field not in plugin_data:
+                result.add_error(
+                    message=f"Missing required field: '{field}'",
+                    field_name=field,
+                    suggestion=f"Add '{field}' field to plugin.json"
+                )
+
+        # Check for unknown fields
+        known_fields = PLUGIN_JSON_SCHEMA["required"] | PLUGIN_JSON_SCHEMA["optional"]
+        for field in plugin_data.keys():
+            if field not in known_fields:
+                result.add_warning(
+                    message=f"Unknown field: '{field}'",
+                    field_name=field,
+                    suggestion=f"Remove '{field}' or verify it is a valid plugin.json field"
+                )
+
+    def _validate_name(
+        self,
+        plugin_data: dict,
+        result: ValidationResult
+    ) -> None:
+        """Validate plugin name field."""
+        name = plugin_data.get("name")
+        if not name:
+            return  # Already handled by schema validation
+
+        # Check type
+        if not isinstance(name, str):
+            result.add_error(
+                message=f"'name' must be a string, got {type(name).__name__}",
+                field_name="name",
+                suggestion="Ensure 'name' is a string value"
+            )
+            return
+
+        # Check length
+        if len(name) > MAX_NAME_LENGTH:
+            result.add_error(
+                message=f"'name' exceeds maximum length of {MAX_NAME_LENGTH} characters",
+                field_name="name",
+                suggestion=f"Shorten 'name' to {MAX_NAME_LENGTH} characters or less"
+            )
+
+        # Check kebab-case pattern
+        if not PLUGIN_NAME_PATTERN.match(name):
+            result.add_error(
+                message=f"'name' must be kebab-case (lowercase letters, numbers, hyphens), got: '{name}'",
+                field_name="name",
+                suggestion="Use kebab-case format (e.g., 'my-plugin', 'developer-kit-java')"
+            )
+
+    def _validate_version(
+        self,
+        plugin_data: dict,
+        result: ValidationResult
+    ) -> None:
+        """Validate version field if present."""
+        version = plugin_data.get("version")
+        if version is None:
+            return  # Optional field
+
+        # Check type
+        if not isinstance(version, str):
+            result.add_error(
+                message=f"'version' must be a string, got {type(version).__name__}",
+                field_name="version",
+                suggestion="Ensure 'version' is a string value"
+            )
+            return
+
+        # Check semantic versioning pattern
+        if not SEMVER_PATTERN.match(version):
+            result.add_error(
+                message=f"'version' must follow semantic versioning (X.Y.Z), got: '{version}'",
+                field_name="version",
+                suggestion="Use semantic versioning format (e.g., '1.0.0', '2.3.1')"
+            )
+
+    def _validate_description(
+        self,
+        plugin_data: dict,
+        result: ValidationResult
+    ) -> None:
+        """Validate description field if present."""
+        description = plugin_data.get("description")
+        if description is None:
+            return  # Optional field
+
+        # Check type
+        if not isinstance(description, str):
+            result.add_error(
+                message=f"'description' must be a string, got {type(description).__name__}",
+                field_name="description",
+                suggestion="Ensure 'description' is a string value"
+            )
+            return
+
+        # Check length
+        if len(description) > MAX_DESCRIPTION_LENGTH:
+            result.add_error(
+                message=f"'description' exceeds maximum length of {MAX_DESCRIPTION_LENGTH} characters",
+                field_name="description",
+                suggestion=f"Shorten 'description' to {MAX_DESCRIPTION_LENGTH} characters or less"
+            )
+
+        # Check minimum length
+        if len(description) < MIN_DESCRIPTION_LENGTH:
+            result.add_warning(
+                message=f"'description' is too short (minimum {MIN_DESCRIPTION_LENGTH} characters)",
+                field_name="description",
+                suggestion=f"Provide a more detailed description (at least {MIN_DESCRIPTION_LENGTH} characters)"
+            )
+
+    def _validate_author(
+        self,
+        plugin_data: dict,
+        result: ValidationResult
+    ) -> None:
+        """Validate author field if present."""
+        author = plugin_data.get("author")
+        if author is None:
+            return  # Optional field
+
+        # Check type
+        if not isinstance(author, dict):
+            result.add_error(
+                message=f"'author' must be an object, got {type(author).__name__}",
+                field_name="author",
+                suggestion="Ensure 'author' is an object with 'name' field"
+            )
+            return
+
+        # Check for required name field
+        if "name" not in author:
+            result.add_error(
+                message="'author' object must contain 'name' field",
+                field_name="author",
+                suggestion="Add 'name' field to author object"
+            )
+        elif not isinstance(author["name"], str):
+            result.add_error(
+                message="'author.name' must be a string",
+                field_name="author",
+                suggestion="Ensure 'author.name' is a string value"
+            )
+
+        # Validate optional email field
+        if "email" in author and not isinstance(author["email"], str):
+            result.add_error(
+                message="'author.email' must be a string",
+                field_name="author",
+                suggestion="Ensure 'author.email' is a string value"
+            )
+
+        # Validate optional url field
+        if "url" in author and not isinstance(author["url"], str):
+            result.add_error(
+                message="'author.url' must be a string",
+                field_name="author",
+                suggestion="Ensure 'author.url' is a string value"
+            )
+
+    def _validate_keywords(
+        self,
+        plugin_data: dict,
+        result: ValidationResult
+    ) -> None:
+        """Validate keywords field if present."""
+        keywords = plugin_data.get("keywords")
+        if keywords is None:
+            return  # Optional field
+
+        # Check type
+        if not isinstance(keywords, list):
+            result.add_error(
+                message=f"'keywords' must be an array, got {type(keywords).__name__}",
+                field_name="keywords",
+                suggestion="Ensure 'keywords' is an array of strings"
+            )
+            return
+
+        # Check each keyword
+        for i, keyword in enumerate(keywords):
+            if not isinstance(keyword, str):
+                result.add_error(
+                    message=f"'keywords[{i}]' must be a string, got {type(keyword).__name__}",
+                    field_name="keywords",
+                    suggestion="Ensure all keywords are string values"
+                )
+            elif len(keyword) == 0:
+                result.add_warning(
+                    message=f"'keywords[{i}]' is empty",
+                    field_name="keywords",
+                    suggestion="Remove empty keywords or provide meaningful values"
+                )
+
+    def _validate_license(
+        self,
+        plugin_data: dict,
+        result: ValidationResult
+    ) -> None:
+        """Validate license field if present."""
+        license_id = plugin_data.get("license")
+        if license_id is None:
+            return  # Optional field
+
+        # Check type
+        if not isinstance(license_id, str):
+            result.add_error(
+                message=f"'license' must be a string, got {type(license_id).__name__}",
+                field_name="license",
+                suggestion="Ensure 'license' is a string value (e.g., 'MIT', 'Apache-2.0')"
+            )
+            return
+
+        # Warn if not a recognized SPDX license
+        if license_id not in VALID_LICENSES:
+            result.add_warning(
+                message=f"'license' '{license_id}' is not a standard SPDX identifier",
+                field_name="license",
+                suggestion=f"Use a standard SPDX license identifier: {', '.join(sorted(VALID_LICENSES)[:5])}..."
+            )
+
+    def _validate_component_paths(
+        self,
+        plugin_data: dict,
+        result: ValidationResult
+    ) -> None:
+        """Validate component path fields (commands, agents, skills, hooks, mcpServers, lspServers, outputStyles)."""
+        # Fields that can be string or array
+        array_or_string_fields = ["commands", "agents", "skills", "outputStyles"]
+        for field in array_or_string_fields:
+            value = plugin_data.get(field)
+            if value is None:
+                continue
+
+            if not isinstance(value, (str, list)):
+                result.add_error(
+                    message=f"'{field}' must be a string or array, got {type(value).__name__}",
+                    field_name=field,
+                    suggestion=f"Ensure '{field}' is a string path or array of paths"
+                )
+                continue
+
+            # If array, check each element
+            if isinstance(value, list):
+                for i, item in enumerate(value):
+                    if not isinstance(item, str):
+                        result.add_error(
+                            message=f"'{field}[{i}]' must be a string, got {type(item).__name__}",
+                            field_name=field,
+                            suggestion=f"Ensure all items in '{field}' are string paths"
+                        )
+                    elif not item.startswith("./"):
+                        result.add_warning(
+                            message=f"'{field}[{i}]' path should start with './', got: '{item}'",
+                            field_name=field,
+                            suggestion="Use relative paths starting with './'"
+                        )
+
+        # Fields that can be string, array, or object (hooks, mcpServers, lspServers)
+        complex_fields = ["hooks", "mcpServers", "lspServers"]
+        for field in complex_fields:
+            value = plugin_data.get(field)
+            if value is None:
+                continue
+
+            if not isinstance(value, (str, list, dict)):
+                result.add_error(
+                    message=f"'{field}' must be a string, array, or object, got {type(value).__name__}",
+                    field_name=field,
+                    suggestion=f"Ensure '{field}' is a path string, array of paths, or inline configuration object"
+                )
+                continue
+
+            # If array, check each element
+            if isinstance(value, list):
+                for i, item in enumerate(value):
+                    if not isinstance(item, str):
+                        result.add_error(
+                            message=f"'{field}[{i}]' must be a string, got {type(item).__name__}",
+                            field_name=field,
+                            suggestion=f"Ensure all items in '{field}' are string paths"
+                        )
+                    elif not item.startswith("./"):
+                        result.add_warning(
+                            message=f"'{field}[{i}]' path should start with './', got: '{item}'",
+                            field_name=field,
+                            suggestion="Use relative paths starting with './'"
+                        )
+
+
+
+class HookValidator(BaseValidator):
+    """Validator for Claude Code plugin hooks.json files."""
+
+    @property
+    def component_type(self) -> str:
+        return "hook"
+
+    @property
+    def file_pattern(self) -> re.Pattern:
+        return HOOK_PATTERN
+
+    @property
+    def schema(self) -> Dict[str, Set[str]]:
+        # hooks.json has no frontmatter schema; return empty to satisfy ABC
+        return {"required": set(), "optional": set()}
+
+    def validate(self, file_path: Path) -> ValidationResult:
+        """Validate a hooks.json file."""
+        result = ValidationResult(
+            file_path=file_path,
+            component_type=self.component_type,
+        )
+
+        try:
+            content = file_path.read_text(encoding="utf-8")
+        except FileNotFoundError:
+            result.add_error(
+                message=f"File not found: {file_path}",
+                suggestion="Verify the file path is correct",
+            )
+            return result
+        except UnicodeDecodeError:
+            result.add_error(
+                message="File is not valid UTF-8",
+                suggestion="Ensure the file uses UTF-8 encoding",
+            )
+            return result
+
+        try:
+            data = json.loads(content)
+        except json.JSONDecodeError as exc:
+            result.add_error(
+                message=f"Invalid JSON: {exc}",
+                suggestion="Fix JSON syntax errors in hooks.json",
+            )
+            return result
+
+        if not isinstance(data, dict):
+            result.add_error(
+                message="hooks.json must be a JSON object at the top level",
+                suggestion="Wrap the content in a JSON object: {}",
+            )
+            return result
+
+        description = data.get("description")
+        if description is not None and not isinstance(description, str):
+            result.add_warning(
+                message=f"'description' must be a string, got {type(description).__name__}",
+                field_name="description",
+                suggestion="Provide a string description for the hooks file",
+            )
+
+        hooks_root = data.get("hooks")
+        if hooks_root is None:
+            result.add_error(
+                message="Missing required top-level 'hooks' key",
+                suggestion="Add a 'hooks' object mapping event names to matcher arrays",
+            )
+            return result
+
+        if not isinstance(hooks_root, dict):
+            result.add_error(
+                message=f"'hooks' must be a JSON object, got {type(hooks_root).__name__}",
+                field_name="hooks",
+                suggestion="'hooks' must map event names to arrays of matcher objects",
+            )
+            return result
+
+        for event_name, matchers in hooks_root.items():
+            self._validate_event(event_name, matchers, result)
+
+        return result
+
+    def _validate_event(
+        self,
+        event_name: str,
+        matchers: Any,
+        result: ValidationResult,
+    ) -> None:
+        if event_name not in VALID_HOOK_EVENTS:
+            result.add_warning(
+                message=f"Unknown hook event: '{event_name}'",
+                field_name="hooks",
+                suggestion=f"Valid events: {', '.join(sorted(VALID_HOOK_EVENTS))}",
+            )
+
+        if not isinstance(matchers, list):
+            result.add_error(
+                message=f"Event '{event_name}' must be an array of matcher objects, got {type(matchers).__name__}",
+                field_name="hooks",
+                suggestion='Each event key must map to an array: [{"matcher": "...", "hooks": [...]}]',
+            )
+            return
+
+        for idx, matcher_obj in enumerate(matchers):
+            self._validate_matcher(event_name, idx, matcher_obj, result)
+
+    def _validate_matcher(
+        self,
+        event_name: str,
+        idx: int,
+        matcher_obj: Any,
+        result: ValidationResult,
+    ) -> None:
+        location = f"hooks.{event_name}[{idx}]"
+
+        if not isinstance(matcher_obj, dict):
+            result.add_error(
+                message=f"{location} must be a JSON object, got {type(matcher_obj).__name__}",
+                field_name="hooks",
+                suggestion='Each matcher entry must be an object with optional "matcher" and required "hooks"',
+            )
+            return
+
+        matcher_value = matcher_obj.get("matcher")
+        if matcher_value is not None and not isinstance(matcher_value, str):
+            result.add_warning(
+                message=f'{location}.matcher must be a string regex, got {type(matcher_value).__name__}',
+                field_name="hooks",
+                suggestion='Provide a string regex pattern for "matcher", e.g. "Bash" or "Write|Edit"',
+            )
+
+        hook_entries = matcher_obj.get("hooks")
+        if hook_entries is None:
+            result.add_error(
+                message=f'{location} is missing required "hooks" array',
+                field_name="hooks",
+                suggestion='Add a "hooks" array with at least one hook entry object',
+            )
+            return
+
+        if not isinstance(hook_entries, list):
+            result.add_error(
+                message=f"{location}.hooks must be an array, got {type(hook_entries).__name__}",
+                field_name="hooks",
+                suggestion='"hooks" must be an array of hook entry objects',
+            )
+            return
+
+        if len(hook_entries) == 0:
+            result.add_warning(
+                message=f"{location}.hooks is empty",
+                field_name="hooks",
+                suggestion="Add at least one hook entry object to the array",
+            )
+
+        for entry_idx, entry in enumerate(hook_entries):
+            self._validate_hook_entry(f"{location}.hooks[{entry_idx}]", entry, result)
+
+    def _validate_hook_entry(
+        self,
+        location: str,
+        entry: Any,
+        result: ValidationResult,
+    ) -> None:
+        if not isinstance(entry, dict):
+            result.add_error(
+                message=f"{location} must be a JSON object, got {type(entry).__name__}",
+                field_name="hooks",
+                suggestion='Each hook entry must be an object with a "type" field',
+            )
+            return
+
+        hook_type = entry.get("type")
+        if hook_type is None:
+            result.add_error(
+                message=f'{location} is missing required "type" field',
+                field_name="hooks",
+                suggestion=f'Add "type" field with one of: {", ".join(sorted(VALID_HOOK_TYPES))}',
+            )
+            return
+
+        if not isinstance(hook_type, str):
+            result.add_error(
+                message=f"{location}.type must be a string, got {type(hook_type).__name__}",
+                field_name="hooks",
+                suggestion=f'Set "type" to one of: {", ".join(sorted(VALID_HOOK_TYPES))}',
+            )
+            return
+
+        if hook_type not in VALID_HOOK_TYPES:
+            result.add_error(
+                message=f"{location}.type has unknown value: '{hook_type}'",
+                field_name="hooks",
+                suggestion=f'Valid types are: {", ".join(sorted(VALID_HOOK_TYPES))}',
+            )
+
+        if hook_type == "command":
+            command = entry.get("command")
+            if command is None:
+                result.add_error(
+                    message=f'{location} of type "command" is missing required "command" field',
+                    field_name="hooks",
+                    suggestion='Add "command" with the shell command to execute',
+                )
+            elif not isinstance(command, str):
+                result.add_error(
+                    message=f"{location}.command must be a string, got {type(command).__name__}",
+                    field_name="hooks",
+                    suggestion="Provide the shell command as a string",
+                )
+
+        elif hook_type == "http":
+            url = entry.get("url")
+            if url is None:
+                result.add_error(
+                    message=f'{location} of type "http" is missing required "url" field',
+                    field_name="hooks",
+                    suggestion='Add "url" with the HTTP endpoint to POST to',
+                )
+            elif not isinstance(url, str):
+                result.add_error(
+                    message=f"{location}.url must be a string, got {type(url).__name__}",
+                    field_name="hooks",
+                    suggestion="Provide the endpoint URL as a string",
+                )
+
+        elif hook_type in ("prompt", "agent"):
+            prompt = entry.get("prompt")
+            if prompt is None:
+                result.add_error(
+                    message=f'{location} of type "{hook_type}" is missing required "prompt" field',
+                    field_name="hooks",
+                    suggestion='Add "prompt" with the LLM prompt text',
+                )
+            elif not isinstance(prompt, str):
+                result.add_error(
+                    message=f"{location}.prompt must be a string, got {type(prompt).__name__}",
+                    field_name="hooks",
+                    suggestion="Provide the prompt as a string",
+                )
+
+        async_value = entry.get("async")
+        if async_value is not None:
+            if not isinstance(async_value, bool):
+                result.add_error(
+                    message=f"{location}.async must be a boolean, got {type(async_value).__name__}",
+                    field_name="hooks",
+                    suggestion='Set "async" to true or false',
+                )
+            elif async_value and hook_type in VALID_HOOK_TYPES and hook_type != "command":
+                result.add_warning(
+                    message=f'{location}.async is only supported for type "command", ignored for "{hook_type}"',
+                    field_name="hooks",
+                    suggestion='Remove "async" from non-command hook entries',
+                )
+
+        timeout_value = entry.get("timeout")
+        if timeout_value is not None:
+            if isinstance(timeout_value, bool) or not isinstance(timeout_value, (int, float)):
+                result.add_error(
+                    message=f"{location}.timeout must be a number, got {type(timeout_value).__name__}",
+                    field_name="hooks",
+                    suggestion='Set "timeout" to a non-negative number (seconds)',
+                )
+            elif timeout_value < 0:
+                result.add_error(
+                    message=f"{location}.timeout must be >= 0, got {timeout_value}",
+                    field_name="hooks",
+                    suggestion="Use a non-negative timeout value",
+                )
+
+        status_msg = entry.get("statusMessage")
+        if status_msg is not None and not isinstance(status_msg, str):
+            result.add_warning(
+                message=f"{location}.statusMessage must be a string, got {type(status_msg).__name__}",
+                field_name="hooks",
+                suggestion="Provide statusMessage as a string",
+            )
+
+    def _validate_specific(
+        self,
+        file_path: Path,
+        frontmatter: Dict[str, Any],
+        content: str,
+        result: ValidationResult,
+    ) -> None:
+        # Not used: HookValidator overrides validate() completely
+        pass
+
+
+class ValidatorFactory:
+    """Factory for creating appropriate validators."""
+
+    @classmethod
+    def _build_validators(cls, validate_external_urls: bool = False) -> List[Any]:
+        return [
+            SkillValidator(validate_external_urls=validate_external_urls),
+            SkillMarkdownValidator(validate_external_urls=validate_external_urls),
+            AgentValidator(),
+            CommandValidator(),
+            RuleValidator(),
+            HookValidator(),
+            KebabCaseValidator(),
+            SkillPackageValidator(),
+            PluginVersionValidator(),
+            PluginJsonValidator(),
+        ]
+
+    @classmethod
+    def get_validator(
+        cls,
+        file_path: Path,
+        validate_external_urls: bool = False
+    ) -> Optional[Any]:
+        """Get the appropriate validator for a file."""
+        for validator in cls._build_validators(validate_external_urls=validate_external_urls):
+            if validator.can_validate(file_path):
+                return validator
+        return None
+
+    @classmethod
+    def get_all_patterns(cls) -> List[re.Pattern]:
+        """Get all file patterns for component files."""
+        return [v.file_pattern for v in cls._build_validators() if hasattr(v, 'file_pattern')]

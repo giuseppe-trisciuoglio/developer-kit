@@ -4,7 +4,7 @@ description: Expert WordPress developer that provides custom plugin and theme de
 tools: [Read, Write, Edit, Glob, Grep, Bash]
 model: sonnet
 skills:
-  - wordpress
+  - wordpress-sage-theme
   - clean-architecture
 ---
 
