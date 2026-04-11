@@ -1,87 +1,100 @@
-# Developer Kit AI Plugin Documentation
+# Developer Kit AI Plugin — Documentation
 
-Welcome to the Developer Kit AI Plugin documentation. This plugin provides comprehensive tools for AI development, prompt engineering, and AI system integration.
+## Overview
 
----
+The AI plugin provides Claude Code with specialized capabilities for building AI-powered applications. It covers the full lifecycle of LLM integration:
 
-## Available Documentation
-
-### Skills Guides
-
-- **[Prompt Engineering Skill](../skills/prompt-engineering/)** - Comprehensive prompt engineering skill
-- **[RAG Skill](../skills/rag/)** - Retrieval-Augmented Generation skill
-- **[Chunking Strategy Skill](../skills/chunking-strategy/)** - Document chunking strategies for RAG systems
-
-### Component Guides
-
-- **[Agent Guide](./guide-agents.md)** - AI specialized agents
-- **[Commands Guide](./guide-commands.md)** - AI commands for prompt optimization
-
----
-
-## About AI Plugin
-
-The Developer Kit AI Plugin provides:
-
-- **AI Agents**: 1 specialized agent for prompt engineering
-- **AI Commands**: 1 command for prompt optimization
-- **AI Skills**: 3 skills covering prompt engineering, RAG, and chunking strategies
-
----
+- **Prompt Engineering** — designing, optimizing, and scaling prompts
+- **RAG Systems** — retrieval-augmented generation pipelines
+- **Chunking Strategies** — document preprocessing for vector databases
 
 ## Plugin Structure
 
 ```
 developer-kit-ai/
-├── agents/              # AI development agents
-├── commands/            # AI commands
-├── skills/              # AI skills
-│   ├── prompt-engineering/  # Prompt engineering skill
-│   ├── rag/                 # RAG skill
-│   └── chunking-strategy/   # Chunking strategies skill
-└── docs/               # This documentation
+├── agents/
+│   └── prompt-engineering-expert.md     # Expert agent for prompt design
+├── commands/
+│   └── devkit.prompt-optimize.md        # Prompt optimization command
+├── skills/
+│   ├── prompt-engineering/              # Prompt design & optimization skill
+│   │   ├── SKILL.md
+│   │   └── references/
+│   │       ├── cot-patterns.md
+│   │       ├── few-shot-patterns.md
+│   │       ├── optimization-frameworks.md
+│   │       ├── system-prompt-design.md
+│   │       └── template-systems.md
+│   ├── rag/                             # RAG implementation skill
+│   │   ├── SKILL.md
+│   │   ├── assets/
+│   │   │   ├── retriever-pipeline.java
+│   │   │   └── vector-store-config.yaml
+│   │   └── references/
+│   │       ├── document-chunking.md
+│   │       ├── embedding-models.md
+│   │       ├── langchain4j-rag-guide.md
+│   │       ├── retrieval-strategies.md
+│   │       └── vector-databases.md
+│   └── chunking-strategy/               # Document chunking skill
+│       ├── SKILL.md
+│       └── references/
+│           ├── advanced-strategies.md
+│           ├── evaluation.md
+│           ├── implementation.md
+│           ├── research.md
+│           ├── semantic-methods.md
+│           ├── strategies.md
+│           ├── tools.md
+│           └── visualization-tools.md
+└── docs/
+    ├── README.md                        # This file
+    ├── guide-agents.md                  # Agent guide
+    └── guide-commands.md                 # Command guide
 ```
 
----
+## Available Components
+
+| Type | Count | Details |
+|------|-------|---------|
+| Skills | 3 | prompt-engineering, rag, chunking-strategy |
+| Agents | 1 | prompt-engineering-expert |
+| Commands | 1 | devkit.prompt-optimize |
 
 ## Quick Start
 
-1. **Explore available agents**: See [Agent Guide](./guide-agents.md)
-2. **Use prompt optimization commands**: See [Commands Guide](./guide-commands.md)
-3. **Learn prompt engineering**: See [Prompt Engineering Skill](../skills/prompt-engineering/)
-4. **Build RAG systems**: See [RAG Skill](../skills/rag/)
-5. **Optimize chunking**: See [Chunking Strategy Skill](../skills/chunking-strategy/)
-
----
+1. **Optimize a prompt** — use [`/developer-kit-ai:devkit.prompt-optimize`](guide-commands.md) with your prompt text
+2. **Design a prompt** — invoke the `prompt-engineering-expert` agent for new prompt creation
+3. **Build a RAG pipeline** — use the `rag` skill with the LangChain4j reference guide
+4. **Choose chunking strategy** — use the `chunking-strategy` skill to select the right approach for your data
 
 ## Key Features
 
 ### Prompt Engineering
-- Prompt optimization strategies
-- Few-shot learning patterns
-- Chain-of-thought reasoning
-- Prompt template systems
-- System prompt design
-- AI application patterns
 
-### Retrieval-Augmented Generation (RAG)
-- RAG system architecture
-- Vector database integration
-- Semantic search patterns
-- Document processing pipelines
-- Knowledge-grounded AI
+- Few-shot learning with strategic example selection
+- Chain-of-thought and tree-of-thought reasoning
+- System prompt architecture and role definition
+- Prompt template systems with modular composition
+- A/B testing and progressive optimization frameworks
+
+### Retrieval-Augmented Generation
+
+- Vector database selection and configuration (Pinecone, Weaviate, Milvus, Chroma, Qdrant, FAISS)
+- Embedding model selection (OpenAI, Sentence Transformers, Hugging Face)
+- Retrieval strategies: dense, sparse, hybrid, reranking
+- LangChain4j integration with complete Java examples
 
 ### Chunking Strategies
-- Optimal chunking for RAG systems
-- Document processing patterns
-- Semantic chunking
-- Chunk size optimization
-- Embedding strategies
 
----
+- 5-level strategy hierarchy: fixed-size (L1) through advanced semantic methods (L5)
+- Semantic coherence validation
+- Retrieval precision/recall evaluation metrics
+- Integration with LangChain, LlamaIndex, and Unstructured
 
 ## See Also
 
-- [Core Plugin Documentation](../../developer-kit-core/docs/) - Core guides and installation
-- [Java Plugin Documentation](../../developer-kit-java/docs/) - LangChain4J and Spring AI integration for Java
-- [Python Plugin Documentation](../../developer-kit-python/docs/) - Python AI/ML development guides
+- [Core Plugin Documentation](../../developer-kit-core/docs/) — Installation and core workflow guides
+- [Java Plugin Documentation](../../developer-kit-java/docs/) — LangChain4j, Spring Boot, and AWS Lambda Java integration
+- [Python Plugin Documentation](../../developer-kit-python/docs/) — Python AI/ML development guides
+- [TypeScript Plugin Documentation](../../developer-kit-typescript/docs/) — TypeScript and Node.js AI integration

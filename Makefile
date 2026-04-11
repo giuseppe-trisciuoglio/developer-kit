@@ -6,6 +6,7 @@
 #   - Copilot CLI (GitHub Copilot - agents + skills, NO commands)
 #   - OpenCode CLI (agents + commands + skills)
 #   - Codex CLI (skills only, NO agents)
+#   - Kimi CLI (skills only, NO agents)
 #
 # Usage:
 #   make help                  Show all available targets
@@ -21,9 +22,10 @@
 
 SHELL := /bin/bash
 .PHONY: all help check-deps list-plugins list-components list-agents list-commands list-skills list-rules \
-        install install-claude install-opencode install-copilot install-codex \
+        install install-claude install-opencode install-copilot install-codex install-kimi \
         install-rules uninstall status backup clean security-scan security-scan-changed \
-        skill-lint skill-security skill-review skill-review-all plugin-validate plugin-bump-version
+        skill-lint skill-security skill-review skill-review-all plugin-validate plugin-bump-version \
+        install-agents-loop
 
 # ═══════════════════════════════════════════════════════════════
 # COLORS & OUTPUT FORMATTING
@@ -63,6 +65,9 @@ COPILOT_SKILLS    := $(COPILOT_CONFIG)/skills
 CODEX_CONFIG      := $(HOME)/.codex
 CODEX_SKILLS      := $(CODEX_CONFIG)/skills
 CODEX_AGENTS_MD   := $(CODEX_CONFIG)/AGENTS.md
+
+KIMI_CONFIG       := $(HOME)/.agents
+KIMI_SKILLS       := $(KIMI_CONFIG)/skills
 
 # ═══════════════════════════════════════════════════════════════
 # PLUGIN DISCOVERY
@@ -160,6 +165,7 @@ help:
 	@echo "  make install-opencode     Install for OpenCode CLI (global)"
 	@echo "  make install-copilot      Install for GitHub Copilot CLI (global)"
 	@echo "  make install-codex        Install for Codex CLI (global)"
+	@echo "  make install-kimi         Install for Kimi CLI (global)"
 	@echo "  make install              Install for all detected CLIs"
 	@echo ""
 	@echo -e "$(GREEN)Management:$(NC)"
@@ -167,6 +173,9 @@ help:
 	@echo "  make uninstall            Remove all Developer Kit installations"
 	@echo "  make backup               Create backup of current configs"
 	@echo "  make clean                Remove generated files"
+
+	@echo "  make install-specs-codex-loop  Install specs_codex_loop symlink in /usr/local/bin"
+	@echo "  make install-agents-loop        Install agents_loop symlink in /usr/local/bin"
 	@echo ""
 	@echo -e "$(GREEN)Information:$(NC)"
 	@echo "  make check-deps           Check if required dependencies are installed"
@@ -448,6 +457,19 @@ status:
 		echo -e "  ✗ $(RED)Not configured$(NC)"; \
 	fi
 	@echo ""
+	@echo -e "$(GREEN)Kimi CLI:$(NC)"
+	@if [ -d "$(KIMI_CONFIG)" ]; then \
+		echo "  ✓ Config directory exists: $(KIMI_CONFIG)"; \
+		if [ -d "$(KIMI_SKILLS)" ] && ls "$(KIMI_SKILLS)" >/dev/null 2>&1; then \
+			echo -e "  ✓ $(GREEN)Developer Kit skills installed$(NC)"; \
+			echo "    Skills: $$(ls -1d "$(KIMI_SKILLS)"/* 2>/dev/null | wc -l | tr -d ' ')"; \
+		else \
+			echo "  ○ Developer Kit skills not installed"; \
+		fi; \
+	else \
+		echo -e "  ✗ $(RED)Not configured$(NC)"; \
+	fi
+	@echo ""
 
 # ═══════════════════════════════════════════════════════════════
 # BACKUP
@@ -482,7 +504,11 @@ backup:
 	fi
 	@if [ -d "$(CODEX_SKILLS)" ]; then \
 		cp -r "$(CODEX_SKILLS)" "$(BACKUP_DIR)/codex-skills" 2>/dev/null || true; \
-		echo -e "$(GREEN)✓ Backed up Codex skills$(NC)"; \
+		echo -e "$(GREEN)✓ Backed up Codex skills (including converted commands)$(NC)"; \
+	fi
+	@if [ -d "$(KIMI_SKILLS)" ]; then \
+		cp -r "$(KIMI_SKILLS)" "$(BACKUP_DIR)/kimi-skills" 2>/dev/null || true; \
+		echo -e "$(GREEN)✓ Backed up Kimi skills$(NC)"; \
 	fi
 	@echo ""
 	@echo "  Backup location: $(BACKUP_DIR)"
@@ -498,6 +524,7 @@ uninstall:
 	@# Collect all installed files from all plugins
 	@installed_agents=""; \
 	installed_commands=""; \
+	installed_commands_skills=""; \
 	for plugin_json in $(PLUGIN_JSON_FILES); do \
 		plugin_dir=$$(dirname "$$plugin_json"); \
 		base_dir=$$(dirname "$$plugin_dir"); \
@@ -508,8 +535,9 @@ uninstall:
 		done; \
 		commands=$$(jq -r '.commands[]? // empty' "$$plugin_json" 2>/dev/null); \
 		for cmd in $$commands; do \
-			cmd_name=$$(basename "$$cmd"); \
-			installed_commands="$$installed_commands $$cmd_name"; \
+			cmd_name=$$(basename "$$cmd" .md); \
+			installed_commands="$$installed_commands $$(basename $$cmd)"; \
+			installed_commands_skills="$$installed_commands_skills $$cmd_name"; \
 		done; \
 	done; \
 	\
@@ -543,8 +571,26 @@ uninstall:
 	if [ -f "$(CODEX_AGENTS_MD)" ] && grep -q "Developer Kit" "$(CODEX_AGENTS_MD)" 2>/dev/null; then \
 		rm -f "$(CODEX_AGENTS_MD)"; \
 		echo -e "$(GREEN)✓ Removed Codex AGENTS.md$(NC)"; \
-	fi
+	fi; \
+	\
+	if [ -d "$(CODEX_SKILLS)" ]; then \
+		for cmd_skill in $$installed_commands_skills; do \
+			if [ -d "$(CODEX_SKILLS)/$$cmd_skill" ]; then \
+				rm -rf "$(CODEX_SKILLS)/$$cmd_skill"; \
+				echo -e "$(GREEN)✓ Removed Codex skill (converted from command): $$cmd_skill$(NC)"; \
+				fi; \
+			done; \
+		fi; \
+	if [ -d "$(KIMI_SKILLS)" ]; then \
+		for cmd_skill in $$installed_commands_skills; do \
+			if [ -d "$(KIMI_SKILLS)/$$cmd_skill" ]; then \
+				rm -rf "$(KIMI_SKILLS)/$$cmd_skill"; \
+				echo -e "$(GREEN)✓ Removed Kimi skill (converted from command): $$cmd_skill$(NC)"; \
+				fi; \
+			done; \
+		fi
 	@echo ""
+	@echo -e "$(GREEN)✓ Uninstallation complete$(NC)"
 	@echo -e "$(GREEN)✓ Uninstallation complete$(NC)"
 	@echo ""
 
@@ -559,6 +605,7 @@ install: backup
 	@$(MAKE) -s install-opencode-if-exists
 	@$(MAKE) -s install-copilot-if-exists
 	@$(MAKE) -s install-codex-if-exists
+	@$(MAKE) -s install-kimi-if-exists
 	@echo ""
 	@$(call success "Installation complete!")
 	@$(MAKE) -s status
@@ -583,6 +630,17 @@ install-codex-if-exists:
 	else \
 		$(call warning "Skipping Codex CLI (not configured)"); \
 	fi
+
+install-kimi-if-exists:
+	@if [ -d "$(KIMI_CONFIG)" ]; then \
+		$(MAKE) -s install-kimi; \
+	else \
+		$(call warning "Skipping Kimi CLI (not configured)"); \
+	fi
+
+# ═══════════════════════════════════════════════════════════════
+# SPECS UTILITIES INSTALLATION
+# ═══════════════════════════════════════════════════════════════
 
 # ═══════════════════════════════════════════════════════════════
 # OPENCODE CLI INSTALLATION
@@ -664,6 +722,7 @@ install-opencode: check-deps
 				for skill_dir in $$base_dir/$$skill_pattern; do \
 					if [ -d "$$skill_dir" ]; then \
 						skill_name=$$(basename "$$skill_dir"); \
+						rm -rf "$(OPENCODE_SKILLS)/$$skill_name"; \
 						cp -r "$$skill_dir" "$(OPENCODE_SKILLS)/$$skill_name"; \
 						echo "  ✓ $$plugin_name: $$skill_name"; \
 						skills_count=$$((skills_count + 1)); \
@@ -775,6 +834,29 @@ install-codex: check-deps
 	done; \
 	echo "  Total skills installed: $$skills_count"
 	@echo ""
+	@echo -e "$(CYAN)Converting commands to skills...$(NC)"
+	@commands_count=0; \
+	for plugin_json in $(PLUGIN_JSON_FILES); do \
+		plugin_dir=$$(dirname "$$plugin_json"); \
+		base_dir=$$(dirname "$$plugin_dir"); \
+		plugin_name=$$(jq -r '.name' "$$plugin_json" 2>/dev/null); \
+		commands=$$(jq -r '.commands[]? // empty' "$$plugin_json" 2>/dev/null); \
+		if [ -n "$$commands" ]; then \
+			for cmd in $$commands; do \
+				cmd_path="$$base_dir/$$cmd"; \
+				if [ -f "$$cmd_path" ]; then \
+					cmd_name=$$(basename "$$cmd" .md); \
+					cmd_skill_dir="$(CODEX_SKILLS)/$$cmd_name"; \
+					mkdir -p "$$cmd_skill_dir"; \
+					cp "$$cmd_path" "$$cmd_skill_dir/SKILL.md"; \
+					echo "  ✓ $$plugin_name: $$cmd_name (converted from command)"; \
+					commands_count=$$((commands_count + 1)); \
+				fi; \
+			done; \
+		fi; \
+	done; \
+	echo "  Total commands converted to skills: $$commands_count"
+	@echo ""
 	@echo -e "$(CYAN)Creating AGENTS.md index...$(NC)"
 	@echo "# Developer Kit for Codex CLI" > $(CODEX_AGENTS_MD)
 	@echo "# Auto-generated by Developer Kit Makefile" >> $(CODEX_AGENTS_MD)
@@ -813,8 +895,160 @@ install-codex: check-deps
 	@$(call success "Codex CLI installation complete")
 	@echo "  AGENTS.md file: $(CODEX_AGENTS_MD)"
 	@echo "  Skills directory: $(CODEX_SKILLS)/"
-	@echo "  NOTE: Agents and commands are NOT installed for Codex CLI (not supported)"
+	@echo "  NOTE: Agents are NOT installed for Codex CLI (not supported)"
+	@echo "  Commands are converted to skills for Codex compatibility"
 	@echo ""
+
+# ═══════════════════════════════════════════════════════════════
+# KIMI CLI INSTALLATION
+# ═══════════════════════════════════════════════════════════════
+
+install-kimi: check-deps
+	@echo ""
+	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
+	@echo -e "$(BLUE)Installing Developer Kit for Kimi CLI$(NC)"
+	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
+	@echo ""
+	@mkdir -p $(KIMI_SKILLS)
+	@echo -e "$(CYAN)Installing skills...$(NC)"
+	@skills_count=0; \
+	for plugin_json in $(PLUGIN_JSON_FILES); do \
+		plugin_dir=$$(dirname "$$plugin_json"); \
+		base_dir=$$(dirname "$$plugin_dir"); \
+		plugin_name=$$(jq -r '.name' "$$plugin_json" 2>/dev/null); \
+		skills=$$(jq -r '.skills[]? // empty' "$$plugin_json" 2>/dev/null); \
+		if [ -n "$$skills" ]; then \
+			for skill_pattern in $$skills; do \
+				for skill_dir in $$base_dir/$$skill_pattern; do \
+					if [ -d "$$skill_dir" ]; then \
+						skill_name=$$(basename "$$skill_dir"); \
+						rm -rf "$(KIMI_SKILLS)/$$skill_name"; \
+						cp -r "$$skill_dir" "$(KIMI_SKILLS)/$$skill_name"; \
+						echo "  ✓ $$plugin_name: $$skill_name"; \
+						skills_count=$$((skills_count + 1)); \
+					fi; \
+				done; \
+			done; \
+		fi; \
+	done; \
+	echo "  Total skills installed: $$skills_count"
+	@echo ""
+	@echo -e "$(CYAN)Converting commands to skills...$(NC)"
+	@commands_count=0; \
+		for plugin_json in $(PLUGIN_JSON_FILES); do \
+			plugin_dir=$$(dirname "$$plugin_json"); \
+			base_dir=$$(dirname "$$plugin_dir"); \
+			plugin_name=$$(jq -r '.name' "$$plugin_json" 2>/dev/null); \
+			commands=$$(jq -r '.commands[]? // empty' "$$plugin_json" 2>/dev/null); \
+			if [ -n "$$commands" ]; then \
+				for cmd in $$commands; do \
+					cmd_path="$$base_dir/$$cmd"; \
+					if [ -f "$$cmd_path" ]; then \
+						cmd_name=$$(basename "$$cmd" .md); \
+						cmd_skill_dir="$(KIMI_SKILLS)/$$cmd_name"; \
+						mkdir -p "$$cmd_skill_dir"; \
+						cp "$$cmd_path" "$$cmd_skill_dir/SKILL.md"; \
+						echo "  ✓ $$plugin_name: $$cmd_name (converted from command)"; \
+						commands_count=$$((commands_count + 1)); \
+					fi; \
+				done; \
+			fi; \
+		done; \
+	echo "  Total commands converted to skills: $$commands_count"
+	@echo ""
+	@echo ""
+
+# ═══════════════════════════════════════════════════════════════
+# UTILITY INSTALLATION
+# ═══════════════════════════════════════════════════════════════
+
+install-agents-loop:
+	@echo ""
+	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
+	@echo -e "$(BLUE)Installing agents_loop utility$(NC)"
+	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
+	@echo ""
+	@if [ ! -d "/usr/local/bin" ]; then \
+		echo -e "$(RED)✗ /usr/local/bin does not exist. Please create it or use sudo.$(NC)"; \
+		exit 1; \
+	fi
+	@ln -sf "$(DEVKIT_DIR)/scripts/agents_loop.py" "/usr/local/bin/agents_loop"
+	@chmod +x "/usr/local/bin/agents_loop"
+	@$(call success,Installed agents_loop → /usr/local/bin/agents_loop)
+	@echo "  Usage: agents_loop --spec=docs/specs/... [--agent=<agent>] [--model=<model>] [--yolo]"
+	@echo ""
+	@echo -e "$(CYAN)Supported agents:$(NC)"
+	@echo "  • claude   - Claude Code (--model sonnet|opus|haiku, --yolo uses --dangerously-skip-permissions)"
+	@echo "  • codex    - OpenAI Codex CLI (--model gpt-5.3-codex|o3, --yolo uses --dangerously-bypass-approvals-and-sandbox)"
+	@echo "  • copilot  - GitHub Copilot CLI (--model gpt-4, --yolo uses --allow-all)"
+	@echo "  • gemini   - Google Gemini CLI (-m gemini-3-pro, --yolo uses -y)"
+	@echo "  • kimi     - Kimi CLI (--model kimi-k1.5, --yolo uses --yolo)"
+	@echo "  • glm4     - GLM-4 CLI (--model glm-4-plus, --yolo uses --dangerously-skip-permissions)"
+	@echo "  • minimax  - MiniMax CLI (--model abab6.5s, --yolo uses --dangerously-skip-permissions)"
+	@echo ""
+	@echo "  Examples:"
+	@echo "    agents_loop --spec=docs/specs/001                              # uses codex (default)"
+	@echo "    agents_loop --spec=docs/specs/001 --agent=claude --model=sonnet --yolo"
+	@echo "    agents_loop --spec=docs/specs/001 --agent=gemini -m gemini-3-pro --yolo"
+	@echo "    agents_loop --spec=docs/specs/001 --agent=codex --model=o3 --yolo"
+	@echo ""
+
+# ═══════════════════════════════════════════════════════════════
+# PLUGIN VERSION BUMP
+# ═══════════════════════════════════════════════════════════════
+
+plugin-bump-version: check-deps
+	@echo ""
+	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
+	@echo -e "$(BLUE)Bumping Plugin Versions$(NC)"
+	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
+	@echo ""
+	@if [ -n "$(VERSION)" ]; then \
+		NEW_VERSION="$(VERSION)"; \
+		echo -e "$(CYAN)Using specified version: $$NEW_VERSION$(NC)"; \
+	else \
+		CURRENT_VERSION=$$(jq -r '.version // "0.0.0"' $(MARKETPLACE_JSON) 2>/dev/null || echo "0.0.0"); \
+		echo -e "$(CYAN)Current version: $$CURRENT_VERSION$(NC)"; \
+		MAJOR=$$(echo $$CURRENT_VERSION | cut -d. -f1); \
+		MINOR=$$(echo $$CURRENT_VERSION | cut -d. -f2); \
+		PATCH=$$(echo $$CURRENT_VERSION | cut -d. -f3); \
+		if [ "$(BUMP)" = "major" ]; then \
+			NEW_VERSION=$$((MAJOR + 1)).0.0; \
+			echo -e "$(CYAN)Bumping MAJOR version$(NC)"; \
+		elif [ "$(BUMP)" = "minor" ]; then \
+			NEW_VERSION=$$MAJOR.$$((MINOR + 1)).0; \
+			echo -e "$(CYAN)Bumping MINOR version$(NC)"; \
+		else \
+			NEW_VERSION=$$MAJOR.$$MINOR.$$((PATCH + 1)); \
+			echo -e "$(CYAN)Bumping PATCH version$(NC)"; \
+		fi; \
+	fi; \
+	echo ""; \
+	echo -e "$(BLUE)ℹ Updating marketplace.json...$(NC)"; \
+	jq --arg ver "$$NEW_VERSION" '.version = $$ver' $(MARKETPLACE_JSON) > $(MARKETPLACE_JSON).tmp && mv $(MARKETPLACE_JSON).tmp $(MARKETPLACE_JSON); \
+	echo -e "$(GREEN)✓ Updated marketplace.json$(NC)"; \
+	echo -e "$(BLUE)ℹ Updating tile.json...$(NC)"; \
+	jq --arg ver "$$NEW_VERSION" '.version = $$ver' $(TILE_JSON) > $(TILE_JSON).tmp && mv $(TILE_JSON).tmp $(TILE_JSON); \
+	echo -e "$(GREEN)✓ Updated tile.json$(NC)"; \
+	echo -e "$(BLUE)ℹ Updating plugin.json files...$(NC)"; \
+	for plugin_json in $(PLUGIN_JSON_FILES); do \
+		jq --arg ver "$$NEW_VERSION" '.version = $$ver' "$$plugin_json" > "$$plugin_json.tmp" && mv "$$plugin_json.tmp" "$$plugin_json"; \
+		echo -e "$(GREEN)  ✓ $$(basename $$(dirname $$(dirname "$$plugin_json"))): $$NEW_VERSION$(NC)"; \
+	done; \
+	echo -e "$(GREEN)✓ All plugin.json files updated$(NC)"; \
+	echo ""; \
+	echo -e "$(GREEN)✓ Version bump complete: $$NEW_VERSION$(NC)"
+	@echo ""
+
+# ═══════════════════════════════════════════════════════════════
+# SECURITY SCAN
+# ═══════════════════════════════════════════════════════════════
+
+security-scan:
+	@$(MCP_SCAN_CLI) --all -v
+
+security-scan-changed:
+	@$(MCP_SCAN_CLI) --changed -v
 
 # ═══════════════════════════════════════════════════════════════
 # SKILL VALIDATION
@@ -897,7 +1131,7 @@ skill-review-all: check-deps
 							failed=$$((failed + 1)); \
 						fi; \
 					fi; \
-				done; \
+			done; \
 			done; \
 		fi; \
 	done; \
@@ -915,50 +1149,3 @@ skill-review-all: check-deps
 plugin-validate:
 	@echo -e "$(BLUE)ℹ Running repository-wide component validation$(NC)"
 	@$(VALIDATOR_CLI) --all -v
-
-# ═══════════════════════════════════════════════════════════════
-# VERSION BUMP
-# ═══════════════════════════════════════════════════════════════
-
-plugin-bump-version:
-	@VERSION="$(VERSION)" BUMP="$(BUMP)" python3 scripts/bump_plugin_versions.py
-
-# ═══════════════════════════════════════════════════════════════
-# CLAUDE CODE INTERACTIVE INSTALLATION
-# ═══════════════════════════════════════════════════════════════
-# TO BE IMPLEMENTED - This will be a comprehensive interactive installer
-# ═══════════════════════════════════════════════════════════════
-
-install-claude: check-deps
-	@echo ""
-	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
-	@echo -e "$(BLUE)      Claude Code Interactive Developer Kit Installer          $(NC)"
-	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
-	@echo ""
-	@echo -e "$(YELLOW)⚠ This installer is designed for Claude Code only.$(NC)"
-	@echo ""
-	@bash $(DEVKIT_DIR)/scripts/install-claude.sh "$(PLUGIN_JSON_FILES)"
-
-# ═══════════════════════════════════════════════════════════════
-# CLEAN
-# ═══════════════════════════════════════════════════════════════
-
-# ═══════════════════════════════════════════════════════════════
-# SECURITY SCANNING
-# ═══════════════════════════════════════════════════════════════
-
-security-scan:
-	@$(MCP_SCAN_CLI) --all -v
-
-security-scan-changed:
-	@$(MCP_SCAN_CLI) --changed -v
-
-# ═══════════════════════════════════════════════════════════════
-# CLEAN
-# ═══════════════════════════════════════════════════════════════
-
-clean:
-	@echo -e "$(BLUE)Cleaning generated files...$(NC)"
-	@rm -f $(DEVKIT_DIR)/*.tmp
-	@$(call success "Clean complete")
-	@echo ""

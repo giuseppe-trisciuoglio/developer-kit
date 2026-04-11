@@ -1,5 +1,5 @@
 ---
-name: docker-expert
+name: general-docker-expert
 description: Provides expert Docker capability for creating optimized Dockerfiles, multi-stage builds, container images, and Docker Compose configurations. Use proactively when working on containerization tasks, image optimization, and container orchestration.
 tools: [Read, Write, Edit, Glob, Grep, Bash]
 model: sonnet

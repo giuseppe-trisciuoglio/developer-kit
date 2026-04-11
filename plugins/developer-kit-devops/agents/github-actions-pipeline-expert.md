@@ -55,7 +55,7 @@ jobs:
 # Always set minimal permissions at workflow level
 permissions:
   contents: read
-  
+
 jobs:
   build:
     permissions:
@@ -257,7 +257,7 @@ runs:
         java-version: ${{ inputs.java-version }}
         distribution: 'temurin'
         cache: 'maven'
-    
+
     - name: Cache Maven
       id: cache
       uses: actions/cache@v4
@@ -294,20 +294,20 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: production
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
-      
+
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
-      
+
       - name: Build, tag, and push image
         id: build-image
         env:
@@ -317,12 +317,12 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-      
+
       - name: Download task definition
         run: |
           aws ecs describe-task-definition --task-definition my-task \
             --query taskDefinition > task-definition.json
-      
+
       - name: Update task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
@@ -330,7 +330,7 @@ jobs:
           task-definition: task-definition.json
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
-      
+
       - name: Deploy to ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
@@ -357,22 +357,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: 'maven'
-      
+
       - name: Build
         run: ./mvnw clean package -DskipTests
-      
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
-      
+
       - name: Deploy Lambda
         run: |
           aws lambda update-function-code \
@@ -397,24 +397,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-      
+
       - run: npm ci
       - run: npm run build
-      
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
-      
+
       - name: Sync to S3
         run: aws s3 sync ./dist s3://${{ secrets.S3_BUCKET }} --delete
-      
+
       - name: Invalidate CloudFront
         run: |
           aws cloudfront create-invalidation \
@@ -446,24 +446,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - id: auth
         uses: google-github-actions/auth@v2
         with:
           workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
           service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
-      
+
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
-      
+
       - name: Configure Docker
         run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
-      
+
       - name: Build and Push
         run: |
           docker build -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/repo/${{ env.SERVICE }}:${{ github.sha }} .
           docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/repo/${{ env.SERVICE }}:${{ github.sha }}
-      
+
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
         with:
@@ -492,20 +492,20 @@ jobs:
     environment: production
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Azure Login
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      
+
       - name: Build and push to ACR
         run: |
           az acr build \
             --registry ${{ secrets.ACR_NAME }} \
             --image my-app:${{ github.sha }} .
-      
+
       - name: Deploy to Container Apps
         uses: azure/container-apps-deploy-action@v2
         with:
@@ -529,15 +529,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set up kubectl
         uses: azure/setup-kubectl@v4
-      
+
       - name: Configure kubeconfig
         run: |
           mkdir -p ~/.kube
           echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > ~/.kube/config
-      
+
       - name: Deploy
         run: |
           kubectl set image deployment/my-app \
@@ -563,21 +563,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: 'maven'
-      
+
       - name: Build and Test
         run: ./mvnw clean verify
-      
+
       - name: Upload Coverage
         uses: codecov/codecov-action@v4
         with:
           files: target/site/jacoco/jacoco.xml
-      
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -601,19 +601,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: 'gradle'
-      
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-      
+
       - name: Build and Test
         run: ./gradlew build
-      
+
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
@@ -636,17 +636,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-      
+
       - run: npm ci
       - run: npm run lint
       - run: npm run test:coverage
       - run: npm run build
-      
+
       - name: Upload Coverage
         uses: codecov/codecov-action@v4
 ```
@@ -665,19 +665,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
-      
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      
+
       - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      
+
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
@@ -687,7 +687,7 @@ jobs:
             type=ref,event=branch
             type=semver,pattern={{version}}
             type=sha
-      
+
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
@@ -833,10 +833,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Build
         run: ./build.sh
-      
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:

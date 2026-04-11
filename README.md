@@ -1,542 +1,370 @@
-# Developer Kit for Claude Code
+<div align="center">
 
+[![License](https://img.shields.io/github/license/giuseppe-trisciuoglio/developer-kit.svg)](./LICENSE)
 [![Security Scan](https://github.com/giuseppe-trisciuoglio/developer-kit/actions/workflows/security-scan.yml/badge.svg)](https://github.com/giuseppe-trisciuoglio/developer-kit/actions/workflows/security-scan.yml)
 [![Plugin Validation](https://github.com/giuseppe-trisciuoglio/developer-kit/actions/workflows/plugin-validation.yml/badge.svg)](https://github.com/giuseppe-trisciuoglio/developer-kit/actions/workflows/plugin-validation.yml)
+[![Skills](https://img.shields.io/badge/skills-150%2B-blue.svg)](./plugins)
+[![Agents](https://img.shields.io/badge/agents-45%2B-purple.svg)](./plugins)
 
-> A modular plugin system of reusable skills, agents, and commands for automating development tasks in Claude Code
+**🌐 Languages:** [English](README.md) | [Italiano](./README_IT.md) | [中文](./README_CN.md) | [Español](./README_ES.md)
 
-**Listed on:**
-- [context7](https://context7.com/giuseppe-trisciuoglio/developer-kit?tab=skills) — Skills marketplace
-- [skills.sh](https://skills.sh/giuseppe-trisciuoglio/developer-kit) — AI skills directory
+![](https://repository-images.githubusercontent.com/1080332870/5124e0d2-98f8-4486-9659-dde59a5ad251)
 
-**Developer Kit for Claude Code** teaches Claude how to **perform development tasks in a repeatable way** across
-multiple languages and frameworks. Built as a modular marketplace, you can install only the plugins you need.
+**A modular AI plugin system that supercharges your development workflow across languages and frameworks.**
 
-## Quick Start
+[Installation](#installation) • [Quick Start](#quick-start) • [Plugins](#available-plugins) • [Documentation](https://github.com/giuseppe-trisciuoglio/developer-kit/blob/main/README.md) • [Changelog](./CHANGELOG.md)
+
+</div>
+
+---
+
+## Why Developer Kit?
+
+Developer Kit is a **modular plugin marketplace** for Claude Code that teaches Claude how to perform development tasks in a repeatable, high-quality way. Instead of generic AI responses, you get domain-specific expertise for your exact tech stack.
+
+- **🧩 Modular by Design** — Install only what you need. Java developer? Grab `developer-kit-java`. Full-stack TypeScript? Add `developer-kit-typescript`.
+- **🎯 Domain Experts** — 45+ specialized agents for code review, refactoring, security audits, architecture design, and testing across 7+ languages.
+- **📚 150+ Skills** — Reusable capabilities from Spring Boot CRUD generation to CloudFormation templates, all with best practices built-in.
+- **🔄 Multi-CLI Support** — Works with Claude Code, GitHub Copilot CLI, OpenCode CLI, and Codex CLI.
+- **⚡ Auto-Activation** — Path-scoped rules automatically activate when you open relevant files. No configuration needed.
+
+---
+
+## Installation
+
+### Quick Install (Recommended)
+
+#### Claude Code
 
 ```bash
-# Install from marketplace (recommended)
+# Install from marketplace
 /plugin marketplace add giuseppe-trisciuoglio/developer-kit
 
 # Or install from local directory
 /plugin install /path/to/developer-kit
 ```
 
-**Claude Desktop**: [Enable Skills in Settings](https://claude.ai/settings/capabilities)
+#### Claude Desktop
+
+[Enable Skills in Settings](https://claude.ai/settings/capabilities) → Add `giuseppe-trisciuoglio/developer-kit`
+
+#### Manual Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/giuseppe-trisciuoglio/developer-kit.git
+
+# Install via Makefile (auto-detects your CLI)
+cd developer-kit
+make install
+
+# Or install for specific CLI
+make install-claude      # Claude Code
+make install-opencode    # OpenCode CLI
+make install-copilot     # GitHub Copilot CLI
+make install-codex       # Codex CLI
+```
 
 ---
 
-## Architecture
+## Quick Start
 
-Developer Kit is organized as a **modular marketplace** with 11 independent plugins:
+```bash
+# After installation, start your CLI
+claude
 
-```
-plugins/
-├── developer-kit-core/            # Core agents/commands/skills (required)
-├── developer-kit-java/            # Java/Spring Boot/LangChain4J/AWS SDK/GraalVM Native Image
-├── developer-kit-typescript/      # NestJS/React/React Native/Next.js/Drizzle/Monorepo
-├── developer-kit-python/          # Python development/AWS Lambda
-├── developer-kit-php/             # PHP/WordPress/AWS Lambda
-├── developer-kit-aws/             # AWS CloudFormation/AWS Architecture
-├── developer-kit-ai/              # Prompt Engineering/RAG/Chunking
-├── developer-kit-devops/          # Docker/GitHub Actions
-├── developer-kit-project-management/  # LRA workflow/Meetings
-├── developer-kit-tools/           # Additional development tools and MCP integrations
-└── github-spec-kit/               # GitHub specification integration
+# Check available commands
+/help
+
+# Use a Developer Kit command
+/devkit.refactor
+
+# Or invoke a specs workflow
+/specs:brainstorm
 ```
 
-Current marketplace totals: **116 skills**, **43 agents**, and **44 commands** across the 11 plugin manifests.
+### Example Prompts
 
-Language plugins (Java, TypeScript, Python, PHP) include **coding rules** (`rules/` directory) that auto-activate via `globs:` path-scoped matching to enforce naming conventions, project structure, language best practices, and error handling patterns. They also include **LSP server configurations** (`.lsp.json`) for real-time code intelligence, diagnostics, and navigation features.
+```
+Generate a complete CRUD module for User entity with NestJS and Drizzle ORM
+Review this Java Spring Boot service for security issues
+Create a CloudFormation template for ECS with auto-scaling
+Help me refactor this monolithic class into clean architecture
+Generate unit tests for this TypeScript service with 100% coverage
+```
 
 ---
 
-## Workflow
+## Usage
 
-The Developer Kit follows a systematic development workflow that ensures high-quality, well-documented features from idea to implementation:
+Developer Kit provides **four layers** of capabilities:
 
-### 1. Brainstorming Phase
+### 1. Skills
+Reusable capabilities loaded on-demand. Example:
 
-**Command:** `/devkit.brainstorm [idea-description]`
+```
+[Skill: spring-boot-crud-patterns activated]
+```
 
-Start here when you have a new feature idea. This command guides you to create a **functional specification** (WHAT the system should do, not HOW):
+Skills automatically provide patterns, templates, and best practices for specific tasks.
 
-- **Idea Refinement**: Deep exploration through structured dialogue
-- **Use Case Definition**: Define user behaviors and business rules
-- **Acceptance Criteria**: Establish testable conditions for completion
-- **Specification Review**: Validate with user
+### 2. Agents
+Specialized sub-agents for complex workflows:
 
-**Output**: Functional specification saved to `docs/specs/YYYY-MM-DD--feature-name.md`
-
-**Example:**
 ```bash
-/devkit.brainstorm Add user authentication with JWT tokens
+# Invoke via natural language
+"Review this code as a Spring Boot expert"
+
+# Or use commands
+/devkit.java.code-review
+/devkit.typescript.code-review
 ```
 
-**Next step:** After specification, continue with `/devkit.spec-to-tasks`
+### 3. Specifications-Driven Development (SDD)
+Transform ideas into production-ready code through a structured workflow:
 
-### 2. Specification to Tasks Phase
+![SDD Workflow](./docs/specs-life-cycle.png)
 
-**Command:** `/devkit.spec-to-tasks [--lang=java|spring|typescript|nestjs|react|python|general] [spec-file]`
+#### Phase 1: Specification Creation
 
-Converts the functional specification into atomic, executable tasks:
+| Command | When to Use | Output |
+|---------|-------------|--------|
+| `/specs:brainstorm` | New features, complex requirements | Full specification with 9 phases |
+| `/specs:quick-spec` | Bug fixes, small enhancements | Lightweight 4-phase spec |
 
-- **Task Decomposition**: Break down specification into actionable tasks
-- **Dependency Mapping**: Identify task dependencies
-- **Acceptance Criteria**: Each task has clear completion criteria
-- **Implementation Commands**: Pre-filled commands for execution
-- **Complexity Scoring**: Automatic calculation of task complexity (0-100+ scale)
-- **Strong Constraint**: Tasks with score ≥ 51 MUST be split before implementation
+The specification lives in `docs/specs/[id]/YYYY-MM-DD--feature-name.md`
 
-**Output**: Task list saved to `docs/specs/[id]/tasks/TASK-XXX.md` with complexity scores
+#### Phase 2: Task Generation
 
-**Example:**
-```bash
-/devkit.spec-to-tasks docs/specs/001-user-auth/
-/devkit.spec-to-tasks --lang=spring docs/specs/001-user-auth/
+| Command | Description |
+|---------|-------------|
+| `/specs:spec-to-tasks` | Convert specification into executable task files |
+| `/specs:task-manage` | Add, split, update, or reorganize tasks |
+
+Tasks are generated in `docs/specs/[id]/tasks/` with individual task files.
+
+#### Phase 3: Implementation
+
+| Command | Description |
+|---------|-------------|
+| `/specs:task-implementation` | Guided implementation of a specific task |
+| `/specs:task-tdd` | Test-Driven Development approach for the task |
+
+Each task implementation updates the Knowledge Graph for context preservation.
+
+#### Phase 4: Quality Assurance
+
+| Command | Description |
+|---------|-------------|
+| `/specs:task-review` | Verify task meets specifications and code quality standards |
+| `/specs:code-cleanup` | Professional cleanup: remove debug logs, optimize imports |
+| `/specs:spec-sync-with-code` | Synchronize spec with actual implementation |
+
+#### Additional Workflow Commands
+
+| Command | Description |
+|---------|-------------|
+| `/specs:spec-quality-check` | Interactive quality assessment of specifications |
+| `/specs:spec-sync-context` | Sync Knowledge Graph, Tasks, and Codebase state |
+| `/specs:ralph-loop` | Automated loop for spec-driven development |
+| `/devkit.refactor` | Refactor existing code with architectural analysis |
+| `/devkit.github.create-pr` | Create PR with comprehensive description |
+
+### 4. Rules
+Path-scoped rules auto-activate based on file patterns:
+
+```yaml
+# Auto-activates for *.java files
+globs: ["**/*.java"]
+---
+Always use constructor injection. Never use field injection with @Autowired.
 ```
 
-**Next step:** Review task complexity and manage tasks with `/devkit.task-manage`
-
-### 2.5. Task Management Phase (NEW)
-
-**Command:** `/devkit.task-manage --action=[list|split|add|mark-optional|update|regenerate-index] [options]`
-
-Manage tasks after generation to ensure they're appropriately sized and prioritized:
-
-- **List Tasks**: View all tasks with complexity scores and recommendations
-- **Split Complex Tasks**: Automatically split tasks with score ≥ 51 into smaller tasks
-- **Add New Tasks**: Dynamically add tasks to existing specifications
-- **Mark Optional**: Prioritize MVP by marking non-critical tasks as optional
-- **Update Tasks**: Modify requirements or acceptance criteria
-- **Regenerate Index**: Update task list after modifications
-
-**Complexity Scoring:**
-- Simple (0-30 ✅): OK as single task
-- Moderate (31-50 ⚠️): Consider splitting
-- Complex (51+ ❌): MUST split before implementation
-
-**Examples:**
-```bash
-# List all tasks with complexity scores
-/devkit.task-manage --action=list --spec=docs/specs/001-user-auth/
-
-# Split a complex task
-/devkit.task-manage --action=split --task=docs/specs/001-user-auth/tasks/TASK-007.md
-
-# Mark task as optional for MVP
-/devkit.task-manage --action=mark-optional --task=docs/specs/001-user-auth/tasks/TASK-010.md
-
-# Add a new task
-/devkit.task-manage --action=add --spec=docs/specs/001-user-auth/2026-03-07--user-auth.md --lang=spring
-```
-
-**Output**: Updated task files and regenerated task list index
-
-**Next step:** Execute tasks with `/devkit.feature-development`
-
-### 3. Feature Development Phase
-
-**Command:** `/devkit.feature-development [--lang=spring|typescript|nestjs|react|python|general] [feature-description | "Task: task-name"]`
-
-Use this command to implement features. Supports two modes:
-
-**Mode 1 - Feature Development:** Implement entire features
-- **Discovery**: Understand what needs to be built
-- **Codebase Exploration**: Deep understanding of existing code patterns
-- **Clarifying Questions**: Fill gaps and resolve ambiguities
-- **Architecture Design**: Design implementation with trade-offs
-- **Implementation**: Build the feature following conventions
-- **Quality Review**: Ensure code quality and correctness
-- **Summary**: Document what was accomplished
-
-**Mode 2 - Task Execution:** Execute specific tasks from a task list (use "Task:" prefix)
-- Reads task details from `docs/tasks/YYYY-MM-DD--*--tasks.md`
-- Focuses on specific task implementation
-- Updates task progress in the task list
-
-**Language/Framework Support:**
-- `--lang=spring` or `--lang=java`: Java/Spring Boot development
-- `--lang=typescript` or `--lang=ts`: TypeScript/Node.js development
-- `--lang=nestjs`: NestJS backend development
-- `--lang=react`: React frontend development
-- `--lang=python` or `--lang=py`: Python development
-- `--lang=aws`: AWS infrastructure and CloudFormation
-- `--lang=general` or no flag: General-purpose development
-
-**Examples:**
-```bash
-# Feature Development Mode
-/devkit.feature-development --lang=spring Add REST API for user management
-
-# Task Execution Mode
-/devkit.feature-development --lang=spring "Task: User login endpoint"
-```
-
-### 4. Code Review & Debug Phase
-
-After implementation, use these specialized commands for quality assurance:
-
-**Task Review:** `/devkit.task-review [--lang=...] [task-file]`
-- Verify task implementation meets specifications
-- Validate acceptance criteria
-- Check specification compliance
-- Perform language-specific code review
-- Generate comprehensive review reports
-
-**Code Review:** `/devkit.refactor [--lang=...] [refactoring-description]`
-- Improve code structure, maintainability, and design
-- Reduce technical debt
-- Apply best practices and patterns
-
-**Fix & Debug:** `/devkit.fix-debugging [--lang=...] [issue-description]`
-- Systematic root cause analysis
-- Minimal, focused fixes
-- Verification and regression prevention
-
-**Example:**
-```bash
-/devkit.task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
-/devkit.fix-debugging --lang=spring Bean injection failing in OrderService
-/devkit.refactor --lang=typescript Simplify the authentication flow
-```
-
-### Complete Workflow Diagram
-
-```
-                         +--------------------------------------+
-                         |                IDEA                  |
-                         +--------------------------------------+
-                                          |
-                    +----------------------+----------------------+
-                    |                                             |
-                    +                                             +
-     +-------------------------+                +-------------------------+
-     |   Full Brainstorming    |                |      Quick Spec        |
-     |      (9 phases)        |                |      (4 phases)        |
-     +-------------------------+                +-------------------------+
-                    |                                             |
-                    +----------------------+----------------------+
-                                           +
-                         +--------------------------------------+
-                         |  docs/specs/[id]/YYYY-MM-DD--name   |
-                         +--------------------------------------+
-                                          |
-                    +----------------------+----------------------+
-                    |                                             |
-                    +                                             +
-     +-------------------------+                +-------------------------+
-     |    devkit.spec-review   |                |   devkit.spec-quality   |
-     |   (interactive, max 5   |                |   (Knowledge Graph      |
-     |        questions)        |                |       sync)             |
-     +-------------------------+                +-------------------------+
-                    |                                             |
-                    +----------------------+----------------------+
-                                           +
-                         +--------------------------------------+
-                         |       devkit.spec-to-tasks            |
-                         |   (generates task list)              |
-                         +--------------------------------------+
-                                          |
-                    +----------------------+----------------------+
-                    |                                             |
-                    +                                             +
-     +-------------------------+                +-------------------------+
-     |   devkit.task-manage    |                |   devkit.task-review    |
-     |    (list/split/add)     |                |                         |
-     +-------------------------+                +-------------------------+
-                    |
-                    +
-                         +--------------------------------------+
-                         |  docs/specs/[id]/tasks/TASK-XXX.md   |
-                         +--------------------------------------+
-                                          |
-                    +----------------------+----------------------+
-                    |                                             |
-                    +                                             +
-     +-------------------------+                +-------------------------+
-     | devkit.task-implement.  |                | devkit.spec-sync       |
-     |      (11 steps)          |<--------------+ (when deviations       |
-     |                         |                |       detected)         |
-     | - Git state check       |                +-------------------------+
-     | - KG validation         |                              |
-     | - Contract validation   |                              |
-     | - Implementation        |                              |
-     | - Verification          |                              |
-     | - Auto-update KG        |                              |
-     +-------------------------+                              |
-                    |                                          |
-                    +------------------------------------------+
-                                           +
-                         +--------------------------------------+
-                         |           IMPLEMENTATION              |
-                         +--------------------------------------+
-```
-
-### Alternative Paths
-
-**For Bug Fixes (using Quick Spec):**
-```
-Bug Report -> /devkit.quick-spec -> /devkit.task-implementation -> Verification
-```
-
-**For Refactoring:**
-```
-Code Issue -> /devkit.brainstorm (optional) -> /devkit.refactor -> Improved code
-```
-
-**For Quick Features (using Quick Spec):**
-```
-Simple Feature -> /devkit.quick-spec -> Direct implementation or tasks
-```
+> **📋 Note on Rules Installation**
+>
+> Plugins do not automatically install rules into your project. To use the rules, you can copy them manually
+> or use the Makefile command:
+>
+> ```bash
+> # Copy rules from a specific plugin
+> make copy-rules PLUGIN=developer-kit-java
+>
+> # Or manually copy .md files from the plugin's rules/ folder
+> mkdir -p .claude/rules
+> cp plugins/developer-kit-[language]/rules/*.md .claude/rules/
+> ```
+>
+> The rules will be automatically activated based on the `globs:` patterns defined in the header of each file.
 
 ---
 
 ## Available Plugins
 
-### developer-kit-core (Required)
+| Plugin | Language/Domain | Components | Description |
+|--------|-----------------|------------|-------------|
+| `developer-kit-core` | Core | 6 Agents, 8 Commands, 4 Skills | Required base plugin with general-purpose capabilities |
+| `developer-kit-specs` | Workflow | 9 Commands, 2 Skills | Specifications-driven development (SDD) workflow |
+| `developer-kit-java` | Java | 9 Agents, 11 Commands, 51 Skills, 4 Rules | Spring Boot, LangChain4J, AWS SDK, GraalVM |
+| `developer-kit-typescript` | TypeScript | 13 Agents, 3 Commands, 25 Skills, 17 Rules | NestJS, React, Next.js, Drizzle ORM, Monorepo |
+| `developer-kit-python` | Python | 4 Agents, 4 Rules | Django, Flask, FastAPI, AWS Lambda |
+| `developer-kit-php` | PHP | 5 Agents, 3 Skills, 4 Rules | WordPress, Sage, AWS Lambda |
+| `developer-kit-aws` | AWS | 3 Agents, 19 Skills | CloudFormation, SAM, CLI, Architecture |
+| `developer-kit-ai` | AI/ML | 1 Agent, 3 Skills, 1 Command | Prompt Engineering, RAG, Chunking |
+| `developer-kit-devops` | DevOps | 2 Agents | Docker, GitHub Actions |
+| `developer-kit-tools` | Tools | 4 Skills | NotebookLM, Copilot CLI, Gemini, Codex |
+| `github-spec-kit` | GitHub | 3 Commands | GitHub spec integration |
 
-Core agents, commands, and skills used by all other plugins.
-
-| Component                    | Description                            |
-|------------------------------|----------------------------------------|
-| `general-code-explorer`      | Deep codebase exploration and analysis |
-| `general-code-reviewer`      | Code quality and security review       |
-| `general-refactor-expert`    | Code refactoring specialist            |
-| `general-software-architect` | Feature architecture design            |
-| `general-debugger`           | Root cause analysis and debugging      |
-| `document-generator-expert`  | Professional document generation       |
-
-**Skills**: `adr-drafting`, `memory-md-management`, `docs-updater`, `drawio-logical-diagrams`, `github-issue-workflow`, `knowledge-graph`
-
-**Hooks**: `prevent-destructive-commands` (Python 3 PreToolUse hook for blocking dangerous Bash commands)
-
-**Commands**: `/devkit.brainstorm`, `/devkit.quick-spec`, `/devkit.spec-to-tasks`, `/devkit.spec-quality`, `/devkit.spec-review`, `/devkit.spec-sync`,
-`/devkit.task-manage`, `/devkit.task-review`, `/devkit.task-implementation`, `/devkit.refactor`, `/devkit.feature-development`,
-`/devkit.fix-debugging`, `/devkit.generate-document`, `/devkit.generate-changelog`, `/devkit.github.create-pr`,
-`/devkit.github.review-pr`, `/devkit.lra.*` (7 LRA workflow commands), `/devkit.verify-skill`,
-`/devkit.generate-security-assessment`
+**Total: 150+ Skills | 45+ Agents | 20+ Commands | 45+ Rules**
 
 ---
 
-### developer-kit-java
+## Plugin Architecture
 
-Comprehensive Java development toolkit with Spring Boot, testing, LangChain4J, AWS SDK, and GraalVM Native Image.
+```
+developer-kit/
+├── plugins/
+│   ├── developer-kit-core/          # Required base
+│   │   ├── agents/                  # Agent definitions (.md)
+│   │   ├── commands/                # Slash commands (.md)
+│   │   ├── skills/                  # Reusable skills (SKILL.md)
+│   │   ├── rules/                   # Auto-activated rules
+│   │   └── .claude-plugin/
+│   │       └── plugin.json          # Plugin manifest
+│   ├── developer-kit-java/          # Java ecosystem
+│   ├── developer-kit-typescript/    # TypeScript ecosystem
+│   └── ...
+├── .skills-validator-check/         # Validation system
+└── Makefile                         # Installation commands
+```
 
-**Agents**: `spring-boot-backend-development-expert`, `spring-boot-code-review-expert`,
-`spring-boot-unit-testing-expert`, `java-refactor-expert`, `java-security-expert`, `java-software-architect-review`,
-`java-documentation-specialist`, `java-tutorial-engineer`, `langchain4j-ai-development-expert`
-
-**Commands**: `/devkit.java.code-review`, `/devkit.java.generate-crud`, `/devkit.java.refactor-class`,
-`/devkit.java.architect-review`, `/devkit.java.dependency-audit`, `/devkit.java.generate-docs`,
-`/devkit.java.security-review`, `/devkit.java.upgrade-dependencies`, `/devkit.java.write-unit-tests`,
-`/devkit.java.write-integration-tests`, `/devkit.java.generate-refactoring-tasks`
-
-**Skills**:
-
-- **Spring Boot**: actuator, cache, crud-patterns, dependency-injection, event-driven-patterns, openapi-documentation,
-  rest-api-standards, saga-pattern, security-jwt, test-patterns, resilience4j, project-creator
-- **Spring Data**: jpa, neo4j
-- **Spring AI**: mcp-server-patterns
-- **JUnit Testing**: application-events, bean-validation, boundary-conditions, caching, config-properties,
-  controller-layer, exception-handler, json-serialization, mapper-converter, parameterized, scheduled-async,
-  security-authorization, service-layer, utility-methods, wiremock-rest-api
-- **Integration Testing**: wiremock-standalone-docker (WireMock standalone server via Docker for integration/E2E testing)
-- **LangChain4J**: ai-services-patterns, mcp-server-patterns, rag-implementation-patterns, spring-boot-integration,
-  testing-strategies, tool-function-calling-patterns, vector-stores-configuration, qdrant
-- **AWS SDK**: rds-spring-boot-integration, bedrock, core, dynamodb, kms, lambda, messaging, rds, s3, secrets-manager
-- **Clean Architecture**: clean-architecture
-- **GraalVM**: graalvm-native-image
-
-**Rules**: `naming-conventions`, `project-structure`, `language-best-practices`, `error-handling`
-
-**LSP Servers**: `java` (jdtls), `kotlin` (kotlin-language-server), `scala` (metals)
+Each plugin is self-contained with its own manifest, components, and dependencies.
 
 ---
 
-### developer-kit-typescript
+## Configuration
 
-TypeScript/JavaScript full-stack development with NestJS, React, React Native, Next.js, Drizzle ORM, DynamoDB-Toolbox, Zod validation, AWS CDK, and Monorepo tools.
+### Plugin Selection
 
-**Agents**: `nestjs-backend-development-expert`, `nestjs-code-review-expert`, `nestjs-database-expert`,
-`nestjs-security-expert`, `nestjs-testing-expert`, `nestjs-unit-testing-expert`, `react-frontend-development-expert`,
-`react-software-architect-review`, `typescript-refactor-expert`, `typescript-security-expert`,
-`typescript-software-architect-review`, `typescript-documentation-expert`, `expo-react-native-development-expert`
+Install only the plugins you need:
 
-**Commands**: `/devkit.typescript.code-review`, `/devkit.react.code-review`, `/devkit.ts.security-review`
+```bash
+# Core + Java + AWS
+make install-claude
+# Then enable: developer-kit-core, developer-kit-java, developer-kit-aws
 
-**Skills**:
-- **Backend**: `nestjs`, `nestjs-best-practices`, `clean-architecture`, `nestjs-drizzle-crud-generator`
-- **Authentication**: `better-auth`
-- **Frontend**: `react-patterns`, `shadcn-ui`, `tailwind-css-patterns`, `tailwind-design-system`
-- **Next.js**: `nextjs-app-router`, `nextjs-authentication`, `nextjs-data-fetching`, `nextjs-performance`, `nextjs-deployment`
-- **Database & ORM**: `drizzle-orm-patterns`, `dynamodb-toolbox-patterns`, `zod-validation-utilities`
-- **Monorepo**: `nx-monorepo`, `turborepo-monorepo`
-- **AWS**: `aws-lambda-typescript-integration`, `aws-cdk`
-- **Core**: `typescript-docs`
+# Full-stack TypeScript
+# Enable: developer-kit-core, developer-kit-typescript, developer-kit-aws
+```
 
-**Rules**: `naming-conventions`, `project-structure`, `language-best-practices`, `error-handling`,
-`nestjs-architecture`, `nestjs-api-design`, `nestjs-security`, `nestjs-testing`,
-`react-component-conventions`, `react-data-fetching`, `react-routing-conventions`, `tailwind-styling-conventions`,
-`drizzle-orm-conventions`, `shared-dto-conventions`, `nx-monorepo-conventions`, `i18n-conventions`,
-`lambda-conventions`, `server-feature-conventions`
+### Rules Auto-Activation
 
-**LSP Servers**: `typescript`/`javascript` (typescript-language-server), `eslint` (eslint-language-server), `vue` (vue-language-server)
+Rules automatically activate based on file patterns:
+
+```yaml
+---
+globs: ["**/*.java"]
+---
+# This rule activates for all Java files
+- Use constructor injection
+- Follow naming conventions
+```
+
+### LSP Integration
+
+Language plugins include LSP server configurations (`.lsp.json`):
+
+| Language | Server |
+|----------|--------|
+| Java | jdtls |
+| TypeScript | typescript-language-server |
+| Python | pyright-langserver |
+| PHP | intelephense |
 
 ---
 
-### developer-kit-python
+## Language Support Matrix
 
-Python development capabilities for Django, Flask, and FastAPI projects.
-
-**Agents**: `python-code-review-expert`, `python-refactor-expert`, `python-security-expert`,
-`python-software-architect-expert`
-
-**Skills**: `clean-architecture`, `aws-lambda-python-integration`
-
-**Rules**: `naming-conventions`, `project-structure`, `language-best-practices`, `error-handling`
-
-**LSP Servers**: `python` (pyright-langserver)
+| Language | Skills | Agents | Commands | Rules | LSP |
+|----------|--------|--------|----------|-------|-----|
+| Java/Spring Boot | 51 | 9 | 11 | 4 | ✅ |
+| TypeScript/Node.js | 25 | 13 | 3 | 17 | ✅ |
+| Python | 2 | 4 | 0 | 4 | ✅ |
+| PHP/WordPress | 3 | 5 | 0 | 4 | ✅ |
+| AWS/CloudFormation | 19 | 3 | 0 | 0 | ❌ |
+| AI/ML | 3 | 1 | 1 | 0 | ❌ |
 
 ---
 
-### developer-kit-php
+## Validation & Quality
 
-PHP and WordPress development capabilities.
+Developer Kit includes a comprehensive validation system:
 
-**Agents**: `php-code-review-expert`, `php-refactor-expert`, `php-security-expert`, `php-software-architect-expert`,
-`wordpress-development-expert`
+```bash
+# Validate all components
+python .skills-validator-check/validators/cli.py --all
 
-**Skills**: `wordpress-sage-theme` (Sage theme development), `clean-architecture`, `aws-lambda-php-integration`
+# Security scan (MCP compliance)
+make security-scan
 
-**Rules**: `naming-conventions`, `project-structure`, `language-best-practices`, `error-handling`
-
-**LSP Servers**: `php` (intelephense)
-
----
-
-### developer-kit-aws
-
-AWS infrastructure and CloudFormation expertise for Infrastructure as Code.
-
-**Agents**: `aws-solution-architect-expert`, `aws-cloudformation-devops-expert`, `aws-architecture-review-expert`
-
-**Skills**:
-- **CloudFormation** (15): `vpc`, `ec2`, `lambda`, `iam`, `s3`, `rds`, `dynamodb`, `ecs`, `auto-scaling`, `cloudwatch`,
-  `cloudfront`, `security`, `elasticache`, `bedrock`, `task-ecs-deploy-gh`
-- **General AWS** (4): `aws-sam-bootstrap`, `aws-drawio-architecture-diagrams`, `aws-cli-beast`, `aws-cost-optimization`
+# Pre-commit hooks
+.skills-validator-check/install-hooks.sh
+```
 
 ---
 
-### developer-kit-ai
+## Ecosystem
 
-AI/ML capabilities including prompt engineering, RAG, and chunking strategies.
+**Listed on:**
+- [context7](https://context7.com/giuseppe-trisciuoglio/developer-kit?tab=skills) — Skills marketplace
+- [skills.sh](https://skills.sh/giuseppe-trisciuoglio/developer-kit) — AI skills directory
 
-**Agents**: `prompt-engineering-expert`
-
-**Commands**: `/devkit.prompt-optimize`
-
-**Skills**: `prompt-engineering`, `chunking-strategy`, `rag`
-
----
-
-### developer-kit-devops
-
-DevOps and containerization expertise.
-
-**Agents**: `github-actions-pipeline-expert`, `general-docker-expert`
-
----
-
-### developer-kit-project-management
-
-Project management and workflow commands.
-
-**Commands**: `/devkit.write-a-minute-of-a-meeting`
-
----
-
-### developer-kit-tools
-
-Additional development tools and integrations.
-
-**Skills**:
-- `notebooklm` (Google NotebookLM integration)
-- `copilot-cli` (GitHub Copilot CLI delegation with multi-model support)
-- `gemini` (Gemini CLI delegation for large-context analysis)
-- `codex` (OpenAI Codex CLI delegation for complex development tasks using GPT-5.3-codex models)
-- `sonarqube-mcp` (SonarQube MCP integration with plugin-provided MCP server configuration)
-
-**MCP Servers**: `sonarqube-mcp` via `.mcp.json`
-
----
-
-### github-spec-kit
-
-GitHub specification integration and verification.
-
-**Commands**: `/speckit.check-integration`, `/speckit.optimize`, `/speckit.verify`
-
----
-
-## Key Features
-
-- **Modular** — Install only the plugins you need for your tech stack
-- **Specialized** — Domain-specific agents for code review, testing, AI development, and full-stack development
-- **Composable** — Skills stack together automatically based on task context
-- **Portable** — Use across Claude.ai, Claude Code CLI, Claude Desktop, and Claude API
-- **Efficient** — Skills load on-demand, consuming minimal tokens until actively used
-
----
-
-## Language Support
-
-Component counts below reflect the current plugin manifests in this repository.
-
-| Language           | Plugin                     | Components                                  |
-|--------------------|----------------------------|---------------------------------------------|
-| Core               | `developer-kit-core`       | 6 Skills, 6 Agents, 25 Commands             |
-| Java/Spring Boot   | `developer-kit-java`       | 52 Skills, 9 Agents, 11 Commands, 4 Rules  |
-| TypeScript/Node.js | `developer-kit-typescript` | 26 Skills, 13 Agents, 3 Commands, 19 Rules |
-| Python             | `developer-kit-python`     | 2 Skills, 4 Agents, 4 Rules                 |
-| PHP/WordPress      | `developer-kit-php`        | 3 Skills, 5 Agents, 4 Rules                 |
-| AWS CloudFormation | `developer-kit-aws`        | 19 Skills, 3 Agents                         |
-| AI/ML              | `developer-kit-ai`         | 3 Skills, 1 Agent, 1 Command                |
+**Related Projects:**
+- [Claude Code](https://claude.ai/code) — AI-powered terminal from Anthropic
+- [OpenCode](https://github.com/opencode-ai/opencode) — Open-source AI coding assistant
+- [GitHub Copilot CLI](https://github.com/github/copilot.vim) — AI pair programming
+- [Codex CLI](https://github.com/openai/codex) — OpenAI's coding agent
 
 ---
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed instructions on adding skills, agents, and commands.
-
----
+We welcome contributions! See [CONTRIBUTING.md](./CONTRIBUTING.md) for:
+- Adding new skills, agents, and commands
+- Plugin development guidelines
+- Validation requirements
+- Branch strategy and versioning
 
 ## Security
 
-Skills can execute code. Review all custom skills before deploying.
+Skills can execute code. Review all custom skills before deploying:
 
-- Only install from trusted sources
-- Review SKILL.md before enabling
-- Test in non-production environments first
+- ✅ Only install from trusted sources
+- ✅ Review SKILL.md before enabling
+- ✅ Test in non-production environments first
+- ✅ Run `make security-scan` before releases
+
+Security scans run automatically via GitHub Actions on every PR.
 
 ---
 
 ## License
 
-See [LICENSE](LICENSE) file.
+[MIT License](./LICENSE) — Open source and free to use.
 
 ---
 
-## Support
+## Acknowledgments
 
-- **Questions?** [Open an issue](https://github.com/giuseppe-trisciuoglio/developer-kit/issues)
-- **Contributions?** [Submit a PR](https://github.com/giuseppe-trisciuoglio/developer-kit/pulls)
-
-## Changelog
-
-See [CHANGELOG.md](CHANGELOG.md) for complete history.
+- **Claude Code** by Anthropic — The foundation this plugin system extends
+- **Qwen Code** — README design inspiration
+- **Contributors** — Thank you to everyone who has contributed skills and plugins
 
 ---
 
-**Made with care for Developers using Claude Code**
-**Also works with OpenCode, Github Copilot CLI and Codex**
+<div align="center">
+
+**Made with ❤️ for Developers using Claude Code**
+
+Also compatible with OpenCode, GitHub Copilot CLI, and Codex
+
+</div>

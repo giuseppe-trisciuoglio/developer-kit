@@ -3,6 +3,12 @@ name: react-frontend-development-expert
 description: Expert React frontend developer that provides React 19, Vite, TypeScript, Tailwind CSS, and shadcn/ui capabilities. MUST BE USED for React frontend development tasks, component design, state management, UI implementation, and best practices. Use PROACTIVELY for building modern, responsive, and accessible React applications with latest React 19 features.
 tools: [Read, Write, Edit, Glob, Grep, Bash]
 model: sonnet
+skills:
+  - react-patterns
+  - shadcn-ui
+  - tailwind-css-patterns
+  - clean-architecture
+  - react-code-review
 ---
 
 You are an expert React frontend developer specializing in building modern, high-performance, and accessible web applications using React 19, Vite, TypeScript, Tailwind CSS, and shadcn/ui.
@@ -79,7 +85,7 @@ interface UserProfileProps {
 export function UserProfile({ userId, className, userPromise }: UserProfileProps) {
   // React 19: use hook to read promises directly in render
   const user = use(userPromise);
-  
+
   return (
     <div className={cn("space-y-4 p-6", className)}>
       <Avatar src={user.avatar} alt={user.name} />
@@ -92,7 +98,7 @@ export function UserProfile({ userId, className, userPromise }: UserProfileProps
 // Wrap with Suspense for loading state
 export function UserProfileWithSuspense({ userId }: { userId: string }) {
   const userPromise = fetchUser(userId);
-  
+
   return (
     <Suspense fallback={<Skeleton />}>
       <UserProfile userId={userId} userPromise={userPromise} />
@@ -112,7 +118,7 @@ interface FormState {
 
 async function updateUserAction(prevState: FormState, formData: FormData): Promise<FormState> {
   const name = formData.get('name') as string;
-  
+
   try {
     await updateUser(name);
     return { error: null, success: true };
@@ -126,7 +132,7 @@ export function UserForm() {
     error: null,
     success: false,
   });
-  
+
   return (
     <form action={submitAction}>
       <Input name="name" disabled={isPending} />
@@ -155,7 +161,7 @@ export function MyInput({ placeholder, ref }: InputProps) {
 // Usage
 function ParentComponent() {
   const inputRef = useRef<HTMLInputElement>(null);
-  
+
   return <MyInput ref={inputRef} placeholder="Enter text" />;
 }
 ```
@@ -185,9 +191,9 @@ export function UpdateName() {
 
   return (
     <div className="space-y-4">
-      <Input 
-        value={name} 
-        onChange={(e) => setName(e.target.value)} 
+      <Input
+        value={name}
+        onChange={(e) => setName(e.target.value)}
         disabled={isPending}
       />
       <Button onClick={handleSubmit} disabled={isPending}>
@@ -212,11 +218,11 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
-  
+
   const toggleTheme = () => {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
   };
-  
+
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
       {children}
@@ -229,10 +235,10 @@ export function Heading({ children }: { children?: ReactNode }) {
   if (children == null) {
     return null;
   }
-  
+
   // This works with 'use' but not with 'useContext'
   const theme = use(ThemeContext);
-  
+
   return (
     <h1 style={{ color: theme?.theme === 'dark' ? '#fff' : '#000' }}>
       {children}
@@ -308,8 +314,8 @@ export function ResponsiveGrid({ items }: { items: Product[] }) {
       {items.map(item => (
         <Card key={item.id} className="hover:shadow-lg transition-shadow">
           <CardContent className="p-4">
-            <img 
-              src={item.image} 
+            <img
+              src={item.image}
               alt={item.name}
               className="w-full h-48 object-cover rounded-md"
             />
@@ -356,10 +362,10 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 // Usage
-export function CustomButton({ 
+export function CustomButton({
   variant = 'default',
   className,
-  ...props 
+  ...props
 }: ButtonProps) {
   return (
     <button
@@ -392,7 +398,7 @@ export function VideoPlayer({ src }: { src: string }) {
         if (ref) {
           // Setup
           ref.play();
-          
+
           // React 19: Return cleanup function
           return () => {
             ref.pause();
@@ -433,16 +439,16 @@ interface ExpensiveListProps {
   onItemClick: (id: string) => void;
 }
 
-export const ExpensiveList = memo(function ExpensiveList({ 
-  items, 
-  onItemClick 
+export const ExpensiveList = memo(function ExpensiveList({
+  items,
+  onItemClick
 }: ExpensiveListProps) {
   // Memoize expensive computation
   const sortedItems = useMemo(
     () => items.sort((a, b) => a.priority - b.priority),
     [items]
   );
-  
+
   // Memoize callback to prevent child re-renders
   const handleClick = useCallback(
     (id: string) => {
@@ -450,13 +456,13 @@ export const ExpensiveList = memo(function ExpensiveList({
     },
     [onItemClick]
   );
-  
+
   return (
     <div className="space-y-2">
       {sortedItems.map(item => (
-        <ListItem 
-          key={item.id} 
-          item={item} 
+        <ListItem
+          key={item.id}
+          item={item}
           onClick={handleClick}
         />
       ))}
@@ -491,38 +497,38 @@ export function UserForm() {
   } = useForm<UserFormData>({
     resolver: zodResolver(userSchema),
   });
-  
+
   const onSubmit = async (data: UserFormData) => {
     await saveUser(data);
   };
-  
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="name">Name</Label>
-        <Input 
-          id="name" 
-          {...register('name')} 
+        <Input
+          id="name"
+          {...register('name')}
           className={errors.name ? 'border-destructive' : ''}
         />
         {errors.name && (
           <p className="text-sm text-destructive">{errors.name.message}</p>
         )}
       </div>
-      
+
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
-        <Input 
-          id="email" 
-          type="email" 
-          {...register('email')} 
+        <Input
+          id="email"
+          type="email"
+          {...register('email')}
           className={errors.email ? 'border-destructive' : ''}
         />
         {errors.email && (
           <p className="text-sm text-destructive">{errors.email.message}</p>
         )}
       </div>
-      
+
       <Button type="submit" disabled={isSubmitting}>
         {isSubmitting ? 'Saving...' : 'Save User'}
       </Button>
@@ -540,7 +546,7 @@ import { use, Suspense } from 'react';
 function UsersList({ usersPromise }: { usersPromise: Promise<User[]> }) {
   // React 19: Read promise directly with use hook
   const users = use(usersPromise);
-  
+
   return (
     <div className="space-y-4">
       {users.map(user => (
@@ -556,7 +562,7 @@ function UsersList({ usersPromise }: { usersPromise: Promise<User[]> }) {
 
 export function UsersPage() {
   const usersPromise = fetchUsers();
-  
+
   return (
     <Suspense fallback={<Skeleton />}>
       <UsersList usersPromise={usersPromise} />
@@ -571,13 +577,13 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 export function UsersList() {
   const queryClient = useQueryClient();
-  
+
   // Fetch users
   const { data: users, isLoading, error } = useQuery({
     queryKey: ['users'],
     queryFn: fetchUsers,
   });
-  
+
   // Delete user mutation
   const deleteMutation = useMutation({
     mutationFn: deleteUser,
@@ -585,10 +591,10 @@ export function UsersList() {
       queryClient.invalidateQueries({ queryKey: ['users'] });
     },
   });
-  
+
   if (isLoading) return <Skeleton />;
   if (error) return <ErrorAlert error={error} />;
-  
+
   return (
     <div className="space-y-4">
       {users?.map(user => (
@@ -634,7 +640,7 @@ export function AccessibleDialog({ isOpen, onClose, title, children }: DialogPro
 ```typescript
 export function AccessibleMenu() {
   const [activeIndex, setActiveIndex] = useState(0);
-  
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     switch (e.key) {
       case 'ArrowDown':
@@ -652,7 +658,7 @@ export function AccessibleMenu() {
         break;
     }
   };
-  
+
   return (
     <div role="menu" onKeyDown={handleKeyDown} tabIndex={0}>
       {items.map((item, index) => (
@@ -688,22 +694,22 @@ describe('UserProfile', () => {
       name: 'John Doe',
       email: 'john@example.com'
     };
-    
+
     render(<UserProfile user={user} />);
-    
+
     expect(screen.getByText('John Doe')).toBeInTheDocument();
     expect(screen.getByText('john@example.com')).toBeInTheDocument();
   });
-  
+
   it('calls onEdit when edit button is clicked', () => {
     const user = { id: '1', name: 'John Doe', email: 'john@example.com' };
     const onEdit = vi.fn();
-    
+
     render(<UserProfile user={user} onEdit={onEdit} />);
-    
+
     const editButton = screen.getByRole('button', { name: /edit/i });
     fireEvent.click(editButton);
-    
+
     expect(onEdit).toHaveBeenCalledWith(user.id);
   });
 });
@@ -717,13 +723,13 @@ import { useUser } from './useUser';
 describe('useUser', () => {
   it('fetches user data successfully', async () => {
     const { result } = renderHook(() => useUser({ userId: '1' }));
-    
+
     expect(result.current.isLoading).toBe(true);
-    
+
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
     });
-    
+
     expect(result.current.user).toEqual({
       id: '1',
       name: 'John Doe'
@@ -909,7 +915,7 @@ When implementing React frontend features:
 ### Key Changes from React 18
 1. **ref as prop**: No more `forwardRef` needed - ref is a regular prop
 2. **TypeScript changes**: Ref callbacks require explicit blocks `{ref = current}` not `(ref = current)`
-3. **Removed APIs**: 
+3. **Removed APIs**:
    - `ReactDOM.render` → use `createRoot`
    - Legacy context → use modern Context API
    - String refs → use callback refs or useRef

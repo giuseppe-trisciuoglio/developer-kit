@@ -101,12 +101,12 @@ echo ""
 installed_count=0
 skipped_count=0
 
-# Register a hook command in .claude/settings.json
-_register_hook_in_settings() {
+# Register legacy single-file PreToolUse Bash hook in .claude/settings.json
+_register_legacy_hook_in_settings() {
     local target_dir="$1"
     local hook_name="$2"
     local settings_file="$target_dir/settings.json"
-    local hook_command="python3 .claude/hooks/$hook_name"
+    local hook_command="python3 \"\$CLAUDE_PROJECT_DIR/.claude/hooks/$hook_name\""
 
     if [[ ! -f "$settings_file" ]]; then
         cat > "$settings_file" << EOF
@@ -126,7 +126,7 @@ _register_hook_in_settings() {
   }
 }
 EOF
-        echo "  ✓ Created .claude/settings.json with hook: $hook_name"
+        echo "  ✓ Created .claude/settings.json with legacy hook: $hook_name"
         return
     fi
 
@@ -156,7 +156,7 @@ bash_entry.setdefault("hooks", [])
 
 for h in bash_entry["hooks"]:
     if h.get("command") == hook_command:
-        print("  ○ Hook already registered in settings.json")
+        print("  ○ Legacy hook already registered in settings.json")
         sys.exit(0)
 
 bash_entry["hooks"].append({"type": "command", "command": hook_command})
@@ -165,8 +165,92 @@ with open(settings_file, "w") as f:
     json.dump(settings, f, indent=2)
     f.write("\n")
 
-print("  ✓ Registered hook in .claude/settings.json: $hook_name")
+print("  ✓ Registered legacy hook in .claude/settings.json: $hook_name")
 PYEOF
+}
+
+_copy_hook_file() {
+    local source_file="$1"
+    local target_dir="$2"
+    local hook_name
+    local target_file
+
+    hook_name=$(basename "$source_file")
+    target_file="$target_dir/hooks/$hook_name"
+
+    if [[ -f "$target_file" ]]; then
+        echo -n "  ⚠ $hook_name already exists. [O]verwrite, [S]kip? "
+        read -n 1 conflict_action
+        echo ""
+        case $conflict_action in
+            O|o)
+                cp "$source_file" "$target_file"
+                chmod +x "$target_file"
+                echo "    ✓ Overwritten: $hook_name"
+                installed_count=$((installed_count + 1))
+                return 0
+                ;;
+            *)
+                echo "    ○ Skipped: $hook_name"
+                skipped_count=$((skipped_count + 1))
+                return 1
+                ;;
+        esac
+    fi
+
+    cp "$source_file" "$target_file"
+    chmod +x "$target_file"
+    echo "  ✓ Hook file: $hook_name"
+    installed_count=$((installed_count + 1))
+    return 0
+}
+
+_register_hooks_config_in_settings() {
+    local target_dir="$1"
+    local hooks_config_file="$2"
+    local settings_file="$target_dir/settings.json"
+
+    python3 - << PYEOF
+import json
+from pathlib import Path
+
+settings_file = Path("$settings_file")
+hooks_file = Path("$hooks_config_file")
+
+if settings_file.exists():
+    with settings_file.open() as f:
+        settings = json.load(f)
+else:
+    settings = {}
+
+with hooks_file.open() as f:
+    hook_config = json.load(f)
+
+settings.setdefault("hooks", {})
+
+for event_name, matcher_entries in hook_config.get("hooks", {}).items():
+    target_entries = settings["hooks"].setdefault(event_name, [])
+
+    for matcher_entry in matcher_entries:
+        normalized_entry = json.loads(json.dumps(matcher_entry))
+
+        for hook in normalized_entry.get("hooks", []):
+            command = hook.get("command")
+            if isinstance(command, str):
+                hook["command"] = command.replace(
+                    "${CLAUDE_PLUGIN_ROOT}",
+                    "$CLAUDE_PROJECT_DIR/.claude"
+                )
+
+        if normalized_entry not in target_entries:
+            target_entries.append(normalized_entry)
+
+with settings_file.open("w") as f:
+    json.dump(settings, f, indent=2)
+    f.write("\n")
+PYEOF
+
+    echo "  ✓ Registered hooks config in .claude/settings.json: $(basename "$hooks_config_file")"
 }
 
 # Install selected plugins
@@ -365,37 +449,33 @@ for ((i=1; i<=plugin_num; i++)); do
         fi
 
         # Install hooks
-        hooks=$(jq -r '.hooks[]? // empty' "$plugin_json" 2>/dev/null)
+        hooks=$(jq -r '
+            if .hooks == null then empty
+            elif (.hooks | type) == "array" then .hooks[]
+            elif (.hooks | type) == "string" then .hooks
+            else empty
+            end
+        ' "$plugin_json" 2>/dev/null)
         if [[ -n "$hooks" ]]; then
             for hook in $hooks; do
                 hook_path="$base_dir/$hook"
                 if [[ -f "$hook_path" ]]; then
-                    hook_name=$(basename "$hook")
-                    target_file="$TARGET_DIR/hooks/$hook_name"
+                    hook_name=$(basename "$hook_path")
 
-                    if [[ -f "$target_file" ]]; then
-                        echo -n "  ⚠ $hook_name already exists. [O]verwrite, [S]kip? "
-                        read -n 1 conflict_action
-                        echo ""
-                        case $conflict_action in
-                            O|o)
-                                cp "$hook_path" "$target_file"
-                                chmod +x "$target_file"
-                                echo "    ✓ Overwritten: $hook_name"
-                                installed_count=$((installed_count + 1))
-                                _register_hook_in_settings "$TARGET_DIR" "$hook_name"
-                                ;;
-                            *)
-                                echo "    ○ Skipped: $hook_name"
-                                skipped_count=$((skipped_count + 1))
-                                ;;
-                        esac
+                    if [[ "$hook_name" == "hooks.json" ]]; then
+                        hook_dir=$(dirname "$hook_path")
+
+                        for hook_impl in "$hook_dir"/*; do
+                            if [[ -f "$hook_impl" && "$(basename "$hook_impl")" != "hooks.json" ]]; then
+                                _copy_hook_file "$hook_impl" "$TARGET_DIR"
+                            fi
+                        done
+
+                        _register_hooks_config_in_settings "$TARGET_DIR" "$hook_path"
                     else
-                        cp "$hook_path" "$target_file"
-                        chmod +x "$target_file"
-                        echo "  ✓ Hook: $hook_name"
-                        installed_count=$((installed_count + 1))
-                        _register_hook_in_settings "$TARGET_DIR" "$hook_name"
+                        if _copy_hook_file "$hook_path" "$TARGET_DIR"; then
+                            _register_legacy_hook_in_settings "$TARGET_DIR" "$hook_name"
+                        fi
                     fi
                 fi
             done

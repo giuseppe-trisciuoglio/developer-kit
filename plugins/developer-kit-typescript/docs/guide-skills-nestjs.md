@@ -18,7 +18,7 @@ NestJS is a progressive Node.js framework for building efficient, reliable, and 
   - Services and providers
   - Middleware, guards, and interceptors
   - Authentication and authorization strategies
-  - Database integration with Drizzle ORM and TypeORM
+  - Database integration with Drizzle ORM (primary) and Prisma
   - Testing patterns (unit, integration, e2e)
   - Microservices architecture
   - GraphQL implementation
@@ -87,44 +87,59 @@ export class UsersController {
 
 ```typescript
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import { User } from './entities/user.entity';
+import { DrizzleService } from '../drizzle/drizzle.service';
+import { users } from '../db/schema';
+import { eq } from 'drizzle-orm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
-  ) {}
+  constructor(private readonly drizzle: DrizzleService) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    const user = this.usersRepository.create(createUserDto);
-    return await this.usersRepository.save(user);
+  async create(createUserDto: CreateUserDto) {
+    const [user] = await this.drizzle.db
+      .insert(users)
+      .values(createUserDto)
+      .returning();
+    return user;
   }
 
-  async findAll(query: any): Promise<User[]> {
-    return await this.usersRepository.find(query);
+  async findAll() {
+    return await this.drizzle.db.select().from(users);
   }
 
-  async findOne(id: string): Promise<User> {
-    const user = await this.usersRepository.findOne(id);
+  async findOne(id: number) {
+    const [user] = await this.drizzle.db
+      .select()
+      .from(users)
+      .where(eq(users.id, id));
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
     return user;
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-    const user = await this.findOne(id);
-    this.usersRepository.merge(user, updateUserDto);
-    return await this.usersRepository.save(user);
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    const [user] = await this.drizzle.db
+      .update(users)
+      .set(updateUserDto)
+      .where(eq(users.id, id))
+      .returning();
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+    return user;
   }
 
-  async remove(id: string): Promise<void> {
-    const user = await this.findOne(id);
-    await this.usersRepository.remove(user);
+  async remove(id: number) {
+    const [user] = await this.drizzle.db
+      .delete(users)
+      .where(eq(users.id, id))
+      .returning();
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
   }
 }
 ```
@@ -265,55 +280,77 @@ export const Roles = (...roles: string[]) => SetMetadata(ROLES_KEY, roles);
 // src/users/users.service.spec.ts
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
-import { CreateUserDto } from './dto/create-user.dto';
+import { DrizzleService } from '../drizzle/drizzle.service';
 
 describe('UsersService', () => {
   let service: UsersService;
-  let repository: Repository<User>;
+  let drizzle: DrizzleService;
 
-  const mockRepository = {
-    create: jest.fn(),
-    save: jest.fn(),
-    find: jest.fn(),
-    findOne: jest.fn(),
-    merge: jest.fn(),
-    remove: jest.fn(),
+  const mockDrizzleService = {
+    db: {
+      insert: jest.fn().mockReturnValue({
+        values: jest.fn().mockReturnValue({
+          returning: jest.fn().mockResolvedValue([{ id: 1, email: 'test@example.com', name: 'Test' }]),
+        }),
+      }),
+      select: jest.fn().mockReturnValue({
+        from: jest.fn().mockReturnValue({
+          where: jest.fn().mockResolvedValue([{ id: 1, email: 'test@example.com', name: 'Test' }]),
+        }),
+        from: jest.fn().mockResolvedValue([{ id: 1, email: 'test@example.com', name: 'Test' }]),
+      }),
+      update: jest.fn().mockReturnValue({
+        set: jest.fn().mockReturnValue({
+          where: jest.fn().mockReturnValue({
+            returning: jest.fn().mockResolvedValue([{ id: 1, email: 'test@example.com', name: 'Test Updated' }]),
+          }),
+        }),
+      }),
+      delete: jest.fn().mockReturnValue({
+        where: jest.fn().mockReturnValue({
+          returning: jest.fn().mockResolvedValue([{ id: 1 }]),
+        }),
+      }),
+    },
   };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsersService,
-        {
-          provide: getRepositoryToken(User),
-          useValue: mockRepository,
-        },
+        { provide: DrizzleService, useValue: mockDrizzleService },
       ],
     }).compile();
 
     service = module.get<UsersService>(UsersService);
-    repository = module.get<Repository<User>>(getRepositoryToken(User));
+    drizzle = module.get<DrizzleService>(DrizzleService);
   });
 
   it('should create a user', async () => {
-    const createUserDto: CreateUserDto = {
-      email: 'test@example.com',
-      name: 'Test User',
-    };
-
-    const user = { id: 1, ...createUserDto };
-
-    mockRepository.create.mockReturnValue(user);
-    mockRepository.save.mockResolvedValue(user);
-
+    const createUserDto = { email: 'test@example.com', name: 'Test User' };
     const result = await service.create(createUserDto);
+    expect(result).toEqual(expect.objectContaining({ email: 'test@example.com' }));
+    expect(drizzle.db.insert).toHaveBeenCalled();
+  });
 
-    expect(result).toEqual(user);
-    expect(mockRepository.create).toHaveBeenCalledWith(createUserDto);
-    expect(mockRepository.save).toHaveBeenCalledWith(user);
+  it('should find all users', async () => {
+    const result = await service.findAll();
+    expect(result).toEqual(expect.any(Array));
+    expect(drizzle.db.select).toHaveBeenCalled();
+  });
+
+  it('should find a user by id', async () => {
+    const result = await service.findOne(1);
+    expect(result).toEqual(expect.objectContaining({ id: 1 }));
+  });
+
+  it('should throw NotFoundException when user not found', async () => {
+    jest.spyOn(drizzle.db, 'select').mockReturnValueOnce({
+      from: jest.fn().mockReturnValue({
+        where: jest.fn().mockResolvedValue([]),
+      }),
+    } as any);
+    await expect(service.findOne(999)).rejects.toThrow(NotFoundException);
   });
 });
 ```
@@ -326,31 +363,31 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { UsersModule } from './users.module';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { DrizzleService } from '../drizzle/drizzle.service';
 
 describe('UsersController (e2e)', () => {
   let app: INestApplication;
-  let repository: Repository<User>;
+  let drizzle: DrizzleService;
+
+  const mockDrizzleService = {
+    db: {
+      select: jest.fn().mockReturnValue({
+        from: jest.fn().mockResolvedValue([]),
+      }),
+    },
+  };
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [UsersModule],
     })
-      .overrideProvider(getRepositoryToken(User))
-      .useValue({
-        find: jest.fn().mockResolvedValue([]),
-        findOne: jest.fn(),
-        create: jest.fn(),
-        save: jest.fn(),
-        remove: jest.fn(),
-      })
+      .overrideProvider(DrizzleService)
+      .useValue(mockDrizzleService)
       .compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
-    repository = moduleFixture.get<Repository<User>>(getRepositoryToken(User));
+    drizzle = moduleFixture.get<DrizzleService>(DrizzleService);
   });
 
   it('/users (GET)', () => {

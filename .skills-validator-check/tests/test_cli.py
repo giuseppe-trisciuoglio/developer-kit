@@ -411,3 +411,76 @@ class TestMain:
         with patch.object(ValidationCLI, 'run', return_value=0):
             result = main()
             assert isinstance(result, int)
+
+
+class TestTypeFilter:
+    """Tests for --type filter functionality."""
+
+    @pytest.fixture
+    def cli(self):
+        return ValidationCLI()
+
+    def test_type_argument_in_parser(self, cli):
+        """Test --type argument is accepted by the parser."""
+        parser = cli._create_parser()
+        args = parser.parse_args(["--all", "--type", "agents"])
+        assert args.type_filter == "agents"
+
+    def test_type_choices(self, cli):
+        """Test --type only accepts valid choices."""
+        import argparse
+        parser = cli._create_parser()
+        with pytest.raises(SystemExit):
+            parser.parse_args(["--all", "--type", "invalid"])
+
+    def test_type_default_is_none(self, cli):
+        """Test --type defaults to None (no filtering)."""
+        parser = cli._create_parser()
+        args = parser.parse_args(["--all"])
+        assert args.type_filter is None
+
+    def test_filter_by_type_agents(self, cli, tmp_path):
+        """Test filtering keeps only agent files."""
+        agent_file = tmp_path / "agents" / "my-agent.md"
+        agent_file.parent.mkdir(parents=True)
+        agent_file.write_text("---\nname: my-agent\ndescription: test\ntools: Read\n---\n# Agent\n")
+
+        skill_dir = tmp_path / "skills" / "my-skill"
+        skill_dir.mkdir(parents=True)
+        skill_file = skill_dir / "SKILL.md"
+        skill_file.write_text("---\nname: my-skill\ndescription: test skill\n---\n# Skill\n")
+
+        all_files = [agent_file, skill_file]
+        filtered = cli._filter_by_type(all_files, "agents")
+        assert agent_file in filtered
+        assert skill_file not in filtered
+
+    def test_filter_by_type_hooks(self, cli, tmp_path):
+        """Test filtering keeps only hooks files."""
+        hooks_dir = tmp_path / "hooks"
+        hooks_dir.mkdir()
+        hooks_file = hooks_dir / "hooks.json"
+        hooks_file.write_text('{"hooks": {}}')
+
+        agent_file = tmp_path / "agents" / "my-agent.md"
+        agent_file.parent.mkdir(parents=True)
+        agent_file.write_text("---\nname: my-agent\ndescription: test\ntools: Read\n---\n# Agent\n")
+
+        filtered = cli._filter_by_type([hooks_file, agent_file], "hooks")
+        assert hooks_file in filtered
+        assert agent_file not in filtered
+
+    def test_filter_by_type_no_match_returns_empty(self, cli, tmp_path):
+        """Test filtering returns empty list when no files match."""
+        agent_file = tmp_path / "agents" / "my-agent.md"
+        agent_file.parent.mkdir(parents=True)
+        agent_file.write_text("---\nname: my-agent\ndescription: test\ntools: Read\n---\n# Agent\n")
+
+        filtered = cli._filter_by_type([agent_file], "hooks")
+        assert filtered == []
+
+    def test_run_with_type_filter_no_match(self, cli):
+        """Test run exits cleanly when --type filter matches nothing."""
+        with patch.object(cli, '_find_all_component_files', return_value=[]):
+            result = cli.run(["--all", "--type", "hooks"])
+        assert result == 0

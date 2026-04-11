@@ -115,9 +115,9 @@ Apply the native plugin:
 
 - **GraalVM**: 21+
 - **Java**: 17+ (21+ recommended)
-- **Build Tools**: Maven 3.6+, Gradle 8+
+- **Build Tools**: Maven 3.9+, Gradle 8+
 - **Frameworks**: Spring Boot 3.x, Quarkus, Micronaut
-- **Native Build Tools**: 0.10.x
+- **Native Build Tools**: 0.10.x (latest)
 
 ---
 

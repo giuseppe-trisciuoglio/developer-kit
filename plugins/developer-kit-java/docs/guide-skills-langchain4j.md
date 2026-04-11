@@ -1,6 +1,6 @@
 # LangChain4J Skills Guide
 
-Quick reference to 8 LangChain4J skills for building AI-powered applications. See individual skill files for complete details.
+Quick reference to 9 LangChain4J skills for building AI-powered applications. See individual skill files for complete details.
 
 ---
 
@@ -204,7 +204,7 @@ Testing AI systems: mock models, test containers, integration tests.
 ## Technology Stack
 
 - **LangChain4J**: Latest stable
-- **Spring Boot**: 3.5.x+
+- **Spring Boot**: 3.x/4.x
 - **Embeddings**: OpenAI, Hugging Face
 - **Vector Stores**: Qdrant, Milvus, Weaviate
 - **LLMs**: OpenAI, Anthropic Claude, Ollama

@@ -6,7 +6,15 @@ This guide covers the AWS CLI Beast Mode skill for advanced cloud operations, au
 
 The AWS CLI (Command Line Interface) is a unified tool to manage your AWS services. The `aws-cli-beast` skill provides advanced patterns, automation scripts, and best practices for power users who need to manage AWS resources efficiently at scale.
 
-## When to Use AWS CLI Skills
+## Skill Details
+
+| Property | Value |
+|----------|-------|
+| **Name** | aws-cli-beast |
+| **Category** | General AWS |
+| **Tools** | Read, Write, Bash |
+
+## When to Use This Skill
 
 Use the AWS CLI skills when you need to:
 
@@ -18,30 +26,43 @@ Use the AWS CLI skills when you need to:
 - Perform security audits and compliance checks
 - Work with AWS services that require waiters and polling
 - Handle AWS CLI pagination for large datasets
+- Deploy and manage Lambda functions from command line
 
-## Available Skills
+## Trigger Phrases
 
-| Skill | Description |
-|-------|-------------|
-| `aws-cli-beast` | Comprehensive AWS CLI mastery for advanced cloud engineers |
+- "aws beast mode"
+- "optimize aws resources via cli"
+- "bulk s3 migration cli"
+- "audit iam policies beast"
+- "troubleshoot vpc networking cli"
+- "aws cli automation"
+- "lambda deployment cli beast"
+- "dynamodb bulk operations"
+- "ec2 fleet management cli"
+- "iam policy audit cli"
+- "bulk aws operations"
 
-## Core Capabilities
+---
 
-### Service Coverage
+## Service Coverage
 
 The `aws-cli-beast` skill covers the following AWS services with advanced CLI patterns:
 
-1. **Compute**: EC2 (instances, spot fleets, ASG), Lambda (deployment, invocation, layers)
-2. **Storage**: S3 (sync, multipart, lifecycle, replication, presigned URLs)
-3. **Database**: DynamoDB (queries, batch operations, TTL), RDS (snapshots, parameter groups)
-4. **Networking**: VPC (subnets, security groups, flow logs, NAT Gateway)
-5. **Security & Identity**: IAM (policies, roles, access keys, password policy)
-6. **AI/ML**: Bedrock (model invocation, provisioning, custom models)
-7. **Observability**: CloudWatch (logs, metrics, alarms, dashboards)
+| Category | Services |
+|----------|----------|
+| **Compute** | EC2 (instances, spot fleets, ASG), Lambda (deployment, invocation, layers) |
+| **Storage** | S3 (sync, multipart, lifecycle, replication, presigned URLs) |
+| **Database** | DynamoDB (queries, batch operations, TTL), RDS (snapshots, parameter groups) |
+| **Networking** | VPC (subnets, security groups, flow logs, NAT Gateway) |
+| **Security** | IAM (policies, roles, access keys, password policy) |
+| **AI/ML** | Bedrock (model invocation, provisioning, custom models) |
+| **Observability** | CloudWatch (logs, metrics, alarms, dashboards) |
 
-### Beast Mode Features
+---
 
-#### Advanced Querying with JMESPath
+## Core Capabilities
+
+### Advanced Querying with JMESPath
 
 Use `--query` flag to transform and filter AWS CLI output server-side:
 
@@ -58,7 +79,7 @@ aws ec2 describe-instances \
   --output json
 ```
 
-#### Bulk Operations
+### Bulk Operations
 
 Handle thousands of resources efficiently:
 
@@ -76,7 +97,7 @@ aws logs describe-log-streams \
   --output text | xargs -r aws logs delete-log-stream --log-group-name /aws/lambda/my-function --log-stream-name
 ```
 
-#### Waiters and Polling
+### Waiters and Polling
 
 Properly handle asynchronous resource provisioning:
 
@@ -91,7 +112,7 @@ aws lambda wait function-active --function-name my-function
 aws rds wait db-instance-available --db-instance-identifier my-db
 ```
 
-#### Security-First Patterns
+### Security-First Patterns
 
 Always apply security best practices:
 
@@ -104,9 +125,12 @@ aws iam simulate-principal-policy \
   --policy-source-arn arn:aws:iam::123456789012:user/myuser \
   --action-names s3:GetObject \
   --resource-arns arn:aws:s3:::my-bucket/*
+
+# Enable MFA for sensitive operations
+aws iam create-virtual-mfa-device --virtual-mfa-device-name my-mfa
 ```
 
-#### Profile and Region Management
+### Profile and Region Management
 
 Seamlessly switch between AWS accounts and regions:
 
@@ -123,11 +147,11 @@ for region in us-east-1 us-west-2 eu-west-1; do
 done
 ```
 
+---
+
 ## Reference Materials
 
 The `aws-cli-beast` skill includes comprehensive reference guides:
-
-### Reference Guides
 
 | Guide | Description |
 |-------|-------------|
@@ -143,6 +167,8 @@ The `aws-cli-beast` skill includes comprehensive reference guides:
 | `aws-blast.sh` | 30+ ready-to-use shell aliases for daily AWS operations |
 | `jmespath-templates.json` | 20+ JMESPath query templates for common use cases |
 
+---
+
 ## Best Practices
 
 1. **Always use `--output json`** for programmatically processable output
@@ -156,30 +182,24 @@ The `aws-cli-beast` skill includes comprehensive reference guides:
 9. **Enable MFA** for operations that modify security settings
 10. **Use profiles** for separating development, staging, and production
 
-## Trigger Phrases
-
-The skill activates on phrases like:
-- "aws beast mode"
-- "optimize aws resources via cli"
-- "bulk s3 migration cli"
-- "audit iam policies beast"
-- "troubleshoot vpc networking cli"
-- "aws cli automation"
-- "lambda deployment cli beast"
-- "dynamodb bulk operations"
-- "ec2 fleet management cli"
-- "iam policy audit cli"
+---
 
 ## Integration with Other Skills
 
 The AWS CLI skill complements other AWS-related capabilities:
 
-- **CloudFormation Skills**: Use CLI for stack operations and drift detection
-- **Java AWS SDK Skills**: Combine CLI for quick checks with SDK for application integration
-- **Architecture Review**: Use CLI to gather resource information for architecture reviews
+| Related Skill | Integration |
+|---------------|-------------|
+| **CloudFormation Skills** | Use CLI for stack operations and drift detection |
+| **AWS SAM Bootstrap** | Deploy SAM projects with `sam deploy` |
+| **Architecture Review** | Use CLI to gather resource information for architecture reviews |
+| **Cost Optimization** | Query resource usage and costs via CLI |
+
+---
 
 ## See Also
 
 - [CloudFormation Skills Guide](./guide-skills-cloudformation.md) - Infrastructure as Code with CloudFormation
+- [AWS SAM Guide](./guide-skills-aws-sam.md) - Serverless Application Model
+- [Cost Optimization Guide](./guide-skills-cost-optimization.md) - AWS cost management
 - [AWS Agents Guide](./guide-agents.md) - AWS specialized agents
-- [Java AWS Skills Guide](../../developer-kit-java/docs/guide-skills-aws-java.md) - AWS SDK integration from Java
