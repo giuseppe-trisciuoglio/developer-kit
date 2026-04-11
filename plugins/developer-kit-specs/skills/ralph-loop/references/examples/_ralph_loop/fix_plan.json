@@ -1,0 +1,77 @@
+{
+  "spec": "docs/specs/001-example-new-spec/",
+  "specFile": "docs/specs/001-example-new-spec/2026-04-02--try-new-ralph-loop-skill.md",
+  "tasksFile": "docs/specs/001-example-new-spec/2026-04-02--try-new-ralph-loop-skill--tasks.md",
+  "initialized": "2026-04-02",
+  "currentTaskIndex": 1,
+  "state": "review",
+  "tasks": [
+    {
+      "id": "TASK-001",
+      "title": "Try New Ralph Loop Skill Task 001",
+      "file": "docs/specs/001-example-new-spec/tasks/TASK-001.md",
+      "dependencies": [],
+      "status": "completed",
+      "steps": {
+        "implement": "done",
+        "review": "done",
+        "sync": "done"
+      }
+    },
+    {
+      "id": "TASK-002",
+      "title": "Try New Ralph Loop Skill Task 002",
+      "file": "docs/specs/001-example-new-spec/tasks/TASK-002.md",
+      "dependencies": [
+        "TASK-001"
+      ],
+      "status": "in_review",
+      "steps": {
+        "implement": "done",
+        "review": "pending",
+        "sync": "pending"
+      }
+    },
+    {
+      "id": "TASK-003",
+      "title": "Try New Ralph Loop Skill Task 003",
+      "file": "docs/specs/001-example-new-spec/tasks/TASK-003.md",
+      "dependencies": [
+        "TASK-002"
+      ],
+      "status": "pending",
+      "steps": {
+        "implement": "pending",
+        "review": "pending",
+        "sync": "pending"
+      }
+    },
+    {
+      "id": "TASK-004",
+      "title": "Try New Ralph Loop Skill Task 004",
+      "file": "docs/specs/001-example-new-spec/tasks/TASK-004.md",
+      "dependencies": [
+        "TASK-003"
+      ],
+      "status": "pending",
+      "steps": {
+        "implement": "pending",
+        "review": "pending",
+        "sync": "pending"
+      }
+    },
+    {
+      "id": "TASK-005",
+      "title": "Try New Ralph Loop Skill Task 005",
+      "file": "docs/specs/001-example-new-spec/tasks/TASK-005.md",
+      "dependencies": [],
+      "status": "pending",
+      "steps": {
+        "implement": "pending",
+        "review": "pending",
+        "sync": "pending"
+      }
+    }
+  ],
+  "lastUpdated": "2026-04-02T14:08:44Z"
+}

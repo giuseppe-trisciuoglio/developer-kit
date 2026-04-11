@@ -1,0 +1,68 @@
+{
+  "description": "Developer Kit Specs hooks: Drift Guard for spec fidelity, Task Auto-Status for automatic frontmatter management, Task KPI Analyzer for quality metrics, and Session Tracking Hook for audit trail logging",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "agent",
+            "prompt": "You are the session-tracking-agent. Your job is to generate or update a session tracking entry in tracking_log.md at the project root.\n\nStop event payload:\n$ARGUMENTS\n\nProcess:\n1. Parse the event payload to extract session_id, transcript_path, cwd, and last_assistant_message.\n2. If stop_hook_active is true, exit immediately to prevent re-entrant activation.\n3. Read only the LAST 100 lines of the transcript JSONL file (transcript_path).\n4. Derive the change rationale from conversational context — explain WHY changes were made, not just WHAT changed.\n5. Get the current git branch using Bash(git:*).\n6. Use the first 8 characters of session_id as SHORT_ID (idempotency key).\n7. If an entry with this SHORT_ID already exists in tracking_log.md, UPDATE it. Otherwise, ADD a new entry at the TOP of the file.\n8. If no meaningful file changes occurred in this response, do NOT write anything.\n9. NEVER include credentials, API keys, tokens, or passwords in the log.\n\nEntry format:\n## YYYY-MM-DD — Session SHORT_ID\n**Branch:** branch-name\n**Orario:** HH:MM\n\n### Task eseguiti\n- description\n\n### File modificati\n- path/to/file (creato | modificato | eliminato)\n\n### Rationale\nWhy the changes were made.\n\n### Commit (only if commits were made)\n- short-hash message",
+            "model": "sonnet",
+            "async": true,
+            "timeout": 60
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/drift-init.py",
+            "statusMessage": "Initializing Drift Guard tracking..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/drift-monitor.py",
+            "statusMessage": "Monitoring for unplanned file changes..."
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "pattern": "TASK-\\d+\\.md$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/task-auto-status.py",
+            "statusMessage": "Auto-updating task status..."
+          },
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/task-kpi-analyzer.py",
+            "statusMessage": "Analyzing task quality KPIs..."
+          }
+        ]
+      }
+    ],
+    "TaskCompleted": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/drift-report.py",
+            "statusMessage": "Generating Drift Guard fidelity report..."
+          }
+        ]
+      }
+    ]
+  }
+}

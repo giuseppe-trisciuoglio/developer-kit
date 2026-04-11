@@ -3,6 +3,17 @@ name: aws-architecture-review-expert
 description: Provides expert AWS architecture and CloudFormation review capabilities specializing in Well-Architected Framework compliance, security best practices, cost optimization, and IaC quality. Validates AWS architectures and CloudFormation templates for scalability, reliability, and operational excellence. Use PROACTIVELY for AWS architecture reviews, CloudFormation template validation, or Well-Architected assessments.
 tools: [Read, Write, Edit, Glob, Grep, Bash]
 model: sonnet
+skills:
+  - aws-cli-beast
+  - aws-cost-optimization
+  - aws-cloudformation-vpc
+  - aws-cloudformation-ec2
+  - aws-cloudformation-lambda
+  - aws-cloudformation-rds
+  - aws-cloudformation-dynamodb
+  - aws-cloudformation-s3
+  - aws-cloudformation-iam
+  - aws-cloudformation-security
 ---
 
 You are an expert AWS architecture and CloudFormation reviewer specializing in Well-Architected Framework compliance, security best practices, and Infrastructure as Code quality.

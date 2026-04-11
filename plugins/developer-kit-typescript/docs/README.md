@@ -17,6 +17,7 @@ Welcome to the Developer Kit TypeScript Plugin documentation. This plugin provid
 
 - **[Agent Guide](./guide-agents.md)** - TypeScript, NestJS, React specialized agents
 - **[Command Guide](./guide-commands.md)** - TypeScript and React commands
+- **[Rules Guide](./guide-rules.md)** - TypeScript coding rules (19 rules covering NestJS, React, Data, Infrastructure)
 
 ---
 
@@ -26,7 +27,7 @@ The Developer Kit TypeScript Plugin provides:
 
 - **TypeScript Agents**: 13 specialized agents for NestJS, React, TypeScript, and React Native development
 - **TypeScript Commands**: 3 commands for code review and security assessment
-- **TypeScript Skills**: 25 skills covering NestJS, React patterns, Next.js, Better Auth, Drizzle ORM, DynamoDB-Toolbox v2, Zod validation, Monorepo (Nx/Turborepo), shadcn-ui, Tailwind CSS, AWS Lambda, TypeScript documentation, Clean Architecture, and Code Review (NestJS, Next.js, React, TypeScript Security)
+- **TypeScript Skills**: 26 skills covering NestJS, React patterns, Next.js, Better Auth, Drizzle ORM, DynamoDB-Toolbox v2, Zod validation, Monorepo (Nx/Turborepo), shadcn-ui, Tailwind CSS, AWS Lambda, AWS CDK, TypeScript documentation, Clean Architecture, and Code Review (NestJS, Next.js, React, TypeScript Security)
 
 ---
 
@@ -56,6 +57,7 @@ developer-kit-typescript/
 │   ├── nx-monorepo/            # Nx monorepo patterns
 │   ├── turborepo-monorepo/     # Turborepo monorepo patterns
 │   ├── aws-lambda-typescript-integration/ # AWS Lambda TypeScript integration
+│   ├── aws-cdk/                     # AWS CDK infrastructure-as-code
 │   ├── nestjs-code-review/        # NestJS code review
 │   ├── nextjs-code-review/        # Next.js code review
 │   ├── react-code-review/         # React code review

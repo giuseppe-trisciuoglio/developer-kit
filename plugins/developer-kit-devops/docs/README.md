@@ -1,63 +1,47 @@
-# Developer Kit DevOps Plugin Documentation
+# DevOps Plugin Documentation
 
-Welcome to the Developer Kit DevOps Plugin documentation. This plugin provides comprehensive tools for DevOps, containerization, and CI/CD automation.
+Complete documentation for the Developer Kit DevOps Plugin.
 
----
+## Contents
 
-## Available Documentation
+- **[Agent Guide](./guide-agents.md)** - Detailed guide for all DevOps agents
 
-### Component Guides
+## Overview
 
-- **[Agent Guide](./guide-agents.md)** - DevOps specialized agents
+The DevOps Plugin provides two specialized agents:
 
----
+| Agent | Focus Area |
+|-------|------------|
+| `general-docker-expert` | Containerization and Docker configurations |
+| `github-actions-pipeline-expert` | CI/CD pipelines and GitHub Actions |
 
-## About DevOps Plugin
+## Use Cases
 
-The Developer Kit DevOps Plugin provides:
+### Containerization Tasks
 
-- **DevOps Agents**: 2 specialized agents for Docker and GitHub Actions
+- Creating production-ready Dockerfiles
+- Optimizing image size and build times
+- Setting up multi-container environments with Docker Compose
+- Implementing container security best practices
 
----
+### CI/CD Tasks
 
-## Plugin Structure
+- Building CI workflows for Java, Node.js, Python, Go applications
+- Setting up multi-environment deployments (staging, production)
+- Configuring OIDC authentication for cloud providers
+- Creating reusable workflow templates
+- Implementing Docker build pipelines with multi-platform support
 
-```
-developer-kit-devops/
-├── agents/              # DevOps agents
-└── docs/               # This documentation
-```
+## Integration
 
----
+This plugin integrates with:
 
-## Quick Start
-
-1. **Explore available agents**: See [Agent Guide](./guide-agents.md)
-2. **Containerize applications**: Use `general-docker-expert` agent
-3. **Create CI/CD pipelines**: Use `github-actions-pipeline-expert` agent
-
----
-
-## Key Features
-
-### Docker Containerization
-- Dockerfile creation and optimization
-- Multi-stage builds
-- Docker Compose orchestration
-- Container networking and volumes
-- Security best practices
-
-### GitHub Actions CI/CD
-- Workflow design and implementation
-- Build and test automation
-- Deployment automation
-- Pipeline optimization
-- Security scanning integration
-
----
+- **developer-kit-core**: Required dependency
+- **developer-kit-aws**: For AWS deployment patterns (ECS, Lambda, S3)
+- **developer-kit-java**: For Spring Boot containerization
+- **developer-kit-typescript**: For Node.js/NestJS workflows
 
 ## See Also
 
-- [Core Plugin Documentation](../../developer-kit-core/docs/) - Core guides and installation
-- [AWS Plugin Documentation](../../developer-kit-aws/docs/) - AWS CloudFormation and infrastructure
-- [Java Plugin Documentation](../../developer-kit-java/docs/) - Java and Spring Boot guides
+- [Core Plugin Documentation](../../developer-kit-core/docs/) - Installation and core features
+- [AWS Plugin Documentation](../../developer-kit-aws/docs/) - AWS infrastructure automation

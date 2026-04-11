@@ -36,14 +36,14 @@ Design in NestJS or Typescript applications.
 |--------------------|---------------------------------------------------------------|----------------------------------------------|
 | **Domain**         | Entities, value objects, domain events, repository interfaces | `domain/` - pure TypeScript                  |
 | **Application**    | Use cases, application services, DTOs, ports                  | `application/` - services, use cases         |
-| **Infrastructure** | Frameworks, database, external APIs                           | `infrastructure/` - TypeORM, Prisma adapters |
+| **Infrastructure** | Frameworks, database, external APIs                           | `infrastructure/` - Drizzle ORM, Prisma adapters |
 | **Adapter**        | Controllers, presenters, external gateways                    | `adapter/` - NestJS controllers              |
 
 #### Hexagonal Architecture (Ports & Adapters)
 
 - **Domain Core**: Pure TypeScript business logic, no framework dependencies
 - **Ports**: Interfaces defining contracts (driven and driving)
-- **Adapters**: Concrete implementations (TypeORM, Prisma, REST, GraphQL)
+- **Adapters**: Concrete implementations (Drizzle ORM, Prisma, REST, GraphQL)
 
 #### Domain-Driven Design Tactical Patterns
 
@@ -67,7 +67,7 @@ src/modules/order/
 │   ├── services/          # Application services
 │   └── dto/              # Request/response DTOs
 ├── infrastructure/
-│   ├── persistence/        # TypeORM/Prisma entities, repository adapters
+│   ├── persistence/        # Drizzle ORM/Prisma entities, repository adapters
 │   └── external/          # External service adapters
 └── presentation/
     └── http/              # NestJS controllers
@@ -75,7 +75,7 @@ src/modules/order/
 
 ### Best Practices
 
-1. **Dependency Rule**: Domain has zero dependencies on frameworks (NestJS, TypeORM, etc.)
+1. **Dependency Rule**: Domain has zero dependencies on frameworks (NestJS, Drizzle ORM, etc.)
 2. **Immutable Value Objects**: Use TypeScript readonly properties and classes
 3. **Rich Domain Models**: Place business logic in entities, not services
 4. **Repository Pattern**: Domain defines interface, infrastructure implements
@@ -87,7 +87,7 @@ src/modules/order/
 ### Common Pitfalls to Avoid
 
 - **Anemic Domain Model**: Entities with only getters/setters, logic in services
-- **Framework Leakage**: Decorators from NestJS/TypeORM in domain layer
+- **Framework Leakage**: Decorators from NestJS/Drizzle in domain layer
 - **Circular Dependencies**: Between domain aggregates - use IDs instead
 - **Missing Domain Events**: Direct service calls instead of events
 - **Repository Misplacement**: Defining repository interfaces in infrastructure

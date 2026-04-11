@@ -1,0 +1,42 @@
+{
+  "name": "developer-kit-specs",
+  "version": "2.8.0",
+  "description": "Specifications-driven development workflow for transforming ideas into functional specifications and executable tasks",
+  "author": {
+    "name": "Giuseppe Trisciuoglio",
+    "email": "giuseppe.trisciuoglio@gmail.com"
+  },
+  "homepage": "https://github.com/giuseppe-trisciuoglio/developer-kit",
+  "repository": "https://github.com/giuseppe-trisciuoglio/developer-kit.git",
+  "license": "MIT",
+  "keywords": [
+    "developer-kit",
+    "specs",
+    "specifications",
+    "brainstorming",
+    "task-management",
+    "functional-requirements"
+  ],
+  "commands": [
+    "./commands/specs.brainstorm.md",
+    "./commands/specs.spec-to-tasks.md",
+    "./commands/specs.task-manage.md",
+    "./commands/specs.task-review.md",
+    "./commands/specs.task-implementation.md",
+    "./commands/specs.spec-sync-with-code.md",
+    "./commands/specs.spec-sync-context.md",
+    "./commands/specs.quick-spec.md",
+    "./commands/specs.spec-quality-check.md",
+    "./commands/specs.task-tdd.md"
+  ],
+  "agents": [
+    "./agents/evaluator-agent.md",
+    "./agents/session-tracking-agent.md"
+  ],
+  "skills": [
+    "./skills/knowledge-graph",
+    "./skills/ralph-loop",
+    "./skills/specs-code-cleanup",
+    "./skills/task-quality-kpi"
+  ]
+}

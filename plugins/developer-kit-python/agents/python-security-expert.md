@@ -3,6 +3,8 @@ name: python-security-expert
 description: Expert security auditor that provides comprehensive Python application security analysis, DevSecOps, and compliance frameworks. Masters vulnerability assessment, threat modeling, secure authentication (OAuth2/JWT), OWASP standards, and security automation. Use PROACTIVELY for security audits, DevSecOps integration, or compliance implementation in Python applications.
 tools: [Read, Write, Edit, Glob, Grep, Bash]
 model: sonnet
+skills:
+  - clean-architecture
 ---
 
 You are an expert security auditor specializing in DevSecOps, application security, and comprehensive cybersecurity practices for Python applications.
@@ -110,8 +112,8 @@ def create_access_token(data: dict) -> str:
 def verify_token(token: str) -> dict:
     try:
         payload = jwt.decode(
-            token, 
-            PUBLIC_KEY, 
+            token,
+            PUBLIC_KEY,
             algorithms=[JWT_CONFIG["algorithm"]],
             options={"require_exp": True}
         )
@@ -183,7 +185,7 @@ class UserCreateRequest(BaseModel):
     email: EmailStr
     username: str = Field(min_length=3, max_length=50, pattern=r'^[a-zA-Z0-9_]+$')
     password: str = Field(min_length=12)
-    
+
     @validator('password')
     def validate_password(cls, v):
         if not re.search(r'[A-Z]', v):
@@ -208,7 +210,7 @@ repos:
     hooks:
       - id: bandit
         args: ['-c', 'bandit.yaml']
-  
+
   - repo: https://github.com/python-security/pyt
     rev: master
     hooks:
@@ -247,23 +249,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
-      
+
       - name: Install dependencies
         run: |
           pip install bandit safety pip-audit
           pip install -r requirements.txt
-      
+
       - name: Bandit Security Scan
         run: bandit -r src/ -f json -o bandit-report.json
-      
+
       - name: Dependency Audit
         run: pip-audit --requirement requirements.txt
-      
+
       - name: Safety Check
         run: safety check --full-report
 ```
@@ -277,7 +279,7 @@ repos:
     hooks:
       - id: bandit
         exclude: tests/
-  
+
   - repo: https://github.com/Yelp/detect-secrets
     rev: v1.4.0
     hooks:
@@ -298,12 +300,12 @@ class SecuritySettings(BaseSettings):
         env_file_encoding='utf-8',
         extra='ignore'
     )
-    
+
     # Secrets as SecretStr to prevent logging
     database_url: SecretStr
     jwt_secret_key: SecretStr
     api_key: SecretStr
-    
+
     # Security settings
     cors_origins: list[str] = []
     allowed_hosts: list[str] = ["*"]
@@ -390,11 +392,11 @@ import re
 def sanitize_sensitive_data(_, __, event_dict):
     """Remove or mask sensitive data from logs"""
     sensitive_keys = {'password', 'token', 'api_key', 'secret', 'authorization'}
-    
+
     for key in list(event_dict.keys()):
         if any(s in key.lower() for s in sensitive_keys):
             event_dict[key] = '***REDACTED***'
-    
+
     # Mask credit card numbers
     if 'message' in event_dict:
         event_dict['message'] = re.sub(
@@ -402,7 +404,7 @@ def sanitize_sensitive_data(_, __, event_dict):
             '****-****-****-****',
             str(event_dict['message'])
         )
-    
+
     return event_dict
 
 structlog.configure(

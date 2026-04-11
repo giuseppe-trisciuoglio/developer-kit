@@ -20,6 +20,7 @@ Use this skill when you need to:
 - Generate or update `template.yaml` and `samconfig.toml`
 - Add local test payloads in `events/` for `sam local invoke`
 - Standardize build/package/deploy workflow for `sam deploy`
+- Migrate existing Lambda functions to SAM templates
 
 ## Trigger Phrases
 
@@ -28,6 +29,8 @@ Use this skill when you need to:
 - "Add template.yaml for SAM"
 - "Initialize SAM for existing Lambda function"
 - "Generate samconfig.toml"
+- "Migrate Lambda to SAM"
+- "Bootstrap serverless project"
 
 ---
 
@@ -49,7 +52,7 @@ Use this skill when you need to:
 
 The skill ensures these files exist:
 
-```text
+```
 .
 ├── template.yaml
 ├── samconfig.toml
@@ -59,12 +62,14 @@ The skill ensures these files exist:
 
 ### 4) SAM Command Coverage
 
-- `sam init`
-- `sam validate`
-- `sam build`
-- `sam package`
-- `sam deploy --guided`
-- `sam local invoke`
+| Command | Purpose |
+|---------|---------|
+| `sam init` | Initialize a new SAM project |
+| `sam validate` | Validate template.yaml syntax |
+| `sam build` | Build the project |
+| `sam package` | Package for deployment |
+| `sam deploy --guided` | Deploy with guided configuration |
+| `sam local invoke` | Test function locally |
 
 ---
 
@@ -93,14 +98,37 @@ confirm_changeset = false
 
 ## Recommended Workflow
 
-1. Identify scenario: new project or migration
-2. Select runtime and package type (Zip or Image)
-3. Generate/update `template.yaml`
-4. Generate/update `samconfig.toml`
-5. Add `events/event.json`
-6. Run `sam validate`
-7. Run `sam build`
-8. Run `sam local invoke` and then `sam deploy --guided`
+1. **Identify scenario**: new project or migration
+2. **Select runtime**: Choose non-deprecated runtimes (Zip or Image package type)
+3. **Generate/update `template.yaml`**: Define Lambda functions and related resources
+4. **Generate/update `samconfig.toml`**: Configure deploy parameters
+5. **Add `events/event.json`**: Create test payloads for local invocation
+6. **Validate**: Run `sam validate`
+7. **Build**: Run `sam build`
+8. **Test locally**: Run `sam local invoke`
+9. **Deploy**: Run `sam deploy --guided`
+
+---
+
+## Validation Checklist
+
+Before deploying, verify:
+
+- [ ] `sam validate` succeeds without errors
+- [ ] `sam build` completes successfully
+- [ ] `template.yaml` has correct logical IDs and handlers
+- [ ] `samconfig.toml` contains deploy parameters for target environments
+- [ ] IAM capabilities are correctly configured
+- [ ] Test events are valid JSON
+
+---
+
+## Reference Materials
+
+The skill includes comprehensive reference guides:
+
+- `references/examples.md` - Complete SAM template examples
+- `references/migration-checklist.md` - Step-by-step migration guide
 
 ---
 
@@ -108,4 +136,4 @@ confirm_changeset = false
 
 - **AWS CloudFormation Lambda** (`aws-cloudformation-lambda`) - Lambda infrastructure patterns in CloudFormation
 - **AWS CLI Beast Mode** (`aws-cli-beast`) - Advanced AWS CLI operational workflows
-- **AWS Cost Optimization** (`aws-cost-optimization`) - Cost controls for serverless and other AWS workloads
+- **AWS Cost Optimization** (`aws-cost-optimization`) - Cost controls for serverless workloads

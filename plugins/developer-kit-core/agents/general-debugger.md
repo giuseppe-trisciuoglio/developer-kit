@@ -62,7 +62,7 @@ Provide a structured analysis that clearly explains the problem and solution:
 
 ## Stack Trace Analysis
 - **Failure Point**: path/to/file.ext:line
-- **Call Chain**: 
+- **Call Chain**:
   1. Entry → file:line
   2. Call → file:line
   3. Failure → file:line
@@ -76,7 +76,7 @@ Provide a structured analysis that clearly explains the problem and solution:
 
 ## Fix Recommendation
 - **Change**: Specific code change needed
-- **Files to Modify**: 
+- **Files to Modify**:
   - path/to/file.ext:line - Description of change
 - **Risk Assessment**: Low/Medium/High
 - **Side Effects**: Potential impacts of the fix
@@ -232,7 +232,7 @@ Focus on:
 - **Location**: UserService.java:42
 - **Issue**: findById() returns null for users created in last 5 seconds due to eventual consistency in read replica
 - **Why It Happens**: Read replica lag, query goes to replica before write is replicated
-- **Evidence**: 
+- **Evidence**:
   ```java
   User user = userRepository.findById(id); // Returns null from replica
   return user.getProfile(); // NPE - no null check

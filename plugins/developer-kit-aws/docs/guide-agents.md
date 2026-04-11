@@ -7,41 +7,42 @@ This guide provides comprehensive documentation for all AWS specialized agents a
 ## Table of Contents
 
 1. [Overview](#overview)
-2. [AWS Architecture Agents](#aws-architecture-agents)
-3. [AWS DevOps Agents](#aws-devops-agents)
-4. [Agent Usage Guidelines](#agent-usage-guidelines)
+2. [Available Agents](#available-agents)
+3. [Agent Reference](#agent-reference)
+4. [Agent Selection Guide](#agent-selection-guide)
 5. [See Also](#see-also)
 
 ---
 
 ## Overview
 
-The AWS Plugin provides specialized agents for AWS architecture design, CloudFormation infrastructure as code, and AWS Well-Architected Framework review. These agents have deep expertise in AWS services and can help with architecture design, infrastructure implementation, and best practices compliance.
+The AWS Plugin provides 3 specialized agents for AWS architecture design, CloudFormation infrastructure as code, and AWS Well-Architected Framework review. These agents have deep expertise in AWS services and help with architecture design, infrastructure implementation, and best practices compliance.
 
 ### Available Agents
 
-- **AWS Architecture Agents**: 2 agents for solution architecture and architecture review
-- **AWS DevOps Agents**: 1 agent for CloudFormation and DevOps automation
+| Agent | Purpose | Category |
+|-------|---------|----------|
+| `aws-solution-architect-expert` | AWS architecture design specialist | Architecture |
+| `aws-architecture-review-expert` | Well-Architected Framework review | Architecture |
+| `aws-cloudformation-devops-expert` | CloudFormation IaC specialist | DevOps |
 
 ---
 
-## AWS Architecture Agents
+## Agent Reference
 
 ### `aws-solution-architect-expert`
 
-**File**: `agents/aws-solution-architect-expert.md`
-
-**Purpose**: AWS solution architecture design specialist for building scalable, secure, and cost-effective cloud solutions.
+**Purpose**: Design scalable, secure, and cost-effective AWS cloud solutions.
 
 **When to use:**
-- Designing new AWS architectures
-- Planning cloud migrations
-- Architecting multi-region solutions
-- Designing serverless architectures
+- Designing new AWS architectures from scratch
+- Planning cloud migrations to AWS
+- Architecting multi-region or hybrid solutions
+- Designing serverless architectures (Lambda, Step Functions)
 - Planning high availability and disaster recovery
 
 **Key Capabilities:**
-- AWS service selection and architecture
+- AWS service selection and architecture design
 - Well-Architected Framework application
 - Cost optimization strategies
 - Security and compliance design
@@ -51,95 +52,73 @@ The AWS Plugin provides specialized agents for AWS architecture design, CloudFor
 
 ### `aws-architecture-review-expert`
 
-**File**: `agents/aws-architecture-review-expert.md`
-
-**Purpose**: AWS architecture review against Well-Architected Framework covering operational excellence, security, reliability, performance efficiency, and cost optimization.
+**Purpose**: Review existing AWS architectures against Well-Architected Framework pillars.
 
 **When to use:**
 - Reviewing existing AWS architectures
 - Validating against Well-Architected Framework
-- Identifying architectural risks
-- Optimizing AWS costs
-- Improving security and compliance
+- Identifying architectural risks and anti-patterns
+- Optimizing AWS costs and resource usage
+- Improving security and compliance posture
 
 **Key Capabilities:**
-- Well-Architected Framework review
+- Well-Architected Framework review (all 6 pillars)
 - Security best practices validation
 - Cost optimization recommendations
-- Performance optimization
+- Performance efficiency analysis
 - Operational excellence assessment
+- Reliability and resilience evaluation
 
 ---
-
-## AWS DevOps Agents
 
 ### `aws-cloudformation-devops-expert`
 
-**File**: `agents/aws-cloudformation-devops-expert.md`
-
-**Purpose**: CloudFormation infrastructure as code specialist for building, deploying, and managing AWS resources.
+**Purpose**: Build, deploy, and manage AWS infrastructure using CloudFormation.
 
 **When to use:**
-- Creating CloudFormation templates
-- Implementing IaC best practices
+- Creating CloudFormation templates from scratch
+- Implementing Infrastructure as Code best practices
 - Automating AWS deployments
-- Managing AWS infrastructure
-- Building CI/CD pipelines for AWS
+- Managing CloudFormation stacks
+- Building CI/CD pipelines for AWS infrastructure
+- Migrating existing resources to CloudFormation
 
 **Key Capabilities:**
-- CloudFormation template design
+- CloudFormation template design and optimization
 - IaC best practices implementation
-- Stack deployment and management
-- Resource orchestration
-- CI/CD pipeline integration
+- Stack deployment and lifecycle management
+- Resource orchestration patterns
+- CI/CD pipeline integration (GitHub Actions, CodePipeline)
+- Drift detection and management
 
 ---
 
-## Agent Usage Guidelines
+## Agent Selection Guide
 
-### When to Use AWS Plugin Agents
-
-AWS Plugin agents are most effective for:
-- **Architecture Design**: Designing new AWS solutions and architectures
-- **Architecture Review**: Validating existing architectures against best practices
-- **Infrastructure as Code**: Building CloudFormation templates and IaC solutions
-- **Cloud Migration**: Planning and executing cloud migrations
-- **Cost Optimization**: Optimizing AWS costs and resource usage
-- **Security**: Implementing AWS security best practices
+| Task | Recommended Agent |
+|------|-------------------|
+| Design new AWS architecture | `aws-solution-architect-expert` |
+| Review existing architecture | `aws-architecture-review-expert` |
+| Create CloudFormation templates | `aws-cloudformation-devops-expert` |
+| Optimize AWS costs | `aws-architecture-review-expert` |
+| Plan cloud migration | `aws-solution-architect-expert` |
+| Implement IaC pipelines | `aws-cloudformation-devops-expert` |
+| Security review | `aws-architecture-review-expert` |
+| Design serverless solutions | `aws-solution-architect-expert` |
 
 ### How to Invoke Agents
-
-Agents can be invoked in several ways:
 
 1. **Automatic Selection**: Claude automatically selects the appropriate agent based on task context
 2. **Direct Invocation**: Use agent name in conversation (e.g., "Ask the aws-solution-architect-expert...")
 3. **Tool Selection**: When using the Task tool, specify the subagent_type parameter
 
-### Agent Selection Guide
-
-| Task | Recommended Agent |
-|------|-------------------|
-| Design AWS architecture | `aws-solution-architect-expert` |
-| Review AWS architecture | `aws-architecture-review-expert` |
-| Create CloudFormation templates | `aws-cloudformation-devops-expert` |
-| Optimize AWS costs | `aws-architecture-review-expert` |
-| Plan cloud migration | `aws-solution-architect-expert` |
-| Implement IaC | `aws-cloudformation-devops-expert` |
-
 ---
 
 ## See Also
 
-- [CloudFormation Skills Guide](./guide-skills-cloudformation.md) - AWS CloudFormation skills
-- [AWS CLI Skills Guide](./guide-skills-aws-cli.md) - AWS CLI Beast Mode for advanced operations
-- [AWS SAM Bootstrap Guide](./guide-skills-aws-sam.md) - AWS SAM project initialization and migration
+- [CloudFormation Skills Guide](./guide-skills-cloudformation.md) - Infrastructure as Code patterns
+- [AWS CLI Skills Guide](./guide-skills-aws-cli.md) - Advanced command line operations
+- [AWS SAM Bootstrap Guide](./guide-skills-aws-sam.md) - Serverless Application Model
+- [Cost Optimization Guide](./guide-skills-cost-optimization.md) - AWS cost management
 - [Core Agent Guide](../../developer-kit-core/docs/guide-agents.md) - All agents across plugins
-- [Java AWS Skills Guide](../../developer-kit-java/docs/guide-skills-aws-java.md) - AWS Java SDK skills
-
----
-
-## Cross-Plugin References
-
-The AWS plugin contains CloudFormation skills for infrastructure as code. For AWS SDK integration from Java applications, see:
-
-- **[Java AWS Skills Guide](../../developer-kit-java/docs/guide-skills-aws-java.md)** - AWS SDK integration from Java
+- [Java AWS Skills Guide](../../developer-kit-java/docs/guide-skills-aws-java.md) - AWS SDK for Java

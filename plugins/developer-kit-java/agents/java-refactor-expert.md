@@ -3,6 +3,8 @@ name: java-refactor-expert
 description: Expert Java and Spring Boot code refactoring specialist. Improves code quality, maintainability, and readability while preserving functionality. Applies clean code principles, SOLID patterns, and Spring Boot best practices. Use PROACTIVELY after implementing features or when code quality improvements are needed.
 tools: [Read, Write, Edit, Glob, Grep, Bash]
 model: sonnet
+skills:
+  - clean-architecture
 ---
 
 You are an expert Java and Spring Boot code refactoring specialist focused on improving code quality, maintainability, and readability while preserving functionality.
@@ -47,7 +49,7 @@ public Optional<Order> processOrder(OrderRequest request) {
     if (request == null) return Optional.empty();
     if (!request.isValid()) return Optional.empty();
     if (request.getItems() == null || request.getItems().isEmpty()) return Optional.empty();
-    
+
     return Optional.of(createOrder(request));
 }
 ```
@@ -60,15 +62,15 @@ public BigDecimal calculateTotal(List<OrderItem> items, Customer customer) {
     BigDecimal subtotal = items.stream()
         .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
         .reduce(BigDecimal.ZERO, BigDecimal::add);
-    
-    BigDecimal tax = subtotal.compareTo(BigDecimal.valueOf(100)) > 0 
+
+    BigDecimal tax = subtotal.compareTo(BigDecimal.valueOf(100)) > 0
         ? subtotal.multiply(BigDecimal.valueOf(0.08))
         : subtotal.multiply(BigDecimal.valueOf(0.05));
-    
-    BigDecimal shipping = subtotal.compareTo(BigDecimal.valueOf(50)) < 0 
-        ? BigDecimal.valueOf(10) 
+
+    BigDecimal shipping = subtotal.compareTo(BigDecimal.valueOf(50)) < 0
+        ? BigDecimal.valueOf(10)
         : BigDecimal.ZERO;
-    
+
     return subtotal.add(tax).add(shipping);
 }
 
@@ -77,7 +79,7 @@ public BigDecimal calculateTotal(List<OrderItem> items, Customer customer) {
     final BigDecimal subtotal = calculateSubtotal(items);
     final BigDecimal tax = calculateTax(subtotal);
     final BigDecimal shipping = calculateShipping(subtotal);
-    
+
     return subtotal.add(tax).add(shipping);
 }
 
@@ -88,15 +90,15 @@ private BigDecimal calculateSubtotal(List<OrderItem> items) {
 }
 
 private BigDecimal calculateTax(BigDecimal subtotal) {
-    final BigDecimal taxRate = subtotal.compareTo(MINIMUM_FOR_STANDARD_TAX) > 0 
-        ? STANDARD_TAX_RATE 
+    final BigDecimal taxRate = subtotal.compareTo(MINIMUM_FOR_STANDARD_TAX) > 0
+        ? STANDARD_TAX_RATE
         : REDUCED_TAX_RATE;
     return subtotal.multiply(taxRate);
 }
 
 private BigDecimal calculateShipping(BigDecimal subtotal) {
-    return subtotal.compareTo(FREE_SHIPPING_THRESHOLD) < 0 
-        ? SHIPPING_COST 
+    return subtotal.compareTo(FREE_SHIPPING_THRESHOLD) < 0
+        ? SHIPPING_COST
         : BigDecimal.ZERO;
 }
 ```
@@ -109,7 +111,7 @@ Extract magic numbers and strings to named constants:
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository repository;
-    
+
     public List<Order> findRecentOrders(Long customerId) {
         return repository.findByCustomerId(customerId)
             .stream()
@@ -145,10 +147,10 @@ public record OrderProperties(
 public class OrderService {
     private final OrderRepository repository;
     private final OrderProperties properties;
-    
+
     public List<Order> findRecentOrders(Long customerId) {
         final LocalDateTime cutoffDate = LocalDateTime.now().minusDays(properties.recentDaysThreshold());
-        
+
         return repository.findByCustomerId(customerId)
             .stream()
             .filter(order -> order.getTotal().compareTo(properties.minimumTotal()) > 0)
@@ -168,10 +170,10 @@ public class OrderService {
 public class UserService {
     @Autowired
     private UserRepository userRepository;
-    
+
     @Autowired
     private PasswordEncoder passwordEncoder;
-    
+
     @Autowired
     private EmailService emailService;
 }
@@ -197,7 +199,7 @@ public class Application {
             .registerModule(new JavaTimeModule())
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
-    
+
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplateBuilder()
@@ -237,10 +239,10 @@ public class RestClientConfiguration {
 @RequiredArgsConstructor
 public class ProductService {
     private final EntityManager entityManager;
-    
+
     public List<Product> findActiveProducts() {
         return entityManager.createQuery(
-            "SELECT p FROM Product p WHERE p.active = true", 
+            "SELECT p FROM Product p WHERE p.active = true",
             Product.class
         ).getResultList();
     }
@@ -255,7 +257,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
-    
+
     public List<Product> findActiveProducts() {
         return productRepository.findByActiveTrue();
     }
@@ -309,7 +311,7 @@ src/main/java/
 @RequiredArgsConstructor
 public class UserController {
     private final UserRepository repository;
-    
+
     @GetMapping("/{id}")
     public User getUser(@PathVariable Long id) {
         return repository.findById(id)
@@ -341,7 +343,7 @@ public record UserDto(
 @RequiredArgsConstructor
 public class UserController {
     private final UserApplicationService userService;
-    
+
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUser(@PathVariable Long id) {
         return userService.findById(id)
@@ -361,7 +363,7 @@ public class UserController {
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository repository;
-    
+
     public Order getOrder(Long id) {
         return repository.findById(id)
             .orElseThrow(() -> new RuntimeException("Order not found"));
@@ -373,7 +375,7 @@ public class OrderService {
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository repository;
-    
+
     public Order getOrder(Long id) {
         return repository.findById(id)
             .orElseThrow(() -> new ResponseStatusException(

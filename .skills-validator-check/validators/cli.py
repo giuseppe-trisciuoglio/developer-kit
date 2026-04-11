@@ -6,7 +6,7 @@ import argparse
 import subprocess
 import sys
 from pathlib import Path
-from typing import List, Optional
+from typing import Dict, List, Optional, Set
 
 # Support both direct execution and package import
 if __name__ == "__main__" or __package__ is None:
@@ -82,6 +82,13 @@ class ValidationCLI:
                 print("No Claude Code components to validate.")
                 return 0
 
+            # Apply --type filter if requested
+            if parsed.type_filter:
+                component_files = self._filter_by_type(component_files, parsed.type_filter)
+                if not component_files:
+                    print(f"No components of type '{parsed.type_filter}' found.")
+                    return 0
+
             # Validate each file
             results: List[ValidationResult] = []
             for file_path in component_files:
@@ -156,6 +163,14 @@ class ValidationCLI:
             "--check-external-urls",
             action="store_true",
             help="Check remote reachability for external HTTP(S) links"
+        )
+
+        parser.add_argument(
+            "--type",
+            choices=["skills", "agents", "commands", "rules", "hooks"],
+            default=None,
+            dest="type_filter",
+            help="Filter validation to a specific component type"
         )
 
         return parser
@@ -239,6 +254,11 @@ class ValidationCLI:
                 if plugin_rules.exists():
                     files.update(plugin_rules.glob("*.md"))
 
+                # Plugin hooks
+                plugin_hooks = plugin_dir / "hooks" / "hooks.json"
+                if plugin_hooks.exists():
+                    files.add(plugin_hooks)
+
                 # Plugin.json files
                 plugin_json = plugin_dir / ".claude-plugin" / "plugin.json"
                 if plugin_json.exists():
@@ -276,6 +296,34 @@ class ValidationCLI:
             if validator is not None:
                 component_files.append(file_path)
         return component_files
+
+    def _filter_by_type(self, files: List[Path], type_filter: str) -> List[Path]:
+        """Filter component files to only those matching the requested type.
+
+        Mapping between --type values and validator component_type strings:
+          skills   -> "skill", "skill-markdown"
+          agents   -> "agent"
+          commands -> "command"
+          rules    -> "rule"
+          hooks    -> "hook"
+        """
+        type_map: Dict[str, Set[str]] = {
+            "skills":   {"skill", "skill-markdown"},
+            "agents":   {"agent"},
+            "commands": {"command"},
+            "rules":    {"rule"},
+            "hooks":    {"hook"},
+        }
+        allowed_types = type_map.get(type_filter, set())
+        filtered = []
+        for file_path in files:
+            validator = ValidatorFactory.get_validator(
+                file_path,
+                validate_external_urls=self.validate_external_urls,
+            )
+            if validator is not None and validator.component_type in allowed_types:
+                filtered.append(file_path)
+        return filtered
 
     def _validate_file(self, file_path: Path) -> Optional[ValidationResult]:
         """Validate a single file."""

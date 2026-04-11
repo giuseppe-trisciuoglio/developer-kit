@@ -8,7 +8,7 @@ Quick reference to Clean Architecture skill for Java Spring Boot applications.
 
 | Skill | Purpose |
 |-------|---------|
-| **clean-architecture** | Clean Architecture, Hexagonal Architecture, and DDD patterns for Java 21+ Spring Boot 3.5+ |
+| **clean-architecture** | Clean Architecture, Hexagonal Architecture, and DDD patterns for Java 21+ Spring Boot 3.x/4.x |
 
 ---
 
@@ -99,7 +99,7 @@ com.example.order/
 ## Technology Stack
 
 - **Java**: 21+
-- **Spring Boot**: 3.5+
+- **Spring Boot**: 3.x/4.x
 - **Architecture**: Clean Architecture, Hexagonal Architecture, DDD
 
 ---

@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/ts-session-context.py",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/ts-session-context.py",
             "statusMessage": "Loading TypeScript project context..."
           }
         ]
@@ -19,7 +19,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/ts-dev-server-guard.py",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/ts-dev-server-guard.py",
             "statusMessage": "Checking for dev server command..."
           }
         ]
@@ -31,7 +31,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/ts-file-validator.py",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/ts-file-validator.py",
             "statusMessage": "Validating TypeScript file naming..."
           }
         ]
@@ -41,29 +41,29 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/ts-pattern-validator.py",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/ts-pattern-validator.py",
             "statusMessage": "Checking TypeScript architectural patterns..."
           },
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/ts-rules-tracker.py",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/ts-rules-tracker.py",
             "statusMessage": "Indexing project rules for modified file..."
           },
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/ts-prettier-format.py",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/ts-prettier-format.py",
             "statusMessage": "Auto-formatting with Prettier...",
             "async": true
           }
         ]
       }
     ],
-    "Prompt": [
+    "UserPromptSubmit": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/ts-rules-verifier.py",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/ts-rules-verifier.py",
             "statusMessage": "Checking pending project-rules verifications..."
           }
         ]
@@ -74,13 +74,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/ts-quality-gate.py",
-            "statusMessage": "Running TypeScript quality checks (tsc + eslint)...",
-            "async": true
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/ts-quality-gate.py",
+            "statusMessage": "Running TypeScript quality checks (tsc + eslint)..."
           }
         ]
       }
     ]
   }
 }
-

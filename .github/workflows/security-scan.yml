@@ -39,3 +39,23 @@ jobs:
         run: |
           echo "🔍 Running MCP-Scan security check on all skills..."
           python .skills-validator-check/validators/mcp_scan_checker.py --all -v
+
+      - name: Run Trust Hub Security Check (PR only)
+        if: github.event_name == 'pull_request'
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_HEAD_REF: ${{ github.head_ref }}
+          GITHUB_BASE_REF: ${{ github.base_ref }}
+        run: |
+          echo "🔐 Running Trust Hub security check on changed skills..."
+          python .skills-validator-check/validators/security_checker.py
+
+      - name: Run Trust Hub Security Check (push to main/develop)
+        if: github.event_name == 'push'
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_HEAD_REF: ${{ github.ref_name }}
+          GITHUB_BASE_REF: ${{ github.event.before }}
+        run: |
+          echo "🔐 Running Trust Hub security check..."
+          python .skills-validator-check/validators/security_checker.py

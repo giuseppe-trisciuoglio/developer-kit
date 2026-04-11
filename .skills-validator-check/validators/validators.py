@@ -23,6 +23,7 @@ from .config import (
     MARKDOWN_FILE_PATTERN,
     SKILL_PACKAGE_PATTERN,
     PLUGIN_PATTERN,
+    HOOK_PATTERN,
     SKILL_SCHEMA,
     AGENT_SCHEMA,
     COMMAND_SCHEMA,
@@ -59,6 +60,8 @@ from .config import (
     PLUGIN_JSON_SCHEMA,
     VALID_LICENSES,
     PLUGIN_NAME_PATTERN,
+    VALID_HOOK_EVENTS,
+    VALID_HOOK_TYPES,
 )
 from .models import ValidationResult, Severity
 
@@ -2421,6 +2424,297 @@ class PluginJsonValidator:
 
 
 
+class HookValidator(BaseValidator):
+    """Validator for Claude Code plugin hooks.json files."""
+
+    @property
+    def component_type(self) -> str:
+        return "hook"
+
+    @property
+    def file_pattern(self) -> re.Pattern:
+        return HOOK_PATTERN
+
+    @property
+    def schema(self) -> Dict[str, Set[str]]:
+        # hooks.json has no frontmatter schema; return empty to satisfy ABC
+        return {"required": set(), "optional": set()}
+
+    def validate(self, file_path: Path) -> ValidationResult:
+        """Validate a hooks.json file."""
+        result = ValidationResult(
+            file_path=file_path,
+            component_type=self.component_type,
+        )
+
+        try:
+            content = file_path.read_text(encoding="utf-8")
+        except FileNotFoundError:
+            result.add_error(
+                message=f"File not found: {file_path}",
+                suggestion="Verify the file path is correct",
+            )
+            return result
+        except UnicodeDecodeError:
+            result.add_error(
+                message="File is not valid UTF-8",
+                suggestion="Ensure the file uses UTF-8 encoding",
+            )
+            return result
+
+        try:
+            data = json.loads(content)
+        except json.JSONDecodeError as exc:
+            result.add_error(
+                message=f"Invalid JSON: {exc}",
+                suggestion="Fix JSON syntax errors in hooks.json",
+            )
+            return result
+
+        if not isinstance(data, dict):
+            result.add_error(
+                message="hooks.json must be a JSON object at the top level",
+                suggestion="Wrap the content in a JSON object: {}",
+            )
+            return result
+
+        description = data.get("description")
+        if description is not None and not isinstance(description, str):
+            result.add_warning(
+                message=f"'description' must be a string, got {type(description).__name__}",
+                field_name="description",
+                suggestion="Provide a string description for the hooks file",
+            )
+
+        hooks_root = data.get("hooks")
+        if hooks_root is None:
+            result.add_error(
+                message="Missing required top-level 'hooks' key",
+                suggestion="Add a 'hooks' object mapping event names to matcher arrays",
+            )
+            return result
+
+        if not isinstance(hooks_root, dict):
+            result.add_error(
+                message=f"'hooks' must be a JSON object, got {type(hooks_root).__name__}",
+                field_name="hooks",
+                suggestion="'hooks' must map event names to arrays of matcher objects",
+            )
+            return result
+
+        for event_name, matchers in hooks_root.items():
+            self._validate_event(event_name, matchers, result)
+
+        return result
+
+    def _validate_event(
+        self,
+        event_name: str,
+        matchers: Any,
+        result: ValidationResult,
+    ) -> None:
+        if event_name not in VALID_HOOK_EVENTS:
+            result.add_warning(
+                message=f"Unknown hook event: '{event_name}'",
+                field_name="hooks",
+                suggestion=f"Valid events: {', '.join(sorted(VALID_HOOK_EVENTS))}",
+            )
+
+        if not isinstance(matchers, list):
+            result.add_error(
+                message=f"Event '{event_name}' must be an array of matcher objects, got {type(matchers).__name__}",
+                field_name="hooks",
+                suggestion='Each event key must map to an array: [{"matcher": "...", "hooks": [...]}]',
+            )
+            return
+
+        for idx, matcher_obj in enumerate(matchers):
+            self._validate_matcher(event_name, idx, matcher_obj, result)
+
+    def _validate_matcher(
+        self,
+        event_name: str,
+        idx: int,
+        matcher_obj: Any,
+        result: ValidationResult,
+    ) -> None:
+        location = f"hooks.{event_name}[{idx}]"
+
+        if not isinstance(matcher_obj, dict):
+            result.add_error(
+                message=f"{location} must be a JSON object, got {type(matcher_obj).__name__}",
+                field_name="hooks",
+                suggestion='Each matcher entry must be an object with optional "matcher" and required "hooks"',
+            )
+            return
+
+        matcher_value = matcher_obj.get("matcher")
+        if matcher_value is not None and not isinstance(matcher_value, str):
+            result.add_warning(
+                message=f'{location}.matcher must be a string regex, got {type(matcher_value).__name__}',
+                field_name="hooks",
+                suggestion='Provide a string regex pattern for "matcher", e.g. "Bash" or "Write|Edit"',
+            )
+
+        hook_entries = matcher_obj.get("hooks")
+        if hook_entries is None:
+            result.add_error(
+                message=f'{location} is missing required "hooks" array',
+                field_name="hooks",
+                suggestion='Add a "hooks" array with at least one hook entry object',
+            )
+            return
+
+        if not isinstance(hook_entries, list):
+            result.add_error(
+                message=f"{location}.hooks must be an array, got {type(hook_entries).__name__}",
+                field_name="hooks",
+                suggestion='"hooks" must be an array of hook entry objects',
+            )
+            return
+
+        if len(hook_entries) == 0:
+            result.add_warning(
+                message=f"{location}.hooks is empty",
+                field_name="hooks",
+                suggestion="Add at least one hook entry object to the array",
+            )
+
+        for entry_idx, entry in enumerate(hook_entries):
+            self._validate_hook_entry(f"{location}.hooks[{entry_idx}]", entry, result)
+
+    def _validate_hook_entry(
+        self,
+        location: str,
+        entry: Any,
+        result: ValidationResult,
+    ) -> None:
+        if not isinstance(entry, dict):
+            result.add_error(
+                message=f"{location} must be a JSON object, got {type(entry).__name__}",
+                field_name="hooks",
+                suggestion='Each hook entry must be an object with a "type" field',
+            )
+            return
+
+        hook_type = entry.get("type")
+        if hook_type is None:
+            result.add_error(
+                message=f'{location} is missing required "type" field',
+                field_name="hooks",
+                suggestion=f'Add "type" field with one of: {", ".join(sorted(VALID_HOOK_TYPES))}',
+            )
+            return
+
+        if not isinstance(hook_type, str):
+            result.add_error(
+                message=f"{location}.type must be a string, got {type(hook_type).__name__}",
+                field_name="hooks",
+                suggestion=f'Set "type" to one of: {", ".join(sorted(VALID_HOOK_TYPES))}',
+            )
+            return
+
+        if hook_type not in VALID_HOOK_TYPES:
+            result.add_error(
+                message=f"{location}.type has unknown value: '{hook_type}'",
+                field_name="hooks",
+                suggestion=f'Valid types are: {", ".join(sorted(VALID_HOOK_TYPES))}',
+            )
+
+        if hook_type == "command":
+            command = entry.get("command")
+            if command is None:
+                result.add_error(
+                    message=f'{location} of type "command" is missing required "command" field',
+                    field_name="hooks",
+                    suggestion='Add "command" with the shell command to execute',
+                )
+            elif not isinstance(command, str):
+                result.add_error(
+                    message=f"{location}.command must be a string, got {type(command).__name__}",
+                    field_name="hooks",
+                    suggestion="Provide the shell command as a string",
+                )
+
+        elif hook_type == "http":
+            url = entry.get("url")
+            if url is None:
+                result.add_error(
+                    message=f'{location} of type "http" is missing required "url" field',
+                    field_name="hooks",
+                    suggestion='Add "url" with the HTTP endpoint to POST to',
+                )
+            elif not isinstance(url, str):
+                result.add_error(
+                    message=f"{location}.url must be a string, got {type(url).__name__}",
+                    field_name="hooks",
+                    suggestion="Provide the endpoint URL as a string",
+                )
+
+        elif hook_type in ("prompt", "agent"):
+            prompt = entry.get("prompt")
+            if prompt is None:
+                result.add_error(
+                    message=f'{location} of type "{hook_type}" is missing required "prompt" field',
+                    field_name="hooks",
+                    suggestion='Add "prompt" with the LLM prompt text',
+                )
+            elif not isinstance(prompt, str):
+                result.add_error(
+                    message=f"{location}.prompt must be a string, got {type(prompt).__name__}",
+                    field_name="hooks",
+                    suggestion="Provide the prompt as a string",
+                )
+
+        async_value = entry.get("async")
+        if async_value is not None:
+            if not isinstance(async_value, bool):
+                result.add_error(
+                    message=f"{location}.async must be a boolean, got {type(async_value).__name__}",
+                    field_name="hooks",
+                    suggestion='Set "async" to true or false',
+                )
+            elif async_value and hook_type in VALID_HOOK_TYPES and hook_type != "command":
+                result.add_warning(
+                    message=f'{location}.async is only supported for type "command", ignored for "{hook_type}"',
+                    field_name="hooks",
+                    suggestion='Remove "async" from non-command hook entries',
+                )
+
+        timeout_value = entry.get("timeout")
+        if timeout_value is not None:
+            if isinstance(timeout_value, bool) or not isinstance(timeout_value, (int, float)):
+                result.add_error(
+                    message=f"{location}.timeout must be a number, got {type(timeout_value).__name__}",
+                    field_name="hooks",
+                    suggestion='Set "timeout" to a non-negative number (seconds)',
+                )
+            elif timeout_value < 0:
+                result.add_error(
+                    message=f"{location}.timeout must be >= 0, got {timeout_value}",
+                    field_name="hooks",
+                    suggestion="Use a non-negative timeout value",
+                )
+
+        status_msg = entry.get("statusMessage")
+        if status_msg is not None and not isinstance(status_msg, str):
+            result.add_warning(
+                message=f"{location}.statusMessage must be a string, got {type(status_msg).__name__}",
+                field_name="hooks",
+                suggestion="Provide statusMessage as a string",
+            )
+
+    def _validate_specific(
+        self,
+        file_path: Path,
+        frontmatter: Dict[str, Any],
+        content: str,
+        result: ValidationResult,
+    ) -> None:
+        # Not used: HookValidator overrides validate() completely
+        pass
+
+
 class ValidatorFactory:
     """Factory for creating appropriate validators."""
 
@@ -2432,6 +2726,7 @@ class ValidatorFactory:
             AgentValidator(),
             CommandValidator(),
             RuleValidator(),
+            HookValidator(),
             KebabCaseValidator(),
             SkillPackageValidator(),
             PluginVersionValidator(),

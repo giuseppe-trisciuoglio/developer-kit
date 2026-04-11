@@ -395,3 +395,44 @@ VALID_LICENSES: FrozenSet[str] = frozenset({
 
 # Plugin name pattern (kebab-case, no spaces)
 PLUGIN_NAME_PATTERN = re.compile(r"^[a-z][a-z0-9]*(-[a-z0-9]+)*$")
+
+# =============================================================================
+# Hook Validation Configuration
+# =============================================================================
+
+# Pattern for plugin hooks configuration files:
+# - plugins/plugin-name/hooks/hooks.json
+HOOK_PATTERN = re.compile(r"(?:.*/)?hooks/hooks\.json$")
+
+# Valid Claude Code hook event names
+VALID_HOOK_EVENTS: FrozenSet[str] = frozenset({
+    "ConfigChange",
+    "Elicitation",
+    "ElicitationResult",
+    "InstructionsLoaded",
+    "Notification",
+    "PermissionRequest",
+    "PostCompact",
+    "PostToolUse",
+    "PostToolUseFailure",
+    "PreCompact",
+    "PreToolUse",
+    "SessionEnd",
+    "SessionStart",
+    "Stop",
+    "SubagentStart",
+    "SubagentStop",
+    "TaskCompleted",
+    "TeammateIdle",
+    "UserPromptSubmit",
+    "WorktreeCreate",
+    "WorktreeRemove",
+})
+
+# Valid hook entry types
+VALID_HOOK_TYPES: FrozenSet[str] = frozenset({
+    "command",
+    "http",
+    "prompt",
+    "agent",
+})

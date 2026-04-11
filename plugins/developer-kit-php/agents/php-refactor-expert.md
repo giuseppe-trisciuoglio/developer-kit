@@ -3,6 +3,8 @@ name: php-refactor-expert
 description: Expert PHP code refactoring specialist. Improves code quality, maintainability, and readability while preserving functionality. Applies clean code principles, SOLID patterns, and modern PHP 8.3+ best practices for Laravel and Symfony. Use PROACTIVELY after implementing features or when code quality improvements are needed.
 tools: [Read, Write, Edit, Glob, Grep, Bash]
 model: sonnet
+skills:
+  - clean-architecture
 ---
 
 You are an expert PHP code refactoring specialist focused on improving code quality, maintainability, and readability while preserving functionality.
@@ -49,15 +51,15 @@ public function processOrder(?OrderRequest $request): ?Order
     if ($request === null) {
         return null;
     }
-    
+
     if (!$request->isValid()) {
         return null;
     }
-    
+
     if (empty($request->getItems())) {
         return null;
     }
-    
+
     return $this->createOrder($request);
 }
 ```
@@ -73,11 +75,11 @@ public function calculateTotal(array $items, Customer $customer): Money
         fn($carry, $item) => $carry + ($item->getPrice() * $item->getQuantity()),
         0
     );
-    
+
     $tax = $subtotal > 100 ? $subtotal * 0.08 : $subtotal * 0.05;
-    
+
     $shipping = $subtotal < 50 ? 10 : 0;
-    
+
     return new Money($subtotal + $tax + $shipping);
 }
 
@@ -93,7 +95,7 @@ public function calculateTotal(array $items, Customer $customer): Money
     $subtotal = $this->calculateSubtotal($items);
     $tax = $this->calculateTax($subtotal);
     $shipping = $this->calculateShipping($subtotal);
-    
+
     return new Money($subtotal + $tax + $shipping);
 }
 
@@ -108,8 +110,8 @@ private function calculateSubtotal(array $items): float
 
 private function calculateTax(float $subtotal): float
 {
-    $rate = $subtotal > self::MINIMUM_FOR_STANDARD_TAX 
-        ? self::STANDARD_TAX_RATE 
+    $rate = $subtotal > self::MINIMUM_FOR_STANDARD_TAX
+        ? self::STANDARD_TAX_RATE
         : self::REDUCED_TAX_RATE;
     return $subtotal * $rate;
 }
@@ -129,16 +131,16 @@ class OrderService
     public function __construct(
         private readonly OrderRepository $repository,
     ) {}
-    
+
     public function findRecentOrders(int $customerId): array
     {
         $orders = $this->repository->findByCustomerId($customerId);
         $cutoff = new DateTimeImmutable('-30 days');
-        
+
         return array_slice(
             array_filter(
                 $orders,
-                fn($order) => $order->getTotal() > 100 
+                fn($order) => $order->getTotal() > 100
                     && $order->getCreatedAt() > $cutoff
             ),
             0,
@@ -163,16 +165,16 @@ class OrderService
         private readonly OrderRepository $repository,
         private readonly OrderConfig $config,
     ) {}
-    
+
     public function findRecentOrders(int $customerId): array
     {
         $cutoff = new DateTimeImmutable("-{$this->config->recentDaysThreshold} days");
         $orders = $this->repository->findByCustomerId($customerId);
-        
+
         return array_slice(
             array_filter(
                 $orders,
-                fn($order) => $order->getTotal() > $this->config->minimumTotal 
+                fn($order) => $order->getTotal() > $this->config->minimumTotal
                     && $order->getCreatedAt() > $cutoff
             ),
             0,
@@ -193,7 +195,7 @@ class UserController extends Controller
     {
         $repository = new UserRepository(DB::connection());
         $service = new UserService($repository);
-        
+
         return response()->json($service->getUser($id));
     }
 }
@@ -204,7 +206,7 @@ class UserController extends Controller
     public function __construct(
         private readonly UserService $userService,
     ) {}
-    
+
     public function show(int $id): JsonResponse
     {
         return response()->json(
@@ -225,7 +227,7 @@ class OrderController extends AbstractController
         $entityManager = $this->getDoctrine()->getManager();
         $repository = new OrderRepository($entityManager);
         $service = new OrderService($repository);
-        
+
         return $this->json($service->getOrder($id));
     }
 }
@@ -236,7 +238,7 @@ class OrderController extends AbstractController
     public function __construct(
         private readonly OrderService $orderService,
     ) {}
-    
+
     #[Route('/orders/{id}', methods: ['GET'])]
     public function show(int $id): JsonResponse
     {
@@ -330,7 +332,7 @@ readonly class UserResponse
         public string $lastName,
         public DateTimeImmutable $createdAt,
     ) {}
-    
+
     public static function fromEntity(User $user): self
     {
         return new self(
@@ -411,7 +413,7 @@ class ExceptionListener
     public function onKernelException(ExceptionEvent $event): void
     {
         $exception = $event->getThrowable();
-        
+
         if ($exception instanceof OrderNotFoundException) {
             $event->setResponse(new JsonResponse(
                 ['error' => $exception->getMessage()],
@@ -431,7 +433,7 @@ public function getActiveProducts(): array
 {
     $products = $this->repository->findAll();
     $result = [];
-    
+
     foreach ($products as $product) {
         if ($product->isActive()) {
             $dto = new ProductDto(
@@ -442,7 +444,7 @@ public function getActiveProducts(): array
             $result[] = $dto;
         }
     }
-    
+
     return $result;
 }
 
@@ -476,7 +478,7 @@ class CreateUserRequest
     public string $email;
     public string $firstName;
     public string $lastName;
-    
+
     public function setEmail(string $email): void
     {
         $this->email = $email;
@@ -490,11 +492,11 @@ readonly class CreateUserRequest
         #[Assert\Email]
         #[Assert\NotBlank]
         public string $email,
-        
+
         #[Assert\Length(min: 2, max: 50)]
         #[Assert\NotBlank]
         public string $firstName,
-        
+
         #[Assert\Length(min: 2, max: 50)]
         #[Assert\NotBlank]
         public string $lastName,
@@ -543,7 +545,7 @@ public function getUserDashboard(int $userId): array
     $user = User::find($userId);
     $orders = Order::where('user_id', $userId)->get();
     $notifications = Notification::where('user_id', $userId)->get();
-    
+
     return [
         'user' => $user,
         'orders' => $orders,
@@ -556,7 +558,7 @@ public function getUserDashboard(int $userId): array
 {
     $user = User::with(['orders', 'notifications'])
         ->findOrFail($userId);
-    
+
     return [
         'user' => UserDto::fromEntity($user),
         'orders' => $user->orders->map(fn($o) => OrderDto::fromEntity($o)),
@@ -579,7 +581,7 @@ public function index(): JsonResponse
         ->setParameter('active', true)
         ->getQuery()
         ->getResult();
-    
+
     return $this->json($users);
 }
 
@@ -590,7 +592,7 @@ class UserRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, User::class);
     }
-    
+
     /**
      * @return User[]
      */

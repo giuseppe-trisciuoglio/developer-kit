@@ -99,8 +99,16 @@ def main() -> None:
         sys.exit(0)
 
     directive = _build_directive(entries)
-    print(directive)
-    sys.exit(1)  # Exit 1: inject directive into Claude's next prompt turn
+
+    # Output JSON format required by Claude Code hooks
+    output = {
+        "hookSpecificOutput": {
+            "hookEventName": "UserPromptSubmit",
+            "additionalContext": directive
+        }
+    }
+    print(json.dumps(output))
+    sys.exit(0)
 
 
 if __name__ == "__main__":

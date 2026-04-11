@@ -1,0 +1,516 @@
+---
+description: "Provides interactive specification quality assessment by asking targeted questions (max 5) to identify ambiguities, gaps, and improvement areas. Integrates responses directly into the specification. Complementary to spec-sync-context which handles technical synchronization."
+argument-hint: "[ --spec=\"docs/specs/XXX-feature\" ]"
+allowed-tools: Read, Write, Edit, Grep, Glob, Bash, AskUserQuestion, TodoWrite
+model: inherit
+---
+
+# Spec Quality Check - Content Quality Assessment
+
+Evaluates the quality of a functional specification by identifying ambiguities, gaps, and improvement areas through an interactive clarification process.
+
+## Overview
+
+This command addresses the **content quality** of specifications, integrating with `/specs:spec-sync-context` which handles technical synchronization:
+
+| Command | Focus |
+|---------|-------|
+| **/specs:spec-quality-check** (this) | Content quality: completeness, clarity, traceability, coverage |
+| **/specs:spec-sync-context** | Technical synchronization: Knowledge Graph, tasks, codebase |
+
+### Workflow Position
+
+```
+Idea → Specification → Architecture & Ontology → Spec Quality Check (this) → Tasks → Implementation
+           ↓                ↓                         ↓
+        Clarify        Define stack &            Verify consistency
+                       domain language
+```
+
+### Dimensions of Quality
+
+The command evaluates four main dimensions:
+
+1. **Completeness and Clarity**
+   - Vague expressions ("robust", "intuitive", "fast")
+   - Terms not defined in glossary
+   - Internal contradictions
+   - Missing or incomplete sections
+
+2. **Requirements Traceability**
+   - User request → specification alignment
+   - Requirements → tasks coverage (if tasks exist)
+   - Clear origin for each requirement
+
+3. **Acceptance Criteria**
+   - Presence of testable criteria
+   - Measurability of criteria
+   - Coverage of key functionalities
+
+4. **Edge Cases Coverage**
+   - Edge cases identified
+   - Error handling documented
+   - Explicit constraints and limitations
+
+5. **Architecture Alignment** (if `docs/specs/architecture.md` exists)
+   - Specification requirements consistent with defined technology stack
+   - No implicit technical assumptions that contradict the architecture
+   - Integration points compatible with infrastructure choices
+   - Data requirements aligned with data architecture
+
+6. **Ontology Consistency** (if `docs/specs/ontology.md` exists)
+   - Domain terms in the specification match ontology definitions
+   - No ambiguous synonyms (terms used interchangeably without definition)
+   - Bounded contexts are respected (same term not used with different meanings)
+   - New domain concepts flagged for ontology addition
+
+## Usage
+
+```bash
+# Basic usage - review a spec folder
+/specs:spec-quality-check docs/specs/001-hotel-search-aggregation/
+
+# Review a specific spec file
+/specs:spec-quality-check docs/specs/001-hotel-search-aggregation/2026-03-07--hotel-search.md
+
+# Review from current directory (auto-detect)
+/specs:spec-quality-check
+```
+
+## Arguments
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `spec-path` | No | Path to spec folder or file (default: auto-detect from CWD) |
+
+## Core Principles
+
+- **Maximum 5 questions**: Focus on the most impactful ambiguities
+- **One question at a time**: Interactive presentation with recommendation
+- **Immediate integration**: Responses are integrated into the specification progressively
+- **Recommendation based on best practices**: For each question, suggests the best option
+- **Non-destructive**: Preserves existing content, only adds clarifications
+- **Final report**: Summary of resolved, deferred, and outstanding areas
+
+---
+
+## Phase 1: Discovery
+
+**Goal**: Identify the specification to review and gather context
+
+**Actions**:
+
+1. Create todo list with all phases
+2. Parse $ARGUMENTS to extract the specification path
+3. Determine the specification folder:
+   - If a file is provided: use the parent directory
+   - If a folder is provided: use it directly
+   - If no argument: auto-detect from current working directory
+4. Verify the folder exists
+5. Identify relevant files:
+   - `YYYY-MM-DD--feature-name.md` - Functional specification (preferred)
+   - `*-specs.md` - Functional specification (legacy fallback)
+   - `user-request.md` - Original user request (for traceability)
+   - `brainstorming-notes.md` - Brainstorming notes (secondary)
+   - `tasks/` - Existing tasks (for coverage verification)
+   - `knowledge-graph.json` - Technical context (optional)
+6. **Load project-level architecture and ontology documents** (if they exist):
+   - Check for `docs/specs/architecture.md` — if found, load for architecture alignment checks
+   - Check for `docs/specs/ontology.md` — if found, load for terminology consistency checks
+   - These are project-level shared documents, NOT per-spec files
+
+---
+
+## Phase 2: Spec Loading
+
+**Goal**: Load and analyze the specification to identify improvement areas
+
+**Actions**:
+
+1. Resolve and read the specification file using the same priority as `devkit.spec-to-tasks`:
+   - preferred `YYYY-MM-DD--feature-name.md`
+   - legacy `*-specs.md`
+   - otherwise the only dated spec-like markdown file in the folder
+2. If present, also read:
+   - `user-request.md` to verify traceability
+   - Existing tasks to verify coverage
+   - `docs/specs/architecture.md` to verify architecture alignment (project-level, loaded in Phase 1)
+   - `docs/specs/ontology.md` to verify terminology consistency (project-level, loaded in Phase 1)
+3. Perform a **structured Quality Scan** using this taxonomy:
+
+### Quality Scan Taxonomy
+
+For each category, mark the status: **Clear**, **Partial**, or **Missing**
+
+#### Completeness and Clarity
+- [ ] User goals and success criteria defined
+- [ ] Explicit out-of-scope statements
+- [ ] Differentiated roles/user personas
+- [ ] Glossary of terms
+- [ ] Explicit assumptions
+
+#### Domain and Data Model
+- [ ] Entities, attributes, relationships
+- [ ] Identity and uniqueness rules
+- [ ] State transitions/lifecycle
+- [ ] Volume/data assumptions
+
+#### Interaction and UX Flow
+- [ ] Critical user paths
+- [ ] Error/empty/loading states
+- [ ] Accessibility/localization notes
+
+#### Non-Functional Quality
+- [ ] Performance (latency/throughput targets)
+- [ ] Scalability (limits, horizontal/vertical)
+- [ ] Reliability (uptime, recovery)
+- [ ] Observability (logging, metrics, tracing)
+- [ ] Security (authN/Z, data protection)
+- [ ] Compliance (regulatory constraints)
+
+#### Integrations and Dependencies
+- [ ] External services/APIs and failure modes
+- [ ] Data import/export formats
+- [ ] Assumptions on protocols/versioning
+
+#### Edge Cases and Error Handling
+- [ ] Negative scenarios identified
+- [ ] Rate limiting/throttling
+- [ ] Conflict resolution (e.g., concurrent modifications)
+
+#### Constraints and Trade-offs
+- [ ] Explicit technical constraints
+- [ ] Documented trade-offs
+- [ ] Rejected alternatives and reasons
+
+#### Terminology and Consistency
+- [ ] Defined canonical terms
+- [ ] No confusing synonyms
+- [ ] Consistent term usage
+
+#### Completion Criteria
+- [ ] Testable acceptance criteria
+- [ ] Measurable Definition of Done
+- [ ] Requirements → acceptance traceability
+
+#### Placeholders and TODOs
+- [ ] Resolved TODO markers
+- [ ] Quantified vague adjectives
+- [ ] Documented pending decisions
+
+#### Architecture Alignment (if `docs/specs/architecture.md` exists)
+- [ ] Requirements compatible with defined technology stack
+- [ ] Data requirements aligned with data architecture choices
+- [ ] Integration points compatible with infrastructure
+- [ ] No implicit technical assumptions contradicting architecture
+- [ ] Performance/scalability expectations realistic for chosen stack
+
+#### Ontology Consistency (if `docs/specs/ontology.md` exists)
+- [ ] Domain terms match ontology definitions
+- [ ] No undefined synonyms used interchangeably
+- [ ] Bounded context boundaries respected
+- [ ] New domain concepts identified for ontology addition
+
+---
+
+## Phase 3: Question Prioritization
+
+**Goal**: Generate a prioritized queue of clarification questions
+
+**Actions**:
+
+1. For each category with Partial or Missing status, generate a potential question
+2. Apply constraints:
+   - **Maximum 5 questions total**
+   - Each question must be answerable with:
+     - **Multi-choice** (2-5 mutually exclusive options), OR
+     - **Short answer** (max 5 words)
+   - Only include questions that impact: architecture, data modeling, task decomposition, test design, UX, operational readiness, compliance, **architecture alignment, domain terminology**
+   - Exclude: stylistic preferences, implementation details, already answered questions
+3. Order by impact × uncertainty (heuristic)
+4. Balance category coverage
+
+---
+
+## Phase 4: Sequential Questioning Loop
+
+**Goal**: Present questions one at a time using AskUserQuestion tool and integrate responses
+
+**Actions**:
+
+1. **For each question in the queue**:
+   - Present **EXACTLY ONE question** at a time using the AskUserQuestion tool
+
+2. **For multi-choice questions**:
+   - Analyze all options and determine the most suitable one (the recommendation)
+   - Structure for AskUserQuestion with:
+     - `question`: The clarification question
+     - `header`: Short category label (max 12 chars, e.g., "Performance", "Data Model")
+     - `options`: Array of 2-4 option objects with:
+       - `label`: Option identifier (e.g., "A: < 1 second")
+       - `description`: Full explanation with the recommendation marked as "(Recommended)" at the end
+     - `multiSelect`: false
+   - The first option should be the recommendation
+   - Include an "Other" option as the last choice for custom answers
+
+3. **For short-answer questions**:
+   - Provide the suggested answer as the first option
+   - Structure for AskUserQuestion with:
+     - `question`: The clarification question
+     - `header`: Short category label (max 12 chars)
+     - `options`: Array with:
+       - First option: The suggested answer marked "(Recommended)" at the end
+       - Second option: "Other" for custom input
+     - `multiSelect`: false
+
+4. **Tool invocation pattern**:
+   ```
+   Use AskUserQuestion to present the question structured as described above
+   Wait for user selection/response
+   If user selects "Other": accept their custom input (max 5 words for short-answer)
+   If user selects the recommended option: use the recommendation
+   ```
+
+5. **Immediate integration after each response**:
+   - Create `## Clarifications` section if it doesn't exist (after overview)
+   - Add `### Session YYYY-MM-DD` subsection
+   - Append bullet: `- Q: <question> → A: <answer>`
+   - Apply the clarification to the appropriate section
+   - Save the file
+
+6. **Stop conditions**:
+   - All critical ambiguities resolved
+   - User signals completion via AskUserQuestion
+   - Reached 5 questions
+
+---
+
+## Phase 5: Clarification Integration
+
+**Goal**: Integrate each clarification into the appropriate specification section
+
+**Mapping clarification → section**:
+
+| Ambiguity Type | Target Section |
+|----------------|----------------|
+| Functional ambiguity | Add/update Functional Requirements |
+| Role/actor distinction | Update User Stories or Actors |
+| Data entity form | Update Data Model |
+| Non-functional constraint | Add/modify Non-Functional Requirements |
+| Edge case/negative flow | Add to Edge Cases / Error Handling |
+| Inconsistent terminology | Normalize term, add "(formerly X)" |
+| Placeholder/TODO | Resolve or quantify |
+| Architecture misalignment | Flag for `docs/specs/architecture.md` update or ADR |
+| Undefined domain term | Add term to `docs/specs/ontology.md` glossary |
+
+**Integration rules**:
+- Preserve existing formatting
+- Don't reorder unrelated sections
+- Maintain heading hierarchy
+- If clarification invalidates a previous statement: replace, don't duplicate
+- Keep each clarification minimal and testable
+
+---
+
+## Phase 6: Validation
+
+**Goal**: Validate integration after each write
+
+**Checks**:
+- [ ] Clarifications session contains exactly one bullet per response
+- [ ] Total questions ≤ 5
+- [ ] No vague placeholders remaining from responses
+- [ ] No remaining contradictions
+- [ ] Valid Markdown structure
+- [ ] Consistent terms across sections
+
+---
+
+## Phase 7: Report Generation
+
+**Goal**: Generate final completion report
+
+**Actions**:
+
+1. Generate summary with:
+   - Number of questions asked and answered
+   - Path of updated specification
+   - Sections touched
+   - Coverage summary table
+
+2. **Coverage summary table**:
+
+   | Category | Status | Notes |
+   |----------|--------|-------|
+   | Completeness and Clarity | Resolved/Clear/Deferred/Outstanding | ... |
+   | Requirements Traceability | Resolved/Clear/Deferred/Outstanding | ... |
+   | Acceptance Criteria | Resolved/Clear/Deferred/Outstanding | ... |
+   | Edge Cases Coverage | Resolved/Clear/Deferred/Outstanding | ... |
+   | Architecture Alignment | Resolved/Clear/Deferred/Outstanding/N/A | ... |
+   | Ontology Consistency | Resolved/Clear/Deferred/Outstanding/N/A | ... |
+
+3. **Status definitions**:
+   - **Resolved**: Was Partial/Missing, has been addressed
+   - **Clear**: Already sufficient at start
+   - **Exceeded question quota or better for planning**
+   - **Outstanding**: Still Partial/Missing but low impact
+
+4. Recommend next steps:
+   - If Outstanding/Deferred: consider running `/specs:spec-quality-check` after planning
+   - If all Clear: proceed to `/specs:spec-to-tasks`
+
+---
+
+## Error Handling
+
+### Specification not found
+```
+Error: Specification not found at [path]
+Verify that the path contains a resolvable spec file (`YYYY-MM-DD--feature-name.md` or legacy `*-specs.md`)
+```
+
+### No ambiguities detected
+```
+No critical ambiguities detected worth formal clarification.
+The specification is complete and clear.
+Proceed with: /specs:spec-to-tasks [spec-folder]
+```
+
+### File write failed
+```
+Warning: Unable to write to [file]: [error]
+The clarification has been recorded in memory but not persisted.
+```
+
+---
+
+## Examples
+
+### Example 1: Spec with performance ambiguity
+
+```bash
+/specs:spec-quality-check docs/specs/003-notification-system/
+```
+
+**Interactive flow**:
+
+```
+Analyzing spec: docs/specs/003-notification-system/2026-03-10--notification-specs.md
+
+Quality Scan Results:
+- Completeness and Clarity: Partial (missing "real-time" definition)
+- Requirements Traceability: Clear
+- Acceptance Criteria: Partial
+- Edge Cases Coverage: Missing
+
+[1/5] Question 1 of 5
+
+The AskUserQuestion tool will present:
+
+**Question:** How should "real-time" be defined for this notification system?
+
+**Options:**
+- **< 5 seconds for user-facing, < 30s for background** (Recommended) - Industry standard for user-facing notifications with relaxed SLA for background processing
+- **< 1 second for all notifications** - Ultra-low latency, requires significant infrastructure investment
+- **< 10 seconds for all notifications** - Relaxed SLA suitable for non-critical notifications
+- **Other** - Provide your own definition
+
+After user selection, the response is integrated into the specification.
+```
+
+### Example 2: Already complete spec
+
+```bash
+/specs:spec-quality-check docs/specs/001-hotel-search-aggregation/
+```
+
+**Output**:
+
+```
+Analyzing spec: docs/specs/001-hotel-search-aggregation/2026-03-07--hotel-search-specs.md
+
+Quality Scan Results:
+- Completeness and Clarity: Clear
+- Requirements Traceability: Clear
+- Acceptance Criteria: Clear
+- Edge Cases Coverage: Clear
+
+No critical ambiguities detected worth formal clarification.
+The specification is well-formed and ready for task generation.
+
+Next step: /specs:spec-to-tasks docs/specs/001-hotel-search-aggregation/
+```
+
+---
+
+## Integration with Other Commands
+
+### Before devkit.spec-to-tasks
+
+Run `spec-quality-check` to ensure the specification is complete before generating tasks:
+
+```bash
+# Step 1: Review and improve spec quality
+/specs:spec-quality-check docs/specs/005-checkout-flow/
+
+# Step 2: Generate tasks from improved spec
+/specs:spec-to-tasks --lang=spring docs/specs/005-checkout-flow/
+```
+
+### After devkit.brainstorm
+
+Run `spec-quality-check` to validate the specification generated from brainstorming:
+
+```bash
+# Step 1: Generate spec from idea
+/specs:brainstorm "Implement user authentication with JWT"
+
+# Step 2: Review the generated spec
+/specs:spec-quality-check docs/specs/002-user-auth/
+
+# Step 3: Proceed to tasks
+/specs:spec-to-tasks --lang=spring docs/specs/002-user-auth/
+```
+
+### With spec-sync-context
+
+The two commands are complementary:
+
+```bash
+# spec-quality-check: improve content quality
+/specs:spec-quality-check docs/specs/003-api-gateway/
+
+# spec-sync-context: sync technical context
+/specs:spec-sync-context docs/specs/003-api-gateway/
+
+# spec-to-tasks: generate tasks with high quality context
+/specs:spec-to-tasks --lang=nestjs docs/specs/003-api-gateway/
+```
+
+---
+
+## Todo Management
+
+During execution, maintain the todo list:
+
+```
+[ ] Phase 1: Discovery
+[ ] Phase 2: Spec Loading
+[ ] Phase 3: Question Prioritization
+[ ] Phase 4: Sequential Questioning (0/5 questions)
+[ ] Phase 5: Clarification Integration
+[ ] Phase 6: Validation
+[ ] Phase 7: Report Generation
+```
+
+Update status progressively.
+
+---
+
+## Notes
+
+- This command is **idempotent**: can be run multiple times
+- Clarification sessions are tracked with dates
+- Recommendations are based on industry-standard best practices
+- The command doesn't modify the general structure of the specification, only adds clarifications
+- For heavier structural changes, use `/specs:brainstorm` to regenerate

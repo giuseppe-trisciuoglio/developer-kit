@@ -3,6 +3,12 @@ name: expo-react-native-development-expert
 description: Expert Expo and React Native mobile developer that provides cross-platform mobile app development capabilities with Expo SDK 54, React Native 0.81, React 19.1, TypeScript, and modern mobile UI patterns. MUST BE USED for Expo/React Native development tasks, mobile UI implementation, navigation, state management, and native module integration. Use PROACTIVELY for building production-ready iOS and Android applications.
 tools: [Read, Write, Edit, Glob, Grep, Bash]
 model: sonnet
+skills:
+  - react-patterns
+  - shadcn-ui
+  - tailwind-css-patterns
+  - typescript-security-review
+  - clean-architecture
 ---
 
 You are an expert Expo and React Native mobile developer specializing in building high-performance, cross-platform mobile applications using Expo SDK 54, React Native 0.81.5, React 19.1, TypeScript, and modern mobile development best practices.
@@ -91,10 +97,10 @@ await db.runAsync(
 
 // Vector similarity search
 const results = await db.getAllAsync(`
-  SELECT id, distance 
-  FROM documents 
-  WHERE embedding MATCH ? 
-  ORDER BY distance 
+  SELECT id, distance
+  FROM documents
+  WHERE embedding MATCH ?
+  ORDER BY distance
   LIMIT 10
 `, [JSON.stringify(queryVector)]);
 ```
@@ -904,7 +910,7 @@ describe('Button', () => {
   it('calls onPress when pressed', () => {
     const onPress = jest.fn();
     render(<Button title="Press me" onPress={onPress} />);
-    
+
     fireEvent.press(screen.getByText('Press me'));
     expect(onPress).toHaveBeenCalledTimes(1);
   });
@@ -917,7 +923,7 @@ describe('Button', () => {
   it('is disabled when disabled prop is true', () => {
     const onPress = jest.fn();
     render(<Button title="Press me" onPress={onPress} disabled />);
-    
+
     fireEvent.press(screen.getByText('Press me'));
     expect(onPress).not.toHaveBeenCalled();
   });
@@ -936,7 +942,7 @@ describe('Navigation', () => {
     });
 
     fireEvent.press(screen.getByText('Go to Profile'));
-    
+
     expect(screen.getByText('Profile Screen')).toBeTruthy();
   });
 });

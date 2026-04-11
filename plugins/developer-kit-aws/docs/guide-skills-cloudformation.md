@@ -6,6 +6,32 @@ This guide covers the comprehensive AWS CloudFormation patterns and best practic
 
 AWS CloudFormation is a service that helps you model and set up your Amazon Web Services resources so you can spend less time managing those resources and more time focusing on your applications. You create a template that describes all the AWS resources you want, and CloudFormation takes care of provisioning and configuring those resources for you.
 
+## Skill Details
+
+| Property | Value |
+|----------|-------|
+| **Category** | CloudFormation |
+| **Tools** | Read, Write, Bash |
+
+## When to Use CloudFormation Skills
+
+Use these skills when you need to:
+- Create infrastructure as code for AWS resources
+- Deploy repeatable, version-controlled infrastructure
+- Automate AWS resource provisioning and management
+- Implement IaC best practices with CloudFormation
+- Build CI/CD pipelines for infrastructure
+
+## Trigger Phrases
+
+- "Create CloudFormation template"
+- "Deploy AWS resources with CloudFormation"
+- "Build VPC with CloudFormation"
+- "Lambda function CloudFormation"
+- "ECS cluster template"
+- "IaC AWS infrastructure"
+- "CloudFormation stack"
+
 ## Available Skills
 
 ### Core Infrastructure
@@ -1046,3 +1072,47 @@ aws cloudformation detect-stack-drift \
 This guide provides practical CloudFormation patterns for building infrastructure as code. The key is to start simple, use nested stacks for complexity, and always follow AWS best practices for security and cost optimization.
 
 For specific service patterns, refer to individual skill documentation and the official [AWS CloudFormation documentation](https://docs.aws.amazon.com/cloudformation/).
+
+---
+
+## Reference Materials
+
+Each CloudFormation skill includes comprehensive reference guides in their `references/` directory:
+
+| Skill | Reference Files |
+|-------|-----------------|
+| `aws-cloudformation-vpc` | examples.md, reference.md |
+| `aws-cloudformation-ec2` | best-practices.md, ec2-instances.md, load-balancers.md, security-iam.md, template-structure.md, constraints.md |
+| `aws-cloudformation-lambda` | constraints.md, examples.md, reference.md |
+| `aws-cloudformation-iam` | examples.md, reference.md |
+| `aws-cloudformation-s3` | advanced-configuration.md, complete-examples.md, examples.md, reference.md |
+| `aws-cloudformation-rds` | database-components.md, high-availability.md, operational-practices.md, security-secrets.md, template-structure.md, constraints.md |
+| `aws-cloudformation-dynamodb` | advanced-configuration.md, complete-examples.md, examples.md, reference.md |
+| `aws-cloudformation-ecs` | constraints.md, examples.md, reference.md |
+| `aws-cloudformation-auto-scaling` | constraints.md, examples.md, reference.md |
+| `aws-cloudformation-cloudwatch` | alarms.md, dashboards.md, logs.md, constraints.md, reference.md |
+| `aws-cloudformation-cloudfront` | advanced-features.md, caching.md, origins.md, security.md, template-structure.md, constraints.md |
+| `aws-cloudformation-security` | constraints.md, examples.md, reference.md |
+| `aws-cloudformation-elasticache` | examples.md, reference.md |
+| `aws-cloudformation-bedrock` | constraints.md, examples.md, reference.md |
+| `aws-cloudformation-task-ecs-deploy-gh` | authentication.md, deployment-strategies.md, ecr-and-task-definitions.md, workflow-examples.md |
+
+---
+
+## Related Skills
+
+| Skill | Integration |
+|-------|-------------|
+| **AWS CLI Beast Mode** (`aws-cli-beast`) | Use CLI for stack operations and drift detection |
+| **AWS SAM Bootstrap** (`aws-sam-bootstrap`) | SAM templates for serverless deployments |
+| **Cost Optimization** (`aws-cost-optimization`) | Optimize CloudFormation resource costs |
+| **ECS GitHub Actions** | CI/CD for ECS deployments |
+
+---
+
+## See Also
+
+- [AWS SAM Guide](./guide-skills-aws-sam.md) - Serverless Application Model
+- [AWS CLI Guide](./guide-skills-aws-cli.md) - Command line operations
+- [Cost Optimization Guide](./guide-skills-cost-optimization.md) - AWS cost management
+- [AWS Agents Guide](./guide-agents.md) - AWS specialized agents

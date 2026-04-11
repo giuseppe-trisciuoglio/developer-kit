@@ -159,11 +159,14 @@ def main() -> None:
 
     error = _validate(file_path)
     if error:
-        print("TypeScript file structure violation:", file=sys.stderr)
-        print(f"  {error}", file=sys.stderr)
-        print("", file=sys.stderr)
-        print("Correct the file name before proceeding.", file=sys.stderr)
-        sys.exit(2)
+        message = f"TypeScript file structure violation:\n  {error}\n\nCorrect the file name before proceeding."
+        # Output JSON format for blocking PostToolUse
+        output = {
+            "decision": "block",
+            "reason": message
+        }
+        print(json.dumps(output))
+        sys.exit(0)
 
     sys.exit(0)
 

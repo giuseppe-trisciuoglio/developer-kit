@@ -307,8 +307,8 @@ REST API mocking with WireMock for integration tests.
 - **Mocking**: Mockito, MockMvc
 - **Assertions**: AssertJ
 - **Spring Test**: Spring Boot Test
-- **WireMock**: 3.0+
-- **Testcontainers**: 1.19+
+- **WireMock**: 3.x
+- **Testcontainers**: 1.x
 
 ---
 

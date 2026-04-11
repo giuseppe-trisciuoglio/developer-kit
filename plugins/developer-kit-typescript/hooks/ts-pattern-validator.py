@@ -215,10 +215,18 @@ def main() -> None:
     warnings.extend(_check_controller_db_access(file_path, content))
 
     if warnings:
-        print(f"TypeScript pattern advisory for '{path_obj.name}':")
+        message = f"TypeScript pattern advisory for '{path_obj.name}':"
         for i, msg in enumerate(warnings, 1):
-            print(f"  {i}. {msg}")
-        sys.exit(1)  # Advisory only — does NOT block
+            message += f"\n  {i}. {msg}"
+        # Output JSON format for advisory (non-blocking)
+        output = {
+            "hookSpecificOutput": {
+                "hookEventName": "PostToolUse",
+                "additionalContext": message
+            }
+        }
+        print(json.dumps(output))
+        sys.exit(0)
 
     sys.exit(0)
 
