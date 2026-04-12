@@ -216,8 +216,8 @@ AGENTS = {
         "model_flag": "--model",
         "yolo_flag": "--allow-all",
         "prompt_arg": True,
-        "prompt_flag": "-p",
-        "default_model": "gpt-5-mini",
+        "prompt_flag": "-p"
+#         "default_model": "gpt-5-mini",
     },
     "gemini": {
         "name": "Gemini CLI",
@@ -377,6 +377,11 @@ def parse_args():
         choices=list(AGENTS.keys()),
         help="Agent to use specifically for review steps: claude, kimi, codex, copilot, gemini, qwen, glm4, minimax, openrouter, auto (default: use --agent). Overrides auto-mode selection for review steps.",
     )
+    parser.add_argument(
+        "--reviewer-model",
+        default=None,
+        help="Model to use for the reviewer agent. If not set, the reviewer will use its default model. The --model flag applies only to the main agent.",
+    )
     return parser.parse_args()
 
 
@@ -500,21 +505,40 @@ If you need clarification, make a reasonable assumption and document it.
 """
 
 
-def run_agent(agent: str, prompt: str, args) -> int:
+IMPLEMENTATION_PREFIX = """[CRITICAL: IMPLEMENTATION PHASE RULE]
+You are in the IMPLEMENTATION phase. Your ONLY job is to implement the assigned task.
+You MUST NOT implement another task when you terminate your goal.
+Under NO circumstances should you execute any review-related commands or proceed to the next task on your own.
+After completing the implementation, STOP immediately and wait for the external review agent to take over.
+DO NOT advance the workflow state. Only implement the code changes required by the task.
+
+---
+
+"""
+
+
+def run_agent(agent: str, prompt: str, args, step: str = None, model: str = None) -> int:
     """Run the specified agent with the given prompt.
-    
+
     For claude-based agents (claude, glm4, minimax, openrouter), this uses
     real-time streaming output with progress indicators and optional log files.
     """
     agent_config = AGENTS[agent]
 
+    # Determine which model to use for this agent
+    model_to_use = model if model is not None else args.model
+
     # Prepend non-interactive instructions to prevent questions
     full_prompt = NON_INTERACTIVE_PREFIX + prompt
 
+    # Add strict implementation-phase rule to prevent self-review
+    if step == "implementation":
+        full_prompt = IMPLEMENTATION_PREFIX + full_prompt
+
     if args.dry_run:
         model_str = ""
-        if args.model and agent_config.get("supports_model"):
-            model_str = f" {agent_config['model_flag']} {args.model}"
+        if model_to_use and agent_config.get("supports_model"):
+            model_str = f" {agent_config['model_flag']} {model_to_use}"
         if agent_config.get("prompt_arg"):
             print(f"  [DRY RUN] Would execute: {' '.join(agent_config['cmd'])}{model_str} '{full_prompt[:50]}...'")
         else:
@@ -558,10 +582,10 @@ def run_agent(agent: str, prompt: str, args) -> int:
     # Add model flag if supported
     if agent_config.get("supports_model"):
         model_flag = agent_config.get("model_flag", "--model")
-        # Use explicitly provided model, or agent's default_model, or skip
-        model_to_use = args.model or agent_config.get("default_model")
-        if model_to_use:
-            cmd.extend([model_flag, model_to_use])
+        # Use explicitly provided model for this run, or agent's default_model, or skip
+        effective_model = model_to_use or agent_config.get("default_model")
+        if effective_model:
+            cmd.extend([model_flag, effective_model])
 
     # Add streaming flags for agents that support it (for real-time output)
     if agent_config.get("supports_streaming"):
@@ -1300,7 +1324,9 @@ def main():
             print(f"  → Executing with {AGENTS[effective_agent]['name']}...")
             print(f"  📝 Command preview: {command[:100]}{'...' if len(command) > 100 else ''}")
             
-            exit_code = run_agent(effective_agent, command, args)
+            # Use --model only for the main agent; reviewer uses --reviewer-model or its default
+            agent_model = args.reviewer_model if step == "review" else args.model
+            exit_code = run_agent(effective_agent, command, args, step, model=agent_model)
             
             if exit_code != 0:
                 print(f"  ⚠️  Agent exited with code {exit_code}", file=sys.stderr)

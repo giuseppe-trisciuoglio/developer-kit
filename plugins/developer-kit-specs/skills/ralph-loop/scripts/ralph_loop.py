@@ -618,6 +618,24 @@ def handle_init(spec_path: str, fix_plan: dict):
 
 def handle_choose_task(spec_path: str, fix_plan: dict, agent_config: dict):
     """Handle choose_task step - select next task"""
+    
+    # Mark previous completed task as reviewed if review passed
+    done_tasks = fix_plan.get("done", [])
+    status_updated = False
+    if done_tasks:
+        last_done_id = done_tasks[-1]
+        for task in fix_plan.get("tasks", []):
+            if task["id"] == last_done_id and task.get("status") == "completed":
+                review_passed, _ = check_review_result(spec_path, last_done_id)
+                if review_passed:
+                    task["status"] = "reviewed"
+                    print(f"   ✅ {last_done_id} marked as reviewed")
+                    status_updated = True
+                break
+    
+    if status_updated:
+        save_fix_plan(spec_path, fix_plan)
+    
     next_task = get_next_pending_task(fix_plan)
 
     if not next_task:
