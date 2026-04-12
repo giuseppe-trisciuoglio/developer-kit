@@ -101,9 +101,10 @@ Adds a new task to an existing specification.
 
 9. **Synchronize Ralph Loop state** if `docs/specs/[id]/_ralph_loop/fix_plan.json` exists:
    ```bash
-   python3 plugins/developer-kit-specs/skills/ralph-loop/scripts/ralph_loop.py \
+   python3 ~/.agents/skills/ralph-loop/scripts/ralph_loop.py \
      --action=refresh --spec=docs/specs/[id]/
    ```
+   N.B. The ralph_loop.py script is located in the `/ralph-loop/scripts/` directory of the skills. 
 
 ### Task File Templates
 
