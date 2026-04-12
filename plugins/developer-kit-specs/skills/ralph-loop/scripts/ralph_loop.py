@@ -116,7 +116,7 @@ def parse_args():
     )
     parser.add_argument(
         "--action", required=True,
-        choices=["start", "loop", "status", "resume", "next"],
+        choices=["start", "loop", "status", "resume", "next", "refresh"],
         help="Action to execute: start (initialize), loop (run one step), status (show state), resume (continue), next (advance to next step)"
     )
     parser.add_argument(
@@ -469,6 +469,62 @@ def update_task_status(fix_plan: dict, task_id: str, new_status: str):
             break
 
 
+def sync_tasks_from_files(spec_path: str, fix_plan: dict) -> bool:
+    """
+    Synchronizes fix_plan tasks with actual TASK-*.md files.
+    Updates statuses, lists, and progress counters.
+    Returns True if changes were detected and applied.
+    Preserves loop state (step, current_task, iteration, etc.).
+    """
+    tasks_from_files = parse_tasks_from_files(spec_path)
+    if not tasks_from_files:
+        return False
+
+    task_range = fix_plan.get("task_range", {})
+    from_task = task_range.get("from")
+    to_task = task_range.get("to")
+    filtered_tasks = filter_tasks_by_range(tasks_from_files, from_task, to_task)
+
+    pending = [t["id"] for t in filtered_tasks if t["status"] in ["pending", "in_progress"]]
+    done = [t["id"] for t in filtered_tasks if t["status"] in ["done", "completed", "implemented", "reviewed"]]
+    optional = [t["id"] for t in filtered_tasks if t.get("status") == "optional" or t.get("optional") is True]
+    superseded = [t["id"] for t in filtered_tasks if t["status"] == "superseded"]
+
+    # Detect changes by comparing dicts
+    old_tasks = {t["id"]: t for t in fix_plan.get("tasks", [])}
+    new_tasks = {t["id"]: t for t in filtered_tasks}
+
+    changed = (
+        old_tasks != new_tasks or
+        fix_plan.get("pending") != pending or
+        fix_plan.get("done") != done or
+        fix_plan.get("optional") != optional or
+        fix_plan.get("superseded") != superseded or
+        fix_plan.get("task_range", {}).get("total_in_range") != len(filtered_tasks)
+    )
+
+    if not changed:
+        return False
+
+    fix_plan["tasks"] = filtered_tasks
+    fix_plan["pending"] = pending
+    fix_plan["done"] = done
+    fix_plan["optional"] = optional
+    fix_plan["superseded"] = superseded
+
+    if "task_range" not in fix_plan:
+        fix_plan["task_range"] = {}
+    fix_plan["task_range"]["total_in_range"] = len(filtered_tasks)
+
+    state = fix_plan.setdefault("state", {})
+    if "range_progress" not in state:
+        state["range_progress"] = {}
+    state["range_progress"]["done_in_range"] = len(done)
+    state["range_progress"]["total_in_range"] = len(filtered_tasks)
+
+    return True
+
+
 def action_start(spec_path: str, from_task: Optional[str], to_task: Optional[str], agent: str = "claude"):
     """Initializes fix_plan.json from task files"""
     print(f"🚀 Ralph Loop | Initializing...")
@@ -555,6 +611,22 @@ def action_start(spec_path: str, from_task: Optional[str], to_task: Optional[str
 def action_loop(spec_path: str, args_agent: str = None, no_commit: bool = False):
     """Executes one step of the state machine"""
     fix_plan = load_fix_plan(spec_path)
+
+    # Auto-sync task statuses from files before proceeding
+    if sync_tasks_from_files(spec_path, fix_plan):
+        current_task = fix_plan["state"].get("current_task")
+        task_ids = {t["id"] for t in fix_plan.get("tasks", [])}
+        if current_task and current_task not in task_ids:
+            print(f"   ⚠️  Current task {current_task} was removed. Resetting to choose_task.")
+            fix_plan["state"]["current_task"] = None
+            fix_plan["state"]["current_task_file"] = None
+            fix_plan["state"]["current_task_lang"] = None
+            fix_plan["state"]["step"] = "choose_task"
+            fix_plan["state"]["retry_count"] = 0
+            fix_plan["state"]["review_file_retry"] = 0
+            fix_plan["state"]["review_file_error"] = None
+        save_fix_plan(spec_path, fix_plan)
+
     state = fix_plan["state"]
     step = state["step"]
 
@@ -972,6 +1044,8 @@ def handle_failed(fix_plan: dict):
 def action_status(spec_path: str):
     """Shows current status"""
     fix_plan = load_fix_plan(spec_path)
+    if sync_tasks_from_files(spec_path, fix_plan):
+        save_fix_plan(spec_path, fix_plan)
     state = fix_plan["state"]
 
     print("📊 Ralph Loop Status")
@@ -1272,6 +1346,16 @@ def check_review_result(spec_path: str, task_id: str) -> tuple[bool, str]:
 def action_next(spec_path: str, args_agent: str = None, no_commit: bool = False):
     """Manually advance to next step (checks review results before advancing)"""
     fix_plan = load_fix_plan(spec_path)
+    if sync_tasks_from_files(spec_path, fix_plan):
+        current_task = fix_plan["state"].get("current_task")
+        task_ids = {t["id"] for t in fix_plan.get("tasks", [])}
+        if current_task and current_task not in task_ids:
+            fix_plan["state"]["current_task"] = None
+            fix_plan["state"]["current_task_file"] = None
+            fix_plan["state"]["current_task_lang"] = None
+            fix_plan["state"]["step"] = "choose_task"
+            fix_plan["state"]["retry_count"] = 0
+        save_fix_plan(spec_path, fix_plan)
     state = fix_plan["state"]
     current_step = state["step"]
 
@@ -1417,6 +1501,51 @@ def main():
         action_next(args.spec, args.agent, args.no_commit)
     elif args.action == "next":
         action_next(args.spec, args.agent, args.no_commit)
+    elif args.action == "refresh":
+        action_refresh(args.spec)
+
+
+def action_refresh(spec_path: str):
+    """Refreshes fix_plan.json from current task files without resetting state."""
+    print(f"🔄 Ralph Loop | Refreshing fix_plan.json from task files...")
+    print(f"   Spec: {spec_path}")
+
+    fix_plan = load_fix_plan(spec_path)
+    old_state = fix_plan.get("state", {})
+    old_current_task = old_state.get("current_task")
+
+    changed = sync_tasks_from_files(spec_path, fix_plan)
+    tasks = fix_plan.get("tasks", [])
+
+    if not tasks and not changed:
+        print("   ⚠️  No task files found. fix_plan.json left unchanged.")
+        return
+
+    print(f"   Found {len(tasks)} tasks")
+
+    # Check if current_task still exists
+    task_ids = {t["id"] for t in tasks}
+    if old_current_task and old_current_task not in task_ids:
+        print(f"   ⚠️  Current task {old_current_task} no longer exists. Resetting current task.")
+        state = fix_plan["state"]
+        state["current_task"] = None
+        state["current_task_file"] = None
+        state["current_task_lang"] = None
+        state["step"] = "choose_task"
+        state["retry_count"] = 0
+        state["review_file_retry"] = 0
+        state["review_file_error"] = None
+
+    save_fix_plan(spec_path, fix_plan)
+
+    print(f"   ✅ fix_plan.json refreshed")
+    print(f"   Tasks in range: {fix_plan['task_range']['total_in_range']}")
+    print(f"   Pending: {len(fix_plan['pending'])}")
+    print(f"   Done: {len(fix_plan['done'])}")
+    print(f"   Optional: {len(fix_plan['optional'])}")
+    print(f"   Superseded: {len(fix_plan['superseded'])}")
+    if fix_plan["state"].get("current_task"):
+        print(f"   Current task preserved: {fix_plan['state']['current_task']}")
 
 
 if __name__ == "__main__":

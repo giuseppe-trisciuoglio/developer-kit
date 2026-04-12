@@ -99,6 +99,12 @@ Adds a new task to an existing specification.
    - Initialize Test Files and Code Files columns with "-"
    - Create matrix if it does not exist with header structure
 
+9. **Synchronize Ralph Loop state** if `docs/specs/[id]/_ralph_loop/fix_plan.json` exists:
+   ```bash
+   python3 plugins/developer-kit-specs/skills/ralph-loop/scripts/ralph_loop.py \
+     --action=refresh --spec=docs/specs/[id]/
+   ```
+
 ### Task File Templates
 
 Choose the appropriate template based on task complexity:
@@ -334,6 +340,12 @@ Splits a complex task into smaller, more manageable subtasks.
    - Update parent task rows to reflect new subtask structure
    - Update coverage summary with new task count
 
+9. **Synchronize Ralph Loop state** if `docs/specs/[id]/_ralph_loop/fix_plan.json` exists:
+   ```bash
+   python3 plugins/developer-kit-specs/skills/ralph-loop/scripts/ralph_loop.py \
+     --action=refresh --spec=docs/specs/[id]/
+   ```
+
 ### Context Chain Inheritance
 
 When splitting tasks, child tasks inherit context from parent:
@@ -385,6 +397,12 @@ Toggles the optional status of a task.
 
 4. Update the traceability matrix
 
+5. **Synchronize Ralph Loop state** if `docs/specs/[id]/_ralph_loop/fix_plan.json` exists:
+   ```bash
+   python3 plugins/developer-kit-specs/skills/ralph-loop/scripts/ralph_loop.py \
+     --action=refresh --spec=docs/specs/[id]/
+   ```
+
 ---
 
 ## Action: Update
@@ -414,6 +432,12 @@ Updates task details.
 
 7. Update traceability matrix if requirements mapping changed
 
+8. **Synchronize Ralph Loop state** if `docs/specs/[id]/_ralph_loop/fix_plan.json` exists:
+   ```bash
+   python3 plugins/developer-kit-specs/skills/ralph-loop/scripts/ralph_loop.py \
+     --action=refresh --spec=docs/specs/[id]/
+   ```
+
 ---
 
 ## Action: Regenerate Index
@@ -441,6 +465,12 @@ Recreates the task index file from existing task files.
    - Dependency graph
 
 5. Write updated index file
+
+6. **Synchronize Ralph Loop state** if `docs/specs/[id]/_ralph_loop/fix_plan.json` exists:
+   ```bash
+   python3 plugins/developer-kit-specs/skills/ralph-loop/scripts/ralph_loop.py \
+     --action=refresh --spec=docs/specs/[id]/
+   ```
 
 ---
 
@@ -590,6 +620,42 @@ Complex:   [█░░░░░░░░░] Z tasks (requires splitting)
 
 ---
 
+## Ralph Loop Synchronization
+
+If a `fix_plan.json` exists in the spec's `_ralph_loop/` directory (created by the `ralph-loop` skill), **you MUST keep it synchronized** with the current task files whenever tasks are added, modified, split, or removed.
+
+### When to Sync
+
+Synchronize after any of these actions:
+- `add`
+- `split`
+- `mark-optional`
+- `mark-required`
+- `update`
+- `regenerate-index`
+
+### How to Sync
+
+Run the Ralph Loop refresh command:
+
+```bash
+python3 plugins/developer-kit-specs/skills/ralph-loop/scripts/ralph_loop.py \
+  --action=refresh \
+  --spec=docs/specs/[ID-feature]/
+```
+
+**What this does:**
+- Re-scans all `TASK-*.md` files in the spec's `tasks/` directory
+- Updates the `tasks` array in `fix_plan.json`
+- Recalculates `pending`, `done`, `optional`, and `superseded` lists
+- Updates task counts and range progress
+- Preserves the current loop state (`current_task`, `step`, `iteration`, etc.)
+- Resets the current task only if the task file no longer exists
+
+If `fix_plan.json` does not exist, skip this step silently.
+
+---
+
 ## Todo Management
 
 For each action, maintain a todo list:
@@ -601,5 +667,6 @@ For each action, maintain a todo list:
 [ ] Update affected files
 [ ] Regenerate index if needed
 [ ] Update traceability matrix
+[ ] Sync Ralph Loop fix_plan.json if present
 [ ] Confirm changes to user
 ```
