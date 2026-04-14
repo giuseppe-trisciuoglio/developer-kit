@@ -125,6 +125,15 @@ Trasforma le idee in codice production-ready attraverso un workflow strutturato:
 
 ![Workflow SDD](./docs/specs-life-cycle.png)
 
+#### Fase 0: Costituzione (Configurazione Iniziale)
+
+| Comando | Quando Usarlo | Output |
+|---------|---------------|--------|
+| `/developer-kit-specs:constitution create` | Nuovo progetto, prima della prima spec | `docs/specs/constitution.md` |
+| `/developer-kit-specs:constitution check` | Valida spec/task rispetto ai principi | Report di Verifica Costituzionale |
+
+La costituzione definisce il DNA architetturale: stack approvato, guardrail AI, vincoli di sicurezza (mappature CWE) e regole non negoziabili che governano tutta la generazione di codice successiva.
+
 #### Fase 1: Creazione della Specifica
 
 | Comando | Quando Usare | Output |
@@ -203,7 +212,7 @@ Usa sempre l'iniezione tramite costruttore. Non usare mai l'iniezione su campo c
 | Plugin | Linguaggio/Dominio | Componenti | Descrizione |
 |--------|-------------------|------------|-------------|
 | `developer-kit-core` | Core | 6 Agent, 8 Comandi, 4 Skill | Plugin base richiesto con capacità generali |
-| `developer-kit-specs` | Workflow | 9 Comandi, 2 Skill | Workflow di sviluppo guidato dalle specifiche (SDD) |
+| `developer-kit-specs` | Workflow | 9 Comandi, 5 Skill | Workflow di sviluppo guidato dalle specifiche (SDD) |
 | `developer-kit-java` | Java | 9 Agent, 11 Comandi, 51 Skill, 4 Regole | Spring Boot, LangChain4J, AWS SDK, GraalVM |
 | `developer-kit-typescript` | TypeScript | 13 Agent, 3 Comandi, 25 Skill, 17 Regole | NestJS, React, Next.js, Drizzle ORM, Monorepo |
 | `developer-kit-python` | Python | 4 Agent, 4 Regole | Django, Flask, FastAPI, AWS Lambda |

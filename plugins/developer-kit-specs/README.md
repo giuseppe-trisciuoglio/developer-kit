@@ -6,6 +6,7 @@ Specifications-driven development workflow for transforming ideas into functiona
 
 This plugin provides a complete workflow for transforming ideas into implemented code:
 
+- **Constitution**: Define the architectural DNA of the project — non-negotiable principles, approved stack, AI guardrails, and security constraints
 - **Brainstorming**: Transform ideas into pure functional specifications (WHAT, not HOW)
 - **Task Generation**: Convert functional specifications into executable tasks
 - **Task Management**: Add, split, update, and manage tasks
@@ -20,6 +21,9 @@ This plugin provides a complete workflow for transforming ideas into implemented
 ## Quick Start
 
 ```bash
+# 0. Define project constitution (once per project)
+/developer-kit-specs:constitution create
+
 # 1. Create a functional specification
 /specs:brainstorm "Add user authentication with JWT tokens"
 
@@ -42,8 +46,8 @@ This plugin provides a complete workflow for transforming ideas into implemented
 ## Workflow
 
 ```
-Idea → Functional Specification → Tasks → TDD / Implementation → Review → Cleanup → Done
-       (brainstorm)              (spec-to-tasks)  (task-tdd)    (task-review)   (code-cleanup)
+Constitution → Idea → Functional Specification → Tasks → TDD / Implementation → Review → Cleanup → Done
+(constitution)  (brainstorm)  (spec-to-tasks)  (task-tdd)  (task-review)   (code-cleanup)
 ```
 
 ## Specification Structure
@@ -66,6 +70,15 @@ docs/specs/001-user-auth/
 ```
 
 ## Commands
+
+### Constitution
+
+| Command | Description |
+|---------|-------------|
+| `/developer-kit-specs:constitution create` | Create `docs/specs/architecture.md` and/or `docs/specs/ontology.md` as project setup |
+| `/developer-kit-specs:constitution update --section=...` | Update a specific section of the constitution |
+| `/developer-kit-specs:constitution check --target=...` | Validate a spec/task/file against the constitution |
+| `/developer-kit-specs:constitution show` | Display the current constitution |
 
 ### Specification Creation
 
@@ -347,6 +360,15 @@ Hooks automate task management:
 | `drift-monitor.py` | Write/Edit any file | Monitor spec drift |
 
 ## Skills
+
+### constitution
+
+Establishes and maintains the architectural DNA of a project through two shared documents:
+- `docs/specs/architecture.md` — approved stack, architectural rules, AI guardrails, security constraints (CWE mappings)
+- `docs/specs/ontology.md` — domain glossary (Ubiquitous Language), bounded contexts
+- Can be used **before brainstorm** as a project setup step
+- Provides `create`, `update`, `check`, and `show` operations
+- Constitution Check validates specs and tasks with CRITICAL / WARNING / OK severity levels
 
 ### knowledge-graph
 

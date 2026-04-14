@@ -4,6 +4,70 @@ Complete reference for all SDD commands with arguments, options, and real-world 
 
 ---
 
+## `/developer-kit-specs:constitution`
+
+Establish and maintain the architectural DNA of a project through two shared documents: `docs/specs/architecture.md` (technology stack, rules, guardrails) and `docs/specs/ontology.md` (domain glossary / Ubiquitous Language). Can be used before `brainstorm` as a project setup step.
+
+### Syntax
+
+```
+/developer-kit-specs:constitution [operation] [options]
+```
+
+### Operations
+
+| Operation | Description |
+|-----------|-------------|
+| `create` | Interactively create `docs/specs/architecture.md` and/or `docs/specs/ontology.md` |
+| `update` | Update a specific section of the existing constitution |
+| `check` | Validate a spec, task, or file against the constitution |
+| `show` | Display the current constitution |
+
+### Options
+
+| Option | Required | Description |
+|--------|----------|-------------|
+| `--section` | For `update` | Section to update: `stack`, `architecture`, `api`, `testing`, `security`, `guardrails` |
+| `--target` | For `check` | Path to the spec/task/file to validate |
+
+### When to Use
+
+- **`create`**: First step of any new SDD project — run before `brainstorm`
+- **`update`**: When technology choices or security requirements change
+- **`check`**: Before approving a spec or task plan; integrated into `task-review`
+- **`show`**: Quick reference during development
+
+### Constitution Check Report
+
+The `check` operation produces a report with three severity levels:
+
+| Level | Meaning |
+|-------|---------|
+| `CRITICAL` | Violates a non-negotiable rule — must fix before proceeding |
+| `WARNING` | Deviates from a recommended practice — should fix |
+| `OK` | Compliant |
+
+### Examples
+
+```bash
+# Create constitution for a new project (interactive)
+/developer-kit-specs:constitution create
+
+# Validate a spec against the constitution
+/developer-kit-specs:constitution check --target=docs/specs/001-user-auth/2026-04-10--user-auth.md
+
+# Validate a task plan
+/developer-kit-specs:constitution check --target=docs/specs/001-user-auth/tasks/TASK-003.md
+
+# Update the security section
+/developer-kit-specs:constitution update --section=security
+
+# Show current constitution
+/developer-kit-specs:constitution show
+```
+
+---
+
 ## `/specs:brainstorm`
 
 Transform ideas into full functional specifications through guided brainstorming.

@@ -125,6 +125,15 @@ Developer Kit 提供**四层**能力：
 
 ![SDD 工作流](./docs/specs-life-cycle.png)
 
+#### 阶段 0：项目章程（首次设置）
+
+| 命令 | 使用时机 | 输出 |
+|------|---------|------|
+| `/developer-kit-specs:constitution create` | 新项目，在第一个规范之前 | `docs/specs/constitution.md` |
+| `/developer-kit-specs:constitution check` | 根据原则验证规范/任务 | 章程检查报告 |
+
+章程定义了架构 DNA：已批准的技术栈、AI 护栏、安全约束（CWE 映射）以及管理所有后续代码生成的不可协商规则。
+
 #### 阶段 1：需求创建
 
 | 命令 | 使用时机 | 输出 |
@@ -203,7 +212,7 @@ globs: ["**/*.java"]
 | 插件 | 语言/领域 | 组件 | 描述 |
 |------|----------|------|------|
 | `developer-kit-core` | 核心 | 6 代理、8 命令、4 技能 | 包含通用能力的基础插件（必需） |
-| `developer-kit-specs` | 工作流 | 9 命令、2 技能 | 需求驱动开发（SDD）工作流 |
+| `developer-kit-specs` | 工作流 | 9 命令、5 技能 | 需求驱动开发（SDD）工作流 |
 | `developer-kit-java` | Java | 9 代理、11 命令、51 技能、4 规则 | Spring Boot、LangChain4J、AWS SDK、GraalVM |
 | `developer-kit-typescript` | TypeScript | 13 代理、3 命令、25 技能、17 规则 | NestJS、React、Next.js、Drizzle ORM、Monorepo |
 | `developer-kit-python` | Python | 4 代理、4 规则 | Django、Flask、FastAPI、AWS Lambda |

@@ -19,6 +19,9 @@ Every change should update all three vertices. The sync commands keep them align
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
+│  Phase 0: CONSTITUTION (first time only)                            │
+│  constitution create → defines architectural DNA of the project     │
+├─────────────────────────────────────────────────────────────────────┤
 │  Phase 1: SPECIFICATION                                             │
 │  brainstorm → spec-quality-check → spec-to-tasks                   │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -32,6 +35,35 @@ Every change should update all three vertices. The sync commands keep them align
 │  ralph-loop: automates Phase 2-3 across all tasks                  │
 └─────────────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## Phase 0: Constitution (First-Time Setup)
+
+Before writing any specification, establish the **architectural DNA** of your project:
+
+```
+/developer-kit-specs:constitution create
+```
+
+This creates `docs/specs/architecture.md` (and optionally `docs/specs/ontology.md`) — documents that define:
+- Approved technology stack and forbidden libraries
+- Architectural rules (e.g., constructor injection, no field injection)
+- API standards and authentication approach
+- Security constraints with CWE mappings
+- AI guardrails that govern all subsequent code generation
+
+**You only run `create` once per project.** After that, use `update` to evolve them and `check` to validate specs/tasks against them.
+
+```
+# Validate a spec against the constitution
+/developer-kit-specs:constitution check --target=docs/specs/001-user-auth/2026-04-10--user-auth.md
+
+# Update a section
+/developer-kit-specs:constitution update --file=architecture --section=security
+```
+
+The constitution feeds into every subsequent phase — brainstorm, spec-to-tasks, task-implementation, and task-review all respect its guardrails.
 
 ---
 

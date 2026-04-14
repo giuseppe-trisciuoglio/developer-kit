@@ -34,6 +34,7 @@
     "./agents/session-tracking-agent.md"
   ],
   "skills": [
+    "./skills/constitution",
     "./skills/knowledge-graph",
     "./skills/ralph-loop",
     "./skills/specs-code-cleanup",

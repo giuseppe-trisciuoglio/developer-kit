@@ -45,6 +45,18 @@ Verify installation:
 
 Let's build a real feature: **user authentication with JWT tokens** for a Spring Boot application.
 
+### Step 0: Establish the Constitution (once per project)
+
+Before writing any specification, define the architectural DNA of your project:
+
+```
+/developer-kit-specs:constitution create
+```
+
+Claude will ask about your technology stack, architectural rules, and security constraints, then generate `docs/specs/architecture.md` and optionally `docs/specs/ontology.md`. These documents act as non-negotiable guardrails for all AI-generated code throughout the project lifecycle.
+
+You only run `create` once. After that, use `check` to validate specs and tasks against them.
+
 ### Step 1: Brainstorm the Idea
 
 ```
@@ -179,6 +191,8 @@ This detects deviations (scope expansions, refinements, reductions) and updates 
 
 | Command | Purpose |
 |---------|---------|
+| `/developer-kit-specs:constitution create` | Define project architectural DNA (run once) |
+| `/developer-kit-specs:constitution check --target=file` | Validate spec/task against constitution |
 | `/specs:brainstorm "idea"` | Create a full specification |
 | `/specs:quick-spec "fix"` | Create a minimal spec for small changes |
 | `/specs:spec-to-tasks --lang=spring spec/` | Generate executable tasks |
