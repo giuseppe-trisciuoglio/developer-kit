@@ -9,16 +9,137 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **New Plugin: developer-kit-specs** — Specifications-Driven Development (SDD) workflow:
-  - 10 commands for the complete SDD lifecycle: `brainstorm`, `quick-spec`, `spec-to-tasks`, `task-manage`, `task-implementation`, `task-tdd`, `task-review`, `spec-sync-with-code`, `spec-sync-context`, `spec-quality-check`
-  - 2 agents: `evaluator-agent` (KPI-driven quality evaluation), `session-tracking-agent` (audit trail)
-  - 4 skills: `knowledge-graph`, `ralph-loop`, `specs-code-cleanup`, `task-quality-kpi`
-  - TDD integration with RED/GREEN phases and language-specific test templates (8 languages)
-  - Ralph Loop automation for multi-agent task execution (claude, codex, copilot, gemini, glm4, kimi, minimax)
-  - KPI evaluation framework with weighted scoring (Spec Compliance 30%, Code Quality 25%, Test Coverage 25%, Contract Fulfillment 20%)
-  - Drift Guard for real-time spec-to-implementation monitoring
-  - Automatic hooks: task auto-status, KPI analysis, drift tracking, session audit trail
-  - Language support: Java/Spring, TypeScript/NestJS/React, Python, PHP, and general
+- Pending features in development
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [2.8.0] - 2026-04-10
+
+### Added
+
+- **New `learn` skill** (`developer-kit-core`):
+  - New `learn` skill for autonomous project pattern learning by analyzing the codebase
+  - Discovers development patterns, conventions, and architectural rules
+  - Outputs structured JSON classifying findings as project rules
+  - Integrates into SDD workflow for spec-driven development
+
+- **New Ralph Loop handler** (`developer-kit-specs`):
+  - New `ralph_loop.py` script for multi-agent task execution automation
+  - State machine: `idle → thinking → working → reviewing → fixing → done`
+  - Supports 7 CLI agents: claude, codex, copilot, gemini, glm4, kimi, minimax
+  - Handles fix iterations and can rewrite `fix_plan.json` when plan changes
+  - Cleanup step on state machine termination
+  - Reference docs: `state-machine.md`, `loop-prompt-template.md`, `multi-cli-integration.md`
+
+- **New `specs-code-cleanup` skill** (`developer-kit-specs`):
+  - Post-review phase cleanup command for final code cleanup after task approval
+  - Removes debug logs, temporary comments, and dead code artifacts
+  - Prepares implementation for final merge
+
+- **New `task-quality-kpi` skill** (`developer-kit-specs`):
+  - Objective task quality evaluation using quantitative KPIs
+  - Weighted scoring: Spec Compliance 30%, Code Quality 25%, Test Coverage 25%, Contract Fulfillment 20%
+  - Auto-generated KPI reports per task (`TASK-XXX--kpi.json`)
+
+- **New Qwen Coder CLI delegation skill** (`developer-kit-tools`):
+  - New `qwen-coder` skill for delegating tasks to Qwen2.5-Coder and QwQ models
+  - Supports both `qwen-coder` and `qwq` model variants
+  - CLI command reference documentation with execution examples
+  - Integrates into multi-CLI delegation workflow
+
+- **New Drift Guard hook** (`developer-kit-specs`):
+  - New hook for real-time spec-to-implementation monitoring
+  - Tracks drift between specifications and actual code
+  - Auto-status updates for task tracking
+
+- **New Architecture and Ontology Definition phase** (`developer-kit-specs`):
+  - Added phase for defining project architecture and ontology
+  - Integrates into brainstorm command for comprehensive spec generation
+
+- **Enhanced TypeScript Claude Code Hooks** (`developer-kit-typescript`):
+  - `ts-rules-verifier.py`: LLM-driven rules verification via Prompt hook
+  - `ts-quality-gate.py`: Prettier check as quality gate hook
+  - `ts-session-context.py`: Session context injection on SessionStart
+  - `ts-dev-server-guard.py`: TMux guard for dev server lifecycle
+  - `ts-file-validator.py`: File path and type validation
+  - `ts-pattern-validator.py`: Code pattern validation
+  - Improved DX with Edit tool coverage and async QA workflows
+
+- **New CI Security Scan Workflow** (`.github/workflows/security-scan.yml`):
+  - Automated MCP-Scan security validation on push and PRs
+  - PRs scan only changed skills for efficiency
+
+### Changed
+
+- **Knowledge Graph skill restructured** (`developer-kit-core`):
+  - Consolidated from multiple reference files into `references/knowledge-graph.md`
+  - Added comprehensive reference docs: `commit-examples.md`, `constraints-warnings.md`, `phase-workflows.md`, `test-commands.md`
+  - Removed fragmented reference files (`schema.md`, `query-examples.md`, `integration-patterns.md`)
+
+- **TypeScript Documentation expanded** (`developer-kit-typescript`):
+  - `typescript-docs`: Added `references/jsdoc-patterns.md`, `references/pipeline-setup.md`, `references/validation.md`
+  - `typescript-security-review`: Enhanced with `references/input-validation.md`, `references/security-headers.md`, `references/xss-prevention.md`
+  - `zod-validation-utilities`: Updated `references/advanced-patterns.md`
+
+- **Gemini CLI skill updated** (`developer-kit-tools`):
+  - Updated to use Gemini 3.0 Flash and Gemini 3.0 Pro models
+  - Added Model Selection Guide section (TASK-002)
+  - Added 3 new gemini-3-flash examples
+  - Added approval-mode plan examples
+
+- **Hooks configuration hardened** (`developer-kit-core`):
+  - Improved `task-review` hook execution handling
+
+- **Docs and guide updates** (global):
+  - `developer-kit-core`: Updated documentation
+  - `developer-kit-ai`: Refreshed agents and commands guides
+  - `developer-kit-specs`: Updated documentation with new features
+
+### Fixed
+
+- **`ralph_loop.py` fix plan rewrite** (`developer-kit-specs`):
+  - Fixed ability to rewrite `fix_plan.json` when the fix plan changes mid-execution
+
+- **Hook configuration errors** (`developer-kit-specs`):
+  - Fixed errors in hooks configuration that prevented proper spec workflow execution
+
+- **`update_done` status bug** (global):
+  - Fixed bug in pipeline where `update_done` status was not correctly set for next step
+
+- **Error messages on wrong state** (`developer-kit-specs`):
+  - Improved error message when state is incorrect in `fix_plan.json`
+
+- **Agent skill reference completeness** (global):
+  - Updated all agents with complete skill references across all plugins
+
+- **Knowledge Graph docs path** (`developer-kit-core`):
+  - Fixed documentation path issues in knowledge graph integration
+
+- **Make command fix** (global):
+  - Fixed `make` command execution in developer-kit
+
+- **Hook supply-chain security** (`developer-kit-core`):
+  - Hardened supply-chain validation and file permission checks
+
+- **`.mcp.json` configuration** (`developer-kit-tools`):
+  - Added proper `.mcp.json` config files for autoloading MCP configuration
+
+- **Kimi CLI installation** (global):
+  - Added installation support for Kimi CLI in developer-kit
+
+### Security
+
+- **Hooks supply-chain hardening** (`developer-kit-core`):
+  - Enhanced file permission validation in hook configurations
+  - Improved security checks for cross-plugin hook dependencies
 
 ## [2.7.2] - 2026-03-24
 
@@ -1143,7 +1264,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.7.2...HEAD
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.8.0...HEAD
+[2.8.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.7.2...v2.8.0
 [2.7.2]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.7.1...v2.7.2
 [2.7.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.3...v2.7.1
 [2.6.3]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.2...v2.6.3
