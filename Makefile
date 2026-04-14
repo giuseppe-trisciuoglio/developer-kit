@@ -7,6 +7,7 @@
 #   - OpenCode CLI (agents + commands + skills)
 #   - Codex CLI (skills only, NO agents)
 #   - Kimi CLI (skills only, NO agents)
+#   - Kiro CLI (skills + agents as JSON + prompts)
 #
 # Usage:
 #   make help                  Show all available targets
@@ -22,7 +23,7 @@
 
 SHELL := /bin/bash
 .PHONY: all help check-deps list-plugins list-components list-agents list-commands list-skills list-rules \
-        install install-claude install-opencode install-copilot install-codex install-kimi \
+        install install-claude install-opencode install-copilot install-codex install-kimi install-kiro \
         install-rules uninstall status backup clean security-scan security-scan-changed \
         skill-lint skill-security skill-review skill-review-all plugin-validate plugin-bump-version \
         install-agents-loop
@@ -68,6 +69,11 @@ CODEX_AGENTS_MD   := $(CODEX_CONFIG)/AGENTS.md
 
 KIMI_CONFIG       := $(HOME)/.agents
 KIMI_SKILLS       := $(KIMI_CONFIG)/skills
+
+KIRO_CONFIG       := $(HOME)/.kiro
+KIRO_SKILLS       := $(KIRO_CONFIG)/skills
+KIRO_AGENTS       := $(KIRO_CONFIG)/agents
+KIRO_PROMPTS      := $(KIRO_CONFIG)/prompts
 
 # ═══════════════════════════════════════════════════════════════
 # PLUGIN DISCOVERY
@@ -166,6 +172,7 @@ help:
 	@echo "  make install-copilot      Install for GitHub Copilot CLI (global)"
 	@echo "  make install-codex        Install for Codex CLI (global)"
 	@echo "  make install-kimi         Install for Kimi CLI (global)"
+	@echo "  make install-kiro         Install for Kiro CLI (global)"
 	@echo "  make install              Install for all detected CLIs"
 	@echo ""
 	@echo -e "$(GREEN)Management:$(NC)"
@@ -470,6 +477,31 @@ status:
 		echo -e "  ✗ $(RED)Not configured$(NC)"; \
 	fi
 	@echo ""
+	@echo -e "$(GREEN)Kiro CLI:$(NC)"
+	@if [ -d "$(KIRO_CONFIG)" ]; then \
+		echo "  ✓ Config directory exists: $(KIRO_CONFIG)"; \
+		if [ -d "$(KIRO_SKILLS)" ] && ls "$(KIRO_SKILLS)" >/dev/null 2>&1; then \
+			echo -e "  ✓ $(GREEN)Developer Kit skills installed$(NC)"; \
+			echo "    Skills: $$(ls -1d "$(KIRO_SKILLS)"/* 2>/dev/null | wc -l | tr -d ' ')"; \
+		else \
+			echo "  ○ Developer Kit skills not installed"; \
+		fi; \
+		if [ -d "$(KIRO_AGENTS)" ] && ls "$(KIRO_AGENTS)"/*.json >/dev/null 2>&1; then \
+			echo -e "  ✓ $(GREEN)Developer Kit agents installed$(NC)"; \
+			echo "    Agents: $$(ls -1 "$(KIRO_AGENTS)"/*.json 2>/dev/null | wc -l | tr -d ' ')"; \
+		else \
+			echo "  ○ Developer Kit agents not installed"; \
+		fi; \
+		if [ -d "$(KIRO_PROMPTS)" ] && ls "$(KIRO_PROMPTS)"/*.md >/dev/null 2>&1; then \
+			echo -e "  ✓ $(GREEN)Developer Kit prompts installed$(NC)"; \
+			echo "    Prompts: $$(ls -1 "$(KIRO_PROMPTS)"/*.md 2>/dev/null | wc -l | tr -d ' ')"; \
+		else \
+			echo "  ○ Developer Kit prompts not installed"; \
+		fi; \
+	else \
+		echo -e "  ✗ $(RED)Not configured$(NC)"; \
+	fi
+	@echo ""
 
 # ═══════════════════════════════════════════════════════════════
 # BACKUP
@@ -606,6 +638,7 @@ install: backup
 	@$(MAKE) -s install-copilot-if-exists
 	@$(MAKE) -s install-codex-if-exists
 	@$(MAKE) -s install-kimi-if-exists
+	@$(MAKE) -s install-kiro-if-exists
 	@echo ""
 	@$(call success "Installation complete!")
 	@$(MAKE) -s status
@@ -636,6 +669,13 @@ install-kimi-if-exists:
 		$(MAKE) -s install-kimi; \
 	else \
 		$(call warning "Skipping Kimi CLI (not configured)"); \
+	fi
+
+install-kiro-if-exists:
+	@if [ -d "$(KIRO_CONFIG)" ]; then \
+		$(MAKE) -s install-kiro; \
+	else \
+		$(call warning "Skipping Kiro CLI (not configured)"); \
 	fi
 
 # ═══════════════════════════════════════════════════════════════
@@ -956,6 +996,101 @@ install-kimi: check-deps
 		done; \
 	echo "  Total commands converted to skills: $$commands_count"
 	@echo ""
+	@echo ""
+
+# ═══════════════════════════════════════════════════════════════
+# KIRO CLI INSTALLATION
+# ═══════════════════════════════════════════════════════════════
+
+install-kiro: check-deps
+	@echo ""
+	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
+	@echo -e "$(BLUE)Installing Developer Kit for Kiro CLI$(NC)"
+	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
+	@echo ""
+	@mkdir -p $(KIRO_SKILLS) $(KIRO_AGENTS) $(KIRO_PROMPTS)
+	@echo -e "$(CYAN)Installing skills...$(NC)"
+	@skills_count=0; \
+	for plugin_json in $(PLUGIN_JSON_FILES); do \
+		plugin_dir=$$(dirname "$$plugin_json"); \
+		base_dir=$$(dirname "$$plugin_dir"); \
+		plugin_name=$$(jq -r '.name' "$$plugin_json" 2>/dev/null); \
+		skills=$$(jq -r '.skills[]? // empty' "$$plugin_json" 2>/dev/null); \
+		if [ -n "$$skills" ]; then \
+			for skill_pattern in $$skills; do \
+				for skill_dir in $$base_dir/$$skill_pattern; do \
+					if [ -d "$$skill_dir" ]; then \
+						skill_name=$$(basename "$$skill_dir"); \
+						rm -rf "$(KIRO_SKILLS)/$$skill_name"; \
+						cp -r "$$skill_dir" "$(KIRO_SKILLS)/$$skill_name"; \
+						echo "  ✓ $$plugin_name: $$skill_name"; \
+						skills_count=$$((skills_count + 1)); \
+					fi; \
+				done; \
+			done; \
+		fi; \
+	done; \
+	echo "  Total skills installed: $$skills_count"
+	@echo ""
+	@echo -e "$(CYAN)Installing agents as JSON...$(NC)"
+	@agents_count=0; \
+	for plugin_json in $(PLUGIN_JSON_FILES); do \
+		plugin_dir=$$(dirname "$$plugin_json"); \
+		base_dir=$$(dirname "$$plugin_dir"); \
+		plugin_name=$$(jq -r '.name' "$$plugin_json" 2>/dev/null); \
+		agents=$$(jq -r '.agents[]? // empty' "$$plugin_json" 2>/dev/null); \
+		if [ -n "$$agents" ]; then \
+			for agent in $$agents; do \
+				agent_path="$$base_dir/$$agent"; \
+				if [ -f "$$agent_path" ]; then \
+					agent_name=$$(basename "$$agent" .md); \
+					description=$$(grep -m1 '^description:' "$$agent_path" 2>/dev/null | sed 's/^description: *//'); \
+					if [ -z "$$description" ]; then \
+						description="$$agent_name agent from Developer Kit"; \
+					fi; \
+					prompt=$$(awk '/^---/{p++; next} p==1' "$$agent_path" 2>/dev/null | head -5 | tr '\n' ' ' | sed 's/  */ /g'); \
+					if [ -z "$$prompt" ]; then \
+						prompt="You are a helpful coding assistant specialized in $$agent_name tasks."; \
+					fi; \
+					jq -n \
+						--arg name "$$agent_name" \
+						--arg desc "$$description" \
+						--arg prompt "$$prompt" \
+						'{"name": $$name, "description": $$desc, "tools": ["read","write","edit","terminal"], "allowedTools": ["read","write","edit"], "resources": ["file://README.md","file://.kiro/steering/**/*.md","skill://.kiro/skills/**/SKILL.md"], "prompt": $$prompt, "model": "claude-sonnet-4"}' \
+						> "$(KIRO_AGENTS)/$$agent_name.json"; \
+					echo "  ✓ $$plugin_name: $$agent_name.json"; \
+					agents_count=$$((agents_count + 1)); \
+				fi; \
+			done; \
+		fi; \
+	done; \
+	echo "  Total agents installed: $$agents_count"
+	@echo ""
+	@echo -e "$(CYAN)Installing prompts (commands)...$(NC)"
+	@prompts_count=0; \
+	for plugin_json in $(PLUGIN_JSON_FILES); do \
+		plugin_dir=$$(dirname "$$plugin_json"); \
+		base_dir=$$(dirname "$$plugin_dir"); \
+		plugin_name=$$(jq -r '.name' "$$plugin_json" 2>/dev/null); \
+		commands=$$(jq -r '.commands[]? // empty' "$$plugin_json" 2>/dev/null); \
+		if [ -n "$$commands" ]; then \
+			for cmd in $$commands; do \
+				cmd_path="$$base_dir/$$cmd"; \
+				if [ -f "$$cmd_path" ]; then \
+					cmd_name=$$(basename "$$cmd"); \
+					cp "$$cmd_path" "$(KIRO_PROMPTS)/$$cmd_name"; \
+					echo "  ✓ $$plugin_name: $$cmd_name"; \
+					prompts_count=$$((prompts_count + 1)); \
+				fi; \
+			done; \
+		fi; \
+	done; \
+	echo "  Total prompts installed: $$prompts_count"
+	@echo ""
+	@$(call success "Kiro CLI installation complete")
+	@echo "  Skills directory:  $(KIRO_SKILLS)/"
+	@echo "  Agents directory:  $(KIRO_AGENTS)/"
+	@echo "  Prompts directory: $(KIRO_PROMPTS)/"
 	@echo ""
 
 # ═══════════════════════════════════════════════════════════════
