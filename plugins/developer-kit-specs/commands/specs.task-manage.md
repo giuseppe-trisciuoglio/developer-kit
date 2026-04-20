@@ -54,6 +54,17 @@ This command provides task management capabilities after initial task generation
 | `--spec` | Conditional | Path to spec folder (required for `add`, `regenerate-index`, `list`) |
 | `--lang` | No | Language/framework hint for new tasks |
 
+## Current Context
+
+If `--spec` is omitted, the spec folder is auto-detected from the current git branch:
+
+```bash
+branch=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/current_branch.py")
+spec_folder=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/find_spec_from_branch.py")
+```
+
+If no matching spec folder is found for the current branch, stop and inform the user.
+
 ---
 
 You are managing existing task files. Follow the appropriate process based on the requested action.

@@ -24,6 +24,18 @@ This command follows a focused workflow optimized for single-task implementation
 |--------------|------------------------------------------|
 | `$ARGUMENTS` | Combined arguments passed to the command |
 
+## Current Context
+
+If `--task` is omitted, the task is auto-detected from the current git branch:
+
+```bash
+branch=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/current_branch.py")
+spec_folder=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/find_spec_from_branch.py")
+# Find the first pending/in_progress task in the spec folder
+```
+
+If no task can be auto-detected, ask the user which task to implement.
+
 ## Task Mode Detection
 
 This command ONLY operates in Task Mode. If no `--task=` parameter is provided, inform the user that they should use the spec-driven flow (`devkit.brainstorm` → `devkit.spec-to-tasks`) or `/specs:feature-development` for non-spec work.

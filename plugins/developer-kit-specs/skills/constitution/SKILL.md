@@ -1,7 +1,40 @@
 ---
 name: constitution
-description: "Establishes and maintains the architectural DNA of a project through two shared documents: docs/specs/architecture.md (technology and infrastructure choices) and docs/specs/ontology.md (domain glossary / Ubiquitous Language). Can be used BEFORE brainstorm as a project setup step, or at any point in the SDD lifecycle. Triggers on 'create constitution', 'update constitution', 'constitution check', 'validate against constitution', 'project principles', 'architectural guardrails', 'setup project architecture', 'define ontology'."
+description: "Creates, updates, validates, and displays the architectural DNA of a project through two shared documents: docs/specs/architecture.md (technology stack, architectural rules, security constraints, AI guardrails) and docs/specs/ontology.md (domain glossary / Ubiquitous Language). Use BEFORE brainstorm as a project setup step, or at any point in the SDD lifecycle to validate specs/tasks against architecture principles. Triggers on 'create constitution', 'update constitution', 'constitution check', 'validate against constitution', 'project principles', 'architectural guardrails', 'setup project architecture', 'define ontology'."
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash, AskUserQuestion, TodoWrite
+---
+
+## Instructions
+
+1. Identify the operation from `$ARGUMENTS` or user intent: `create`, `update`, `check`, or `show`.
+2. For **create**: ask which files to create (architecture.md, ontology.md, or both), gather required information via `AskUserQuestion`, then write the files using the templates below.
+3. For **update**: identify the target file and section, apply the change surgically, update the `Last Updated` date.
+4. For **check**: read both constitution files, read the target file, validate against architectural rules and ontology terms, output a Constitution Check Report.
+5. For **show**: read and display both files formatted for readability.
+6. Always confirm with the user before writing or overwriting files.
+
+## Examples
+
+**Create constitution before first brainstorm:**
+```
+/developer-kit-specs:constitution create
+```
+
+**Validate a spec against architecture and ontology:**
+```
+/developer-kit-specs:constitution check --target=docs/specs/001/2024-01-15--user-auth.md
+```
+
+**Update the security constraints section:**
+```
+/developer-kit-specs:constitution update --file=architecture --section=security
+```
+
+**Show current constitution:**
+```
+/developer-kit-specs:constitution show
+```
+
 ---
 
 # Constitution Skill

@@ -51,6 +51,17 @@ Idea → Specs → Tasks → Implementation → Spec Sync Context (this)
 | `--task` | No | Update context after specific task completion |
 | `--dry-run` | No | Show planned changes without executing them |
 
+## Current Context
+
+If `--spec` is omitted, the spec folder is auto-detected from the current git branch:
+
+```bash
+branch=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/current_branch.py")
+spec_folder=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/find_spec_from_branch.py")
+```
+
+If no matching spec folder is found for the current branch, stop and inform the user.
+
 ## Core Principles
 
 - **Incremental updates**: Only update what has changed, don't rewrite everything

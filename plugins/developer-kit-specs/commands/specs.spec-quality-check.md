@@ -83,6 +83,17 @@ The command evaluates four main dimensions:
 |----------|----------|-------------|
 | `spec-path` | No | Path to spec folder or file (default: auto-detect from CWD) |
 
+## Current Context
+
+If `--spec` is omitted, the spec folder is auto-detected from the current git branch:
+
+```bash
+branch=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/current_branch.py")
+spec_folder=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/find_spec_from_branch.py")
+```
+
+If no matching spec folder is found for the current branch, stop and inform the user.
+
 ## Core Principles
 
 - **Maximum 5 questions**: Focus on the most impactful ambiguities

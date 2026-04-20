@@ -101,6 +101,15 @@ The command will automatically gather context information when needed:
 - Recent commits and changes
 - Available when the repository has history
 
+If `spec-file` is omitted, the spec folder is auto-detected from the current git branch:
+
+```bash
+branch=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/current_branch.py")
+spec_folder=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/find_spec_from_branch.py")
+```
+
+If no matching spec folder is found for the current branch, stop and inform the user.
+
 ---
 
 You are converting a functional specification into executable tasks. Follow a systematic approach: analyze requirements, identify dependencies, generate atomic tasks, and create a trackable task list.
