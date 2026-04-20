@@ -1,5 +1,5 @@
 {
-  "description": "Prevent execution of destructive Bash commands that target paths outside the working directory or match security blacklists",
+  "description": "Core hooks: prevent destructive commands and auto-learn on session stop",
   "hooks": {
     "PreToolUse": [
       {
@@ -9,6 +9,18 @@
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/prevent-destructive-commands.py",
             "statusMessage": "Checking command safety..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/auto-learn-on-stop.py",
+            "statusMessage": "Checking if session learning is needed..."
           }
         ]
       }
