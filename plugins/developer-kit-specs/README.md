@@ -25,22 +25,22 @@ This plugin provides a complete workflow for transforming ideas into implemented
 /developer-kit-specs:constitution create
 
 # 1. Create a functional specification
-/specs:brainstorm "Add user authentication with JWT tokens"
+/developer-kit-specs:specs.brainstorm "Add user authentication with JWT tokens"
 
 # 2. Convert specification to tasks
-/specs:spec-to-tasks --lang=spring docs/specs/001-user-auth/
+/developer-kit-specs:specs.spec-to-tasks --lang=spring docs/specs/001-user-auth/
 
 # 3. Implement a task
-/specs:task-implementation --lang=spring --task="docs/specs/001-user-auth/tasks/TASK-001.md"
+/developer-kit-specs:specs.task-implementation --lang=spring --task="docs/specs/001-user-auth/tasks/TASK-001.md"
 
 # 4. Review implementation
-/specs:task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
+/developer-kit-specs:specs.task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
 
 # 5. Clean up code
-/specs:code-cleanup --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
+/developer-kit-specs:specs-code-cleanup --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
 
 # 6. Sync specification with implementation
-/specs:spec-sync-with-code docs/specs/001-user-auth/
+/developer-kit-specs:specs.spec-sync-with-code docs/specs/001-user-auth/
 ```
 
 ## Workflow
@@ -84,41 +84,41 @@ docs/specs/001-user-auth/
 
 | Command | Description |
 |---------|-------------|
-| `/specs:brainstorm [idea]` | Full specification creation for complex features |
-| `/specs:quick-spec [idea]` | Lightweight spec for bug fixes and small features |
-| `/specs:spec-quality-check [folder]` | Review specification content quality |
+| `/developer-kit-specs:specs.brainstorm [idea]` | Full specification creation for complex features |
+| `/developer-kit-specs:specs.quick-spec [idea]` | Lightweight spec for bug fixes and small features |
+| `/developer-kit-specs:specs.spec-quality-check [folder]` | Review specification content quality |
 
 ### Task Generation and Management
 
 | Command | Description |
 |---------|-------------|
-| `/specs:spec-to-tasks [--lang=...] [folder]` | Convert specification to executable tasks |
-| `/specs:task-manage --action=list` | List all tasks in a specification |
-| `/specs:task-manage --action=add` | Add a new task |
-| `/specs:task-manage --action=split` | Split an existing task |
-| `/specs:task-manage --action=update` | Update task metadata |
+| `/developer-kit-specs:specs.spec-to-tasks [--lang=...] [folder]` | Convert specification to executable tasks |
+| `/developer-kit-specs:specs.task-manage --action=list` | List all tasks in a specification |
+| `/developer-kit-specs:specs.task-manage --action=add` | Add a new task |
+| `/developer-kit-specs:specs.task-manage --action=split` | Split an existing task |
+| `/developer-kit-specs:specs.task-manage --action=update` | Update task metadata |
 
 ### Task Implementation
 
 | Command | Description |
 |---------|-------------|
-| `/specs:task-implementation [--lang=...] [task-file]` | Implement a specific task |
-| `/specs:task-tdd [--lang=...] [task-file]` | TDD RED phase - generate failing tests first |
-| `/specs:task-review [--lang=...] [task-file]` | Verify implemented task meets specification |
-| `/specs:code-cleanup [--lang=...] [task-file]` | Clean up code after review approval |
+| `/developer-kit-specs:specs.task-implementation [--lang=...] [task-file]` | Implement a specific task |
+| `/developer-kit-specs:specs.task-tdd [--lang=...] [task-file]` | TDD RED phase - generate failing tests first |
+| `/developer-kit-specs:specs.task-review [--lang=...] [task-file]` | Verify implemented task meets specification |
+| `/developer-kit-specs:specs-code-cleanup [--lang=...] [task-file]` | Clean up code after review approval |
 
 ### Synchronization
 
 | Command | Description |
 |---------|-------------|
-| `/specs:spec-sync-context [folder]` | Sync Knowledge Graph, tasks, and codebase |
-| `/specs:spec-sync-with-code [folder]` | Detect and fix spec-to-code drift |
+| `/developer-kit-specs:specs.spec-sync-context [folder]` | Sync Knowledge Graph, tasks, and codebase |
+| `/developer-kit-specs:specs.spec-sync-with-code [folder]` | Detect and fix spec-to-code drift |
 
 ### Automation
 
 | Command | Description |
 |---------|-------------|
-| `/specs:ralph-loop` | Step-by-step automation (use Python script directly) |
+| `/developer-kit-specs:specs.ralph-loop` | Step-by-step automation (use Python script directly) |
 
 ## Language Support
 
@@ -260,7 +260,7 @@ Test-Driven Development is integrated into the task implementation workflow:
 ### RED Phase (Write Failing Tests)
 
 ```bash
-/specs:task-tdd --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
+/developer-kit-specs:specs.task-tdd --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
 ```
 
 Generates failing tests based on task acceptance criteria before implementation.
@@ -268,7 +268,7 @@ Generates failing tests based on task acceptance criteria before implementation.
 ### GREEN Phase (Make Tests Pass)
 
 ```bash
-/specs:task-implementation --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
+/developer-kit-specs:specs.task-implementation --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
 ```
 
 Implements code to make the failing tests pass.
@@ -325,7 +325,7 @@ Specifications are **deliverables**, not just background context.
 ### Rules
 
 1. When work is driven by files in `docs/specs/`, treat the specification as a deliverable.
-2. After `/specs:task-implementation`, always run `/specs:task-review`, fix every finding, then run `/specs:spec-sync-with-code` whenever implementation changed, clarified, or constrained intended behavior.
+2. After `/developer-kit-specs:specs.task-implementation`, always run `/developer-kit-specs:specs.task-review`, fix every finding, then run `/developer-kit-specs:specs.spec-sync-with-code` whenever implementation changed, clarified, or constrained intended behavior.
 3. During normal chat sessions, if specs were used to guide implementation, update affected spec files before concluding.
 4. If no spec update is needed, state that explicitly.
 
@@ -335,7 +335,7 @@ Specifications are **deliverables**, not just background context.
 ## Specification Maintenance Rules
 
 - When work is driven by files in `docs/specs/`, treat the specification as a deliverable.
-- After `/specs:task-implementation`, always run `/specs:task-review`, fix every finding, then run `/specs:spec-sync-with-code`.
+- After `/developer-kit-specs:specs.task-implementation`, always run `/developer-kit-specs:specs.task-review`, fix every finding, then run `/developer-kit-specs:specs.spec-sync-with-code`.
 - During normal chat sessions, if specs were used to guide implementation, update affected spec files before concluding.
 - If no spec update is needed, state that explicitly and explain why.
 ```

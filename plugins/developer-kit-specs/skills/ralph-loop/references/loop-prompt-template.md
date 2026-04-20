@@ -70,7 +70,7 @@ Execute Step: CURRENT_STEP
 1. Read fix_plan.json to get current_task and current_task_file
 2. Read the task file CURRENT_TASK_FILE
 3. Run task-implementation:
-   /specs:task-implementation --lang=LANG --task="TASK_FILE"
+   /developer-kit-specs:specs.task-implementation --lang=LANG --task="TASK_FILE"
 4. If implementation succeeds:
    - Set state.step = "review"
 5. If implementation fails:
@@ -87,7 +87,7 @@ Execute Step: CURRENT_STEP
 ```
 1. Read fix_plan.json to get current_task and current_task_file
 2. Run task-review with --no-confirm:
-   /specs:task-review --no-confirm --lang=LANG "TASK_FILE"
+   /developer-kit-specs:specs.task-review --no-confirm --lang=LANG "TASK_FILE"
 3. Read the review report TASK-FILE--review.md
 4. If review passes (all criteria met, no issues):
    - Set state.step = "cleanup"
@@ -109,7 +109,7 @@ Execute Step: CURRENT_STEP
 ```
 1. Read fix_plan.json to get current_task and current_task_file
 2. Run code-cleanup with --no-confirm:
-   /specs:code-cleanup --no-confirm --lang=LANG --task="TASK_FILE"
+   /developer-kit-specs:specs-code-cleanup --no-confirm --lang=LANG --task="TASK_FILE"
 3. Set state.step = "sync"
 4. Save fix_plan.json
 5. Print: "Cleanup: TASK-ID complete | Next: sync"
@@ -123,7 +123,7 @@ Execute Step: CURRENT_STEP
 1. Read fix_plan.json to get current_task
 2. Read the review report: docs/specs/[id]/tasks/TASK-XXX--review.md
 3. Fix the reported issues:
-   - Run /specs:task-implementation --lang=LANG --task="TASK_FILE"
+   - Run /developer-kit-specs:specs.task-implementation --lang=LANG --task="TASK_FILE"
    - Or manually apply edits to address findings
 4. If fixes succeed:
    - Set state.step = "review"
@@ -141,7 +141,7 @@ Execute Step: CURRENT_STEP
 ```
 1. Read fix_plan.json to get current_task and spec_folder
 2. Run spec-sync-with-code:
-   /specs:spec-sync-with-code SPEC_FOLDER/ --after-task=TASK-ID
+   /developer-kit-specs:specs.spec-sync-with-code SPEC_FOLDER/ --after-task=TASK-ID
 3. Set state.step = "update_done"
 4. Save fix_plan.json
 5. Print: "Sync: TASK-ID complete | Next: update_done"

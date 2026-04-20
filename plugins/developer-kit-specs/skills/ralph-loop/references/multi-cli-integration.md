@@ -27,10 +27,10 @@ The Ralph Loop uses a Python script (`ralph_loop.py`) as the central orchestrato
 
 | CLI | Agent Code | Command Prefix | Example |
 |-----|------------|----------------|---------|
-| Claude Code | `claude` | `/` | `/specs:task-implementation` |
+| Claude Code | `claude` | `/` | `/developer-kit-specs:specs.task-implementation` |
 | Codex CLI | `codex` | (none) | `task-implementation` |
 | Copilot CLI | `copilot` | (none) | `task-implementation` |
-| Kimi CLI | `kimi` | `/` | `/specs:task-implementation` |
+| Kimi CLI | `kimi` | `/` | `/developer-kit-specs:specs.task-implementation` |
 
 ## Basic Usage (All CLIs)
 
@@ -58,7 +58,7 @@ Output shows the command to execute:
 → Implementation: TASK-036
 
 Execute:
-  /specs:task-implementation --task=TASK-036
+  /developer-kit-specs:specs.task-implementation --task=TASK-036
 
 After execution, update state:
   python3 ralph_loop.py --action=loop --spec=docs/specs/001-feature/
@@ -68,7 +68,7 @@ After execution, update state:
 
 In your CLI, run the shown command:
 ```bash
-/specs:task-implementation --task=TASK-036
+/developer-kit-specs:specs.task-implementation --task=TASK-036
 ```
 
 ### 4. Continue Loop
@@ -93,7 +93,7 @@ python3 ralph_loop.py --action=start \
 /loop 5m python3 ralph_loop.py --action=loop --spec=docs/specs/001-feature/
 ```
 
-Commands will be formatted as: `/specs:task-implementation --task=TASK-036`
+Commands will be formatted as: `/developer-kit-specs:specs.task-implementation --task=TASK-036`
 
 ### Codex CLI
 
@@ -134,7 +134,7 @@ python3 ralph_loop.py --action=start \
 python3 ralph_loop.py --action=loop --spec=docs/specs/001-feature/
 ```
 
-Commands will be formatted as: `/specs:task-implementation --task=TASK-036`
+Commands will be formatted as: `/developer-kit-specs:specs.task-implementation --task=TASK-036`
 
 ## Multi-Agent Support
 
@@ -268,10 +268,10 @@ while :; do cat prompt.md | codex; done
 
 | Step | Claude/Kimi | Codex/Copilot |
 |------|-------------|---------------|
-| Implementation | `/specs:task-implementation --task=TASK-036` | `task-implementation --task=TASK-036` |
-| Review | `/specs:task-review --task=TASK-036` | `task-review --task=TASK-036` |
+| Implementation | `/developer-kit-specs:specs.task-implementation --task=TASK-036` | `task-implementation --task=TASK-036` |
+| Review | `/developer-kit-specs:specs.task-review --task=TASK-036` | `task-review --task=TASK-036` |
 | Cleanup | `/developer-kit-specs:specs-code-cleanup --task=TASK-036` | `specs-code-cleanup --task=TASK-036` |
-| Sync | `/specs:spec-sync-with-code --after-task=TASK-036` | `spec-sync-with-code --after-task=TASK-036` |
+| Sync | `/developer-kit-specs:specs.spec-sync-with-code --after-task=TASK-036` | `spec-sync-with-code --after-task=TASK-036` |
 
 ## Best Practices
 

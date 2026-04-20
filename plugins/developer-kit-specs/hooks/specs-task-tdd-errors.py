@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Error handling and alternative flows for /specs:task-tdd (TASK-012).
+"""Error handling and alternative flows for /developer-kit-specs:specs.task-tdd (TASK-012).
 
 Provides small, testable helpers that consolidate common error checks used by
 other specs hooks (parser, generator, red-phase, updater). The module raises
@@ -54,7 +54,7 @@ def ensure_task_file_exists(task_path: str) -> None:
         raise SpecsTddError(
             (
                 f"Task file not found: {task_path}. "
-                "Provide a valid task file path or run '/specs:spec-to-tasks' first."
+                "Provide a valid task file path or run '/developer-kit-specs:specs.spec-to-tasks' first."
             ),
             code="E1",
         )

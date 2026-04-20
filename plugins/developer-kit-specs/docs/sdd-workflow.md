@@ -73,8 +73,8 @@ The constitution feeds into every subsequent phase — brainstorm, spec-to-tasks
 
 | Scenario | Command | Output |
 |----------|---------|--------|
-| New complex feature | `/specs:brainstorm "idea"` | Full 9-phase specification |
-| Bug fix or small change | `/specs:quick-spec "fix"` | Minimal 4-phase specification |
+| New complex feature | `/developer-kit-specs:specs.brainstorm "idea"` | Full 9-phase specification |
+| Bug fix or small change | `/developer-kit-specs:specs.quick-spec "fix"` | Minimal 4-phase specification |
 
 **When to use `brainstorm` vs `quick-spec`:**
 
@@ -84,7 +84,7 @@ The constitution feeds into every subsequent phase — brainstorm, spec-to-tasks
 #### Example: Complex Feature (brainstorm)
 
 ```
-/specs:brainstorm Add a hotel search engine with multi-provider aggregation,
+/developer-kit-specs:specs.brainstorm Add a hotel search engine with multi-provider aggregation,
 real-time availability, price comparison, and guest review scoring
 ```
 
@@ -158,7 +158,7 @@ The system shall return results containing:
 #### Example: Simple Fix (quick-spec)
 
 ```
-/specs:quick-spec Fix the N+1 query issue when loading user orders with items
+/developer-kit-specs:specs.quick-spec Fix the N+1 query issue when loading user orders with items
 ```
 
 Claude skips idea refinement and approach exploration, going straight to:
@@ -181,7 +181,7 @@ Phase 3 — Generate Minimal Spec:
 After generating a specification, validate it:
 
 ```
-/specs:spec-quality-check docs/specs/001-hotel-search/
+/developer-kit-specs:specs.spec-quality-check docs/specs/001-hotel-search/
 ```
 
 Claude asks up to 5 targeted questions, one at a time:
@@ -206,7 +206,7 @@ Quality scan covers 12 taxonomy areas:
 ### 1.3 Generate Tasks
 
 ```
-/specs:spec-to-tasks --lang=spring docs/specs/001-hotel-search/
+/developer-kit-specs:specs.spec-to-tasks --lang=spring docs/specs/001-hotel-search/
 ```
 
 This is the bridge from functional specification to executable code:
@@ -272,16 +272,16 @@ View, split, or reorganize tasks before implementation:
 
 ```
 # List all tasks with status and complexity
-/specs:task-manage --action=list --spec="docs/specs/001-hotel-search/"
+/developer-kit-specs:specs.task-manage --action=list --spec="docs/specs/001-hotel-search/"
 
 # Split a complex task (complexity ≥ 50)
-/specs:task-manage --action=split --task="docs/specs/001-hotel-search/tasks/TASK-003.md"
+/developer-kit-specs:specs.task-manage --action=split --task="docs/specs/001-hotel-search/tasks/TASK-003.md"
 
 # Add a new task
-/specs:task-manage --action=add --spec="docs/specs/001-hotel-search/"
+/developer-kit-specs:specs.task-manage --action=add --spec="docs/specs/001-hotel-search/"
 
 # Mark a task as optional
-/specs:task-manage --action=mark-optional --task="docs/specs/001-hotel-search/tasks/TASK-006.md"
+/developer-kit-specs:specs.task-manage --action=mark-optional --task="docs/specs/001-hotel-search/tasks/TASK-006.md"
 ```
 
 ---
@@ -293,17 +293,17 @@ For each task, follow one of two approaches:
 ### Approach A: Direct Implementation
 
 ```
-/specs:task-implementation --lang=spring --task="docs/specs/001-hotel-search/tasks/TASK-001.md"
+/developer-kit-specs:specs.task-implementation --lang=spring --task="docs/specs/001-hotel-search/tasks/TASK-001.md"
 ```
 
 ### Approach B: TDD (Test-Driven Development)
 
 ```
 # RED phase — generate failing tests
-/specs:task-tdd --lang=spring --task="docs/specs/001-hotel-search/tasks/TASK-001.md"
+/developer-kit-specs:specs.task-tdd --lang=spring --task="docs/specs/001-hotel-search/tasks/TASK-001.md"
 
 # GREEN phase — implement to make tests pass
-/specs:task-implementation --lang=spring --task="docs/specs/001-hotel-search/tasks/TASK-001.md"
+/developer-kit-specs:specs.task-implementation --lang=spring --task="docs/specs/001-hotel-search/tasks/TASK-001.md"
 ```
 
 ### Implementation Process (12 Steps)
@@ -368,7 +368,7 @@ Implementation uses language-specific review agents:
 ### 3.1 Review
 
 ```
-/specs:task-review --lang=spring docs/specs/001-hotel-search/tasks/TASK-001.md
+/developer-kit-specs:specs.task-review --lang=spring docs/specs/001-hotel-search/tasks/TASK-001.md
 ```
 
 The review checks 4 dimensions:
@@ -411,7 +411,7 @@ Output: `TASK-001--review.md` with detailed findings.
 After completing tasks, sync the specification with the implementation:
 
 ```
-/specs:spec-sync-with-code docs/specs/001-hotel-search/
+/developer-kit-specs:specs.spec-sync-with-code docs/specs/001-hotel-search/
 ```
 
 This detects three types of deviations:
@@ -431,7 +431,7 @@ The sync command:
 ### 3.4 Sync Context
 
 ```
-/specs:spec-sync-context docs/specs/001-hotel-search/
+/developer-kit-specs:specs.spec-sync-context docs/specs/001-hotel-search/
 ```
 
 This keeps technical context aligned:
@@ -444,13 +444,13 @@ This keeps technical context aligned:
 **Options:**
 ```bash
 # Preview changes without writing
-/specs:spec-sync-context --spec="docs/specs/001-hotel-search/" --dry-run
+/developer-kit-specs:specs.spec-sync-context --spec="docs/specs/001-hotel-search/" --dry-run
 
 # Update only the Knowledge Graph
-/specs:spec-sync-context --spec="docs/specs/001-hotel-search/" --update-kg-only
+/developer-kit-specs:specs.spec-sync-context --spec="docs/specs/001-hotel-search/" --update-kg-only
 
 # Sync after a specific task
-/specs:spec-sync-context --spec="docs/specs/001-hotel-search/" --task="TASK-003"
+/developer-kit-specs:specs.spec-sync-context --spec="docs/specs/001-hotel-search/" --task="TASK-003"
 ```
 
 ---
@@ -544,18 +544,18 @@ Here's a concrete example implementing a **notification system** for a NestJS ap
 
 ```
 # 1. Brainstorm
-/specs:brainstorm Add a notification system with email, SMS, and push channels
+/developer-kit-specs:specs.brainstorm Add a notification system with email, SMS, and push channels
    with template management and delivery tracking
 
 # 2. Quality check
-/specs:spec-quality-check docs/specs/002-notification-system/
+/developer-kit-specs:specs.spec-quality-check docs/specs/002-notification-system/
 
 # 3. Generate tasks
-/specs:spec-to-tasks --lang=nestjs docs/specs/002-notification-system/
+/developer-kit-specs:specs.spec-to-tasks --lang=nestjs docs/specs/002-notification-system/
    → Generates 8 tasks
 
 # 4. List tasks
-/specs:task-manage --action=list --spec="docs/specs/002-notification-system/"
+/developer-kit-specs:specs.task-manage --action=list --spec="docs/specs/002-notification-system/"
    TASK-001 [pending]  Create notification entity and repository    complexity: 35
    TASK-002 [pending]  Implement template engine                     complexity: 50
    TASK-003 [pending]  Build email channel adapter                   complexity: 40
@@ -566,19 +566,19 @@ Here's a concrete example implementing a **notification system** for a NestJS ap
    TASK-008 [pending]  E2E tests and cleanup                        complexity: 30
 
 # 5. Split complex task
-/specs:task-manage --action=split --task="docs/specs/002-notification-system/tasks/TASK-006.md"
+/developer-kit-specs:specs.task-manage --action=split --task="docs/specs/002-notification-system/tasks/TASK-006.md"
    → Split into TASK-006A (orchestrator) and TASK-006B (delivery tracking)
 
 # 6. Implement each task
-/specs:task-implementation --lang=nestjs --task="docs/specs/002-notification-system/tasks/TASK-001.md"
-/specs:task-review --lang=nestjs docs/specs/002-notification-system/tasks/TASK-001.md
+/developer-kit-specs:specs.task-implementation --lang=nestjs --task="docs/specs/002-notification-system/tasks/TASK-001.md"
+/developer-kit-specs:specs.task-review --lang=nestjs docs/specs/002-notification-system/tasks/TASK-001.md
 /developer-kit-specs:specs-code-cleanup --lang=nestjs --task="docs/specs/002-notification-system/tasks/TASK-001.md"
 
 # Repeat for TASK-002 through TASK-006B...
 
 # 7. Final sync
-/specs:spec-sync-with-code docs/specs/002-notification-system/
-/specs:spec-sync-context docs/specs/002-notification-system/
+/developer-kit-specs:specs.spec-sync-with-code docs/specs/002-notification-system/
+/developer-kit-specs:specs.spec-sync-context docs/specs/002-notification-system/
 
 # 8. Or automate everything with Ralph Loop
 python3 plugins/developer-kit-specs/skills/ralph-loop/scripts/ralph_loop.py \

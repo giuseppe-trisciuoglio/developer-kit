@@ -21,6 +21,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [2.8.1] - 2026-04-20
+
+### Fixed
+
+- Corrected `/specs:` references in `developer-kit-specs` to use the proper `/developer-kit-specs:specs.` command prefix
+- Fixed cross-plugin and skill references for `feature-development` and `code-cleanup`
+- Updated `spec-quality` references to `spec-sync-context` where appropriate
+
 ## [2.8.0] - 2026-04-10
 
 ### Added

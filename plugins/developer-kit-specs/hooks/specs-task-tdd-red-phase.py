@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify RED-phase test execution for /specs:task-tdd.
+"""Verify RED-phase test execution for /developer-kit-specs:specs.task-tdd.
 
 This hook executes the generated test file for a task and determines whether the
 project is still in the RED phase of TDD:

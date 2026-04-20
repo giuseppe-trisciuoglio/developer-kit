@@ -32,15 +32,15 @@ Idea → Functional Specification → Tasks → Implementation → Review → Co
 
 ```bash
 # Review a specific task
-/specs:task-review docs/specs/001-user-auth/tasks/TASK-001.md
+/developer-kit-specs:specs.task-review docs/specs/001-user-auth/tasks/TASK-001.md
 
 # With language specification for code review
-/specs:task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
-/specs:task-review --lang=typescript docs/specs/001-user-auth/tasks/TASK-001.md
-/specs:task-review --lang=nestjs docs/specs/001-user-auth/tasks/TASK-001.md
-/specs:task-review --lang=react docs/specs/001-user-auth/tasks/TASK-001.md
-/specs:task-review --lang=python docs/specs/001-user-auth/tasks/TASK-001.md
-/specs:task-review --lang=general docs/specs/001-user-auth/tasks/TASK-001.md
+/developer-kit-specs:specs.task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
+/developer-kit-specs:specs.task-review --lang=typescript docs/specs/001-user-auth/tasks/TASK-001.md
+/developer-kit-specs:specs.task-review --lang=nestjs docs/specs/001-user-auth/tasks/TASK-001.md
+/developer-kit-specs:specs.task-review --lang=react docs/specs/001-user-auth/tasks/TASK-001.md
+/developer-kit-specs:specs.task-review --lang=python docs/specs/001-user-auth/tasks/TASK-001.md
+/developer-kit-specs:specs.task-review --lang=general docs/specs/001-user-auth/tasks/TASK-001.md
 ```
 
 ## Arguments
@@ -87,8 +87,8 @@ If no task can be auto-detected, ask the user which task to review.
    - `--lang` parameter (language/framework for code review)
    - `task-file-path` (path to task file) OR `--spec` and `--task` parameters
 3. **Support two argument formats**:
-   - Format 1 (direct path): `/specs:task-review docs/specs/001-feature/tasks/TASK-001.md`
-   - Format 2 (spec+task): `/specs:task-review --spec=docs/specs/001-feature --task=TASK-001`
+   - Format 1 (direct path): `/developer-kit-specs:specs.task-review docs/specs/001-feature/tasks/TASK-001.md`
+   - Format 2 (spec+task): `/developer-kit-specs:specs.task-review --spec=docs/specs/001-feature --task=TASK-001`
    
    If `--spec` and `--task` are provided, construct the task file path as: `{spec}/tasks/{task}.md`
    
@@ -338,7 +338,7 @@ minor_issues: N
 4. If issues found:
    - List specific issues that need fixing
    - Save findings to the review report at `docs/specs/[id]/tasks/TASK-XXX--review.md`
-   - Invoke `/specs:task-implementation --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"`
+   - Invoke `/developer-kit-specs:specs.task-implementation --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"`
    - Reference the review report path so implementation can read the detailed findings
    - Track unresolved items
    - **Note**: Before re-implementing, consider running `/devkit.spec-review [spec-folder]` to verify the spec is still accurate if issues suggest spec-level problems
@@ -348,7 +348,7 @@ minor_issues: N
    - Status automatically updates to `reviewed` when all checkboxes are checked
    - Proceed to code cleanup:
    ```
-   /specs:code-cleanup --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
+   /developer-kit-specs:specs-code-cleanup --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
    ```
 
 ---
@@ -368,8 +368,8 @@ minor_issues: N
     - **Code Review Status**: Passed / Issues / Failed
     - **Review Report**: `docs/specs/[id]/tasks/TASK-XXX--review.md`
     - **Next Step**: 
-      - If approved: Run `/specs:code-cleanup` to finalize the task
-      - If issues found: Return to `/specs:task-implementation` to fix issues
+      - If approved: Run `/developer-kit-specs:specs-code-cleanup` to finalize the task
+      - If issues found: Return to `/developer-kit-specs:specs.task-implementation` to fix issues
 
 ---
 
@@ -378,19 +378,19 @@ minor_issues: N
 This command completes the verification loop:
 
 ```
-/specs:brainstorm
+/developer-kit-specs:specs.brainstorm
     ↓
 [Creates: docs/specs/[id]/YYYY-MM-DD--feature-name.md]
     ↓
-/specs:spec-to-tasks --lang=[language] docs/specs/[id]/
+/developer-kit-specs:specs.spec-to-tasks --lang=[language] docs/specs/[id]/
     ↓
 [Creates: docs/specs/[id]/tasks/TASK-XXX.md]
     ↓
-/specs:task-implementation--lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
+/developer-kit-specs:specs.task-implementation--lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
     ↓
 [Implements task]
     ↓
-/specs:task-review --lang=[language] "docs/specs/[id]/tasks/TASK-XXX.md"
+/developer-kit-specs:specs.task-review --lang=[language] "docs/specs/[id]/tasks/TASK-XXX.md"
     ↓
 [Verifies implementation, generates review report]
     ↓
@@ -406,19 +406,19 @@ This command completes the verification loop:
 
 ```bash
 # Review a completed task
-/specs:task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
+/developer-kit-specs:specs.task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
 ```
 
 ### Example 2: Review Checkout Task
 
 ```bash
-/specs:task-review --lang=typescript docs/specs/005-checkout/tasks/TASK-003.md
+/developer-kit-specs:specs.task-review --lang=typescript docs/specs/005-checkout/tasks/TASK-003.md
 ```
 
 ### Example 3: Review API Integration Task
 
 ```bash
-/specs:task-review --lang=python docs/specs/010-payment/tasks/TASK-002.md
+/developer-kit-specs:specs.task-review --lang=python docs/specs/010-payment/tasks/TASK-002.md
 ```
 
 ---

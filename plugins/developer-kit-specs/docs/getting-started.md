@@ -4,7 +4,9 @@ This guide walks you through the core concepts of SDD and gets you productive in
 
 ## What is SDD?
 
-Specification-Driven Development (SDD) is a workflow where you define **WHAT** you want to build before writing any code. The specification becomes a contract between your idea and the implementation, enforced through automated quality gates.
+Specification-Driven Development (SDD) is a workflow where you define **WHAT** you want to build before writing any
+code. The specification becomes a contract between your idea and the implementation, enforced through automated quality
+gates.
 
 ```
 Idea → Specification → Tasks → Implementation → Review → Cleanup → Done
@@ -12,6 +14,7 @@ Idea → Specification → Tasks → Implementation → Review → Cleanup → D
 ```
 
 **Why SDD?**
+
 - **Eliminates ambiguity**: Every feature is defined functionally before coding starts
 - **Traceability**: Every line of code traces back to a requirement
 - **Quality gates**: Automated review ensures nothing is missed
@@ -38,7 +41,7 @@ Verify installation:
 
 ```
 /help
-# You should see /specs:brainstorm, /specs:spec-to-tasks, etc.
+# You should see /developer-kit-specs:specs.brainstorm, /developer-kit-specs:specs.spec-to-tasks, etc.
 ```
 
 ## Your First Specification
@@ -53,14 +56,16 @@ Before writing any specification, define the architectural DNA of your project:
 /developer-kit-specs:constitution create
 ```
 
-Claude will ask about your technology stack, architectural rules, and security constraints, then generate `docs/specs/architecture.md` and optionally `docs/specs/ontology.md`. These documents act as non-negotiable guardrails for all AI-generated code throughout the project lifecycle.
+Claude will ask about your technology stack, architectural rules, and security constraints, then generate
+`docs/specs/architecture.md` and optionally `docs/specs/ontology.md`. These documents act as non-negotiable guardrails
+for all AI-generated code throughout the project lifecycle.
 
 You only run `create` once. After that, use `check` to validate specs and tasks against them.
 
 ### Step 1: Brainstorm the Idea
 
 ```
-/specs:brainstorm Add user authentication with JWT tokens for a Spring Boot REST API
+/developer-kit-specs:specs.brainstorm Add user authentication with JWT tokens for a Spring Boot REST API
 ```
 
 Claude will guide you through a 9-phase process:
@@ -76,6 +81,7 @@ Claude will guide you through a 9-phase process:
 9. **Summary** — Lists outputs and recommended next steps
 
 **Output files created:**
+
 ```
 docs/specs/001-user-auth/
 ├── 2026-04-10--user-auth.md        # Main functional specification
@@ -89,7 +95,7 @@ The specification is technology-agnostic. It describes behaviors, not implementa
 ### Step 2: Convert to Tasks
 
 ```
-/specs:spec-to-tasks --lang=spring docs/specs/001-user-auth/
+/developer-kit-specs:specs.spec-to-tasks --lang=spring docs/specs/001-user-auth/
 ```
 
 Claude analyzes your specification and generates executable tasks:
@@ -100,6 +106,7 @@ Claude analyzes your specification and generates executable tasks:
 4. **Generates a traceability matrix** mapping requirements to tasks
 
 **Output files created:**
+
 ```
 docs/specs/001-user-auth/
 ├── 2026-04-10--user-auth--tasks.md    # Task index
@@ -115,6 +122,7 @@ docs/specs/001-user-auth/
 ```
 
 Each task file contains:
+
 - **Frontmatter**: ID, title, status, dependencies, provides/expects contracts
 - **Description**: What to implement
 - **Acceptance Criteria**: Checkboxes for verification
@@ -123,7 +131,7 @@ Each task file contains:
 ### Step 3: Implement a Task
 
 ```
-/specs:task-implementation --lang=spring --task="docs/specs/001-user-auth/tasks/TASK-001.md"
+/developer-kit-specs:specs.task-implementation --lang=spring --task="docs/specs/001-user-auth/tasks/TASK-001.md"
 ```
 
 Claude follows a structured 12-step process:
@@ -134,23 +142,24 @@ Claude follows a structured 12-step process:
 4. **Updates task status** — Automatically marks `in_progress` → `implemented`
 
 **Hooks fire automatically:**
+
 - `task-auto-status.py` updates the task frontmatter based on checkbox changes
 - `task-kpi-analyzer.py` calculates quality KPIs and saves them to `TASK-001--kpi.json`
 
 ### Step 4: Review the Implementation
 
 ```
-/specs:task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
+/developer-kit-specs:specs.task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
 ```
 
 The review validates 4 dimensions:
 
-| Dimension | What It Checks |
-|-----------|---------------|
-| **Implementation** | Does the code match the task description? |
-| **Acceptance Criteria** | Are all criteria met? |
-| **Spec Compliance** | Does it align with the original specification? |
-| **Code Quality** | Language-specific best practices, patterns, security |
+| Dimension               | What It Checks                                       |
+|-------------------------|------------------------------------------------------|
+| **Implementation**      | Does the code match the task description?            |
+| **Acceptance Criteria** | Are all criteria met?                                |
+| **Spec Compliance**     | Does it align with the original specification?       |
+| **Code Quality**        | Language-specific best practices, patterns, security |
 
 **Output:** `TASK-001--review.md` with pass/fail status and detailed findings.
 
@@ -163,6 +172,7 @@ If the review passes:
 ```
 
 This final step:
+
 - Removes debug logs (`System.out.println`, temporary comments)
 - Optimizes imports
 - Runs language-specific formatters (`./mvnw spotless:apply`)
@@ -174,33 +184,35 @@ This final step:
 After implementing several tasks, sync the spec with reality:
 
 ```
-/specs:spec-sync-with-code docs/specs/001-user-auth/
+/developer-kit-specs:specs.spec-sync-with-code docs/specs/001-user-auth/
 ```
 
-This detects deviations (scope expansions, refinements, reductions) and updates the specification to match what was actually built.
+This detects deviations (scope expansions, refinements, reductions) and updates the specification to match what was
+actually built.
 
 ## What's Next?
 
 - **[SDD Workflow](./sdd-workflow.md)** — Complete workflow documentation with all phases
 - **[Commands Reference](./commands-reference.md)** — Detailed command documentation with examples
-- **[Ralph Loop Guide](./ralph-loop-guide.md)** — Automate task execution across multiple agents (manual and fully automated via `agents_loop.py`)
+- **[Ralph Loop Guide](./ralph-loop-guide.md)** — Automate task execution across multiple agents (manual and fully
+  automated via `agents_loop.py`)
 - **[TDD Workflow](./tdd-workflow.md)** — Test-Driven Development integration
 - **[KPI Evaluation](./kpi-evaluation.md)** — Understanding quality metrics and scoring
 
 ## Quick Reference
 
-| Command | Purpose |
-|---------|---------|
-| `/developer-kit-specs:constitution create` | Define project architectural DNA (run once) |
-| `/developer-kit-specs:constitution check --target=file` | Validate spec/task against constitution |
-| `/specs:brainstorm "idea"` | Create a full specification |
-| `/specs:quick-spec "fix"` | Create a minimal spec for small changes |
-| `/specs:spec-to-tasks --lang=spring spec/` | Generate executable tasks |
-| `/specs:task-implementation --lang=spring --task=TASK.md` | Implement a task |
-| `/specs:task-tdd --lang=spring --task=TASK.md` | Generate failing tests first (RED) |
-| `/specs:task-review --lang=spring TASK.md` | Review implementation |
-| `/developer-kit-specs:specs-code-cleanup --lang=spring --task=TASK.md` | Final cleanup |
-| `/specs:spec-sync-with-code spec/` | Sync spec with implementation |
-| `/specs:spec-sync-context spec/` | Sync Knowledge Graph and context |
-| `/specs:task-manage --action=list` | List and manage tasks |
-| `agents_loop.py --spec=spec/ --agent=auto` | Fully automated multi-agent orchestration |
+| Command                                                                       | Purpose                                     |
+|-------------------------------------------------------------------------------|---------------------------------------------|
+| `/developer-kit-specs:constitution create`                                    | Define project architectural DNA (run once) |
+| `/developer-kit-specs:constitution check --target=file`                       | Validate spec/task against constitution     |
+| `/developer-kit-specs:specs.brainstorm "idea"`                                | Create a full specification                 |
+| `/developer-kit-specs:specs.quick-spec "fix"`                                 | Create a minimal spec for small changes     |
+| `/developer-kit-specs:specs.spec-to-tasks --lang=spring spec/`                | Generate executable tasks                   |
+| `/developer-kit-specs:specs.task-implementation --lang=spring --task=TASK.md` | Implement a task                            |
+| `/developer-kit-specs:specs.task-tdd --lang=spring --task=TASK.md`            | Generate failing tests first (RED)          |
+| `/developer-kit-specs:specs.task-review --lang=spring TASK.md`                | Review implementation                       |
+| `/developer-kit-specs:specs-code-cleanup --lang=spring --task=TASK.md`        | Final cleanup                               |
+| `/developer-kit-specs:specs.spec-sync-with-code spec/`                        | Sync spec with implementation               |
+| `/developer-kit-specs:specs.spec-sync-context spec/`                          | Sync Knowledge Graph and context            |
+| `/developer-kit-specs:specs.task-manage --action=list`                        | List and manage tasks                       |
+| `agents_loop.py --spec=spec/ --agent=auto`                                    | Fully automated multi-agent orchestration   |

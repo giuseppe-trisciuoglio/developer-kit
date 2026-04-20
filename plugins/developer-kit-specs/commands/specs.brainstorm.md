@@ -45,13 +45,13 @@ Use this command when starting a new feature to define clear functional requirem
 ## Usage
 
 ```bash
-/specs:brainstorm [idea-description]
+/developer-kit-specs:specs.brainstorm [idea-description]
 ```
 
 After generating the functional specification, continue with:
 
 ```bash
-/specs:spec-to-tasks docs/specs/[id]/
+/developer-kit-specs:specs.spec-to-tasks docs/specs/[id]/
 ```
 
 ## Arguments
@@ -121,7 +121,7 @@ incrementally, generate professional documentation, review the document, and rec
 
 4. **Determine workflow tier based on idea complexity**:
     - **Quick** (bug fix, small change, <3 files, well-understood solution):
-        - Recommend switching to `/specs:quick-spec` for faster turnaround
+        - Recommend switching to `/developer-kit-specs:specs.quick-spec` for faster turnaround
         - Ask via AskUserQuestion:
             - Options:
                 - "Continue with full brainstorming" (for comprehensive spec)
@@ -561,7 +561,7 @@ Task(
         - Update the `Last Updated` date
      4. If no new terms: skip silently
 
-   - **Note**: The ontology is a living document. It will be further refined by `/specs:spec-to-tasks` when technical decisions are made.
+   - **Note**: The ontology is a living document. It will be further refined by `/developer-kit-specs:specs.spec-to-tasks` when technical decisions are made.
 
 9. Update todos
 
@@ -635,7 +635,7 @@ Task(
 
 1. The functional specification is complete. The next step is to convert it to executable tasks:
 
-   **For converting specification to tasks**: Recommend `/specs:spec-to-tasks`
+   **For converting specification to tasks**: Recommend `/developer-kit-specs:specs.spec-to-tasks`
     - Use when: Converting functional specification to trackable tasks
     - Arguments: `--lang=[language] docs/specs/[id]/`
 
@@ -652,11 +652,11 @@ Task(
 
 ```bash
 # Recommended: Run spec-quality-check first, then generate tasks
-/specs:spec-quality-check docs/specs/[id]/
-/specs:spec-to-tasks --lang=[java|spring|typescript|nestjs|react|python|general] docs/specs/[id]/
+/developer-kit-specs:specs.spec-quality-check docs/specs/[id]/
+/developer-kit-specs:specs.spec-to-tasks --lang=[java|spring|typescript|nestjs|react|python|general] docs/specs/[id]/
 
 # Alternative: Skip review and generate tasks directly
-/specs:spec-to-tasks --lang=[java|spring|typescript|nestjs|react|python|general] docs/specs/[id]/
+/developer-kit-specs:specs.spec-to-tasks --lang=[java|spring|typescript|nestjs|react|python|general] docs/specs/[id]/
 ```   - The functional specification has been saved at `docs/specs/[id]/YYYY-MM-DD--feature-name.md`
    - The task list will be saved at `docs/specs/[id]/YYYY-MM-DD--feature-name--tasks.md`
    - Individual tasks will be in `docs/specs/[id]/tasks/TASK-XXX.md`
@@ -681,8 +681,8 @@ Task(
     - **Document Location**: `docs/specs/[id]/YYYY-MM-DD--feature-name.md`
     - **Specification Review**: Review outcome and any revisions made
     - **Recommended Next Step**: 
-      - If scope was split: "Complete this specification's implementation, then run /specs:brainstorm for Spec B: [name]"
-      - Otherwise: "Generate task list with /specs:spec-to-tasks"
+      - If scope was split: "Complete this specification's implementation, then run /developer-kit-specs:specs.brainstorm for Spec B: [name]"
+      - Otherwise: "Generate task list with /developer-kit-specs:specs.spec-to-tasks"
 
 ---
 
@@ -694,7 +694,7 @@ This brainstorming command produces a **functional specification** that feeds in
 
 ```
 
-/specs:brainstorm
+/developer-kit-specs:specs.brainstorm
 ↓
 Phase 4: Optional Codebase Exploration (for integration context only)
 ↓
@@ -710,14 +710,14 @@ Phase 7: Specification Review (quality verification)
 ↓
 [Recommends: devkit.spec-to-tasks]
 ↓
-/specs:spec-to-tasks --lang=[language] docs/specs/[id]/
+/developer-kit-specs:specs.spec-to-tasks --lang=[language] docs/specs/[id]/
 ↓
 [Ensures: docs/specs/architecture.md exists]
 [Refines: docs/specs/ontology.md]
 [Creates: docs/specs/[id]/YYYY-MM-DD--feature-name--tasks.md]
 [Creates: docs/specs/[id]/tasks/TASK-XXX.md]
 ↓
-/specs:task-implementation --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
+/developer-kit-specs:specs.task-implementation --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
 ↓
 [Implements single task]
 
@@ -735,7 +735,7 @@ The functional specification created by this command serves as:
 
 ### Re-entering Brainstorming
 
-If implementation reveals specification issues, you can re-run `/specs:brainstorm`:
+If implementation reveals specification issues, you can re-run `/developer-kit-specs:specs.brainstorm`:
 - The previous specification will be preserved in its folder
 - A new specification will be created with the current date
 - You can reference the previous specification during the new brainstorming session
@@ -789,51 +789,51 @@ Update the status as you progress through each phase and section.
 ### Example 1: Simple Feature Idea
 
 ```bash
-/specs:brainstorm Add user authentication with JWT tokens
+/developer-kit-specs:specs.brainstorm Add user authentication with JWT tokens
 ```
 
 ### Example 2: Complex Feature
 
 ```bash
-/specs:brainstorm Implement real-time notifications using WebSockets
+/developer-kit-specs:specs.brainstorm Implement real-time notifications using WebSockets
 ```
 
 ### Example 3: Refactoring
 
 ```bash
-/specs:brainstorm Refactor the payment processing module to be more maintainable
+/developer-kit-specs:specs.brainstorm Refactor the payment processing module to be more maintainable
 ```
 
 ### Example 4: Bug Fix Design
 
 ```bash
-/specs:brainstorm Design a fix for the race condition in order processing
+/developer-kit-specs:specs.brainstorm Design a fix for the race condition in order processing
 ```
 
 ### Example 5: Performance Improvement
 
 ```bash
-/specs:brainstorm Design a caching strategy to reduce API response times
+/developer-kit-specs:specs.brainstorm Design a caching strategy to reduce API response times
 ```
 
 ### Example 6: Integration
 
 ```bash
-/specs:brainstorm Integrate Stripe payment processing for subscriptions
+/developer-kit-specs:specs.brainstorm Integrate Stripe payment processing for subscriptions
 ```
 
 ### Example 7: Full Workflow (after brainstorming)
 
 ```bash
 # Step 1: Brainstorm and generate functional specification
-/specs:brainstorm Design a microservices architecture for the reporting module
+/developer-kit-specs:specs.brainstorm Design a microservices architecture for the reporting module
 
 # Step 2: Convert specification to tasks
-/specs:spec-to-tasks --lang=spring docs/specs/001-reporting-module/
+/developer-kit-specs:specs.spec-to-tasks --lang=spring docs/specs/001-reporting-module/
 
 # Step 3: Implement specific tasks
-/specs:task-implementation --lang=spring --task="docs/specs/001-reporting-module/tasks/TASK-001.md"
-/specs:task-implementation --lang=spring --task="docs/specs/001-reporting-module/tasks/TASK-002.md"
+/developer-kit-specs:specs.task-implementation --lang=spring --task="docs/specs/001-reporting-module/tasks/TASK-001.md"
+/developer-kit-specs:specs.task-implementation --lang=spring --task="docs/specs/001-reporting-module/tasks/TASK-002.md"
 ```
 
 This separates WHAT (functional specification) from HOW (implementation), following the "divide et impera" principle.

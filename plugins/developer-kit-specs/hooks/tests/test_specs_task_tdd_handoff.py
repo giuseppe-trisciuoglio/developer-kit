@@ -109,7 +109,7 @@ def test_prepare_handoff_creates_markdown_summary_with_next_steps():
     assert result.handoff_path.endswith("_drift/tdd-handoff-task-013.md")
     assert "RED phase confirmed via `pytest`." in handoff_doc
     assert "`tests/test_task_file_updates.py` (both, python, scenarios: 2)" in handoff_doc
-    assert "/specs:task-implementation --lang=python" in handoff_doc
+    assert "/developer-kit-specs:specs.task-implementation --lang=python" in handoff_doc
     assert "## Context To Preserve" in handoff_doc
 
 
