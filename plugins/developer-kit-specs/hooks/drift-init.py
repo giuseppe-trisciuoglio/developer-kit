@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Drift Guard Initialization Hook for Claude Code.
 
-Initializes drift tracking when /specs:task-implementation is invoked.
+Initializes drift tracking when /developer-kit-specs:specs.task-implementation is invoked.
 Extracts task ID, reads TASK-XXX.md, parses "Files to Create" section,
 and saves initial state to _drift/state.json.
 
@@ -31,7 +31,7 @@ DRIFT_DIR_NAME = "_drift"
 
 
 def extract_task_id_from_prompt(prompt: str) -> str | None:
-    """Extract task file path from prompt containing /specs:task-implementation."""
+    """Extract task file path from prompt containing /developer-kit-specs:specs.task-implementation."""
     match = TASK_IMPLEMENTATION_PATTERN.search(prompt)
     if match:
         # The regex has 3 capture groups: double-quoted, single-quoted, unquoted
@@ -253,7 +253,7 @@ def main() -> None:
 
     cwd = input_data.get("cwd", os.getcwd())
 
-    # 1. Check if prompt contains /specs:task-implementation
+    # 1. Check if prompt contains /developer-kit-specs:specs.task-implementation
     task_identifier = extract_task_id_from_prompt(prompt)
     if not task_identifier:
         # Not a task implementation command → silent exit

@@ -38,7 +38,7 @@ Verify installation:
 
 ```
 /help
-# You should see /specs:brainstorm, /specs:spec-to-tasks, etc.
+# You should see /developer-kit-specs:specs.brainstorm, /developer-kit-specs:specs.spec-to-tasks, etc.
 ```
 
 ## Your First Specification
@@ -48,7 +48,7 @@ Let's build a real feature: **user authentication with JWT tokens** for a Spring
 ### Step 1: Brainstorm the Idea
 
 ```
-/specs:brainstorm Add user authentication with JWT tokens for a Spring Boot REST API
+/developer-kit-specs:specs.brainstorm Add user authentication with JWT tokens for a Spring Boot REST API
 ```
 
 Claude will guide you through a 9-phase process:
@@ -77,7 +77,7 @@ The specification is technology-agnostic. It describes behaviors, not implementa
 ### Step 2: Convert to Tasks
 
 ```
-/specs:spec-to-tasks --lang=spring docs/specs/001-user-auth/
+/developer-kit-specs:specs.spec-to-tasks --lang=spring docs/specs/001-user-auth/
 ```
 
 Claude analyzes your specification and generates executable tasks:
@@ -111,7 +111,7 @@ Each task file contains:
 ### Step 3: Implement a Task
 
 ```
-/specs:task-implementation --lang=spring --task="docs/specs/001-user-auth/tasks/TASK-001.md"
+/developer-kit-specs:specs.task-implementation --lang=spring --task="docs/specs/001-user-auth/tasks/TASK-001.md"
 ```
 
 Claude follows a structured 12-step process:
@@ -128,7 +128,7 @@ Claude follows a structured 12-step process:
 ### Step 4: Review the Implementation
 
 ```
-/specs:task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
+/developer-kit-specs:specs.task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
 ```
 
 The review validates 4 dimensions:
@@ -162,7 +162,7 @@ This final step:
 After implementing several tasks, sync the spec with reality:
 
 ```
-/specs:spec-sync-with-code docs/specs/001-user-auth/
+/developer-kit-specs:specs.spec-sync-with-code docs/specs/001-user-auth/
 ```
 
 This detects deviations (scope expansions, refinements, reductions) and updates the specification to match what was actually built.
@@ -179,14 +179,14 @@ This detects deviations (scope expansions, refinements, reductions) and updates 
 
 | Command | Purpose |
 |---------|---------|
-| `/specs:brainstorm "idea"` | Create a full specification |
-| `/specs:quick-spec "fix"` | Create a minimal spec for small changes |
-| `/specs:spec-to-tasks --lang=spring spec/` | Generate executable tasks |
-| `/specs:task-implementation --lang=spring --task=TASK.md` | Implement a task |
-| `/specs:task-tdd --lang=spring --task=TASK.md` | Generate failing tests first (RED) |
-| `/specs:task-review --lang=spring TASK.md` | Review implementation |
+| `/developer-kit-specs:specs.brainstorm "idea"` | Create a full specification |
+| `/developer-kit-specs:specs.quick-spec "fix"` | Create a minimal spec for small changes |
+| `/developer-kit-specs:specs.spec-to-tasks --lang=spring spec/` | Generate executable tasks |
+| `/developer-kit-specs:specs.task-implementation --lang=spring --task=TASK.md` | Implement a task |
+| `/developer-kit-specs:specs.task-tdd --lang=spring --task=TASK.md` | Generate failing tests first (RED) |
+| `/developer-kit-specs:specs.task-review --lang=spring TASK.md` | Review implementation |
 | `/developer-kit-specs:specs-code-cleanup --lang=spring --task=TASK.md` | Final cleanup |
-| `/specs:spec-sync-with-code spec/` | Sync spec with implementation |
-| `/specs:spec-sync-context spec/` | Sync Knowledge Graph and context |
-| `/specs:task-manage --action=list` | List and manage tasks |
+| `/developer-kit-specs:specs.spec-sync-with-code spec/` | Sync spec with implementation |
+| `/developer-kit-specs:specs.spec-sync-context spec/` | Sync Knowledge Graph and context |
+| `/developer-kit-specs:specs.task-manage --action=list` | List and manage tasks |
 | `agents_loop.py --spec=spec/ --agent=auto` | Fully automated multi-agent orchestration |

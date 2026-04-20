@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Parse and validate task files for /specs:task-tdd.
+"""Parse and validate task files for /developer-kit-specs:specs.task-tdd.
 
 Pure stdlib parser for spec task markdown files. It extracts YAML-like
 frontmatter, validates required fields, and returns the Test Instructions
@@ -58,7 +58,7 @@ def read_task_file(task_path: str) -> str:
         raise TaskFileError(
             (
                 f"Task file not found: {task_path}. "
-                "Provide a valid task file path or run '/specs:spec-to-tasks' first."
+                "Provide a valid task file path or run '/developer-kit-specs:specs.spec-to-tasks' first."
             ),
             code="E1",
         ) from exc
@@ -256,7 +256,7 @@ def extract_test_instructions(body: str) -> tuple[str | None, list[ParseWarning]
                 code="A3",
                 message="Task file does not contain Test Instructions section.",
                 suggested_action=(
-                    "Prompt the user to generate Test Instructions or rerun '/specs:spec-to-tasks' "
+                    "Prompt the user to generate Test Instructions or rerun '/developer-kit-specs:specs.spec-to-tasks' "
                     "to regenerate the task file."
                 ),
             )
@@ -275,7 +275,7 @@ def extract_test_instructions(body: str) -> tuple[str | None, list[ParseWarning]
                 code="A3",
                 message="Task file contains an empty Test Instructions section.",
                 suggested_action=(
-                    "Prompt the user to add test guidance before running '/specs:task-tdd'."
+                    "Prompt the user to add test guidance before running '/developer-kit-specs:specs.task-tdd'."
                 ),
             )
         ]

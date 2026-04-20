@@ -132,7 +132,7 @@ Ralph Loop | Step: choose_task | Iteration: 3
 **Actions**:
 1. Run task-implementation:
    ```
-   /specs:task-implementation --lang=LANG --task="TASK-FILE"
+   /developer-kit-specs:specs.task-implementation --lang=LANG --task="TASK-FILE"
    ```
    Or for non-Claude CLIs, read the task file and implement manually.
 2. If implementation succeeds:
@@ -145,7 +145,7 @@ Ralph Loop | Step: choose_task | Iteration: 3
 **Output**:
 ```
 Ralph Loop | Step: implementation | Task: TASK-037
-→ Running /specs:task-implementation --lang=spring --task="docs/specs/001-feature/tasks/TASK-037.md"
+→ Running /developer-kit-specs:specs.task-implementation --lang=spring --task="docs/specs/001-feature/tasks/TASK-037.md"
 → Success → Next: review
 ```
 
@@ -156,7 +156,7 @@ Ralph Loop | Step: implementation | Task: TASK-037
 **Actions**:
 1. Run task-review with `--no-confirm` to prevent interactive blocking:
    ```
-   /specs:task-review --no-confirm --lang=LANG "TASK-FILE"
+   /developer-kit-specs:specs.task-review --no-confirm --lang=LANG "TASK-FILE"
    ```
    Or for non-Claude CLIs, verify implementation manually:
    - Read acceptance criteria from task file
@@ -178,7 +178,7 @@ Ralph Loop | Step: implementation | Task: TASK-037
 **Output**:
 ```
 Ralph Loop | Step: review | Task: TASK-037 | Retry: 1/3
-→ Running /specs:task-review --no-confirm --lang=spring "docs/specs/001-feature/tasks/TASK-037.md"
+→ Running /developer-kit-specs:specs.task-review --no-confirm --lang=spring "docs/specs/001-feature/tasks/TASK-037.md"
 → Reading review report
 → Clean → Next: cleanup
 ```
@@ -193,7 +193,7 @@ Ralph Loop | Step: review | Task: TASK-037 | Retry: 1/3
    docs/specs/[id]/tasks/TASK-XXX--review.md
    ```
 2. Fix the issues reported in the review report:
-   - For Claude Code: run `/specs:task-implementation --lang=LANG --task="TASK-FILE"` (the task implementation command should read the review report and apply fixes)
+   - For Claude Code: run `/developer-kit-specs:specs.task-implementation --lang=LANG --task="TASK-FILE"` (the task implementation command should read the review report and apply fixes)
    - For non-Claude CLIs: manually edit files to address each finding
 3. If fixes succeed:
    - Set `state.step = "review"`
@@ -216,7 +216,7 @@ Ralph Loop | Step: fix | Task: TASK-037 | Retry: 1/3
 **Actions**:
 1. Run code-cleanup with `--no-confirm`:
    ```
-   /specs:code-cleanup --no-confirm --lang=LANG --task="TASK-FILE"
+   /developer-kit-specs:specs-code-cleanup --no-confirm --lang=LANG --task="TASK-FILE"
    ```
    Or for non-Claude CLIs:
    - Remove debug logs and temporary comments
@@ -229,7 +229,7 @@ Ralph Loop | Step: fix | Task: TASK-037 | Retry: 1/3
 **Output**:
 ```
 Ralph Loop | Step: cleanup | Task: TASK-037
-→ Running /specs:code-cleanup --no-confirm --lang=spring --task="docs/specs/001-feature/tasks/TASK-037.md"
+→ Running /developer-kit-specs:specs-code-cleanup --no-confirm --lang=spring --task="docs/specs/001-feature/tasks/TASK-037.md"
 → Cleanup complete → Next: sync
 ```
 
@@ -240,7 +240,7 @@ Ralph Loop | Step: cleanup | Task: TASK-037
 **Actions**:
 1. Run spec-sync-with-code:
    ```
-   /specs:spec-sync-with-code SPEC-FOLDER/ --after-task=TASK-ID
+   /developer-kit-specs:specs.spec-sync-with-code SPEC-FOLDER/ --after-task=TASK-ID
    ```
    Or for non-Claude CLIs:
    - Read decision-log.md for any deviations
@@ -252,7 +252,7 @@ Ralph Loop | Step: cleanup | Task: TASK-037
 **Output**:
 ```
 Ralph Loop | Step: sync | Task: TASK-037
-→ Running /specs:spec-sync-with-code docs/specs/001-feature/ --after-task=TASK-037
+→ Running /developer-kit-specs:specs.spec-sync-with-code docs/specs/001-feature/ --after-task=TASK-037
 → Sync complete → Next: update_done
 ```
 

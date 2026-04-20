@@ -19,7 +19,7 @@ Generate failing tests before writing any production code.
 ### Command
 
 ```bash
-/specs:task-tdd --lang=spring --task="docs/specs/001-user-auth/tasks/TASK-002.md"
+/developer-kit-specs:specs.task-tdd --lang=spring --task="docs/specs/001-user-auth/tasks/TASK-002.md"
 ```
 
 ### What Happens
@@ -125,7 +125,7 @@ Implement production code to make the failing tests pass.
 ### Command
 
 ```bash
-/specs:task-implementation --lang=spring --task="docs/specs/001-user-auth/tasks/TASK-002.md"
+/developer-kit-specs:specs.task-implementation --lang=spring --task="docs/specs/001-user-auth/tasks/TASK-002.md"
 ```
 
 ### What Happens
@@ -155,7 +155,7 @@ After implementing `JwtTokenService`:
 
 ```bash
 # Already have specification and tasks generated
-/specs:spec-to-tasks --lang=nestjs docs/specs/002-notification-system/
+/developer-kit-specs:specs.spec-to-tasks --lang=nestjs docs/specs/002-notification-system/
 ```
 
 ### Task: Implement Template Engine (TASK-002)
@@ -180,7 +180,7 @@ expects: [TemplateRepository]
 ### RED Phase
 
 ```bash
-/specs:task-tdd --lang=nestjs --task="docs/specs/002-notification/tasks/TASK-002.md"
+/developer-kit-specs:specs.task-tdd --lang=nestjs --task="docs/specs/002-notification/tasks/TASK-002.md"
 ```
 
 Generates:
@@ -245,7 +245,7 @@ Tests fail: `TemplateEngineService` doesn't exist.
 ### GREEN Phase
 
 ```bash
-/specs:task-implementation --lang=nestjs --task="docs/specs/002-notification/tasks/TASK-002.md"
+/developer-kit-specs:specs.task-implementation --lang=nestjs --task="docs/specs/002-notification/tasks/TASK-002.md"
 ```
 
 Claude implements:
@@ -285,7 +285,7 @@ Tests pass. Proceed to review.
 ### Review
 
 ```bash
-/specs:task-review --lang=nestjs docs/specs/002-notification/tasks/TASK-002.md
+/developer-kit-specs:specs.task-review --lang=nestjs docs/specs/002-notification/tasks/TASK-002.md
 ```
 
 ### Cleanup

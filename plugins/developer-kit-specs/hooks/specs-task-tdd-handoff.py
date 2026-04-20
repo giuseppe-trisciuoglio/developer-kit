@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Prepare implementation handoff artifacts for /specs:task-tdd."""
+"""Prepare implementation handoff artifacts for /developer-kit-specs:specs.task-tdd."""
 
 from __future__ import annotations
 
@@ -119,7 +119,7 @@ def extract_section(body: str, heading: str) -> str:
 
 
 def build_implementation_command(task_path: str, language: str | None) -> str:
-    parts = ["/specs:task-implementation"]
+    parts = ["/developer-kit-specs:specs.task-implementation"]
     if language:
         parts.append(f"--lang={language}")
     parts.append(f'--task="{task_path}"')

@@ -11,12 +11,12 @@ Evaluates the quality of a functional specification by identifying ambiguities, 
 
 ## Overview
 
-This command addresses the **content quality** of specifications, integrating with `/specs:spec-sync-context` which handles technical synchronization:
+This command addresses the **content quality** of specifications, integrating with `/developer-kit-specs:specs.spec-sync-context` which handles technical synchronization:
 
 | Command | Focus |
 |---------|-------|
-| **/specs:spec-quality-check** (this) | Content quality: completeness, clarity, traceability, coverage |
-| **/specs:spec-sync-context** | Technical synchronization: Knowledge Graph, tasks, codebase |
+| **/developer-kit-specs:specs.spec-quality-check** (this) | Content quality: completeness, clarity, traceability, coverage |
+| **/developer-kit-specs:specs.spec-sync-context** | Technical synchronization: Knowledge Graph, tasks, codebase |
 
 ### Workflow Position
 
@@ -68,13 +68,13 @@ The command evaluates four main dimensions:
 
 ```bash
 # Basic usage - review a spec folder
-/specs:spec-quality-check docs/specs/001-hotel-search-aggregation/
+/developer-kit-specs:specs.spec-quality-check docs/specs/001-hotel-search-aggregation/
 
 # Review a specific spec file
-/specs:spec-quality-check docs/specs/001-hotel-search-aggregation/2026-03-07--hotel-search.md
+/developer-kit-specs:specs.spec-quality-check docs/specs/001-hotel-search-aggregation/2026-03-07--hotel-search.md
 
 # Review from current directory (auto-detect)
-/specs:spec-quality-check
+/developer-kit-specs:specs.spec-quality-check
 ```
 
 ## Arguments
@@ -356,8 +356,8 @@ For each category, mark the status: **Clear**, **Partial**, or **Missing**
    - **Outstanding**: Still Partial/Missing but low impact
 
 4. Recommend next steps:
-   - If Outstanding/Deferred: consider running `/specs:spec-quality-check` after planning
-   - If all Clear: proceed to `/specs:spec-to-tasks`
+   - If Outstanding/Deferred: consider running `/developer-kit-specs:specs.spec-quality-check` after planning
+   - If all Clear: proceed to `/developer-kit-specs:specs.spec-to-tasks`
 
 ---
 
@@ -373,7 +373,7 @@ Verify that the path contains a resolvable spec file (`YYYY-MM-DD--feature-name.
 ```
 No critical ambiguities detected worth formal clarification.
 The specification is complete and clear.
-Proceed with: /specs:spec-to-tasks [spec-folder]
+Proceed with: /developer-kit-specs:specs.spec-to-tasks [spec-folder]
 ```
 
 ### File write failed
@@ -389,7 +389,7 @@ The clarification has been recorded in memory but not persisted.
 ### Example 1: Spec with performance ambiguity
 
 ```bash
-/specs:spec-quality-check docs/specs/003-notification-system/
+/developer-kit-specs:specs.spec-quality-check docs/specs/003-notification-system/
 ```
 
 **Interactive flow**:
@@ -421,7 +421,7 @@ After user selection, the response is integrated into the specification.
 ### Example 2: Already complete spec
 
 ```bash
-/specs:spec-quality-check docs/specs/001-hotel-search-aggregation/
+/developer-kit-specs:specs.spec-quality-check docs/specs/001-hotel-search-aggregation/
 ```
 
 **Output**:
@@ -438,7 +438,7 @@ Quality Scan Results:
 No critical ambiguities detected worth formal clarification.
 The specification is well-formed and ready for task generation.
 
-Next step: /specs:spec-to-tasks docs/specs/001-hotel-search-aggregation/
+Next step: /developer-kit-specs:specs.spec-to-tasks docs/specs/001-hotel-search-aggregation/
 ```
 
 ---
@@ -451,10 +451,10 @@ Run `spec-quality-check` to ensure the specification is complete before generati
 
 ```bash
 # Step 1: Review and improve spec quality
-/specs:spec-quality-check docs/specs/005-checkout-flow/
+/developer-kit-specs:specs.spec-quality-check docs/specs/005-checkout-flow/
 
 # Step 2: Generate tasks from improved spec
-/specs:spec-to-tasks --lang=spring docs/specs/005-checkout-flow/
+/developer-kit-specs:specs.spec-to-tasks --lang=spring docs/specs/005-checkout-flow/
 ```
 
 ### After devkit.brainstorm
@@ -463,13 +463,13 @@ Run `spec-quality-check` to validate the specification generated from brainstorm
 
 ```bash
 # Step 1: Generate spec from idea
-/specs:brainstorm "Implement user authentication with JWT"
+/developer-kit-specs:specs.brainstorm "Implement user authentication with JWT"
 
 # Step 2: Review the generated spec
-/specs:spec-quality-check docs/specs/002-user-auth/
+/developer-kit-specs:specs.spec-quality-check docs/specs/002-user-auth/
 
 # Step 3: Proceed to tasks
-/specs:spec-to-tasks --lang=spring docs/specs/002-user-auth/
+/developer-kit-specs:specs.spec-to-tasks --lang=spring docs/specs/002-user-auth/
 ```
 
 ### With spec-sync-context
@@ -478,13 +478,13 @@ The two commands are complementary:
 
 ```bash
 # spec-quality-check: improve content quality
-/specs:spec-quality-check docs/specs/003-api-gateway/
+/developer-kit-specs:specs.spec-quality-check docs/specs/003-api-gateway/
 
 # spec-sync-context: sync technical context
-/specs:spec-sync-context docs/specs/003-api-gateway/
+/developer-kit-specs:specs.spec-sync-context docs/specs/003-api-gateway/
 
 # spec-to-tasks: generate tasks with high quality context
-/specs:spec-to-tasks --lang=nestjs docs/specs/003-api-gateway/
+/developer-kit-specs:specs.spec-to-tasks --lang=nestjs docs/specs/003-api-gateway/
 ```
 
 ---
@@ -513,4 +513,4 @@ Update status progressively.
 - Clarification sessions are tracked with dates
 - Recommendations are based on industry-standard best practices
 - The command doesn't modify the general structure of the specification, only adds clarifications
-- For heavier structural changes, use `/specs:brainstorm` to regenerate
+- For heavier structural changes, use `/developer-kit-specs:specs.brainstorm` to regenerate

@@ -52,13 +52,13 @@ The full brainstorming workflow (`devkit.brainstorm`) is comprehensive but can b
 
 ```bash
 # Quick spec for a bug fix
-/specs:quick-spec Fix race condition in order processing
+/developer-kit-specs:specs.quick-spec Fix race condition in order processing
 
 # Quick spec for small feature
-/specs:quick-spec Add password reset link expiration
+/developer-kit-specs:specs.quick-spec Add password reset link expiration
 
 # Quick spec with language hint
-/specs:quick-spec --lang=spring Add API rate limiting
+/developer-kit-specs:specs.quick-spec --lang=spring Add API rate limiting
 ```
 
 ## Arguments
@@ -225,10 +225,10 @@ The full brainstorming workflow (`devkit.brainstorm`) is comprehensive but can b
 3. Include pre-filled commands:
    ```bash
    # For task generation:
-   /specs:spec-to-tasks --lang=[language] docs/specs/[id]/
+   /developer-kit-specs:specs.spec-to-tasks --lang=[language] docs/specs/[id]/
 
    # For direct implementation:
-   /specs:feature-development --lang=[language] "Quick implement: [brief description]"
+   /developer-kit:devkit.feature-development --lang=[language] "Quick implement: [brief description]"
    ```
 
 ---
@@ -256,7 +256,7 @@ The full brainstorming workflow (`devkit.brainstorm`) is comprehensive but can b
 ### Example 1: Bug Fix
 
 ```bash
-/specs:quick-spec Fix memory leak in user session cleanup
+/developer-kit-specs:specs.quick-spec Fix memory leak in user session cleanup
 ```
 
 Output:
@@ -268,7 +268,7 @@ Output:
 ### Example 2: Small Feature
 
 ```bash
-/specs:quick-spec Add request timeout configuration
+/developer-kit-specs:specs.quick-spec Add request timeout configuration
 ```
 
 Output:
@@ -280,7 +280,7 @@ Output:
 ### Example 3: With Language
 
 ```bash
-/specs:quick-spec --lang=python Add logging to payment service
+/developer-kit-specs:specs.quick-spec --lang=python Add logging to payment service
 ```
 
 ---
@@ -328,7 +328,7 @@ Maintain todo list:
 **How to switch:**
 - During Phase 2 (Problem + Solution), if issues detected:
   - Add option "Switch to full brainstorming" to AskUserQuestion
-  - If chosen, invoke `/specs:brainstorm [original description]`
+  - If chosen, invoke `/developer-kit-specs:specs.brainstorm [original description]`
   - Delete partial quick-spec artifacts
 
 ---

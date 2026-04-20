@@ -30,16 +30,16 @@ Idea → Specs → Tasks → Implementation → Spec Sync Context (this)
 
 ```bash
 # Basic usage - update context for a spec folder
-/specs:spec-sync-context docs/specs/001-hotel-search-aggregation/
+/developer-kit-specs:specs.spec-sync-context docs/specs/001-hotel-search-aggregation/
 
 # Update KG only (used by spec-to-tasks after codebase analysis)
-/specs:spec-sync-context docs/specs/001-hotel-search-aggregation/ --update-kg-only
+/developer-kit-specs:specs.spec-sync-context docs/specs/001-hotel-search-aggregation/ --update-kg-only
 
 # Update after task completion (used by task-implementation)
-/specs:spec-sync-context docs/specs/001-hotel-search-aggregation/ --task=TASK-001
+/developer-kit-specs:specs.spec-sync-context docs/specs/001-hotel-search-aggregation/ --task=TASK-001
 
 # Dry run - show what would be changed without making changes
-/specs:spec-sync-context docs/specs/001-hotel-search-aggregation/ --dry-run
+/developer-kit-specs:specs.spec-sync-context docs/specs/001-hotel-search-aggregation/ --dry-run
 ```
 
 ## Arguments
@@ -332,7 +332,7 @@ Add to `spec-to-tasks` Phase 3.5 (after Codebase Analysis):
 
 After codebase analysis completes, automatically update KG:
 
-/specs:spec-quality [spec-folder] --update-kg-only
+/developer-kit-specs:specs.spec-sync-context [spec-folder] --update-kg-only
 
 This persists agent discoveries into knowledge-graph.json for future reuse.
 ```
@@ -346,7 +346,7 @@ Add to `task-implementation`, after T-6 (Task Completion):
 
 After task completion and verification, update spec context:
 
-/specs:spec-quality [spec-folder] --task=[TASK-ID]
+/developer-kit-specs:specs.spec-sync-context [spec-folder] --task=[TASK-ID]
 
 This updates:
 - Knowledge Graph with new provides entries
@@ -401,7 +401,7 @@ This updates:
 ### Example 1: Full Context Update
 
 ```bash
-/specs:spec-quality docs/specs/001-hotel-search-aggregation/
+/developer-kit-specs:specs.spec-sync-context docs/specs/001-hotel-search-aggregation/
 ```
 
 Output:
@@ -430,7 +430,7 @@ Summary:
 ### Example 2: Dry Run
 
 ```bash
-/specs:spec-quality docs/specs/001-hotel-search-aggregation/ --dry-run
+/developer-kit-specs:specs.spec-sync-context docs/specs/001-hotel-search-aggregation/ --dry-run
 ```
 
 Shows what would change without applying changes.
@@ -438,7 +438,7 @@ Shows what would change without applying changes.
 ### Example 3: After Task Implementation
 
 ```bash
-/specs:spec-quality docs/specs/001-hotel-search-aggregation/ --task=TASK-001
+/developer-kit-specs:specs.spec-sync-context docs/specs/001-hotel-search-aggregation/ --task=TASK-001
 ```
 
 Updates KG with provides from TASK-001 and enriches related tasks.

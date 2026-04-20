@@ -36,13 +36,13 @@ Idea → Spec → Tasks → Implementation → Spec Sync With Code (this)
 
 ```bash
 # Sync spec after implementation drift detected
-/specs:spec-sync-with-code docs/specs/001-hotel-search-aggregation/
+/developer-kit-specs:specs.spec-sync-with-code docs/specs/001-hotel-search-aggregation/
 
 # Sync after specific task completed
-/specs:spec-sync-with-code docs/specs/001-hotel-search-aggregation/ --after-task=TASK-001
+/developer-kit-specs:specs.spec-sync-with-code docs/specs/001-hotel-search-aggregation/ --after-task=TASK-001
 
 # Sync for current spec folder (auto-detected)
-/specs:spec-sync-with-code
+/developer-kit-specs:specs.spec-sync-with-code
 ```
 
 ## Arguments
@@ -199,7 +199,7 @@ Idea → Spec → Tasks → Implementation → Spec Sync With Code (this)
      b. Generate task description from deviation context
      c. Generate acceptance criteria from deviation details
      d. Determine dependencies from related existing tasks
-     e. Use `/specs:task-manage` pattern to create task file:
+     e. Use `/developer-kit-specs:specs.task-manage` pattern to create task file:
         - Read task index to get next task ID
         - Create task file with template
         - Add to task index
@@ -319,21 +319,21 @@ For each deviation type, create task as follows:
 This command integrates with the SDD workflow:
 
 ```
-/specs:brainstorm
+/developer-kit-specs:specs.brainstorm
     ↓
 [Creates: docs/specs/[id]/YYYY-MM-DD--feature-name.md]
     ↓
-/specs:spec-to-tasks --lang=[language] docs/specs/[id]/
+/developer-kit-specs:specs.spec-to-tasks --lang=[language] docs/specs/[id]/
     ↓
 [Creates: docs/specs/[id]/tasks/TASK-XXX.md]
     ↓
-/specs:task-implementation --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
+/developer-kit-specs:specs.task-implementation --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
     ↓
 [Implements task, may deviate from spec]
     ↓
 T-6.6: Spec Deviation Check detects deviation
     ↓
-/specs:spec-sync-with-code docs/specs/[id]/  ← This command
+/developer-kit-specs:specs.spec-sync-with-code docs/specs/[id]/  ← This command
     ↓
 [Spec updated with deviations from decision-log.md]
 ```
@@ -351,7 +351,7 @@ The spec-sync command can be automatically invoked:
 When deviations are detected, the command can now automatically create missing tasks:
 
 ```
-/specs:spec-sync-with-code docs/specs/[id]/
+/developer-kit-specs:specs.spec-sync-with-code docs/specs/[id]/
     ↓
 [Detects: Scope Expansions, Requirement Refinements, Scope Reductions]
     ↓
@@ -371,7 +371,7 @@ Run spec-sync manually when:
 - Before starting a new feature phase
 - When decision-log.md has many entries not reflected in spec
 - After a normal chat session that used `docs/specs/[id]/` as implementation context and clarified, narrowed, or expanded what should be built
-- When recommendations made during the session changed task notes, acceptance criteria, decisions, or any other spec artifact even if `/specs:task-implementation` was not used
+- When recommendations made during the session changed task notes, acceptance criteria, decisions, or any other spec artifact even if `/developer-kit-specs:specs.task-implementation` was not used
 
 ---
 
@@ -381,7 +381,7 @@ Run spec-sync manually when:
 
 ```bash
 # Task T-003 added pagination not in original spec
-/specs:spec-sync-with-code docs/specs/001-hotel-search/ --after-task=TASK-003
+/developer-kit-specs:specs.spec-sync-with-code docs/specs/001-hotel-search/ --after-task=TASK-003
 ```
 
 Output:
@@ -413,7 +413,7 @@ Options:
 
 ```bash
 # Sync entire spec after multiple tasks completed
-/specs:spec-sync-with-code docs/specs/001-user-auth/
+/developer-kit-specs:specs.spec-sync-with-code docs/specs/001-user-auth/
 ```
 
 ### Example 3: Auto-Detect Spec Folder
@@ -421,7 +421,7 @@ Options:
 ```bash
 # Run from within spec directory
 cd docs/specs/001-hotel-search-aggregation/
-/specs:spec-sync-with-code
+/developer-kit-specs:specs.spec-sync-with-code
 ```
 
 ---

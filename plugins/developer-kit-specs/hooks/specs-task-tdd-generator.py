@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate RED-phase test skeletons for /specs:task-tdd.
+"""Generate RED-phase test skeletons for /developer-kit-specs:specs.task-tdd.
 
 This module builds on the task parser hook. It reads Test Instructions from a
 parsed task file, derives behavior-focused scenarios, and renders minimal test

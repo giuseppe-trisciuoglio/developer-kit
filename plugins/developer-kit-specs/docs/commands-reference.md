@@ -4,14 +4,14 @@ Complete reference for all SDD commands with arguments, options, and real-world 
 
 ---
 
-## `/specs:brainstorm`
+## `/developer-kit-specs:specs.brainstorm`
 
 Transform ideas into full functional specifications through guided brainstorming.
 
 ### Syntax
 
 ```
-/specs:brainstorm [idea-description]
+/developer-kit-specs:specs.brainstorm [idea-description]
 ```
 
 ### Arguments
@@ -57,28 +57,28 @@ docs/specs/[ID-feature]/
 
 ```bash
 # New feature with complex requirements
-/specs:brainstorm Add a multi-tenant SaaS billing system with subscription management,
+/developer-kit-specs:specs.brainstorm Add a multi-tenant SaaS billing system with subscription management,
 usage metering, invoice generation, Stripe integration, and prorated upgrades
 
 # API design
-/specs:brainstorm Design a RESTful API for an e-commerce platform with product catalog,
+/developer-kit-specs:specs.brainstorm Design a RESTful API for an e-commerce platform with product catalog,
 shopping cart, checkout flow, and order management
 
 # Infrastructure feature
-/specs:brainstorm Add real-time WebSocket notifications for order status changes
+/developer-kit-specs:specs.brainstorm Add real-time WebSocket notifications for order status changes
 with delivery guarantees and connection management
 ```
 
 ---
 
-## `/specs:quick-spec`
+## `/developer-kit-specs:specs.quick-spec`
 
 Create a lightweight specification for well-understood changes.
 
 ### Syntax
 
 ```
-/specs:quick-spec [description]
+/developer-kit-specs:specs.quick-spec [description]
 ```
 
 ### Arguments
@@ -115,28 +115,28 @@ docs/specs/[ID-feature]/
 
 ```bash
 # Bug fix
-/specs:quick-spec Fix the NullPointerException in UserService.updateProfile()
+/developer-kit-specs:specs.quick-spec Fix the NullPointerException in UserService.updateProfile()
 when the email field is null
 
 # Small feature
-/specs:quick-spec Add pagination to the /api/v1/orders endpoint with
+/developer-kit-specs:specs.quick-spec Add pagination to the /api/v1/orders endpoint with
 configurable page size and sorting
 
 # Performance improvement
-/specs:quick-spec Optimize the dashboard query that loads in 8+ seconds
+/developer-kit-specs:specs.quick-spec Optimize the dashboard query that loads in 8+ seconds
 by adding database indexes and caching the aggregation results
 ```
 
 ---
 
-## `/specs:spec-to-tasks`
+## `/developer-kit-specs:specs.spec-to-tasks`
 
 Convert a functional specification into executable task files.
 
 ### Syntax
 
 ```
-/specs:spec-to-tasks [--lang=language] [spec-folder]
+/developer-kit-specs:specs.spec-to-tasks [--lang=language] [spec-folder]
 ```
 
 ### Arguments
@@ -183,28 +183,28 @@ docs/specs/[ID-feature]/
 
 ```bash
 # Spring Boot project
-/specs:spec-to-tasks --lang=spring docs/specs/001-user-auth/
+/developer-kit-specs:specs.spec-to-tasks --lang=spring docs/specs/001-user-auth/
 
 # NestJS project
-/specs:spec-to-tasks --lang=nestjs docs/specs/002-notification-system/
+/developer-kit-specs:specs.spec-to-tasks --lang=nestjs docs/specs/002-notification-system/
 
 # Python project
-/specs:spec-to-tasks --lang=python docs/specs/003-data-pipeline/
+/developer-kit-specs:specs.spec-to-tasks --lang=python docs/specs/003-data-pipeline/
 
 # General / multi-language
-/specs:spec-to-tasks --lang=general docs/specs/004-api-design/
+/developer-kit-specs:specs.spec-to-tasks --lang=general docs/specs/004-api-design/
 ```
 
 ---
 
-## `/specs:task-manage`
+## `/developer-kit-specs:specs.task-manage`
 
 Manage tasks after generation — add, split, update, list.
 
 ### Syntax
 
 ```
-/specs:task-manage --action=action [options]
+/developer-kit-specs:specs.task-manage --action=action [options]
 ```
 
 ### Actions
@@ -240,33 +240,33 @@ Tasks with complexity ≥50 are candidates for splitting.
 
 ```bash
 # List all tasks
-/specs:task-manage --action=list --spec="docs/specs/001-user-auth/"
+/developer-kit-specs:specs.task-manage --action=list --spec="docs/specs/001-user-auth/"
 
 # Split a complex task
-/specs:task-manage --action=split --task="docs/specs/001-user-auth/tasks/TASK-003.md"
+/developer-kit-specs:specs.task-manage --action=split --task="docs/specs/001-user-auth/tasks/TASK-003.md"
 # Result: TASK-003 → TASK-003A + TASK-003B
 
 # Add a new task
-/specs:task-manage --action=add --spec="docs/specs/001-user-auth/"
+/developer-kit-specs:specs.task-manage --action=add --spec="docs/specs/001-user-auth/"
 # Claude will ask for task details interactively
 
 # Mark a task as optional (won't block completion)
-/specs:task-manage --action=mark-optional --task="docs/specs/001-user-auth/tasks/TASK-008.md"
+/developer-kit-specs:specs.task-manage --action=mark-optional --task="docs/specs/001-user-auth/tasks/TASK-008.md"
 
 # Regenerate task index after manual changes
-/specs:task-manage --action=regenerate-index --spec="docs/specs/001-user-auth/"
+/developer-kit-specs:specs.task-manage --action=regenerate-index --spec="docs/specs/001-user-auth/"
 ```
 
 ---
 
-## `/specs:task-implementation`
+## `/developer-kit-specs:specs.task-implementation`
 
 Implement a specific task from a task list.
 
 ### Syntax
 
 ```
-/specs:task-implementation [--lang=language] --task="task-file"
+/developer-kit-specs:specs.task-implementation [--lang=language] --task="task-file"
 ```
 
 ### Arguments
@@ -296,28 +296,28 @@ Implement a specific task from a task list.
 
 ```bash
 # Spring Boot task
-/specs:task-implementation --lang=spring \
+/developer-kit-specs:specs.task-implementation --lang=spring \
   --task="docs/specs/001-user-auth/tasks/TASK-001.md"
 
 # NestJS task
-/specs:task-implementation --lang=nestjs \
+/developer-kit-specs:specs.task-implementation --lang=nestjs \
   --task="docs/specs/002-notification/tasks/TASK-003.md"
 
 # React task
-/specs:task-implementation --lang=react \
+/developer-kit-specs:specs.task-implementation --lang=react \
   --task="docs/specs/003-dashboard/tasks/TASK-002.md"
 ```
 
 ---
 
-## `/specs:task-tdd`
+## `/developer-kit-specs:specs.task-tdd`
 
 Generate failing tests (TDD RED phase) before implementation.
 
 ### Syntax
 
 ```
-/specs:task-tdd [--lang=language] --task="task-file"
+/developer-kit-specs:specs.task-tdd [--lang=language] --task="task-file"
 ```
 
 ### Arguments
@@ -343,32 +343,32 @@ Generate failing tests (TDD RED phase) before implementation.
 ### TDD Workflow
 
 ```
-RED phase: /specs:task-tdd      → Generate failing tests
-GREEN phase: /specs:task-implementation → Make tests pass
+RED phase: /developer-kit-specs:specs.task-tdd      → Generate failing tests
+GREEN phase: /developer-kit-specs:specs.task-implementation → Make tests pass
 ```
 
 ### Examples
 
 ```bash
 # Spring Boot — RED phase
-/specs:task-tdd --lang=spring --task="docs/specs/001-user-auth/tasks/TASK-002.md"
+/developer-kit-specs:specs.task-tdd --lang=spring --task="docs/specs/001-user-auth/tasks/TASK-002.md"
 # Creates: src/test/java/.../JwtTokenServiceTest.java (all tests fail)
 
 # Then GREEN phase
-/specs:task-implementation --lang=spring --task="docs/specs/001-user-auth/tasks/TASK-002.md"
+/developer-kit-specs:specs.task-implementation --lang=spring --task="docs/specs/001-user-auth/tasks/TASK-002.md"
 # Creates: src/main/java/.../JwtTokenService.java (all tests pass)
 ```
 
 ---
 
-## `/specs:task-review`
+## `/developer-kit-specs:specs.task-review`
 
 Verify that an implemented task meets specifications and passes code review.
 
 ### Syntax
 
 ```
-/specs:task-review [--lang=language] [--task="task-file"]
+/developer-kit-specs:specs.task-review [--lang=language] [--task="task-file"]
 ```
 
 ### Arguments
@@ -402,10 +402,10 @@ Verify that an implemented task meets specifications and passes code review.
 
 ```bash
 # Spring Boot review
-/specs:task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
+/developer-kit-specs:specs.task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
 
 # NestJS review
-/specs:task-review --lang=nestjs docs/specs/002-notification/tasks/TASK-003.md
+/developer-kit-specs:specs.task-review --lang=nestjs docs/specs/002-notification/tasks/TASK-003.md
 ```
 
 ---
@@ -457,14 +457,14 @@ Professional code cleanup after task review approval.
 
 ---
 
-## `/specs:spec-sync-with-code`
+## `/developer-kit-specs:specs.spec-sync-with-code`
 
 Synchronize functional specification with actual implementation state.
 
 ### Syntax
 
 ```
-/specs:spec-sync-with-code [--spec="spec-folder"] [--after-task="TASK-XXX"]
+/developer-kit-specs:specs.spec-sync-with-code [--spec="spec-folder"] [--after-task="TASK-XXX"]
 ```
 
 ### Arguments
@@ -486,22 +486,22 @@ Synchronize functional specification with actual implementation state.
 
 ```bash
 # Full sync
-/specs:spec-sync-with-code docs/specs/001-user-auth/
+/developer-kit-specs:specs.spec-sync-with-code docs/specs/001-user-auth/
 
 # Sync after specific task
-/specs:spec-sync-with-code --spec="docs/specs/001-user-auth/" --after-task="TASK-003"
+/developer-kit-specs:specs.spec-sync-with-code --spec="docs/specs/001-user-auth/" --after-task="TASK-003"
 ```
 
 ---
 
-## `/specs:spec-sync-context`
+## `/developer-kit-specs:specs.spec-sync-context`
 
 Synchronize Knowledge Graph, tasks, and codebase state.
 
 ### Syntax
 
 ```
-/specs:spec-sync-context [--spec="spec-folder"] [--update-kg-only] [--task="task-file"] [--dry-run]
+/developer-kit-specs:specs.spec-sync-context [--spec="spec-folder"] [--update-kg-only] [--task="task-file"] [--dry-run]
 ```
 
 ### Arguments
@@ -517,28 +517,28 @@ Synchronize Knowledge Graph, tasks, and codebase state.
 
 ```bash
 # Full context sync
-/specs:spec-sync-context --spec="docs/specs/001-user-auth/"
+/developer-kit-specs:specs.spec-sync-context --spec="docs/specs/001-user-auth/"
 
 # Preview only
-/specs:spec-sync-context --spec="docs/specs/001-user-auth/" --dry-run
+/developer-kit-specs:specs.spec-sync-context --spec="docs/specs/001-user-auth/" --dry-run
 
 # Update Knowledge Graph only
-/specs:spec-sync-context --spec="docs/specs/001-user-auth/" --update-kg-only
+/developer-kit-specs:specs.spec-sync-context --spec="docs/specs/001-user-auth/" --update-kg-only
 
 # Sync after specific task
-/specs:spec-sync-context --spec="docs/specs/001-user-auth/" --task="TASK-003"
+/developer-kit-specs:specs.spec-sync-context --spec="docs/specs/001-user-auth/" --task="TASK-003"
 ```
 
 ---
 
-## `/specs:spec-quality-check`
+## `/developer-kit-specs:specs.spec-quality-check`
 
 Interactive specification quality assessment.
 
 ### Syntax
 
 ```
-/specs:spec-quality-check [--spec="spec-folder"]
+/developer-kit-specs:specs.spec-quality-check [--spec="spec-folder"]
 ```
 
 ### Arguments
@@ -572,8 +572,8 @@ Claude asks up to 5 focused questions, one at a time. Your answers are integrate
 
 ```bash
 # Check specification quality
-/specs:spec-quality-check --spec="docs/specs/001-user-auth/"
+/developer-kit-specs:specs.spec-quality-check --spec="docs/specs/001-user-auth/"
 
 # Can be run multiple times (idempotent)
-/specs:spec-quality-check --spec="docs/specs/001-user-auth/"
+/developer-kit-specs:specs.spec-quality-check --spec="docs/specs/001-user-auth/"
 ```
