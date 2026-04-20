@@ -32,21 +32,21 @@ spec.loader.exec_module(drift_init)
 
 def test_extract_task_id_from_prompt_with_quotes():
     """Test extracting task path from prompt with double quotes."""
-    prompt = '/specs:task-implementation --lang=python --task="docs/specs/001/tasks/TASK-001.md"'
+    prompt = '/developer-kit-specs:specs.task-implementation --lang=python --task="docs/specs/001/tasks/TASK-001.md"'
     result = drift_init.extract_task_id_from_prompt(prompt)
     assert result == "docs/specs/001/tasks/TASK-001.md"
 
 
 def test_extract_task_id_from_prompt_with_single_quotes():
     """Test extracting task path from prompt with single quotes."""
-    prompt = "/specs:task-implementation --task='docs/specs/001/tasks/TASK-001.md'"
+    prompt = "/developer-kit-specs:specs.task-implementation --task='docs/specs/001/tasks/TASK-001.md'"
     result = drift_init.extract_task_id_from_prompt(prompt)
     assert result == "docs/specs/001/tasks/TASK-001.md"
 
 
 def test_extract_task_id_from_prompt_without_quotes():
     """Test extracting task path from prompt without quotes."""
-    prompt = "/specs:task-implementation --task=docs/specs/001/tasks/TASK-001.md"
+    prompt = "/developer-kit-specs:specs.task-implementation --task=docs/specs/001/tasks/TASK-001.md"
     result = drift_init.extract_task_id_from_prompt(prompt)
     assert result == "docs/specs/001/tasks/TASK-001.md"
 
@@ -60,7 +60,7 @@ def test_extract_task_id_from_prompt_normal_user_message():
 
 def test_extract_task_id_with_spaces_in_path():
     """Test handling paths with spaces (edge case)."""
-    prompt = '/specs:task-implementation --task="docs/specs/001 drift/tasks/TASK-001.md"'
+    prompt = '/developer-kit-specs:specs.task-implementation --task="docs/specs/001 drift/tasks/TASK-001.md"'
     result = drift_init.extract_task_id_from_prompt(prompt)
     assert result == "docs/specs/001 drift/tasks/TASK-001.md"
 
@@ -257,7 +257,7 @@ def test_task_file_not_found_emits_notice():
     with patch("sys.stdout") as mock_stdout:
         input_data = {
             "hook_event_name": "UserPromptSubmit",
-            "prompt": '/specs:task-implementation --task="nonexistent/TASK-999.md"',
+            "prompt": '/developer-kit-specs:specs.task-implementation --task="nonexistent/TASK-999.md"',
             "cwd": tempfile.gettempdir(),
         }
 
@@ -283,7 +283,7 @@ def test_task_file_unreadable_silent_exit():
 
         input_data = {
             "hook_event_name": "UserPromptSubmit",
-            "prompt": f'/specs:task-implementation --task="{task_path}"',
+            "prompt": f'/developer-kit-specs:specs.task-implementation --task="{task_path}"',
             "cwd": tmpdir,
         }
 
@@ -296,7 +296,7 @@ def test_task_file_unreadable_silent_exit():
 
 
 def test_no_implementation_command_silent_exit():
-    """Test that prompts without /specs:task-implementation exit silently."""
+    """Test that prompts without /developer-kit-specs:specs.task-implementation exit silently."""
     input_data = {
         "hook_event_name": "UserPromptSubmit",
         "prompt": "Help me write some code",

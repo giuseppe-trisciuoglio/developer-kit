@@ -26,23 +26,23 @@ This command provides task management capabilities after initial task generation
 
 ```bash
 # Add a new task
-/specs:task-manage --action=add --spec=docs/specs/001-feature/ --lang=spring
+/developer-kit-specs:specs.task-manage --action=add --spec=docs/specs/001-feature/ --lang=spring
 
 # Split a complex task
-/specs:task-manage --action=split --task=docs/specs/001-feature/tasks/TASK-007.md
+/developer-kit-specs:specs.task-manage --action=split --task=docs/specs/001-feature/tasks/TASK-007.md
 
 # Mark task as optional/required
-/specs:task-manage --action=mark-optional --task=docs/specs/001-feature/tasks/TASK-003.md
-/specs:task-manage --action=mark-required --task=docs/specs/001-feature/tasks/TASK-003.md
+/developer-kit-specs:specs.task-manage --action=mark-optional --task=docs/specs/001-feature/tasks/TASK-003.md
+/developer-kit-specs:specs.task-manage --action=mark-required --task=docs/specs/001-feature/tasks/TASK-003.md
 
 # Update task details
-/specs:task-manage --action=update --task=docs/specs/001-feature/tasks/TASK-005.md
+/developer-kit-specs:specs.task-manage --action=update --task=docs/specs/001-feature/tasks/TASK-005.md
 
 # Regenerate task index
-/specs:task-manage --action=regenerate-index --spec=docs/specs/001-feature/
+/developer-kit-specs:specs.task-manage --action=regenerate-index --spec=docs/specs/001-feature/
 
 # List all tasks
-/specs:task-manage --action=list --spec=docs/specs/001-feature/
+/developer-kit-specs:specs.task-manage --action=list --spec=docs/specs/001-feature/
 ```
 
 ## Arguments
@@ -58,9 +58,9 @@ This command provides task management capabilities after initial task generation
 
 You are managing existing task files. Follow the appropriate process based on the requested action.
 
-> **IMPORTANT**: When suggesting how to implement a task, ALWAYS use `/specs:task-implementation`, NEVER use `/developer-kit:devkit.feature-development`. The correct command is:
+> **IMPORTANT**: When suggesting how to implement a task, ALWAYS use `/developer-kit-specs:specs.task-implementation`, NEVER use `/developer-kit:devkit.feature-development`. The correct command is:
 > ```
-> /specs:task-implementation --lang=[lang] --task="[task-file-path]"
+> /developer-kit-specs:specs.task-implementation --lang=[lang] --task="[task-file-path]"
 > ```
 
 ## Action: Add
@@ -128,7 +128,7 @@ files_to_create:
   - "[file path]"
 files_to_modify:
   - "[file path]"
-implementation_command: "/specs:task-implementation --lang=[lang] --task=\"docs/specs/[id]/tasks/TASK-XXX.md\""
+implementation_command: "/developer-kit-specs:specs.task-implementation --lang=[lang] --task=\"docs/specs/[id]/tasks/TASK-XXX.md\""
 ---
 
 # TASK-XXX: [Task Title]
@@ -161,7 +161,7 @@ implementation_command: "/specs:task-implementation --lang=[lang] --task=\"docs/
 - `[file path]`
 
 **Implementation Command**:
-/specs:task-implementation --lang=[lang] --task="docs/specs/[id]/tasks/TASK-XXX.md"
+/developer-kit-specs:specs.task-implementation --lang=[lang] --task="docs/specs/[id]/tasks/TASK-XXX.md"
 ```
 
 #### Template B: Full (For complex tasks requiring detailed tracking)
@@ -189,7 +189,7 @@ files_to_create:
   - "[file path]"
 files_to_modify:
   - "[file path]"
-implementation_command: "/specs:task-implementation --lang=[lang] --task=\"docs/specs/[id]/tasks/TASK-XXX.md\""
+implementation_command: "/developer-kit-specs:specs.task-implementation --lang=[lang] --task=\"docs/specs/[id]/tasks/TASK-XXX.md\""
 business_goals:
   - "[Business goal this task serves]"
 data_contracts:
@@ -280,7 +280,7 @@ context_hash: "[SHA-256 hash for change detection]"
 - [Security consideration]
 
 **Implementation Command**:
-/specs:task-implementation --lang=[lang] --task="docs/specs/[id]/tasks/TASK-XXX.md"
+/developer-kit-specs:specs.task-implementation --lang=[lang] --task="docs/specs/[id]/tasks/TASK-XXX.md"
 ```
 
 ### Context Hash Generation
@@ -537,10 +537,10 @@ Complex:   [█░░░░░░░░░] Z tasks (requires splitting)
 
 ```bash
 # Task 1
-/specs:task-implementation --lang=[lang] --task="docs/specs/[id]/tasks/TASK-001.md"
+/developer-kit-specs:specs.task-implementation --lang=[lang] --task="docs/specs/[id]/tasks/TASK-001.md"
 
 # Task 2
-/specs:task-implementation --lang=[lang] --task="docs/specs/[id]/tasks/TASK-002.md"
+/developer-kit-specs:specs.task-implementation --lang=[lang] --task="docs/specs/[id]/tasks/TASK-002.md"
 ```
 
 ## Next Actions
@@ -557,35 +557,35 @@ Complex:   [█░░░░░░░░░] Z tasks (requires splitting)
 
 ```bash
 # Add a new task to a specification
-/specs:task-manage --action=add --spec=docs/specs/001-user-auth/ --lang=spring
+/developer-kit-specs:specs.task-manage --action=add --spec=docs/specs/001-user-auth/ --lang=spring
 ```
 
 ### Example 2: Split a complex task
 
 ```bash
 # Split a complex task into subtasks
-/specs:task-manage --action=split --task=docs/specs/001-user-auth/tasks/TASK-007.md
+/developer-kit-specs:specs.task-manage --action=split --task=docs/specs/001-user-auth/tasks/TASK-007.md
 ```
 
 ### Example 3: Mark task as optional
 
 ```bash
 # Mark a task as optional
-/specs:task-manage --action=mark-optional --task=docs/specs/001-user-auth/tasks/TASK-003.md
+/developer-kit-specs:specs.task-manage --action=mark-optional --task=docs/specs/001-user-auth/tasks/TASK-003.md
 ```
 
 ### Example 4: Regenerate task index
 
 ```bash
 # Regenerate the task index file
-/specs:task-manage --action=regenerate-index --spec=docs/specs/001-user-auth/
+/developer-kit-specs:specs.task-manage --action=regenerate-index --spec=docs/specs/001-user-auth/
 ```
 
 ### Example 5: List all tasks
 
 ```bash
 # List all tasks with complexity
-/specs:task-manage --action=list --spec=docs/specs/001-user-auth/
+/developer-kit-specs:specs.task-manage --action=list --spec=docs/specs/001-user-auth/
 ```
 
 ---

@@ -96,7 +96,7 @@ Each invocation:
 [ralph-loop] Agent: claude
 [ralph-loop] Next: Execute the following command, then run loop again:
 
-claude --print "/specs:task-implementation --lang=spring --task=docs/specs/001-user-auth/tasks/TASK-003.md"
+claude --print "/developer-kit-specs:specs.task-implementation --lang=spring --task=docs/specs/001-user-auth/tasks/TASK-003.md"
 ```
 
 After executing the shown command, run the loop again:
@@ -200,7 +200,7 @@ python3 plugins/developer-kit-specs/skills/ralph-loop/scripts/ralph_loop.py \
 # 2. Run loop (iteration 1: choose_task)
 python3 .../ralph_loop.py --action=loop --spec=docs/specs/001-user-auth/
 # → Selects TASK-001 (Create User entity)
-# → Shows command: /specs:task-implementation --lang=spring --task=...TASK-001.md
+# → Shows command: /developer-kit-specs:specs.task-implementation --lang=spring --task=...TASK-001.md
 
 # 3. Execute the shown command (manually or via script)
 # ... implement TASK-001 ...
@@ -490,5 +490,5 @@ python3 .../ralph_loop.py --action=start --spec=docs/specs/001-user-auth/
 
 The task has failed review 3 times. Options:
 1. Implement the task manually
-2. Split the task into smaller subtasks: `/specs:task-manage --action=split --task=...`
+2. Split the task into smaller subtasks: `/developer-kit-specs:specs.task-manage --action=split --task=...`
 3. Review the task yourself and fix the issues
