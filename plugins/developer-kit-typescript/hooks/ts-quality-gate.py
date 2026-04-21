@@ -20,6 +20,8 @@ import sys
 from pathlib import Path
 from typing import Optional
 
+from ts_project_detection import is_typescript_project
+
 # ─── Configuration ────────────────────────────────────────────────────────────
 
 # Maximum number of modified files to check (guards against huge diffs)
@@ -242,6 +244,8 @@ def main() -> None:
         input_data = {}
 
     cwd = Path(input_data.get("cwd", os.environ.get("CLAUDE_CWD", os.getcwd())))
+    if not is_typescript_project(cwd):
+        sys.exit(0)
 
     # Get modified files
     modified = _get_modified_files(cwd)

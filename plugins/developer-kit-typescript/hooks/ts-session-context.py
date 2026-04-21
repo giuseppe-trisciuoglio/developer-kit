@@ -12,10 +12,11 @@ Zero external dependencies — pure Python 3 standard library only.
 """
 
 import json
-import os
 import subprocess
 import sys
 from pathlib import Path
+
+from ts_project_detection import get_cwd, is_typescript_project
 
 # ─── Configuration ────────────────────────────────────────────────────────────
 
@@ -136,19 +137,21 @@ def main() -> None:
     except Exception:
         pass
 
-    cwd = os.environ.get("CLAUDE_CWD", os.getcwd())
+    cwd = get_cwd()
+    if not is_typescript_project(cwd):
+        sys.exit(0)
 
     sections: list[str] = []
 
-    project = _project_section(cwd)
+    project = _project_section(str(cwd))
     if project:
         sections.append(project)
 
-    git = _git_section(cwd)
+    git = _git_section(str(cwd))
     if git:
         sections.append(git)
 
-    todos = _todo_section(cwd)
+    todos = _todo_section(str(cwd))
     if todos:
         sections.append(todos)
 

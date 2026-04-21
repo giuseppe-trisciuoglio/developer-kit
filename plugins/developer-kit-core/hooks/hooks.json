@@ -1,5 +1,5 @@
 {
-  "description": "Core hooks: prevent destructive commands and auto-learn on session stop",
+  "description": "Core hooks: prevent destructive commands; stop hooks temporarily disabled",
   "hooks": {
     "PreToolUse": [
       {
@@ -13,17 +13,6 @@
         ]
       }
     ],
-    "Stop": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/auto-learn-on-stop.py",
-            "statusMessage": "Checking if session learning is needed..."
-          }
-        ]
-      }
-    ]
+    "Stop": []
   }
 }
