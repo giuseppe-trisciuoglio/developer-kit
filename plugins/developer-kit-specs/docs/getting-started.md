@@ -101,17 +101,21 @@ The specification is technology-agnostic. It describes behaviors, not implementa
 Claude analyzes your specification and generates executable tasks:
 
 1. **Reads the specification** and extracts functional requirements
-2. **Explores your codebase** to understand existing patterns (Spring Security, User entities, etc.)
-3. **Breaks requirements into tasks** — atomic, testable units with clear acceptance criteria
-4. **Generates a traceability matrix** mapping requirements to tasks
+2. **Generates specification artifacts** (`data-model.md` and `contracts/*`) directly from the spec
+3. **Explores your codebase** to understand existing patterns (Spring Security, User entities, etc.)
+4. **Breaks requirements into tasks** — atomic, testable units with clear acceptance criteria
+5. **Generates a traceability matrix** mapping requirements to tasks
 
 **Output files created:**
 
 ```
 docs/specs/001-user-auth/
 ├── 2026-04-10--user-auth--tasks.md    # Task index
-├── knowledge-graph.json                # Cached codebase analysis
+├── data-model.md                       # Generated domain model
 ├── traceability-matrix.md             # Requirements → Tasks mapping
+├── contracts/                         # Generated interface contracts
+│   ├── auth-api.openapi.yaml
+│   └── README.md
 └── tasks/
     ├── TASK-001.md    # Create User entity and repository
     ├── TASK-002.md    # Implement JWT token service
