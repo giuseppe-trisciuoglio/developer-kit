@@ -15,11 +15,12 @@ Zero external dependencies — pure Python 3 standard library only.
 """
 
 import json
-import os
 import shutil
 import subprocess
 import sys
 from pathlib import Path
+
+from ts_project_detection import get_cwd, is_typescript_project
 
 # ─── Target file extensions ───────────────────────────────────────────────────
 
@@ -122,7 +123,10 @@ def main() -> None:
     if not resolved.exists():
         sys.exit(0)
 
-    cwd = Path(os.environ.get("CLAUDE_CWD", os.getcwd()))
+    cwd = get_cwd()
+    if not is_typescript_project(cwd):
+        sys.exit(0)
+
     root = _find_project_root(resolved)
 
     if not _has_prettier(root):

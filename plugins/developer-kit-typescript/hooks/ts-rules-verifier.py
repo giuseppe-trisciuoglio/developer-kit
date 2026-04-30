@@ -20,6 +20,8 @@ import sys
 from pathlib import Path
 from typing import Optional
 
+from ts_project_detection import get_cwd, is_typescript_project
+
 # Must match ts-rules-tracker.py
 _STATE_FILENAME_PREFIX = ".ts-rules-pending-"
 
@@ -93,6 +95,9 @@ def main() -> None:
         json.load(sys.stdin)  # consume input
     except (json.JSONDecodeError, ValueError):
         pass
+
+    if not is_typescript_project(get_cwd()):
+        sys.exit(0)
 
     entries = _consume_state()
     if not entries:

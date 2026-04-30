@@ -1,6 +1,7 @@
 {
-  "description": "Developer Kit Specs hooks: Drift Guard for spec fidelity, Task Auto-Status for automatic frontmatter management, Task KPI Analyzer for quality metrics, and Session Tracking Hook for audit trail logging",
+  "description": "Developer Kit Specs hooks: Drift Guard for spec fidelity, Task Auto-Status for automatic frontmatter management, and Task KPI Analyzer for quality metrics; stop hooks temporarily disabled",
   "hooks": {
+    "Stop": [],
     "UserPromptSubmit": [
       {
         "hooks": [

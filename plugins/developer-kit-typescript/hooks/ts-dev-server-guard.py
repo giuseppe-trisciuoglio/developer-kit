@@ -20,7 +20,8 @@ import os
 import re
 import shutil
 import sys
-from pathlib import Path
+
+from ts_project_detection import get_cwd, is_typescript_project
 
 # ─── Dev Server Command Detection ────────────────────────────────────────────
 
@@ -75,6 +76,10 @@ def main() -> None:
     if data.get("tool_name") != "Bash":
         sys.exit(0)
 
+    cwd = get_cwd()
+    if not is_typescript_project(cwd):
+        sys.exit(0)
+
     cmd: str = data.get("tool_input", {}).get("command", "")
     if not cmd or not _DEV_SERVER_RE.search(cmd):
         sys.exit(0)
@@ -101,8 +106,7 @@ def main() -> None:
         sys.exit(0)
 
     # ── Transform: wrap command in a named tmux session ────────────────────
-    cwd = os.environ.get("CLAUDE_CWD", os.getcwd())
-    session_name = _sanitize_session_name(Path(cwd).name)
+    session_name = _sanitize_session_name(cwd.name)
     escaped_cmd = _escape_for_single_quotes(cmd)
 
     tmux_cmd = (

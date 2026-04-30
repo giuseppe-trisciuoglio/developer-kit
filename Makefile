@@ -618,11 +618,18 @@ uninstall:
 			if [ -d "$(KIMI_SKILLS)/$$cmd_skill" ]; then \
 				rm -rf "$(KIMI_SKILLS)/$$cmd_skill"; \
 				echo -e "$(GREEN)✓ Removed Kimi skill (converted from command): $$cmd_skill$(NC)"; \
-				fi; \
-			done; \
-		fi
+			fi; \
+		done; \
+	fi; \
+	if [ -d "$(COPILOT_SKILLS)" ]; then \
+		for cmd_skill in $$installed_commands_skills; do \
+			if [ -d "$(COPILOT_SKILLS)/$$cmd_skill" ]; then \
+				rm -rf "$(COPILOT_SKILLS)/$$cmd_skill"; \
+				echo -e "$(GREEN)✓ Removed Copilot skill (converted from command): $$cmd_skill$(NC)"; \
+			fi; \
+		done; \
+	fi
 	@echo ""
-	@echo -e "$(GREEN)✓ Uninstallation complete$(NC)"
 	@echo -e "$(GREEN)✓ Uninstallation complete$(NC)"
 	@echo ""
 
@@ -834,10 +841,32 @@ install-copilot: check-deps
 	done; \
 	echo "  Total skills installed: $$skills_count"
 	@echo ""
+	@echo -e "$(CYAN)Converting commands to skills...$(NC)"
+	@commands_count=0; \
+	for plugin_json in $(PLUGIN_JSON_FILES); do \
+		plugin_dir=$$(dirname "$$plugin_json"); \
+		base_dir=$$(dirname "$$plugin_dir"); \
+		plugin_name=$$(jq -r '.name' "$$plugin_json" 2>/dev/null); \
+		commands=$$(jq -r '.commands[]? // empty' "$$plugin_json" 2>/dev/null); \
+		if [ -n "$$commands" ]; then \
+			for cmd in $$commands; do \
+				cmd_path="$$base_dir/$$cmd"; \
+				if [ -f "$$cmd_path" ]; then \
+					cmd_name=$$(basename "$$cmd" .md); \
+					cmd_skill_dir="$(COPILOT_SKILLS)/$$cmd_name"; \
+					mkdir -p "$$cmd_skill_dir"; \
+					cp "$$cmd_path" "$$cmd_skill_dir/SKILL.md"; \
+					echo "  ✓ $$plugin_name: $$cmd_name (converted from command)"; \
+					commands_count=$$((commands_count + 1)); \
+				fi; \
+			done; \
+		fi; \
+	done; \
+	echo "  Total commands converted to skills: $$commands_count"
+	@echo ""
 	@$(call success "Copilot CLI installation complete")
 	@echo "  Agents directory: $(COPILOT_AGENTS)/"
 	@echo "  Skills directory: $(COPILOT_SKILLS)/"
-	@echo "  NOTE: Commands are NOT installed for Copilot CLI (not supported)"
 	@echo ""
 
 # ═══════════════════════════════════════════════════════════════

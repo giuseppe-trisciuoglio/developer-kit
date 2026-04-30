@@ -19,6 +19,8 @@ import sys
 from pathlib import Path
 from typing import Optional
 
+from ts_project_detection import get_cwd, is_typescript_project
+
 # State directory lives under $CLAUDE_CWD/.claude/ (project-local, not world-readable)
 _STATE_FILENAME_PREFIX = ".ts-rules-pending-"
 
@@ -123,7 +125,10 @@ def main() -> None:
     if not file_path or not any(file_path.endswith(ext) for ext in TS_EXTENSIONS):
         sys.exit(0)
 
-    cwd = Path(os.environ.get("CLAUDE_CWD", os.getcwd()))
+    cwd = get_cwd()
+    if not is_typescript_project(cwd):
+        sys.exit(0)
+
     rules_dir = cwd / ".claude" / "rules"
     if not rules_dir.is_dir():
         sys.exit(0)

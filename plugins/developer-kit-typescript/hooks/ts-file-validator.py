@@ -17,6 +17,8 @@ import sys
 from pathlib import Path
 from typing import Optional
 
+from ts_project_detection import get_cwd, is_typescript_project
+
 # ─── Naming Convention Configuration ──────────────────────────────────────────
 
 # Compound suffixes used in NestJS — order matters (longest first)
@@ -155,6 +157,9 @@ def main() -> None:
 
     file_path: str = data.get("tool_input", {}).get("file_path", "")
     if not file_path:
+        sys.exit(0)
+
+    if not is_typescript_project(get_cwd()):
         sys.exit(0)
 
     error = _validate(file_path)

@@ -10,6 +10,8 @@ pyproject.toml
 .skills-validator-check/validators/__init__.py
 .skills-validator-check/validators/cli.py
 .skills-validator-check/validators/config.py
+.skills-validator-check/validators/mcp_scan_checker.py
 .skills-validator-check/validators/models.py
 .skills-validator-check/validators/reporter.py
+.skills-validator-check/validators/security_checker.py
 .skills-validator-check/validators/validators.py
