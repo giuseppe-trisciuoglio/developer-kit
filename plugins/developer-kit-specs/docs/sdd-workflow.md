@@ -181,9 +181,9 @@ This is the bridge from functional specification to executable code:
 
 **What happens:**
 1. Reads the specification and extracts requirements (assigned REQ-IDs)
-2. Loads or creates a Knowledge Graph (`knowledge-graph.json`)
-3. Explores your codebase with language-specific patterns
-4. Updates the Knowledge Graph with discoveries
+2. Generates `data-model.md` and `contracts/*` directly from the specification
+3. Optionally reuses an existing Knowledge Graph (`knowledge-graph.json`) if present
+4. Explores your codebase with language-specific patterns
 5. Decomposes requirements into atomic tasks
 6. Generates a traceability matrix
 7. Enforces task limit (≤15 implementation tasks)
@@ -486,8 +486,12 @@ docs/specs/001-hotel-search/
 ├── user-request.md                          # Original user input
 ├── brainstorming-notes.md                   # Brainstorming session context
 ├── decision-log.md                          # Decision audit trail
+├── data-model.md                            # Generated from specification
+├── contracts/                               # Generated interface artifacts
+│   ├── hotel-search-api.openapi.yaml
+│   └── README.md
 ├── traceability-matrix.md                   # Requirements → Tasks mapping
-├── knowledge-graph.json                     # Cached codebase analysis
+├── knowledge-graph.json                     # Optional cached codebase analysis
 ├── tasks/
 │   ├── TASK-001.md                          # Create data models
 │   ├── TASK-001--kpi.json                   # Auto-generated quality KPIs

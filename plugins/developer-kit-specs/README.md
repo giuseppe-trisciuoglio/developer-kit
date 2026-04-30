@@ -56,8 +56,12 @@ docs/specs/001-user-auth/
 ├── user-request.md                    # Original user input
 ├── brainstorming-notes.md             # Brainstorming session context
 ├── decision-log.md                    # Decision audit trail
+├── data-model.md                      # Generated from spec-to-tasks
+├── contracts/                         # Generated interface artifacts
+│   ├── auth-api.openapi.yaml
+│   └── README.md
 ├── traceability-matrix.md             # Requirements-to-task mapping
-├── knowledge-graph.json               # Cached codebase analysis
+├── knowledge-graph.json               # Optional cached codebase analysis
 └── tasks/
     ├── TASK-001.md                    # Individual task
     ├── TASK-001--kpi.json            # KPI analysis (auto-generated)

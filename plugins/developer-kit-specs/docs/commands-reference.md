@@ -146,16 +146,16 @@ Convert a functional specification into executable task files.
 | `--lang` | Recommended | Target language: `java`, `spring`, `typescript`, `nestjs`, `react`, `python`, `php`, `general` |
 | `spec-folder` | Yes | Path to the specification directory |
 
-### Process (7 Phases)
+### Process (11 Phases)
 
 | Phase | Name | Description |
 |-------|------|-------------|
 | 1 | Specification Analysis | Read and understand the spec |
 | 1.5 | Architecture & Ontology | Ensure technical foundation exists |
 | 2 | Requirement Extraction | Organize requirements, assign REQ-IDs |
-| 2.5 | Knowledge Graph | Load or create cached codebase analysis |
+| 2.5 | Knowledge Graph | Load cached codebase analysis when available |
 | 3 | Codebase Analysis | Language-specific exploration |
-| 3.5 | Update Knowledge Graph | Persist discoveries |
+| 3.5 | Spec Artifact Generation | Always generate `data-model.md` and `contracts/*` from the specification |
 | 4 | Task Decomposition | Break into atomic tasks |
 | 5 | Task Generation | Create task files and index |
 | 5.5 | Traceability Matrix | Map requirements to tasks |
@@ -171,13 +171,18 @@ Maximum 15 implementation tasks per specification. If exceeded, the command reje
 ```
 docs/specs/[ID-feature]/
 ├── YYYY-MM-DD--feature-name--tasks.md    # Task index
-├── knowledge-graph.json                   # Codebase analysis cache
+├── data-model.md                         # Generated domain/data model
 ├── traceability-matrix.md                # Requirements mapping
+├── contracts/                            # Generated interface contracts
+│   ├── *.openapi.yaml
+│   └── *.md
 └── tasks/
     ├── TASK-001.md
     ├── TASK-002.md
     └── ...
 ```
+
+If a prior `knowledge-graph.json` exists, it may be reused as input, but `spec-to-tasks` does not update agent context files as part of this workflow.
 
 ### Examples
 
