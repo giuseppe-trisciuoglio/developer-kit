@@ -118,6 +118,9 @@
     "codex": {
       "path": "plugins/developer-kit-tools/skills/codex/SKILL.md"
     },
+    "create-pr-from-spec": {
+      "path": "plugins/developer-kit-specs/skills/create-pr-from-spec/SKILL.md"
+    },
     "copilot-cli": {
       "path": "plugins/developer-kit-tools/skills/copilot-cli/SKILL.md"
     },

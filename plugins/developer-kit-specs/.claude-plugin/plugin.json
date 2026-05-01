@@ -35,6 +35,7 @@
   ],
   "skills": [
     "./skills/constitution",
+    "./skills/create-pr-from-spec",
     "./skills/knowledge-graph",
     "./skills/ralph-loop",
     "./skills/specs-code-cleanup",
