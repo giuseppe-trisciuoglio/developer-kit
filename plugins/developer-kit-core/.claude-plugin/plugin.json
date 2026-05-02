@@ -51,6 +51,7 @@
     "./skills/docs-updater",
     "./skills/drawio-logical-diagrams",
     "./skills/github-issue-workflow",
-    "./skills/learn"
+    "./skills/learn",
+    "./skills/bug-fix-brief"
   ]
 }

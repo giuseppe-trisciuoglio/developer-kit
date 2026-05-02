@@ -106,6 +106,9 @@
     "better-auth": {
       "path": "plugins/developer-kit-typescript/skills/better-auth/SKILL.md"
     },
+    "bug-fix-brief": {
+      "path": "plugins/developer-kit-core/skills/bug-fix-brief/SKILL.md"
+    },
     "chunking-strategy": {
       "path": "plugins/developer-kit-ai/skills/chunking-strategy/SKILL.md"
     },
