@@ -17,6 +17,8 @@ import re
 import sys
 from pathlib import Path
 
+from ts_project_detection import get_cwd, is_typescript_project
+
 # ─── NestJS Component Patterns ────────────────────────────────────────────────
 
 # Maps NestJS compound file suffix → at least one of these strings must appear
@@ -195,6 +197,9 @@ def main() -> None:
     content: str = _extract_content(tool_name, tool_input)
 
     if not file_path or not content:
+        sys.exit(0)
+
+    if not is_typescript_project(get_cwd()):
         sys.exit(0)
 
     # Only TypeScript / TSX files

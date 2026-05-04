@@ -125,6 +125,15 @@ Transform ideas into production-ready code through a structured workflow:
 
 ![SDD Workflow](./docs/specs-life-cycle.png)
 
+#### Phase 0: Constitution (First-Time Setup)
+
+| Command | When to Use | Output |
+|---------|-------------|--------|
+| `/developer-kit-specs:constitution create` | New project, before first spec | `docs/specs/constitution.md` |
+| `/developer-kit-specs:constitution check` | Validate spec/task against principles | Constitution Check Report |
+
+The constitution defines the architectural DNA: approved stack, AI guardrails, security constraints (CWE mappings), and non-negotiable rules that govern all subsequent code generation.
+
 #### Phase 1: Specification Creation
 
 | Command | When to Use | Output |
@@ -203,7 +212,7 @@ Always use constructor injection. Never use field injection with @Autowired.
 | Plugin | Language/Domain | Components | Description |
 |--------|-----------------|------------|-------------|
 | `developer-kit-core` | Core | 6 Agents, 8 Commands, 4 Skills | Required base plugin with general-purpose capabilities |
-| `developer-kit-specs` | Workflow | 9 Commands, 2 Skills | Specifications-driven development (SDD) workflow |
+| `developer-kit-specs` | Workflow | 9 Commands, 5 Skills | Specifications-driven development (SDD) workflow |
 | `developer-kit-java` | Java | 9 Agents, 11 Commands, 51 Skills, 4 Rules | Spring Boot, LangChain4J, AWS SDK, GraalVM |
 | `developer-kit-typescript` | TypeScript | 13 Agents, 3 Commands, 25 Skills, 17 Rules | NestJS, React, Next.js, Drizzle ORM, Monorepo |
 | `developer-kit-python` | Python | 4 Agents, 4 Rules | Django, Flask, FastAPI, AWS Lambda |

@@ -1,5 +1,5 @@
 {
-  "description": "TypeScript Developer Kit hooks — enforce naming conventions, architectural patterns, quality gates, and session context for TypeScript/NestJS/Nx projects",
+  "description": "TypeScript Developer Kit hooks — run only in TypeScript projects and enforce naming conventions, architectural patterns, and session context; stop hooks temporarily disabled",
   "hooks": {
     "SessionStart": [
       {
@@ -69,16 +69,6 @@
         ]
       }
     ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/ts-quality-gate.py",
-            "statusMessage": "Running TypeScript quality checks (tsc + eslint)..."
-          }
-        ]
-      }
-    ]
+    "Stop": []
   }
 }

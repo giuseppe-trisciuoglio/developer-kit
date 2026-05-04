@@ -125,6 +125,15 @@ Transforma ideas en código listo para producción a través de un flujo de trab
 
 ![Flujo de Trabajo SDD](./docs/specs-life-cycle.png)
 
+#### Fase 0: Constitución (Configuración Inicial)
+
+| Comando | Cuándo Usarlo | Salida |
+|---------|---------------|--------|
+| `/developer-kit-specs:constitution create` | Nuevo proyecto, antes de la primera spec | `docs/specs/constitution.md` |
+| `/developer-kit-specs:constitution check` | Validar spec/tarea contra los principios | Informe de Verificación Constitucional |
+
+La constitución define el ADN arquitectónico: stack aprobado, guardrails de IA, restricciones de seguridad (mapeos CWE) y reglas no negociables que rigen toda la generación de código posterior.
+
 #### Fase 1: Creación de Especificaciones
 
 | Comando | Cuándo Usar | Salida |
@@ -203,7 +212,7 @@ Usa siempre inyección por constructor. Nunca uses inyección de campo con @Auto
 | Plugin | Lenguaje/Dominio | Componentes | Descripción |
 |--------|------------------|-------------|-------------|
 | `developer-kit-core` | Core | 6 Agentes, 8 Comandos, 4 Habilidades | Plugin base requerido con capacidades de propósito general |
-| `developer-kit-specs` | Flujo de trabajo | 9 Comandos, 2 Habilidades | Flujo de trabajo de desarrollo guiado por especificaciones (SDD) |
+| `developer-kit-specs` | Flujo de trabajo | 9 Comandos, 5 Habilidades | Flujo de trabajo de desarrollo guiado por especificaciones (SDD) |
 | `developer-kit-java` | Java | 9 Agentes, 11 Comandos, 51 Habilidades, 4 Reglas | Spring Boot, LangChain4J, AWS SDK, GraalVM |
 | `developer-kit-typescript` | TypeScript | 13 Agentes, 3 Comandos, 25 Habilidades, 17 Reglas | NestJS, React, Next.js, Drizzle ORM, Monorepo |
 | `developer-kit-python` | Python | 4 Agentes, 4 Reglas | Django, Flask, FastAPI, AWS Lambda |

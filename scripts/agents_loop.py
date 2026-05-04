@@ -2,7 +2,7 @@
 """
 agents_loop.py — Universal Ralph Loop automation for multiple AI agents.
 
-Supports: claude, kimi, codex, copilot, gemini, qwen, glm4, minimax, openrouter
+Supports: claude, kimi, codex, copilot, gemini, qwen, glm4, minimax, openrouter, kiro
 
 Usage:
     agents_loop --spec=docs/specs/001-feature --agent=claude
@@ -245,6 +245,18 @@ AGENTS = {
         "prompt_arg": True,
         "prompt_flag": "-p",  # Must be before prompt value
     },
+    "kiro": {
+        "name": "Kiro CLI",
+        "cmd": ["kiro-cli", "chat", "--no-interactive"],
+        "stdin_mode": False,
+        "supports_flags": True,
+        "supports_model": False,
+        "supports_yolo": True,
+        "supports_streaming": False,  # Headless mode - no TUI streaming
+        "yolo_flag": "--trust-all-tools",  # Auto-approve all tool calls in headless mode
+        "prompt_arg": True,
+        # Prompt is positional after flags (no prompt_flag needed)
+    },
 }
 
 
@@ -261,7 +273,7 @@ def parse_args():
         "--agent",
         default="codex",
         choices=list(AGENTS.keys()),
-        help="AI agent to use: claude, kimi, codex, copilot, gemini, qwen, glm4, minimax, openrouter, auto (default: codex). Use 'auto' for intelligent agent selection by workflow phase.",
+        help="AI agent to use: claude, kimi, codex, copilot, gemini, qwen, glm4, minimax, openrouter, kiro, auto (default: codex). Use 'auto' for intelligent agent selection by workflow phase.",
     )
     parser.add_argument(
         "--action",
@@ -284,7 +296,7 @@ def parse_args():
         "--dangerously-bypass-approvals",
         action=argparse.BooleanOptionalAction,
         default=True,
-        help="Enable YOLO mode (bypass all approvals). Uses agent-specific flag: codex (--dangerously-bypass-approvals-and-sandbox), claude/glm4/minimax (--dangerously-skip-permissions), gemini/qwen (-y), kimi (--yolo), copilot (--allow-all). (default: enabled).",
+        help="Enable YOLO mode (bypass all approvals). Uses agent-specific flag: codex (--dangerously-bypass-approvals-and-sandbox), claude/glm4/minimax (--dangerously-skip-permissions), gemini/qwen (-y), kimi (--yolo), copilot (--allow-all), kiro (--trust-all-tools). (default: enabled).",
     )
     parser.add_argument(
         "--full-auto",
@@ -300,7 +312,7 @@ def parse_args():
     )
     parser.add_argument(
         "--model",
-        help="Model to use (e.g. claude: sonnet/opus/haiku, codex: gpt-5.4/o3, gemini: gemini-3-pro, qwen: qwen-plus, kimi: kimi-k1.5, glm4: glm-4-plus, minimax: abab6.5s, copilot: gpt-4).",
+        help="Model to use (e.g. claude: sonnet/opus/haiku, codex: gpt-5.4/o3, gemini: gemini-3-pro, qwen: qwen-plus, kimi: kimi-k1.5, glm4: glm-4-plus, minimax: abab6.5s, copilot: gpt-4). Kiro does not support model selection.",
     )
     parser.add_argument(
         "-C", "--workdir",
@@ -375,7 +387,7 @@ def parse_args():
         "--reviewer",
         default=None,
         choices=list(AGENTS.keys()),
-        help="Agent to use specifically for review steps: claude, kimi, codex, copilot, gemini, qwen, glm4, minimax, openrouter, auto (default: use --agent). Overrides auto-mode selection for review steps.",
+        help="Agent to use specifically for review steps: claude, kimi, codex, copilot, gemini, qwen, glm4, minimax, openrouter, kiro, auto (default: use --agent). Overrides auto-mode selection for review steps.",
     )
     return parser.parse_args()
 
@@ -463,7 +475,7 @@ def extract_command_from_output(stdout: str, agent: str) -> Optional[str]:
     # Fallback: search for command patterns
     # NOTE: Patterns require at least one letter to avoid matching progress indicators like "/26"
     for line in lines:
-        if agent in ("claude", "kimi", "gemini", "qwen"):
+        if agent in ("claude", "kimi", "gemini", "qwen", "kiro"):
             # Slash-prefixed commands: require first char after / to be a letter
             match = re.search(r'(/[a-zA-Z][\w:-]*[^\n`]*)', line)
         else:
@@ -480,27 +492,41 @@ def extract_command_from_output(stdout: str, agent: str) -> Optional[str]:
 
 # Non-interactive mode instructions - prepended to all prompts
 # This ensures agents don't ask questions when there's no human in the loop
-NON_INTERACTIVE_PREFIX = """[CRITICAL: NON-INTERACTIVE MODE]
-You are running in FULLY AUTOMATED mode. There is NO human in the loop to answer questions.
+NON_INTERACTIVE_PREFIX = """
+<rules>
+    [CRITICAL: NON-INTERACTIVE MODE]
+    You are running in FULLY AUTOMATED mode. There is NO human in the loop to answer questions.
 
-STRICT RULES:
-1. DO NOT ask the user any questions
-2. DO NOT use AskUserQuestion or similar tools
-3. DO NOT prompt for confirmation or choices (A/B/C/D)
-4. ALWAYS proceed with the RECOMMENDED or DEFAULT option
-5. If multiple options exist, choose the SAFEST and MOST CONSERVATIVE approach
-6. Make your best judgment and EXECUTE immediately
-7. Report what you did, don't ask what to do
+    STRICT RULES:
+    1. DO NOT ask the user any questions
+    2. DO NOT use AskUserQuestion or similar tools
+    3. DO NOT prompt for confirmation or choices (A/B/C/D)
+    4. ALWAYS proceed with the RECOMMENDED or DEFAULT option
+    5. If multiple options exist, choose the SAFEST and MOST CONSERVATIVE approach
+    6. Make your best judgment and EXECUTE immediately
+    7. Report what you did, don't ask what to do
+    8. You need to write a concise report. You need to minimize the use of tokens in the output.
+    9. Update the task file document when you finish your task.
+    No one reads your summaries, so either don't write them at all, or keep them brief.
 
-If you encounter ambiguities, use your expertise to decide and proceed.
-If you need clarification, make a reasonable assumption and document it.
-
+    If you encounter ambiguities, use your expertise to decide and proceed.
+    If you need clarification, make a reasonable assumption and document it.
+    If you need documentation try in `docs/specs` folders find it.
+</rules>
 ---
 
 """
 
+REVIEW_PREFIX = """
+<review>
+    When you complete a review. You need write a `TASK-XXX-review.md` file with your review.
+    It's mandatory. You can't skip this. It's very important for loop.
+</review>
+---
 
-def run_agent(agent: str, prompt: str, args) -> int:
+"""
+
+def run_agent(agent: str, prompt: str, step: str, args) -> int:
     """Run the specified agent with the given prompt.
     
     For claude-based agents (claude, glm4, minimax, openrouter), this uses
@@ -509,7 +535,10 @@ def run_agent(agent: str, prompt: str, args) -> int:
     agent_config = AGENTS[agent]
 
     # Prepend non-interactive instructions to prevent questions
-    full_prompt = NON_INTERACTIVE_PREFIX + prompt
+    if step == "review":
+        full_prompt =  NON_INTERACTIVE_PREFIX + REVIEW_PREFIX + prompt
+    else:
+        full_prompt = NON_INTERACTIVE_PREFIX + prompt
 
     if args.dry_run:
         model_str = ""
@@ -1300,7 +1329,7 @@ def main():
             print(f"  → Executing with {AGENTS[effective_agent]['name']}...")
             print(f"  📝 Command preview: {command[:100]}{'...' if len(command) > 100 else ''}")
             
-            exit_code = run_agent(effective_agent, command, args)
+            exit_code = run_agent(effective_agent, command, step, args)
             
             if exit_code != 0:
                 print(f"  ⚠️  Agent exited with code {exit_code}", file=sys.stderr)

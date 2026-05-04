@@ -20,6 +20,8 @@ import sys
 from pathlib import Path
 from typing import Optional
 
+from ts_project_detection import is_typescript_project
+
 # ─── Configuration ────────────────────────────────────────────────────────────
 
 # Maximum number of modified files to check (guards against huge diffs)
@@ -30,6 +32,8 @@ TOOL_TIMEOUT = 90
 
 # Maximum output characters per tool to show Claude
 MAX_OUTPUT_CHARS = 2000
+
+COMPACT_FORMATTER_MISSING = "The compact formatter is no longer part of core ESLint"
 
 # Directories excluded from file detection
 EXCLUDED_DIRS: frozenset[str] = frozenset(
@@ -188,19 +192,31 @@ def _run_eslint(cwd: Path, files: list[str]) -> tuple[bool, str]:
     if not shutil.which("eslint") and not shutil.which("npx"):
         return False, ""
 
-    cmd = ["npx", "eslint", "--format", "compact", *files]
+    compact_cmd = ["npx", "eslint", "--format", "compact", *files]
+    fallback_cmd = ["npx", "eslint", *files]
 
     try:
         result = subprocess.run(
-            cmd,
+            compact_cmd,
             capture_output=True,
             text=True,
             cwd=cwd,
             timeout=TOOL_TIMEOUT,
         )
+        output = result.stdout + result.stderr
+
+        if COMPACT_FORMATTER_MISSING in output:
+            result = subprocess.run(
+                fallback_cmd,
+                capture_output=True,
+                text=True,
+                cwd=cwd,
+                timeout=TOOL_TIMEOUT,
+            )
+            output = result.stdout + result.stderr
+
         if result.returncode == 0:
             return False, ""
-        output = result.stdout + result.stderr
         return True, output[:MAX_OUTPUT_CHARS]
     except (subprocess.TimeoutExpired, FileNotFoundError):
         return False, ""
@@ -242,6 +258,8 @@ def main() -> None:
         input_data = {}
 
     cwd = Path(input_data.get("cwd", os.environ.get("CLAUDE_CWD", os.getcwd())))
+    if not is_typescript_project(cwd):
+        sys.exit(0)
 
     # Get modified files
     modified = _get_modified_files(cwd)

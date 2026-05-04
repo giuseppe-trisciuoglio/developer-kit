@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RalphLoopJob",
+  "description": "State file for a ralph-loop-v2 job",
+  "type": "object",
+  "required": ["id", "status", "createdAt", "specFolder", "state"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique job identifier (e.g. job_1713261568000)"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["queued", "running", "completed", "failed"],
+      "description": "Top-level lifecycle status"
+    },
+    "pid": {
+      "type": ["integer", "null"],
+      "description": "OS process ID while running; null when idle or finished"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "startedAt": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "completedAt": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "phase": {
+      "type": "string",
+      "description": "Current state-machine step (e.g. choose_task, implementation, review…)"
+    },
+    "progress": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Overall completion percentage"
+    },
+    "specFolder": {
+      "type": "string",
+      "description": "Path to the spec folder being processed"
+    },
+    "taskRange": {
+      "type": "object",
+      "properties": {
+        "from": { "type": ["string", "null"] },
+        "to":   { "type": ["string", "null"] }
+      }
+    },
+    "defaultAgent": {
+      "type": "string",
+      "description": "Default CLI agent (claude, codex, copilot, …)"
+    },
+    "state": {
+      "type": "object",
+      "description": "Full state-machine payload (mirrors fix_plan.json state block)",
+      "required": ["step", "iteration"],
+      "properties": {
+        "step": {
+          "type": "string",
+          "enum": [
+            "init", "choose_task", "implementation", "review",
+            "fix", "cleanup", "sync", "update_done", "complete", "failed"
+          ]
+        },
+        "currentTask":     { "type": ["string", "null"] },
+        "currentTaskFile": { "type": ["string", "null"] },
+        "currentTaskLang": { "type": ["string", "null"] },
+        "iteration":       { "type": "integer", "minimum": 0 },
+        "retryCount":      { "type": "integer", "minimum": 0 },
+        "lastUpdated":     { "type": "string", "format": "date-time" },
+        "error":           { "type": ["string", "null"] },
+        "rangeProgress": {
+          "type": "object",
+          "properties": {
+            "doneInRange":  { "type": "integer" },
+            "totalInRange": { "type": "integer" }
+          }
+        }
+      }
+    },
+    "tasks":      { "type": "array" },
+    "pending":    { "type": "array", "items": { "type": "string" } },
+    "done":       { "type": "array", "items": { "type": "string" } },
+    "result":     { "description": "Final result payload on completion" },
+    "errorMessage": { "type": ["string", "null"] }
+  }
+}

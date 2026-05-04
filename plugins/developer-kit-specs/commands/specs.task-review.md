@@ -53,14 +53,15 @@ Idea → Functional Specification → Tasks → Implementation → Review → Co
 
 ## Current Context
 
-The command will automatically gather context information when needed:
-- Current git branch and status
-- Recent commits and changes
-- Available when the repository has history
+If `--task` is omitted, the task is auto-detected from the current git branch:
 
----
+```bash
+branch=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/current_branch.py")
+spec_folder=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/find_spec_from_branch.py")
+# Find the first pending/in_progress task in the spec folder
+```
 
-You are reviewing an implemented task to verify it meets specifications and passes code review. Follow a systematic approach: analyze the task, verify implementation, check spec compliance, and perform code review.
+If no task can be auto-detected, ask the user which task to review.
 
 ## Core Principles
 

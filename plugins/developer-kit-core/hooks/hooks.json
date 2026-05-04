@@ -1,5 +1,5 @@
 {
-  "description": "Prevent execution of destructive Bash commands that target paths outside the working directory or match security blacklists",
+  "description": "Core hooks: prevent destructive commands",
   "hooks": {
     "PreToolUse": [
       {
@@ -12,6 +12,7 @@
           }
         ]
       }
-    ]
+    ],
+    "Stop": []
   }
 }

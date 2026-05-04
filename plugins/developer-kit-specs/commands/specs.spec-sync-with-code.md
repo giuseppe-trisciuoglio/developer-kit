@@ -52,6 +52,17 @@ Idea → Spec → Tasks → Implementation → Spec Sync With Code (this)
 | `spec-folder` | No | Path to spec folder (default: detect from CWD) |
 | `--after-task` | No | Specific task ID that just completed |
 
+## Current Context
+
+If `--spec` is omitted, the spec folder is auto-detected from the current git branch:
+
+```bash
+branch=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/current_branch.py")
+spec_folder=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/find_spec_from_branch.py")
+```
+
+If no matching spec folder is found for the current branch, stop and inform the user.
+
 ---
 
 ## Phase 1: Discovery

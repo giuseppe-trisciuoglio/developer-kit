@@ -60,6 +60,18 @@ Task file updates are handled by `plugins/developer-kit-specs/hooks/specs-task-t
 | `--task` | Path to task file (from spec-to-tasks) | Yes |
 | `--lang` | Programming language/framework | Yes |
 
+## Current Context
+
+If `--task` is omitted, the task is auto-detected from the current git branch:
+
+```bash
+branch=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/current_branch.py")
+spec_folder=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/find_spec_from_branch.py")
+# Find the first pending task in the spec folder
+```
+
+If no task can be auto-detected, ask the user which task to generate TDD tests for.
+
 ## Supported Languages
 
 | Language | `--lang` Value | Test Framework | File Location |

@@ -1,6 +1,6 @@
 {
   "name": "developer-kit-specs",
-  "version": "2.8.1",
+  "version": "2.8.2",
   "description": "Specifications-driven development workflow for transforming ideas into functional specifications and executable tasks",
   "author": {
     "name": "Giuseppe Trisciuoglio",
@@ -34,6 +34,8 @@
     "./agents/session-tracking-agent.md"
   ],
   "skills": [
+    "./skills/constitution",
+    "./skills/create-pr-from-spec",
     "./skills/knowledge-graph",
     "./skills/ralph-loop",
     "./skills/specs-code-cleanup",
