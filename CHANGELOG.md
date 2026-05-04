@@ -21,6 +21,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [2.8.2] - 2026-05-04
+
+### Added
+
+- **New `bug-fix-brief` skill** (`developer-kit-core`):
+  - Structured bug documentation for systematic bug analysis
+  - Follows spec-driven development workflow
+  - Provides comprehensive bug reporting template
+
+- **New `create-pr-from-spec` skill** (`developer-kit-specs`):
+  - Creates GitHub Pull Request from specification documents
+  - Integrates spec-to-code workflow with PR automation
+  - Updates configuration for seamless integration
+
+- **New Phase on Task Generation** (`developer-kit-specs`):
+  - Added new phase for enhanced task generation workflow
+  - Improved task complexity handling
+
+- **New Hooks** (`developer-kit-specs`):
+  - Added new hooks for spec workflow automation
+  - Enhanced hook configuration
+
+- **New `/specs:constitution` skill** (`developer-kit-specs`):
+  - Setup project constitution for team guidelines
+  - Project-level behavior enforcement
+
+### Changed
+
+- **Ralph Loop Skill Refactored** (`developer-kit-specs`):
+  - Refactored to use same approach as Codex plugin
+  - Improved multi-CLI agent integration
+
+- **Documentation Updates** (global):
+  - Added AGENTS.md for AI coding agent workflow
+  - Updated AGENTS.md with behavioral guidelines
+  - Moved agents.md into examples directory
+
+### Fixed
+
+- **Hook Configuration** (`developer-kit-core`):
+  - Fixed edit config with hooks
+  - Disabled Stop hooks to prevent workflow interruptions
+
 ## [2.8.1] - 2026-04-20
 
 ### Fixed
@@ -1272,8 +1315,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.8.0...HEAD
-[2.8.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.7.2...v2.8.0
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.8.2...HEAD
+[2.8.2]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.8.1...v2.8.2
+[2.8.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.8.0...v2.8.1
 [2.7.2]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.7.1...v2.7.2
 [2.7.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.3...v2.7.1
 [2.6.3]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.6.2...v2.6.3
