@@ -1,14 +1,52 @@
 ---
-name: ralph-loop
-description: "Ralph Loop — spec-driven development orchestrator with foreground/background execution support. State machine: init → choose_task → implementation → review → fix → cleanup → sync → update_done."
+description: "Ralph Loop orchestrator for spec-driven development (WHAT: runs the SDD state machine one step at a time). Use WHEN: automating the implement-review-fix-sync cycle for specification tasks."
 argument-hint: '[--wait|--background] [--spec <path>] [--action start|loop|next|status] [--from-task <id>] [--to-task <id>]'
 allowed-tools: Read, Glob, Grep, Bash(python3:*), Bash(git:*), AskUserQuestion
 ---
 
-Run the Ralph Loop orchestrator for specification-driven development.
+## Overview
 
-Raw slash-command arguments:
-`$ARGUMENTS`
+The Ralph Loop applies the "Ralph Wiggum as a Software Engineer" technique to specification-driven development. It solves context window explosion by executing **one step per invocation**, persisting state in `fix_plan.json`.
+
+State machine: `init → choose_task → implementation → review → fix → cleanup → sync → update_done → (loop)`
+
+## Usage
+
+```bash
+# Initialize a new loop
+/developer-kit-specs:specs.ralph-loop --action=start --spec=docs/specs/001-feature/ --from-task=TASK-001 --to-task=TASK-010
+
+# Run one step (execute shown command, then run loop again)
+/developer-kit-specs:specs.ralph-loop --action=loop --spec=docs/specs/001-feature/
+
+# Advance state after executing the shown command
+/developer-kit-specs:specs.ralph-loop --action=next --spec=docs/specs/001-feature/
+
+# Check status
+/developer-kit-specs:specs.ralph-loop --action=status --spec=docs/specs/001-feature/
+```
+
+## Arguments
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `--action` | Yes | Action to perform: `start`, `loop`, `next`, `status` |
+| `--spec` | No | Path to spec folder (auto-detected from git branch if omitted) |
+| `--from-task` | No | Starting task ID (for `start` action) |
+| `--to-task` | No | Ending task ID (for `start` action) |
+| `--wait` | No | Run in foreground, wait for results |
+| `--background` | No | Run in background without prompting |
+
+## Current Context
+
+If `--spec` is omitted, the spec folder is auto-detected from the current git branch:
+
+```bash
+branch=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/current_branch.py")
+spec_folder=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/find_spec_from_branch.py")
+```
+
+If no matching spec folder is found for the current branch, stop and inform the user.
 
 ## Execution mode rules
 
@@ -42,29 +80,18 @@ Bash({
 
 After launching, tell the user: "Ralph Loop started in the background."
 
-## Current Context
-
-If `--spec` is omitted, the spec folder is auto-detected from the current git branch:
-
-```bash
-branch=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/current_branch.py")
-spec_folder=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/find_spec_from_branch.py")
-```
-
-If no matching spec folder is found for the current branch, stop and inform the user.
-
-## Usage examples
+## Examples
 
 ```bash
 # Initialize
-/specs:ralph-loop --action=start --spec=docs/specs/001-feature/ --from-task=TASK-001 --to-task=TASK-010
+/developer-kit-specs:specs.ralph-loop --action=start --spec=docs/specs/001-feature/ --from-task=TASK-001 --to-task=TASK-010
 
 # Run one step
-/specs:ralph-loop --action=loop --spec=docs/specs/001-feature/
+/developer-kit-specs:specs.ralph-loop --action=loop --spec=docs/specs/001-feature/
 
 # Advance state after executing the shown command
-/specs:ralph-loop --action=next --spec=docs/specs/001-feature/
+/developer-kit-specs:specs.ralph-loop --action=next --spec=docs/specs/001-feature/
 
 # Check status
-/specs:ralph-loop --action=status --spec=docs/specs/001-feature/
+/developer-kit-specs:specs.ralph-loop --action=status --spec=docs/specs/001-feature/
 ```
