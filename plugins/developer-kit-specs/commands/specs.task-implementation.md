@@ -117,7 +117,7 @@ This command implements a specific task following a focused workflow:
    - **NEW: `imp-requirements` and `ac-mapping` from frontmatter** — which spec ACs this task implements
    - If either section is missing, stop and instruct the user to update the task document before implementation
 
-4. **Spec Traceability Gate (NEW)**:
+4. **Spec Traceability Gate **:
    - If the task file has `spec` reference, read the spec file to get full context:
      - Load the spec's acceptance criteria list with their `[IMP]`/`[SEF]`/`[EXT]` taxonomy
      - Identify which ACs this task covers (from `ac-mapping`)
@@ -301,7 +301,7 @@ This command implements a specific task following a focused workflow:
    - Ask user via AskUserQuestion how to proceed
    - If user chooses to proceed, log the unsatisfied contracts
 
-5. **CONTRACT RENEGOTIATION PROTOCOL (NEW)**:
+5. **CONTRACT RENEGOTIATION PROTOCOL **:
    - **Contracts are proposals, not laws** — especially for the first 3 tasks of a new feature:
      - **Phase 1 (Tasks 1-3)**: Contracts are "proposals" — can be modified without penalty
      - **Phase 2 (After Task 3)**: Contracts become "stable" — modifications require changelog
@@ -449,7 +449,7 @@ overall_assessment: partial
 5. Write clean, focused code
 6. **Ralph Loop Mode**: If fixing review issues, focus only on the identified issues unless the user explicitly requests additional changes
 
-7. **BOUNDED CONTEXT ADHERENCE CHECK (NEW)**:
+7. **BOUNDED CONTEXT ADHERENCE CHECK **:
    - Before creating or modifying files, determine the bounded context of each target file:
      - Read `docs/specs/ontology.md` for bounded context definitions
      - Use the spec's "Bounded Context Impact Statement" (if present) for the feature's primary context
@@ -590,7 +590,7 @@ overall_assessment: partial
    - Treat specification files as deliverables whenever they directly shaped implementation decisions, not as read-only references.
    - If no spec changes are required, state that explicitly with a short rationale.
 
-6. **ESCALATION EVALUATION (NEW)**:
+6. **ESCALATION EVALUATION **:
    - After documenting deviations, analyze whether the pattern of deviations indicates a systemic problem:
      - **Same AC violated across multiple tasks**: The acceptance criterion may be impossible or poorly defined. → Escalation type: `spec`
      - **Cross-boundary modifications causing repeated issues**: The bounded context split is wrong. → Escalation type: `architecture`
@@ -605,7 +605,7 @@ overall_assessment: partial
 
 ---
 
-## T-7: Escalation Decision (NEW)
+## T-7: Escalation Decision 
 
 **Goal**: Handle cases where implementation reveals a design-level problem that cannot be fixed within the task
 

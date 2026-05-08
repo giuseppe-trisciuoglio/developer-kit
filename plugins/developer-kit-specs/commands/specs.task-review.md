@@ -163,7 +163,7 @@ If no task can be auto-detected, ask the user which task to review.
      - Update "Status" to "Implemented" for REQ-IDs covered by this task
    - Save updated matrix back to `docs/specs/[id]/traceability-matrix.md`
 
-6. **BOUNDED CONTEXT ADHERENCE CHECK (NEW)**:
+6. **BOUNDED CONTEXT ADHERENCE CHECK **:
    - Read `docs/specs/ontology.md` for bounded context definitions
    - Determine the primary bounded context of the feature (from spec or task frontmatter)
    - For each file modified/created in the implementation (from git diff or file list):
@@ -192,7 +192,7 @@ If no task can be auto-detected, ask the user which task to review.
 3. Identify any gaps or misalignments
 4. Check if implementation introduces any out-of-scope changes
 
-5. **SPEC FIDELITY CHECK (NEW)**:
+5. **SPEC FIDELITY CHECK **:
    - Read the task's `imp-requirements` and `ac-mapping` from frontmatter
    - For each AC-ID in `ac-mapping`:
      - Verify the implementation actually satisfies the acceptance criterion
@@ -250,7 +250,7 @@ If no task can be auto-detected, ask the user which task to review.
 
 ---
 
-## Phase 5.5: Architecture Boundary Review (NEW)
+## Phase 5.5: Architecture Boundary Review 
 
 **Goal**: Verify that the implementation does not corrupt the bounded context model
 
