@@ -9,10 +9,10 @@ This plugin provides a complete workflow for transforming ideas into implemented
 - **Constitution**: Define the architectural DNA of the project — non-negotiable principles, approved stack, AI guardrails, and security constraints
 - **Brainstorming**: Transform ideas into pure functional specifications (WHAT, not HOW)
 - **Task Generation**: Convert functional specifications into executable tasks
-- **Task Management**: Add, split, update, and manage tasks
-- **Implementation**: Execute specific tasks with language-specific agents
-- **Review**: Verify implemented tasks meet specifications
-- **Code Cleanup**: Final cleanup after review approval
+- **Task Management**: Add or split tasks to refine implementation scope
+- **Implementation**: Execute specific tasks with integrated verification and cleanup
+- **Review**: Verify implemented tasks meet specifications and quality standards
+- **Synchronization**: Keep spec, tasks, and code aligned throughout the lifecycle
 - **Ralph Loop**: Step-by-step automation for long-running implementations
 
 ## Quick Start
@@ -27,24 +27,21 @@ This plugin provides a complete workflow for transforming ideas into implemented
 # 2. Convert specification to tasks
 /developer-kit-specs:specs.spec-to-tasks --lang=spring docs/specs/001-user-auth/
 
-# 3. Implement a task
+# 3. Implement a task (includes verification and optional cleanup)
 /developer-kit-specs:specs.task-implementation --lang=spring --task="docs/specs/001-user-auth/tasks/TASK-001.md"
 
 # 4. Review implementation
 /developer-kit-specs:specs.task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
 
-# 5. Clean up code
-/developer-kit-specs:specs-code-cleanup --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
-
-# 6. Sync specification with implementation
-/developer-kit-specs:specs.spec-sync-with-code docs/specs/001-user-auth/
+# 5. Sync specification with implementation
+/developer-kit-specs:specs.sync docs/specs/001-user-auth/
 ```
 
 ## Workflow
 
 ```
-Constitution → Idea → Functional Specification → Tasks → Implementation → Review → Cleanup → Done
-(constitution)  (brainstorm)  (spec-to-tasks)  (task-implementation)  (task-review)   (code-cleanup)
+Constitution → Idea → Functional Specification → Tasks → Implementation → Review → Sync → Done
+(constitution)  (brainstorm)  (spec-to-tasks)  (task-implementation)  (task-review)  (sync)
 ```
 
 ## Specification Structure
@@ -93,25 +90,23 @@ docs/specs/001-user-auth/
 | Command | Description |
 |---------|-------------|
 | `/developer-kit-specs:specs.spec-to-tasks [--lang=...] [folder]` | Convert specification to executable tasks |
-| `/developer-kit-specs:specs.task-manage --action=list` | List all tasks in a specification |
 | `/developer-kit-specs:specs.task-manage --action=add` | Add a new task |
 | `/developer-kit-specs:specs.task-manage --action=split` | Split an existing task |
-| `/developer-kit-specs:specs.task-manage --action=update` | Update task metadata |
 
 ### Task Implementation
 
 | Command | Description |
 |---------|-------------|
-| `/developer-kit-specs:specs.task-implementation [--lang=...] [task-file]` | Implement a specific task |
+| `/developer-kit-specs:specs.task-implementation [--lang=...] [task-file]` | Implement a specific task (includes cleanup phase) |
 | `/developer-kit-specs:specs.task-review [--lang=...] [task-file]` | Verify implemented task meets specification |
-| `/developer-kit-specs:specs-code-cleanup [--lang=...] [task-file]` | Clean up code after review approval |
 
 ### Synchronization
 
 | Command | Description |
 |---------|-------------|
-| `/developer-kit-specs:specs.spec-sync-context [folder]` | Sync Knowledge Graph, tasks, and codebase |
-| `/developer-kit-specs:specs.spec-sync-with-code [folder]` | Detect and fix spec-to-code drift |
+| `/developer-kit-specs:specs.sync [folder]` | Full sync: KG + task enrichment + code drift detection |
+| `/developer-kit-specs:specs.sync [folder] --kg-only` | Update Knowledge Graph only |
+| `/developer-kit-specs:specs.sync [folder] --code-only` | Detect spec-to-code deviations only |
 
 ### Automation
 
@@ -154,6 +149,7 @@ pending → in_progress → implemented → reviewed → completed
 | `blocked` | Cannot proceed | None |
 | `optional` | Not required | None |
 | `superseded` | Replaced by other tasks | None |
+| `escalated` | Design-level problem | None |
 
 ### Auto-Status Management
 
@@ -163,62 +159,10 @@ Task status is automatically managed by hooks when you edit task files:
 |-------------|------------------------|
 | Edit task file | `pending` → `in_progress` |
 | Check AC boxes | Progress through implementation |
-| Check all DoD boxes | `implemented` → `reviewed` |
-| Add Cleanup Summary | `reviewed` → `completed` |
-
-## Ralph Loop
-
-The Ralph Loop applies Geoffrey Huntley's "Ralph Wiggum as a Software Engineer" technique to SDD. It solves context window explosion by executing **one step per invocation**, persisting state in `fix_plan.json`.
-
-### State Machine
-
-```
-init → choose_task → implementation → review → fix → cleanup → sync → update_done
-```
-
-### Quick Start
-
-```bash
-# 1. Initialize
-python3 plugins/developer-kit-specs/skills/ralph-loop/scripts/ralph_loop.py \
-  --action=start \
-  --spec=docs/specs/001-feature/
-
-# 2. Run loop (execute shown command, then run loop again)
-python3 plugins/developer-kit-specs/skills/ralph-loop/scripts/ralph_loop.py \
-  --action=loop \
-  --spec=docs/specs/001-feature/
-
-# 3. Check status
-python3 plugins/developer-kit-specs/skills/ralph-loop/scripts/ralph_loop.py \
-  --action=status \
-  --spec=docs/specs/001-feature/
-```
-
-### Task Range Filtering
-
-Process a specific range of tasks:
-
-```bash
-python3 plugins/developer-kit-specs/skills/ralph-loop/scripts/ralph_loop.py \
-  --action=start \
-  --spec=docs/specs/001-feature/ \
-  --from-task=TASK-036 \
-  --to-task=TASK-041
-```
-
-### Multi-Agent Support
-
-Specify agent per task in task frontmatter:
-
-```yaml
----
-id: TASK-036
-title: Refactor user service
-agent: codex  # claude, codex, copilot, gemini, glm4, kimi, minimax
----
-```
+| Check all DoD boxes | `implemented` |
+| Approval via Review | `implemented` → `reviewed` |
+| Cleanup completion | `reviewed` → `completed` |
 
 ## Knowledge Graph
 
-The Knowledge Graph maintains a structured view of the codebase state relative to the specification. It is stored in `knowledge-graph.json` and updated via `specs.spec-sync-context`.
+The Knowledge Graph maintains a structured view of the codebase state relative to the specification. It is stored in `knowledge-graph.json` and updated via `specs.sync`.

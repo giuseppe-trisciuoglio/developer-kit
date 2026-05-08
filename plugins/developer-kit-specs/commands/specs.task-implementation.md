@@ -18,38 +18,27 @@ This command follows a focused workflow optimized for single-task implementation
 /developer-kit-specs:specs.task-implementation [--lang=java|spring|typescript|nestjs|react|python|general] --task=task-name
 ```
 
-## Arguments
+## Argument Parsing
 
-| Argument     | Description                              |
-|--------------|------------------------------------------|
-| `$ARGUMENTS` | Combined arguments passed to the command |
-
-## Current Context
-
-If `--task` is omitted, the task is auto-detected from the current git branch:
-
-```bash
-branch=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/current_branch.py")
-spec_folder=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/find_spec_from_branch.py")
-# Find the first pending/in_progress task in the spec folder
-```
-
-If no task can be auto-detected, ask the user which task to implement.
+1. Run the shared argument parser:
+   ```bash
+   python3 "${CLAUDE_PLUGIN_ROOT}/scripts/parse_args.py" "$ARGUMENTS"
+   ```
+   Read the JSON output and extract:
+   - `task` → task file path (or construct from `spec` + `task_id`)
+   - `spec` → spec folder path
+   - `lang` → target language/framework
+   - `flags` → boolean flags
+2. If `spec` is null, auto-detect from git branch:
+   ```bash
+   branch=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/current_branch.py")
+   spec=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/find_spec_from_branch.py")
+   ```
+3. Validate required parameters. If missing, ask user via AskUserQuestion.
 
 ## Task Mode Detection
 
 This command ONLY operates in Task Mode. If no `--task=` parameter is provided, inform the user that they should use the spec-driven flow (`devkit.brainstorm` → `devkit.spec-to-tasks`) or `/developer-kit:devkit.feature-development` for non-spec work.
-
-```bash
-# Task Mode examples:
-"--task=User login"                   → Task mode
-"--task=Password reset"               → Task mode
-"--task=API endpoint implementation"  → Task mode
-
-# Invalid (no --task=):
-"Add user authentication"              → Error: generate a spec/task first or use devkit.feature-development
-"--lang=spring Add REST API"         → Error: generate a spec/task first or use devkit.feature-development
-```
 
 ## Core Principles
 
@@ -63,7 +52,7 @@ This command ONLY operates in Task Mode. If no `--task=` parameter is provided, 
 
 ---
 
-## Workflow: Task Implementation (9 Steps)
+## Workflow: Task Implementation (10 Steps)
 
 This command implements a specific task following a focused workflow:
 - T-1: Task Identification
@@ -75,6 +64,7 @@ This command implements a specific task following a focused workflow:
 - T-4: Implementation
 - T-5: Verification
 - T-6: Task Completion
+- T-7: Code Cleanup (Post-Review)
 
 ---
 
@@ -84,37 +74,18 @@ This command implements a specific task following a focused workflow:
 
 **Actions**:
 
-1. Parse $ARGUMENTS to extract parameters:
-   - Extract value from `--task=` parameter (can be task ID or file path)
-   - Extract value from `--spec=` parameter (spec folder path)
-   - Extract value from `--lang=` parameter (optional)
-   - Trim whitespace
-
-2. **Support two argument formats**:
-   - **Format 1** (direct path): `--task=docs/specs/001-feature/tasks/TASK-001.md`
-   - **Format 2** (spec+task): `--spec=docs/specs/001-feature --task=TASK-001`
-   
-   If Format 2 is used, construct the task file path as: `{spec}/tasks/{task}.md`
-
-3. Find the task file:
-   - If the task value is a file path (contains "/" or ends with ".md"): use it directly
-   - If `--spec` is provided with task ID: construct path `{spec}/tasks/{task}.md`
-   - Otherwise, look for task files matching `docs/specs/*/tasks/TASK-*.md`
-   - Match task by ID (e.g., "TASK-001") or title in the task frontmatter
-   - If multiple found, ask user which one via AskUserQuestion
-   - If none found, error with helpful message
-
-3. Read the task file and extract:
+1. (Argument parsing completed in Phase 0)
+2. Read the task file and extract:
    - Task ID and title from YAML frontmatter
    - Description
    - Acceptance criteria
    - Definition of Ready (DoR) and Definition of Done (DoD) sections
    - Dependencies from YAML frontmatter
    - Reference to specification file
-   - **NEW: `imp-requirements` and `ac-mapping` from frontmatter** — which spec ACs this task implements
+   - `imp-requirements` and `ac-mapping` from frontmatter — which spec ACs this task implements
    - If either section is missing, stop and instruct the user to update the task document before implementation
 
-4. **Spec Traceability Gate **:
+3. **Spec Traceability Gate **:
    - If the task file has `spec` reference, read the spec file to get full context:
      - Load the spec's acceptance criteria list with their `[IMP]`/`[SEF]`/`[EXT]` taxonomy
      - Identify which ACs this task covers (from `ac-mapping`)
@@ -132,7 +103,6 @@ This command implements a specific task following a focused workflow:
    - Remaining [IMP] criteria will be covered by: [list other tasks from task list]
    - Primary bounded context: [from spec's Bounded Context Impact Statement, if present]
    ```
-   - **Why this matters**: The implementator understands WHERE this task sits in the overall feature. This prevents "tunnel vision" where local optimization breaks global consistency.
    - If the task has a **Cross-Boundary Warning** section: read it and note the risk level before proceeding
 
 ---
@@ -319,7 +289,77 @@ This command implements a specific task following a focused workflow:
    - Files created/modified
    - New components and APIs
    - Testing performed
-3. Inform the user:
+3. **Synchronization**:
+   - Run `/developer-kit-specs:specs.sync [spec-folder] --kg-only --after-task=[TASK-ID]` to update technical context
+   - Run `/developer-kit-specs:specs.sync [spec-folder] --code-only` to detect spec-to-code deviations
+4. Inform the user:
    - Display a summary of the implementation
    - Provide the command for review: `/developer-kit-specs:specs.task-review --task=TASK-XXX`
-4. Log completion of the task implementation workflow
+   - **Next Step**: Run `/developer-kit-specs:specs.task-review` then Phase T-7 cleanup auto-activates
+5. Log completion of the task implementation workflow
+
+---
+
+## T-7: Code Cleanup (Optional, Post-Review)
+
+**Goal**: Cosmetic cleanup after review approval — the final step before completion.
+
+**Prerequisite**: Task status is `reviewed` (review passed).
+
+**When to run**: Automatically suggested after task-review passes. Skippable if user prefers manual cleanup.
+
+**Actions**:
+
+### T-7.1: Verify Review Status
+
+1. Read the task file — confirm status is `reviewed` or `implemented`
+2. Verify review report `TASK-XXX--review.md` exists and is approved
+3. If not reviewed → stop and prompt user to run `/developer-kit-specs:specs.task-review` first
+
+### T-7.2: Identify Files to Clean
+
+1. Read `TASK-XXX--review.md` for files created/modified
+2. Read task `provides` field for file paths
+3. Build cleanup file list; categorize: source / test / config
+
+### T-7.3: Technical Debt Removal
+
+Search with Grep for temporary/debug artifacts:
+- `console.log`, `System.out.println`, `print(`, `// DEBUG:`, `// temp`, `// hack`
+- Resolved `TODO`/`FIXME` comments (keep unresolved ones with context)
+
+Remove confirmed debt. Document what was removed.
+
+### T-7.4: Import Optimization
+
+1. Run language-specific import optimizer if available:
+   - Java/Spring: `./mvnw spotless:apply` or IDE optimize imports
+   - TypeScript/Node: organize imports via IDE
+   - Python: `isort` or `black`
+   - PHP: `php-cs-fixer fix`
+2. If no tool available: manually remove unused imports
+
+### T-7.5: Code Formatting & Readability
+
+1. Run language-specific formatter:
+   - Java: `./mvnw spotless:apply`
+   - TypeScript: `npm run lint:fix` / `prettier --write`
+   - Python: `black` / `autopep8`
+   - PHP: `php-cs-fixer`
+2. If no formatter: fix indentation, break lines >120 chars, fix spacing
+3. Remove dead code only if obviously safe
+
+### T-7.6: Final Verification
+
+1. Run tests — must pass. If fail: stop, report, do NOT mark complete.
+2. Verify no logic or signature changes were introduced
+3. Update task status: `reviewed` → `completed`
+4. Set `cleanup_date` and `completed_date` in frontmatter
+
+### T-7.7: Summary
+
+Report:
+- Files cleaned
+- Debt removed (what and where)
+- Formatter/import tool used
+- Status: completed

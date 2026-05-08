@@ -8,12 +8,12 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/task-auto-status.py",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/task_lifecycle.py auto-status ${CLAUDE_CHANGED_FILE}",
             "statusMessage": "Auto-updating task status..."
           },
           {
             "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/task-validator.py",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/task_lifecycle.py validate ${CLAUDE_CHANGED_FILE}",
             "statusMessage": "Validating task frontmatter..."
           }
         ]

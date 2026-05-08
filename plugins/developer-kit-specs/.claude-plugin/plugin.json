@@ -23,8 +23,7 @@
     "./commands/specs.task-manage.md",
     "./commands/specs.task-review.md",
     "./commands/specs.task-implementation.md",
-    "./commands/specs.spec-sync-with-code.md",
-    "./commands/specs.spec-sync-context.md",
+    "./commands/specs.sync.md",
     "./commands/specs.quick-spec.md",
     "./commands/specs.spec-quality-check.md"
   ],

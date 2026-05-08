@@ -36,32 +36,25 @@ Idea → Functional Specification → Tasks → Implementation → Review → Co
 
 # With language specification for code review
 /developer-kit-specs:specs.task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
-/developer-kit-specs:specs.task-review --lang=typescript docs/specs/001-user-auth/tasks/TASK-001.md
-/developer-kit-specs:specs.task-review --lang=nestjs docs/specs/001-user-auth/tasks/TASK-001.md
-/developer-kit-specs:specs.task-review --lang=react docs/specs/001-user-auth/tasks/TASK-001.md
-/developer-kit-specs:specs.task-review --lang=python docs/specs/001-user-auth/tasks/TASK-001.md
-/developer-kit-specs:specs.task-review --lang=general docs/specs/001-user-auth/tasks/TASK-001.md
 ```
 
-## Arguments
+## Argument Parsing
 
-| Argument | Required | Description |
-|----------|----------|-------------|
-| `--lang` | No | Target language/framework: `java`, `spring`, `typescript`, `nestjs`, `react`, `python`, `general` |
-| `--no-confirm` | No | Skip user confirmation and auto-callback. Use when running inside automated loops (e.g., Ralph Loop). |
-| `task-file-path` | Yes | Path to the task file (e.g., `docs/specs/001-user-auth/tasks/TASK-001.md`) |
-
-## Current Context
-
-If `--task` is omitted, the task is auto-detected from the current git branch:
-
-```bash
-branch=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/current_branch.py")
-spec_folder=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/find_spec_from_branch.py")
-# Find the first pending/in_progress task in the spec folder
-```
-
-If no task can be auto-detected, ask the user which task to review.
+1. Run the shared argument parser:
+   ```bash
+   python3 "${CLAUDE_PLUGIN_ROOT}/scripts/parse_args.py" "$ARGUMENTS"
+   ```
+   Read the JSON output and extract:
+   - `task` → task file path (or construct from `spec` + `task_id`)
+   - `spec` → spec folder path
+   - `lang` → target language/framework
+   - `flags` → detect `--no-confirm`
+2. If `spec` is null, auto-detect from git branch:
+   ```bash
+   branch=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/current_branch.py")
+   spec=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/find_spec_from_branch.py")
+   ```
+3. Validate required parameters. If missing, ask user via AskUserQuestion.
 
 ## Core Principles
 
@@ -78,34 +71,22 @@ If no task can be auto-detected, ask the user which task to review.
 
 **Goal**: Read and understand the task and its specifications
 
-**Input**: $ARGUMENTS (task file path or --spec and --task parameters)
-
 **Actions**:
 
-1. Create todo list with all phases
-2. Parse $ARGUMENTS to extract:
-   - `--lang` parameter (language/framework for code review)
-   - `task-file-path` (path to task file) OR `--spec` and `--task` parameters
-3. **Support two argument formats**:
-   - Format 1 (direct path): `/developer-kit-specs:specs.task-review docs/specs/001-feature/tasks/TASK-001.md`
-   - Format 2 (spec+task): `/developer-kit-specs:specs.task-review --spec=docs/specs/001-feature --task=TASK-001`
-   
-   If `--spec` and `--task` are provided, construct the task file path as: `{spec}/tasks/{task}.md`
-   
-4. Read the task file (`docs/specs/[id]/tasks/TASK-XXX.md`)
-4. Extract:
+1. (Argument parsing completed in Phase 0)
+2. Read the task file (`docs/specs/[id]/tasks/TASK-XXX.md`)
+3. Extract:
    - Task ID and title
    - Description
    - Acceptance criteria
    - Definition of Ready (DoR) and Definition of Done (DoD) sections
    - Dependencies
    - Reference to specification file
-   - **NEW: `imp-requirements` and `ac-mapping` from frontmatter** — which spec ACs this task claims to implement
-   - **NEW: `cross-boundary` and `external-dep-risk` flags from frontmatter** — pre-identified risks
+   - `imp-requirements` and `ac-mapping` from frontmatter — which spec ACs this task claims to implement
    - If either section is missing, stop the review and require the task document to be updated before continuing
-5. Read the functional specification file (from task's spec reference)
-6. Verify both files exist and are valid
-7. If files not found, ask user for correct path via AskUserQuestion
+4. Read the functional specification file (from task's spec reference)
+5. Verify both files exist and are valid
+6. If files not found, ask user for correct path via AskUserQuestion
 
 ---
 
@@ -131,7 +112,7 @@ If no task can be auto-detected, ask the user which task to review.
    - Additional changes that were made
 
 4. **Read decision-log.md if exists**:
-   - Check for `decision-log.md` in the spec folder (extract from task frontmatter `spec:` field)
+   - Check for `decision-log.md` in the spec folder
    - If file exists, read any DEC entries related to this task (TASK-XXX)
    - Use decision context to understand WHY deviations were made
    - Reference specific decision IDs when explaining deviations in findings
@@ -156,7 +137,7 @@ If no task can be auto-detected, ask the user which task to review.
    - ⚠️ Partially met (with details) — treated as FAILED for `review_status`
 
 5. **Update traceability-matrix.md**:
-   - Read `docs/specs/[id]/traceability-matrix.md` (extract from task frontmatter `spec:` field)
+   - Read `docs/specs/[id]/traceability-matrix.md`
    - For this task (TASK-XXX), update the matrix:
      - Fill in "Test Files" column with test file names created for this task
      - Fill in "Code Files" column with source files created for this task
@@ -165,15 +146,15 @@ If no task can be auto-detected, ask the user which task to review.
 
 6. **BOUNDED CONTEXT ADHERENCE CHECK **:
    - Read `docs/specs/ontology.md` for bounded context definitions
-   - Determine the primary bounded context of the feature (from spec or task frontmatter)
-   - For each file modified/created in the implementation (from git diff or file list):
+   - Determine the primary bounded context of the feature
+   - For each file modified/created in the implementation:
      - Determine its bounded context from path conventions or ontology
      - If DIFFERENT from the feature's primary context:
        - Check if the task file has a "Cross-Boundary Warning" section
-       - If YES and justification is valid: note in review as "acknowledged cross-boundary" (no issue)
-       - If YES but justification is weak: add `warning` issue — "Cross-boundary modification with weak justification"
-       - If NO warning section: add `blocking` issue — "Undocumented cross-boundary modification. Risks architectural drift."
-   - **Why this matters**: Tasks that silently cross bounded context boundaries are the #1 cause of architectural drift. They pass code review because the code "works", but they corrupt the bounded context model over time.
+       - If YES and justification is valid: note in review as "acknowledged cross-boundary"
+       - If YES but justification is weak: add `warning` issue
+       - If NO warning section: add `blocking` issue
+   - **Why this matters**: Tasks that silently cross bounded context boundaries are the #1 cause of architectural drift.
 
 ---
 
@@ -183,7 +164,7 @@ If no task can be auto-detected, ask the user which task to review.
 
 **Actions**:
 
-1. Review the functional specification (already loaded in Phase 1) to verify compliance
+1. Review the functional specification to verify compliance
 2. Compare implementation against:
    - User stories and use cases
    - Business rules
@@ -198,17 +179,14 @@ If no task can be auto-detected, ask the user which task to review.
      - Verify the implementation actually satisfies the acceptance criterion
      - Check the criterion's taxonomy in the spec: `[IMP]`, `[SEF]`, or `[EXT]`
      - **If the task claims to implement `[SEF]` or `[EXT]` criteria**: 
-       - Flag as "Task Over-Specification" — the task should NOT have standalone ACs for side-effects or external verifications
-       - These should be verified only in e2e, not in individual task ACs
+       - Flag as "Task Over-Specification"
    - **If the task has NO `ac-mapping` or `imp-requirements`**:
      - Flag as "Legacy Task — no traceability metadata"
-     - Proceed with traditional review (backward compatibility)
 
 6. **Verify task necessity**:
    - Ask: "Is this task implementing a criterion that requires new code?"
    - If ALL the task's ACs are `[SEF]` or `[EXT]`: 
      - Flag as "Unnecessary Task — no implementation needed"
-     - This task should not exist; its 'implementation' should be moved to e2e verification
    - If the task creates entities/structs NOT mentioned in the functional spec:
      - Check `data-model.md` for `(derived)` marking
      - If NOT marked `(derived)`: Flag as "Invented Entity — not in spec"
@@ -216,8 +194,7 @@ If no task can be auto-detected, ask the user which task to review.
 7. **Check for spec contradictions**:
    - If the implementation does something DIFFERENT from the spec:
      - Check `decision-log.md` for a DEC entry justifying the deviation
-     - If NO DEC entry: the deviation is undocumented — flag as critical issue
-     - If DEC entry exists: reference it in the review report
+     - If NO DEC entry: flag as critical issue
 
 ---
 
@@ -227,26 +204,13 @@ If no task can be auto-detected, ask the user which task to review.
 
 **Actions**:
 
-1. Based on `--lang` parameter, select appropriate code review agent:
-
-| Language | Code Review Agent |
-|----------|------------------|
-| `java` | `developer-kit-java:spring-boot-code-review-expert` |
-| `spring` | `developer-kit-java:spring-boot-code-review-expert` |
-| `typescript` | `developer-kit:general-code-reviewer` |
-| `nestjs` | `developer-kit-typescript:nestjs-code-review-expert` |
-| `react` | `developer-kit:general-code-reviewer` |
-| `python` | `developer-kit-python:python-code-review-expert` |
-| `php` | `developer-kit-php:php-code-review-expert` |
-| `general` | `developer-kit:general-code-reviewer` |
-
-2. Perform code review focusing on:
+1. Based on `--lang` parameter, perform code review focusing on:
    - Architectural alignment
    - Coding standards and patterns
    - Security and performance
    - Error handling and edge cases
    - Maintainability and readability
-3. Document specific code findings (file, line, issue, recommendation)
+2. Document specific code findings (file, line, issue, recommendation)
 
 ---
 
@@ -275,8 +239,10 @@ If no task can be auto-detected, ask the user which task to review.
    - Set `reviewed_date: YYYY-MM-DD` if `passed`
    - For other statuses, update task status accordingly (e.g., `needs_fix`, `escalated`)
 
-4. **Inform user**:
+4. **Synchronization**:
+   - Run `/developer-kit-specs:specs.sync [spec-folder]` to synchronize all components
+
+5. **Inform user**:
    - Display review summary and status
    - Provide link to full review report
-   - If `needs_fix`, provide instructions for fixing
-   - If `passed`, suggest running `/developer-kit-specs:specs-code-cleanup`
+   - If `passed`, suggest running Phase T-7 cleanup in `task-implementation`
