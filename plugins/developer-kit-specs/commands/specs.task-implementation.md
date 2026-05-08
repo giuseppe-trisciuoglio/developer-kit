@@ -77,6 +77,7 @@ This command implements a specific task following a focused workflow:
 - T-6: Task Completion
 - T-6.5: Update Specs Quality
 - T-6.6: Spec Deviation Check
+- T-7: Escalation Decision (if design-level problem detected)
 
 ---
 
@@ -113,7 +114,29 @@ This command implements a specific task following a focused workflow:
    - Definition of Ready (DoR) and Definition of Done (DoD) sections
    - Dependencies from YAML frontmatter
    - Reference to specification file
+   - **NEW: `imp-requirements` and `ac-mapping` from frontmatter** — which spec ACs this task implements
    - If either section is missing, stop and instruct the user to update the task document before implementation
+
+4. **Spec Traceability Gate (NEW)**:
+   - If the task file has `spec` reference, read the spec file to get full context:
+     - Load the spec's acceptance criteria list with their `[IMP]`/`[SEF]`/`[EXT]` taxonomy
+     - Identify which ACs this task covers (from `ac-mapping`)
+     - Identify which `[IMP]` ACs remain for other tasks
+   - Display to implementator:
+   ```
+   Task Traceability Context:
+   - This task: TASK-XXX — "[title]"
+   - Implements Spec ACs: [ac-mapping, e.g., AC-1, AC-3]
+   - Corresponding REQ-IDs: [imp-requirements, e.g., REQ-001, REQ-003]
+   
+   Full Specification Context:
+   - Total spec ACs: N ([I] implementable / [S] side-effect / [E] external)
+   - This task covers: X/[I] implementable criteria
+   - Remaining [IMP] criteria will be covered by: [list other tasks from task list]
+   - Primary bounded context: [from spec's Bounded Context Impact Statement, if present]
+   ```
+   - **Why this matters**: The implementator understands WHERE this task sits in the overall feature. This prevents "tunnel vision" where local optimization breaks global consistency.
+   - If the task has a **Cross-Boundary Warning** section: read it and note the risk level before proceeding
 
 ---
 
@@ -278,7 +301,25 @@ This command implements a specific task following a focused workflow:
    - Ask user via AskUserQuestion how to proceed
    - If user chooses to proceed, log the unsatisfied contracts
 
-5. **If all expectations ARE satisfied**:
+5. **CONTRACT RENEGOTIATION PROTOCOL (NEW)**:
+   - **Contracts are proposals, not laws** — especially for the first 3 tasks of a new feature:
+     - **Phase 1 (Tasks 1-3)**: Contracts are "proposals" — can be modified without penalty
+     - **Phase 2 (After Task 3)**: Contracts become "stable" — modifications require changelog
+   - **If the current task discovers that a contract needs to change** (e.g., a struct needs a new field, a signature needs an extra parameter):
+     - Document the change in a **Contract Changelog** section in the task file:
+       ```markdown
+       ## Contract Changelog
+       - **Original contract**: `WorktreeState { SpecID, SpecName, WorktreePath }`
+       - **Modified to**: `WorktreeState { SpecID, SpecName, WorktreePath, CreatedAt }`
+       - **Reason**: Required for age-based cleanup logic (not in original spec)
+       - **Impact**: TASK-002, TASK-003 must update their expectations
+       - **Status**: proposal (Task ≤ 3) / stable (Task > 3)
+       ```
+     - If Task > 3 (stable phase): Warn that dependent tasks may fail contract validation and require re-review
+     - If Task ≤ 3 (proposal phase): Silently update the contract and proceed
+   - **Why this matters**: Early tasks of a feature often "discover" the correct interface shape. Rigid contracts force hacky workarounds or break downstream tasks.
+
+6. **If all expectations ARE satisfied**:
    - Log: "Contract validation passed: All expectations satisfied by completed dependencies"
    - Proceed to implementation with contract context
 
@@ -313,6 +354,7 @@ This command implements a specific task following a focused workflow:
      - `needs_fix` → Issues need to be addressed
      - `passed` → Review passed, no fixes needed
      - `partial` → Some issues fixed, others remain
+     - `escalate` → Problem is architectural/spec-level, cannot be fixed in this task
    - Extract issues list from the review content
    - Each issue should have:
      - `file`: File affected
@@ -323,7 +365,18 @@ This command implements a specific task following a focused workflow:
 
 3. **Process review feedback**:
    - If `review_status` is `passed`: Log "Review passed previously, proceeding with implementation"
+   - If `review_status` is `escalate`: Log "Review indicated escalation — proceeding to T-6.6 and T-7.5 for escalation handling. Do NOT attempt to fix."
+     - Skip to T-6.6 (Spec Deviation Check) then T-7.5 (Escalation Decision)
    - If `review_status` is `needs_fix` or `partial`:
+     - **Ralph Loop Circuit Breaker Check**:
+       - Count how many Ralph Loop iterations this task has gone through
+       - Check if the SAME issues appear in previous review files (look for `TASK-007--review-v1.md`, `TASK-007--review-v2.md`, etc.)
+       - **If 3+ iterations with same unresolved issues**:
+         - This is not an implementation bug — it's a design problem
+         - Change `review_status` to `escalate` for this iteration
+         - Log: "Circuit breaker triggered: Same issue persists across 3+ Ralph Loop iterations"
+         - Proceed to T-6.6 and T-7.5
+       - **If different issues each iteration**: Continue normal Ralph Loop
      - Filter issues where `fix_applied: false` or not marked as resolved
      - Group issues by file
      - Log: "Found X issues from previous review that need fixing"
@@ -395,6 +448,27 @@ overall_assessment: partial
 4. Use appropriate sub-agents based on --lang
 5. Write clean, focused code
 6. **Ralph Loop Mode**: If fixing review issues, focus only on the identified issues unless the user explicitly requests additional changes
+
+7. **BOUNDED CONTEXT ADHERENCE CHECK (NEW)**:
+   - Before creating or modifying files, determine the bounded context of each target file:
+     - Read `docs/specs/ontology.md` for bounded context definitions
+     - Use the spec's "Bounded Context Impact Statement" (if present) for the feature's primary context
+     - Map each file to its context based on path conventions (e.g., `internal/coreengine/` = Core Engine, `internal/worktree/` = Git Worktree Management)
+   - **If any target file is in a different bounded context from the feature's primary context**:
+     - Check the task file for a "Cross-Boundary Warning" section
+     - If the task file has a justification: review it — is it still valid given what you now know about the codebase?
+     - **If NO justification or weak justification**:
+       - PAUSE implementation
+       - Log: "Bounded Context Adherence Check FAILED: [file] is in [context], but feature's primary context is [primary context]. No valid justification found."
+       - Present options:
+         ```
+         Options:
+         - "Proceed anyway" (cross-boundary modification — will be flagged in review)
+         - "Escalate" (return to spec-to-tasks to redesign the boundary)
+         - "Refactor" (move the logic to a file in the primary context)
+         ```
+       - Ask user via AskUserQuestion
+   - **Why this matters**: Cross-boundary modifications are the #1 cause of architectural drift. They pass review because the code "works", but they corrupt the bounded context model over time.
 
 ---
 
@@ -516,6 +590,86 @@ overall_assessment: partial
    - Treat specification files as deliverables whenever they directly shaped implementation decisions, not as read-only references.
    - If no spec changes are required, state that explicitly with a short rationale.
 
+6. **ESCALATION EVALUATION (NEW)**:
+   - After documenting deviations, analyze whether the pattern of deviations indicates a systemic problem:
+     - **Same AC violated across multiple tasks**: The acceptance criterion may be impossible or poorly defined. → Escalation type: `spec`
+     - **Cross-boundary modifications causing repeated issues**: The bounded context split is wrong. → Escalation type: `architecture`
+     - **External dependency not available or different from expected**: The task decomposition was based on false assumptions. → Escalation type: `planning`
+     - **Ralph Loop exhausted (3+ iterations on same issue)**: The problem is not implementation-level. → Escalation type: `design`
+   - **If any escalation pattern is detected**:
+     - Do NOT proceed to "Ask user to sync" — the problem is deeper than a sync
+     - Generate an escalation report (see T-7: Escalation Decision)
+     - Set task status to `escalated`
+     - Stop normal completion flow
+   - **If no escalation pattern**: Proceed with user question (point 3 above)
+
+---
+
+## T-7: Escalation Decision (NEW)
+
+**Goal**: Handle cases where implementation reveals a design-level problem that cannot be fixed within the task
+
+**Trigger**: T-6.6 detects an escalation pattern, OR T-3.7 receives `escalate` review status, OR T-4.6 (Bounded Context Check) user chooses "Escalate"
+
+**Actions**:
+
+1. **Generate Escalation Report**:
+   ```markdown
+   # ESCALATION REPORT: TASK-XXX
+   
+   **Date**: YYYY-MM-DD
+   **Task**: TASK-XXX
+   **Escalation Type**: [spec / architecture / planning / design]
+   
+   ## Problem Description
+   [What happened during implementation that revealed a deeper problem]
+   
+   ## Evidence
+   - [Specific deviation from decision-log, if any]
+   - [Ralph Loop iterations exhausted, if applicable]
+   - [Cross-boundary modification that failed, if applicable]
+   
+   ## Root Cause Analysis
+   [Why the task/spec/decomposition was wrong]
+   
+   ## Recommended Action
+   - **If type = spec**: Return to `/developer-kit-specs:specs.brainstorm` to revise the functional specification
+   - **If type = architecture**: Return to `/developer-kit-specs:specs.spec-to-tasks` to redesign the bounded context split
+   - **If type = planning**: Return to `/developer-kit-specs:specs.spec-to-tasks` to regenerate tasks with corrected dependencies
+   - **If type = design**: Return to `/developer-kit-specs:specs.spec-to-tasks` to redefine the interface contracts
+   
+   ## Impact
+   - Tasks affected: [list]
+   - Files that may need rework: [list]
+   - Estimated rework scope: [small/medium/large]
+   ```
+
+2. **Save report**:
+   - Save to `docs/specs/[id]/escalations/TASK-XXX-escalation.md`
+   - Create `escalations/` directory if it doesn't exist
+
+3. **Update task status**:
+   - Set task frontmatter `status: escalated`
+   - Do NOT set `implemented_date`
+   - Do NOT mark task as completed
+
+4. **Inform user**:
+   ```
+   ⚠️ ESCALATION TRIGGERED for TASK-XXX
+   
+   The implementation revealed a [type] problem that cannot be fixed within this task:
+   [Brief problem description]
+   
+   Recommended action: [action from report]
+   Escalation report: docs/specs/[id]/escalations/TASK-XXX-escalation.md
+   
+   Do NOT proceed with dependent tasks until this escalation is resolved.
+   ```
+
+5. **Provide commands for resolution**:
+   - For `spec` escalations: `/developer-kit-specs:specs.brainstorm docs/specs/[id]/`
+   - For `architecture`/`planning`/`design` escalations: `/developer-kit-specs:specs.spec-to-tasks --escalation=docs/specs/[id]/escalations/TASK-XXX-escalation.md docs/specs/[id]/`
+
 ---
 
 ## Task File Format
@@ -559,6 +713,10 @@ expects:
 | `completed_date` | No | Date cleanup completed (YYYY-MM-DD) |
 | `cleanup_date` | No | Date code cleanup finished (YYYY-MM-DD) |
 | `dependencies` | No | Array of task IDs this task depends on |
+| `imp-requirements` | No | Array of REQ-IDs this task implements (from spec) |
+| `ac-mapping` | No | Array of AC-IDs this task covers (e.g., [AC-1, AC-3]) |
+| `cross-boundary` | No | Boolean — true if task modifies files outside primary bounded context |
+| `external-dep-risk` | No | Boolean — true if task depends on unverified external interface |
 | `provides` | No | What this task makes available (see format below) |
 | `expects` | No | What this task requires from dependencies |
 | `complexity` | No | Complexity score (0-100) |

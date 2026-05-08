@@ -121,6 +121,10 @@ If no matching spec folder is found for the current branch, stop and inform the 
    ### Requirement Refinements
    - Changed "instant search" to "search with caching"
 
+   ### Architecture Deviations
+   - Cross-boundary modification in TASK-005 (modified Core Engine file)
+   - New cross-context dependency introduced
+
    ### Scope Reductions
    - Dropped "search by proximity" feature
    ```
@@ -181,6 +185,9 @@ If no matching spec folder is found for the current branch, stop and inform the 
    - For each scope expansion: Create task for new feature/component
    - For each requirement refinement: Create task for updated requirement
    - For each scope reduction: Mark related tasks as optional or superseded
+   - For each architecture deviation: Check if escalation report exists in `docs/specs/[id]/escalations/`
+     - If YES: suggest returning to `/developer-kit-specs:specs.spec-to-tasks` instead of creating tasks
+     - If NO: flag as requiring ADR or architecture review before proceeding
    - Skip refinements that don't require new implementation (e.g., documentation clarifications)
 
 2. **Generate task proposals**:
@@ -288,6 +295,8 @@ For each deviation type, create task as follows:
    - Check if all tasks still map to updated spec
    - Identify tasks that need updates
    - Flag tasks with obsolete references
+   - **Verify taxonomy compliance**: Ensure no task claims to implement `[SEF]` or `[EXT]` criteria as `[IMP]`
+     - If a task's `imp-requirements` includes `[SEF]`/`[EXT]` ACs: flag as "Task Over-Specification — should be e2e only"
 
 2. **Report validation results**:
    ```markdown

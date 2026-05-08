@@ -91,9 +91,22 @@ Adds a new task to an existing specification.
 4. Ask the user for:
    - Task title
    - Task description
-   - Acceptance criteria
+   - Acceptance criteria (must map to `[IMP]` criteria from spec)
    - Dependencies (if any)
    - Estimated complexity
+
+5. **Determine `imp-requirements` and `ac-mapping`**:
+   - Read the functional specification to extract `[IMP]` acceptance criteria
+   - Map each acceptance criterion to its AC-ID and REQ-ID
+   - Populate `imp-requirements` with the REQ-IDs this task implements
+   - Populate `ac-mapping` with the AC-IDs this task covers
+   - **If the task implements `[SEF]` or `[EXT]` criteria**: warn that these should not have standalone tasks — recommend e2e verification instead
+
+6. **Determine `cross-boundary` and `external-dep-risk`**:
+   - Read `docs/specs/ontology.md` for bounded context definitions
+   - For each file in `files_to_create`/`files_to_modify`: determine its bounded context
+   - If any file is outside the feature's primary context: set `cross-boundary: true`
+   - If the task depends on an external interface (e.g., ADR-XXX): set `external-dep-risk: true`
 
 5. Create the new task file following the standard task format
 
@@ -122,11 +135,15 @@ Use this template for straightforward tasks with clear scope.
 ---
 id: "TASK-XXX"
 title: "[Task Title]"
-status: "pending"  # pending | in-progress | completed | superseded | optional
+status: "pending"  # pending | in-progress | completed | superseded | optional | escalated
 description: "[What this task implements]"
+imp-requirements: []  # REQ-IDs this task implements (only [IMP] criteria)
+ac-mapping: []        # AC-IDs this task covers (e.g., [AC-1, AC-3])
+cross-boundary: false  # true if task modifies files outside primary bounded context
+external-dep-risk: false  # true if task depends on unverified external interface
 acceptance_criteria:
-  - "[Criterion 1]"
-  - "[Criterion 2]"
+  - "[Criterion 1 — must map to an [IMP] AC]"
+  - "[Criterion 2 — must map to an [IMP] AC]"
 definition_of_ready:
   - "[Precondition 1]"
   - "[Precondition 2]"
@@ -183,11 +200,15 @@ Use this template for complex tasks that need business context, data contracts, 
 ---
 id: "TASK-XXX"
 title: "[Task Title]"
-status: "pending"  # pending | in-progress | completed | superseded | optional
+status: "pending"  # pending | in-progress | completed | superseded | optional | escalated
 description: "[What this task implements]"
+imp-requirements: []  # REQ-IDs this task implements (only [IMP] criteria)
+ac-mapping: []        # AC-IDs this task covers (e.g., [AC-1, AC-3])
+cross-boundary: false  # true if task modifies files outside primary bounded context
+external-dep-risk: false  # true if task depends on unverified external interface
 acceptance_criteria:
-  - "[Criterion 1]"
-  - "[Criterion 2]"
+  - "[Criterion 1 — must map to an [IMP] AC]"
+  - "[Criterion 2 — must map to an [IMP] AC]"
 definition_of_ready:
   - "[Precondition 1]"
   - "[Precondition 2]"
@@ -338,6 +359,12 @@ Splits a complex task into smaller, more manageable subtasks.
    - The `superseded` status is automatically tracked by hooks
    - Add `supersedes` reference to new subtasks in the frontmatter
 
+7. **Redistribute `imp-requirements` and `ac-mapping`**:
+   - Read the parent task's `imp-requirements` and `ac-mapping`
+   - Distribute the AC-IDs among subtasks based on what each subtask implements
+   - Each subtask should have a NON-OVERLAPPING subset of the parent's AC-IDs
+   - Verify: union of all subtask AC-IDs == parent's AC-IDs
+
 7. Update task index with new structure
 
 8. Update traceability matrix
@@ -351,6 +378,13 @@ When splitting tasks, child tasks inherit context from parent:
 
 ```yaml
 # Parent task context (preserved)
+imp-requirements:
+  - "[Subset of parent's REQ-IDs assigned to this child]"
+ac-mapping:
+  - "[Subset of parent's AC-IDs assigned to this child]"
+cross-boundary: false  # inherited but re-evaluated for child's files
+external-dep-risk: false  # inherited but re-evaluated for child's dependencies
+
 business_goals:
   - "[Inherited from parent]"
 
@@ -500,7 +534,9 @@ COMPLEXITY SCORE =
   (Independent Components × 25) +
   (Design Decisions × 10) +
   (Integration Points × 15) +
-  (External Dependencies × 20)
+  (External Dependencies × 20) +
+  (Cross-Boundary Modification ? 10 : 0) +
+  (External Dependency Risk ? 5 : 0)
 
 Thresholds:
 - 0-30: Simple

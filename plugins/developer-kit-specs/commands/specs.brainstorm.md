@@ -92,6 +92,7 @@ incrementally, generate professional documentation, review the document, and rec
 - **YAGNI ruthlessly**: Remove unnecessary features from all specifications
 - **Functional focus ONLY**: Describe WHAT the system should do, never HOW it will be implemented
 - **No technical decisions**: Do NOT mention frameworks, libraries, patterns, or code
+- **ADR constraint preservation**: When the input is an ADR, RFC, or technical analysis document, the architectural decisions it contains are treated as **immutable constraints** for the functional specification. If the brainstorming process identifies a need to override an ADR decision, the override MUST be explicitly documented in `decision-log.md` with a DEC entry referencing the original ADR.
 - **Incremental validation**: Present specification in sections, validate each
 - **Professional documentation**: Use specialist agent for high-quality documents
 - **Be flexible**: Go back and clarify when something doesn't make sense
@@ -101,15 +102,70 @@ incrementally, generate professional documentation, review the document, and rec
 
 ---
 
+## Phase 0: Input Mode Detection & ADR Discovery
+
+**Goal**: Determine whether the input is a free-form idea, an ADR/RFC, or a structured analysis document. If the input is a structured document, extract architectural decisions as constraints before proceeding.
+
+**Context**: The `$ARGUMENTS` parameter may contain:
+- A free-text idea (e.g., "Add user authentication with JWT tokens")
+- A path to an existing document (e.g., `@docs/adr/039-git-worktree-management.md`)
+- A reference to a file containing architectural decisions, RFC, or analysis
+
+**Actions**:
+
+1. **Detect input mode**:
+   - If `$ARGUMENTS` contains a file path pattern (starts with `/`, `./`, `docs/`, or `@docs/`): **Structured Document Mode**
+   - If `$ARGUMENTS` is free text describing a feature: **Free-Form Idea Mode**
+   - If `$ARGUMENTS` is empty: Ask user for input and detect mode from their response
+
+2. **If Structured Document Mode**:
+   - Read the referenced document
+   - Extract all **architectural decisions** documented in the file:
+     - Configuration values, defaults, and file paths
+     - CLI flags and command structures proposed
+     - Integration patterns with existing systems
+     - Error handling and edge-case strategies
+     - Directory structures and naming conventions
+   - Create a `constraints` list in memory with the extracted decisions
+   - **Do NOT re-evaluate these decisions** — they are the architectural foundation. The functional specification must work within them.
+   - If a decision in the ADR contradicts project conventions (e.g., architecture.md, ontology.md), flag it as a conflict, not as a candidate for change
+
+3. **If Free-Form Idea Mode**:
+   - Proceed directly to Phase 1 — no constraints to extract
+   - The brainstorming will discover all decisions collaboratively
+
+4. **Decision override protocol**:
+   - If during brainstorming you identify that an ADR decision should be overridden:
+     - Create a DEC entry in `decision-log.md` with:
+       - Reference to the original ADR (e.g., "Overrides ADR-039, Section 3: Configuration")
+       - Justification for the override
+       - Impact on the specification
+     - Only then modify the constraint
+   - Without a DEC entry, ADR constraints remain immutable
+
+5. **Summarize constraints** (Structured Document Mode only):
+   - After extraction, produce a brief summary:
+   ```
+   Input Mode: Structured Document (ADR-039)
+   Constraints extracted:
+   - Config: worktreeBasePath (default: ../<repo-name>-worktrees)
+   - CLI: No explicit flags mentioned
+   - Integration: ADR-038 branch creation
+   - Behavior: Worktree creation + manual cleanup command
+   Override DEC entries: None / DEC-XXX
+   ```
+
+---
+
 ## Phase 1: Context Discovery
 
-**Goal**: Understand the current project state and the initial idea
+**Goal**: Understand the current project state and the initial idea, within the bounds of any extracted constraints
 
 **Initial idea**: $ARGUMENTS
 
 **Actions**:
 
-1. Create todo list with all phases
+1. Create todo list with all phases (including Phase 0 if Structured Document Mode)
 2. Explore the current project state (for context only - do NOT include in specification):
     - Read recent commits to understand what's being worked on
     - Check for existing documentation (README, docs/, existing specs)
@@ -363,10 +419,24 @@ Task(
     - Clear, testable criteria for each user story
     - Success conditions in natural language
     - Edge case handling
+    - **MANDATORY: Acceptance Criteria Taxonomy** — Every criterion MUST be classified with one of:
+      - **`[IMP]` Implementable**: Requires new code, configuration, or explicit system behavior. **Only these generate implementation tasks.**
+      - **`[SEF]` Side-Effect**: A natural, automatic consequence of an `[IMP]` criterion being satisfied. These do NOT generate standalone tasks but should be verifiable in e2e tests.
+      - **`[EXT]` External Verification**: Verified by external tools, user observation, or existing system behavior. These do NOT generate tasks but should appear as e2e checkpoints.
+    - **60% Rule**: At least 60% of acceptance criteria should be `[IMP]`. If fewer than 60% are `[IMP]`, the specification is too descriptive and not prescriptive enough — return to Section 2 and refine.
+    - **Why this matters**: `spec-to-tasks` uses `[IMP]` criteria to generate atomic tasks. `[SEF]` and `[EXT]` criteria that are misclassified as `[IMP]` produce "false work" — tasks that verify natural behavior rather than implement functionality.
 
    **Section 5: Integration Requirements**
     - What existing systems must integrate with (capabilities, not implementation)
     - Data exchange requirements (not technical protocols)
+
+   **Section 6: Bounded Context Impact (Optional but Recommended)**
+    - **Primary Context**: The bounded context where the majority of new code will reside (e.g., "Git Worktree Management")
+    - **Secondary Contexts Touched**: Existing bounded contexts where files will be modified (e.g., "Core Engine — task_run.go will be modified")
+    - **Inbound Dependencies**: Services or interfaces this feature requires FROM other contexts (e.g., "ADR-038 BranchCreator from Core Engine")
+    - **Outbound Dependencies**: Services or interfaces this feature provides TO other contexts
+    - **Cross-Boundary Risk**: If this feature modifies files in a context different from its primary, flag as `HIGH RISK` and document the rationale
+    - **Why this matters**: `spec-to-tasks` uses this statement to validate that tasks respect bounded context boundaries. Features that silently cross boundaries produce tightly-coupled tasks that are hard to implement and review in isolation.
 
 4. **CRITICAL**: Throughout all sections, NEVER mention:
     - Frameworks, libraries, or tools
@@ -443,13 +513,19 @@ Task(
     - Error scenarios: [from Section 3]
 
     **Acceptance Criteria**:
-    - Testable criteria: [from Section 4]
+    - Testable criteria: [from Section 4 — each MUST be tagged with [IMP], [SEF], or [EXT]]
     - Success conditions: [from Section 4]
     - Edge cases: [from Section 4]
+    - **60% Rule Check**: Ensure at least 60% of criteria are [IMP]; if not, flag for refinement
 
     **Integration Requirements**:
     - Systems to integrate: [from Section 5]
     - Data exchange: [from Section 5]
+
+    **Bounded Context Impact** (from Section 6):
+    - Primary context: [bounded context]
+    - Secondary contexts touched: [list or "None"]
+    - Cross-boundary risk: [NONE / LOW / HIGH]
 
     **Out of Scope**: [list]
     **Open Questions**: [list]
@@ -462,7 +538,8 @@ Task(
     - Do NOT mention any frameworks, libraries, or tools
     - Do NOT include code or pseudo-code
     - Focus on WHAT the system should do, not HOW
-    - Use professional markdown structure",
+    - Every acceptance criterion MUST include its taxonomy tag: [IMP], [SEF], or [EXT]
+    - Use professional markdown structure
   subagent_type: "developer-kit:document-generator-expert"
 )
 ```
@@ -595,15 +672,32 @@ Task(
 
     4. **Testability**: Acceptance criteria are clear and testable
 
-    5. **Formatting**: Proper markdown structure, consistent formatting
+    5. **Acceptance Criteria Taxonomy**: Verify that:
+       - Every acceptance criterion is tagged with `[IMP]`, `[SEF]`, or `[EXT]`
+       - No `[SEF]` or `[EXT]` is disguised as `[IMP]` (e.g., "git worktree list shows worktree" should be `[SEF]`, not `[IMP]`)
+       - At least 60% of criteria are `[IMP]`; if not, flag as "Under-specified — needs more prescriptive criteria"
 
-    6. **Clarity**: Language is professional, concise, and unambiguous
+    6. **Bounded Context Impact**: If Section 6 is present, verify it:
+       - Identifies a clear primary bounded context
+       - Lists all secondary contexts touched
+       - Flags cross-boundary modifications with appropriate risk level
+
+    7. **ADR Consistency** (if the input was a structured document):
+       - Verify that the functional specification does NOT silently contradict the ADR constraints
+       - Check that any override of an ADR decision has a corresponding DEC entry in the decision-log
+       - Flag any configuration defaults, paths, or naming conventions that differ from the ADR without justification
+
+    8. **Formatting**: Proper markdown structure, consistent formatting
+
+    9. **Clarity**: Language is professional, concise, and unambiguous
 
     Provide:
     - Overall assessment (Excellent / Good / Needs Revision)
     - List of any missing sections or content
     - Specific issues found (if any)
     - Any technical details that should be removed
+    - **AC Taxonomy issues**: List any ACs misclassified or missing classification
+    - **Bounded Context issues**: Flag any unannotated cross-boundary modifications
     - Recommendations for improvement (if needed)",
   subagent_type: "developer-kit:general-code-reviewer"
 )
@@ -671,6 +765,8 @@ Task(
 
 1. Mark all todos complete
 2. Summarize:
+    - **Input Mode**: Free-Form Idea / Structured Document (ADR/RFC)
+    - **ADR Constraints Preserved**: [If structured document: list key constraints extracted and whether any were overridden with DEC entries]
     - **Original Idea**: What was brainstormed
     - **Scope Assessment**: Small / Medium / Large (and user choice if large)
     - **Scope Split Decision**: [If applicable: "User chose to split into N specifications - focusing on Spec A: [name]" OR "User chose to continue with single specification despite large scope warning"]
@@ -680,7 +776,7 @@ Task(
     - **Spec ID**: `[id]` (e.g., `001-hotel-search-aggregation`)
     - **Document Location**: `docs/specs/[id]/YYYY-MM-DD--feature-name.md`
     - **Specification Review**: Review outcome and any revisions made
-    - **Recommended Next Step**: 
+    - **Recommended Next Step**:
       - If scope was split: "Complete this specification's implementation, then run /developer-kit-specs:specs.brainstorm for Spec B: [name]"
       - Otherwise: "Generate task list with /developer-kit-specs:specs.spec-to-tasks"
 
@@ -739,6 +835,7 @@ If implementation reveals specification issues, you can re-run `/developer-kit-s
 - The previous specification will be preserved in its folder
 - A new specification will be created with the current date
 - You can reference the previous specification during the new brainstorming session
+- **If the original input was an ADR**: Re-running brainstorming MUST re-read the ADR file to ensure constraints are still accurately captured. Do NOT rely on the previous spec for ADR constraints — the ADR is the source of truth.
 
 ## Todo Management
 
@@ -746,6 +843,7 @@ Throughout the process, maintain a todo list like:
 
 ```
 
+[ ] Phase 0: Input Mode Detection & ADR Discovery (if structured document)
 [ ] Phase 1: Context Discovery
 [ ] Phase 1.5: Complexity Assessment & Scope Validation (split if scope too large)
 [ ] Phase 2: Idea Refinement
@@ -755,8 +853,9 @@ Throughout the process, maintain a todo list like:
 [ ] Section 1: Business Context
 [ ] Section 2: Functional Requirements
 [ ] Section 3: User Interactions
-[ ] Section 4: Acceptance Criteria
+[ ] Section 4: Acceptance Criteria (with [IMP]/[SEF]/[EXT] taxonomy)
 [ ] Section 5: Integration Requirements
+[ ] Section 6: Bounded Context Impact Statement
 [ ] Phase 6: Functional Specification Generation
 [ ] Phase 6.1: Ontology Initialization/Enrichment (docs/specs/ontology.md)
 [ ] Phase 7: Specification Review
@@ -835,5 +934,24 @@ Update the status as you progress through each phase and section.
 /developer-kit-specs:specs.task-implementation --lang=spring --task="docs/specs/001-reporting-module/tasks/TASK-001.md"
 /developer-kit-specs:specs.task-implementation --lang=spring --task="docs/specs/001-reporting-module/tasks/TASK-002.md"
 ```
+
+### Example 8: ADR-as-Input Mode (Structured Document)
+
+When the input is an existing ADR or RFC, the brainstorming extracts architectural constraints and preserves them:
+
+```bash
+# Step 1: Point to an ADR file — brainstorming will extract constraints automatically
+/developer-kit-specs:specs.brainstorm @docs/adr/039-git-worktree-management.md
+
+# Output will include:
+# - Phase 0: Extracts worktreeBasePath, CLI flags, ADR-038 integration as constraints
+# - Phase 5: Acceptance criteria tagged with [IMP]/[SEF]/[EXT]
+# - Phase 6: decision-log.md includes DEC entries for any ADR overrides
+
+# Step 2: Proceed to spec-to-tasks as normal
+/developer-kit-specs:specs.spec-to-tasks --lang=go docs/specs/025-git-worktree-per-spec/
+```
+
+**Key difference**: The ADR's decisions (e.g., `worktreeBasePath` default, cleanup model) are treated as immutable constraints. Any override requires a DEC entry in `decision-log.md`.
 
 This separates WHAT (functional specification) from HOW (implementation), following the "divide et impera" principle.

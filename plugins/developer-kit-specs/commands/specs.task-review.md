@@ -100,6 +100,8 @@ If no task can be auto-detected, ask the user which task to review.
    - Definition of Ready (DoR) and Definition of Done (DoD) sections
    - Dependencies
    - Reference to specification file
+   - **NEW: `imp-requirements` and `ac-mapping` from frontmatter** — which spec ACs this task claims to implement
+   - **NEW: `cross-boundary` and `external-dep-risk` flags from frontmatter** — pre-identified risks
    - If either section is missing, stop the review and require the task document to be updated before continuing
 5. Read the functional specification file (from task's spec reference)
 6. Verify both files exist and are valid
@@ -161,11 +163,23 @@ If no task can be auto-detected, ask the user which task to review.
      - Update "Status" to "Implemented" for REQ-IDs covered by this task
    - Save updated matrix back to `docs/specs/[id]/traceability-matrix.md`
 
+6. **BOUNDED CONTEXT ADHERENCE CHECK (NEW)**:
+   - Read `docs/specs/ontology.md` for bounded context definitions
+   - Determine the primary bounded context of the feature (from spec or task frontmatter)
+   - For each file modified/created in the implementation (from git diff or file list):
+     - Determine its bounded context from path conventions or ontology
+     - If DIFFERENT from the feature's primary context:
+       - Check if the task file has a "Cross-Boundary Warning" section
+       - If YES and justification is valid: note in review as "acknowledged cross-boundary" (no issue)
+       - If YES but justification is weak: add `warning` issue — "Cross-boundary modification with weak justification"
+       - If NO warning section: add `blocking` issue — "Undocumented cross-boundary modification. Risks architectural drift."
+   - **Why this matters**: Tasks that silently cross bounded context boundaries are the #1 cause of architectural drift. They pass code review because the code "works", but they corrupt the bounded context model over time.
+
 ---
 
 ## Phase 4: Specification Compliance Check
 
-**Goal**: Ensure implementation aligns with functional specification
+**Goal**: Ensure implementation aligns with functional specification AND verify task necessity
 
 **Actions**:
 
@@ -177,6 +191,33 @@ If no task can be auto-detected, ask the user which task to review.
    - Data requirements
 3. Identify any gaps or misalignments
 4. Check if implementation introduces any out-of-scope changes
+
+5. **SPEC FIDELITY CHECK (NEW)**:
+   - Read the task's `imp-requirements` and `ac-mapping` from frontmatter
+   - For each AC-ID in `ac-mapping`:
+     - Verify the implementation actually satisfies the acceptance criterion
+     - Check the criterion's taxonomy in the spec: `[IMP]`, `[SEF]`, or `[EXT]`
+     - **If the task claims to implement `[SEF]` or `[EXT]` criteria**: 
+       - Flag as "Task Over-Specification" — the task should NOT have standalone ACs for side-effects or external verifications
+       - These should be verified only in e2e, not in individual task ACs
+   - **If the task has NO `ac-mapping` or `imp-requirements`**:
+     - Flag as "Legacy Task — no traceability metadata"
+     - Proceed with traditional review (backward compatibility)
+
+6. **Verify task necessity**:
+   - Ask: "Is this task implementing a criterion that requires new code?"
+   - If ALL the task's ACs are `[SEF]` or `[EXT]`: 
+     - Flag as "Unnecessary Task — no implementation needed"
+     - This task should not exist; its 'implementation' should be moved to e2e verification
+   - If the task creates entities/structs NOT mentioned in the functional spec:
+     - Check `data-model.md` for `(derived)` marking
+     - If NOT marked `(derived)`: Flag as "Invented Entity — not in spec"
+
+7. **Check for spec contradictions**:
+   - If the implementation does something DIFFERENT from the spec:
+     - Check `decision-log.md` for a DEC entry justifying the deviation
+     - If NO DEC entry: the deviation is undocumented — flag as critical issue
+     - If DEC entry exists: reference it in the review report
 
 ---
 
@@ -209,6 +250,35 @@ If no task can be auto-detected, ask the user which task to review.
 
 ---
 
+## Phase 5.5: Architecture Boundary Review (NEW)
+
+**Goal**: Verify that the implementation does not corrupt the bounded context model
+
+**Actions**:
+
+1. **Read the implementation's file list**:
+   - From git diff or from the files listed in the task's "Files to Create/Modify"
+   - Map each file to its bounded context using `docs/specs/ontology.md`
+
+2. **Check for context pollution**:
+   - Count how many files are in the feature's PRIMARY bounded context
+   - Count how many files are in SECONDARY contexts
+   - If >30% of files are in secondary contexts:
+     - The feature is scattered — sign of tight coupling
+     - Add `architecture_issue` to review findings
+
+3. **Check for new cross-context dependencies**:
+   - If the implementation introduces an import/reference from context A to context B that didn't exist before:
+     - Flag as `new_cross_context_dependency` — requires ADR
+     - Add to review findings as `major` issue
+
+4. **Impact on review status**:
+   - `architecture_issue` does NOT automatically fail the task (the code may work)
+   - But if the issue is SEVERE (feature scattered across 3+ contexts, or undocumented cross-boundary modifications):
+     - Force `review_status: escalate` — the design is wrong, not the code
+
+---
+
 ## Phase 6: Review Report Generation
 
 **Goal**: Create comprehensive review report
@@ -216,14 +286,26 @@ If no task can be auto-detected, ask the user which task to review.
 **Actions**:
 
 1. Compile all findings into a review report
-2. Determine `review_status` using this rule:
-   - **PASSED**: ALL acceptance criteria ✅ AND ALL DoD items ✅ AND no critical/major code issues
-   - **FAILED**: ANY criterion is ❌ or ⚠️, OR ANY DoD item is ❌ or ⚠️, OR critical/major code issues found
+2. **Determine `review_status` using the Unified Status Schema**:
+   - **`passed`**: ALL acceptance criteria ✅ AND ALL DoD items ✅ AND no critical/major code issues AND no architecture issues
+   - **`needs_fix`**: ANY criterion is ❌, OR ANY DoD item is ❌, OR critical/major code issues found (fixable in this task)
+   - **`partial`**: Multi-AC task where some ACs are ✅ and others are ❌ (fixable in this task)
+   - **`escalate`**: ANY of the following (NOT fixable in this task alone):
+     - "Task Over-Specification" from Phase 4.5 (task implements `[SEF]`/`[EXT]` as `[IMP]`)
+     - "Unnecessary Task" from Phase 4.5 (all ACs are `[SEF]`/`[EXT]`)
+     - "Invented Entity" from Phase 4.5 (entity not in spec and not marked `(derived)`)
+     - Undocumented cross-boundary modification from Phase 3.6 (blocking)
+     - Severe `architecture_issue` from Phase 5.5 (feature scattered across contexts)
+     - `new_cross_context_dependency` from Phase 5.5 (undocumented inter-context coupling)
+     - Spec AC is impossible to implement as written
+     - 3+ iterations of the same issue in Ralph Loop (task-implementation signals this)
+   - **Escalation means**: The problem is at the design/spec/decomposition level, NOT the code level. Do NOT trigger Ralph Loop — go to task-implementation T-7 (Escalation Decision).
+
 3. Generate the report in markdown format with YAML frontmatter:
 
 ```markdown
 ---
-review_status: PASSED   # or FAILED
+review_status: passed   # or needs_fix, partial, escalate
 task_id: TASK-XXX
 task_title: [Task Title]
 spec_file: [spec-file.md]
@@ -231,13 +313,16 @@ review_date: [ISO date]
 language: [language]
 summary:
   implementation: COMPLETE|INCOMPLETE
-  acceptance_criteria: ALL_MET|FAILED
-  definition_of_done: ALL_MET|FAILED
-  spec_compliance: COMPLIANT|DEVIATIONS|NON_COMPLIANT
+  acceptance_criteria: ALL_MET|PARTIAL|FAILED
+  definition_of_done: ALL_MET|PARTIAL|FAILED
+  spec_compliance: COMPLIANT|DEVIATIONS|NON_COMPLIANT|ESCALATE
   code_review: PASSED|ISSUES|FAILED
-critical_issues: N   # required if FAILED
-major_issues: N      # required if FAILED
+  bounded_context: CLEAN|ACKNOWLEDGED_CROSSING|UNDOCUMENTED_CROSSING
+  architecture: CLEAN|POLLUTED|NEW_DEPENDENCY
+critical_issues: N   # required if needs_fix or escalate
+major_issues: N      # required if needs_fix or escalate
 minor_issues: N
+escalation_reason: [spec / architecture / planning / design / none]  # required if escalate
 ---
 
 # Task Review Report: TASK-XXX
@@ -254,10 +339,12 @@ minor_issues: N
 | Implementation | ✅ Complete / ⚠️ Partial / ❌ Incomplete |
 | Acceptance Criteria | ✅ All Met / ⚠️ Partial / ❌ Failed |
 | Definition of Done | ✅ All Met / ⚠️ Partial / ❌ Failed |
-| Spec Compliance | ✅ Compliant / ⚠️ Deviations / ❌ Non-compliant |
+| Spec Compliance | ✅ Compliant / ⚠️ Deviations / ❌ Non-compliant / 🚨 Escalate |
 | Code Review | ✅ Passed / ⚠️ Issues Found / ❌ Failed |
+| Bounded Context | ✅ Clean / ⚠️ Acknowledged Crossing / ❌ Undocumented Crossing |
+| Architecture | ✅ Clean / ⚠️ Polluted / 🚨 New Cross-Context Dependency |
 
-**Overall Result**: ✅ PASSED / ❌ FAILED
+**Overall Result**: ✅ passed / ⚠️ needs_fix / ⚠️ partial / 🚨 escalate
 
 ## Implementation Verification
 
@@ -431,9 +518,12 @@ Throughout the process, maintain a todo list like:
 [ ] Phase 1: Task Analysis
 [ ] Phase 2: Implementation Verification
 [ ] Phase 3: Acceptance Criteria Validation
+  - [ ] Step 3.6: Bounded Context Adherence Check
 [ ] Phase 4: Specification Compliance Check
+  - [ ] Step 4.5: Spec Fidelity Check
 [ ] Phase 5: Code Review
-[ ] Phase 6: Review Report Generation
+[ ] Phase 5.5: Architecture Boundary Review
+[ ] Phase 6: Review Report Generation (Unified Status Schema)
 [ ] Phase 7: Review Confirmation
 [ ] Phase 8: Summary
 ```

@@ -703,21 +703,33 @@ Provide a comprehensive summary that will inform task generation.
    - Add `contracts/README.md` summarizing why no standalone interface contract files were extracted yet
    - Document any implicit boundaries that tasks must preserve
 
-5. **Treat artifacts as mandatory inputs for task generation**:
-   - Phase 4 and Phase 5 must read `data-model.md` and `contracts/*`
-   - Tasks must reference these artifacts in technical context, implementation details, and test instructions when relevant
+5. **ARTIFACT FIDELITY GATE (prevents Over-Specification Drift)**:
+   - Before proceeding to Phase 4, verify that every entity, field, and relationship in `data-model.md` can be traced back to the functional specification
+   - For each element in `data-model.md`, ask: "Is this explicitly required by the spec, or is it my technical interpretation?"
+   - **If an element is NOT derivable from the spec**: 
+     - Mark it with `(derived)` in the data-model.md
+     - Do NOT create acceptance criteria around it in task files
+     - It may appear in "Technical Context" as an implementation suggestion, never as a requirement
+   - Example: `WorktreeState` struct is NOT in the spec — it is a derived implementation detail. It must be marked `(derived)` and never appear as "WorktreeState must be defined" in any task's AC.
 
-6. **Do NOT update agent context files in this phase**:
+6. **Treat artifacts as advisory inputs for task generation**:
+   - Phase 4 and Phase 5 may read `data-model.md` and `contracts/*` for context
+   - Tasks must use these artifacts ONLY to inform implementation choices, NEVER as source of truth for acceptance criteria
+   - The **functional specification** (with its `[IMP]`/`[SEF]`/`[EXT]` taxonomy) is the ONLY source of truth for acceptance criteria
+   - **Critical distinction**: If `data-model.md` defines `WorktreeManager` but the spec does NOT mention it, the task cannot have "WorktreeManager interface must be defined" as an AC. The task AC must reflect the spec's language (e.g., "Worktree can be created via CLI command").
+
+7. **Do NOT update agent context files in this phase**:
    - Do not call `/developer-kit-specs:specs.spec-sync-context`
    - Do not create or modify `knowledge-graph.json`
    - Do not rewrite task files or any other context cache as part of artifact generation
 
-7. **Log and report**:
+8. **Log and report**:
    ```
    Specification artifacts generated:
    - Data model: docs/specs/[ID]/data-model.md
    - Contracts directory: docs/specs/[ID]/contracts/
    - Contract files: [list generated files]
+   - Fidelity Gate: [N] elements from spec, [M] elements derived (marked)
    ```
 
 **Note**: This phase always runs, even when a cached Knowledge Graph is reused in Phase 2.5.
@@ -726,14 +738,23 @@ Provide a comprehensive summary that will inform task generation.
 
 ## Phase 4: Technical Task Decomposition
 
-**Goal**: Break down requirements into atomic, executable tasks
+**Goal**: Break down `[IMP]` requirements into atomic, executable tasks. Respect bounded context boundaries and avoid over-specification.
+
+**CRITICAL: Spec Fidelity Gate** — Before decomposing tasks, verify:
+1. The functional specification contains acceptance criteria tagged with `[IMP]`, `[SEF]`, or `[EXT]`
+2. If tags are MISSING: apply taxonomy retroactively based on the spec's content, then proceed
+3. If the spec has a "Bounded Context Impact Statement" (Section 6): load it and use it for boundary validation
+4. If the spec has NO `[IMP]` criteria: STOP — the spec is purely descriptive. Return to brainstorming.
 
 **Actions**:
 
-1. **Always review generated specification artifacts**:
-   - Read `docs/specs/[id]/data-model.md` for entities, relationships, invariants, and states
-   - Read `docs/specs/[id]/contracts/*` for request/response, event, or boundary definitions
-   - Use these artifacts to define task boundaries, data responsibilities, integration points, and test expectations
+1. **Filter requirements by taxonomy — ONLY `[IMP]` criteria generate implementation tasks**:
+   - Read the functional specification's acceptance criteria
+   - Select ONLY criteria tagged `[IMP]` (Implementable) for task decomposition
+   - **`[SEF]` criteria**: Do NOT generate standalone tasks. They will be verified in the e2e task (TASK-N-1).
+   - **`[EXT]` criteria**: Do NOT generate standalone tasks. They will be listed as checkpoints in the e2e task.
+   - Example: If AC-5 (`git worktree list` shows worktree) is `[SEF]`, it does NOT get a task. It is a natural side effect of using `git worktree add`, which is covered by AC-1's task.
+   - **Why this matters**: Creating tasks for `[SEF]` criteria produces "false work" — tasks that verify natural behavior rather than implement functionality. In spec 025, AC-5 (`git worktree list`) and AC-2 (second run reuses) are `[SEF]` and should not generate dedicated tasks.
 
 1.1. **If Knowledge Graph context is available** (from Phase 2.5 cached only):
    - Review KG patterns: Architectural patterns to follow in each task
@@ -744,14 +765,39 @@ Provide a comprehensive summary that will inform task generation.
    - Example: "Follow existing Repository Pattern - extend JpaRepository"
    - Example: "Integrate with existing HotelService.searchHotels() method"
 
-1.2. **If Architecture context is available** (from Phase 1.5):
-   - Use the technology stack to inform implementation details in each task
-   - Ensure tasks reference the correct frameworks, libraries, and patterns from `docs/specs/architecture.md`
-   - If tasks require new infrastructure components not in the architecture document, flag them for ADR tracking using the `adr-drafting` skill
-   - Example: "Use NestJS module pattern as defined in architecture.md"
-   - Example: "Follow PostgreSQL with Drizzle ORM as specified in architecture"
+1.2. **BOUNDED CONTEXT BOUNDARY CHECK (prevents Boundary Confusion Drift)**:
+   - Load `docs/specs/ontology.md` and extract the bounded context definitions
+   - Load the spec's "Bounded Context Impact Statement" (Section 6) if present
+   - For each task, before assigning file targets, determine the bounded context of each file
+   - **If a task targets files in a bounded context DIFFERENT from the feature's primary context**:
+     - Flag the task as `CROSS-BOUNDARY`
+     - Add a warning in the task's Technical Context:
+       ```
+       ⚠️ BOUNDARY CROSSING: This task modifies [file] which belongs to [bounded context].
+       Primary context of this feature: [primary context].
+       Justification required: Why is this modification in [bounded context] necessary?
+       Recommended: Coordinate with [bounded context] owner or consider if the change belongs there.
+       ```
+     - Example: TASK-005 modifies `cmd/specs-kit/task_run.go` (Core Engine) for a Git Worktree feature. This is a HIGH RISK cross-boundary modification and must be flagged.
+   - **If Architecture context is available** (from Phase 1.5):
+     - Use the technology stack to inform implementation details in each task
+     - Ensure tasks reference the correct frameworks, libraries, and patterns from `docs/specs/architecture.md`
+     - If tasks require new infrastructure components not in the architecture document, flag them for ADR tracking using the `adr-drafting` skill
 
-1.3. **If Ontology context is available** (from Phase 1.5):
+1.3. **EXTERNAL DEPENDENCY PRE-FLIGHT (prevents Dependency Blindness)**:
+   - Before generating a task that depends on an external interface (e.g., "ADR-038 BranchCreator", "existing API", "third-party service"):
+     - Verify that the interface exists in the codebase OR is documented in a contract
+     - If the interface does NOT exist:
+       - Mark the task as `EXTERNAL_DEPENDENCY_RISK`
+       - Add a warning in the task's Technical Context:
+         ```
+         ⚠️ EXTERNAL DEPENDENCY: This task depends on [interface] which was not found in the codebase.
+         Risk: If [interface] does not exist or has a different signature, this task may fail at contract validation (T-3.6).
+         Mitigation: Verify [interface] exists before implementing this task, or implement it first.
+         ```
+     - Example: TASK-007 depends on `BranchCreator.EnsureBranch(specID, specName)` from ADR-038. If ADR-038 is not yet implemented, this task must be flagged.
+
+1.4. **If Ontology context is available** (from Phase 1.5):
    - Use domain terms from `docs/specs/ontology.md` consistently in task titles, descriptions, and acceptance criteria
    - Ensure task descriptions use the canonical term from the glossary (avoid synonyms not defined in the ontology)
    - If a task introduces NEW domain concepts not in the ontology, add them to `docs/specs/ontology.md` and update the `Last Updated` date
@@ -764,11 +810,15 @@ Provide a comprehensive summary that will inform task generation.
 
 2. For each task, define:
    - **Title**: Concise, descriptive name (e.g., "User login functionality")
-   - **Description**: What the task covers functionally
-   - **Acceptance Criteria**: 2-4 testable conditions
+   - **Description**: What the task covers functionally — must map to one or more `[IMP]` acceptance criteria
+   - **AC-ID Mapping**: List the acceptance criteria IDs this task implements (e.g., AC-1, AC-3)
+   - **REQ-ID Mapping**: List the requirement IDs this task covers (e.g., REQ-001)
+   - **Acceptance Criteria**: 2-4 testable conditions derived ONLY from `[IMP]` spec criteria
    - **Definition of Ready (DoR)**: Clear preconditions for starting (dependencies complete, technical context understood, blockers resolved)
    - **Definition of Done (DoD)**: Clear completion conditions covering implementation, tests, and task handoff
    - **Dependencies**: List task IDs this depends on (if any)
+   - **Cross-Boundary**: YES/NO — whether this task modifies files outside the feature's primary bounded context
+   - **External Dependency Risk**: YES/NO — whether this task depends on an unverified external interface
 
 3. Map dependencies explicitly:
    - Identify which tasks must complete before others can start
@@ -777,17 +827,38 @@ Provide a comprehensive summary that will inform task generation.
    - Identify potential circular dependencies (Task A depends on B, B depends on A)
    - Order tasks accordingly
 
-4. Validate dependencies before generating files:
+4. **FILE COLLISION DETECTION (prevents File Collision Drift)**:
+   - Before generating files, build a file-to-task mapping:
+   ```
+   File: pkg/domain/worktree.go
+     - TASK-001: creates WorktreeState
+     - TASK-003: creates WorktreeManager interface
+     → ⚠️ COLLISION: Two tasks create/modify the same file
+   
+   File: cmd/specs-kit/task_run.go
+     - TASK-005: adds cleanup call
+     - TASK-006: adds preserve-on-failure logic
+     → ⚠️ COLLISION: Two tasks modify the same file
+   ```
+   - **If collisions are detected**:
+     - Merge the colliding tasks into a SINGLE task with combined acceptance criteria
+     - OR split the file responsibilities so each task targets a different file
+     - Add a note in the merged task explaining the collision and the merge decision
+   - **For new files**: If two tasks create the same file, merge them.
+   - **For existing files**: If two tasks modify the same file, merge them OR split by having one task create a hook/extension point and the other use it.
+
+5. Validate dependencies before generating files:
    - Present the dependency structure in a clear table format:
 
-   | Task ID | Title | Dependencies |
-   |---------|-------|--------------|
-   | TASK-001 | [Title] | None |
-   | TASK-002 | [Title] | TASK-001 |
-   | TASK-003 | [Title] | TASK-001, TASK-002 |
-   | ... | ... | ... |
+   | Task ID | Title | Dependencies | Cross-Boundary? | Ext. Dependency Risk? |
+   |---------|-------|--------------|-----------------|----------------------|
+   | TASK-001 | [Title] | None | No | No |
+   | TASK-002 | [Title] | TASK-001 | No | Yes — ADR-038 |
+   | TASK-003 | [Title] | TASK-001 | **YES** — Core Engine | No |
+   | ... | ... | ... | ... | ... |
 
    - If there are circular dependencies, high coupling, or unclear ordering, use AskUserQuestion to confirm a fix
+   - **If cross-boundary tasks exist without justification**: warn and ask for confirmation
    - Otherwise proceed directly and include the dependency table in the generated summary
 
 5. **Identify Test Requirements for Each Task**:
@@ -812,6 +883,23 @@ Provide a comprehensive summary that will inform task generation.
         - Python: `user_service.py` → `test_user_service.py`
 
     - **Link Tests to Acceptance Criteria**: Ensure that for each functional acceptance criterion, there is at least one test scenario that verifies it. This step is critical for guaranteeing traceability.
+
+    **5.1 TEST INSTRUCTIONS FIDELITY CHECK (prevents Self-Referential Test Drift)**:
+    - After generating test instructions, validate each test scenario against the functional specification:
+      - Ask: "Is this behavior explicitly mentioned in the spec's acceptance criteria or business rules?"
+      - **If YES**: Keep the test scenario
+      - **If NO — the scenario is a 'best practice' or 'common edge case'**: 
+        - Remove it from the task's test instructions
+        - Instead, add it to the e2e task (TASK-N-1) as a "Supplemental Verification" — a nice-to-have check, not a blocking requirement
+    - **Banned test scenarios** (unless explicitly in the spec):
+      - Network errors for local filesystem operations (e.g., git worktree)
+      - Mocking requirements for external tools unless the spec requires testability
+      - Performance tests unless the spec defines performance criteria
+      - Concurrency/race condition tests unless the spec mentions concurrent access
+    - **Example from spec 025**: 
+      - "Network error during branch creation" → REMOVE (git worktree is local filesystem)
+      - "Tests use mocking for git commands" → REMOVE (not a spec requirement)
+      - "Git is not available on system" → KEEP only if spec explicitly mentions it (AC-3 in 025 does)
 
 6. Present task structure to the user only if major restructuring, optional tasks, or scope gaps were detected. Otherwise generate the files directly and summarize the resulting plan.
 
@@ -887,16 +975,32 @@ spec: [resolved spec file path]
 lang: [java|spring|typescript|nestjs|react|python|general]
 status: pending
 dependencies: [TASK-YYY if applicable]
+imp-requirements: [REQ-IDs of [IMP] criteria this task covers]
 ---
 
 # TASK-XXX: [Task Title]
 
-**Functional Description**: [Functional description of what this task covers]
+**Functional Description**: [Functional description of what this task covers — must map to one or more `[IMP]` criteria]
+
+**Maps to Specification**: [AC IDs this task implements, e.g., AC-1, AC-3]
+
+## ⚠️ Cross-Boundary Warning (if applicable)
+<!-- Remove this section if not cross-boundary -->
+- **Primary Context**: [feature's bounded context]
+- **This Task Modifies**: [file] in [different bounded context]
+- **Risk**: HIGH / MEDIUM / LOW
+- **Justification**: [why this cross-boundary modification is necessary]
+
+## ⚠️ External Dependency Risk (if applicable)
+<!-- Remove this section if no external dependency -->
+- **Depends on**: [external interface, e.g., ADR-038 BranchCreator]
+- **Status**: Verified / Unverified / At Risk
+- **Mitigation**: [what to do if the interface doesn't exist or differs]
 
 ## Acceptance Criteria
 
-- [ ] [Functional criterion 1]
-- [ ] [Functional criterion 2]
+- [ ] [Functional criterion 1 — derived ONLY from [IMP] spec criteria, NOT from data-model.md]
+- [ ] [Functional criterion 2 — must be traceable to a specific AC-ID]
 - [ ] [Functional criterion 3 if needed]
 
 ## Definition of Ready (DoR)
@@ -1042,31 +1146,46 @@ Each task has its own detailed file with technical context:
    
    ## Coverage Summary
    
-   - **Requirements**: N total
-   - **Covered by Tasks**: N/N (100%)
+   - **Requirements**: N total ([I] Implementable / [S] Side-Effect / [E] External)
+   - **Covered by Tasks**: N/N (100%) — Note: Only [I] criteria have implementation tasks
    - **With Tests**: N/N (X%)
    - **Implemented**: N/N (X%)
    
+   ## Coverage Type Legend
+   
+   | Type | Meaning | Task Generated? | Verified In |
+   |------|---------|-----------------|-------------|
+   | `[I]` Implementable | Requires new code | YES — dedicated task(s) | Unit + Integration tests |
+   | `[S]` Side-Effect | Natural consequence of [I] | NO — e2e verification only | E2E test task only |
+   | `[E]` External | Verified externally | NO — e2e checkpoint only | E2E test task only |
+   
    ## Matrix
    
-   | REQ ID | Requirement | Task(s) | Test Files | Code Files | Status |
-   |--------|-------------|---------|------------|------------|--------|
-   | REQ-001 | User can search by destination | TASK-001, TASK-003 | - | - | Pending |
-   | REQ-002 | Results paginated | TASK-005 | - | - | Pending |
+   | REQ ID | Type | Requirement | Task(s) | E2E Checkpoint? | Test Files | Code Files | Status |
+   |--------|------|-------------|---------|-----------------|------------|------------|--------|
+   | REQ-001 | [I] | User can search by destination | TASK-001, TASK-003 | — | - | - | Pending |
+   | REQ-002 | [S] | Results appear in UI automatically | — (e2e only) | YES | - | - | Pending |
+   | REQ-003 | [E] | User receives email notification | — (manual) | YES | - | - | Pending |
    ```
 
 3. **Initialize matrix columns**:
    - **REQ ID**: Identifier from Phase 2
+   - **Type**: `[I]`, `[S]`, or `[E]` — copied from the spec's AC taxonomy
    - **Requirement**: Brief description (first 50 chars)
-   - **Task(s)**: Comma-separated TASK-XXX list that cover this requirement
+   - **Task(s)**: 
+     - For `[I]`: Comma-separated TASK-XXX list that cover this requirement
+     - For `[S]`/`[E]`: "— (e2e only)" or "— (manual)"
+   - **E2E Checkpoint?**: `YES` for `[S]`/`[E]`, "—" for `[I]`
    - **Test Files**: Leave empty "-" (will be filled by task-review)
    - **Code Files**: Leave empty "-" (will be filled by task-review)
    - **Status**: "Pending" until implementation, then "Implemented" after task-review
 
 4. **Calculate coverage summary**:
-   - Total requirements count (from REQ-IDs assigned)
-   - Count requirements covered by at least one task (should be 100%)
-   - Report coverage percentage in summary section
+   - Total requirements count (from REQ-IDs assigned), broken down by type
+   - Count `[I]` requirements covered by at least one task (should be 100%)
+   - Count `[S]`/`[E]` requirements with e2e checkpoint (should be 100%)
+   - **Report separate percentages**: "[I] tasks: N/N (100%), [S] e2e: N/N (100%), [E] e2e: N/N (100%)"
+   - **Why separate**: A 100% overall coverage that hides 0% [S]/[E] e2e coverage is misleading. Each type must be tracked independently.
 
 ## Phase 6: Review and Confirmation
 
@@ -1103,6 +1222,15 @@ Each task has its own detailed file with technical context:
       - Data model: `docs/specs/[id]/data-model.md`
       - Contracts: `docs/specs/[id]/contracts/*`
     - **Tasks Generated**: Number of tasks created (breakdown: X implementation, 1 e2e test, 1 cleanup)
+    - **[IMP] Criteria**: N criteria → X implementation tasks (each [IMP] should map to at least one task)
+    - **[SEF] Criteria**: N criteria → verified in e2e task (no standalone tasks)
+    - **[EXT] Criteria**: N criteria → e2e checkpoints (no standalone tasks)
+    - **Quality Gates Passed**:
+      - Spec Fidelity Gate: [PASS / FAIL — retroactive taxonomy applied?]
+      - BC Boundary Check: [N cross-boundary tasks flagged]
+      - Ext Dependency Pre-Flight: [N external dependencies flagged]
+      - File Collision Detection: [N collisions detected and resolved]
+      - Test Fidelity Check: [N invented test scenarios removed]
     - **Dependency Structure**: Brief overview of task dependencies
     - **Spec Size Status**: [If >15 tasks were detected: "WARNING: Spec exceeds 15-task limit. User chose to continue anyway" OR "Aborted: User returned to brainstorm to split specification"]
     - **Output Files**:
@@ -1211,17 +1339,16 @@ id: TASK-001
 title: "User registration endpoint"
 spec: docs/specs/001-user-auth/2026-03-07--user-auth-specs.md
 lang: spring
+status: pending
 dependencies: []
+imp-requirements: [REQ-001, REQ-004]
 ---
 
 # TASK-001: User registration endpoint
 
 **Functional Description**: Implement user registration with email validation
 
-## Acceptance Criteria
-- [ ] Users can register with a valid email and password.
-- [ ] Duplicate email registrations are rejected.
-- [ ] Passwords are persisted only after encoding.
+**Maps to Specification**: AC-1 (User can register with email), AC-4 (Password must be encoded)
 
 ## Definition of Ready (DoR)
 - [ ] No prerequisite tasks are pending.
@@ -1251,22 +1378,22 @@ This section describes **what** to test, not **how** to implement test code.
 
 **1. Mandatory Unit Tests:**
    - `UserService`:
-     - [ ] Verify that the `register(userData)` method calls `UserRepository.save()` only if the email is unique.
-     - [ ] Verify that `EmailAlreadyExistsException` is thrown when the email is already registered.
-     - [ ] Verify that the password is encoded before saving.
+     - [ ] Verify that the `register(userData)` method calls `UserRepository.save()` only if the email is unique. *(AC-1)*
+     - [ ] Verify that `EmailAlreadyExistsException` is thrown when the email is already registered. *(AC-1)*
+     - [ ] Verify that the password is encoded before saving. *(AC-4)*
    - `AuthController`:
-     - [ ] Test email validation with valid, invalid, and missing formats.
-     - [ ] Verify that the controller returns status 201 for successful registration.
+     - [ ] Test email validation with valid, invalid, and missing formats. *(AC-1)*
+     - [ ] Verify that the controller returns status 201 for successful registration. *(AC-1)*
 
 **2. Mandatory Integration Tests:**
    - `Registration Flow`:
-     - [ ] Verify that a POST request to the `/api/v1/users/register` endpoint with valid data saves a new user in the database and returns status 201.
-     - [ ] Verify that a request with duplicate email returns status 409 and does not modify the database.
+     - [ ] Verify that a POST request to the `/api/v1/users/register` endpoint with valid data saves a new user in the database and returns status 201. *(AC-1)*
+     - [ ] Verify that a request with duplicate email returns status 409 and does not modify the database. *(AC-1)*
 
 **3. Edge Cases and Error Conditions to Test:**
-   - [ ] Send malformed email (e.g., without @).
-   - [ ] Send too short password (e.g., less than 8 characters).
-   - [ ] Send malformed JSON payload.
+   - [ ] Send malformed email (e.g., without @). *(AC-1 — validation rule)*
+   - [ ] Send too short password (e.g., less than 8 characters). *(AC-4 — business rule)*
+   - [ ] Send malformed JSON payload. *(AC-1 — input validation)*
 
 **Test Acceptance Criteria**:
    - [ ] All tests described above are implemented and pass.
@@ -1281,6 +1408,8 @@ This section describes **what** to test, not **how** to implement test code.
 **Implementation Command**:
 /developer-kit-specs:specs.task-implementation --lang=spring --task="docs/specs/001-user-auth/tasks/TASK-001.md"
 ```
+
+**Note**: Each test scenario is annotated with `(AC-N)` to show which acceptance criterion it verifies. This prevents Self-Referential Test Drift by making it explicit when a test scenario is NOT traceable to the spec.
 
 ### Example 2: E-commerce Checkout (TypeScript)
 
@@ -1340,8 +1469,16 @@ Throughout the process, maintain a todo list like:
 [ ] Phase 2: Requirement Extraction
 [ ] Phase 3: Codebase Analysis
 [ ] Phase 4: Technical Task Decomposition (including e2e and cleanup tasks)
+  - [ ] Step 4.0: Spec Fidelity Gate (verify [IMP]/[SEF]/[EXT] taxonomy)
+  - [ ] Step 4.1: Filter [IMP] criteria only for task generation
+  - [ ] Step 4.2: Bounded Context Boundary Check
+  - [ ] Step 4.3: External Dependency Pre-Flight
+  - [ ] Step 4.4: File Collision Detection
+  - [ ] Step 4.5: Test Instructions Fidelity Check
+  - [ ] Step 4.6: Dependency validation with cross-boundary + ext-dep columns
 [ ] Phase 5: Task List Generation
-[ ] Phase 5.5: Spec Size Check (reject if >15 tasks and recommend brainstorm)
+[ ] Phase 5.5: Traceability Matrix Generation (with [I]/[S]/[E] type classification)
+[ ] Phase 5.6: Spec Size Check (reject if >15 tasks and recommend brainstorm)
 [ ] Phase 6: Review and Confirmation
 [ ] Phase 7: Summary
 ```
@@ -1349,11 +1486,19 @@ Throughout the process, maintain a todo list like:
 Update the status as you progress through each phase.
 
 **CRITICAL**: Phase 4 MUST generate:
-1. Implementation tasks (based on requirements)
-2. One e2e test task (depends on all implementation tasks)
-3. One cleanup task (depends on e2e test task, uses specs-code-cleanup skill)
+1. Implementation tasks (based ONLY on `[IMP]` requirements)
+2. E2E verification points for `[SEF]` and `[EXT]` criteria (included in the e2e task)
+3. One e2e test task (depends on all implementation tasks, verifies all `[IMP]`/`[SEF]`/`[EXT]` criteria)
+4. One cleanup task (depends on e2e test task, uses specs-code-cleanup skill)
 
-**Phase 5.5 (Spec Size Check)**: If >15 implementation tasks detected:
+**Phase 4 Quality Gates** (MUST pass before generating files):
+- Spec Fidelity Gate: Spec has `[IMP]`/`[SEF]`/`[EXT]` taxonomy
+- BC Boundary Check: All cross-boundary tasks are flagged with justification
+- Ext Dependency Pre-Flight: All external dependencies are flagged with risk level
+- File Collision Detection: No two tasks create/modify the same file without merging
+- Test Fidelity Check: No test scenario invented that isn't in the spec
+
+**Phase 5.6 (Spec Size Check)**: If >15 implementation tasks detected:
 1. STOP task generation immediately
 2. Present warning message explaining the spec is too large
 3. Recommend returning to /developer-kit-specs:specs.brainstorm to split the idea into 2+ specifications

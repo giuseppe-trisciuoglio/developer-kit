@@ -25,7 +25,7 @@ brainstorm → spec-to-tasks → task-tdd (RED) → task-implementation (GREEN) 
 
 ## What This Command Does
 
-1. **Read Task Specification**: Parse task file to extract requirements, acceptance criteria, and technical context
+1. **Read Task Specification**: Parse task file to extract requirements, acceptance criteria, and technical context — **FILTER: only [IMP] criteria generate unit/integration tests**
 2. **Generate Test Skeleton**: Create appropriate test file structure for the specified language/framework
 3. **Write Failing Tests**: Generate test cases based on task acceptance criteria that will fail
 4. **Verify RED Phase**: Execute tests to confirm they fail as expected (RED phase confirmation)
@@ -244,7 +244,13 @@ Both workflows are valid—the TDD command is **optional** and teams can choose 
 
 Generated tests follow these principles:
 
-1. **Specification-Derived**: Tests are based on task acceptance criteria, not implementation details
+1. **Specification-Derived**: Tests are based on task `[IMP]` acceptance criteria, not implementation details
+   - Read the task's `ac-mapping` frontmatter field to know which AC-IDs this task covers
+   - For each AC-ID in `ac-mapping`, check its taxonomy in the spec: `[IMP]`, `[SEF]`, or `[EXT]`
+   - **Generate unit/integration tests ONLY for `[IMP]` criteria**
+   - **`[SEF]` criteria**: Add a note in the test file — `// [SEF] AC-N: verified in e2e test (natural side effect)`
+   - **`[EXT]` criteria**: Add a note — `// [EXT] AC-N: verified externally, no automated test needed`
+   - **If the task has NO `ac-mapping`**: generate tests for ALL acceptance criteria (backward compatibility)
 2. **Failing by Design**: Tests will fail because implementation doesn't exist yet (RED phase)
 3. **Language-Appropriate**: Test structure matches framework conventions for the specified language
 4. **Readable**: Test names and assertions clearly express requirements

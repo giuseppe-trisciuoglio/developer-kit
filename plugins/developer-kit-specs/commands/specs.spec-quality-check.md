@@ -203,6 +203,9 @@ For each category, mark the status: **Clear**, **Partial**, or **Missing**
 - [ ] Testable acceptance criteria
 - [ ] Measurable Definition of Done
 - [ ] Requirements → acceptance traceability
+- [ ] **Acceptance criteria tagged with [IMP]/[SEF]/[EXT]**
+- [ ] **At least 60% of AC are [IMP]**
+- [ ] **Bounded Context Impact Statement present (if feature crosses contexts)**
 
 #### Placeholders and TODOs
 - [ ] Resolved TODO markers
@@ -231,7 +234,8 @@ For each category, mark the status: **Clear**, **Partial**, or **Missing**
 **Actions**:
 
 1. For each category with Partial or Missing status, generate a potential question
-2. Apply constraints:
+2. **Priority boost**: If "Acceptance criteria tagged" is Missing → this is the FIRST question (taxonomy is foundational)
+3. Apply constraints:
    - **Maximum 5 questions total**
    - Each question must be answerable with:
      - **Multi-choice** (2-5 mutually exclusive options), OR
@@ -313,6 +317,9 @@ For each category, mark the status: **Clear**, **Partial**, or **Missing**
 | Placeholder/TODO | Resolve or quantify |
 | Architecture misalignment | Flag for `docs/specs/architecture.md` update or ADR |
 | Undefined domain term | Add term to `docs/specs/ontology.md` glossary |
+| Missing AC taxonomy | Apply [IMP]/[SEF]/[EXT] tags to all acceptance criteria |
+| Missing Bounded Context Impact | Add Section 6: Bounded Context Impact Statement |
+| < 60% [IMP] criteria | Return to brainstorming for more prescriptive criteria |
 
 **Integration rules**:
 - Preserve existing formatting
@@ -359,6 +366,8 @@ For each category, mark the status: **Clear**, **Partial**, or **Missing**
    | Edge Cases Coverage | Resolved/Clear/Deferred/Outstanding | ... |
    | Architecture Alignment | Resolved/Clear/Deferred/Outstanding/N/A | ... |
    | Ontology Consistency | Resolved/Clear/Deferred/Outstanding/N/A | ... |
+   | **AC Taxonomy ([IMP]/[SEF]/[EXT])** | Resolved/Clear/Deferred/Outstanding | ... |
+   | **Bounded Context Impact** | Resolved/Clear/Deferred/Outstanding/N/A | ... |
 
 3. **Status definitions**:
    - **Resolved**: Was Partial/Missing, has been addressed
