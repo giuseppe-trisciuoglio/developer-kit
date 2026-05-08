@@ -1,29 +1,7 @@
 {
-  "description": "Developer Kit Specs hooks: Drift Guard for spec fidelity, Task Auto-Status for automatic frontmatter management, and Task KPI Analyzer for quality metrics; stop hooks temporarily disabled",
+  "description": "Developer Kit Specs hooks: Task lifecycle automation (auto-status, frontmatter validation)",
   "hooks": {
-    "Stop": [],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/drift-init.py",
-            "statusMessage": "Initializing Drift Guard tracking..."
-          }
-        ]
-      }
-    ],
     "PostToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/drift-monitor.py",
-            "statusMessage": "Monitoring for unplanned file changes..."
-          }
-        ]
-      },
       {
         "matcher": "Write|Edit",
         "pattern": "TASK-\\d+\\.md$",
@@ -35,19 +13,8 @@
           },
           {
             "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/task-kpi-analyzer.py",
-            "statusMessage": "Analyzing task quality KPIs..."
-          }
-        ]
-      }
-    ],
-    "TaskCompleted": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/drift-report.py",
-            "statusMessage": "Generating Drift Guard fidelity report..."
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/task-validator.py",
+            "statusMessage": "Validating task frontmatter..."
           }
         ]
       }

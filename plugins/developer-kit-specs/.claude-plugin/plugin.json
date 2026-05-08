@@ -26,19 +26,14 @@
     "./commands/specs.spec-sync-with-code.md",
     "./commands/specs.spec-sync-context.md",
     "./commands/specs.quick-spec.md",
-    "./commands/specs.spec-quality-check.md",
-    "./commands/specs.task-tdd.md"
+    "./commands/specs.spec-quality-check.md"
   ],
-  "agents": [
-    "./agents/evaluator-agent.md",
-    "./agents/session-tracking-agent.md"
-  ],
+  "agents": [],
   "skills": [
     "./skills/constitution",
     "./skills/create-pr-from-spec",
     "./skills/knowledge-graph",
     "./skills/ralph-loop",
-    "./skills/specs-code-cleanup",
-    "./skills/task-quality-kpi"
+    "./skills/specs-code-cleanup"
   ]
 }

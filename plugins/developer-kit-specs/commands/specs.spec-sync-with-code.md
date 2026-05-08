@@ -1,5 +1,5 @@
 ---
-description: "Synchronizes functional specification with current implementation state. Use this command after implementing tasks or when spec drift is detected. Detects deviations between spec and code, proposes specification updates based on decision-log and completed tasks. Closes the SDD triangle (Spec <-> Test <-> Code)."
+description: "Synchronizes functional specification with current implementation state. Use this command after implementing tasks or when spec drift is detected. Detects deviations between spec and code, proposes specification updates based on decision-log and completed tasks. Closes the SDD loop (Spec <-> Code)."
 argument-hint: "[ --spec=\"docs/specs/XXX-feature\" ] [ --after-task=\"TASK-XXX\" ]"
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash, AskUserQuestion, TodoWrite
 model: inherit
@@ -11,9 +11,8 @@ Synchronizes the functional specification with the current implementation state,
 
 ## Overview
 
-This command closes the SDD triangle by keeping synchronized:
+This command closes the SDD loop by keeping synchronized:
 - **Spec** → The functional specification (WHAT)
-- **Test** → Tasks and acceptance criteria (verification)
 - **Code** → The actual implementation (HOW)
 
 ### Problem It Solves
@@ -21,7 +20,7 @@ This command closes the SDD triangle by keeping synchronized:
 The current workflow is unidirectional: Spec → Tasks → Code. Decisions made during implementation don't flow back to the specification, leading to:
 - Specifications that are inaccurate relative to the implemented code
 - Decisions lost with the conversation
-- No explicit traceability: Requirement → Task → Test → Code
+- No explicit traceability: Requirement → Task → Code
 
 ### Workflow Position
 
@@ -296,200 +295,12 @@ For each deviation type, create task as follows:
    - Identify tasks that need updates
    - Flag tasks with obsolete references
    - **Verify taxonomy compliance**: Ensure no task claims to implement `[SEF]` or `[EXT]` criteria as `[IMP]`
-     - If a task's `imp-requirements` includes `[SEF]`/`[EXT]` ACs: flag as "Task Over-Specification — should be e2e only"
 
-2. **Report validation results**:
+2. **Generate final report**:
    ```markdown
-   ## Sync Verification
-
-   ### Tasks Still Valid
-   - TASK-001: User registration ✅
-   - TASK-002: Login functionality ✅
-
-   ### Tasks Needing Update
-   - TASK-003: References removed "proximity search" ❌
+   ## Spec Sync Complete
+   - Specification updated: [path]
+   - Revision history added
+   - Decision log references maintained
+   - N new tasks created (if applicable)
    ```
-
-3. **If tasks need updates**:
-   - Ask via AskUserQuestion:
-     - "Update affected tasks now?" / "Review manually later"
-
----
-
-## Phase 6: Summary
-
-**Goal**: Document sync outcome
-
-**Actions**:
-
-1. Mark all todos complete
-2. Summarize:
-   - **Spec Updated**: Yes/No (changes applied)
-   - **Deviations Detected**: N total (X added, Y modified, Z dropped)
-   - **Tasks Created**: N new tasks created (if approved)
-   - **Decisions Referenced**: N DEC entries analyzed
-   - **Revision History**: Added to spec
-   - **Backup Created**: Path to backup file
-   - **Next Step**: Continue with remaining tasks or implement newly created tasks
-
----
-
-## Integration with Workflow
-
-This command integrates with the SDD workflow:
-
-```
-/developer-kit-specs:specs.brainstorm
-    ↓
-[Creates: docs/specs/[id]/YYYY-MM-DD--feature-name.md]
-    ↓
-/developer-kit-specs:specs.spec-to-tasks --lang=[language] docs/specs/[id]/
-    ↓
-[Creates: docs/specs/[id]/tasks/TASK-XXX.md]
-    ↓
-/developer-kit-specs:specs.task-implementation --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
-    ↓
-[Implements task, may deviate from spec]
-    ↓
-T-6.6: Spec Deviation Check detects deviation
-    ↓
-/developer-kit-specs:specs.spec-sync-with-code docs/specs/[id]/  ← This command
-    ↓
-[Spec updated with deviations from decision-log.md]
-```
-
-### Automatic Triggers
-
-The spec-sync command can be automatically invoked:
-
-1. **From task-implementation T-6.6**: When spec deviation is detected
-2. **From spec-quality**: When drift is detected during quality check
-3. **From task-review**: When review reveals spec-level issues
-
-### Automatic Task Creation
-
-When deviations are detected, the command can now automatically create missing tasks:
-
-```
-/developer-kit-specs:specs.spec-sync-with-code docs/specs/[id]/
-    ↓
-[Detects: Scope Expansions, Requirement Refinements, Scope Reductions]
-    ↓
-[User approves: "Approve all updates"]
-    ↓
-Phase 3.5: Automatic Task Creation
-    ↓
-[Creates: TASK-XXX.md for each deviation requiring implementation]
-    ↓
-Phase 4: Apply Updates to Spec
-```
-
-### Manual Triggers
-
-Run spec-sync manually when:
-- After completing several tasks to bring spec up to date
-- Before starting a new feature phase
-- When decision-log.md has many entries not reflected in spec
-- After a normal chat session that used `docs/specs/[id]/` as implementation context and clarified, narrowed, or expanded what should be built
-- When recommendations made during the session changed task notes, acceptance criteria, decisions, or any other spec artifact even if `/developer-kit-specs:specs.task-implementation` was not used
-
----
-
-## Examples
-
-### Example 1: Sync After Implementation Drift
-
-```bash
-# Task T-003 added pagination not in original spec
-/developer-kit-specs:specs.spec-sync-with-code docs/specs/001-hotel-search/ --after-task=TASK-003
-```
-
-Output:
-```
-Analyzing spec: docs/specs/001-hotel-search/
-Reading decision-log.md... Found 3 decisions
-Analyzing completed tasks... TASK-001 ✅, TASK-002 ✅, TASK-003 ✅
-
-Deviations Detected:
-- Scope Expansion: Pagination added (DEC-003)
-- Requirement Refinement: Search timeout set to 5s (DEC-004)
-
-Proposed Updates:
-+ Add "Pagination" section to Functional Requirements
-+ Update "Search Performance" with timeout clarification
-
-Task Creation Analysis:
-- Scope Expansion "Pagination" → Requires new task
-- Requirement Refinement "Search timeout" → No new task needed
-
-Options:
-- "Approve all updates" (recommended) - Apply spec changes AND create missing tasks
-- "Approve spec only" - Apply spec changes, skip task creation
-- "Review selectively"
-- "Skip for now"
-```
-
-### Example 2: Full Spec Sync
-
-```bash
-# Sync entire spec after multiple tasks completed
-/developer-kit-specs:specs.spec-sync-with-code docs/specs/001-user-auth/
-```
-
-### Example 3: Auto-Detect Spec Folder
-
-```bash
-# Run from within spec directory
-cd docs/specs/001-hotel-search-aggregation/
-/developer-kit-specs:specs.spec-sync-with-code
-```
-
----
-
-## Todo Management
-
-Maintain todo list:
-
-```
-[ ] Phase 1: Discovery
-[ ] Phase 2: Deviation Detection
-[ ] Phase 3: Spec Update Proposal
-[ ] Phase 3.5: Automatic Task Creation (conditional)
-[ ] Phase 4: Apply Updates
-[ ] Phase 5: Sync Verification
-[ ] Phase 6: Summary
-```
-
----
-
-## Best Practices
-
-### When to Run Spec Sync
-
-- ✅ After task completion when deviation detected
-- ✅ Before starting new implementation phase
-- ✅ When decision-log.md has significant entries
-- ✅ Before releasing feature documentation
-
-### Spec Sync vs Spec Review
-
-| Command | Purpose | When to Use |
-|---------|---------|-------------|
-| `spec-review` | Quality check for vague terms, completeness | Before generating tasks |
-| `spec-sync` | Update spec to match implemented reality | After implementation changes |
-
-### Revision History Best Practices
-
-- **Always reference decision IDs**: Links decisions to spec changes
-- **Use ISO dates**: YYYY-MM-DD format for consistency
-- **Categorize changes**: Helps understand type of evolution
-- **Keep backup**: Original spec preserved in `.backup` file
-
----
-
-## Notes
-
-- This command maintains the "living specification" principle
-- Decision-log.md is the single source of truth for WHY changes were made
-- The spec should always reflect what the system DOES, not what we thought it would do
-- Regular spec-syncs prevent spec-documentation drift over time

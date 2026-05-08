@@ -125,7 +125,7 @@ incrementally, generate professional documentation, review the document, and rec
      - CLI flags and command structures proposed
      - Integration patterns with existing systems
      - Error handling and edge-case strategies
-     - Directory structures and naming conventions
+     - Directory structures and documentation conventions
    - Create a `constraints` list in memory with the extracted decisions
    - **Do NOT re-evaluate these decisions** — they are the architectural foundation. The functional specification must work within them.
    - If a decision in the ADR contradicts project conventions (e.g., architecture.md, ontology.md), flag it as a conflict, not as a candidate for change
@@ -225,733 +225,93 @@ incrementally, generate professional documentation, review the document, and rec
    - 5+ integration points
    - Complex data model (9+ entities)
    - Multiple independent user flows
-   - Examples: "Complete e-commerce platform", "User management with auth, profiles, preferences, notifications, and analytics"
+   - Examples: "Full E-commerce system", "Multi-provider travel aggregator", "Complete CRM system"
 
-3. **If Large Scope detected**:
-
-   - STOP and inform the user with this message:
-
-   ```
-   Scope Assessment: Large
-
-   Your idea covers multiple functional domains and would likely generate more than 15 implementation tasks.
-   This is too large for a single specification and implementation cycle.
-
-   Recommended approach: Create 2 or more focused specifications, each with clear scope.
-
-   Benefits of splitting:
-   - Each specification has a clear, testable functional boundary
-   - Implementation cycles are manageable and focused
-   - Easier to prioritize and deliver incrementally
-   - Better traceability from requirements to code
-   ```
-
-   - **Identify natural split points** in the idea:
-     - Look for bounded contexts (e.g., "authentication" vs "user profiles" vs "notifications")
-     - Identify core vs extended features (must-have vs nice-to-have)
-     - Find independent functional domains that can be implemented separately
-     - Consider phased delivery (Phase 1, Phase 2, etc.)
-
-   - **Use AskUserQuestion** to present split options:
-
-   ```
-   I recommend splitting this idea into [N] focused specifications:
-
-   Option 1: Split by Functional Domain
-   - Spec A: [domain name] - [brief description, core functionality]
-   - Spec B: [domain name] - [brief description, core functionality]
-   - Spec C: [domain name] - [brief description, if applicable]
-
-   Option 2: Split by Priority/Phase
-   - Spec A: Core functionality (must-have for initial release) - [list key features]
-   - Spec B: Extended features (phase 2) - [list key features]
-
-   How would you like to proceed?
-   ```
-
-   - Options via AskUserQuestion:
-     - "Split by functional domain" (create Spec A first)
-     - "Split by priority/phase" (create Core Spec first)
-     - "Let me reconsider the scope" (user refines idea)
-     - "Continue with single specification anyway" (not recommended - proceed at user risk)
-
-   - **If user chooses to split**:
-     - Focus brainstorming ONLY on the first specification (Spec A / Core)
-     - Clearly state: "This brainstorming session is for [Spec A name] only"
-     - After completing this spec, recommend running brainstorming again for Spec B
-     - Log in decision-log.md: "Scope split into [N] specifications per user choice"
-
-   - **If user chooses "continue anyway"**:
-     - Proceed with single specification
-     - Log warning in decision-log.md: "User chose to continue with large scope despite split recommendation"
-     - Add note: "This specification may exceed 15-task limit and could be rejected by spec-to-tasks command"
-
-4. **If Small or Medium Scope**: Proceed to Phase 2 without interruption
+3. **If scope is classified as LARGE**:
+   - **Inform the user**: "This idea has a very large scope. To ensure high-quality implementation and maintainable code, I recommend splitting it into smaller, focused specifications."
+   - **Propose a split strategy**: Suggest 2-3 smaller specifications that cover the original idea incrementally.
+     - Example split:
+       - Spec 1: Core domain and data model
+       - Spec 2: Primary user flows and API
+       - Spec 3: Advanced features and integrations
+   - **Use AskUserQuestion** to offer options:
+     - Options:
+       - "Split the idea into the suggested specifications" (recommended)
+       - "Focus only on one part of the idea" (ask which one)
+       - "Continue with a single large specification" (not recommended - warn about task count limit)
+   - If user chooses to split: Focus the current brainstorming session on the FIRST part of the split.
+   - If user chooses to focus on one part: Focus the current session on that part.
+   - If user chooses to continue: Proceed with a warning that `spec-to-tasks` will reject the spec if it exceeds 15 tasks.
 
 ---
 
 ## Phase 2: Idea Refinement
 
-**Goal**: Deeply understand the idea through structured dialogue
-
-Run this phase only if the initial request still has meaningful ambiguity after Phase 1.
+**Goal**: Clarify the requirements and constraints through a dialogue with the developer
 
 **Actions**:
 
-1. Ask up to 3 tightly related questions to refine the idea
-2. Prefer a single AskUserQuestion checkpoint with multiple choice options when possible
-3. Focus on understanding:
-    - **Purpose**: What is this trying to achieve?
-    - **Constraints**: Are there technical, time, or resource constraints?
-    - **Success Criteria**: How will we know if this is successful?
-    - **Scope**: What is in scope and what is explicitly out of scope?
-    - **Users**: Who will use this and how?
-
-**Example structured questions**:
-
-- "What is the primary success metric for this feature?"
-- "Which constraint is most important: development time, performance, or maintainability?"
-- "Who are the primary users of this feature?"
-
-4. If the idea becomes clear, summarize assumptions and proceed to Phase 3
-5. If ambiguity remains after one checkpoint, ask one final focused follow-up and then proceed
+1. Ask up to 3 targeted questions to refine the idea:
+    - Focus on ambiguities or missing information
+    - Ask about edge cases or specific behaviors
+    - Ask about integration with existing features
+2. Incorporate any extracted constraints from Phase 0 into your questions
+3. If the user provides a lot of information, summarize it to ensure alignment
+4. If the user changes the idea significantly, restart the refinement phase
 
 ---
 
-## Phase 3: Functional Approach Exploration
+## Phase 5: Specification Generation
 
-**Goal**: Present 2-3 different functional approaches with trade-offs (WHAT, not HOW)
+**Goal**: Generate a comprehensive functional specification document
 
 **Actions**:
 
-1. Based on the refined idea, develop 2-3 distinct approaches focusing on BEHAVIOR:
-    - **Approach A**: Simple/MVP (fastest to implement, may lack some features)
-    - **Approach B**: Balanced (good feature set, reasonable complexity) - **typically your recommendation**
-    - **Approach C**: Comprehensive (full-featured, more complex)
-
-2. For each approach, describe ONLY functional aspects:
-    - User behaviors supported
-    - Business rules and constraints
-    - Data requirements (what, not how)
-    - Integration points (capabilities needed, not technical implementation)
-    - Pros (benefits for users/business)
-    - Cons (limitations, complexity for users)
-
-3. **CRITICAL**: Do NOT mention any technical details:
-    - NO frameworks (Spring, NestJS, React, etc.)
-    - NO patterns (Repository, Service, Controller, etc.)
-    - NO libraries or dependencies
-    - NO code or pseudo-code
-
-4. If there are materially different scope options, use AskUserQuestion to present them:
-    - Lead with your recommended option
-    - Explain your reasoning
-5. If one approach is clearly dominant, select it, record the rationale, and proceed without an extra gate
-
-6. **After approach selection, log the decision**:
-    - Create an in-memory note of DEC-001: Approach Selection
-    - Record: date, approach chosen, alternatives presented, rationale
-    - This will be written to `decision-log.md` in Phase 6
+1. Define the specification ID and folder: `docs/specs/[id]/`
+2. Generate the main specification file: `docs/specs/[id]/YYYY-MM-DD--feature-name.md`
+3. Use a professional, academic style (refer to specialist agent if available)
+4. Include the following sections:
+    - **Overview**: High-level description and goals
+    - **User Stories**: Functional requirements from the user's perspective
+    - **Functional Requirements**: Detailed description of what the system should do
+    - **Acceptance Criteria**: Testable conditions for each requirement
+    - **Domain Model**: High-level description of entities and relationships
+    - **User Interaction Flow**: Description of how users interact with the feature
+    - **Non-Functional Requirements**: Performance, security, and scalability constraints
+    - **Edge Cases & Error Handling**: How the system handles unusual situations
+5. **CRITICAL: Save the original user context**:
+   - Save the initial user request and key brainstorming dialogue to `docs/specs/[id]/user-request.md`
+   - Save any significant notes, alternative approaches considered, or research findings to `docs/specs/[id]/brainstorming-notes.md`
+   - These files provide essential context for subsequent commands like `spec-to-tasks`
+6. Ensure the specification is pure WHAT and does not mention HOW (frameworks, patterns, code)
+7. Incorporate all extracted constraints from Phase 0 and decisions from Phase 3
 
 ---
 
-## Phase 4: Contextual Codebase Exploration (Optional)
+## Phase 6: Specification Review
 
-**Goal**: Understand existing codebase for context only — do NOT influence the specification with technical decisions
-
-**NOTE**: This phase is OPTIONAL. Skip if not needed. The functional specification should be technology-agnostic.
+**Goal**: Ensure the generated specification is clear, complete, and consistent
 
 **Actions**:
 
-1. Only if the feature needs to integrate with existing systems, use the Task tool to explore:
-
-```
-Task(
-  description: "Explore codebase for integration context",
-  prompt: "Explore the codebase to understand what existing systems, APIs, or data structures the new feature must integrate with.
-
-    Focus on:
-    1. Existing APIs or interfaces the feature must use
-    2. Shared data structures or models
-    3. Existing business rules that apply
-
-    Return:
-    - List of integration requirements (capabilities needed, not implementation)
-    - Do NOT suggest frameworks, patterns, or technical solutions",
-  subagent_type: "developer-kit:general-code-explorer"
-)
-```
-
-2. Incorporate findings as integration requirements in the specification
-3. Do NOT let this influence technical decisions — keep the specification functional
+1. Read the entire generated specification
+2. Check for:
+    - Ambiguities or vague language
+    - Missing requirements or edge cases
+    - Consistency with project conventions
+    - Adherence to the WHAT vs. HOW principle
+3. If issues are found, update the specification accordingly
+4. If the user provides feedback, incorporate it into the document
 
 ---
 
-## Phase 5: Functional Specification Presentation
+## Phase 7: Next Steps Recommendation
 
-**Goal**: Present the functional specification in validated sections
-
-**DO NOT START WITHOUT APPROACH APPROVAL**
+**Goal**: Guide the developer to the next phase of the workflow
 
 **Actions**:
 
-1. Once the approach is selected, present the functional specification in sections of 200-300 words each
-2. Incorporate any integration requirements from Phase 4
-3. Cover the following areas in separate sections:
-
-   **Section 1: Business Context**
-    - What problem does this feature solve?
-    - Who are the users and what are their goals?
-    - How does this fit into the overall system purpose?
-
-   **Section 2: Functional Requirements**
-    - User stories and use cases
-    - Business rules and constraints
-    - Data requirements (what data, not how to store)
-    - External system capabilities needed
-
-   **Section 3: User Interactions**
-    - User flows and journeys
-    - Alternative paths and edge cases
-    - Error scenarios and how users are informed
-
-   **Section 4: Acceptance Criteria**
-    - Clear, testable criteria for each user story
-    - Success conditions in natural language
-    - Edge case handling
-    - **MANDATORY: Acceptance Criteria Taxonomy** — Every criterion MUST be classified with one of:
-      - **`[IMP]` Implementable**: Requires new code, configuration, or explicit system behavior. **Only these generate implementation tasks.**
-      - **`[SEF]` Side-Effect**: A natural, automatic consequence of an `[IMP]` criterion being satisfied. These do NOT generate standalone tasks but should be verifiable in e2e tests.
-      - **`[EXT]` External Verification**: Verified by external tools, user observation, or existing system behavior. These do NOT generate tasks but should appear as e2e checkpoints.
-    - **60% Rule**: At least 60% of acceptance criteria should be `[IMP]`. If fewer than 60% are `[IMP]`, the specification is too descriptive and not prescriptive enough — return to Section 2 and refine.
-    - **Why this matters**: `spec-to-tasks` uses `[IMP]` criteria to generate atomic tasks. `[SEF]` and `[EXT]` criteria that are misclassified as `[IMP]` produce "false work" — tasks that verify natural behavior rather than implement functionality.
-
-   **Section 5: Integration Requirements**
-    - What existing systems must integrate with (capabilities, not implementation)
-    - Data exchange requirements (not technical protocols)
-
-   **Section 6: Bounded Context Impact (Optional but Recommended)**
-    - **Primary Context**: The bounded context where the majority of new code will reside (e.g., "Git Worktree Management")
-    - **Secondary Contexts Touched**: Existing bounded contexts where files will be modified (e.g., "Core Engine — task_run.go will be modified")
-    - **Inbound Dependencies**: Services or interfaces this feature requires FROM other contexts (e.g., "ADR-038 BranchCreator from Core Engine")
-    - **Outbound Dependencies**: Services or interfaces this feature provides TO other contexts
-    - **Cross-Boundary Risk**: If this feature modifies files in a context different from its primary, flag as `HIGH RISK` and document the rationale
-    - **Why this matters**: `spec-to-tasks` uses this statement to validate that tasks respect bounded context boundaries. Features that silently cross boundaries produce tightly-coupled tasks that are hard to implement and review in isolation.
-
-4. **CRITICAL**: Throughout all sections, NEVER mention:
-    - Frameworks, libraries, or tools
-    - Technical patterns or architectural styles
-    - Code or pseudo-code
-
-5. Validate only at meaningful checkpoints:
-    - Default: generate all sections, then present one consolidated review
-    - Use AskUserQuestion mid-way only if a section introduces new ambiguity or a major scope decision
-
-6. If no major ambiguity is detected, proceed directly to Phase 6 and collect feedback on the complete draft
-
----
-
-## Phase 6: Functional Specification Generation
-
-**Goal**: Generate professional functional specification document
-
-**Actions**:
-
-1. Compile all validated specification sections
-
-2. Generate unique spec ID:
-    - Count existing folders in `docs/specs/` to determine next sequence number
-    - Create slug from feature name (lowercase, hyphenated)
-    - Format: `NNN-feature-slug` (e.g., `001-hotel-search-aggregation`)
-    - Example: If 5 specs exist, next ID is `006-feature-name`
-
-3. Create spec folder: `docs/specs/[id]/`
-
-4. **CRITICAL: Save the original user request**:
-    - Create a file `user-request.md` in `docs/specs/[id]/` containing:
-        - The original user input/idea description
-        - Any constraints or requirements mentioned
-        - This file will be used by `spec-to-tasks` to verify all requirements are captured
-    - Example content:
-      ```markdown
-      # User Request
- 
-      **Original Input**: [what the user asked for]
- 
-      **Key Requirements Mentioned**:
-      - [requirement 1]
-      - [requirement 2]
- 
-      **Constraints**: [any constraints mentioned]
-      ```
-
-5. Use the Task tool to launch the document-generator-expert subagent:
-
-```
-Task(
-  description: "Generate functional specification",
-  prompt: "Generate a professional functional specification document based on the following validated specification:
-
-    **Feature Title**: [title]
-    **Date**: [current date]
-    **Spec ID**: [id] (e.g., 001-hotel-search-aggregation)
-
-    **Business Context**:
-    - Problem solved: [from Section 1]
-    - Target users: [from Section 1]
-    - System fit: [from Section 1]
-
-    **Functional Requirements**:
-    - User stories: [from Section 2]
-    - Business rules: [from Section 2]
-    - Data requirements: [from Section 2]
-    - External capabilities: [from Section 2]
-
-    **User Interactions**:
-    - User flows: [from Section 3]
-    - Alternative paths: [from Section 3]
-    - Error scenarios: [from Section 3]
-
-    **Acceptance Criteria**:
-    - Testable criteria: [from Section 4 — each MUST be tagged with [IMP], [SEF], or [EXT]]
-    - Success conditions: [from Section 4]
-    - Edge cases: [from Section 4]
-    - **60% Rule Check**: Ensure at least 60% of criteria are [IMP]; if not, flag for refinement
-
-    **Integration Requirements**:
-    - Systems to integrate: [from Section 5]
-    - Data exchange: [from Section 5]
-
-    **Bounded Context Impact** (from Section 6):
-    - Primary context: [bounded context]
-    - Secondary contexts touched: [list or "None"]
-    - Cross-boundary risk: [NONE / LOW / HIGH]
-
-    **Out of Scope**: [list]
-    **Open Questions**: [list]
-
-    Create a comprehensive, well-formatted functional specification and save it to:
-    docs/specs/[id]/YYYY-MM-DD--feature-name.md
-
-    IMPORTANT:
-    - This is a FUNCTIONAL specification, NOT a technical design
-    - Do NOT mention any frameworks, libraries, or tools
-    - Do NOT include code or pseudo-code
-    - Focus on WHAT the system should do, not HOW
-    - Every acceptance criterion MUST include its taxonomy tag: [IMP], [SEF], or [EXT]
-    - Use professional markdown structure
-  subagent_type: "developer-kit:document-generator-expert"
-)
-```
-
-6. Wait for the document generator to complete
-7. Verify the document was created successfully in `docs/specs/[id]/`
-    - If the file was not created or is incomplete:
-        - Check the subagent output for errors
-        - Re-run Phase 6 with additional guidance if needed
-        - Use AskUserQuestion to decide: "Retry generation", "Continue with manual creation", or "Abort"
-
-8. **CRITICAL: Save brainstorming context files for later use by spec-to-tasks**:
-    - If you have conversation context or notes about the feature (from the dialogue with user), save them to the spec
-      folder
-    - Create a file named `brainstorming-notes.md` in `docs/specs/[id]/` with:
-        - Key technical decisions discussed
-        - Architecture patterns mentioned
-        - Any specific technologies or integrations requested
-        - Notes about implementation approach
-    - This file will be read by `devkit.spec-to-tasks` to ensure technical details are NOT lost
-
-8.5. **Create decision-log.md for decision audit trail**:
-
-- Create a file `decision-log.md` in `docs/specs/[id]/` with the following format:
-  ```markdown
-  # Decision Log: [Feature Name]
-  
-  | ID | Date | Task | Decision | Alternatives | Impact | Decided By |
-  |----|------|------|----------|--------------|--------|------------|
-  
-  ## DEC-001: Approach Selection
-  - **Date**: [current date YYYY-MM-DD]
-  - **Task**: Brainstorming
-  - **Phase**: Approach Selection
-  - **Context**: Selection of functional approach for feature specification
-  - **Decision**: [Approach chosen - A/B/C]
-  - **Alternatives Considered**: [Brief description of approaches presented]
-  - **Impact**: Specification structure, scope boundaries, acceptance criteria
-  - **Decided By**: user selection
-  ```
-- This file will track all non-trivial decisions made during implementation
-- Future phases (task-implementation, task-review) will append entries to this file
-
-8.6. **Initialize or enrich the project ontology (`docs/specs/ontology.md`)**:
-
-   Domain terms identified during brainstorming are part of the functional understanding (Ubiquitous Language). This step captures them in a shared, project-level ontology file.
-
-   - **Check if `docs/specs/ontology.md` exists**:
-
-   - **If the file does NOT exist**:
-     1. Collect domain terms that emerged during the brainstorming dialogue (from Phases 2-5)
-     2. Use **AskUserQuestion** to present the identified terms and ask the user to confirm, add, or remove terms:
-        ```
-        During brainstorming, the following domain terms emerged:
-        - [Term 1]: [proposed definition]
-        - [Term 2]: [proposed definition]
-        - ...
-
-        Should I create the project ontology (docs/specs/ontology.md) with these terms?
-        ```
-        - Options:
-          - "Yes, create with these terms" (recommended)
-          - "Yes, but let me adjust the terms first"
-          - "Skip ontology creation for now"
-     3. If the user confirms, create `docs/specs/ontology.md` using this template:
-        ```markdown
-        # Project Ontology — Ubiquitous Language
-
-        **Created**: [current date YYYY-MM-DD]
-        **Last Updated**: [current date YYYY-MM-DD]
-
-        ## Domain Glossary
-
-        | Term | Definition | Bounded Context |
-        |------|-----------|-----------------|
-        | [Term 1] | [Definition] | [Context where this term applies] |
-        | [Term 2] | [Definition] | [Context where this term applies] |
-
-        ## Bounded Contexts
-
-        | Context | Description | Key Terms |
-        |---------|-------------|-----------|
-        | [Context 1] | [Description] | [Terms specific to this context] |
-
-        ## Conceptual Mapping
-
-        [Relationships between key domain entities — to be refined during task generation]
-        ```
-
-   - **If the file ALREADY exists**:
-     1. Read the existing `docs/specs/ontology.md`
-     2. Compare domain terms from the brainstorming session against existing glossary entries
-     3. If NEW terms were identified that are not in the glossary:
-        - Use **AskUserQuestion** to present the new terms and ask if they should be added
-        - If confirmed, append the new terms to the Domain Glossary table
-        - Update the `Last Updated` date
-     4. If no new terms: skip silently
-
-   - **Note**: The ontology is a living document. It will be further refined by `/developer-kit-specs:specs.spec-to-tasks` when technical decisions are made.
-
-9. Update todos
-
----
-
-## Phase 7: Specification Review
-
-**Goal**: Review the generated functional specification for quality and completeness
-
-**IMPORTANT**: The functional specification should be technology-agnostic (WHAT), but technical details discussed during
-brainstorming are preserved separately in `brainstorming-notes.md` for use by `spec-to-tasks`.
-
-**Actions**:
-
-1. Use the Task tool to launch a code-reviewer subagent to review the specification:
-
-```
-Task(
-  description: "Review functional specification quality",
-  prompt: "Review the functional specification at docs/specs/[id]/YYYY-MM-DD--feature-name.md for:
-
-    1. **Completeness**: All required sections are present (Business Context, Functional Requirements, User Interactions, Acceptance Criteria, Integration Requirements, Out of Scope, Open Questions)
-
-    2. **Functional Focus**: Verify the specification is purely functional:
-       - NO mention of frameworks, libraries, or tools
-       - NO technical patterns or architectural styles
-       - NO code or pseudo-code
-       - Focuses on WHAT, not HOW
-
-    3. **Quality**: Content is clear, specific, and actionable
-
-    4. **Testability**: Acceptance criteria are clear and testable
-
-    5. **Acceptance Criteria Taxonomy**: Verify that:
-       - Every acceptance criterion is tagged with `[IMP]`, `[SEF]`, or `[EXT]`
-       - No `[SEF]` or `[EXT]` is disguised as `[IMP]` (e.g., "git worktree list shows worktree" should be `[SEF]`, not `[IMP]`)
-       - At least 60% of criteria are `[IMP]`; if not, flag as "Under-specified — needs more prescriptive criteria"
-
-    6. **Bounded Context Impact**: If Section 6 is present, verify it:
-       - Identifies a clear primary bounded context
-       - Lists all secondary contexts touched
-       - Flags cross-boundary modifications with appropriate risk level
-
-    7. **ADR Consistency** (if the input was a structured document):
-       - Verify that the functional specification does NOT silently contradict the ADR constraints
-       - Check that any override of an ADR decision has a corresponding DEC entry in the decision-log
-       - Flag any configuration defaults, paths, or naming conventions that differ from the ADR without justification
-
-    8. **Formatting**: Proper markdown structure, consistent formatting
-
-    9. **Clarity**: Language is professional, concise, and unambiguous
-
-    Provide:
-    - Overall assessment (Excellent / Good / Needs Revision)
-    - List of any missing sections or content
-    - Specific issues found (if any)
-    - Any technical details that should be removed
-    - **AC Taxonomy issues**: List any ACs misclassified or missing classification
-    - **Bounded Context issues**: Flag any unannotated cross-boundary modifications
-    - Recommendations for improvement (if needed)",
-  subagent_type: "developer-kit:general-code-reviewer"
-)
-```
-
-2. Once the agent returns, synthesize the review findings
-
-3. **Use the AskUserQuestion tool to present the review findings**:
-
-   Present options based on agent assessment:
-    - **Option A**: Document is excellent, proceed to next steps
-    - **Option B**: Minor revisions needed (agent will specify what)
-    - **Option C**: Major revisions needed (regenerate with corrections)
-
-4. If revisions are needed:
-    - For minor revisions: Edit the document directly based on agent feedback
-    - For major revisions: Re-run Phase 6 with updated instructions from agent
-    - Optionally: Re-run Phase 7 with another review if significant changes were made
-
-5. Once approved, mark documentation phase complete
-
----
-
-## Phase 8: Next Steps Recommendation
-
-**Goal**: Recommend the appropriate next command in the workflow
-
-**Actions**:
-
-1. The functional specification is complete. The next step is to convert it to executable tasks:
-
-   **For converting specification to tasks**: Recommend `/developer-kit-specs:specs.spec-to-tasks`
-    - Use when: Converting functional specification to trackable tasks
-    - Arguments: `--lang=[language] docs/specs/[id]/`
-
-2. **Use the AskUserQuestion tool to present the recommendation**:
-
-   Present options:
-    - **Option A**: Run spec-quality-check first, then generate tasks (recommended)
-    - **Option B**: Skip review and go directly to task generation (warning: may have quality issues)
-    - **Option C**: Exit and review the specification manually
-
-3. Include the pre-filled command:
-
-3. Include the pre-filled commands:
-
-```bash
-# Recommended: Run spec-quality-check first, then generate tasks
-/developer-kit-specs:specs.spec-quality-check docs/specs/[id]/
-/developer-kit-specs:specs.spec-to-tasks --lang=[java|spring|typescript|nestjs|react|python|general] docs/specs/[id]/
-
-# Alternative: Skip review and generate tasks directly
-/developer-kit-specs:specs.spec-to-tasks --lang=[java|spring|typescript|nestjs|react|python|general] docs/specs/[id]/
-```   - The functional specification has been saved at `docs/specs/[id]/YYYY-MM-DD--feature-name.md`
-   - The task list will be saved at `docs/specs/[id]/YYYY-MM-DD--feature-name--tasks.md`
-   - Individual tasks will be in `docs/specs/[id]/tasks/TASK-XXX.md`
-
----
-
-## Phase 9: Summary
-
-**Goal**: Document what was accomplished
-
-**Actions**:
-
-1. Mark all todos complete
-2. Summarize:
-    - **Input Mode**: Free-Form Idea / Structured Document (ADR/RFC)
-    - **ADR Constraints Preserved**: [If structured document: list key constraints extracted and whether any were overridden with DEC entries]
-    - **Original Idea**: What was brainstormed
-    - **Scope Assessment**: Small / Medium / Large (and user choice if large)
-    - **Scope Split Decision**: [If applicable: "User chose to split into N specifications - focusing on Spec A: [name]" OR "User chose to continue with single specification despite large scope warning"]
-    - **Approach Selected**: Which approach was chosen and why
-    - **Integration Context**: Key integration requirements (if any)
-    - **Functional Specification Created**: Key aspects of the specification
-    - **Spec ID**: `[id]` (e.g., `001-hotel-search-aggregation`)
-    - **Document Location**: `docs/specs/[id]/YYYY-MM-DD--feature-name.md`
-    - **Specification Review**: Review outcome and any revisions made
-    - **Recommended Next Step**:
-      - If scope was split: "Complete this specification's implementation, then run /developer-kit-specs:specs.brainstorm for Spec B: [name]"
-      - Otherwise: "Generate task list with /developer-kit-specs:specs.spec-to-tasks"
-
----
-
-## Integration with Development Commands
-
-This brainstorming command produces a **functional specification** that feeds into the new modular workflow:
-
-### New Output Flow
-
-```
-
-/developer-kit-specs:specs.brainstorm
-↓
-Phase 4: Optional Codebase Exploration (for integration context only)
-↓
-Phase 5: Functional Specification Presentation (validated incrementally)
-↓
-Phase 6: Documentation (document-generator-expert agent)
-       + Ontology initialization (docs/specs/ontology.md)
-↓
-Phase 7: Specification Review (quality verification)
-↓
-[Creates: docs/specs/[id]/YYYY-MM-DD--feature-name.md]
-[Creates/Updates: docs/specs/ontology.md (domain terms)]
-↓
-[Recommends: devkit.spec-to-tasks]
-↓
-/developer-kit-specs:specs.spec-to-tasks --lang=[language] docs/specs/[id]/
-↓
-[Ensures: docs/specs/architecture.md exists]
-[Refines: docs/specs/ontology.md]
-[Creates: docs/specs/[id]/YYYY-MM-DD--feature-name--tasks.md]
-[Creates: docs/specs/[id]/tasks/TASK-XXX.md]
-↓
-/developer-kit-specs:specs.task-implementation --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
-↓
-[Implements single task]
-
-```
-
-### Specification as Reference
-
-The functional specification created by this command serves as:
-
-1. **Reference during implementation**: The development commands can read the specification for context
-2. **Communication tool**: Can be shared with team members for review
-3. **Documentation**: Becomes part of project's functional specification history
-4. **Task generation input**: Used by `devkit.spec-to-tasks` to create executable tasks
-5. **Organized storage**: All related files (spec, tasks, individual tasks) are grouped in `docs/specs/[id]/`
-
-### Re-entering Brainstorming
-
-If implementation reveals specification issues, you can re-run `/developer-kit-specs:specs.brainstorm`:
-- The previous specification will be preserved in its folder
-- A new specification will be created with the current date
-- You can reference the previous specification during the new brainstorming session
-- **If the original input was an ADR**: Re-running brainstorming MUST re-read the ADR file to ensure constraints are still accurately captured. Do NOT rely on the previous spec for ADR constraints — the ADR is the source of truth.
-
-## Todo Management
-
-Throughout the process, maintain a todo list like:
-
-```
-
-[ ] Phase 0: Input Mode Detection & ADR Discovery (if structured document)
-[ ] Phase 1: Context Discovery
-[ ] Phase 1.5: Complexity Assessment & Scope Validation (split if scope too large)
-[ ] Phase 2: Idea Refinement
-[ ] Phase 3: Functional Approach Exploration
-[ ] Phase 4: Contextual Codebase Exploration (Optional)
-[ ] Phase 5: Functional Specification Presentation
-[ ] Section 1: Business Context
-[ ] Section 2: Functional Requirements
-[ ] Section 3: User Interactions
-[ ] Section 4: Acceptance Criteria (with [IMP]/[SEF]/[EXT] taxonomy)
-[ ] Section 5: Integration Requirements
-[ ] Section 6: Bounded Context Impact Statement
-[ ] Phase 6: Functional Specification Generation
-[ ] Phase 6.1: Ontology Initialization/Enrichment (docs/specs/ontology.md)
-[ ] Phase 7: Specification Review
-[ ] Phase 8: Next Steps Recommendation
-[ ] Phase 9: Summary
-
-```
-
-Update the status as you progress through each phase and section.
-
-**CRITICAL**: Phase 1.5 MUST assess scope size before proceeding:
-- If scope is too large (>15 estimated tasks), guide user to split into multiple specifications
-- Present split options clearly (by domain or by priority)
-- If user chooses to split: focus ONLY on first spec, recommend brainstorming for remaining specs
-- If user chooses to continue anyway: log warning and note potential rejection by spec-to-tasks
-
----
-
-**Note**: This command follows a collaborative, iterative approach with specialist agents to ensure designs are:
-- Based on actual codebase exploration (not assumptions)
-- Well-thought-out and validated incrementally
-- Documented professionally with specialist assistance
-- Reviewed for quality before proceeding
-- Ready for implementation with clear next steps
-
---- 
-
-## Examples
-
-### Example 1: Simple Feature Idea
-
-```bash
-/developer-kit-specs:specs.brainstorm Add user authentication with JWT tokens
-```
-
-### Example 2: Complex Feature
-
-```bash
-/developer-kit-specs:specs.brainstorm Implement real-time notifications using WebSockets
-```
-
-### Example 3: Refactoring
-
-```bash
-/developer-kit-specs:specs.brainstorm Refactor the payment processing module to be more maintainable
-```
-
-### Example 4: Bug Fix Design
-
-```bash
-/developer-kit-specs:specs.brainstorm Design a fix for the race condition in order processing
-```
-
-### Example 5: Performance Improvement
-
-```bash
-/developer-kit-specs:specs.brainstorm Design a caching strategy to reduce API response times
-```
-
-### Example 6: Integration
-
-```bash
-/developer-kit-specs:specs.brainstorm Integrate Stripe payment processing for subscriptions
-```
-
-### Example 7: Full Workflow (after brainstorming)
-
-```bash
-# Step 1: Brainstorm and generate functional specification
-/developer-kit-specs:specs.brainstorm Design a microservices architecture for the reporting module
-
-# Step 2: Convert specification to tasks
-/developer-kit-specs:specs.spec-to-tasks --lang=spring docs/specs/001-reporting-module/
-
-# Step 3: Implement specific tasks
-/developer-kit-specs:specs.task-implementation --lang=spring --task="docs/specs/001-reporting-module/tasks/TASK-001.md"
-/developer-kit-specs:specs.task-implementation --lang=spring --task="docs/specs/001-reporting-module/tasks/TASK-002.md"
-```
-
-### Example 8: ADR-as-Input Mode (Structured Document)
-
-When the input is an existing ADR or RFC, the brainstorming extracts architectural constraints and preserves them:
-
-```bash
-# Step 1: Point to an ADR file — brainstorming will extract constraints automatically
-/developer-kit-specs:specs.brainstorm @docs/adr/039-git-worktree-management.md
-
-# Output will include:
-# - Phase 0: Extracts worktreeBasePath, CLI flags, ADR-038 integration as constraints
-# - Phase 5: Acceptance criteria tagged with [IMP]/[SEF]/[EXT]
-# - Phase 6: decision-log.md includes DEC entries for any ADR overrides
-
-# Step 2: Proceed to spec-to-tasks as normal
-/developer-kit-specs:specs.spec-to-tasks --lang=go docs/specs/025-git-worktree-per-spec/
-```
-
-**Key difference**: The ADR's decisions (e.g., `worktreeBasePath` default, cleanup model) are treated as immutable constraints. Any override requires a DEC entry in `decision-log.md`.
-
-This separates WHAT (functional specification) from HOW (implementation), following the "divide et impera" principle.
+1. Summarize the generated specification
+2. Provide the command to generate tasks: `/developer-kit-specs:specs.spec-to-tasks docs/specs/[id]/`
+3. If the specification is complex, recommend running `/developer-kit-specs:specs.spec-quality-check docs/specs/[id]/` first
+4. Log completion of the brainstorming workflow
