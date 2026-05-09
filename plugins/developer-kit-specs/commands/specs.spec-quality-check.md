@@ -11,12 +11,12 @@ Evaluates the quality of a functional specification by identifying ambiguities, 
 
 ## Overview
 
-This command addresses the **content quality** of specifications, integrating with `/developer-kit-specs:specs.spec-sync-context` which handles technical synchronization:
+This command addresses the **content quality** of specifications, integrating with `/developer-kit-specs:specs.sync` which handles technical synchronization:
 
 | Command | Focus |
 |---------|-------|
 | **/developer-kit-specs:specs.spec-quality-check** (this) | Content quality: completeness, clarity, traceability, coverage |
-| **/developer-kit-specs:specs.spec-sync-context** | Technical synchronization: Knowledge Graph, tasks, codebase |
+| **/developer-kit-specs:specs.sync** | Technical synchronization: Knowledge Graph, tasks, codebase |
 
 ### Workflow Position
 
@@ -500,8 +500,8 @@ The two commands are complementary:
 # spec-quality-check: improve content quality
 /developer-kit-specs:specs.spec-quality-check docs/specs/003-api-gateway/
 
-# spec-sync-context: sync technical context
-/developer-kit-specs:specs.spec-sync-context docs/specs/003-api-gateway/
+# specs.sync: sync technical context
+/developer-kit-specs:specs.sync docs/specs/003-api-gateway/
 
 # spec-to-tasks: generate tasks with high quality context
 /developer-kit-specs:specs.spec-to-tasks --lang=nestjs docs/specs/003-api-gateway/

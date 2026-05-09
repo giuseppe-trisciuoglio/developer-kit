@@ -9,8 +9,8 @@ code. The specification becomes a contract between your idea and the implementat
 gates.
 
 ```
-Idea → Specification → Tasks → Implementation → Review → Cleanup → Done
-       (brainstorm)  (spec-to-tasks)             (task-review)  (code-cleanup)
+Idea → Specification → Tasks → Implementation → Review → Sync → Done
+       (brainstorm)  (spec-to-tasks)             (task-review)  (specs.sync)
 ```
 
 **Why SDD?**
@@ -138,7 +138,7 @@ Each task file contains:
 /developer-kit-specs:specs.task-implementation --lang=spring --task="docs/specs/001-user-auth/tasks/TASK-001.md"
 ```
 
-Claude follows a structured 12-step process:
+Claude follows a structured process:
 
 1. **Validates prerequisites** — Checks git state, task dependencies, contracts
 2. **Implements the code** — Writes production code following your project conventions
@@ -147,8 +147,7 @@ Claude follows a structured 12-step process:
 
 **Hooks fire automatically:**
 
-- `task-auto-status.py` updates the task frontmatter based on checkbox changes
-- `task-kpi-analyzer.py` calculates quality KPIs and saves them to `TASK-001--kpi.json`
+- `task_lifecycle.py` updates the task frontmatter based on checkbox changes and git state.
 
 ### Step 4: Review the Implementation
 
@@ -167,32 +166,16 @@ The review validates 4 dimensions:
 
 **Output:** `TASK-001--review.md` with pass/fail status and detailed findings.
 
-### Step 5: Clean Up and Complete
-
-If the review passes:
-
-```
-/developer-kit-specs:specs-code-cleanup --lang=spring --task="docs/specs/001-user-auth/tasks/TASK-001.md"
-```
-
-This final step:
-
-- Removes debug logs (`System.out.println`, temporary comments)
-- Optimizes imports
-- Runs language-specific formatters (`./mvnw spotless:apply`)
-- Verifies tests still pass
-- Marks the task as `completed`
-
-### Step 6: Sync Specification with Implementation
+### Step 5: Sync Specification with Implementation
 
 After implementing several tasks, sync the spec with reality:
 
 ```
-/developer-kit-specs:specs.spec-sync-with-code docs/specs/001-user-auth/
+/developer-kit-specs:specs.sync docs/specs/001-user-auth/
 ```
 
 This detects deviations (scope expansions, refinements, reductions) and updates the specification to match what was
-actually built.
+actually built, while also updating the Knowledge Graph.
 
 ## What's Next?
 
@@ -200,8 +183,6 @@ actually built.
 - **[Commands Reference](./commands-reference.md)** — Detailed command documentation with examples
 - **[Ralph Loop Guide](./ralph-loop-guide.md)** — Automate task execution across multiple agents (manual and fully
   automated via `agents_loop.py`)
-- **[TDD Workflow](./tdd-workflow.md)** — Test-Driven Development integration
-- **[KPI Evaluation](./kpi-evaluation.md)** — Understanding quality metrics and scoring
 
 ## Quick Reference
 
@@ -213,10 +194,7 @@ actually built.
 | `/developer-kit-specs:specs.quick-spec "fix"`                                 | Create a minimal spec for small changes     |
 | `/developer-kit-specs:specs.spec-to-tasks --lang=spring spec/`                | Generate executable tasks                   |
 | `/developer-kit-specs:specs.task-implementation --lang=spring --task=TASK.md` | Implement a task                            |
-| `/developer-kit-specs:specs.task-tdd --lang=spring --task=TASK.md`            | Generate failing tests first (RED)          |
 | `/developer-kit-specs:specs.task-review --lang=spring TASK.md`                | Review implementation                       |
-| `/developer-kit-specs:specs-code-cleanup --lang=spring --task=TASK.md`        | Final cleanup                               |
-| `/developer-kit-specs:specs.spec-sync-with-code spec/`                        | Sync spec with implementation               |
-| `/developer-kit-specs:specs.spec-sync-context spec/`                          | Sync Knowledge Graph and context            |
+| `/developer-kit-specs:specs.sync spec/`                                       | Sync spec with implementation (full sync)   |
 | `/developer-kit-specs:specs.task-manage --action=list`                        | List and manage tasks                       |
 | `agents_loop.py --spec=spec/ --agent=auto`                                    | Fully automated multi-agent orchestration   |

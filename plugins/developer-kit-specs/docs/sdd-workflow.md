@@ -29,7 +29,7 @@ Every change should update both vertices. The sync commands keep them aligned.
 │  task-implementation → task-review                                 │
 ├─────────────────────────────────────────────────────────────────────┤
 │  Phase 3: FINALIZATION                                              │
-│  code-cleanup → spec-sync-with-code → spec-sync-context            │
+│  sync (full) → Knowledge Graph update + Drift detection            │
 ├─────────────────────────────────────────────────────────────────────┤
 │  AUTOMATION (optional)                                              │
 │  ralph-loop: automates Phase 2-3 across all tasks                  │
@@ -310,24 +310,16 @@ Claude verifies the implementation against acceptance criteria, checks for archi
 
 ## Phase 3: Finalization
 
-### Code Cleanup
-
-```
-/developer-kit-specs:specs-code-cleanup
-```
-
-Final pass to remove TODOs, unused imports, and ensure consistent styling across all modified files.
-
 ### Spec Sync
 
 Keep your specification in sync with implementation decisions:
 
 ```
-# Update spec based on implementation decisions
-/developer-kit-specs:specs.spec-sync-with-code
+# Full sync: Knowledge Graph update + Drift detection
+/developer-kit-specs:specs.sync docs/specs/001-hotel-search/
 
-# Update technical context (KG)
-/developer-kit-specs:specs.spec-sync-context
+# Update technical context (KG) only
+/developer-kit-specs:specs.sync docs/specs/001-hotel-search/ --kg-only
 ```
 
 ---
@@ -342,7 +334,7 @@ Automate the entire implementation-review cycle across all tasks:
 
 Ralph Loop will:
 1. Identify the next pending task
-2. Run `task-implementation`
+2. Run `task-implementation` (includes cleanup Phase T-7)
 3. Run `task-review`
 4. If review fails, iterate (up to 3 times) to fix issues
 5. Move to the next task until the feature is complete

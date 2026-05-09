@@ -319,18 +319,15 @@ Tasks with complexity ≥50 are candidates for splitting.
 /developer-kit-specs:specs.task-manage --action=add --spec="docs/specs/001-user-auth/"
 # Claude will ask for task details interactively
 
-# Mark a task as optional (won't block completion)
-/developer-kit-specs:specs.task-manage --action=mark-optional --task="docs/specs/001-user-auth/tasks/TASK-008.md"
-
-# Regenerate task index after manual changes
-/developer-kit-specs:specs.task-manage --action=regenerate-index --spec="docs/specs/001-user-auth/"
+# Mark a task
+/developer-kit-specs:specs.task-manage --action=mark-optional --task="docs/specs/001-user-auth/tasks/TASK-003.md"
 ```
 
 ---
 
 ## `/developer-kit-specs:specs.task-implementation`
 
-Implement a specific task from a task list.
+Guided task implementation following the SDD workflow.
 
 ### Syntax
 
@@ -343,12 +340,12 @@ Implement a specific task from a task list.
 | Argument | Required | Description |
 |----------|----------|-------------|
 | `--lang` | Recommended | Target language/framework |
-| `--task` | **Yes** | Path to task file |
+| `--task` | **Yes** | Path to the task file to implement |
 
-### Process (12 Steps)
+### Process (10 Phases)
 
-| Step | Name | Gate |
-|------|------|------|
+| Phase | Name | Description |
+|-------|------|-------------|
 | T-1 | Task identification | Valid task file |
 | T-2 | Git state check | Clean working tree |
 | T-3 | Dependency check | All deps completed |
@@ -358,8 +355,11 @@ Implement a specific task from a task list.
 | T-4 | Implementation | — |
 | T-5 | Verification | Tests pass |
 | T-6 | Task completion | Status updated |
-| T-6.5 | Knowledge Graph update | Context persisted |
-| T-6.6 | Spec deviation check | Drift reported |
+| T-7 | Code Cleanup | Post-review cleanup (auto-activates) |
+
+> **Note**: The TDD RED phase command was removed in v3.0. Test generation is now
+> integrated into `specs.task-implementation`. The review phase (T-7) includes
+> test verification as part of the standard workflow.
 
 ### Examples
 
@@ -375,57 +375,6 @@ Implement a specific task from a task list.
 # React task
 /developer-kit-specs:specs.task-implementation --lang=react \
   --task="docs/specs/003-dashboard/tasks/TASK-002.md"
-```
-
----
-
-## `/developer-kit-specs:specs.task-tdd`
-
-Generate failing tests (TDD RED phase) before implementation.
-
-### Syntax
-
-```
-/developer-kit-specs:specs.task-tdd [--lang=language] --task="task-file"
-```
-
-### Arguments
-
-| Argument | Required | Description |
-|----------|----------|-------------|
-| `--lang` | Recommended | Target language/framework |
-| `--task` | **Yes** | Path to task file |
-
-### Supported Test Frameworks
-
-| Language | Framework | Template |
-|----------|-----------|----------|
-| Spring | JUnit 5 + Mockito | `spring-test-template.java` |
-| Java | JUnit 5 | `java-test-template.java` |
-| NestJS | Jest | `nestjs-test-template.spec.ts` |
-| TypeScript | Jest / Mocha | `typescript-test-template.spec.ts` |
-| React | Jest + React Testing Library | `react-test-template.test.tsx` |
-| Node.js | Jest | `nodejs-test-template.test.ts` |
-| Python | pytest | `python-test-template.py` |
-| PHP | PHPUnit | `php-test-template.php` |
-
-### TDD Workflow
-
-```
-RED phase: /developer-kit-specs:specs.task-tdd      → Generate failing tests
-GREEN phase: /developer-kit-specs:specs.task-implementation → Make tests pass
-```
-
-### Examples
-
-```bash
-# Spring Boot — RED phase
-/developer-kit-specs:specs.task-tdd --lang=spring --task="docs/specs/001-user-auth/tasks/TASK-002.md"
-# Creates: src/test/java/.../JwtTokenServiceTest.java (all tests fail)
-
-# Then GREEN phase
-/developer-kit-specs:specs.task-implementation --lang=spring --task="docs/specs/001-user-auth/tasks/TASK-002.md"
-# Creates: src/main/java/.../JwtTokenService.java (all tests pass)
 ```
 
 ---
@@ -447,155 +396,75 @@ Verify that an implemented task meets specifications and passes code review.
 | `--lang` | Recommended | Target language/framework |
 | `--task` | Yes | Path to task file |
 
+> **Note**: Code cleanup is now integrated as Phase T-7 of
+> `specs.task-implementation`. It auto-activates after `specs.task-review` passes.
+> See `skills/specs-code-cleanup/SKILL.md` for language-specific formatter reference.
+
 ### Review Dimensions
 
-| Dimension | What It Checks |
-|-----------|---------------|
-| Implementation | Code matches task description |
-| Acceptance Criteria | All criteria checkboxes ✅ |
-| Spec Compliance | Alignment with functional specification |
-| Code Quality | Language-specific patterns, security, conventions |
-
-### Review Outcomes
-
-| Status | Condition |
-|--------|-----------|
-| **PASSED** | All criteria ✅, all DoD ✅, no critical issues |
-| **FAILED** | Any criterion ❌, or critical code issues |
-
-### Output
-
-`TASK-XXX--review.md` — Detailed review report with findings per dimension.
+| Dimension | Description |
+|-----------|-------------|
+| **Implementation** | Matches task description |
+| **Acceptance Criteria** | All criteria met |
+| **DoD** | Definition of Done satisfied |
+| **Compliance** | Aligns with functional spec |
+| **Code Quality** | Language-specific standards |
 
 ### Examples
 
 ```bash
-# Spring Boot review
-/developer-kit-specs:specs.task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
+# Review Spring Boot task
+/developer-kit-specs:specs.task-review --lang=spring --task="docs/specs/001-user-auth/tasks/TASK-001.md"
 
-# NestJS review
-/developer-kit-specs:specs.task-review --lang=nestjs docs/specs/002-notification/tasks/TASK-003.md
+# Review NestJS task
+/developer-kit-specs:specs.task-review --lang=nestjs --task="docs/specs/002-notification/tasks/TASK-003.md"
 ```
 
 ---
 
-## `/developer-kit-specs:specs-code-cleanup`
+## `/developer-kit-specs:specs.sync`
 
-Professional code cleanup after task review approval.
+Synchronizes specification with implementation. Replaces the old `specs.spec-sync-with-code` and `specs.spec-sync-context` commands with a unified interface.
 
 ### Syntax
 
 ```
-/developer-kit-specs:specs-code-cleanup --lang=language --task="task-file"
+/developer-kit-specs:specs.sync [spec-folder] [--kg-only] [--code-only] [--after-task=TASK-XXX] [--dry-run]
 ```
 
 ### Arguments
 
 | Argument | Required | Description |
 |----------|----------|-------------|
-| `--lang` | Yes | Target language/framework |
-| `--task` | Yes | Path to task file (must be in `reviewed` status) |
-
-### Cleanup Process (8 Phases)
-
-1. **Task verification** — Confirm reviewed status
-2. **Identify files** — From review report and task provides
-3. **Remove debug artifacts** — `console.log`, `System.out.println`, temporary comments
-4. **Optimize imports** — Language-specific import cleanup
-5. **Code readability** — Run formatters
-6. **Documentation check** — Headers, API docs
-7. **Final verification** — Run tests, verify no logic changes
-8. **Task completion** — Update status to `completed`
-
-### Language-Specific Formatters
-
-| Language | Formatter Command |
-|----------|-------------------|
-| Spring | `./mvnw spotless:apply` |
-| TypeScript | `npm run lint:fix && npm run format` |
-| Python | `black .` |
-| PHP | `php-cs-fixer fix` |
-
-### Examples
-
-```bash
-/developer-kit-specs:specs-code-cleanup --lang=spring --task="docs/specs/001-user-auth/tasks/TASK-001.md"
-/developer-kit-specs:specs-code-cleanup --lang=nestjs --task="docs/specs/002-notification/tasks/TASK-003.md"
-/developer-kit-specs:specs-code-cleanup --lang=python --task="docs/specs/003-pipeline/tasks/TASK-002.md"
-```
-
----
-
-## `/developer-kit-specs:specs.spec-sync-with-code`
-
-Synchronize functional specification with actual implementation state.
-
-### Syntax
-
-```
-/developer-kit-specs:specs.spec-sync-with-code [--spec="spec-folder"] [--after-task="TASK-XXX"]
-```
-
-### Arguments
-
-| Argument | Required | Description |
-|----------|----------|-------------|
-| `--spec` | Yes | Specification directory |
+| `spec-folder` | Yes | Specification directory (positional) |
+| `--kg-only` | No | Update Knowledge Graph only |
+| `--code-only` | No | Detect spec-to-code deviations only |
 | `--after-task` | No | Sync after specific task completion |
-
-### Deviation Types
-
-| Type | Description | Example |
-|------|-------------|---------|
-| **Scope Expansion** | Features added beyond spec | Added refresh token support |
-| **Requirement Refinement** | Clarifications or corrections | Changed password length to 12 |
-| **Scope Reduction** | Features dropped or deferred | Deferred 2FA to next spec |
-
-### Examples
-
-```bash
-# Full sync
-/developer-kit-specs:specs.spec-sync-with-code docs/specs/001-user-auth/
-
-# Sync after specific task
-/developer-kit-specs:specs.spec-sync-with-code --spec="docs/specs/001-user-auth/" --after-task="TASK-003"
-```
-
----
-
-## `/developer-kit-specs:specs.spec-sync-context`
-
-Synchronize Knowledge Graph, tasks, and codebase state.
-
-### Syntax
-
-```
-/developer-kit-specs:specs.spec-sync-context [--spec="spec-folder"] [--update-kg-only] [--task="task-file"] [--dry-run]
-```
-
-### Arguments
-
-| Argument | Required | Description |
-|----------|----------|-------------|
-| `--spec` | Yes | Specification directory |
-| `--update-kg-only` | No | Only update Knowledge Graph, skip task enrichment |
-| `--task` | No | Sync context for specific task |
 | `--dry-run` | No | Preview changes without writing |
 
+### Modes
+
+| Flag | Behavior |
+|------|----------|
+| (none) | Full sync: KG + drift detection + spec update |
+| `--kg-only` | Knowledge Graph update only |
+| `--code-only` | Drift detection only |
+| `--dry-run` | Read-only preview |
+
 ### Examples
 
 ```bash
-# Full context sync
-/developer-kit-specs:specs.spec-sync-context --spec="docs/specs/001-user-auth/"
+# Full sync after implementation
+/developer-kit-specs:specs.sync docs/specs/001-feature/
 
-# Preview only
-/developer-kit-specs:specs.spec-sync-context --spec="docs/specs/001-user-auth/" --dry-run
+# KG-only after spec-to-tasks
+/developer-kit-specs:specs.sync docs/specs/001-feature/ --kg-only
 
-# Update Knowledge Graph only
-/developer-kit-specs:specs.spec-sync-context --spec="docs/specs/001-user-auth/" --update-kg-only
+# Drift check
+/developer-kit-specs:specs.sync docs/specs/001-feature/ --code-only
 
-# Sync after specific task
-/developer-kit-specs:specs.spec-sync-context --spec="docs/specs/001-user-auth/" --task="TASK-003"
+# Preview
+/developer-kit-specs:specs.sync docs/specs/001-feature/ --dry-run
 ```
 
 ---

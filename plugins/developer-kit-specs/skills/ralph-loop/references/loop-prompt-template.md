@@ -108,8 +108,8 @@ Execute Step: CURRENT_STEP
 
 ```
 1. Read fix_plan.json to get current_task and current_task_file
-2. Run code-cleanup with --no-confirm:
-   /developer-kit-specs:specs-code-cleanup --no-confirm --lang=LANG --task="TASK_FILE"
+2. Run task-implementation with --action=cleanup:
+   /developer-kit-specs:specs.task-implementation --action=cleanup --lang=LANG --task="TASK_FILE"
 3. Set state.step = "sync"
 4. Save fix_plan.json
 5. Print: "Cleanup: TASK-ID complete | Next: sync"
@@ -140,8 +140,8 @@ Execute Step: CURRENT_STEP
 
 ```
 1. Read fix_plan.json to get current_task and spec_folder
-2. Run spec-sync-with-code:
-   /developer-kit-specs:specs.spec-sync-with-code SPEC_FOLDER/ --after-task=TASK-ID
+2. Run specs.sync:
+   /developer-kit-specs:specs.sync SPEC_FOLDER/ --after-task=TASK-ID
 3. Set state.step = "update_done"
 4. Save fix_plan.json
 5. Print: "Sync: TASK-ID complete | Next: update_done"
