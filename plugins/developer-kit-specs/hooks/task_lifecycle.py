@@ -4,7 +4,7 @@ import os
 import re
 import yaml
 import json
-from datetime import datetime
+from datetime import datetime, date
 from pathlib import Path
 from typing import Dict, List, Optional, Any, Tuple
 
@@ -31,11 +31,11 @@ FIELD_SCHEMA = {
     "ac-mapping": {"type": list, "required": False},
     "cross-boundary": {"type": bool, "required": False},
     "external-dep-risk": {"type": bool, "required": False},
-    "started_date": {"type": str, "required": False},
-    "implemented_date": {"type": str, "required": False},
-    "reviewed_date": {"type": str, "required": False},
-    "completed_date": {"type": str, "required": False},
-    "cleanup_date": {"type": str, "required": False},
+    "started_date": {"type": (str, date), "required": False},
+    "implemented_date": {"type": (str, date), "required": False},
+    "reviewed_date": {"type": (str, date), "required": False},
+    "completed_date": {"type": (str, date), "required": False},
+    "cleanup_date": {"type": (str, date), "required": False},
 }
 
 # --- Core Functions ---
@@ -86,12 +86,9 @@ def update_status(filepath: str):
     old_status = frontmatter.get("status")
     new_status = detect_status_from_body(body)
     
-    # Preserve terminal states
+    # Preserve terminal states — reviewed/completed tasks must never be demoted
     if old_status in [TaskStatus.REVIEWED, TaskStatus.COMPLETED]:
-        if new_status == TaskStatus.IMPLEMENTED:
-            new_status = old_status
-        else:
-            new_status = TaskStatus.IN_PROGRESS
+        new_status = old_status
     # Preserve special states unless all checkboxes are completed
     elif old_status in [TaskStatus.BLOCKED, TaskStatus.OPTIONAL, TaskStatus.ESCALATED]:
         if new_status == TaskStatus.IMPLEMENTED:
@@ -129,8 +126,12 @@ def validate_task(filepath: str) -> bool:
                 errors.append(f"Missing required field: {field}")
             elif field in frontmatter:
                 val = frontmatter[field]
-                if not isinstance(val, rules["type"]) and val is not None:
-                    errors.append(f"Invalid type for {field}: expected {rules['type'].__name__}")
+                expected = rules["type"]
+                if isinstance(expected, tuple):
+                    if not isinstance(val, expected) and val is not None:
+                        errors.append(f"Invalid type for {field}: expected one of {', '.join(t.__name__ for t in expected)}")
+                elif not isinstance(val, expected) and val is not None:
+                    errors.append(f"Invalid type for {field}: expected {expected.__name__}")
                 if "values" in rules and val not in rules["values"]:
                     errors.append(f"Invalid value for {field}: {val}")
 

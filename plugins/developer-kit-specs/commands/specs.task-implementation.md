@@ -64,6 +64,21 @@ This command follows a focused workflow optimized for single-task implementation
    ```
 3. Validate required parameters. If missing, ask user via AskUserQuestion.
 
+## Action Routing
+
+The `--action` flag determines the workflow path:
+
+| Action | Workflow | Description |
+|--------|----------|-------------|
+| *(default)* | T-1 → T-7 | Full implementation workflow |
+| `cleanup` | T-7 only | Jump directly to post-review code cleanup |
+
+After argument parsing, check the `action` field in the JSON output:
+- If `action` is `null` or absent → proceed with the full implementation workflow (T-1 through T-6, T-7 optional)
+- If `action` is `cleanup` → skip to **T-7: Code Cleanup** directly, using the provided `--task=` path
+
+When routing to T-7 directly, still perform **T-7.1: Verify Review Status** to confirm the task is in `reviewed` state before executing cleanup.
+
 ## Task Mode Detection
 
 This command ONLY operates in Task Mode. If no `--task=` parameter is provided, inform the user that they should use the spec-driven flow (`devkit.brainstorm` → `devkit.spec-to-tasks`) or `/developer-kit:devkit.feature-development` for non-spec work.
