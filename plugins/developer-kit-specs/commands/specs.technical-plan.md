@@ -627,7 +627,7 @@ docs/
 
 1. Run `/developer-kit-specs:specs.spec-to-tasks [spec-folder]` to generate implementation tasks
 2. Execute tasks in phase order
-3. After implementation, run `/developer-kit-specs:specs.spec-sync-with-code [spec-folder]`
+3. After implementation, run `/developer-kit-specs:specs.sync [spec-folder]`
 
 ### File Output
 

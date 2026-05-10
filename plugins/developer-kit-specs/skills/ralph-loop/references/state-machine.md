@@ -385,7 +385,7 @@ case "$STEP" in
     ;;
 
   sync)
-    echo "→ [SYNC: Run spec-sync-with-code for $TASK]"
+    echo "→ [SYNC: Run specs.sync for $TASK]"
     # In real implementation: call the actual command
     jq '.state.step = "update_done"' "$FIX_PLAN" > tmp.json && mv tmp.json "$FIX_PLAN"
     ;;

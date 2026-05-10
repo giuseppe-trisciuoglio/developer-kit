@@ -155,8 +155,7 @@ This command:
    - If no argument: auto-detect from current working directory
 4. Verify the folder exists
 5. Identify relevant files:
-   - `YYYY-MM-DD--feature-name.md` - Functional specification (preferred)
-   - `*-specs.md` - Functional specification (legacy fallback)
+   - `YYYY-MM-DD--feature-name.md` - Functional specification
    - `user-request.md` - Original user request (for traceability)
    - `brainstorming-notes.md` - Brainstorming notes (secondary)
    - `tasks/` - Existing tasks (for coverage verification)
@@ -177,8 +176,7 @@ This command:
 ### 2a. Spec Loading (identica a prima)
 
 1. Resolve and read the specification file:
-   - Preferred: `YYYY-MM-DD--feature-name.md`
-   - Legacy: `*-specs.md`
+   - `YYYY-MM-DD--feature-name.md`
    - Fallback: only dated spec-like markdown in folder
 2. If present, also read:
    - `user-request.md` for traceability
@@ -435,7 +433,7 @@ For each category with Partial/Missing status, generate a candidate question IF 
 ### Specification not found
 ```
 Error: Specification not found at [path]
-Verify that the path contains a resolvable spec file (`YYYY-MM-DD--feature-name.md` or legacy `*-specs.md`)
+Verify that the path contains a resolvable spec file (`YYYY-MM-DD--feature-name.md`)
 ```
 
 ### No ambiguities detected

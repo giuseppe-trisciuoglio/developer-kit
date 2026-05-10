@@ -722,7 +722,7 @@ Rules that AI agents MUST follow when generating code for this project:
 
 - **Spec Death Principle**: Every spec has a limited lifespan:
   1. During implementation, spec is the source of truth
-  2. After completion, run `spec-sync-with-code` to update spec
+  2. After completion, run `specs.sync` to update spec
   3. Archive completed specs to `archived/` folder — never let specs become stale
   4. A spec that lives forever without archiving becomes misleading technical debt
 
@@ -916,7 +916,7 @@ When running `constitution check`, also evaluate file freshness:
 ```markdown
 > ⚠️ **Context Rot Warning**: This file has not been updated in 30+ days.
 > Context rot may have occurred — architectural decisions may have drifted.
-> Consider running `spec-sync-with-code` or updating the spec before continuing.
+> Consider running `specs.sync` or updating the spec before continuing.
 ```
 
 **Recovery Actions** for high context rot risk:

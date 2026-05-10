@@ -60,53 +60,7 @@ After generating the functional specification, continue with:
 |--------------------|----------|--------------------------------------------------|
 | `idea-description` | No       | Description of the idea or feature to brainstorm |
 
-## Arguments
-
-| Argument           | Required | Description                                      |
-|--------------------|----------|--------------------------------------------------|
-| `idea-description` | No       | Description of the idea or feature to brainstorm |
-
 ## Current Context
-
-### Basic Usage
-
-```bash
-/developer-kit-specs:specs.brainstorm Add user authentication with email and password
-```
-
-### With External Input
-
-```bash
-/developer-kit-specs:specs.brainstorm @docs/adr/039-architecture-decisions.md
-```
-
-### After generating the spec
-
-```bash
-/developer-kit-specs:specs.spec-to-tasks docs/specs/001-feature/
-```
-
-## Examples
-
-### Basic Usage
-
-```bash
-/developer-kit-specs:specs.brainstorm Add user authentication with email and password
-```
-
-### With External Input
-
-```bash
-/developer-kit-specs:specs.brainstorm @docs/adr/039-architecture-decisions.md
-```
-
-### After generating the spec
-
-```bash
-/developer-kit-specs:specs.spec-to-tasks docs/specs/001-feature/
-```
-
-## Argument Details
 
 The command will automatically gather context information when needed:
 
@@ -182,7 +136,7 @@ Every specification has a limited lifespan. The spec is a living document that s
 1. **During spec-to-tasks**: Spec is alive, every decision traces back to it
 2. **During implementation**: Spec guides, deviations are documented
 3. **During task-review**: Spec is validated against, findings trace to spec
-4. **During spec-sync-with-code**: Spec is updated to reflect implemented behavior
+4. **During sync**: Spec is updated to reflect implemented behavior
 5. **After completion**: Spec is archived, not deleted
 
 **Archive command** (after feature completion):
@@ -669,6 +623,125 @@ During Phase 2, ask about exclusions that could become Negative Requirements:
 
 ---
 
+## Phase 3: Functional Approach Exploration
+
+**Goal**: Present 2-3 different functional approaches with trade-offs (WHAT, not HOW)
+
+**Actions**:
+
+1. Based on the refined idea, develop 2-3 distinct approaches focusing on BEHAVIOR:
+    - **Approach A**: Simple/MVP (fastest to implement, may lack some features)
+    - **Approach B**: Balanced (good feature set, reasonable complexity) - **typically your recommendation**
+    - **Approach C**: Comprehensive (full-featured, more complex)
+
+2. For each approach, describe ONLY functional aspects:
+    - User behaviors supported
+    - Business rules and constraints
+    - Data requirements (what, not how)
+    - Integration points (capabilities needed, not technical implementation)
+    - Pros (benefits for users/business)
+    - Cons (limitations, complexity for users)
+
+3. **CRITICAL**: Do NOT mention any technical details:
+    - NO frameworks (Spring, NestJS, React, etc.)
+    - NO patterns (Repository, Service, Controller, etc.)
+    - NO libraries or dependencies
+    - NO code or pseudo-code
+
+4. If there are materially different scope options, use AskUserQuestion to present them:
+    - Lead with your recommended option
+    - Explain your reasoning
+5. If one approach is clearly dominant, select it, record the rationale, and proceed without an extra gate
+
+6. **After approach selection, log the decision**:
+    - Create an in-memory note of DEC-001: Approach Selection
+    - Record: date, approach chosen, alternatives presented, rationale
+    - This will be written to `decision-log.md` in Phase 6
+
+---
+
+## Phase 4: Contextual Codebase Exploration (Optional)
+
+**Goal**: Understand existing codebase for context only — do NOT influence the specification with technical decisions
+
+**NOTE**: This phase is OPTIONAL. Skip if not needed. The functional specification should be technology-agnostic.
+
+**Actions**:
+
+1. Only if the feature needs to integrate with existing systems, use the Task tool to explore:
+
+```
+Task(
+  description: "Explore codebase for integration context",
+  prompt: "Explore the codebase to understand what existing systems, APIs, or data structures the new feature must integrate with.
+
+    Focus on:
+    1. Existing APIs or interfaces the feature must use
+    2. Shared data structures or models
+    3. Existing business rules that apply
+
+    Return:
+    - List of integration requirements (capabilities needed, not implementation)
+    - Do NOT suggest frameworks, patterns, or technical solutions",
+  subagent_type: "developer-kit:general-code-explorer"
+)
+```
+
+2. Incorporate findings as integration requirements in the specification
+3. Do NOT let this influence technical decisions — keep the specification functional
+
+---
+
+## Phase 5: Functional Specification Presentation
+
+**Goal**: Present the functional specification in validated sections
+
+**DO NOT START WITHOUT APPROACH APPROVAL**
+
+**Actions**:
+
+1. Once the approach is selected, present the functional specification in sections of 200-300 words each
+2. Incorporate any integration requirements from Phase 4
+3. Cover the following areas in separate sections:
+
+   **Section 1: Business Context**
+    - What problem does this feature solve?
+    - Who are the users and what are their goals?
+    - How does this fit into the overall system purpose?
+
+   **Section 2: Functional Requirements**
+    - User stories and use cases
+    - Business rules and constraints
+    - Data requirements (what data, not how to store)
+    - External system capabilities needed
+
+   **Section 3: User Interactions**
+    - User flows and journeys
+    - Alternative paths and edge cases
+    - Error scenarios and how users are informed
+
+   **Section 4: Acceptance Criteria**
+    - Clear, testable criteria for each user story
+    - Success conditions in natural language
+    - Edge case handling
+
+   **Section 5: Integration Requirements**
+    - What existing systems must integrate with (capabilities, not implementation)
+    - Data exchange requirements (not technical protocols)
+
+4. **CRITICAL**: Throughout all sections, NEVER mention:
+    - Frameworks, libraries, or tools
+    - Technical patterns or architectural styles
+    - Code or pseudo-code
+
+5. Validate only at meaningful checkpoints:
+    - Default: generate all sections, then present one consolidated review
+    - Use AskUserQuestion mid-way only if a section introduces new ambiguity or a major scope decision
+
+6. If no major ambiguity is detected, proceed directly to Phase 5.3 and collect feedback on the complete draft
+
+---
+
 ## Phase 5.3: Non-Goals Definition
 
 **Goal**: Explicitly define what this feature does NOT include
@@ -717,44 +790,198 @@ This feature does NOT include:
 
 ---
 
-## Phase 5: Specification Generation
+## Phase 6: Specification Generation
 
-**Goal**: Generate a comprehensive functional specification document
+**Goal**: Generate professional functional specification document
 
 **Actions**:
 
-1. Define the specification ID and folder: `docs/specs/[id]/`
-2. Generate the main specification file: `docs/specs/[id]/YYYY-MM-DD--feature-name.md`
-3. Use a professional, academic style (refer to specialist agent if available)
-4. Include the following sections:
-    - **Overview**: High-level description and goals
-    - **User Stories**: Functional requirements from the user's perspective
-    - **Functional Requirements**: Detailed description using EARS syntax (REQ-XXX format)
-    - **Acceptance Criteria**: Testable conditions for each requirement
-    - **Domain Model**: High-level description of entities and relationships
-    - **User Interaction Flow**: Description of how users interact with the feature
-    - **Non-Functional Requirements**: Performance, security, and scalability constraints
-    - **Non-Goals**: What this feature does NOT include (minimum 3 items with explanations)
-    - **Edge Cases & Error Handling**: How the system handles unusual situations
-5. **Insert [NEEDS CLARIFICATION] markers** when required (see `[NEEDS CLARIFICATION] Markers` section below)
-6. **CRITICAL: Save the original user context**:
-   - Save the initial user request and key brainstorming dialogue to `docs/specs/[id]/user-request.md`
-   - Save any significant notes, alternative approaches considered, or research findings to `docs/specs/[id]/brainstorming-notes.md`
-   - These files provide essential context for subsequent commands like `spec-to-tasks`
-7. Ensure the specification is pure WHAT and does not mention HOW (frameworks, patterns, code)
-8. Incorporate all extracted constraints from Phase 0 and decisions from Phase 3
-8. **Apply EARS syntax** to all functional requirements:
-   - Each requirement must have `REQ-XXX` prefix
-   - Each requirement must use SHALL/WILL/MAY keywords
-   - Event-driven requirements must have WHEN/IF trigger
-   - Generic requirements (no trigger) are allowed but minimize them
-   - No forbidden words (robust, fast, intuitive, etc.)
-9. **Include Non-Goals section** (minimum 3 items with explanations)
-10. **Include Negative Requirements section** (security constraints, data integrity, reliability - minimum 3 items with REQ-NR prefix)
+1. Compile all validated specification sections
+
+2. Generate unique spec ID:
+    - Count existing folders in `docs/specs/` to determine next sequence number
+    - Create slug from feature name (lowercase, hyphenated)
+    - Format: `NNN-feature-slug` (e.g., `001-hotel-search-aggregation`)
+    - Example: If 5 specs exist, next ID is `006-feature-name`
+
+3. Create spec folder: `docs/specs/[id]/`
+
+4. **CRITICAL: Save the original user request**:
+    - Create a file `user-request.md` in `docs/specs/[id]/` containing:
+        - The original user input/idea description
+        - Any constraints or requirements mentioned
+        - This file will be used by `spec-to-tasks` to verify all requirements are captured
+    - Example content:
+      ```markdown
+      # User Request
+
+      **Original Input**: [what the user asked for]
+
+      **Key Requirements Mentioned**:
+      - [requirement 1]
+      - [requirement 2]
+
+      **Constraints**: [any constraints mentioned]
+      ```
+
+5. Use the Task tool to launch the document-generator-expert subagent:
+
+```
+Task(
+  description: "Generate functional specification",
+  prompt: "Generate a professional functional specification document based on the following validated specification:
+
+    **Feature Title**: [title]
+    **Date**: [current date]
+    **Spec ID**: [id] (e.g., 001-hotel-search-aggregation)
+
+    **Business Context**:
+    - Problem solved: [from Section 1]
+    - Target users: [from Section 1]
+    - System fit: [from Section 1]
+
+    **Functional Requirements**:
+    - User stories: [from Section 2]
+    - Business rules: [from Section 2]
+    - Data requirements: [from Section 2]
+    - External capabilities: [from Section 2]
+
+    **User Interactions**:
+    - User flows: [from Section 3]
+    - Alternative paths: [from Section 3]
+    - Error scenarios: [from Section 3]
+
+    **Acceptance Criteria**:
+    - Testable criteria: [from Section 4]
+    - Success conditions: [from Section 4]
+    - Edge cases: [from Section 4]
+
+    **Integration Requirements**:
+    - Systems to integrate: [from Section 5]
+    - Data exchange: [from Section 5]
+
+    **Non-Goals**: [from Phase 5.3]
+    **Negative Requirements**: [security, data integrity, reliability constraints]
+    **Open Questions**: [list]
+
+    Create a comprehensive, well-formatted functional specification and save it to:
+    docs/specs/[id]/YYYY-MM-DD--feature-name.md
+
+    IMPORTANT:
+    - This is a FUNCTIONAL specification, NOT a technical design
+    - Do NOT mention any frameworks, libraries, or tools
+    - Do NOT include code or pseudo-code
+    - Focus on WHAT the system should do, not HOW
+    - Use professional markdown structure
+    - Use EARS syntax (SHALL/WILL/MAY) for all requirements
+    - Include REQ-XXX prefix for each requirement
+    - Include Non-Goals section (minimum 3 items)
+    - Include Negative Requirements section (minimum 3 items with REQ-NR prefix)",
+  subagent_type: "developer-kit:document-generator-expert"
+)
+```
+
+6. Wait for the document generator to complete
+7. Verify the document was created successfully in `docs/specs/[id]/`
+    - If the file was not created or is incomplete:
+        - Check the subagent output for errors
+        - Re-run Phase 6 with additional guidance if needed
+        - Use AskUserQuestion to decide: "Retry generation", "Continue with manual creation", or "Abort"
+
+8. **CRITICAL: Save brainstorming context files for later use by spec-to-tasks**:
+    - If you have conversation context or notes about the feature (from the dialogue with user), save them to the spec
+      folder
+    - Create a file named `brainstorming-notes.md` in `docs/specs/[id]/` with:
+        - Key technical decisions discussed
+        - Architecture patterns mentioned
+        - Any specific technologies or integrations requested
+        - Notes about implementation approach
+    - This file will be read by `devkit.spec-to-tasks` to ensure technical details are NOT lost
+
+8.5. **Create decision-log.md for decision audit trail**:
+
+- Create a file `decision-log.md` in `docs/specs/[id]/` with the following format:
+  ```markdown
+  # Decision Log: [Feature Name]
+
+  | ID | Date | Task | Decision | Alternatives | Impact | Decided By |
+  |----|------|------|----------|--------------|--------|------------|
+
+  ## DEC-001: Approach Selection
+  - **Date**: [current date YYYY-MM-DD]
+  - **Task**: Brainstorming
+  - **Phase**: Approach Selection
+  - **Context**: Selection of functional approach for feature specification
+  - **Decision**: [Approach chosen - A/B/C]
+  - **Alternatives Considered**: [Brief description of approaches presented]
+  - **Impact**: Specification structure, scope boundaries, acceptance criteria
+  - **Decided By**: user selection
+  ```
+- This file will track all non-trivial decisions made during implementation
+- Future phases (task-implementation, task-review) will append entries to this file
+
+8.6. **Initialize or enrich the project ontology (`docs/specs/ontology.md`)**:
+
+   Domain terms identified during brainstorming are part of the functional understanding (Ubiquitous Language). This step captures them in a shared, project-level ontology file.
+
+   - **Check if `docs/specs/ontology.md` exists**:
+
+   - **If the file does NOT exist**:
+     1. Collect domain terms that emerged during the brainstorming dialogue (from Phases 2-5)
+     2. Use **AskUserQuestion** to present the identified terms and ask the user to confirm, add, or remove terms:
+        ```
+        During brainstorming, the following domain terms emerged:
+        - [Term 1]: [proposed definition]
+        - [Term 2]: [proposed definition]
+        - ...
+
+        Should I create the project ontology (docs/specs/ontology.md) with these terms?
+        ```
+        - Options:
+          - "Yes, create with these terms" (recommended)
+          - "Yes, but let me adjust the terms first"
+          - "Skip ontology creation for now"
+     3. If the user confirms, create `docs/specs/ontology.md` using this template:
+        ```markdown
+        # Project Ontology — Ubiquitous Language
+
+        **Created**: [current date YYYY-MM-DD]
+        **Last Updated**: [current date YYYY-MM-DD]
+
+        ## Domain Glossary
+
+        | Term | Definition | Bounded Context |
+        |------|-----------|-----------------|
+        | [Term 1] | [Definition] | [Context where this term applies] |
+        | [Term 2] | [Definition] | [Context where this term applies] |
+
+        ## Bounded Contexts
+
+        | Context | Description | Key Terms |
+        |---------|-------------|-----------|
+        | [Context 1] | [Description] | [Terms specific to this context] |
+
+        ## Conceptual Mapping
+
+        [Relationships between key domain entities — to be refined during task generation]
+        ```
+
+   - **If the file ALREADY exists**:
+     1. Read the existing `docs/specs/ontology.md`
+     2. Compare domain terms from the brainstorming session against existing glossary entries
+     3. If NEW terms were identified that are not in the glossary:
+        - Use **AskUserQuestion** to present the new terms and ask if they should be added
+        - If confirmed, append the new terms to the Domain Glossary table
+        - Update the `Last Updated` date
+     4. If no new terms: skip silently
+
+   - **Note**: The ontology is a living document. It will be further refined by `/developer-kit-specs:specs.spec-to-tasks` when technical decisions are made.
+
+9. Update todos
 
 ---
 
-## Phase 5.5: EARS Validation
+## Phase 6.5: EARS Validation
 
 **Goal**: Ensure all requirements follow EARS syntax before finalizing the spec
 
@@ -883,116 +1110,299 @@ Specification created with 2 [NEEDS CLARIFICATION] markers:
 Next: Run /developer-kit-specs:specs.spec-check to resolve.
 ```
 
-## Phase 6: Specification Review
+---
 
-**Goal**: Ensure the generated specification is clear, complete, consistent, and EARS-compliant
+## Phase 7: Specification Review
+
+**Goal**: Review the generated functional specification for quality, completeness, and EARS compliance
+
+**IMPORTANT**: The functional specification should be technology-agnostic (WHAT), but technical details discussed during
+brainstorming are preserved separately in `brainstorming-notes.md` for use by `spec-to-tasks`.
 
 **Actions**:
 
-1. Read the entire generated specification
-2. Check for:
-    - Ambiguities or vague language
-    - Missing requirements or edge cases
-    - Consistency with project conventions
-    - Adherence to the WHAT vs. HOW principle
-3. **Validate [NEEDS CLARIFICATION] markers**:
-   - [ ] Maximum 3 markers present
-   - [ ] Each marker has specific, answerable question
-   - [ ] Markers are inline within requirement text
-   - [ ] No markers for areas with reasonable defaults
-4. **Validate Non-Goals section**:
-   - [ ] Non-Goals section exists
-   - [ ] At least 3 Non-Goals listed
-   - [ ] Each Non-Goal has explanation
-   - [ ] No contradicting requirements
-5. **Validate Negative Requirements section**:
-   - [ ] Negative Requirements section exists
-   - [ ] At least 3 Negative Requirements listed
-   - [ ] Each has REQ-NR prefix
-   - [ ] EARS syntax used (SHALL NOT)
-   - [ ] Categories identified (Security, Data Integrity, Reliability)
-6. **Validate EARS compliance**:
-   - [ ] All functional requirements have REQ-ID prefix
-   - [ ] All requirements use SHALL/WILL/MAY keywords
-   - [ ] Event-driven requirements have clear WHEN/IF triggers
-   - [ ] No forbidden words present (robust, fast, intuitive, etc.)
-   - [ ] Each requirement is independently testable
-   - [ ] Non-requirements (explanatory text) are clearly marked without REQ-ID
-6. If issues are found, update the specification accordingly
-7. If the user provides feedback, incorporate it into the document
-8. **Enforce Spec Death Awareness**: Verify spec is complete and well-defined — a spec that dies before completion becomes technical debt
+1. Use the Task tool to launch a code-reviewer subagent to review the specification:
 
----
+```
+Task(
+  description: "Review functional specification quality",
+  prompt: "Review the functional specification at docs/specs/[id]/YYYY-MM-DD--feature-name.md for:
 
-## Phase 7: Next Steps Recommendation
+    1. **Completeness**: All required sections are present (Business Context, Functional Requirements, User Interactions, Acceptance Criteria, Integration Requirements, Out of Scope, Open Questions)
 
-**Goal**: Guide the developer to the next phase of the workflow
+    2. **Functional Focus**: Verify the specification is purely functional:
+       - NO mention of frameworks, libraries, or tools
+       - NO technical patterns or architectural styles
+       - NO code or pseudo-code
+       - Focuses on WHAT, not HOW
 
-**Actions**:
+    3. **Quality**: Content is clear, specific, and actionable
 
-1. Summarize the generated specification
-2. If [NEEDS CLARIFICATION] markers exist: list them in the summary
-3. Provide the command to generate tasks: `/developer-kit-specs:specs.spec-to-tasks docs/specs/[id]/`
-4. If the specification is complex or has markers, recommend running `/developer-kit-specs:specs.spec-check docs/specs/[id]/` first
-5. Report: spec file path + marker count + next step (spec-check)
-6. Log completion of the brainstorming workflow
-7. **Remind about Spec Lifecycle**: After implementation is complete, run `/specs:spec-sync-with-code` then archive the spec to `archived/` folder. A spec that lives forever becomes stale documentation.
+    4. **Testability**: Acceptance criteria are clear and testable
 
----
+    5. **Formatting**: Proper markdown structure, consistent formatting
 
-## Complete Template with Negative Requirements
+    6. **Clarity**: Language is professional, concise, and unambiguous
 
-When generating a specification, use this complete section structure:
+    7. **EARS Compliance**: All requirements have REQ-ID, use SHALL/WILL/MAY, and have appropriate triggers
 
-```markdown
-## Functional Requirements
+    8. **Negative Requirements**: At least 3 present with REQ-NR prefix and SHALL NOT syntax
 
-[Positive requirements with REQ-XXX prefix using EARS syntax]
+    9. **Non-Goals**: At least 3 present with explanations
 
-## Negative Requirements
-
-The system SHALL NOT:
-
-### Security
-- REQ-NR001: [Security constraint - SHALL NOT pattern]
-- REQ-NR002: [Another security constraint]
-
-### Data Integrity
-- REQ-NR003: [Data integrity constraint]
-- REQ-NR004: [Another data integrity constraint]
-
-### Reliability
-- REQ-NR005: [Reliability constraint]
-
-## Non-Goals
-
-This feature does NOT include:
-- **Feature X**: [Explanation why excluded]
-- **Feature Y**: [Explanation why excluded]
-
-## Acceptance Criteria
-
-[Criteria organized by requirement ID]
-
-## Edge Cases & Error Handling
-
-[Describe how system handles unusual situations]
-
-## Domain Model
-
-[High-level entities and relationships]
-
-## User Interaction Flows
-
-[How users interact with the feature]
+    Provide:
+    - Overall assessment (Excellent / Good / Needs Revision)
+    - List of any missing sections or content
+    - Specific issues found (if any)
+    - Any technical details that should be removed
+    - EARS violations (if any)
+    - Recommendations for improvement (if needed)",
+  subagent_type: "developer-kit:general-code-reviewer"
+)
 ```
 
-### Negative Requirements Integration Points
+2. Once the agent returns, synthesize the review findings
 
-| Phase | Where Negative Requirements Appear |
-|-------|-------------------------------------|
-| Phase 2 (Idea Refinement) | Ask about anti-patterns to prevent |
-| Phase 5 (Generation) | Generate Negative Requirements section |
-| Phase 5.3 (Non-Goals) | Distinguish from Negative Requirements |
-| Phase 6 (Review) | Validate Negative Requirements completeness |
-| Phase 6 (Review) | Validate EARS negative syntax (SHALL NOT) |
+3. **Use the AskUserQuestion tool to present the review findings**:
+
+   Present options based on agent assessment:
+    - **Option A**: Document is excellent, proceed to next steps
+    - **Option B**: Minor revisions needed (agent will specify what)
+    - **Option C**: Major revisions needed (regenerate with corrections)
+
+4. If revisions are needed:
+    - For minor revisions: Edit the document directly based on agent feedback
+    - For major revisions: Re-run Phase 6 with updated instructions from agent
+    - Optionally: Re-run Phase 7 with another review if significant changes were made
+
+5. Once approved, mark documentation phase complete
+
+---
+
+## Phase 8: Next Steps Recommendation
+
+**Goal**: Recommend the appropriate next command in the workflow
+
+**Actions**:
+
+1. The functional specification is complete. The next step is to convert it to executable tasks:
+
+   **For converting specification to tasks**: Recommend `/developer-kit-specs:specs.spec-to-tasks`
+    - Use when: Converting functional specification to trackable tasks
+    - Arguments: `--lang=[language] docs/specs/[id]/`
+
+2. **Use the AskUserQuestion tool to present the recommendation**:
+
+   Present options:
+    - **Option A**: Run spec-check first, then generate tasks (recommended)
+    - **Option B**: Skip review and go directly to task generation (warning: may have quality issues)
+    - **Option C**: Exit and review the specification manually
+
+3. Include the pre-filled commands:
+
+```bash
+# Recommended: Run spec-check first, then generate tasks
+/developer-kit-specs:specs.spec-check docs/specs/[id]/
+/developer-kit-specs:specs.spec-to-tasks --lang=[java|spring|typescript|nestjs|react|python|general] docs/specs/[id]/
+
+# Alternative: Skip review and generate tasks directly
+/developer-kit-specs:specs.spec-to-tasks --lang=[java|spring|typescript|nestjs|react|python|general] docs/specs/[id]/
+```
+
+   - The functional specification has been saved at `docs/specs/[id]/YYYY-MM-DD--feature-name.md`
+   - The task list will be saved at `docs/specs/[id]/YYYY-MM-DD--feature-name--tasks.md`
+   - Individual tasks will be in `docs/specs/[id]/tasks/TASK-XXX.md`
+
+---
+
+## Phase 9: Summary
+
+**Goal**: Document what was accomplished
+
+**Actions**:
+
+1. Mark all todos complete
+2. Summarize:
+    - **Original Idea**: What was brainstormed
+    - **Input Mode**: Free-Form Idea / Structured Document (ADR reference if applicable)
+    - **Scope Assessment**: Small / Medium / Large (and user choice if large)
+    - **Scope Split Decision**: [If applicable: "User chose to split into N specifications - focusing on Spec A: [name]" OR "User chose to continue with single specification despite large scope warning"]
+    - **Approach Selected**: Which approach was chosen and why
+    - **Integration Context**: Key integration requirements (if any)
+    - **Functional Specification Created**: Key aspects of the specification
+    - **Spec ID**: `[id]` (e.g., `001-hotel-search-aggregation`)
+    - **Document Location**: `docs/specs/[id]/YYYY-MM-DD--feature-name.md`
+    - **EARS Validation**: Number of requirements validated, any violations fixed
+    - **Specification Review**: Review outcome and any revisions made
+    - **[NEEDS CLARIFICATION] Markers**: Count and list of markers (if any)
+    - **Recommended Next Step**: 
+      - If scope was split: "Complete this specification's implementation, then run /developer-kit-specs:specs.brainstorm for Spec B: [name]"
+      - Otherwise: "Generate task list with /developer-kit-specs:specs.spec-to-tasks"
+
+---
+
+## Integration with Development Commands
+
+This brainstorming command produces a **functional specification** that feeds into the modular workflow:
+
+### Output Flow
+
+```
+/developer-kit-specs:specs.brainstorm
+↓
+Phase 0: Input Mode Detection (ADR/RFC or free-form)
+↓
+Phase 1-2: Context Discovery & Idea Refinement
+↓
+Phase 3: Functional Approach Exploration (MVP / Balanced / Comprehensive)
+↓
+Phase 4: Optional Codebase Exploration (for integration context only)
+↓
+Phase 5: Functional Specification Presentation (validated incrementally)
+↓
+Phase 6: Documentation (specialist agent)
+       + Ontology initialization (docs/specs/ontology.md)
+↓
+Phase 7: Specification Review (quality verification with code-reviewer agent)
+↓
+[Creates: docs/specs/[id]/YYYY-MM-DD--feature-name.md]
+[Creates: docs/specs/[id]/user-request.md]
+[Creates: docs/specs/[id]/brainstorming-notes.md]
+[Creates: docs/specs/[id]/decision-log.md]
+[Creates/Updates: docs/specs/ontology.md (domain terms)]
+↓
+[Recommends: spec-check + spec-to-tasks]
+↓
+/developer-kit-specs:specs.spec-to-tasks --lang=[language] docs/specs/[id]/
+↓
+[Ensures: docs/specs/architecture.md exists]
+[Refines: docs/specs/ontology.md]
+[Creates: docs/specs/[id]/YYYY-MM-DD--feature-name--tasks.md]
+[Creates: docs/specs/[id]/tasks/TASK-XXX.md]
+↓
+/developer-kit-specs:specs.task-implementation --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
+↓
+[Implements single task]
+```
+
+### Specification as Reference
+
+The functional specification created by this command serves as:
+
+1. **Reference during implementation**: The development commands can read the specification for context
+2. **Communication tool**: Can be shared with team members for review
+3. **Documentation**: Becomes part of project's functional specification history
+4. **Task generation input**: Used by `spec-to-tasks` to create executable tasks
+5. **Organized storage**: All related files (spec, tasks, individual tasks) are grouped in `docs/specs/[id]/`
+
+### Re-entering Brainstorming
+
+If implementation reveals specification issues, you can re-run `/developer-kit-specs:specs.brainstorm`:
+- The previous specification will be preserved in its folder
+- A new specification will be created with the current date
+- You can reference the previous specification during the new brainstorming session
+
+## Todo Management
+
+Throughout the process, maintain a todo list like:
+
+```
+[ ] Phase 0: Input Mode Detection & ADR Discovery (if applicable)
+[ ] Phase 1: Context Discovery
+[ ] Phase 1.5: Complexity Assessment & Scope Validation (split if scope too large)
+[ ] Phase 2: Idea Refinement
+[ ] Phase 3: Functional Approach Exploration
+[ ] Phase 4: Contextual Codebase Exploration (Optional)
+[ ] Phase 5: Functional Specification Presentation
+[ ] Section 1: Business Context
+[ ] Section 2: Functional Requirements
+[ ] Section 3: User Interactions
+[ ] Section 4: Acceptance Criteria
+[ ] Section 5: Integration Requirements
+[ ] Phase 5.3: Non-Goals Definition
+[ ] Phase 6: Specification Generation
+[ ] Phase 6.1: Ontology Initialization/Enrichment (docs/specs/ontology.md)
+[ ] Phase 6.5: EARS Validation
+[ ] Phase 7: Specification Review
+[ ] Phase 8: Next Steps Recommendation
+[ ] Phase 9: Summary
+```
+
+Update the status as you progress through each phase and section.
+
+**CRITICAL**: Phase 1.5 MUST assess scope size before proceeding:
+- If scope is too large (>15 estimated tasks), guide user to split into multiple specifications
+- Present split options clearly (by domain or by priority)
+- If user chooses to split: focus ONLY on first spec, recommend brainstorming for remaining specs
+- If user chooses to continue anyway: log warning and note potential rejection by spec-to-tasks
+
+---
+
+**Note**: This command follows a collaborative, iterative approach with specialist agents to ensure designs are:
+- Based on actual codebase exploration (not assumptions)
+- Well-thought-out and validated incrementally
+- Documented professionally with specialist assistance
+- Reviewed for quality before proceeding
+- Ready for implementation with clear next steps
+
+--- 
+
+## Examples
+
+### Example 1: Simple Feature Idea
+
+```bash
+/developer-kit-specs:specs.brainstorm Add user authentication with JWT tokens
+```
+
+### Example 2: Complex Feature
+
+```bash
+/developer-kit-specs:specs.brainstorm Implement real-time notifications using WebSockets
+```
+
+### Example 3: Refactoring
+
+```bash
+/developer-kit-specs:specs.brainstorm Refactor the payment processing module to be more maintainable
+```
+
+### Example 4: Bug Fix Design
+
+```bash
+/developer-kit-specs:specs.brainstorm Design a fix for the race condition in order processing
+```
+
+### Example 5: Performance Improvement
+
+```bash
+/developer-kit-specs:specs.brainstorm Design a caching strategy to reduce API response times
+```
+
+### Example 6: Integration
+
+```bash
+/developer-kit-specs:specs.brainstorm Integrate Stripe payment processing for subscriptions
+```
+
+### Example 7: ADR-Based Specification
+
+```bash
+/developer-kit-specs:specs.brainstorm @docs/adr/039-git-worktree-management.md
+```
+
+### Example 8: Full Workflow (after brainstorming)
+
+```bash
+# Step 1: Brainstorm and generate functional specification
+/developer-kit-specs:specs.brainstorm Design a microservices architecture for the reporting module
+
+# Step 2: Convert specification to tasks
+/developer-kit-specs:specs.spec-to-tasks --lang=spring docs/specs/001-reporting-module/
+
+# Step 3: Implement specific tasks
+/developer-kit-specs:specs.task-implementation --lang=spring --task="docs/specs/001-reporting-module/tasks/TASK-001.md"
+/developer-kit-specs:specs.task-implementation --lang=spring --task="docs/specs/001-reporting-module/tasks/TASK-002.md"
+```
+
+This separates WHAT (functional specification) from HOW (implementation), following the "divide et impera" principle.

@@ -471,7 +471,7 @@ The following behaviors MUST NOT change:
 3. **For Bug Fix**: List severity, affected components, and root cause summary
 4. Provide next steps:
    - Run `spec-to-tasks` if tasks are needed
-   - Run `spec-sync-with-code` after implementation
+   - Run `specs.sync` after implementation
    - Archive the change spec after merge
 
 ---
@@ -562,11 +562,11 @@ brainstorm → spec-to-tasks → implementation
 
 Brainstorm generates new features; change-spec modifies existing ones.
 
-### With spec-sync-with-code
+### With specs.sync
 
 After implementing changes from a change-spec:
 ```
-change-spec → task-implementation → task-review → spec-sync-with-code
+change-spec → task-implementation → task-review → specs.sync
 ```
 
 ---
