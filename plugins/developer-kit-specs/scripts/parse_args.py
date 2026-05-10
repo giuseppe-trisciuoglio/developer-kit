@@ -55,13 +55,6 @@ def parse_args(arguments: str) -> dict:
     if spec_match:
         result["spec"] = spec_match.group(1).strip('"\'').rstrip('/\\')
 
-    # Derive task path from spec + task_id if needed
-    if result.get("task_id") and result["spec"] and not result["task"]:
-        result["task"] = f"{result['spec']}/tasks/{result['task_id']}.md"
-        del result["task_id"]
-    elif result.get("task_id") and not result["spec"]:
-        pass # keep task_id if needed, but we don't have it in the initial result dict
-
     # --- Language (--lang=...) ---
     lang_match = re.search(r'--lang=([^\s]+)', arguments)
     if lang_match:
@@ -94,9 +87,22 @@ def parse_args(arguments: str) -> dict:
             path = token.rstrip('/\\')
             if path not in result["positional"]:
                 result["positional"].append(path)
-            # Populate spec from first positional if not already set
-            if result["spec"] is None:
-                result["spec"] = path
+            # Path pointing to a task file -> populate task, not spec
+            if re.search(r'/tasks/TASK-\d+\.md$', path):
+                if result["task"] is None:
+                    result["task"] = path
+                    # Also derive spec from task path (parent of tasks/)
+                    if result["spec"] is None:
+                        result["spec"] = re.sub(r'/tasks/TASK-\d+\.md$', '', path)
+            else:
+                # Populate spec from first positional if not already set
+                if result["spec"] is None:
+                    result["spec"] = path
+
+    # --- Derive task path from spec + task_id (after positional parsing) ---
+    if result.get("task_id") and result["spec"] and not result["task"]:
+        result["task"] = f"{result['spec']}/tasks/{result['task_id']}.md"
+        del result["task_id"]
 
     return result
 
