@@ -23,7 +23,7 @@ Every change should update both vertices. The sync commands keep them aligned.
 │  constitution create → defines architectural DNA of the project     │
 ├─────────────────────────────────────────────────────────────────────┤
 │  Phase 1: SPECIFICATION                                             │
-│  brainstorm → spec-quality-check → spec-to-tasks                   │
+│  brainstorm → spec-check → spec-to-tasks                   │
 ├─────────────────────────────────────────────────────────────────────┤
 │  Phase 2: IMPLEMENTATION (per task, repeat for each)                │
 │  task-implementation → task-review                                 │
@@ -181,10 +181,10 @@ Phase 3 — Generate Minimal Spec:
 After generating a specification, validate it:
 
 ```
-/developer-kit-specs:specs.spec-quality-check docs/specs/001-hotel-search/
+/developer-kit-specs:specs.spec-check docs/specs/001-hotel-search/
 ```
 
-Claude asks up to 5 targeted questions, one at a time:
+Claude resolves any `[NEEDS CLARIFICATION]` markers from brainstorming, then asks up to 5 targeted questions, one at a time:
 
 ```
 Question 1 of 5:
@@ -202,6 +202,7 @@ Quality scan covers 12 taxonomy areas:
 - Non-Functional Requirements (performance, scalability, security)
 - Edge Cases and Error Handling
 - Architecture Alignment (if architecture.md exists)
+- `[NEEDS CLARIFICATION]` Markers (resolved first, before scan)
 
 ### 1.3 Generate Tasks
 

@@ -54,7 +54,7 @@ Idea → Functional Specification → Tasks (this) → Implementation → Review
    - Presence of `[IMP]`, `[SEF]`, `[EXT]` taxonomy tags
    - 60% rule: at least 60% of criteria must be `[IMP]`
    - Bounded Context Impact Statement presence
-3. If taxonomy is missing, run `/developer-kit-specs:specs.spec-quality-check [spec-folder]` first
+3. If taxonomy is missing, run `/developer-kit-specs:specs.spec-check [spec-folder]` first
 4. Extract all `[IMP]` acceptance criteria for decomposition
 
 ---

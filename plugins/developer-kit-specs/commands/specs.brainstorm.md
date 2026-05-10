@@ -183,7 +183,7 @@ incrementally, generate professional documentation, review the document, and rec
                 - "Continue with full brainstorming" (for comprehensive spec)
                 - "Switch to quick spec" (recommended for bug fixes/small changes)
     - **Standard** (feature, moderate scope, 3-10 files): Continue with brainstorm
-    - **Full** (greenfield, complex, >10 files or multiple modules): Continue with brainstorm + recommend spec-quality-check
+    - **Full** (greenfield, complex, >10 files or multiple modules): Continue with brainstorm + recommend spec-check
       after
 
 ---
@@ -279,14 +279,96 @@ incrementally, generate professional documentation, review the document, and rec
     - **User Interaction Flow**: Description of how users interact with the feature
     - **Non-Functional Requirements**: Performance, security, and scalability constraints
     - **Edge Cases & Error Handling**: How the system handles unusual situations
-5. **CRITICAL: Save the original user context**:
+5. **Insert [NEEDS CLARIFICATION] markers** when required (see `[NEEDS CLARIFICATION] Markers` section below)
+6. **CRITICAL: Save the original user context**:
    - Save the initial user request and key brainstorming dialogue to `docs/specs/[id]/user-request.md`
    - Save any significant notes, alternative approaches considered, or research findings to `docs/specs/[id]/brainstorming-notes.md`
    - These files provide essential context for subsequent commands like `spec-to-tasks`
-6. Ensure the specification is pure WHAT and does not mention HOW (frameworks, patterns, code)
-7. Incorporate all extracted constraints from Phase 0 and decisions from Phase 3
+7. Ensure the specification is pure WHAT and does not mention HOW (frameworks, patterns, code)
+8. Incorporate all extracted constraints from Phase 0 and decisions from Phase 3
 
 ---
+
+---
+
+### [NEEDS CLARIFICATION] Markers
+
+When writing the specification, mark unclear aspects that require user input. This creates a bidirectional link with `specs.spec-check` which resolves these markers.
+
+**When to use a marker**:
+
+Mark with `[NEEDS CLARIFICATION: specific question]` ONLY when ALL of these are true:
+1. The choice **significantly impacts feature scope** or user experience
+2. **Multiple reasonable interpretations exist** with different implications
+3. **No reasonable default exists** for the domain
+
+**When NOT to use a marker** (make an informed guess instead):
+
+| Area | Reasonable Default | Do NOT mark |
+|------|-------------------|-------------|
+| Data retention | Industry-standard for domain | Guess and document |
+| Performance targets | Standard web/mobile expectations | Guess and document |
+| Error handling | User-friendly messages + fallbacks | Guess and document |
+| Auth method | Session-based or OAuth2 for web | Guess and document |
+| Integration patterns | REST/GraphQL for web, function calls for libs | Guess and document |
+| UI/UX details | Standard responsive design, standard patterns | Guess and document |
+| Input validation | Standard type/range/boundary checks | Guess and document |
+
+**Marker syntax**:
+
+```markdown
+The system must support [NEEDS CLARIFICATION: which payment providers should be supported at launch?] for processing transactions.
+```
+
+The marker is placed INLINE within the requirement text. It does not replace the requirement — the requirement still stands with a best-guess default. The marker flags the uncertainty.
+
+**Rules**:
+
+- **Maximum 3 markers total** across the entire specification
+- **Prioritize by impact**: scope > security/privacy > user experience > technical details
+- Each marker must contain a **specific question** (not a vague "needs clarification")
+- The surrounding requirement text should still be meaningful with the default assumption
+- Do NOT create a separate "Needs Clarification" section — markers are inline
+
+**Examples of good markers**:
+
+```markdown
+# Good: specific, scope-impacting
+The system must process refunds [NEEDS CLARIFICATION: should refunds be automatic or require manual approval?] within 5 business days.
+
+# Good: security-impacting
+User data must be retained [NEEDS CLARIFICATION: what is the data retention period required by GDPR/compliance?] according to regulatory requirements.
+
+# Good: UX-impacting with multiple interpretations
+Search results should be sorted [NEEDS CLARIFICATION: by relevance, recency, price, or user-selectable?] by default.
+```
+
+**Examples of bad markers** (should be guessed instead):
+
+```markdown
+# Bad: has reasonable default (REST API)
+The system must expose [NEEDS CLARIFICATION: REST or GraphQL?] endpoints.
+→ Default: REST. Document assumption in Assumptions section.
+
+# Bad: too vague
+The system must be [NEEDS CLARIFICATION: fast?] for all users.
+→ Bad marker. Make it measurable: "The system must respond to user actions within 2 seconds."
+
+# Bad: implementation detail (not scope-level)
+The database should use [NEEDS CLARIFICATION: PostgreSQL or MySQL?] for storage.
+→ This is an implementation decision, not a spec-level ambiguity. Don't mark.
+```
+
+**After spec generation**:
+
+If any markers were placed, include a note in the completion summary:
+```
+Specification created with 2 [NEEDS CLARIFICATION] markers:
+  1. "Which payment providers should be supported?"
+  2. "Should guest checkout be allowed?"
+
+Next: Run /developer-kit-specs:specs.spec-check to resolve.
+```
 
 ## Phase 6: Specification Review
 
@@ -300,8 +382,9 @@ incrementally, generate professional documentation, review the document, and rec
     - Missing requirements or edge cases
     - Consistency with project conventions
     - Adherence to the WHAT vs. HOW principle
-3. If issues are found, update the specification accordingly
-4. If the user provides feedback, incorporate it into the document
+3. Verify that [NEEDS CLARIFICATION] markers follow the rules (max 3, specific questions, inline)
+4. If issues are found, update the specification accordingly
+5. If the user provides feedback, incorporate it into the document
 
 ---
 
@@ -312,6 +395,8 @@ incrementally, generate professional documentation, review the document, and rec
 **Actions**:
 
 1. Summarize the generated specification
-2. Provide the command to generate tasks: `/developer-kit-specs:specs.spec-to-tasks docs/specs/[id]/`
-3. If the specification is complex, recommend running `/developer-kit-specs:specs.spec-quality-check docs/specs/[id]/` first
-4. Log completion of the brainstorming workflow
+2. If [NEEDS CLARIFICATION] markers exist: list them in the summary
+3. Provide the command to generate tasks: `/developer-kit-specs:specs.spec-to-tasks docs/specs/[id]/`
+4. If the specification is complex or has markers, recommend running `/developer-kit-specs:specs.spec-check docs/specs/[id]/` first
+5. Report: spec file path + marker count + next step (spec-check)
+6. Log completion of the brainstorming workflow

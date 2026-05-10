@@ -469,14 +469,14 @@ Synchronizes specification with implementation. Replaces the old `specs.spec-syn
 
 ---
 
-## `/developer-kit-specs:specs.spec-quality-check`
+## `/developer-kit-specs:specs.spec-check`
 
-Interactive specification quality assessment.
+Resolves `[NEEDS CLARIFICATION]` markers generated during brainstorming and performs a structured quality scan to identify underspecified areas.
 
 ### Syntax
 
 ```
-/developer-kit-specs:specs.spec-quality-check [--spec="spec-folder"]
+/developer-kit-specs:specs.spec-check [--spec="spec-folder"]
 ```
 
 ### Arguments
@@ -504,14 +504,14 @@ The scan covers 12 areas:
 
 ### Process
 
-Claude asks up to 5 focused questions, one at a time. Your answers are integrated directly into the specification.
+Claude asks up to 5 focused questions, one at a time. Marker-derived questions from brainstorming are presented first; if quota remains, a structured scan generates additional questions. Your answers are integrated directly into the specification.
 
 ### Examples
 
 ```bash
-# Check specification quality
-/developer-kit-specs:specs.spec-quality-check --spec="docs/specs/001-user-auth/"
+# Check specification quality and resolve markers
+/developer-kit-specs:specs.spec-check --spec="docs/specs/001-user-auth/"
 
 # Can be run multiple times (idempotent)
-/developer-kit-specs:specs.spec-quality-check --spec="docs/specs/001-user-auth/"
+/developer-kit-specs:specs.spec-check --spec="docs/specs/001-user-auth/"
 ```

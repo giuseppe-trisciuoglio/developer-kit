@@ -83,7 +83,7 @@ docs/specs/001-user-auth/
 |---------|-------------|
 | `/developer-kit-specs:specs.brainstorm [idea]` | Full specification creation for complex features |
 | `/developer-kit-specs:specs.quick-spec [idea]` | Lightweight spec for bug fixes and small features |
-| `/developer-kit-specs:specs.spec-quality-check [folder]` | Review specification content quality |
+| `/developer-kit-specs:specs.spec-check [folder]` | Resolve [NEEDS CLARIFICATION] markers and scan for ambiguities |
 
 ### Task Generation and Management
 
