@@ -24,7 +24,9 @@
     "./commands/specs.task-review.md",
     "./commands/specs.task-implementation.md",
     "./commands/specs.sync.md",
-    "./commands/specs.spec-check.md"
+    "./commands/specs.spec-check.md",
+    "./commands/specs.change-spec.md",
+    "./commands/specs.technical-plan.md"
   ],
   "agents": [],
   "skills": [

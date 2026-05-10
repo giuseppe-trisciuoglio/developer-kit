@@ -86,14 +86,19 @@ def update_status(filepath: str):
     old_status = frontmatter.get("status")
     new_status = detect_status_from_body(body)
     
-    # Don't downgrade from terminal/special states unless explicitly changed
-    if old_status in [TaskStatus.REVIEWED, TaskStatus.COMPLETED, TaskStatus.OPTIONAL, TaskStatus.BLOCKED, TaskStatus.ESCALATED]:
-        # If all checked, it might be implemented but we keep reviewed/completed
+    # Preserve terminal states
+    if old_status in [TaskStatus.REVIEWED, TaskStatus.COMPLETED]:
         if new_status == TaskStatus.IMPLEMENTED:
             new_status = old_status
         else:
-            # If some unchecked, it moved back to in_progress
             new_status = TaskStatus.IN_PROGRESS
+    # Preserve special states unless all checkboxes are completed
+    elif old_status in [TaskStatus.BLOCKED, TaskStatus.OPTIONAL, TaskStatus.ESCALATED]:
+        if new_status == TaskStatus.IMPLEMENTED:
+            new_status = old_status
+        # Keep special state even with incomplete checkboxes
+        else:
+            new_status = old_status
 
     if old_status != new_status:
         frontmatter["status"] = new_status

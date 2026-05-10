@@ -39,8 +39,8 @@ def parse_args(arguments: str) -> dict:
         "raw": arguments,
     }
 
-    # --- Task reference (--task=...) ---
-    task_match = re.search(r'--task=([^\s]+)', arguments)
+    # --- Task reference (--task=... or --after-task=...) ---
+    task_match = re.search(r'--(?:after-)?task=([^\s]+)', arguments)
     if task_match:
         val = task_match.group(1).strip('"\'')
         # Format 1: full path (contains / or \)
@@ -53,7 +53,7 @@ def parse_args(arguments: str) -> dict:
     # --- Spec folder (--spec=...) ---
     spec_match = re.search(r'--spec=([^\s]+)', arguments)
     if spec_match:
-        result["spec"] = spec_match.group(1).strip('"\'')
+        result["spec"] = spec_match.group(1).strip('"\'').rstrip('/\\')
 
     # Derive task path from spec + task_id if needed
     if result.get("task_id") and result["spec"] and not result["task"]:
@@ -85,10 +85,18 @@ def parse_args(arguments: str) -> dict:
         if re.search(rf'--{re.escape(flag)}(?:\s|$|=)', arguments):
             result["flags"].append(flag)
 
-    # --- Positional arguments (first path-like token) ---
-    pos_match = re.match(r'^([^\s-][^\s]*(?:/|\\))', arguments.strip())
-    if pos_match:
-        result["positional"].append(pos_match.group(1).rstrip('/\\'))
+    # --- Positional arguments (path-like tokens) ---
+    for token in arguments.strip().split():
+        # Positional: starts without -- and looks like a path (contains /)
+        if token.startswith('--'):
+            continue
+        if '/' in token or token.startswith('docs/'):
+            path = token.rstrip('/\\')
+            if path not in result["positional"]:
+                result["positional"].append(path)
+            # Populate spec from first positional if not already set
+            if result["spec"] is None:
+                result["spec"] = path
 
     return result
 
