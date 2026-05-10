@@ -724,6 +724,12 @@ Task(
     - Clear, testable criteria for each user story
     - Success conditions in natural language
     - Edge case handling
+    - **MANDATORY: Acceptance Criteria Taxonomy** — Every criterion MUST be classified with one of:
+      - **`[IMP]` Implementable**: Requires new code, configuration, or explicit system behavior. **Only these generate implementation tasks.**
+      - **`[SEF]` Side-Effect**: A natural, automatic consequence of an `[IMP]` criterion being satisfied. These do NOT generate standalone tasks but should be verifiable in e2e tests.
+      - **`[EXT]` External Verification**: Verified by external tools, user observation, or existing system behavior. These do NOT generate tasks but should appear as e2e checkpoints.
+    - **60% Rule**: At least 60% of acceptance criteria should be `[IMP]`. If fewer than 60% are `[IMP]`, the specification is too descriptive and not prescriptive enough — return to Section 2 and refine.
+    - **Why this matters**: `spec-to-tasks` uses `[IMP]` criteria to generate atomic tasks. `[SEF]` and `[EXT]` criteria that are misclassified as `[IMP]` produce "false work" — tasks that verify natural behavior rather than implement functionality.
 
    **Section 5: Integration Requirements**
     - What existing systems must integrate with (capabilities, not implementation)
@@ -852,9 +858,10 @@ Task(
     - Error scenarios: [from Section 3]
 
     **Acceptance Criteria**:
-    - Testable criteria: [from Section 4]
+    - Testable criteria: [from Section 4 — each MUST be tagged with [IMP], [SEF], or [EXT]]
     - Success conditions: [from Section 4]
     - Edge cases: [from Section 4]
+    - **60% Rule Check**: Ensure at least 60% of criteria are [IMP]; if not, flag for refinement
 
     **Integration Requirements**:
     - Systems to integrate: [from Section 5]
@@ -875,6 +882,7 @@ Task(
     - Use professional markdown structure
     - Use EARS syntax (SHALL/WILL/MAY) for all requirements
     - Include REQ-XXX prefix for each requirement
+    - Every acceptance criterion MUST include its taxonomy tag: [IMP], [SEF], or [EXT]
     - Include Non-Goals section (minimum 3 items)
     - Include Negative Requirements section (minimum 3 items with REQ-NR prefix)",
   subagent_type: "developer-kit:document-generator-expert"
@@ -1140,15 +1148,20 @@ Task(
 
     4. **Testability**: Acceptance criteria are clear and testable
 
-    5. **Formatting**: Proper markdown structure, consistent formatting
+    5. **Acceptance Criteria Taxonomy**: Verify that:
+       - Every acceptance criterion is tagged with `[IMP]`, `[SEF]`, or `[EXT]`
+       - No `[SEF]` or `[EXT]` is disguised as `[IMP]` (e.g., "git worktree list shows worktree" should be `[SEF]`, not `[IMP]`)
+       - At least 60% of criteria are `[IMP]`; if not, flag as "Under-specified — needs more prescriptive criteria"
 
-    6. **Clarity**: Language is professional, concise, and unambiguous
+    6. **Formatting**: Proper markdown structure, consistent formatting
 
-    7. **EARS Compliance**: All requirements have REQ-ID, use SHALL/WILL/MAY, and have appropriate triggers
+    7. **Clarity**: Language is professional, concise, and unambiguous
 
-    8. **Negative Requirements**: At least 3 present with REQ-NR prefix and SHALL NOT syntax
+    8. **EARS Compliance**: All requirements have REQ-ID, use SHALL/WILL/MAY, and have appropriate triggers
 
-    9. **Non-Goals**: At least 3 present with explanations
+    9. **Negative Requirements**: At least 3 present with REQ-NR prefix and SHALL NOT syntax
+
+    10. **Non-Goals**: At least 3 present with explanations
 
     Provide:
     - Overall assessment (Excellent / Good / Needs Revision)
@@ -1317,7 +1330,7 @@ Throughout the process, maintain a todo list like:
 [ ] Section 1: Business Context
 [ ] Section 2: Functional Requirements
 [ ] Section 3: User Interactions
-[ ] Section 4: Acceptance Criteria
+[ ] Section 4: Acceptance Criteria (with [IMP]/[SEF]/[EXT] taxonomy)
 [ ] Section 5: Integration Requirements
 [ ] Phase 5.3: Non-Goals Definition
 [ ] Phase 6: Specification Generation

@@ -21,6 +21,64 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [3.0.0] - 2026-05-10
+
+### Added
+
+- **Anti-Drift Workflow v2.0** (`developer-kit-specs`):
+  - Complete rewrite of Anti-Drift Workflow with improved spec-to-implementation monitoring
+  - Enhanced task lifecycle management with new 'superseded' state
+  - Action routing for task workflows with automatic state transitions
+  - Improved date field type validation in spec handling
+
+- **New `spec-sync` command** (`developer-kit-specs`):
+  - Updated command references to use specs.sync for specification synchronization
+  - Added new specifications for specs command integration
+
+- **New `spec-check` command** (`developer-kit-specs`):
+  - Renamed from spec-quality-check with improved functionality
+  - Integrated [needs clarification] handling for incomplete specifications
+
+- **ADR-039 example** (`developer-kit-core`):
+  - Added Architecture Decision Record example for git worktree management
+
+### Changed
+
+- **Task path derivation improved** (`developer-kit-specs`):
+  - Enhanced task path derivation logic for better spec population
+  - Improved argument parsing for task workflows
+
+- **Command reference updates** (`developer-kit-specs`):
+  - Removed (NEW) markers from spec commands for cleaner output
+
+### Deprecated
+
+### Removed
+
+- **Drift Guard hook** (Migration v3.0):
+  - Removed deprecated Drift Guard hook functionality
+  - Superseded by new Anti-Drift Workflow v2.0 approach
+
+- **TDD workflow hooks** (Migration v3.0):
+  - Removed Test-Driven Development workflow hooks
+  - Simplified to focused spec-driven approach
+
+- **KPI tracking hooks** (Migration v3.0):
+  - Removed Key Performance Indicator tracking hooks
+  - No longer part of core workflow
+
+- **Sessions hooks** (Migration v3.0):
+  - Removed session management hooks
+  - Simplified session handling
+
+### Fixed
+
+- **Orphan file cleanup** (Migration v3.2):
+  - Cleaned up orphan files and obsolete references
+  - Removed deprecated configuration entries
+
+### Security
+
 ## [2.8.2] - 2026-05-04
 
 ### Added
@@ -1315,7 +1373,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.8.2...HEAD
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v3.0.0...HEAD
+[3.0.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.8.2...v3.0.0
 [2.8.2]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.8.1...v2.8.2
 [2.8.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.8.0...v2.8.1
 [2.7.2]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.7.1...v2.7.2
