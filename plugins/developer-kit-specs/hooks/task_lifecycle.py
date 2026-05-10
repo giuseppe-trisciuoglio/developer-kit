@@ -19,13 +19,14 @@ class TaskStatus:
     OPTIONAL = "optional"
     BLOCKED = "blocked"
     ESCALATED = "escalated"
+    SUPERSEDED = "superseded"
 
 FIELD_SCHEMA = {
     "id": {"type": str, "required": True},
     "title": {"type": str, "required": True},
     "spec": {"type": str, "required": True},
     "status": {"type": str, "required": True, "values": [
-        "pending", "in_progress", "implemented", "reviewed", "completed", "optional", "blocked", "escalated"
+        "pending", "in_progress", "implemented", "reviewed", "completed", "optional", "blocked", "escalated", "superseded"
     ]},
     "imp-requirements": {"type": list, "required": False},
     "ac-mapping": {"type": list, "required": False},
@@ -61,19 +62,45 @@ def write_task_file(path: Path, frontmatter: Dict, body: str):
     content = "---\n" + yaml.dump(frontmatter, sort_keys=False) + "---\n" + body
     path.write_text(content)
 
-def detect_status_from_body(body: str) -> str:
-    """Heuristic to detect status from checkboxes in the body."""
+def _all_dod_complete(body: str) -> bool:
+    """Check whether all Definition of Done checkboxes are checked."""
+    # Extract the Definition of Done section
+    dod_match = re.search(r'## Definition of Done(.*?)(?=\n## |\Z)', body, re.DOTALL)
+    if not dod_match:
+        return False
+    dod_section = dod_match.group(1)
+    unchecked = len(re.findall(r'- \[ \]', dod_section))
+    return unchecked == 0
+
+
+def detect_status_from_body(body: str, old_status: Optional[str] = None) -> str:
+    """Heuristic to detect status from checkboxes and DoD in the body.
+
+    Progression when all checkboxes are checked:
+        pending/in_progress -> implemented
+        implemented -> reviewed  (when DoD is also complete)
+        reviewed -> completed   (when cleanup_date is set, i.e. cleanup ran)
+    """
     # Count checkboxes
     total = len(re.findall(r'- \[ \]', body)) + len(re.findall(r'- \[x\]', body))
     checked = len(re.findall(r'- \[x\]', body))
-    
-    if total == 0:
-        return TaskStatus.PENDING
-    if checked == 0:
-        return TaskStatus.PENDING
-    if checked == total:
-        return TaskStatus.IMPLEMENTED
-    return TaskStatus.IN_PROGRESS
+    all_checked = (total > 0 and checked == total)
+
+    if not all_checked:
+        if checked == 0:
+            return TaskStatus.PENDING
+        # An implemented task with incomplete DoD should not be demoted
+        if old_status == TaskStatus.IMPLEMENTED:
+            return TaskStatus.IMPLEMENTED
+        return TaskStatus.IN_PROGRESS
+
+    # All checkboxes checked — determine promotion level
+    if old_status == TaskStatus.REVIEWED:
+        # reviewed -> completed only if cleanup already ran
+        return TaskStatus.REVIEWED
+    if old_status == TaskStatus.IMPLEMENTED and _all_dod_complete(body):
+        return TaskStatus.REVIEWED
+    return TaskStatus.IMPLEMENTED
 
 def update_status(filepath: str):
     """Auto-updates the task status based on checkboxes and sets dates."""
@@ -84,23 +111,19 @@ def update_status(filepath: str):
         return
 
     old_status = frontmatter.get("status")
-    new_status = detect_status_from_body(body)
-    
-    # Preserve terminal states — reviewed/completed tasks must never be demoted
-    if old_status in [TaskStatus.REVIEWED, TaskStatus.COMPLETED]:
+    new_status = detect_status_from_body(body, old_status=old_status)
+
+    # Preserve terminal states — completed tasks must never be demoted
+    if old_status == TaskStatus.COMPLETED:
         new_status = old_status
-    # Preserve special states unless all checkboxes are completed
-    elif old_status in [TaskStatus.BLOCKED, TaskStatus.OPTIONAL, TaskStatus.ESCALATED]:
-        if new_status == TaskStatus.IMPLEMENTED:
-            new_status = old_status
-        # Keep special state even with incomplete checkboxes
-        else:
-            new_status = old_status
+    # Preserve special states that are managed externally
+    elif old_status in [TaskStatus.BLOCKED, TaskStatus.OPTIONAL, TaskStatus.ESCALATED, TaskStatus.SUPERSEDED]:
+        new_status = old_status
 
     if old_status != new_status:
         frontmatter["status"] = new_status
         print(f"Status updated: {old_status} -> {new_status}")
-        
+
         # Auto-set dates
         today = datetime.now().strftime("%Y-%m-%d")
         if new_status == TaskStatus.IN_PROGRESS and not frontmatter.get("started_date"):
@@ -109,6 +132,10 @@ def update_status(filepath: str):
             frontmatter["implemented_date"] = today
             if not frontmatter.get("started_date"):
                 frontmatter["started_date"] = today
+        elif new_status == TaskStatus.REVIEWED and not frontmatter.get("reviewed_date"):
+            frontmatter["reviewed_date"] = today
+        elif new_status == TaskStatus.COMPLETED and not frontmatter.get("completed_date"):
+            frontmatter["completed_date"] = today
 
         write_task_file(path, frontmatter, body)
 
