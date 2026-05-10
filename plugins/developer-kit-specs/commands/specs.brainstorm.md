@@ -60,7 +60,53 @@ After generating the functional specification, continue with:
 |--------------------|----------|--------------------------------------------------|
 | `idea-description` | No       | Description of the idea or feature to brainstorm |
 
+## Arguments
+
+| Argument           | Required | Description                                      |
+|--------------------|----------|--------------------------------------------------|
+| `idea-description` | No       | Description of the idea or feature to brainstorm |
+
 ## Current Context
+
+### Basic Usage
+
+```bash
+/developer-kit-specs:specs.brainstorm Add user authentication with email and password
+```
+
+### With External Input
+
+```bash
+/developer-kit-specs:specs.brainstorm @docs/adr/039-architecture-decisions.md
+```
+
+### After generating the spec
+
+```bash
+/developer-kit-specs:specs.spec-to-tasks docs/specs/001-feature/
+```
+
+## Examples
+
+### Basic Usage
+
+```bash
+/developer-kit-specs:specs.brainstorm Add user authentication with email and password
+```
+
+### With External Input
+
+```bash
+/developer-kit-specs:specs.brainstorm @docs/adr/039-architecture-decisions.md
+```
+
+### After generating the spec
+
+```bash
+/developer-kit-specs:specs.spec-to-tasks docs/specs/001-feature/
+```
+
+## Argument Details
 
 The command will automatically gather context information when needed:
 
@@ -99,6 +145,362 @@ incrementally, generate professional documentation, review the document, and rec
 - **Use TodoWrite**: Track all progress throughout
 - **No time estimates**: DO NOT provide or request time estimates
 - **Scope awareness**: Validate idea scope early; if too large, guide user to split into multiple focused specifications
+
+## Spec Lifecycle: Deliberate Death
+
+Every specification has a limited lifespan. The spec is a living document that serves its purpose during implementation, but once the feature is built and verified, the spec transitions to a historical record.
+
+### The Spec Is Dead, Long Live the Spec
+
+| Phase | Spec State | Purpose |
+|-------|------------|---------|
+| **Creation** | Living document | Guide implementation decisions |
+| **Implementation** | Reference artifact | Answer "what should this do?" |
+| **Verification** | Validation checklist | Ensure spec compliance |
+| **Completion** | Historical record | Audit trail, knowledge preservation |
+| **Post-project** | Archived reference | Future maintenance and onboarding |
+
+**The spec dies when:**
+1. Implementation is complete and verified against the spec
+2. The feature has been in production without spec-related issues
+3. The spec has been superseded by a new version
+
+**The spec is NOT deleted:**
+- It becomes `archived/` in the spec folder
+- It remains as historical record
+- Future changes reference it as "original spec" or "preceding spec"
+
+### Why "Deliberate Death"?
+
+- Prevents spec rot: specs that never die become stale and misleading
+- Encourages accurate specs: knowing a spec will be archived sharpens focus
+- Supports knowledge transfer: archived specs provide valuable context
+- Enables improvement: each spec lifecycle informs better next specs
+
+### Spec Death Protocol
+
+1. **During spec-to-tasks**: Spec is alive, every decision traces back to it
+2. **During implementation**: Spec guides, deviations are documented
+3. **During task-review**: Spec is validated against, findings trace to spec
+4. **During spec-sync-with-code**: Spec is updated to reflect implemented behavior
+5. **After completion**: Spec is archived, not deleted
+
+**Archive command** (after feature completion):
+```bash
+mv docs/specs/[id]/YYYY-MM-DD--feature-name.md \
+   docs/specs/[id]/archived/YYYY-MM-DD--feature-name.md
+```
+
+Add to `archived/README.md`:
+```markdown
+## [Date] - [Feature Name] - COMPLETED
+- Implementation: complete
+- Status: verified against spec
+- Superseded by: [link or N/A]
+```
+
+---
+
+## Requirement Syntax: EARS Standard
+
+All functional requirements in the generated specification MUST use **EARS syntax** (Easy Approach to Requirements Syntax).
+
+### Syntax Forms
+
+| Form | Pattern | Example |
+|------|---------|---------|
+| **Event-driven** | `WHEN <event> THEN the system SHALL <action>` | `WHEN the user clicks "Submit" THEN the system SHALL validate the form data` |
+| **State-driven** | `WHEN <system state> THEN the system SHALL <action>` | `WHEN the session expires THEN the system SHALL clear user data` |
+| **Generic** | `The system SHALL <action>` | `The system SHALL encrypt all stored passwords with bcrypt` |
+| **Feature** | `IF <feature> THEN the system SHALL <action>` | `IF multi-factor auth is enabled THEN the system SHALL require second factor` |
+| **Negative** | `IF <unwanted condition> THEN the system SHALL <response>` | `IF SQL input detected THEN the system SHALL reject with 400` |
+
+### Mandatory Keywords
+
+- **SHALL** — obligation (use for MUST requirements)
+- **WILL** — intention (use for planned features)
+- **MAY** — permission (use for optional behaviors)
+
+### Forbidden Words (cause ambiguity)
+
+- "robust", "intuitive", "fast", "scalable", "efficient", "user-friendly"
+- Replace with measurable criteria
+
+### Requirement ID Format
+
+- Format: `REQ-XXX` (e.g., `REQ-001`, `REQ-002`)
+- Numbering: Sequential per spec
+- Placement: Before each requirement text
+
+### Example Good vs Bad
+
+```markdown
+# BAD (vague)
+"The system must be fast and secure."
+
+# GOOD (EARS)
+"The system SHALL encrypt all stored passwords with bcrypt and cost factor ≥12."
+
+# BAD (missing trigger)
+"The user receives a confirmation email."
+
+# GOOD (EARS)
+"WHEN a purchase is completed THEN the system SHALL send a confirmation email to the customer's registered address."
+```
+
+### Validation Checklist
+
+Before Phase 5 generation, verify:
+- [ ] Every requirement has REQ-ID prefix
+- [ ] Every requirement uses SHALL/WILL/MAY
+- [ ] Every requirement has a trigger (WHEN/IF) or is generic
+- [ ] No forbidden words present
+- [ ] Each requirement is testable (can verify pass/fail)
+
+## Non-Goals Enforcement
+
+Every specification MUST include an explicit **"Non-Goals"** section that lists what the feature does NOT do.
+
+**Purpose**: Prevent AI agent from adding "helpful" features outside the intended scope.
+
+**Rules**:
+1. If the feature doesn't include social login → add "No social login providers"
+2. If the feature doesn't support real-time → add "No real-time updates or WebSocket support"
+3. If there's no admin panel → add "No administrative interface"
+4. Always include at least 3 non-goals
+
+**Format**:
+```markdown
+## Non-Goals
+
+This feature does NOT include:
+
+- **Feature X**: [Brief explanation why excluded]
+- **Feature Y**: [Brief explanation why excluded]
+- **Feature Z**: [Brief explanation why excluded]
+```
+
+**Trigger Pattern**: "The system will NOT do X" or "X is out of scope for this feature"
+
+### Common Non-Goals Templates (use as starting point)
+
+#### Web Application
+- No social login (OAuth, Google, GitHub, etc.)
+- No multi-language support (English only)
+- No real-time updates (no WebSocket, SSE, or polling)
+- No offline mode or PWA support
+- No mobile app (web-only)
+
+#### Backend/API
+- No GraphQL (REST only)
+- No async processing (synchronous only)
+- No caching layer
+- No message queue integration
+- No third-party integrations
+
+#### Database/Data
+- No data export functionality
+- No data import/migration tools
+- No backup/restore utilities
+- No data archiving
+
+#### Security
+- No two-factor authentication
+- No role-based access control (RBAC)
+- No API key management
+- No audit logging
+
+#### Operations
+- No monitoring/observability setup
+- No CI/CD pipeline setup
+- No containerization
+- No deployment automation
+
+**Rule**: Start with project-specific exclusions, then add domain-specific ones.
+
+---
+
+## Negative Requirements
+
+Every specification SHOULD include explicit **"Negative Requirements"** that describe behaviors the system must NOT exhibit. These are constraints that prevent common failures, security issues, or anti-patterns.
+
+### Purpose
+
+- **Prevent failures**: Define what the system MUST NOT do to avoid known failure modes
+- **Block security issues**: Specify anti-patterns that must never appear (SQL injection, XSS, etc.)
+- **Document constraints**: Make implicit exclusions explicit for future maintainers
+- **Guide implementation**: Help developers avoid dangerous patterns during implementation
+
+### Negative Requirements vs Non-Goals
+
+| Aspect | Non-Goals | Negative Requirements |
+|--------|-----------|----------------------|
+| **Focus** | Features NOT included in this spec | Behaviors the system MUST NOT exhibit |
+| **Type** | Scope exclusions (what we don't build) | Anti-patterns/prevention (how we don't build it) |
+| **Example** | "No social login" | "The system SHALL NOT store passwords in plain text" |
+| **Validation** | Is feature X built? | Does behavior Y occur in implementation? |
+
+### Common Categories
+
+**Security Constraints** (OWASP Top 10 based):
+- No SQL string concatenation (use parameterized queries)
+- No eval() or dynamic code execution
+- No hardcoded credentials or secrets
+- No user-generated content without sanitization
+- No insecure direct object references
+
+**Data Integrity Constraints**:
+- No lost updates (optimistic locking or versioning)
+- No data loss on concurrent operations
+- No state corruption on failure
+
+**Performance Constraints**:
+- No N+1 query patterns
+- No blocking operations in request handlers
+- No unbounded data structures
+
+**Reliability Constraints**:
+- No silent failures (errors must be logged)
+- No single points of failure without mitigation
+- No data inconsistency across services
+
+### Template Format
+
+```markdown
+## Negative Requirements
+
+The system SHALL NOT:
+
+### Security
+- [Constraint 1 with REQ-ID]
+- [Constraint 2 with REQ-ID]
+
+### Data Integrity
+- [Constraint 3 with REQ-ID]
+
+### Reliability
+- [Constraint 4 with REQ-ID]
+```
+
+### EARS Syntax for Negative Requirements
+
+| Pattern | Example |
+|---------|---------|
+| **Negative** | `IF <unwanted condition> THEN the system SHALL NOT <action>` |
+| **Prevention** | `The system SHALL NOT <unsafe behavior>` |
+
+Example:
+```markdown
+## Negative Requirements
+
+The system SHALL NOT:
+
+### Security
+- REQ-NR001: IF user input is used in SQL query THEN the system SHALL NOT concatenate directly; it SHALL use parameterized queries with placeholders
+- REQ-NR002: The system SHALL NOT store passwords in plain text; it SHALL use bcrypt with cost factor ≥12
+
+### Data Integrity
+- REQ-NR003: The system SHALL NOT allow concurrent updates to overwrite each other without detection; it SHALL implement optimistic locking
+```
+
+### Generating Negative Requirements
+
+During Phase 5, identify negative requirements by asking:
+1. "What failures could occur if we don't specify this?"
+2. "What security issues could happen with this feature?"
+3. "What anti-patterns might developers use?"
+4. "What race conditions or data corruption could happen?"
+
+### Validation Checklist
+
+- [ ] At least 3 Negative Requirements present
+- [ ] Each has REQ-NR prefix and EARS syntax
+- [ ] Categories are identified (Security, Data Integrity, Reliability)
+- [ ] No contradictions with positive requirements
+- [ ] Directly traceable to anti-patterns or known failure modes
+
+---
+
+## [NEEDS CLARIFICATION] Marker Rules
+
+Every specification may include `[NEEDS CLARIFICATION]` markers to identify areas requiring user input. However, to prevent specification bloat and ensure actionable outcomes, markers are **strictly limited to 3 maximum**.
+
+### Why Maximum 3?
+
+- **Focus**: Each marker represents a significant scope decision. Too many markers indicate the spec is not ready.
+- **Actionability**: Resolving markers requires user time. More than 3 creates friction.
+- **Quality over quantity**: Better to have 3 well-defined markers than 10 vague ones.
+
+### Marker Requirements
+
+| Requirement | Description |
+|-------------|-------------|
+| **Max 3 markers** | No specification shall have more than 3 [NEEDS CLARIFICATION] markers total |
+| **Specific questions** | Each marker must contain a specific, answerable question |
+| **Inline placement** | Markers appear inline within requirement text, not as a separate section |
+| **Impact prioritization** | Markers are prioritized: scope > security/privacy > user experience > technical |
+
+### When to Use a Marker
+
+Mark with `[NEEDS CLARIFICATION: specific question]` ONLY when ALL of these are true:
+1. The choice **significantly impacts feature scope** or user experience
+2. **Multiple reasonable interpretations exist** with different implications
+3. **No reasonable default exists** for the domain
+
+### When NOT to Use a Marker (Make an Informed Guess Instead)
+
+| Area | Reasonable Default | Do NOT Mark |
+|------|-------------------|-------------|
+| Data retention | Industry-standard for domain | Guess and document |
+| Performance targets | Standard web/mobile expectations | Guess and document |
+| Error handling | User-friendly messages + fallbacks | Guess and document |
+| Auth method | Session-based or OAuth2 for web | Guess and document |
+| Integration patterns | REST/GraphQL for web, function calls for libs | Guess and document |
+| UI/UX details | Standard responsive design, standard patterns | Guess and document |
+| Input validation | Standard type/range/boundary checks | Guess and document |
+
+### Marker Syntax
+
+```markdown
+The system must support [NEEDS CLARIFICATION: which payment providers should be supported at launch?] for processing transactions.
+```
+
+The marker is placed **INLINE** within the requirement text. It does not replace the requirement — the requirement still stands with a best-guess default.
+
+### Marker Validation Checklist
+
+Before Phase 5 generation, verify:
+- [ ] Maximum 3 markers present in the specification
+- [ ] Each marker has a specific question (not vague "needs clarification")
+- [ ] Markers are inline within requirement text
+- [ ] Markers are prioritized by impact (scope > security > UX > technical)
+- [ ] No markers for areas with reasonable defaults
+
+### Marker Enforcement Examples
+
+```markdown
+# GOOD: Specific question, high impact
+The system SHALL process payments via [NEEDS CLARIFICATION: which payment providers should be supported at launch?] (Stripe, PayPal, or both?)
+
+# BAD: Vague question
+The system SHALL support payments via [NEEDS CLARIFICATION: what should we support?] (unspecified)
+
+# BAD: Technical detail (has reasonable default)
+The database should use [NEEDS CLARIFICATION: PostgreSQL or MySQL?] for storage.
+→ Default: PostgreSQL. Document assumption in Assumptions section.
+
+# BAD: Has reasonable default (REST API)
+The system must expose [NEEDS CLARIFICATION: REST or GraphQL?] endpoints.
+→ Default: REST. Document assumption in Assumptions section.
+```
+
+### Marker Count Validation in Phase 5
+
+After generating the specification:
+1. Count all `[NEEDS CLARIFICATION:` occurrences
+2. If count > 3: Flag the spec and identify the excess markers
+3. For excess markers: Either convert to a best-guess assumption OR defer to a future spec-check session
+4. Report final marker count in the completion summary
 
 ---
 
@@ -176,15 +578,14 @@ incrementally, generate professional documentation, review the document, and rec
     - Any initial thoughts or constraints?
 
 4. **Determine workflow tier based on idea complexity**:
-    - **Quick** (bug fix, small change, <3 files, well-understood solution):
-        - Recommend switching to `/developer-kit-specs:specs.quick-spec` for faster turnaround
+    - **Bug fix** (defect in existing system):
+        - Recommend `/developer-kit-specs:specs.change-spec --type=bugfix` for root cause analysis and regression prevention
         - Ask via AskUserQuestion:
             - Options:
-                - "Continue with full brainstorming" (for comprehensive spec)
-                - "Switch to quick spec" (recommended for bug fixes/small changes)
-    - **Standard** (feature, moderate scope, 3-10 files): Continue with brainstorm
-    - **Full** (greenfield, complex, >10 files or multiple modules): Continue with brainstorm + recommend spec-check
-      after
+                - "Continue with change-spec" (recommended for bug fixes)
+                - "Continue with brainstorm" (for new features)
+    - **New feature** (any scope): Continue with brainstorm
+    - **Modify existing** (delta): Continue with change-spec
 
 ---
 
@@ -255,9 +656,64 @@ incrementally, generate professional documentation, review the document, and rec
     - Focus on ambiguities or missing information
     - Ask about edge cases or specific behaviors
     - Ask about integration with existing features
+    - Ask about **exclusions and negative requirements** (what should the system NOT do?)
 2. Incorporate any extracted constraints from Phase 0 into your questions
 3. If the user provides a lot of information, summarize it to ensure alignment
 4. If the user changes the idea significantly, restart the refinement phase
+
+**Negative Requirements Question**:
+During Phase 2, ask about exclusions that could become Negative Requirements:
+- "Are there security constraints or anti-patterns we must avoid?"
+- "Are there known failure modes or race conditions to prevent?"
+- "Are there data integrity constraints beyond normal validation?"
+
+---
+
+## Phase 5.3: Non-Goals Definition
+
+**Goal**: Explicitly define what this feature does NOT include
+
+**Actions**:
+
+1. **Review the idea description** and identify:
+   - What was explicitly mentioned as out of scope
+   - What was mentioned as in scope
+   - Common related features that could be assumed
+
+2. **Brainstorm potential Non-Goals** by asking:
+   - "What would a developer naturally assume but is NOT in scope?"
+   - "What related features could be 'helpful' but are excluded?"
+   - "What technical capabilities are related but not required?"
+
+3. **Generate Non-Goals list** (minimum 3):
+   - Platform limitations (e.g., "No mobile app", "No offline mode")
+   - Feature exclusions (e.g., "No social login", "No real-time sync")
+   - Scope boundaries (e.g., "No multi-tenancy", "No plugin system")
+   - Technical exclusions (e.g., "No WebSocket", "No GraphQL")
+
+4. **Format each Non-Goal**:
+   - Bold the excluded feature name
+   - One sentence explaining why it's excluded
+   - Connects to business logic when possible
+
+**Output**:
+```markdown
+## Non-Goals
+
+This feature does NOT include:
+
+- **Social Login**: Only email/password authentication is supported
+- **Multi-language Support**: Interface is English only
+- **Real-time Updates**: No WebSocket or SSE support
+- **Admin Panel**: User management done via database directly
+- **Export/Import**: No data migration utilities
+```
+
+**Validation**:
+- [ ] Minimum 3 Non-Goals present
+- [ ] Each Non-Goal has explanation
+- [ ] No contradictions with functional requirements
+- [ ] Non-Goals are mutually exclusive with requirements
 
 ---
 
@@ -273,11 +729,12 @@ incrementally, generate professional documentation, review the document, and rec
 4. Include the following sections:
     - **Overview**: High-level description and goals
     - **User Stories**: Functional requirements from the user's perspective
-    - **Functional Requirements**: Detailed description of what the system should do
+    - **Functional Requirements**: Detailed description using EARS syntax (REQ-XXX format)
     - **Acceptance Criteria**: Testable conditions for each requirement
     - **Domain Model**: High-level description of entities and relationships
     - **User Interaction Flow**: Description of how users interact with the feature
     - **Non-Functional Requirements**: Performance, security, and scalability constraints
+    - **Non-Goals**: What this feature does NOT include (minimum 3 items with explanations)
     - **Edge Cases & Error Handling**: How the system handles unusual situations
 5. **Insert [NEEDS CLARIFICATION] markers** when required (see `[NEEDS CLARIFICATION] Markers` section below)
 6. **CRITICAL: Save the original user context**:
@@ -286,8 +743,64 @@ incrementally, generate professional documentation, review the document, and rec
    - These files provide essential context for subsequent commands like `spec-to-tasks`
 7. Ensure the specification is pure WHAT and does not mention HOW (frameworks, patterns, code)
 8. Incorporate all extracted constraints from Phase 0 and decisions from Phase 3
+8. **Apply EARS syntax** to all functional requirements:
+   - Each requirement must have `REQ-XXX` prefix
+   - Each requirement must use SHALL/WILL/MAY keywords
+   - Event-driven requirements must have WHEN/IF trigger
+   - Generic requirements (no trigger) are allowed but minimize them
+   - No forbidden words (robust, fast, intuitive, etc.)
+9. **Include Non-Goals section** (minimum 3 items with explanations)
+10. **Include Negative Requirements section** (security constraints, data integrity, reliability - minimum 3 items with REQ-NR prefix)
 
 ---
+
+## Phase 5.5: EARS Validation
+
+**Goal**: Ensure all requirements follow EARS syntax before finalizing the spec
+
+**Actions**:
+
+1. **Parse all requirements** in the generated spec:
+   - Extract requirements with `REQ-XXX` pattern
+   - Identify requirements that lack REQ-ID
+
+2. **Validate each requirement**:
+   - Has REQ-ID prefix?
+   - Uses SHALL/WILL/MAY keyword?
+   - Has trigger (WHEN/IF) or is generic (no trigger)?
+   - Contains forbidden words?
+
+3. **Fix violations**:
+   - Add missing REQ-IDs
+   - Restructure requirements missing triggers
+   - Replace forbidden words with measurable alternatives
+
+4. **Document non-requirements**:
+   - Explanatory text (not requirements) should NOT have REQ-ID
+   - Notes and rationale are exempt from EARS syntax
+
+5. **Update requirement count**:
+   - Report final REQ count in summary
+   - Flag if >50% of requirements are generic (may indicate missing triggers)
+
+**Output**: EARS-compliant requirements section with validation report
+
+Example output snippet:
+
+```markdown
+## Functional Requirements
+
+### Authentication (4 requirements)
+
+**Context**: User login and session management
+
+| ID | Requirement | Trigger Type |
+|----|-------------|--------------|
+| REQ-001 | The system SHALL validate credentials against the user database | Event (login attempt) |
+| REQ-002 | The system SHALL lock account after 5 failed attempts | Event (failed attempt) |
+| REQ-003 | WHEN session expires THEN the system SHALL clear user data | State transition |
+| REQ-004 | The system SHALL encrypt all passwords with bcrypt cost ≥12 | Generic |
+```
 
 ---
 
@@ -372,7 +885,7 @@ Next: Run /developer-kit-specs:specs.spec-check to resolve.
 
 ## Phase 6: Specification Review
 
-**Goal**: Ensure the generated specification is clear, complete, and consistent
+**Goal**: Ensure the generated specification is clear, complete, consistent, and EARS-compliant
 
 **Actions**:
 
@@ -382,9 +895,32 @@ Next: Run /developer-kit-specs:specs.spec-check to resolve.
     - Missing requirements or edge cases
     - Consistency with project conventions
     - Adherence to the WHAT vs. HOW principle
-3. Verify that [NEEDS CLARIFICATION] markers follow the rules (max 3, specific questions, inline)
-4. If issues are found, update the specification accordingly
-5. If the user provides feedback, incorporate it into the document
+3. **Validate [NEEDS CLARIFICATION] markers**:
+   - [ ] Maximum 3 markers present
+   - [ ] Each marker has specific, answerable question
+   - [ ] Markers are inline within requirement text
+   - [ ] No markers for areas with reasonable defaults
+4. **Validate Non-Goals section**:
+   - [ ] Non-Goals section exists
+   - [ ] At least 3 Non-Goals listed
+   - [ ] Each Non-Goal has explanation
+   - [ ] No contradicting requirements
+5. **Validate Negative Requirements section**:
+   - [ ] Negative Requirements section exists
+   - [ ] At least 3 Negative Requirements listed
+   - [ ] Each has REQ-NR prefix
+   - [ ] EARS syntax used (SHALL NOT)
+   - [ ] Categories identified (Security, Data Integrity, Reliability)
+6. **Validate EARS compliance**:
+   - [ ] All functional requirements have REQ-ID prefix
+   - [ ] All requirements use SHALL/WILL/MAY keywords
+   - [ ] Event-driven requirements have clear WHEN/IF triggers
+   - [ ] No forbidden words present (robust, fast, intuitive, etc.)
+   - [ ] Each requirement is independently testable
+   - [ ] Non-requirements (explanatory text) are clearly marked without REQ-ID
+6. If issues are found, update the specification accordingly
+7. If the user provides feedback, incorporate it into the document
+8. **Enforce Spec Death Awareness**: Verify spec is complete and well-defined — a spec that dies before completion becomes technical debt
 
 ---
 
@@ -400,3 +936,63 @@ Next: Run /developer-kit-specs:specs.spec-check to resolve.
 4. If the specification is complex or has markers, recommend running `/developer-kit-specs:specs.spec-check docs/specs/[id]/` first
 5. Report: spec file path + marker count + next step (spec-check)
 6. Log completion of the brainstorming workflow
+7. **Remind about Spec Lifecycle**: After implementation is complete, run `/specs:spec-sync-with-code` then archive the spec to `archived/` folder. A spec that lives forever becomes stale documentation.
+
+---
+
+## Complete Template with Negative Requirements
+
+When generating a specification, use this complete section structure:
+
+```markdown
+## Functional Requirements
+
+[Positive requirements with REQ-XXX prefix using EARS syntax]
+
+## Negative Requirements
+
+The system SHALL NOT:
+
+### Security
+- REQ-NR001: [Security constraint - SHALL NOT pattern]
+- REQ-NR002: [Another security constraint]
+
+### Data Integrity
+- REQ-NR003: [Data integrity constraint]
+- REQ-NR004: [Another data integrity constraint]
+
+### Reliability
+- REQ-NR005: [Reliability constraint]
+
+## Non-Goals
+
+This feature does NOT include:
+- **Feature X**: [Explanation why excluded]
+- **Feature Y**: [Explanation why excluded]
+
+## Acceptance Criteria
+
+[Criteria organized by requirement ID]
+
+## Edge Cases & Error Handling
+
+[Describe how system handles unusual situations]
+
+## Domain Model
+
+[High-level entities and relationships]
+
+## User Interaction Flows
+
+[How users interact with the feature]
+```
+
+### Negative Requirements Integration Points
+
+| Phase | Where Negative Requirements Appear |
+|-------|-------------------------------------|
+| Phase 2 (Idea Refinement) | Ask about anti-patterns to prevent |
+| Phase 5 (Generation) | Generate Negative Requirements section |
+| Phase 5.3 (Non-Goals) | Distinguish from Negative Requirements |
+| Phase 6 (Review) | Validate Negative Requirements completeness |
+| Phase 6 (Review) | Validate EARS negative syntax (SHALL NOT) |

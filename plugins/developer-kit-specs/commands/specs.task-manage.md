@@ -8,6 +8,8 @@ allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, TodoWrite, AskUserQues
 
 Creates or splits tasks after initial generation by `specs.spec-to-tasks`.
 
+## Overview
+
 **Supported Actions:**
 
 1. `add` — Add a new task to the specification
@@ -22,6 +24,29 @@ Creates or splits tasks after initial generation by `specs.spec-to-tasks`.
 /developer-kit-specs:specs.task-manage --action=add --spec=docs/specs/001-feature/ --lang=spring
 
 # Split a complex task
+/developer-kit-specs:specs.task-manage --action=split --task=docs/specs/001-feature/tasks/TASK-007.md
+```
+
+## Arguments
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `--action` | Yes | Management action: add or split |
+| `--task` | Conditional | Required when action=split |
+| `--spec` | Conditional | Required when action=add |
+| `--lang` | No | Target language/framework |
+
+## Examples
+
+### Add a New Task
+
+```bash
+/developer-kit-specs:specs.task-manage --action=add --spec=docs/specs/001-feature/ --lang=spring
+```
+
+### Split an Existing Task
+
+```bash
 /developer-kit-specs:specs.task-manage --action=split --task=docs/specs/001-feature/tasks/TASK-007.md
 ```
 

@@ -24,7 +24,7 @@
     "./commands/specs.task-review.md",
     "./commands/specs.task-implementation.md",
     "./commands/specs.sync.md",
-    "./commands/specs.quick-spec.md",
+
     "./commands/specs.spec-check.md"
   ],
   "agents": [],

@@ -31,8 +31,8 @@ The command falls back to a **full structured scan** across all quality categori
 ```
 brainstorm → spec-check (this) → spec-to-tasks → task-implementation → task-review → sync
                ↑
-        Risolve [NEEDS CLARIFICATION]
-        Generati da specs.brainstorm
+        Resolve [NEEDS CLARIFICATION]
+        Generate da specs.brainstorm
 ```
 
 ### Dimensions of Quality
@@ -104,12 +104,14 @@ If no matching spec folder is found for the current branch, stop and inform the 
 
 ## Core Principles
 
-- **Maximum 5 questions**: Focus on the most impactful ambiguities
+- **Maximum 3 markers to resolve**: Focus on the most impactful clarifications first
+- **Maximum 5 questions total**: Focus on the most impactful ambiguities (markers + scan combined)
 - **One question at a time**: Interactive presentation with recommendation
 - **Immediate integration**: Responses are integrated into the specification progressively
 - **Recommendation based on best practices**: For each question, suggests the best option
 - **Non-destructive**: Preserves existing content, only adds clarifications
 - **Final report**: Summary of resolved, deferred, and outstanding areas
+- **Deferred markers handling**: Markers exceeding limit are queued for next session
 
 ---
 
@@ -206,6 +208,17 @@ This command:
      ```
 3. **DEDUPLICATION**: If multiple markers ask semantically equivalent questions, keep the most specific and merge context
 4. **LIMIT**: If > 3 markers found, keep only the 3 most critical (scope > security > UX > technical)
+5. **Marker Priority Scoring**: Assign priority score to each marker:
+   - **P1 (Critical)**: Impacts feature scope or fundamental design decisions
+   - **P2 (High)**: Affects security, privacy, or user data handling
+   - **P3 (Medium)**: Influences user experience or workflow
+   - **P4 (Low)**: Technical implementation details
+   - Sort markers by priority, keep highest scoring when limiting
+6. **Deferred Markers Handling**:
+   - Markers exceeding the 3-marker limit are marked as "deferred"
+   - They remain in the spec with `[DEFERRED: will be addressed in next spec-check session]`
+   - Deferred markers do NOT count toward the 3-marker limit (they are effectively queued)
+   - After user resolves 3 markers, the next spec-check session handles deferred ones
 
 ### 2c. Structured Quality Scan
 

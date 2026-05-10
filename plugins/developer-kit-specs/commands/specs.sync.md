@@ -7,16 +7,9 @@ model: inherit
 
 # Spec Synchronization
 
+## Overview
+
 Synchronizes the functional specification with implementation reality. This is the close-the-loop step of the workflow.
-
-## Modes
-
-| Flag | What it does | When to use |
-|------|-------------|-------------|
-| (none) | Full sync: KG + task enrichment + code drift detection | Default after implementation |
-| `--kg-only` | Update Knowledge Graph only | After spec-to-tasks, when codebase was analyzed |
-| `--code-only` | Detect spec-to-code deviations only | When you suspect drift |
-| `--dry-run` | Show what would change without writing | Review before applying |
 
 ## Usage
 
@@ -34,6 +27,57 @@ Synchronizes the functional specification with implementation reality. This is t
 /developer-kit-specs:specs.sync docs/specs/001-feature/ --code-only
 
 # Preview changes
+/developer-kit-specs:specs.sync docs/specs/001-feature/ --dry-run
+```
+
+## Modes
+
+| Flag | What it does | When to use |
+|------|-------------|-------------|
+| (none) | Full sync: KG + task enrichment + code drift detection | Default after implementation |
+| `--kg-only` | Update Knowledge Graph only | After spec-to-tasks, when codebase was analyzed |
+| `--code-only` | Detect spec-to-code deviations only | When you suspect drift |
+| `--dry-run` | Show what would change without writing | Review before applying |
+
+## Arguments
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `--spec` | No | Path to spec folder (e.g., docs/specs/XXX-feature) |
+| `--kg-only` | No | Update Knowledge Graph only |
+| `--code-only` | No | Detect spec-to-code deviations only |
+| `--after-task` | No | Sync after a specific task (e.g., TASK-003) |
+| `--dry-run` | No | Preview changes without writing |
+
+## Examples
+
+### Full Sync (Recommended)
+
+```bash
+/developer-kit-specs:specs.sync docs/specs/001-feature/
+```
+
+### Sync After a Specific Task
+
+```bash
+/developer-kit-specs:specs.sync docs/specs/001-feature/ --after-task=TASK-003
+```
+
+### KG-Only Mode
+
+```bash
+/developer-kit-specs:specs.sync docs/specs/001-feature/ --kg-only
+```
+
+### Code Drift Detection Only
+
+```bash
+/developer-kit-specs:specs.sync docs/specs/001-feature/ --code-only
+```
+
+### Preview Changes
+
+```bash
 /developer-kit-specs:specs.sync docs/specs/001-feature/ --dry-run
 ```
 

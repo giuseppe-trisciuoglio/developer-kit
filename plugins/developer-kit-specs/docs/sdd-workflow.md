@@ -74,12 +74,17 @@ The constitution feeds into every subsequent phase — brainstorm, spec-to-tasks
 | Scenario | Command | Output |
 |----------|---------|--------|
 | New complex feature | `/developer-kit-specs:specs.brainstorm "idea"` | Full 9-phase specification |
-| Bug fix or small change | `/developer-kit-specs:specs.quick-spec "fix"` | Minimal 4-phase specification |
+| Bug fix | `/developer-kit-specs:specs.change-spec --type=bugfix` | Bug fix specification |
+| Modify existing feature | `/developer-kit-specs:specs.change-spec --type=delta` | Delta specification |
+| Document bug fix | `/developer-kit-specs:specs.change-spec --type=bugfix` | Bug fix specification |
+| Document technical approach | `/developer-kit-specs:specs.technical-plan --spec=...` | Technical plan |
 
-**When to use `brainstorm` vs `quick-spec`:**
+**When to use each command:**
 
-- **brainstorm**: 5+ files involved, unclear requirements, multiple stakeholders, needs architectural decisions
-- **quick-spec**: 1-3 files, clear solution, well-understood context, ≤4 acceptance criteria
+- **brainstorm**: Standard entry point for all new features, regardless of scope
+- **change-spec delta**: Adding new feature to existing system, modifying existing behavior
+- **change-spec bugfix**: Bug fix requiring root cause analysis and regression prevention
+- **technical-plan**: After brainstorm, document HOW the feature will be built (stack, decisions, phases)
 
 #### Example: Complex Feature (brainstorm)
 
@@ -155,25 +160,26 @@ The system shall return results containing:
 - Provider source and booking URL
 ```
 
-#### Example: Simple Fix (quick-spec)
+#### Example: Bug Fix
 
 ```
-/developer-kit-specs:specs.quick-spec Fix the N+1 query issue when loading user orders with items
+/developer-kit-specs:specs.change-spec --type=bugfix --spec=docs/specs/001-feature/ \
+  --title="Fix N+1 query issue"
 ```
 
-Claude skips idea refinement and approach exploration, going straight to:
+Claude gathers bug information and performs root cause analysis:
 ```
-Phase 1 — Quick Context:
+Phase 1 — Bug Discovery:
   Found: UserRepository, OrderService, OrderRepository
   Issue: OrderService.findAll() triggers lazy loading per order
 
-Phase 2 — Problem + Solution Checkpoint:
-  Problem: N+1 query on Order.findAll() → lazy loads items for each order
-  Solution: Use JOIN FETCH in repository query
+Phase 2 — Root Cause Analysis:
+  Root Cause: Missing JOIN FETCH causes N+1 queries
+  Location: OrderRepository.java:45
+  Solution: Add @Query with JOIN FETCH
 
-Phase 3 — Generate Minimal Spec:
-  docs/specs/004-fix-n1-orders/2026-04-10--fix-n1-orders.md
-  Acceptance criteria: 3 (within limit of 4)
+Phase 3 — Bug Fix Document Generated:
+  docs/specs/001-feature/changes/2026-04-10--bugfix--n1-orders.md
 ```
 
 ### 1.2 Quality Check the Specification
@@ -284,6 +290,41 @@ View, split, or reorganize tasks before implementation:
 # Mark a task as optional
 /developer-kit-specs:specs.task-manage --action=mark-optional --task="docs/specs/001-hotel-search/tasks/TASK-006.md"
 ```
+
+### 1.5 Document Technical Plan (Optional)
+
+After generating a specification with brainstorm, you may want to document the technical approach:
+
+```
+/developer-kit-specs:specs.technical-plan --spec=docs/specs/001-hotel-search/
+```
+
+The technical plan captures:
+- **Technology Stack**: Exact versions with rationale (no ranges)
+- **Architecture Decisions**: Key decisions with alternatives considered (AD-001, AD-002, ...)
+- **Implementation Phases**: Step-by-step build plan with milestones
+- **Performance Requirements**: Measurable targets (response time, throughput)
+- **Risk Assessment**: What could go wrong and how to detect it
+- **Project Structure**: Directory organization and naming conventions
+
+### 1.6 Document Changes (Delta/Bug Fix)
+
+For modifying existing systems, use change-spec:
+
+```
+# Delta: Adding new feature to existing system
+/developer-kit-specs:specs.change-spec --type=delta --spec=docs/specs/001-hotel-search/ \
+  --title="Add multi-currency support"
+
+# Bug Fix: With root cause analysis
+/developer-kit-specs:specs.change-spec --type=bugfix --spec=docs/specs/001-hotel-search/ \
+  --title="Fix session timeout calculation"
+```
+
+Key features of change-spec:
+- **Root Cause Analysis**: Not just symptom, but WHY the bug exists
+- **Unchanged Behavior**: MANDATORY section preventing regressions
+- **EARS Syntax**: Standardized requirements format
 
 ---
 

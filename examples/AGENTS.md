@@ -15,7 +15,7 @@ AI Agents must follow these three phases in order:
 
 ### Phase 1: Specification & Planning
 Before writing any implementation code:
-1. **Brainstorm**: Use `/specs:brainstorm "idea"` (complex) or `/specs:quick-spec "idea"` (simple) to create a functional specification in `docs/specs/[ID]/`.
+1. **Brainstorm**: Use `/specs:brainstorm "idea"` to create a functional specification in `docs/specs/[ID]/`.
 2. **Quality Check**: Run `/specs:spec-quality-check docs/specs/[ID]/` to validate the requirements.
 3. **Generate Tasks**: Convert the spec into executable tasks using `/specs:spec-to-tasks --lang=[lang] docs/specs/[ID]/`.
 4. **Manage Scope**: If a task has complexity > 50, use `/specs:task-manage --action=split` to break it down.
@@ -42,9 +42,8 @@ For long-running implementations or multiple tasks, use the **Ralph Loop** to ma
 
 | Command | When to use |
 |---------|-------------|
-| `/specs:brainstorm` | Starting a new complex feature. |
-| `/specs:quick-spec` | Bug fixes or small changes (<3 files). |
-| `/specs:spec-to-tasks` | Bridge from WHAT (spec) to HOW (code). |
+| `/specs:brainstorm` | Starting a new feature. |
+| `/specs:change-spec` | Bug fixes and modifications to existing features. |
 | `/specs:task-tdd` | Mandatory first step of implementation (RED). |
 | `/specs:task-implementation` | Implementing the solution (GREEN). |
 | `/specs:task-review` | Mandatory gate before cleanup. |

@@ -135,64 +135,6 @@ with delivery guarantees and connection management
 
 ---
 
-## `/developer-kit-specs:specs.quick-spec`
-
-Create a lightweight specification for well-understood changes.
-
-### Syntax
-
-```
-/developer-kit-specs:specs.quick-spec [description]
-```
-
-### Arguments
-
-| Argument | Required | Description |
-|----------|----------|-------------|
-| `description` | Yes | Clear description of the change |
-
-### When to Use
-
-- Bug fixes with known solutions
-- Small features affecting 1-3 files
-- Changes with clear acceptance criteria (≤4)
-- Well-understood technical context
-
-### Process (4 Phases)
-
-| Phase | Name | Description |
-|-------|------|-------------|
-| 1 | Quick Context | Check git log, identify affected files |
-| 2 | Problem + Solution Checkpoint | Define and validate approach |
-| 3 | Generate Minimal Spec | Create lightweight specification |
-| 4 | Next Step Recommendation | Suggest implementation path |
-
-### Output
-
-```
-docs/specs/[ID-feature]/
-├── YYYY-MM-DD--feature-name.md     # Minimal specification
-└── decision-log.md                  # Decision record
-```
-
-### Examples
-
-```bash
-# Bug fix
-/developer-kit-specs:specs.quick-spec Fix the NullPointerException in UserService.updateProfile()
-when the email field is null
-
-# Small feature
-/developer-kit-specs:specs.quick-spec Add pagination to the /api/v1/orders endpoint with
-configurable page size and sorting
-
-# Performance improvement
-/developer-kit-specs:specs.quick-spec Optimize the dashboard query that loads in 8+ seconds
-by adding database indexes and caching the aggregation results
-```
-
----
-
 ## `/developer-kit-specs:specs.spec-to-tasks`
 
 Convert a functional specification into executable task files.
@@ -514,4 +456,130 @@ Claude asks up to 5 focused questions, one at a time. Marker-derived questions f
 
 # Can be run multiple times (idempotent)
 /developer-kit-specs:specs.spec-check --spec="docs/specs/001-user-auth/"
+```
+
+---
+
+## `/developer-kit-specs:specs.change-spec`
+
+Create a Change Specification for delta/iterations and bug fixes.
+
+### Syntax
+
+```
+/developer-kit-specs:specs.change-spec [options]
+```
+
+### Arguments
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `--type` | Yes | Type: `delta` (new feature/iteration) or `bugfix` (defect correction) |
+| `--spec` | No | Path to parent specification folder |
+| `--title` | No | Change description |
+
+### When to Use
+
+- **Delta**: Modifying existing system behavior, adding new features to existing system
+- **Bug Fix**: Documenting a bug fix with root cause analysis and regression prevention
+
+### Process (6 Phases)
+
+
+| Phase | Name | Description |
+|-------|------|-------------|
+| 1 | Mode Detection | Parse arguments, determine delta or bugfix mode |
+| 2 | Discovery | Gather context about existing system and change |
+| 3 | Delta Classification | Classify changes into ADDED/MODIFIED/REMOVED (Delta) |
+| 4 | Root Cause Analysis | Understand WHY bug exists (Bugfix) |
+| 5 | Document Generation | Create change specification |
+| 6 | Task Generation | Create implementation tasks |
+
+### Key Features
+
+- **Unchanged Behavior**: MANDATORY section for bug fixes to prevent regressions
+- **Root Cause Analysis**: Not just symptom, but WHY the bug exists
+- **EARS Syntax**: Requirements use standardized format with REQ-CHG-XXX prefix
+- **Archive Strategy**: Changes versioned with date for audit trail
+
+### Output
+
+```
+docs/specs/[ID-feature]/changes/
+├── YYYY-MM-DD--change-name.md     # Delta specification
+└── YYYY-MM-DD--bugfix--name.md    # Bug fix specification
+```
+
+### Examples
+
+```bash
+# Create delta specification
+/developer-kit-specs:specs.change-spec --type=delta --spec=docs/specs/001-feature/ \
+  --title="Add payment retry logic"
+
+# Create bug fix specification
+/developer-kit-specs:specs.change-spec --type=bugfix --spec=docs/specs/001-feature/ \
+  --title="Fix race condition in checkout"
+```
+
+---
+
+## `/developer-kit-specs:specs.technical-plan`
+
+Create a Technical Plan document that captures architectural decisions, stack, and implementation phases.
+
+### Syntax
+
+```
+/developer-kit-specs:specs.technical-plan [--spec=spec-folder]
+```
+
+### Arguments
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `--spec` | No | Path to functional specification folder |
+
+### When to Use
+
+After `specs.brainstorm` generates the functional specification, document:
+- **Stack choices** with exact versions (no ranges)
+- **Architecture patterns** to follow
+- **Implementation phases** / milestones
+- **Performance targets** with measurable metrics
+- **Risks** and how to detect them
+
+### Process (8 Phases)
+
+| Phase | Name | Description |
+|-------|------|-------------|
+| 1 | Specification Analysis | Load functional spec, extract technical implications |
+| 2 | Technology Stack | Document choices with versions and rationale |
+| 3 | Architecture Decisions | Document key decisions with alternatives |
+| 4 | Implementation Phases | Define how feature will be built step by step |
+| 5 | Performance Requirements | Define measurable performance targets |
+| 6 | Risk Assessment | Identify what could go wrong and mitigations |
+| 7 | File Structure | Define project organization |
+| 8 | Summary | Report completion and next steps |
+
+### Key Principles
+
+- **Concrete over Abstract**: "Node 20.11 LTS" not "Node ≥18"
+- **Decision with Rationale**: Why this choice over alternatives
+- **Version Pinning**: Every dependency has exact version (no ranges)
+- **Risks First**: What could go wrong before how to build it
+- **Performance as Requirements**: Metrics are not optional
+
+### Output
+
+```
+docs/specs/[ID-feature]/
+└── YYYY-MM-DD--technical-plan.md   # Technical implementation plan
+```
+
+### Examples
+
+```bash
+# Create from existing spec
+/developer-kit-specs:specs.technical-plan --spec=docs/specs/001-feature/
 ```

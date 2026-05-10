@@ -24,6 +24,33 @@ Idea → Functional Specification → Tasks (this) → Implementation → Review
 /developer-kit-specs:specs.spec-to-tasks docs/specs/001-feature/
 ```
 
+## Arguments
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `--lang` | No | Target language/framework (java, spring, typescript, nestjs, react, python, general) |
+| `--spec` | No | Path to spec folder (e.g., docs/specs/XXX-feature) |
+
+## Examples
+
+### Basic Usage
+
+```bash
+/developer-kit-specs:specs.spec-to-tasks docs/specs/001-feature/
+```
+
+### With Language Specification
+
+```bash
+/developer-kit-specs:specs.spec-to-tasks --lang=spring docs/specs/001-feature/
+```
+
+### KG-Only Mode
+
+```bash
+/developer-kit-specs:specs.spec-to-tasks docs/specs/001-feature/ --kg-only
+```
+
 ## Argument Parsing
 
 1. Run the shared argument parser:

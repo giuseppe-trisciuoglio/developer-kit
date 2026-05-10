@@ -18,6 +18,34 @@ This command follows a focused workflow optimized for single-task implementation
 /developer-kit-specs:specs.task-implementation [--lang=java|spring|typescript|nestjs|react|python|general] --task=task-name
 ```
 
+## Arguments
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `--lang` | No | Target language/framework |
+| `--task` | Yes | Task file path (e.g., docs/specs/XXX-feature/tasks/TASK-001.md) |
+| `--spec` | No | Path to spec folder |
+
+## Examples
+
+### Basic Usage
+
+```bash
+/developer-kit-specs:specs.task-implementation --task=docs/specs/001-feature/tasks/TASK-001.md
+```
+
+### With Language Specification
+
+```bash
+/developer-kit-specs:specs.task-implementation --lang=spring --task=docs/specs/001-feature/tasks/TASK-002.md
+```
+
+### Auto-Detect Spec from Branch
+
+```bash
+/developer-kit-specs:specs.task-implementation --lang=typescript --task=TASK-003
+```
+
 ## Argument Parsing
 
 1. Run the shared argument parser:

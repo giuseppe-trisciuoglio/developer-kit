@@ -38,6 +38,34 @@ Idea → Functional Specification → Tasks → Implementation → Review → Co
 /developer-kit-specs:specs.task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
 ```
 
+## Arguments
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `--lang` | No | Target language/framework for code review |
+| `--task` | No | Task file path |
+| `--spec` | No | Path to spec folder |
+
+## Examples
+
+### Basic Usage
+
+```bash
+/developer-kit-specs:specs.task-review docs/specs/001-user-auth/tasks/TASK-001.md
+```
+
+### With Language Specification
+
+```bash
+/developer-kit-specs:specs.task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
+```
+
+### Using Spec Detection
+
+```bash
+/developer-kit-specs:specs.task-review --task=TASK-001
+```
+
 ## Argument Parsing
 
 1. Run the shared argument parser:

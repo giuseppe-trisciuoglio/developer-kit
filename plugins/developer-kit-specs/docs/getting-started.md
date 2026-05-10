@@ -92,6 +92,22 @@ docs/specs/001-user-auth/
 
 The specification is technology-agnostic. It describes behaviors, not implementation details.
 
+### Step 1.5: (Optional) Document Technical Plan
+
+After generating a specification with brainstorm, you may want to document the technical approach:
+
+```
+/developer-kit-specs:specs.technical-plan --spec=docs/specs/001-user-auth/
+```
+
+The technical plan captures:
+- **Technology Stack**: Exact versions with rationale (no ranges)
+- **Architecture Decisions**: Key decisions with alternatives considered (AD-001, AD-002, ...)
+- **Implementation Phases**: Step-by-step build plan with milestones
+- **Performance Requirements**: Measurable targets (response time, throughput)
+- **Risk Assessment**: What could go wrong and how to detect it
+- **Project Structure**: Directory organization and naming conventions
+
 ### Step 2: Convert to Tasks
 
 ```
@@ -191,10 +207,12 @@ actually built, while also updating the Knowledge Graph.
 | `/developer-kit-specs:constitution create`                                    | Define project architectural DNA (run once) |
 | `/developer-kit-specs:constitution check --target=file`                       | Validate spec/task against constitution     |
 | `/developer-kit-specs:specs.brainstorm "idea"`                                | Create a full specification                 |
-| `/developer-kit-specs:specs.quick-spec "fix"`                                 | Create a minimal spec for small changes     |
+| `/developer-kit-specs:specs.spec-check [folder]`                              | Resolve markers and scan for ambiguities    |
 | `/developer-kit-specs:specs.spec-to-tasks --lang=spring spec/`                | Generate executable tasks                   |
 | `/developer-kit-specs:specs.task-implementation --lang=spring --task=TASK.md` | Implement a task                            |
 | `/developer-kit-specs:specs.task-review --lang=spring TASK.md`                | Review implementation                       |
 | `/developer-kit-specs:specs.sync spec/`                                       | Sync spec with implementation (full sync)   |
-| `/developer-kit-specs:specs.task-manage --action=list`                        | List and manage tasks                       |
-| `agents_loop.py --spec=spec/ --agent=auto`                                    | Fully automated multi-agent orchestration   |
+| `/developer-kit-specs:specs.task-manage --action=list`                         | List and manage tasks                       |
+| `/developer-kit-specs:specs.change-spec --type=delta\|bugfix`                  | Document changes to existing specs         |
+| `/developer-kit-specs:specs.technical-plan --spec=...`                        | Document technical approach (HOW)          |
+| `agents_loop.py --spec=spec/ --agent=auto`                                    | Fully automated multi-agent orchestration  |
