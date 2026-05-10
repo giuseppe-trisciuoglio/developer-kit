@@ -1,6 +1,6 @@
 {
   "name": "developer-kit-specs",
-  "version": "2.8.2",
+  "version": "3.0.0",
   "description": "Specifications-driven development workflow for transforming ideas into functional specifications and executable tasks",
   "author": {
     "name": "Giuseppe Trisciuoglio",
@@ -24,7 +24,6 @@
     "./commands/specs.task-review.md",
     "./commands/specs.task-implementation.md",
     "./commands/specs.sync.md",
-
     "./commands/specs.spec-check.md"
   ],
   "agents": [],
