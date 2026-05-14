@@ -19,6 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Task `ac-mapping` frontmatter not generated** (`developer-kit-specs`):
+  - Fixed spec-to-tasks command to properly include `ac-mapping` field in task frontmatter
+  - This field is required by task-review for specification compliance verification
+
 ### Security
 
 ## [3.0.0] - 2026-05-10

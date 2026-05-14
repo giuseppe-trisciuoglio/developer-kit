@@ -998,6 +998,7 @@ spec: [resolved spec file path]
 lang: [java|spring|typescript|nestjs|react|python|general]
 status: pending
 dependencies: [TASK-YYY if applicable]
+ac-mapping: [AC-1, AC-3]
 imp-requirements: [REQ-IDs of [IMP] criteria this task covers]
 ---
 
@@ -1365,6 +1366,7 @@ spec: docs/specs/001-user-auth/2026-03-07--user-auth-specs.md
 lang: spring
 status: pending
 dependencies: []
+ac-mapping: [AC-1, AC-4]
 imp-requirements: [REQ-001, REQ-004]
 ---
 
