@@ -215,6 +215,17 @@ For each classified change, ask the user:
 
 ### Delta Document Template
 
+Read the centralized template at `${CLAUDE_PLUGIN_ROOT}/templates/change-specification-delta.md`.
+Fill in the gathered information and save to the output path.
+
+The template defines these sections:
+- Summary and Change Summary table
+- ADDED / MODIFIED / REMOVED sections (each with Requirements and Acceptance Criteria)
+- Affected Components, Testing Strategy, Rollback Plan
+
+<details>
+<summary>Legacy template reference (deprecated — use ${CLAUDE_PLUGIN_ROOT}/templates/change-specification-delta.md)</summary>
+
 ```markdown
 # Change Specification: [Title]
 
@@ -304,7 +315,22 @@ For each classified change, ask the user:
 [How to revert if needed]
 ```
 
+</details>
+
 ### Bug Fix Document Template
+
+Read the centralized template at `${CLAUDE_PLUGIN_ROOT}/templates/bug-fix-specification.md`.
+Fill in the gathered information and save to the output path.
+
+The template defines these sections:
+- Bug Summary (title, component, severity, reproduction steps)
+- Current Behavior vs Expected Behavior
+- Root Cause Analysis
+- Unchanged Behavior (regression prevention)
+- Solution Approach, Acceptance Criteria, Risk Assessment
+
+<details>
+<summary>Legacy template reference (deprecated — use ${CLAUDE_PLUGIN_ROOT}/templates/bug-fix-specification.md)</summary>
 
 ```markdown
 # Bug Fix Specification: [Short Name]
@@ -434,6 +460,8 @@ The following behaviors MUST NOT change:
 - [Related bugs (if any)]
 - [ADR or technical decisions (if any)]
 ```
+
+</details>
 
 ---
 

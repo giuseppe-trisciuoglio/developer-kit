@@ -698,29 +698,31 @@ Task(
 
 **DO NOT START WITHOUT APPROACH APPROVAL**
 
+**Template**: Read the functional specification template at `${CLAUDE_PLUGIN_ROOT}/templates/functional-specification.md` to understand the target structure. The specification MUST follow this template.
+
 **Actions**:
 
 1. Once the approach is selected, present the functional specification in sections of 200-300 words each
 2. Incorporate any integration requirements from Phase 4
-3. Cover the following areas in separate sections:
+3. Cover the following areas in separate sections (matching the template structure):
 
-   **Section 1: Business Context**
+   **Section 1: Business Context** (→ template: `## Business Context`)
     - What problem does this feature solve?
     - Who are the users and what are their goals?
     - How does this fit into the overall system purpose?
 
-   **Section 2: Functional Requirements**
+   **Section 2: Functional Requirements** (→ template: `## Functional Requirements`)
     - User stories and use cases
     - Business rules and constraints
     - Data requirements (what data, not how to store)
     - External system capabilities needed
 
-   **Section 3: User Interactions**
+   **Section 3: User Interactions** (→ template: `## User Interactions`)
     - User flows and journeys
     - Alternative paths and edge cases
     - Error scenarios and how users are informed
 
-   **Section 4: Acceptance Criteria**
+   **Section 4: Acceptance Criteria** (→ template: `## Acceptance Criteria`)
     - Clear, testable criteria for each user story
     - Success conditions in natural language
     - Edge case handling
@@ -731,7 +733,7 @@ Task(
     - **60% Rule**: At least 60% of acceptance criteria should be `[IMP]`. If fewer than 60% are `[IMP]`, the specification is too descriptive and not prescriptive enough — return to Section 2 and refine.
     - **Why this matters**: `spec-to-tasks` uses `[IMP]` criteria to generate atomic tasks. `[SEF]` and `[EXT]` criteria that are misclassified as `[IMP]` produce "false work" — tasks that verify natural behavior rather than implement functionality.
 
-   **Section 5: Integration Requirements**
+   **Section 5: Integration Requirements** (→ template: `## Integration Requirements`)
     - What existing systems must integrate with (capabilities, not implementation)
     - Data exchange requirements (not technical protocols)
 
@@ -871,15 +873,16 @@ Task(
     **Negative Requirements**: [security, data integrity, reliability constraints]
     **Open Questions**: [list]
 
-    Create a comprehensive, well-formatted functional specification and save it to:
-    docs/specs/[id]/YYYY-MM-DD--feature-name.md
+    Read the template at ${CLAUDE_PLUGIN_ROOT}/templates/functional-specification.md and use it as the document structure.
+    Fill in the gathered information into the template sections.
+    Save the result to: docs/specs/[id]/YYYY-MM-DD--feature-name.md
 
     IMPORTANT:
+    - Read and follow the template at ${CLAUDE_PLUGIN_ROOT}/templates/functional-specification.md
     - This is a FUNCTIONAL specification, NOT a technical design
     - Do NOT mention any frameworks, libraries, or tools
     - Do NOT include code or pseudo-code
     - Focus on WHAT the system should do, not HOW
-    - Use professional markdown structure
     - Use EARS syntax (SHALL/WILL/MAY) for all requirements
     - Include REQ-XXX prefix for each requirement
     - Every acceptance criterion MUST include its taxonomy tag: [IMP], [SEF], or [EXT]

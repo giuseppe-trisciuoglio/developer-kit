@@ -188,19 +188,26 @@ Agent B: Taking over the feature
 
 3. **For `docs/specs/architecture.md`**, gather via `AskUserQuestion`:
 
-   **Q1 — Software Stack**:
-   - Options: "Java / Spring Boot", "TypeScript / NestJS", "TypeScript / React", "Python / Django or FastAPI", "PHP / Laravel or Symfony", or freeform
+   **Q1 — Logical Architecture** (domains and bounded contexts):
+   - "What are the main domains/bounded contexts of your project?"
+   - Options: "I'll describe them", "Single monolith (one context)", or freeform
 
-   **Q2 — Data Architecture**:
-   - Options: "PostgreSQL", "MySQL", "MongoDB", "Multiple databases", or freeform
-
-   **Q3 — Infrastructure**:
+   **Q2 — Infrastructure**:
    - Options: "AWS", "Docker / Docker Compose", "Kubernetes", "Serverless", "Not yet decided", or freeform
 
-   **Q4 — Architectural Rules** (optional, freeform):
+   **Q3 — Software Stack**:
+   - Options: "Java / Spring Boot", "TypeScript / NestJS", "TypeScript / React", "Python / Django or FastAPI", "PHP / Laravel or Symfony", or freeform
+
+   **Q4 — Data Architecture**:
+   - Options: "PostgreSQL", "MySQL", "MongoDB", "Multiple databases", or freeform
+
+   **Q5 — Architectural Style** (optional):
+   - Options: "Layered", "Hexagonal (Ports & Adapters)", "Clean Architecture", "CQRS", "Microservices", or freeform
+
+   **Q6 — Architectural Rules** (optional, freeform):
    - Forbidden patterns, required patterns, security constraints, AI guardrails
 
-   Then create `docs/specs/architecture.md` using the **Architecture Template** below.
+   Then create `docs/specs/architecture.md` using the **Architecture Template** at `${CLAUDE_PLUGIN_ROOT}/templates/architecture.md`. Read that file, fill the gathered answers into the placeholder sections, and write the result to `docs/specs/architecture.md`.
 
 4. **For `docs/specs/ontology.md`**, gather via `AskUserQuestion`:
 
@@ -279,6 +286,27 @@ When checking library usage, output:
 ---
 
 ## Architecture Template
+
+The architecture template is maintained in a single centralized file:
+
+```
+${CLAUDE_PLUGIN_ROOT}/templates/architecture.md
+```
+
+**Do NOT duplicate the template here.** Always read `${CLAUDE_PLUGIN_ROOT}/templates/architecture.md` to get the latest version.
+
+The template defines these sections:
+
+| # | Section | Purpose |
+|---|---------|----------|
+| 1 | Logical Architecture | Bounded contexts, modules, context map, shared kernel |
+| 2 | Infrastructure Architecture | Deployment topology, networking, scaling, environments |
+| 3 | Software Architecture | Tech stack, data architecture, architectural style, project structure, rules, patterns, API conventions, library verification |
+| 4 | Security Constraints | Forbidden/required/recommended patterns with CWE/OWASP mapping |
+| 5 | AI Guardrails | Rules for AI agents generating code |
+
+<details>
+<summary>Legacy template reference (deprecated — use ${CLAUDE_PLUGIN_ROOT}/templates/architecture.md)</summary>
 
 ```markdown
 # Project Architecture
@@ -736,14 +764,9 @@ Rules that AI agents MUST follow when generating code for this project:
 - [Guardrail 1, e.g., "Never generate @Transactional on repository methods."]
 - [Guardrail 2, e.g., "Always generate tests alongside implementation code."]
 - [Guardrail 3, e.g., "Do not introduce new dependencies without explicit approval."]
-
-## Architecture Decisions
-
-> Significant modifications to this architecture document must be tracked
-> via **ADR (Architecture Decision Records)** using the `adr-drafting` skill.
->
-> ADR location: `docs/architecture/adr/`
 ```
+
+</details>
 
 ---
 

@@ -255,12 +255,18 @@ Idea → Functional Specification → Tasks → Implementation → Review → Co
    - `escalate`: Critical architectural drift, spec contradiction without DEC, or impossible requirement
 
 2. **Generate review report** (`docs/specs/[id]/reviews/TASK-XXX-review.md`):
-   - Review Status and Summary
-   - Acceptance Criteria & DoD Results
-   - Code Review Findings
-   - Spec Compliance & Architectural Alignment
-   - Required Fixes (if any)
-   - **Next Steps**
+   Read the centralized review template at `${CLAUDE_PLUGIN_ROOT}/templates/task-review.md`.
+   Fill in the gathered findings and save to the reviews directory.
+
+   The review template defines these sections:
+   | Section | Purpose |
+   |---------|----------|
+   | Review Summary | High-level status table (AC, DoD, Code Quality, Spec Compliance, Architecture) |
+   | Acceptance Criteria & DoD Results | Per-criterion and per-item status with evidence |
+   | Code Review Findings | Table of issues with severity, file, category, recommendation |
+   | Spec Compliance & Architectural Alignment | Fidelity check, cross-boundary adherence, decision log, traceability update |
+   | Required Fixes | Critical / Warnings / Suggestions tables |
+   | Next Steps | Action by review status |
 
 3. **Update task status**:
    - Set `status: reviewed` in task frontmatter if `passed`

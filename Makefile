@@ -468,6 +468,20 @@ install-specs-skills:
 	fi; \
 	echo "  Total commands converted to skills: $$commands_count"; \
 	echo ""; \
+	if [ -d "$(SPECS_PLUGIN_DIR)/templates" ]; then \
+		echo -e "$(CYAN)Copying templates into skills references...$(NC)"; \
+		templates_count=0; \
+		for skill_dir in $$TARGET_SKILLS_DIR/*/; do \
+			if [ -d "$$skill_dir" ]; then \
+				mkdir -p "$$skill_dir/references/templates"; \
+				cp $(SPECS_PLUGIN_DIR)/templates/*.md "$$skill_dir/references/templates/"; \
+				skill_basename=$$(basename "$$skill_dir"); \
+				templates_count=$$((templates_count + 1)); \
+			fi; \
+		done; \
+		echo "  ✓ Templates copied to $$templates_count skills"; \
+		echo ""; \
+	fi; \
 	echo -e "$(GREEN)✓ Specs plugin installation complete$(NC)"; \
 	echo "  Target project: $$SELECTED_DIR"; \
 	echo "  Skills directory: $$TARGET_SKILLS_DIR/"; \
@@ -865,6 +879,24 @@ install-opencode: check-deps
 	done; \
 	echo "  Total skills installed: $$skills_count"
 	@echo ""
+	@echo -e "$(CYAN)Copying templates into skills references...$(NC)"
+	@templates_count=0; \
+	for plugin_json in $(PLUGIN_JSON_FILES); do \
+		plugin_dir=$$(dirname "$$plugin_json"); \
+		base_dir=$$(dirname "$$plugin_dir"); \
+		templates_dir="$$base_dir/templates"; \
+		if [ -d "$$templates_dir" ]; then \
+			for skill_dir in $(OPENCODE_SKILLS)/*/; do \
+				if [ -d "$$skill_dir" ]; then \
+					mkdir -p "$$skill_dir/references/templates"; \
+					cp $$templates_dir/*.md "$$skill_dir/references/templates/"; \
+					templates_count=$$((templates_count + 1)); \
+				fi; \
+			done; \
+		fi; \
+	done; \
+	echo "  ✓ Templates copied to $$templates_count skills"
+	@echo ""
 	@$(call success "OpenCode CLI installation complete")
 	@echo "  Agents directory: $(OPENCODE_AGENTS)/"
 	@echo "  Commands directory: $(OPENCODE_COMMANDS)/"
@@ -949,6 +981,24 @@ install-copilot: check-deps
 	done; \
 	echo "  Total commands converted to skills: $$commands_count"
 	@echo ""
+	@echo -e "$(CYAN)Copying templates into skills references...$(NC)"
+	@templates_count=0; \
+	for plugin_json in $(PLUGIN_JSON_FILES); do \
+		plugin_dir=$$(dirname "$$plugin_json"); \
+		base_dir=$$(dirname "$$plugin_dir"); \
+		templates_dir="$$base_dir/templates"; \
+		if [ -d "$$templates_dir" ]; then \
+			for skill_dir in $(COPILOT_SKILLS)/*/; do \
+				if [ -d "$$skill_dir" ]; then \
+					mkdir -p "$$skill_dir/references/templates"; \
+					cp $$templates_dir/*.md "$$skill_dir/references/templates/"; \
+					templates_count=$$((templates_count + 1)); \
+				fi; \
+			done; \
+		fi; \
+	done; \
+	echo "  ✓ Templates copied to $$templates_count skills"
+	@echo ""
 	@$(call success "Copilot CLI installation complete")
 	@echo "  Agents directory: $(COPILOT_AGENTS)/"
 	@echo "  Skills directory: $(COPILOT_SKILLS)/"
@@ -1010,6 +1060,24 @@ install-codex: check-deps
 		fi; \
 	done; \
 	echo "  Total commands converted to skills: $$commands_count"
+	@echo ""
+	@echo -e "$(CYAN)Copying templates into skills references...$(NC)"
+	@templates_count=0; \
+	for plugin_json in $(PLUGIN_JSON_FILES); do \
+		plugin_dir=$$(dirname "$$plugin_json"); \
+		base_dir=$$(dirname "$$plugin_dir"); \
+		templates_dir="$$base_dir/templates"; \
+		if [ -d "$$templates_dir" ]; then \
+			for skill_dir in $(CODEX_SKILLS)/*/; do \
+				if [ -d "$$skill_dir" ]; then \
+					mkdir -p "$$skill_dir/references/templates"; \
+					cp $$templates_dir/*.md "$$skill_dir/references/templates/"; \
+					templates_count=$$((templates_count + 1)); \
+				fi; \
+			done; \
+		fi; \
+	done; \
+	echo "  ✓ Templates copied to $$templates_count skills"
 	@echo ""
 	@echo -e "$(CYAN)Creating AGENTS.md index...$(NC)"
 	@echo "# Developer Kit for Codex CLI" > $(CODEX_AGENTS_MD)
@@ -1110,6 +1178,26 @@ install-kimi: check-deps
 		done; \
 	echo "  Total commands converted to skills: $$commands_count"
 	@echo ""
+	@echo -e "$(CYAN)Copying templates into skills references...$(NC)"
+	@templates_count=0; \
+	for plugin_json in $(PLUGIN_JSON_FILES); do \
+		plugin_dir=$$(dirname "$$plugin_json"); \
+		base_dir=$$(dirname "$$plugin_dir"); \
+		templates_dir="$$base_dir/templates"; \
+		if [ -d "$$templates_dir" ]; then \
+			for skill_dir in $(KIMI_SKILLS)/*/; do \
+				if [ -d "$$skill_dir" ]; then \
+					mkdir -p "$$skill_dir/references/templates"; \
+					cp $$templates_dir/*.md "$$skill_dir/references/templates/"; \
+					templates_count=$$((templates_count + 1)); \
+				fi; \
+			done; \
+		fi; \
+	done; \
+	echo "  ✓ Templates copied to $$templates_count skills"
+	@echo ""
+	@$(call success "Kimi CLI installation complete")
+	@echo "  Skills directory: $(KIMI_SKILLS)/"
 	@echo ""
 
 # ═══════════════════════════════════════════════════════════════
@@ -1200,6 +1288,24 @@ install-kiro: check-deps
 		fi; \
 	done; \
 	echo "  Total prompts installed: $$prompts_count"
+	@echo ""
+	@echo -e "$(CYAN)Copying templates into skills references...$(NC)"
+	@templates_count=0; \
+	for plugin_json in $(PLUGIN_JSON_FILES); do \
+		plugin_dir=$$(dirname "$$plugin_json"); \
+		base_dir=$$(dirname "$$plugin_dir"); \
+		templates_dir="$$base_dir/templates"; \
+		if [ -d "$$templates_dir" ]; then \
+			for skill_dir in $(KIRO_SKILLS)/*/; do \
+				if [ -d "$$skill_dir" ]; then \
+					mkdir -p "$$skill_dir/references/templates"; \
+					cp $$templates_dir/*.md "$$skill_dir/references/templates/"; \
+					templates_count=$$((templates_count + 1)); \
+				fi; \
+			done; \
+		fi; \
+	done; \
+	echo "  ✓ Templates copied to $$templates_count skills"
 	@echo ""
 	@$(call success "Kiro CLI installation complete")
 	@echo "  Skills directory:  $(KIRO_SKILLS)/"

@@ -250,45 +250,19 @@ You are converting a functional specification into executable tasks. Follow a sy
           - Freeform: allow custom answer
 
      3. Create `docs/specs/architecture.md` using the gathered information:
-        ```markdown
-        # Project Architecture
+        - Read the centralized template at `${CLAUDE_PLUGIN_ROOT}/templates/architecture.md`
+        - Fill the gathered answers into the placeholder sections of the template
+        - Set `**Created**` and `**Last Updated**` to the current date
+        - Write the result to `docs/specs/architecture.md`
 
-        **Created**: [current date YYYY-MM-DD]
-        **Last Updated**: [current date YYYY-MM-DD]
-
-        ## Software Stack
-
-        | Component | Technology | Notes |
-        |-----------|-----------|-------|
-        | Language | [e.g., TypeScript] | [version if known] |
-        | Framework | [e.g., NestJS] | [version if known] |
-        | Key Libraries | [e.g., Drizzle ORM, Passport] | |
-
-        ## Data Architecture
-
-        | Component | Technology | Notes |
-        |-----------|-----------|-------|
-        | Primary Database | [e.g., PostgreSQL] | |
-        | Caching | [e.g., Redis, none] | |
-        | ORM / Data Access | [e.g., Drizzle, Hibernate] | |
-        | Migrations | [e.g., Flyway, Drizzle Kit] | |
-
-        ## Infrastructure
-
-        | Component | Technology | Notes |
-        |-----------|-----------|-------|
-        | Hosting | [e.g., AWS ECS] | |
-        | CI/CD | [e.g., GitHub Actions] | |
-        | Containerization | [e.g., Docker] | |
-        | Orchestration | [e.g., Kubernetes, none] | |
-
-        ## Architecture Decisions
-
-        > Significant modifications to this architecture document must be tracked
-        > via **ADR (Architecture Decision Records)** using the `adr-drafting` skill.
-        >
-        > ADR location: `docs/architecture/adr/` (or project-specific convention)
-        ```
+        The template defines these sections:
+        | # | Section | Source Question |
+        |---|---------|----------------|
+        | 1 | Logical Architecture | Gather from user or leave as scaffold |
+        | 2 | Infrastructure Architecture | Question 3 above |
+        | 3 | Software Architecture | Questions 1 & 2 above |
+        | 4 | Security Constraints | Default template values |
+        | 5 | AI Guardrails | Default template values |
 
      4. Log the creation and present to the user for final confirmation
 
@@ -298,9 +272,10 @@ You are converting a functional specification into executable tasks. Follow a sy
      3. Briefly summarize what was loaded:
         ```
         Loaded project architecture:
+        - Logical Architecture: [bounded contexts summary]
+        - Infrastructure: [hosting/scaling summary]
         - Stack: [language/framework]
         - Database: [database]
-        - Infrastructure: [hosting]
         ```
      4. **Check for conflicts**: If the `--lang` parameter conflicts with the architecture document (e.g., `--lang=spring` but architecture says TypeScript), warn the user via **AskUserQuestion**:
         - "The `--lang` parameter ([lang]) doesn't match the architecture document ([architecture stack]). Which should I use?"
@@ -990,158 +965,188 @@ Provide a comprehensive summary that will inform task generation.
 
    **IMPORTANT**: Always include test files in "Files to Create" section for any class that contains business logic, state management, validation, or complex behavior. Test files should be listed alongside source files with clear descriptions of what to test (e.g., "test state transitions", "test validation logic").
 
-```markdown
----
-id: TASK-XXX
-title: "[Task Title]"
-spec: [resolved spec file path]
-lang: [java|spring|typescript|nestjs|react|python|general]
-status: pending
-dependencies: [TASK-YYY if applicable]
-ac-mapping: [AC-1, AC-3]
-imp-requirements: [REQ-IDs of [IMP] criteria this task covers]
----
+   Read the centralized task template at `${CLAUDE_PLUGIN_ROOT}/templates/task.md`.
+   Fill in the gathered information for each task and write to `docs/specs/[id]/tasks/TASK-XXX.md`.
 
-# TASK-XXX: [Task Title]
+   The task template defines these sections:
+   | Section | Purpose |
+   |---------|----------|
+   | Frontmatter | id, title, spec, lang, status, dependencies, ac-mapping, imp-requirements |
+   | Functional Description | What this task covers, mapped to [IMP] criteria |
+   | Cross-Boundary Warning | (optional) Flag cross-context modifications |
+   | External Dependency Risk | (optional) Flag unverified dependencies |
+   | Acceptance Criteria | Functional criteria derived ONLY from [IMP] spec criteria |
+   | Definition of Ready (DoR) | Pre-flight checklist before starting |
+   | Technical Context | Patterns, APIs, conventions from codebase analysis |
+   | Implementation Details | Files to create/modify (names only, no code) |
+   | Test Instructions | What to test (unit, integration, edge cases) |
+   | Definition of Done (DoD) | Completion checklist |
 
-**Functional Description**: [Functional description of what this task covers — must map to one or more `[IMP]` criteria]
+   <details>
+   <summary>Legacy task template reference (deprecated — use ${CLAUDE_PLUGIN_ROOT}/templates/task.md)</summary>
 
-**Maps to Specification**: [AC IDs this task implements, e.g., AC-1, AC-3]
+   ```markdown
+   ---
+   id: TASK-XXX
+   title: "[Task Title]"
+   spec: [resolved spec file path]
+   lang: [java|spring|typescript|nestjs|react|python|general]
+   status: pending
+   dependencies: [TASK-YYY if applicable]
+   ac-mapping: [AC-1, AC-3]
+   imp-requirements: [REQ-IDs of [IMP] criteria this task covers]
+   ---
 
-## ⚠️ Cross-Boundary Warning (if applicable)
-<!-- Remove this section if not cross-boundary -->
-- **Primary Context**: [feature's bounded context]
-- **This Task Modifies**: [file] in [different bounded context]
-- **Risk**: HIGH / MEDIUM / LOW
-- **Justification**: [why this cross-boundary modification is necessary]
+   # TASK-XXX: [Task Title]
 
-## ⚠️ External Dependency Risk (if applicable)
-<!-- Remove this section if no external dependency -->
-- **Depends on**: [external interface, e.g., ADR-038 BranchCreator]
-- **Status**: Verified / Unverified / At Risk
-- **Mitigation**: [what to do if the interface doesn't exist or differs]
+   **Functional Description**: [Functional description of what this task covers — must map to one or more `[IMP]` criteria]
 
-## Acceptance Criteria
+   **Maps to Specification**: [AC IDs this task implements, e.g., AC-1, AC-3]
 
-- [ ] [Functional criterion 1 — derived ONLY from [IMP] spec criteria, NOT from data-model.md]
-- [ ] [Functional criterion 2 — must be traceable to a specific AC-ID]
-- [ ] [Functional criterion 3 if needed]
+   ## ⚠️ Cross-Boundary Warning (if applicable)
+   <!-- Remove this section if not cross-boundary -->
+   - **Primary Context**: [feature's bounded context]
+   - **This Task Modifies**: [file] in [different bounded context]
+   - **Risk**: HIGH / MEDIUM / LOW
+   - **Justification**: [why this cross-boundary modification is necessary]
 
-## Definition of Ready (DoR)
+   ## ⚠️ External Dependency Risk (if applicable)
+   <!-- Remove this section if no external dependency -->
+   - **Depends on**: [external interface, e.g., ADR-038 BranchCreator]
+   - **Status**: Verified / Unverified / At Risk
+   - **Mitigation**: [what to do if the interface doesn't exist or differs]
 
-Before starting this task, ensure:
-- [ ] Dependencies are completed or explicitly marked as not required.
-- [ ] Technical context, patterns, and integration points are understood.
-- [ ] Files to create/modify are identified and accessible.
-- [ ] Required tooling, commands, and local prerequisites are available.
-- [ ] Open questions or blockers have been resolved.
+   ## Acceptance Criteria
 
-## Technical Context (from Codebase Analysis)
+   - [ ] [Functional criterion 1 — derived ONLY from [IMP] spec criteria, NOT from data-model.md]
+   - [ ] [Functional criterion 2 — must be traceable to a specific AC-ID]
+   - [ ] [Functional criterion 3 if needed]
 
-- **Existing Patterns to Follow**: [patterns from codebase analysis]
-- **APIs to Integrate With**: [existing APIs or services]
-- **Shared Components**: [existing utilities, services, or modules to use]
-- **Conventions**: [coding conventions, naming, structure, framework-specific patterns]
-- **Architecture Reference**: [relevant entries from docs/specs/architecture.md — stack, data layer, infrastructure]
-- **Domain Terms**: [relevant terms from docs/specs/ontology.md — use canonical names consistently]
+   ## Definition of Ready (DoR)
 
-## Implementation Details (File names only, no code)
+   Before starting this task, ensure:
+   - [ ] Dependencies are completed or explicitly marked as not required.
+   - [ ] Technical context, patterns, and integration points are understood.
+   - [ ] Files to create/modify are identified and accessible.
+   - [ ] Required tooling, commands, and local prerequisites are available.
+   - [ ] Open questions or blockers have been resolved.
 
-**Files to Create**:
-- `[path/source/1]` - [brief description of its purpose]
-- `[path/source/2]` - [brief description of its purpose]
-- `[path/test/1]` - [e.g., user.service.spec.ts]
-- `[path/test/2]` - [e.g., user.controller.integration.spec.ts]
+   ## Technical Context (from Codebase Analysis)
 
-**Files to Modify** (if applicable):
-- `[path/existing/1]` - [what modifications are needed]
+   - **Existing Patterns to Follow**: [patterns from codebase analysis]
+   - **APIs to Integrate With**: [existing APIs or services]
+   - **Shared Components**: [existing utilities, services, or modules to use]
+   - **Conventions**: [coding conventions, naming, structure, framework-specific patterns]
+   - **Architecture Reference**: [relevant entries from docs/specs/architecture.md — stack, data layer, infrastructure]
+   - **Domain Terms**: [relevant terms from docs/specs/ontology.md — use canonical names consistently]
 
-## Test Instructions
+   ## Implementation Details (File names only, no code)
 
-This section describes **what** to test, not **how** to implement test code.
+   **Files to Create**:
+   - `[path/source/1]` - [brief description of its purpose]
+   - `[path/source/2]` - [brief description of its purpose]
+   - `[path/test/1]` - [e.g., user.service.spec.ts]
+   - `[path/test/2]` - [e.g., user.controller.integration.spec.ts]
 
-**1. Mandatory Unit Tests:**
-   - `[Source Class/File Name 1]`:
-     - [ ] Verify that [method/unit] correctly handles [success scenario].
-     - [ ] Verify that [method/unit] throws an exception/error when [error scenario].
-     - [ ] Verify that the [specific business rule] logic works as described in the specification.
-   - `[Source Class/File Name 2]`:
-     - [ ] Test validation of [specific field] with valid, invalid, and borderline values.
+   **Files to Modify** (if applicable):
+   - `[path/existing/1]` - [what modifications are needed]
 
-**2. Mandatory Integration Tests:**
-   - `[Flow/Component Name]`:
-     - [ ] Verify that the `[API endpoint]` endpoint with valid data correctly interacts with the database and returns the expected response (e.g., status 201, correct body).
-     - [ ] Verify that a call to the `[API endpoint]` endpoint with invalid data **does not** modify the database state and returns an appropriate error (e.g., status 400).
+   ## Test Instructions
 
-**3. Edge Cases and Error Conditions to Test:**
-   - [ ] Send missing or malformed data.
-   - [ ] Simulate timeout or failure of an external service.
-   - [ ] Test race conditions (if relevant, e.g., double booking).
-   - [ ] Test with high data loads or boundary values (e.g., maximum length strings).
+   This section describes **what** to test, not **how** to implement test code.
 
-**Test Acceptance Criteria**:
-   - [ ] All tests described above are implemented and pass.
-   - [ ] Test coverage for classes with business logic is >= 80%.
+   **1. Mandatory Unit Tests:**
+      - `[Source Class/File Name 1]`:
+        - [ ] Verify that [method/unit] correctly handles [success scenario].
+        - [ ] Verify that [method/unit] throws an exception/error when [error scenario].
+        - [ ] Verify that the [specific business rule] logic works as described in the specification.
+      - `[Source Class/File Name 2]`:
+        - [ ] Test validation of [specific field] with valid, invalid, and borderline values.
 
-## Definition of Done (DoD)
+   **2. Mandatory Integration Tests:**
+      - `[Flow/Component Name]`:
+        - [ ] Verify that the `[API endpoint]` endpoint with valid data correctly interacts with the database and returns the expected response (e.g., status 201, correct body).
+        - [ ] Verify that a call to the `[API endpoint]` endpoint with invalid data **does not** modify the database state and returns an appropriate error (e.g., status 400).
 
-This task is complete when:
-- [ ] Functional description is implemented end-to-end.
-- [ ] All acceptance criteria are met with evidence in code or tests.
-- [ ] Tests in this task are implemented or updated and passing.
-- [ ] Required files are created or modified following the documented technical context.
-- [ ] Any handoff expectations for dependent tasks are documented.
+   **3. Edge Cases and Error Conditions to Test:**
+      - [ ] Send missing or malformed data.
+      - [ ] Simulate timeout or failure of an external service.
+      - [ ] Test race conditions (if relevant, e.g., double booking).
+      - [ ] Test with high data loads or boundary values (e.g., maximum length strings).
 
-**Dependencies**: [TASK-YYY if applicable, otherwise "None"]
+   **Test Acceptance Criteria**:
+      - [ ] All tests described above are implemented and pass.
+      - [ ] Test coverage for classes with business logic is >= 80%.
 
-**Implementation Command**:
-/developer-kit-specs:specs.task-implementation --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
-```
+   ## Definition of Done (DoD)
+
+   This task is complete when:
+   - [ ] Functional description is implemented end-to-end.
+   - [ ] All acceptance criteria are met with evidence in code or tests.
+   - [ ] Tests in this task are implemented or updated and passing.
+   - [ ] Required files are created or modified following the documented technical context.
+   - [ ] Any handoff expectations for dependent tasks are documented.
+
+   **Dependencies**: [TASK-YYY if applicable, otherwise "None"]
+
+   **Implementation Command**:
+   /developer-kit-specs:specs.task-implementation --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
+   ```
+
+   </details>
 
 5. Create the task list index file: `docs/specs/[id]/YYYY-MM-DD--feature-name--tasks.md`
 
-```markdown
-# Task List: [Feature Name]
+   Read the centralized task-list template at `${CLAUDE_PLUGIN_ROOT}/templates/task-list.md`.
+   Fill in the task index, codebase analysis summary, and task type summary.
 
-**Specification**: [resolved spec file path]
-**Generated**: [current date]
-**Language**: [language]
+   <details>
+   <summary>Legacy task-list template reference (deprecated — use ${CLAUDE_PLUGIN_ROOT}/templates/task-list.md)</summary>
 
-## Codebase Analysis Summary
+   ```markdown
+   # Task List: [Feature Name]
 
-- **Project Structure**: [summary from codebase analysis]
-- **Key Patterns**: [patterns identified]
-- **Integration Points**: [APIs/services to integrate with]
+   **Specification**: [resolved spec file path]
+   **Generated**: [current date]
+   **Language**: [language]
 
-## Task Index
+   ## Codebase Analysis Summary
 
-| Task ID | Title | Technical Focus | Status | Dependencies |
-|---------|-------|-----------------|--------|--------------|
-| [TASK-001](tasks/TASK-001.md) | Task title | [files/components] | [ ] | - |
-| [TASK-002](tasks/TASK-002.md) | Task title | [files/components] | [ ] | TASK-001 |
-| ... | ... | ... | ... | ... |
-| [TASK-N-1](tasks/TASK-N-1.md) |  End-to-End Testing | [e2e test files] | [ ] | TASK-001, TASK-002, ... |
-| [TASK-N](tasks/TASK-N.md) | Code Cleanup & Hygiene | [all modified files] | [ ] | TASK-N-1 |
+   - **Project Structure**: [summary from codebase analysis]
+   - **Key Patterns**: [patterns identified]
+   - **Integration Points**: [APIs/services to integrate with]
 
-**Legend**:
-- [E2E] = End-to-end test task (validates entire feature workflow)
-- [CLEANUP] = Code cleanup task (uses specs-code-cleanup skill)
+   ## Task Index
 
-## Tasks
+   | Task ID | Title | Technical Focus | Status | Dependencies |
+   |---------|-------|-----------------|--------|--------------|
+   | [TASK-001](tasks/TASK-001.md) | Task title | [files/components] | [ ] | - |
+   | [TASK-002](tasks/TASK-002.md) | Task title | [files/components] | [ ] | TASK-001 |
+   | ... | ... | ... | ... | ... |
+   | [TASK-N-1](tasks/TASK-N-1.md) |  End-to-End Testing | [e2e test files] | [ ] | TASK-001, TASK-002, ... |
+   | [TASK-N](tasks/TASK-N.md) | Code Cleanup & Hygiene | [all modified files] | [ ] | TASK-N-1 |
 
-Each task has its own detailed file with technical context:
-- [TASK-001](tasks/TASK-001.md): Task title
-- [TASK-002](tasks/TASK-002.md): Task title
-- ...
-- [TASK-N-1](tasks/TASK-N-1.md):  End-to-End Testing (validates entire feature)
-- [TASK-N](tasks/TASK-N.md): Code Cleanup & Workspace Hygiene (final cleanup)
+   **Legend**:
+   - [E2E] = End-to-end test task (validates entire feature workflow)
+   - [CLEANUP] = Code cleanup task (uses specs-code-cleanup skill)
 
-## Task Type Summary
+   ## Tasks
 
-- **Implementation Tasks** (TASK-001 to TASK-N-2): Core feature implementation
-- **E2E Test Task** (TASK-N-1): End-to-end testing of complete workflow
-- **Cleanup Task** (TASK-N): Final code quality and hygiene cleanup
-```
+   Each task has its own detailed file with technical context:
+   - [TASK-001](tasks/TASK-001.md): Task title
+   - [TASK-002](tasks/TASK-002.md): Task title
+   - ...
+   - [TASK-N-1](tasks/TASK-N-1.md):  End-to-End Testing (validates entire feature)
+   - [TASK-N](tasks/TASK-N.md): Code Cleanup & Workspace Hygiene (final cleanup)
+
+   ## Task Type Summary
+
+   - **Implementation Tasks** (TASK-001 to TASK-N-2): Core feature implementation
+   - **E2E Test Task** (TASK-N-1): End-to-end testing of complete workflow
+   - **Cleanup Task** (TASK-N): Final code quality and hygiene cleanup
+   ```
+
+   </details>
 
 6. Save all files (including `data-model.md`, `contracts/*`, and `traceability-matrix.md`)
 7. Run `/developer-kit-specs:specs.sync [spec-folder] --kg-only` to initialize technical context

@@ -81,11 +81,10 @@ Creates or splits tasks after initial generation by `specs.spec-to-tasks`.
 2. Read the functional specification to understand the feature context.
 3. Ask the user for the task title and a brief description.
 4. Create a new task file in `docs/specs/[id]/tasks/TASK-XXX.md`.
-5. Populate the task file with:
-   - Frontmatter (id, title, spec, status: pending)
-   - Description
-   - Acceptance Criteria (ask user or derive from spec)
-   - Definition of Done (standard items)
+5. Populate the task file using the task template at `${CLAUDE_PLUGIN_ROOT}/templates/task.md`:
+   - Fill in frontmatter (id, title, spec, status: pending)
+   - Fill in Functional Description, Acceptance Criteria (ask user or derive from spec)
+   - Include Definition of Ready, Test Instructions, Definition of Done from the template
 6. Inform the user of the new task path.
 
 ---
