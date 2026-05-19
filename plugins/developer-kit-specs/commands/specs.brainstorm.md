@@ -1,5 +1,5 @@
 ---
-description: "Provides guided brainstorming capability to transform ideas into pure functional specifications. Use when starting a new feature to define WHAT should be built (not HOW). Output: docs/specs/[id]/YYYY-MM-DD--feature-name.md"
+description: "Provides guided brainstorming capability to transform new feature ideas into pure functional specifications. Documentation-only: never implement code changes, bug fixes, or refactors. For fixes or modifications, route to specs.change-spec. Output: docs/specs/[id]/YYYY-MM-DD--feature-name.md"
 argument-hint: "[ idea-description ]"
 allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, TodoWrite, AskUserQuestion
 model: inherit
@@ -75,7 +75,8 @@ The command will automatically gather context information when needed:
 - Purpose: Describes the initial idea, feature, or problem to solve
 - Format: Free text describing the concept
 - Default: If not provided, the command will ask for it interactively
-- Examples: "Add user authentication", "Refactor payment module", "Design caching strategy"
+- Examples: "Add user authentication", "Design caching strategy", "Create a specification for subscription billing"
+- Non-examples: "Fix this bug", "Modify this existing behavior", "Refactor payment module" → use `specs.change-spec` instead
 
 ---
 
@@ -99,6 +100,8 @@ incrementally, generate professional documentation, review the document, and rec
 - **Use TodoWrite**: Track all progress throughout
 - **No time estimates**: DO NOT provide or request time estimates
 - **Scope awareness**: Validate idea scope early; if too large, guide user to split into multiple focused specifications
+- **Documentation-only boundary**: This command MUST NOT implement, patch, refactor, or modify application/source code. It may only create or update specification artifacts under `docs/specs/` and related spec documentation files.
+- **Route fixes and deltas away**: If the user asks to fix a bug, change existing behavior, refactor existing code, or "just make the modification", STOP and route them to `/developer-kit-specs:specs.change-spec` or an implementation/debugging command. Do not perform the change inside brainstorming.
 
 ## Spec Lifecycle: Deliberate Death
 
@@ -458,6 +461,56 @@ After generating the specification:
 
 ---
 
+## Hard Boundary: No Implementation During Brainstorming
+
+This command is a **specification authoring workflow only**.
+
+### Allowed File Changes
+
+The command may create or edit only specification artifacts, such as:
+
+- `docs/specs/[id]/YYYY-MM-DD--feature-name.md`
+- `docs/specs/[id]/user-request.md`
+- `docs/specs/[id]/brainstorming-notes.md`
+- `docs/specs/[id]/decision-log.md`
+- `docs/specs/ontology.md`
+
+### Forbidden Actions
+
+The command MUST NOT:
+
+- Edit source code, tests, configuration, migrations, build files, or runtime assets
+- Apply bug fixes, refactors, patches, or behavior changes
+- Run code-formatting or code-modifying commands
+- Create commits or branches for implementation work
+- Treat a user request for "fix", "modify", "change", "patch", "refactor", "correggi", "modifica", "risolvi", or "sistema" as permission to change code
+
+### Required Response for Fix/Modification Requests
+
+If the user request is primarily a bug fix or modification of existing behavior, respond with a routing message instead of implementing:
+
+```markdown
+This request is a bug fix or change to existing behavior, so `specs.brainstorm` is not the right workflow and I will not modify code from here.
+
+Recommended next command:
+/developer-kit-specs:specs.change-spec --type=bugfix "[short problem description]"
+
+For an existing-behavior change that is not a defect:
+/developer-kit-specs:specs.change-spec --type=delta "[short change description]"
+```
+
+After showing the routing message, always ask the user whether they want to create a **new functional specification** instead of a fix/change specification.
+
+Use AskUserQuestion with these options:
+- "Create a new functional spec with brainstorm" (continue only with documentation)
+- "Use change-spec bugfix" (recommended for defects)
+- "Use change-spec delta" (recommended for existing behavior changes)
+- "Exit without changes"
+
+Only continue with brainstorming if the user explicitly confirms they want a **new functional specification** and not a direct code change.
+
+---
+
 ## Phase 0: Input Mode Detection & ADR Discovery
 
 **Goal**: Determine whether the input is a free-form idea, an ADR/RFC, or a structured analysis document. If the input is a structured document, extract architectural decisions as constraints before proceeding.
@@ -522,24 +575,39 @@ After generating the specification:
 **Actions**:
 
 1. Create todo list with all phases (including Phase 0 if Structured Document Mode)
-2. Explore the current project state (for context only - do NOT include in specification):
+2. **Determine workflow tier before codebase exploration, document generation, or any action that could become implementation**:
+    - **Bug fix** (defect in existing system):
+        - STOP the brainstorming workflow by default
+        - Do NOT inspect files with the intent to patch them
+        - Do NOT edit source code, tests, configuration, migrations, or build files
+        - Recommend `/developer-kit-specs:specs.change-spec --type=bugfix` for root cause analysis and regression prevention
+        - Ask via AskUserQuestion only to confirm routing:
+            - Options:
+                - "Switch to change-spec bugfix" (recommended)
+                - "Create a new functional spec with brainstorm" (only if the user wants a new specification instead of a bug fix workflow)
+                - "Exit without changes"
+    - **Modify existing behavior / refactor / delta change**:
+        - STOP the brainstorming workflow by default
+        - Do NOT apply the requested change
+        - Recommend `/developer-kit-specs:specs.change-spec --type=delta`
+        - Ask via AskUserQuestion only to confirm routing:
+            - Options:
+                - "Switch to change-spec delta" (recommended)
+                - "Create a new functional spec with brainstorm" (only if the user wants a new specification instead of a delta/change workflow)
+                - "Exit without changes"
+    - **Direct implementation request** (e.g., "fix it", "make the change", "implement this now"):
+        - Refuse to implement inside brainstorming
+        - Explain that brainstorming only writes specs
+        - Recommend the appropriate implementation/debugging workflow after a spec/task exists
+    - **New feature** (any scope): Continue with brainstorm
+3. Only after the request is confirmed as a new feature specification, explore the current project state (for context only - do NOT include in specification):
     - Read recent commits to understand what's being worked on
     - Check for existing documentation (README, docs/, existing specs)
     - Look for related features or similar implementations
-3. If the idea is unclear, ask the user for:
+4. If the idea is unclear, ask the user for:
     - What problem are they trying to solve?
     - What is the high-level goal?
     - Any initial thoughts or constraints?
-
-4. **Determine workflow tier based on idea complexity**:
-    - **Bug fix** (defect in existing system):
-        - Recommend `/developer-kit-specs:specs.change-spec --type=bugfix` for root cause analysis and regression prevention
-        - Ask via AskUserQuestion:
-            - Options:
-                - "Continue with change-spec" (recommended for bug fixes)
-                - "Continue with brainstorm" (for new features)
-    - **New feature** (any scope): Continue with brainstorm
-    - **Modify existing** (delta): Continue with change-spec
 
 ---
 
@@ -1377,22 +1445,22 @@ Update the status as you progress through each phase and section.
 /developer-kit-specs:specs.brainstorm Implement real-time notifications using WebSockets
 ```
 
-### Example 3: Refactoring
+### Example 3: Existing Behavior Change (do NOT use brainstorm)
 
 ```bash
-/developer-kit-specs:specs.brainstorm Refactor the payment processing module to be more maintainable
+/developer-kit-specs:specs.change-spec --type=delta "Make the payment processing behavior easier to maintain"
 ```
 
-### Example 4: Bug Fix Design
+### Example 4: Bug Fix (do NOT use brainstorm)
 
 ```bash
-/developer-kit-specs:specs.brainstorm Design a fix for the race condition in order processing
+/developer-kit-specs:specs.change-spec --type=bugfix "Fix the race condition in order processing"
 ```
 
-### Example 5: Performance Improvement
+### Example 5: New Performance Feature
 
 ```bash
-/developer-kit-specs:specs.brainstorm Design a caching strategy to reduce API response times
+/developer-kit-specs:specs.brainstorm Design a caching capability to reduce API response times
 ```
 
 ### Example 6: Integration
