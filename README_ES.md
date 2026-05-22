@@ -169,7 +169,7 @@ Cada implementación de tarea actualiza el Grafo de Conocimiento para la preserv
 |---------|-------------|
 | `/specs:task-review` | Verifica que la tarea cumpla las especificaciones y estándares de calidad |
 | `/specs:code-cleanup` | Limpieza profesional: eliminar logs de depuración, optimizar imports |
-| `/specs:spec-sync-with-code` | Sincroniza la especificación con la implementación actual |
+| `/specs:spec-sync` | Sincroniza la especificación con la implementación actual |
 
 #### Comandos Adicionales del Flujo de Trabajo
 

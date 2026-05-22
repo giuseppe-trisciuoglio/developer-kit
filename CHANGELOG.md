@@ -51,6 +51,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Command reference updates** (`developer-kit-specs`):
   - Removed (NEW) markers from spec commands for cleaner output
 
+### Migration from v2.x to v3.0
+
+This release contains breaking changes. Follow this guide to migrate from v2.x.
+
+#### Command Mapping
+
+| Old Command | New Command | Notes |
+|-------------|-------------|-------|
+| `/specs:drift-guard` | `/specs:spec-sync` | New anti-drift approach with improved monitoring |
+| `/specs:spec-quality-check` | `/specs:spec-check` | Renamed for consistency |
+| `/specs:task-tdd` | `/specs:task-implementation` | TDD phase integrated into implementation |
+| `/specs:tdd-implementation` | `/specs:task-implementation` | Merged into single command |
+| `/specs:session-track` | N/A (removed) | Session tracking hooks removed |
+| `/specs:evaluator` | N/A (removed) | KPI evaluation removed |
+
+#### Workflow Changes
+
+- **Simplified Task Lifecycle**: Tasks now have states: `pending` → `in_progress` → `review` → `done` → `superseded`
+- **Integrated Testing**: No separate TDD phase — tests created during `task-implementation`
+- **Removed Hooks**: Drift Guard, TDD, KPI tracking, Sessions hooks removed
+
+#### Migration Steps
+
+1. Update command usage: `/specs:spec-quality-check` → `/specs:spec-check`
+2. Remove old hook configurations: `rm -rf .claude-plugin/hooks/drift-guard/`
+3. Migrate task states: `tdd_red` → `in_progress`, `tdd_green` → `review`
+
+4. Update docs: `docs/sdd-triangle.md` → `docs/sdd-workflow.md`
+
+#### Backward Compatibility
+
+- **Specification files**: Fully compatible — no changes needed
+- **Task files**: Compatible — old statuses auto-mapped
+- **Constitution files**: Fully compatible
+
 ### Deprecated
 
 ### Removed

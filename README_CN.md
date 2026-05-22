@@ -169,7 +169,7 @@ Developer Kit 提供**四层**能力：
 |------|------|
 | `/specs:task-review` | 验证任务是否符合需求规格和代码质量标准 |
 | `/specs:code-cleanup` | 专业清理：移除调试日志、优化导入 |
-| `/specs:spec-sync-with-code` | 将需求规格与实际实现同步 |
+| `/specs:spec-sync` | 将需求规格与实际实现同步 |
 
 #### 附加工作流命令
 

@@ -29,7 +29,7 @@ For **each** task in `pending` status, follow this strict sequence:
 
 ### Phase 3: Finalization & Sync
 After completing one or more tasks:
-1. **Spec Sync**: Run `/specs:spec-sync-with-code docs/specs/[ID]/`. This detects drift and updates the functional spec with decisions made during coding.
+1. **Spec Sync**: Run `/specs:specs.sync docs/specs/[ID]/`. This detects drift and updates the functional spec with decisions made during coding.
 2. **Context Sync**: Run `/specs:spec-sync-context docs/specs/[ID]/` to update the Knowledge Graph and task metadata.
 
 ## 3. Automation with Ralph Loop
@@ -47,7 +47,7 @@ For long-running implementations or multiple tasks, use the **Ralph Loop** to ma
 | `/specs:task-tdd` | Mandatory first step of implementation (RED). |
 | `/specs:task-implementation` | Implementing the solution (GREEN). |
 | `/specs:task-review` | Mandatory gate before cleanup. |
-| `/specs:spec-sync-with-code` | Closing the loop by updating the spec. |
+| `/specs:specs.sync` | Closing the loop by updating the spec. |
 
 ## 5. Prohibited Actions
 
