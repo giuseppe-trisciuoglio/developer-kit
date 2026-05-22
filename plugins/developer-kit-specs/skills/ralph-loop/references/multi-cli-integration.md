@@ -270,8 +270,8 @@ while :; do cat prompt.md | codex; done
 |------|-------------|---------------|
 | Implementation | `/developer-kit-specs:specs.task-implementation --task=TASK-036` | `task-implementation --task=TASK-036` |
 | Review | `/developer-kit-specs:specs.task-review --task=TASK-036` | `task-review --task=TASK-036` |
-| Cleanup | `/developer-kit-specs:specs-code-cleanup --task=TASK-036` | `specs-code-cleanup --task=TASK-036` |
-| Sync | `/developer-kit-specs:specs.spec-sync-with-code --after-task=TASK-036` | `spec-sync-with-code --after-task=TASK-036` |
+| Cleanup | `/developer-kit-specs:specs.task-implementation --task=TASK-036 --action=cleanup` | `specs.task-implementation --task=TASK-036 --action=cleanup` |
+| Sync | `/developer-kit-specs:specs.sync --after-task=TASK-036` | `specs.sync --after-task=TASK-036` |
 
 ## Best Practices
 

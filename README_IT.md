@@ -139,7 +139,9 @@ La costituzione definisce il DNA architetturale: stack approvato, guardrail AI, 
 | Comando | Quando Usare | Output |
 |---------|--------------|--------|
 | `/specs:brainstorm` | Nuove funzionalità, requisiti complessi | Specifica completa con 9 fasi |
-| `/specs:quick-spec` | Bug fix, miglioramenti minori | Specifica leggera 4 fasi |
+| `/specs:change-spec` | Delta/iterazioni, bug fix | Change specification |
+| `/specs:technical-plan` | Dopo brainstorm, documenta COME | Piano tecnico |
+| `/specs:spec-check` | Risolvi marker, verifica qualità | Specifica con qualità migliorata |
 
 La specifica risiede in `docs/specs/[id]/YYYY-MM-DD--feature-name.md`
 
@@ -167,12 +169,14 @@ Ogni implementazione aggiorna il Knowledge Graph per la conservazione del contes
 |---------|-------------|
 | `/specs:task-review` | Verifica che il task rispetti le specifiche e gli standard di qualità |
 | `/specs:code-cleanup` | Pulizia professionale: rimuovi log di debug, ottimizza import |
-| `/specs:spec-sync-with-code` | Sincronizza la specifica con l'implementazione effettiva |
+| `/specs:spec-sync` | Sincronizza la specifica con l'implementazione effettiva |
 
 #### Comandi Workflow Aggiuntivi
 
 | Comando | Descrizione |
 |---------|-------------|
+| `/specs:change-spec` | Documenta delta/iterazioni e bug fix con analisi del comportamento invariato |
+| `/specs:technical-plan` | Documenta COME la feature sarà costruita (stack, decisioni, fasi) |
 | `/specs:spec-quality-check` | Valutazione interattiva della qualità delle specifiche |
 | `/specs:spec-sync-context` | Sincronizza Knowledge Graph, Task e stato del Codebase |
 | `/specs:ralph-loop` | Loop automatizzato per sviluppo guidato da specifiche |

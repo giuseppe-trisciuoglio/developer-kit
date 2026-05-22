@@ -20,36 +20,68 @@ This command follows a focused workflow optimized for single-task implementation
 
 ## Arguments
 
-| Argument     | Description                              |
-|--------------|------------------------------------------|
-| `$ARGUMENTS` | Combined arguments passed to the command |
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `--lang` | No | Target language/framework |
+| `--task` | Yes | Task file path (e.g., docs/specs/XXX-feature/tasks/TASK-001.md) |
+| `--spec` | No | Path to spec folder |
 
-## Current Context
+## Examples
 
-If `--task` is omitted, the task is auto-detected from the current git branch:
+### Basic Usage
 
 ```bash
-branch=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/current_branch.py")
-spec_folder=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/find_spec_from_branch.py")
-# Find the first pending/in_progress task in the spec folder
+/developer-kit-specs:specs.task-implementation --task=docs/specs/001-feature/tasks/TASK-001.md
 ```
 
-If no task can be auto-detected, ask the user which task to implement.
+### With Language Specification
+
+```bash
+/developer-kit-specs:specs.task-implementation --lang=spring --task=docs/specs/001-feature/tasks/TASK-002.md
+```
+
+### Auto-Detect Spec from Branch
+
+```bash
+/developer-kit-specs:specs.task-implementation --lang=typescript --task=TASK-003
+```
+
+## Argument Parsing
+
+1. Run the shared argument parser:
+   ```bash
+   python3 "${CLAUDE_PLUGIN_ROOT}/scripts/parse_args.py" "$ARGUMENTS"
+   ```
+   Read the JSON output and extract:
+   - `task` → task file path (or construct from `spec` + `task_id`)
+   - `spec` → spec folder path
+   - `lang` → target language/framework
+   - `flags` → boolean flags
+2. If `spec` is null, auto-detect from git branch:
+   ```bash
+   branch=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/current_branch.py")
+   spec=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/find_spec_from_branch.py")
+   ```
+3. Validate required parameters. If missing, ask user via AskUserQuestion.
+
+## Action Routing
+
+The `--action` flag determines the workflow path:
+
+| Action | Workflow | Description |
+|--------|----------|-------------|
+| *(default)* | T-1 → T-7 | Full implementation workflow |
+| `cleanup` | T-7 only | Jump directly to post-review code cleanup |
+
+After argument parsing, check the `action` field in the JSON output:
+- If `action` is `null` or absent → proceed with the full implementation workflow (T-1 through T-6, T-7 optional)
+- If `action` is `cleanup` → skip to **T-7: Code Cleanup** directly, using the provided `--task=` path
+
+When routing to T-7 directly, still perform **T-7.1: Verify Review Status** to confirm the task is in `reviewed` state before executing cleanup.
 
 ## Task Mode Detection
 
 This command ONLY operates in Task Mode. If no `--task=` parameter is provided, inform the user that they should use the spec-driven flow (`devkit.brainstorm` → `devkit.spec-to-tasks`) or `/developer-kit:devkit.feature-development` for non-spec work.
-
-```bash
-# Task Mode examples:
-"--task=User login"                   → Task mode
-"--task=Password reset"               → Task mode
-"--task=API endpoint implementation"  → Task mode
-
-# Invalid (no --task=):
-"Add user authentication"              → Error: generate a spec/task first or use devkit.feature-development
-"--lang=spring Add REST API"         → Error: generate a spec/task first or use devkit.feature-development
-```
 
 ## Core Principles
 
@@ -63,7 +95,7 @@ This command ONLY operates in Task Mode. If no `--task=` parameter is provided, 
 
 ---
 
-## Workflow: Task Implementation (12 Steps)
+## Workflow: Task Implementation (10 Steps)
 
 This command implements a specific task following a focused workflow:
 - T-1: Task Identification
@@ -75,8 +107,7 @@ This command implements a specific task following a focused workflow:
 - T-4: Implementation
 - T-5: Verification
 - T-6: Task Completion
-- T-6.5: Update Specs Quality
-- T-6.6: Spec Deviation Check
+- T-7: Code Cleanup (Post-Review)
 
 ---
 
@@ -86,34 +117,36 @@ This command implements a specific task following a focused workflow:
 
 **Actions**:
 
-1. Parse $ARGUMENTS to extract parameters:
-   - Extract value from `--task=` parameter (can be task ID or file path)
-   - Extract value from `--spec=` parameter (spec folder path)
-   - Extract value from `--lang=` parameter (optional)
-   - Trim whitespace
-
-2. **Support two argument formats**:
-   - **Format 1** (direct path): `--task=docs/specs/001-feature/tasks/TASK-001.md`
-   - **Format 2** (spec+task): `--spec=docs/specs/001-feature --task=TASK-001`
-   
-   If Format 2 is used, construct the task file path as: `{spec}/tasks/{task}.md`
-
-3. Find the task file:
-   - If the task value is a file path (contains "/" or ends with ".md"): use it directly
-   - If `--spec` is provided with task ID: construct path `{spec}/tasks/{task}.md`
-   - Otherwise, look for task files matching `docs/specs/*/tasks/TASK-*.md`
-   - Match task by ID (e.g., "TASK-001") or title in the task frontmatter
-   - If multiple found, ask user which one via AskUserQuestion
-   - If none found, error with helpful message
-
-3. Read the task file and extract:
+1. (Argument parsing completed in Phase 0)
+2. Read the task file and extract:
    - Task ID and title from YAML frontmatter
    - Description
    - Acceptance criteria
    - Definition of Ready (DoR) and Definition of Done (DoD) sections
    - Dependencies from YAML frontmatter
    - Reference to specification file
+   - `imp-requirements` and `ac-mapping` from frontmatter — which spec ACs this task implements
    - If either section is missing, stop and instruct the user to update the task document before implementation
+
+3. **Spec Traceability Gate **:
+   - If the task file has `spec` reference, read the spec file to get full context:
+     - Load the spec's acceptance criteria list with their `[IMP]`/`[SEF]`/`[EXT]` taxonomy
+     - Identify which ACs this task covers (from `ac-mapping`)
+     - Identify which `[IMP]` ACs remain for other tasks
+   - Display to implementator:
+   ```
+   Task Traceability Context:
+   - This task: TASK-XXX — "[title]"
+   - Implements Spec ACs: [ac-mapping, e.g., AC-1, AC-3]
+   - Corresponding REQ-IDs: [imp-requirements, e.g., REQ-001, REQ-003]
+   
+   Full Specification Context:
+   - Total spec ACs: N ([I] implementable / [S] side-effect / [E] external)
+   - This task covers: X/[I] implementable criteria
+   - Remaining [IMP] criteria will be covered by: [list other tasks from task list]
+   - Primary bounded context: [from spec's Bounded Context Impact Statement, if present]
+   ```
+   - If the task has a **Cross-Boundary Warning** section: read it and note the risk level before proceeding
 
 ---
 
@@ -133,7 +166,7 @@ This command implements a specific task following a focused workflow:
    - Only proceed with implementation if no uncommitted changes exist OR user explicitly accepts the risk
 2. **Run lint and tests** (after git check passes):
    - Treat these checks as explicit DoR validation for local readiness and baseline health.
-   - Detect available lint/test commands by checking `package.json` (scripts), `Makefile`, `pom.xml`, `build.gradle`, `pyproject.toml`, `composer.json`, etc.
+   - Detect available lint/test commands by checking `package.json` (scripts), `Makefile`, `pom.xml`, `build.gradle`, `pyproject.toml`, `build.gradle`, `pyproject.toml`, `composer.json`, etc.
    - Run lint first (e.g., `npm run lint`, `make lint`, `./mvnw checkstyle:check`, `ruff check .`), then tests (e.g., `npm test`, `make test`, `./mvnw test -q`, `pytest`, `php artisan test`)
    - If lint or tests fail:
      - Show the failing output to the user
@@ -208,504 +241,168 @@ This command implements a specific task following a focused workflow:
        ```
      - Ask user via AskUserQuestion how to proceed
    - **If warnings found**:
-     - Present warnings but allow continuation:
-       ```
-       Task validation warnings:
-       - Pattern "Circuit Breaker" differs slightly from codebase convention
-       - API /api/v1/hotels may need rate limiting
-
-       Proceed with implementation?
-       ```
-
-5. **If validation passed or user chose to proceed**:
-   - Load KG context for implementation (optional):
-     - Query KG for components the task will use
-     - Query KG for API endpoints to integrate with
-     - Use this context during implementation
+     - Present warnings but allow continuation
 
 ---
 
 ## T-3.6: Contract Validation
 
-**Goal**: Verify DoR contract expectations are satisfied by completed dependencies (provides)
-
-**Prerequisite**: T-3: Dependency Check completed
+**Goal**: Ensure interfaces and data structures are agreed upon before coding
 
 **Actions**:
 
-1. **Extract expects from current task**:
-   - Read `expects` field from task YAML frontmatter
-   - Parse the list of expected items (files, classes, functions, methods)
-   - Example format:
-     ```yaml
-     expects:
-       - file: "src/main/java/com/hotels/search/poc/search/domain/entity/Search.java"
-         symbols:
-           - "Search"
-           - "SearchStatus"
-           - "SearchCriteria"
-       - file: "src/main/java/com/hotels/search/poc/search/domain/valueobject/SearchId.java"
-         symbols:
-           - "SearchId"
-     ```
-
-2. **For each expected item, verify it exists**:
-   - Check if the file exists
-   - Check if the symbols are declared in the file (using Grep or Read)
-   - If file doesn't exist or symbols not found → dependency contract not satisfied
-
-3. **Check provides from completed dependencies**:
-   - For each completed dependency, read its `provides` section
-   - Match expected items against provided items
-   - Track which expectations are satisfied by which dependencies
-
-4. **If any expectations are NOT satisfied**:
-   - Present errors to user:
-     ```
-     Contract Validation Failed:
-     Task expects the following but they are not provided by completed dependencies:
-
-     Expected: Search entity with symbols [Search, SearchStatus]
-     Provided by: None (no completed dependency provides this)
-
-     Expected: SearchId value object
-     Provided by: None
-
-     Options:
-     - "Proceed anyway" (implement missing contracts)
-     - "Cancel" (complete dependencies first)
-     ```
-   - Ask user via AskUserQuestion how to proceed
-   - If user chooses to proceed, log the unsatisfied contracts
-
-5. **If all expectations ARE satisfied**:
-   - Log: "Contract validation passed: All expectations satisfied by completed dependencies"
-   - Proceed to implementation with contract context
-
-**Note**: This phase ensures that task dependencies provide what the current task expects at the symbol level, not just at the task completion level.
+1. Read the `expects` and `provides` sections of the task
+2. Verify if the components mentioned in `expects` are already implemented (check Knowledge Graph or codebase)
+3. If this is one of the **first 3 tasks** of the spec:
+   - Treat `provides` as a **proposal**
+   - You may suggest changes to the proposed interface if implementation reveals a better way
+   - Document any changes in `decision-log.md`
+4. If this is a **later task**:
+   - Treat `provides` as a **contract**
+   - You MUST follow the agreed-upon interface to avoid breaking dependencies
+   - If a change is absolutely necessary, you MUST create a DEC entry in `decision-log.md` justifying the break
 
 ---
 
-## T-3.7: Review Feedback Check (Ralph Loop Support)
+## T-3.7: Review Feedback Check
 
-**Goal**: Load and address issues from previous review iterations (Ralph Loop mode)
+**Goal**: Ensure previous review failures are addressed
 
 **Actions**:
 
-1. **Check for existing review file**:
-   - Construct review file path from task file:
-     - If task is `docs/specs/XXX/tasks/TASK-007.md`
-     - Look for `docs/specs/XXX/tasks/TASK-007--review.md`
-   - Pattern: Replace `.md` with `--review.md` in the task filename
-
-**Goal**: Load and address issues from previous review iterations (Ralph Loop mode)
-
-**Actions**:
-
-1. **Check for existing review file**:
-   - Construct review file path: `{task_base_name}--review.md`
-   - Example: if task is `TASK-007.md`, look for `TASK-007--review.md`
-   - Remove `.md` from task filename and append `--review.md`
-
-2. **If review file exists**:
-   - Read the review file content
-   - Extract `review_status` from YAML frontmatter:
-     - `needs_fix` → Issues need to be addressed
-     - `passed` → Review passed, no fixes needed
-     - `partial` → Some issues fixed, others remain
-   - Extract issues list from the review content
-   - Each issue should have:
-     - `file`: File affected
-     - `line`: Line number (optional)
-     - `severity`: `blocking`, `warning`, `suggestion`
-     - `description`: What needs to be fixed
-     - `fix_applied`: Whether this was already fixed
-
-3. **Process review feedback**:
-   - If `review_status` is `passed`: Log "Review passed previously, proceeding with implementation"
-   - If `review_status` is `needs_fix` or `partial`:
-     - Filter issues where `fix_applied: false` or not marked as resolved
-     - Group issues by file
-     - Log: "Found X issues from previous review that need fixing"
-     - Display issues to user with severity levels
-
-4. **Update implementation plan**:
-   - Add fixing review issues as part of T-4 Implementation phase
-   - Prioritize `blocking` issues first, then `warning`, then `suggestion`
-   - Use TodoWrite to track: "[ ] Fix X review issues (Y blocking, Z warnings)"
-
-5. **If no review file exists**:
-   - Normal flow - no previous review to consider
-   - Log: "No previous review found, proceeding with fresh implementation"
-
-**Review File Format** (`TASK-XXX--review.md`):
-
-```yaml
----
-review_date: 2026-04-07
-review_status: needs_fix
-task_id: TASK-007
-overall_assessment: partial
----
-
-## Critical Issues
-
-### Issue 1: [TITLE]
-- **File**: `src/main/java/com/example/Service.java`
-- **Line**: 45
-- **Severity**: blocking
-- **Category**: logic_error
-- **Description**: Null pointer exception risk
-- **Fix Applied**: false
-
-## Summary
-
-- **Total Issues**: 5
-- **Blocking**: 2
-- **Warnings**: 2
-- **Suggestions**: 1
-```
-
-**Naming Convention**:
-- Task file: `TASK-007.md`
-- Review file: `TASK-007--review.md` (double dash `--` before `review`)
+1. Check if a review report exists for this task: `docs/specs/[id]/reviews/TASK-XXX-review.md`
+2. If it exists and status is NOT `passed`:
+   - Read the "Required Fixes" and "Code Review Findings" sections
+   - Incorporate these requirements into your implementation plan
+   - Ensure every finding is addressed in the new implementation
 
 ---
 
 ## T-4: Implementation
 
-**Goal**: Implement the task according to acceptance criteria and the documented DoD, and fix any review issues from previous iterations
+**Goal**: Execute the task requirements in the codebase
 
 **Actions**:
 
-1. Read acceptance criteria and DoD items from the task
-2. **If review feedback exists** (from T-3.7):
-   - Address all `blocking` issues first
-   - Address `warning` issues second
-   - Address `suggestion` issues if time permits
-   - For each issue:
-     - Read the affected file
-     - Apply the necessary fix
-     - Mark the issue as resolved in your tracking
-   - Update the review file with `fix_applied: true` for resolved issues (optional, T-6.6 will handle this)
-3. Focus implementation on meeting criteria:
-   - Implement description requirements
-   - Ensure all acceptance criteria are met
-   - Satisfy each DoD item with concrete evidence in code, tests, or task metadata
-4. Use appropriate sub-agents based on --lang
-5. Write clean, focused code
-6. **Ralph Loop Mode**: If fixing review issues, focus only on the identified issues unless the user explicitly requests additional changes
+1. Explore the codebase to find relevant files and patterns
+2. Read the files identified by agents (if any)
+3. Create a detailed implementation plan with all necessary steps
+4. Implement the code changes:
+   - Create new files and directories as needed
+   - Modify existing files
+   - Follow project patterns and conventions
+   - Adhere to the functional specification and task description
+5. Ensure code is clean, well-documented, and follows best practices
+6. Use TodoWrite to track each step of the implementation
 
 ---
 
 ## T-5: Verification
 
-**Goal**: Verify implementation meets acceptance criteria and DoD
+**Goal**: Verify the implementation against acceptance criteria and DoD
 
 **Actions**:
 
-1. Run tests (if available)
-2. Verify each acceptance criterion is met
-3. Verify each DoD item is satisfied; do not mark the task complete until every documented DoD item has evidence
-4. If criteria are not met, iterate on implementation
+1. Run the project's build/compile command to ensure no syntax errors
+2. Run relevant unit and integration tests:
+   - Identify existing tests for modified components
+   - Run them to ensure no regressions
+3. Create new tests for the implemented functionality:
+   - Follow the test instructions in the task description
+   - Use the project's testing framework and patterns
+   - Ensure high coverage of the new code
+4. Verify all acceptance criteria are met through manual or automated checks
+5. Verify all DoD items are satisfied
+6. If any verification fails, return to T-4 to fix the issues
 
 ---
 
 ## T-6: Task Completion
 
-**Goal**: Update task list and summarize
+**Goal**: Finalize the task and update status
 
 **Actions**:
 
-1. Confirm completion before marking the task done:
-   - Ensure all DoD items are satisfied and documented
-   - If the task has explicit DoR/DoD checklists, update them to reflect the validated state
-
-2. **Auto-update task status**:
-   - Check all boxes in the Acceptance Criteria section (`[ ]` → `[x]`)
-   - Status automatically updates to `implemented` via hooks
-   - The `implemented_date` field is set automatically
-
-3. Summarize:
-   - What was implemented
-   - Acceptance criteria and DoD items verified
-   - **Next Step**: Run `/developer-kit-specs:specs.task-review` to verify the implementation, then `/developer-kit-specs:specs-code-cleanup` to finalize
+1. Update the task file (`docs/specs/[id]/tasks/TASK-XXX.md`):
+   - Check all acceptance criteria boxes: `- [x]`
+   - Check all DoD boxes: `- [x]`
+   - Set `status: implemented` in frontmatter
+   - Set `implemented_date: YYYY-MM-DD`
+2. Add a summary of changes to the task file:
+   - Files created/modified
+   - New components and APIs
+   - Testing performed
+3. **Synchronization**:
+   - Run `/developer-kit-specs:specs.sync [spec-folder] --kg-only --after-task=[TASK-ID]` to update technical context
+   - Run `/developer-kit-specs:specs.sync [spec-folder] --code-only` to detect spec-to-code deviations
+4. Inform the user:
+   - Display a summary of the implementation
+   - Provide the command for review: `/developer-kit-specs:specs.task-review --task=TASK-XXX`
+   - **Next Step**: Run `/developer-kit-specs:specs.task-review` then Phase T-7 cleanup auto-activates
+5. Log completion of the task implementation workflow
 
 ---
 
-## T-6.5: Update Specs Quality
+## T-7: Code Cleanup (Optional, Post-Review)
 
-**Goal**: Automatically update Knowledge Graph and enrich tasks after implementation
+**Goal**: Cosmetic cleanup after review approval — the final step before completion.
 
-**Prerequisite**: T-6: Task Completion completed successfully
+**Prerequisite**: Task status is `reviewed` (review passed).
+
+**When to run**: Automatically suggested after task-review passes. Skippable if user prefers manual cleanup.
 
 **Actions**:
 
-1. **Call spec-sync-context command**:
-   ```
-   /developer-kit-specs:specs.spec-sync-context [spec-folder] --task=[TASK-ID]
-   ```
+### T-7.1: Verify Review Status
 
-2. **The spec-sync-context command will**:
-   - Extract provides from implemented files
-   - Update Knowledge Graph with new provides entries
-   - Enrich related tasks with updated technical context
-   - Generate summary report of changes
+1. Read the task file — confirm status is `reviewed` or `implemented`
+2. Verify review report `TASK-XXX--review.md` exists and is approved
+3. If not reviewed → stop and prompt user to run `/developer-kit-specs:specs.task-review` first
 
-3. **Log the update**:
-   ```
-   Specs Quality updated:
-   - TASK-001 provides: Search entity (Search, SearchStatus), SearchId value object
-   - Knowledge Graph updated: docs/specs/[ID]/knowledge-graph.json
-   - Dependent tasks enriched with new technical context
-   ```
+### T-7.2: Identify Files to Clean
 
-4. **If update fails**:
-   - Log warning but continue (non-blocking)
-   - Note: "Failed to update specs quality, continuing without context sync"
+1. Read `TASK-XXX--review.md` for files created/modified
+2. Read task `provides` field for file paths
+3. Build cleanup file list; categorize: source / test / config
 
-**Note**: This ensures that:
-- Future tasks can validate their expectations against actual implementations
-- Knowledge Graph stays synchronized with codebase
-- Related tasks benefit from updated technical context
+### T-7.3: Technical Debt Removal
 
----
+Search with Grep for temporary/debug artifacts:
+- `console.log`, `System.out.println`, `print(`, `// DEBUG:`, `// temp`, `// hack`
+- Resolved `TODO`/`FIXME` comments (keep unresolved ones with context)
 
-## T-6.6: Spec Deviation Check
+Remove confirmed debt. Document what was removed.
 
-**Goal**: Detect if implementation deviated from specification
+### T-7.4: Import Optimization
 
-**Prerequisite**: T-6: Task Completion completed
+1. Run language-specific import optimizer if available:
+   - Java/Spring: `./mvnw spotless:apply` or IDE optimize imports
+   - TypeScript/Node: organize imports via IDE
+   - Python: `isort` or `black`
+   - PHP: `php-cs-fixer fix`
+2. If no tool available: manually remove unused imports
 
-**Actions**:
+### T-7.5: Code Formatting & Readability
 
-1. **Compare task acceptance criteria with actual implementation**:
-   - Review what was specified vs. what was actually implemented
-   - Check for new features added beyond the task scope
-   - Identify any acceptance criteria that were changed or dropped
+1. Run language-specific formatter:
+   - Java: `./mvnw spotless:apply`
+   - TypeScript: `npm run lint:fix` / `prettier --write`
+   - Python: `black` / `autopep8`
+   - PHP: `php-cs-fixer`
+2. If no formatter: fix indentation, break lines >120 chars, fix spacing
+3. Remove dead code only if obviously safe
 
-2. **If deviations found**:
-   - Log each deviation with context and rationale
-   - Append deviation entry to `docs/specs/[id]/decision-log.md`:
-     ```markdown
-     ## DEC-NNN: Spec Deviation - [Brief Description]
-     - **Date**: YYYY-MM-DD
-     - **Task**: TASK-XXX
-     - **Phase**: Implementation
-     - **Context**: [Why the deviation occurred]
-     - **Decision**: [What changed from the spec]
-     - **Alternatives Considered**: [Could we have followed spec instead?]
-     - **Impact**: [Files/components affected, spec sections no longer accurate]
-     - **Decided By**: user / AI recommendation
-     ```
+### T-7.6: Final Verification
 
-3. **Ask user via AskUserQuestion**:
-   ```
-   Options:
-   - "Yes, sync now" - Run `/developer-kit-specs:specs.spec-sync-with-code` to update specification
-   - "Later" - Skip for now, remember to sync later
-   - "Skip (deviation intentional)" - No sync needed, deviation is documented
-   ```
+1. Run tests — must pass. If fail: stop, report, do NOT mark complete.
+2. Verify no logic or signature changes were introduced
+3. Update task status: `reviewed` → `completed`
+4. Set `cleanup_date` and `completed_date` in frontmatter
 
-4. **If no deviations**:
-   - Log "Implementation matches spec, no sync needed"
-   - Proceed to summary
+### T-7.7: Summary
 
-5. **For spec-driven chat sessions outside this command**:
-   - If the assistant used `docs/specs/[id]/` as working context and the session clarified or changed what should be built, update the affected spec artifacts before concluding.
-   - Treat specification files as deliverables whenever they directly shaped implementation decisions, not as read-only references.
-   - If no spec changes are required, state that explicitly with a short rationale.
-
----
-
-## Task File Format
-
-Each task file in `docs/specs/[ID]/tasks/TASK-*.md` must have a YAML frontmatter with the following structure:
-
-```yaml
----
-id: TASK-001
-title: "Task Title"
-spec: docs/specs/[ID-feature]/2026-03-07--feature-name.md
-lang: spring
-status: pending
-dependencies: []
-provides:
-  - file: "src/main/java/com/example/Task.java"
-    symbols:
-      - "Task"
-      - "TaskStatus"
-    type: "entity"
-expects:
-  - file: "src/main/java/com/example/Other.java"
-    symbols:
-      - "OtherService"
-    type: "service"
----
-```
-
-**Frontmatter Fields:**
-
-| Field | Required | Description |
-|-------|----------|-------------|
-| `id` | Yes | Unique task identifier (e.g., TASK-001) |
-| `title` | Yes | Human-readable task title |
-| `spec` | Yes | Reference to the specification file |
-| `lang` | Yes | Programming language/framework (spring, typescript, nestjs, general, etc.) |
-| `status` | No | Current status: `pending`, `in_progress`, `implemented`, `reviewed`, `completed`, `superseded`, `optional`, `blocked` |
-| `started_date` | No | Date work started (YYYY-MM-DD) |
-| `implemented_date` | No | Date implementation finished (YYYY-MM-DD) |
-| `reviewed_date` | No | Date review completed (YYYY-MM-DD) |
-| `completed_date` | No | Date cleanup completed (YYYY-MM-DD) |
-| `cleanup_date` | No | Date code cleanup finished (YYYY-MM-DD) |
-| `dependencies` | No | Array of task IDs this task depends on |
-| `provides` | No | What this task makes available (see format below) |
-| `expects` | No | What this task requires from dependencies |
-| `complexity` | No | Complexity score (0-100) |
-| `optional` | No | Boolean - if true, task is optional |
-| `parent_task` | No | Parent task ID (for subtasks) |
-| `supersedes` | No | Array of task IDs this task supersedes |
-
-**provides/expects Format:**
-- `file`: Relative path to the source file
-- `symbols`: Array of symbols (classes, interfaces, functions, methods) provided/required
-- `type`: Type of component (entity, value-object, service, repository, controller, function, etc.)
-
-### Standardized Status Workflow
-
-Status values MUST be one of the following (auto-managed by hooks):
-
-```
-pending → in_progress → implemented → reviewed → completed
-              ↓
-          blocked (can return to in_progress)
-```
-
-**Status Transitions:**
-- `pending`: Initial state, no dates required
-- `in_progress`: Work started → sets `started_date`
-- `implemented`: Coding complete → sets `implemented_date`
-- `reviewed`: Review passed → sets `reviewed_date`
-- `completed`: Cleanup done → sets `completed_date` and `cleanup_date`
-- `superseded`: Task replaced by others
-- `optional`: Task is not required
-- `blocked`: Task cannot proceed (temporary state)
-
-**Status updates happen automatically when you:**
-- Edit the task file and save changes
-- Check/uncheck checkboxes in the task content
-- The hooks detect changes and update frontmatter accordingly
-
-## Language/Framework Selection
-
-Parse $ARGUMENTS to detect the optional `--lang` parameter:
-
-- `--lang=spring` or `--lang=java`: Use Java/Spring Boot specialized agents
-- `--lang=typescript` or `--lang=ts`: Use TypeScript specialized agents
-- `--lang=nestjs`: Use NestJS specialized agents
-- `--lang=react`: Use React frontend specialized agents
-- `--lang=python` or `--lang=py`: Use Python specialized agents
-- `--lang=general` or no flag: Use general-purpose agents (default)
-
----
-
-## Decision Logging Protocol
-
-Throughout the workflow, whenever a non-trivial choice is made between alternatives, append a DEC entry to `docs/specs/[id]/decision-log.md`.
-
-### When to log decisions:
-
-**Task Mode T-4 (Implementation)**: When implementation requires non-trivial choices:
-- Choosing between multiple implementation options
-- Deviating from task specification
-- Scope changes or requirement drops
-- Adding features not in original spec
-
-### Decision Log Format:
-
-```markdown
-## DEC-NNN: [Decision Title]
-- **Date**: YYYY-MM-DD
-- **Task**: TASK-XXX
-- **Phase**: Implementation
-- **Context**: [Why this decision was necessary]
-- **Decision**: [What was decided]
-- **Alternatives Considered**: [What was rejected and why]
-- **Impact**: [Files/components affected]
-- **Decided By**: user / AI recommendation accepted
-```
-
-### How to find spec folder:
-
-- Extract from task frontmatter `spec:` field
-- If no decision-log.md exists, create it with header table
-
----
-
-## Todo Management
-
-Throughout the process, maintain a todo list like:
-
-```
-[ ] T-1: Task Identification
-[ ] T-2: Git State Check
-[ ] T-3: Dependency Check
-[ ] T-3.5: Knowledge Graph Validation
-[ ] T-3.6: Contract Validation
-[ ] T-4: Implementation
-[ ] T-5: Verification
-[ ] T-6: Task Completion
-[ ] T-6.5: Update Specs Quality
-[ ] T-6.6: Spec Deviation Check
-```
-
-Update the status as you progress through each phase.
-
----
-
-## Examples
-
-After generating tasks with `/developer-kit-specs:specs.spec-to-tasks`, implement individual tasks:
-
-```bash
-# Implement a specific task from the task list
-/developer-kit-specs:specs.task-implementation --lang=spring --task="User login"
-/developer-kit-specs:specs.task-implementation --lang=typescript --task="Password reset"
-/developer-kit-specs:specs.task-implementation --lang=nestjs --task="JWT token generation"
-/developer-kit-specs:specs.task-implementation --lang=react --task="Login form UI"
-/developer-kit-specs:specs.task-implementation --lang=python --task="API endpoint implementation"
-
-# Task Mode with general agents
-/developer-kit-specs:specs.task-implementation --lang=general --task="Database schema update"
-
-# Using task ID
-/developer-kit-specs:specs.task-implementation --lang=spring --task="TASK-001"
-/developer-kit-specs:specs.task-implementation --lang=typescript --task="TASK-002"
-```
-
-**Expected Output:**
-
-```
-# Successful execution - Task identified
-→ Task identified: TASK-001 "User login"
-→ Checking git status...
-→ Validating dependencies...
-→ Knowledge Graph validation: ✓ All dependencies exist
-→ Contract validation: ✓ All expectations satisfied
-→ Task implemented successfully
-→ Next: Run `/developer-kit-specs:specs.task-review` then `/developer-kit-specs:specs-code-cleanup`
-
-# Or with errors - Dependency not met
-→ Task identified: TASK-002 "Password reset"
-→ Dependency check failed:
-  - TASK-001 not completed (required by this task)
-  Options:
-  - [1] Proceed anyway
-  - [2] Complete dependencies first
-  - [3] Cancel
-
-# Or with invalid task
-/developer-kit-specs:specs.task-implementation --task="Invalid task"
-→ Error: Task "Invalid task" not found
-  Suggestion: Use --task=TASK-XXX or provide full path to task file
-```
+Report:
+- Files cleaned
+- Debt removed (what and where)
+- Formatter/import tool used
+- Status: completed

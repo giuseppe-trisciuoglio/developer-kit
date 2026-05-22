@@ -36,32 +36,53 @@ Idea → Functional Specification → Tasks → Implementation → Review → Co
 
 # With language specification for code review
 /developer-kit-specs:specs.task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
-/developer-kit-specs:specs.task-review --lang=typescript docs/specs/001-user-auth/tasks/TASK-001.md
-/developer-kit-specs:specs.task-review --lang=nestjs docs/specs/001-user-auth/tasks/TASK-001.md
-/developer-kit-specs:specs.task-review --lang=react docs/specs/001-user-auth/tasks/TASK-001.md
-/developer-kit-specs:specs.task-review --lang=python docs/specs/001-user-auth/tasks/TASK-001.md
-/developer-kit-specs:specs.task-review --lang=general docs/specs/001-user-auth/tasks/TASK-001.md
 ```
 
 ## Arguments
 
 | Argument | Required | Description |
 |----------|----------|-------------|
-| `--lang` | No | Target language/framework: `java`, `spring`, `typescript`, `nestjs`, `react`, `python`, `general` |
-| `--no-confirm` | No | Skip user confirmation and auto-callback. Use when running inside automated loops (e.g., Ralph Loop). |
-| `task-file-path` | Yes | Path to the task file (e.g., `docs/specs/001-user-auth/tasks/TASK-001.md`) |
+| `--lang` | No | Target language/framework for code review |
+| `--task` | No | Task file path |
+| `--spec` | No | Path to spec folder |
 
-## Current Context
+## Examples
 
-If `--task` is omitted, the task is auto-detected from the current git branch:
+### Basic Usage
 
 ```bash
-branch=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/current_branch.py")
-spec_folder=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/find_spec_from_branch.py")
-# Find the first pending/in_progress task in the spec folder
+/developer-kit-specs:specs.task-review docs/specs/001-user-auth/tasks/TASK-001.md
 ```
 
-If no task can be auto-detected, ask the user which task to review.
+### With Language Specification
+
+```bash
+/developer-kit-specs:specs.task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
+```
+
+### Using Spec Detection
+
+```bash
+/developer-kit-specs:specs.task-review --task=TASK-001
+```
+
+## Argument Parsing
+
+1. Run the shared argument parser:
+   ```bash
+   python3 "${CLAUDE_PLUGIN_ROOT}/scripts/parse_args.py" "$ARGUMENTS"
+   ```
+   Read the JSON output and extract:
+   - `task` → task file path (or construct from `spec` + `task_id`)
+   - `spec` → spec folder path
+   - `lang` → target language/framework
+   - `flags` → detect `--no-confirm`
+2. If `spec` is null, auto-detect from git branch:
+   ```bash
+   branch=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/current_branch.py")
+   spec=$(python3 "${CLAUDE_PLUGIN_ROOT}/scripts/find_spec_from_branch.py")
+   ```
+3. Validate required parameters. If missing, ask user via AskUserQuestion.
 
 ## Core Principles
 
@@ -78,32 +99,22 @@ If no task can be auto-detected, ask the user which task to review.
 
 **Goal**: Read and understand the task and its specifications
 
-**Input**: $ARGUMENTS (task file path or --spec and --task parameters)
-
 **Actions**:
 
-1. Create todo list with all phases
-2. Parse $ARGUMENTS to extract:
-   - `--lang` parameter (language/framework for code review)
-   - `task-file-path` (path to task file) OR `--spec` and `--task` parameters
-3. **Support two argument formats**:
-   - Format 1 (direct path): `/developer-kit-specs:specs.task-review docs/specs/001-feature/tasks/TASK-001.md`
-   - Format 2 (spec+task): `/developer-kit-specs:specs.task-review --spec=docs/specs/001-feature --task=TASK-001`
-   
-   If `--spec` and `--task` are provided, construct the task file path as: `{spec}/tasks/{task}.md`
-   
-4. Read the task file (`docs/specs/[id]/tasks/TASK-XXX.md`)
-4. Extract:
+1. (Argument parsing completed in Phase 0)
+2. Read the task file (`docs/specs/[id]/tasks/TASK-XXX.md`)
+3. Extract:
    - Task ID and title
    - Description
    - Acceptance criteria
    - Definition of Ready (DoR) and Definition of Done (DoD) sections
    - Dependencies
    - Reference to specification file
+   - `imp-requirements` and `ac-mapping` from frontmatter — which spec ACs this task claims to implement
    - If either section is missing, stop the review and require the task document to be updated before continuing
-5. Read the functional specification file (from task's spec reference)
-6. Verify both files exist and are valid
-7. If files not found, ask user for correct path via AskUserQuestion
+4. Read the functional specification file (from task's spec reference)
+5. Verify both files exist and are valid
+6. If files not found, ask user for correct path via AskUserQuestion
 
 ---
 
@@ -129,7 +140,7 @@ If no task can be auto-detected, ask the user which task to review.
    - Additional changes that were made
 
 4. **Read decision-log.md if exists**:
-   - Check for `decision-log.md` in the spec folder (extract from task frontmatter `spec:` field)
+   - Check for `decision-log.md` in the spec folder
    - If file exists, read any DEC entries related to this task (TASK-XXX)
    - Use decision context to understand WHY deviations were made
    - Reference specific decision IDs when explaining deviations in findings
@@ -154,22 +165,34 @@ If no task can be auto-detected, ask the user which task to review.
    - ⚠️ Partially met (with details) — treated as FAILED for `review_status`
 
 5. **Update traceability-matrix.md**:
-   - Read `docs/specs/[id]/traceability-matrix.md` (extract from task frontmatter `spec:` field)
+   - Read `docs/specs/[id]/traceability-matrix.md`
    - For this task (TASK-XXX), update the matrix:
      - Fill in "Test Files" column with test file names created for this task
      - Fill in "Code Files" column with source files created for this task
      - Update "Status" to "Implemented" for REQ-IDs covered by this task
    - Save updated matrix back to `docs/specs/[id]/traceability-matrix.md`
 
+6. **BOUNDED CONTEXT ADHERENCE CHECK **:
+   - Read `docs/specs/ontology.md` for bounded context definitions
+   - Determine the primary bounded context of the feature
+   - For each file modified/created in the implementation:
+     - Determine its bounded context from path conventions or ontology
+     - If DIFFERENT from the feature's primary context:
+       - Check if the task file has a "Cross-Boundary Warning" section
+       - If YES and justification is valid: note in review as "acknowledged cross-boundary"
+       - If YES but justification is weak: add `warning` issue
+       - If NO warning section: add `blocking` issue
+   - **Why this matters**: Tasks that silently cross bounded context boundaries are the #1 cause of architectural drift.
+
 ---
 
 ## Phase 4: Specification Compliance Check
 
-**Goal**: Ensure implementation aligns with functional specification
+**Goal**: Ensure implementation aligns with functional specification AND verify task necessity
 
 **Actions**:
 
-1. Review the functional specification (already loaded in Phase 1) to verify compliance
+1. Review the functional specification to verify compliance
 2. Compare implementation against:
    - User stories and use cases
    - Business rules
@@ -177,6 +200,29 @@ If no task can be auto-detected, ask the user which task to review.
    - Data requirements
 3. Identify any gaps or misalignments
 4. Check if implementation introduces any out-of-scope changes
+
+5. **SPEC FIDELITY CHECK **:
+   - Read the task's `imp-requirements` and `ac-mapping` from frontmatter
+   - For each AC-ID in `ac-mapping`:
+     - Verify the implementation actually satisfies the acceptance criterion
+     - Check the criterion's taxonomy in the spec: `[IMP]`, `[SEF]`, or `[EXT]`
+     - **If the task claims to implement `[SEF]` or `[EXT]` criteria**: 
+       - Flag as "Task Over-Specification"
+   - **If the task has NO `ac-mapping` or `imp-requirements`**:
+     - Flag as "Legacy Task — no traceability metadata"
+
+6. **Verify task necessity**:
+   - Ask: "Is this task implementing a criterion that requires new code?"
+   - If ALL the task's ACs are `[SEF]` or `[EXT]`: 
+     - Flag as "Unnecessary Task — no implementation needed"
+   - If the task creates entities/structs NOT mentioned in the functional spec:
+     - Check `data-model.md` for `(derived)` marking
+     - If NOT marked `(derived)`: Flag as "Invented Entity — not in spec"
+
+7. **Check for spec contradictions**:
+   - If the implementation does something DIFFERENT from the spec:
+     - Check `decision-log.md` for a DEC entry justifying the deviation
+     - If NO DEC entry: flag as critical issue
 
 ---
 
@@ -186,260 +232,53 @@ If no task can be auto-detected, ask the user which task to review.
 
 **Actions**:
 
-1. Based on `--lang` parameter, select appropriate code review agent:
-
-| Language | Code Review Agent |
-|----------|------------------|
-| `java` | `developer-kit-java:spring-boot-code-review-expert` |
-| `spring` | `developer-kit-java:spring-boot-code-review-expert` |
-| `typescript` | `developer-kit:general-code-reviewer` |
-| `nestjs` | `developer-kit-typescript:nestjs-code-review-expert` |
-| `react` | `developer-kit:general-code-reviewer` |
-| `python` | `developer-kit-python:python-code-review-expert` |
-| `php` | `developer-kit-php:php-code-review-expert` |
-| `general` | `developer-kit:general-code-reviewer` |
-
-2. Launch code review agent to analyze implemented code
-3. Collect review findings
-4. Categorize issues by severity:
-   - Critical (must fix)
-   - Major (should fix)
-   - Minor (recommended fix)
-   - Info (suggestions)
+1. Based on `--lang` parameter, perform code review focusing on:
+   - Architectural alignment
+   - Coding standards and patterns
+   - Security and performance
+   - Error handling and edge cases
+   - Maintainability and readability
+2. Document specific code findings (file, line, issue, recommendation)
 
 ---
 
 ## Phase 6: Review Report Generation
 
-**Goal**: Create comprehensive review report
+**Goal**: Generate a summary of review findings and set status
 
 **Actions**:
 
-1. Compile all findings into a review report
-2. Determine `review_status` using this rule:
-   - **PASSED**: ALL acceptance criteria ✅ AND ALL DoD items ✅ AND no critical/major code issues
-   - **FAILED**: ANY criterion is ❌ or ⚠️, OR ANY DoD item is ❌ or ⚠️, OR critical/major code issues found
-3. Generate the report in markdown format with YAML frontmatter:
+1. **Calculate overall status**:
+   - `passed`: All ACs and DoD met, no critical code issues, no architectural drift
+   - `needs_fix`: Minor issues in ACs, DoD, or code quality
+   - `partial`: Some ACs met, but major functionality missing or incorrect
+   - `escalate`: Critical architectural drift, spec contradiction without DEC, or impossible requirement
 
-```markdown
----
-review_status: PASSED   # or FAILED
-task_id: TASK-XXX
-task_title: [Task Title]
-spec_file: [spec-file.md]
-review_date: [ISO date]
-language: [language]
-summary:
-  implementation: COMPLETE|INCOMPLETE
-  acceptance_criteria: ALL_MET|FAILED
-  definition_of_done: ALL_MET|FAILED
-  spec_compliance: COMPLIANT|DEVIATIONS|NON_COMPLIANT
-  code_review: PASSED|ISSUES|FAILED
-critical_issues: N   # required if FAILED
-major_issues: N      # required if FAILED
-minor_issues: N
----
+2. **Generate review report** (`docs/specs/[id]/reviews/TASK-XXX-review.md`):
+   Read the review template using this lookup order:
+   1. `${CLAUDE_PLUGIN_ROOT}/templates/task-review.md`
+   2. `templates/task-review.md` inside the installed skill folder for non-Claude agents.
+   Fill in the gathered findings and save to the reviews directory.
 
-# Task Review Report: TASK-XXX
+   The review template defines these sections:
+   | Section | Purpose |
+   |---------|----------|
+   | Review Summary | High-level status table (AC, DoD, Code Quality, Spec Compliance, Architecture) |
+   | Acceptance Criteria & DoD Results | Per-criterion and per-item status with evidence |
+   | Code Review Findings | Table of issues with severity, file, category, recommendation |
+   | Spec Compliance & Architectural Alignment | Fidelity check, cross-boundary adherence, decision log, traceability update |
+   | Required Fixes | Critical / Warnings / Suggestions tables |
+   | Next Steps | Action by review status |
 
-**Task**: [Task Title]
-**Specification**: [spec-file.md]
-**Reviewed**: [date]
-**Language**: [language]
+3. **Update task status**:
+   - Set `status: reviewed` in task frontmatter if `passed`
+   - Set `reviewed_date: YYYY-MM-DD` if `passed`
+   - For other statuses, update task status accordingly (e.g., `needs_fix`, `escalated`)
 
-## Summary
+4. **Synchronization**:
+   - Run `/developer-kit-specs:specs.sync [spec-folder]` to synchronize all components
 
-| Category | Status |
-|----------|--------|
-| Implementation | ✅ Complete / ⚠️ Partial / ❌ Incomplete |
-| Acceptance Criteria | ✅ All Met / ⚠️ Partial / ❌ Failed |
-| Definition of Done | ✅ All Met / ⚠️ Partial / ❌ Failed |
-| Spec Compliance | ✅ Compliant / ⚠️ Deviations / ❌ Non-compliant |
-| Code Review | ✅ Passed / ⚠️ Issues Found / ❌ Failed |
-
-**Overall Result**: ✅ PASSED / ❌ FAILED
-
-## Implementation Verification
-
-- **Implemented**: [description]
-- **Deviations**: [list if any]
-
-## Acceptance Criteria
-
-| Criterion | Status | Evidence |
-|-----------|--------|----------|
-| Criterion 1 | ✅/⚠️/❌ | [evidence] |
-| Criterion 2 | ✅/⚠️/❌ | [evidence] |
-
-## Definition of Done
-
-| DoD Item | Status | Evidence |
-|----------|--------|----------|
-| DoD item 1 | ✅/⚠️/❌ | [evidence] |
-| DoD item 2 | ✅/⚠️/❌ | [evidence] |
-
-## Specification Compliance
-
-- **Compliant**: Yes/No
-- **Deviations**: [list]
-
-
-## Traceability
-
--- **Traceability Coverage**: N/N requirements covered (X%)
--- **REQ-IDs**: [List of REQ-IDs covered by this task]
-## Code Review Findings
-
-### Critical
-- [list]
-
-### Major
-- [list]
-
-### Minor
-- [list]
-
-### Info
-- [list]
-
-## Recommendations
-
-- [actionable recommendations]
-
-## Decisions Referenced
-
-- [List any DEC-ID entries from decision-log.md that explain deviations]
-
-
-3. **If decision-log.md exists, include decisions referenced**:
-   - Search for DEC entries mentioning this task (TASK-XXX)
-   - Summarize key decisions that affected implementation
-   - Reference specific decision IDs (e.g., See DEC-003)
-```
-
-3. Save report to: `docs/specs/[id]/tasks/TASK-XXX--review.md`
-
----
-
-## Phase 7: Review Confirmation
-
-**Goal**: Present review results to user
-
-**Actions**:
-
-1. **If `--no-confirm` was passed**: SKIP this phase entirely. Do NOT use `AskUserQuestion`. Do NOT invoke `task-implementation` automatically. Simply save the review report and terminate so the caller (e.g., Ralph Loop) can read the report and decide the next step.
-
-2. Present the review report to the user
-3. Ask for confirmation via AskUserQuestion:
-   - **Option A**: Review complete, task approved
-   - **Option B**: Issues found, needs revision
-   - **Option C**: Need additional verification
-
-4. If issues found:
-   - List specific issues that need fixing
-   - Save findings to the review report at `docs/specs/[id]/tasks/TASK-XXX--review.md`
-   - Invoke `/developer-kit-specs:specs.task-implementation --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"`
-   - Reference the review report path so implementation can read the detailed findings
-   - Track unresolved items
-   - **Note**: Before re-implementing, consider running `/devkit.spec-review [spec-folder]` to verify the spec is still accurate if issues suggest spec-level problems
-
-5. If review approved (no issues or all issues fixed):
-   - **Auto-update task status**: Check the boxes in the DoD/Review section of the task
-   - Status automatically updates to `reviewed` when all checkboxes are checked
-   - Proceed to code cleanup:
-   ```
-   /developer-kit-specs:specs-code-cleanup --lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
-   ```
-
----
-
-## Phase 8: Summary
-
-**Goal**: Document what was accomplished
-
-**Actions**:
-
-1. Mark all todos complete
-2. Summarize:
-    - **Task Reviewed**: Path to task file
-    - **Specification**: Reference to functional spec
-    - **Implementation Status**: Complete/Partial/Incomplete
-    - **Acceptance Criteria**: All met / Partial / Failed
-    - **Code Review Status**: Passed / Issues / Failed
-    - **Review Report**: `docs/specs/[id]/tasks/TASK-XXX--review.md`
-    - **Next Step**: 
-      - If approved: Run `/developer-kit-specs:specs-code-cleanup` to finalize the task
-      - If issues found: Return to `/developer-kit-specs:specs.task-implementation` to fix issues
-
----
-
-## Integration with Workflow
-
-This command completes the verification loop:
-
-```
-/developer-kit-specs:specs.brainstorm
-    ↓
-[Creates: docs/specs/[id]/YYYY-MM-DD--feature-name.md]
-    ↓
-/developer-kit-specs:specs.spec-to-tasks --lang=[language] docs/specs/[id]/
-    ↓
-[Creates: docs/specs/[id]/tasks/TASK-XXX.md]
-    ↓
-/developer-kit-specs:specs.task-implementation--lang=[language] --task="docs/specs/[id]/tasks/TASK-XXX.md"
-    ↓
-[Implements task]
-    ↓
-/developer-kit-specs:specs.task-review --lang=[language] "docs/specs/[id]/tasks/TASK-XXX.md"
-    ↓
-[Verifies implementation, generates review report]
-    ↓
-[If issues: back to implementation]
-[If approved: proceed to next task]
-```
-
----
-
-## Examples
-
-### Example 1: Review User Authentication Task
-
-```bash
-# Review a completed task
-/developer-kit-specs:specs.task-review --lang=spring docs/specs/001-user-auth/tasks/TASK-001.md
-```
-
-### Example 2: Review Checkout Task
-
-```bash
-/developer-kit-specs:specs.task-review --lang=typescript docs/specs/005-checkout/tasks/TASK-003.md
-```
-
-### Example 3: Review API Integration Task
-
-```bash
-/developer-kit-specs:specs.task-review --lang=python docs/specs/010-payment/tasks/TASK-002.md
-```
-
----
-
-## Todo Management
-
-Throughout the process, maintain a todo list like:
-
-```
-[ ] Phase 1: Task Analysis
-[ ] Phase 2: Implementation Verification
-[ ] Phase 3: Acceptance Criteria Validation
-[ ] Phase 4: Specification Compliance Check
-[ ] Phase 5: Code Review
-[ ] Phase 6: Review Report Generation
-[ ] Phase 7: Review Confirmation
-[ ] Phase 8: Summary
-```
-
-Update the status as you progress through each phase.
-
----
-
-**Note**: This command ensures quality control in the development workflow by verifying that implemented tasks meet specifications and pass code review standards before proceeding to the next task.
+5. **Inform user**:
+   - Display review summary and status
+   - Provide link to full review report
+   - If `passed`, suggest running Phase T-7 cleanup in `task-implementation`

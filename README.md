@@ -139,7 +139,9 @@ The constitution defines the architectural DNA: approved stack, AI guardrails, s
 | Command | When to Use | Output |
 |---------|-------------|--------|
 | `/specs:brainstorm` | New features, complex requirements | Full specification with 9 phases |
-| `/specs:quick-spec` | Bug fixes, small enhancements | Lightweight 4-phase spec |
+| `/specs:change-spec` | Delta/iteration changes, bug fixes | Change specification |
+| `/specs:technical-plan` | After brainstorm, document HOW | Technical plan |
+| `/specs:spec-check` | Resolve markers, scan quality | Quality-improved specification |
 
 The specification lives in `docs/specs/[id]/YYYY-MM-DD--feature-name.md`
 
@@ -167,12 +169,14 @@ Each task implementation updates the Knowledge Graph for context preservation.
 |---------|-------------|
 | `/specs:task-review` | Verify task meets specifications and code quality standards |
 | `/specs:code-cleanup` | Professional cleanup: remove debug logs, optimize imports |
-| `/specs:spec-sync-with-code` | Synchronize spec with actual implementation |
+| `/specs:spec-sync` | Synchronize spec with actual implementation |
 
 #### Additional Workflow Commands
 
 | Command | Description |
 |---------|-------------|
+| `/specs:change-spec` | Document delta/iterations and bug fixes with unchanged behavior analysis |
+| `/specs:technical-plan` | Document HOW the feature will be built (stack, decisions, phases) |
 | `/specs:spec-quality-check` | Interactive quality assessment of specifications |
 | `/specs:spec-sync-context` | Sync Knowledge Graph, Tasks, and Codebase state |
 | `/specs:ralph-loop` | Automated loop for spec-driven development |

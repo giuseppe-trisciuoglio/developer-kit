@@ -1,6 +1,6 @@
 {
   "name": "developer-kit-specs",
-  "version": "2.8.2",
+  "version": "3.0.0",
   "description": "Specifications-driven development workflow for transforming ideas into functional specifications and executable tasks",
   "author": {
     "name": "Giuseppe Trisciuoglio",
@@ -23,22 +23,17 @@
     "./commands/specs.task-manage.md",
     "./commands/specs.task-review.md",
     "./commands/specs.task-implementation.md",
-    "./commands/specs.spec-sync-with-code.md",
-    "./commands/specs.spec-sync-context.md",
-    "./commands/specs.quick-spec.md",
-    "./commands/specs.spec-quality-check.md",
-    "./commands/specs.task-tdd.md"
+    "./commands/specs.sync.md",
+    "./commands/specs.spec-check.md",
+    "./commands/specs.change-spec.md",
+    "./commands/specs.technical-plan.md"
   ],
-  "agents": [
-    "./agents/evaluator-agent.md",
-    "./agents/session-tracking-agent.md"
-  ],
+  "agents": [],
   "skills": [
     "./skills/constitution",
     "./skills/create-pr-from-spec",
     "./skills/knowledge-graph",
     "./skills/ralph-loop",
-    "./skills/specs-code-cleanup",
-    "./skills/task-quality-kpi"
+    "./skills/specs-code-cleanup"
   ]
 }

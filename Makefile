@@ -24,7 +24,7 @@
 SHELL := /bin/bash
 .PHONY: all help check-deps list-plugins list-components list-agents list-commands list-skills list-rules \
         install install-claude install-opencode install-copilot install-codex install-kimi install-kiro \
-        install-rules uninstall status backup clean security-scan security-scan-changed \
+        install-rules install-specs-skills uninstall status backup clean security-scan security-scan-changed \
         skill-lint skill-security skill-review skill-review-all plugin-validate plugin-bump-version \
         install-agents-loop
 
@@ -173,6 +173,8 @@ help:
 	@echo "  make install-codex        Install for Codex CLI (global)"
 	@echo "  make install-kimi         Install for Kimi CLI (global)"
 	@echo "  make install-kiro         Install for Kiro CLI (global)"
+	@echo "  make install-specs-skills Install specs plugin as local skills (prompts for project path)"
+	@echo "    Or: make install-specs-skills TARGET_DIR=/path/to/project"
 	@echo "  make install              Install for all detected CLIs"
 	@echo ""
 	@echo -e "$(GREEN)Management:$(NC)"
@@ -387,6 +389,104 @@ list-rules:
 
 install-rules:
 	@bash $(DEVKIT_DIR)/scripts/install-rules.sh "$(TARGET)"
+
+# ═══════════════════════════════════════════════════════════════
+# SPECS PLUGIN → LOCAL .agents/skills INSTALLATION
+# ═══════════════════════════════════════════════════════════════
+
+SPECS_PLUGIN_DIR := $(PLUGINS_DIR)/developer-kit-specs
+LOCAL_SKILLS_DIR := $(DEVKIT_DIR)/.agents/skills
+
+# TARGET_DIR can be passed as make variable. If not set, interactive selection.
+install-specs-skills:
+	@echo ""
+	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
+	@echo -e "$(BLUE)Installing specs plugin skills → .agents/skills/$(NC)"
+	@echo -e "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
+	@echo ""
+	@if [ -n "$(TARGET_DIR)" ]; then \
+		SELECTED_DIR="$(TARGET_DIR)"; \
+	else \
+		echo -e "$(CYAN)Enter target project path:$(NC)"; \
+		read -p "Path: " SELECTED_DIR; \
+		if [ -z "$$SELECTED_DIR" ]; then \
+			echo -e "$(RED)No path provided$(NC)"; exit 1; \
+		fi; \
+	fi; \
+	if [ ! -d "$$SELECTED_DIR" ]; then \
+		echo -e "$(RED)Directory does not exist: $$SELECTED_DIR$(NC)"; exit 1; \
+	fi; \
+	TARGET_SKILLS_DIR="$$SELECTED_DIR.agents/skills"; \
+	mkdir -p "$$TARGET_SKILLS_DIR"; \
+	echo -e "$(GREEN)Target:$(NC) $$SELECTED_DIR"; \
+	echo ""; \
+	skills_count=0; \
+	plugin_json="$(SPECS_PLUGIN_DIR)/.claude-plugin/plugin.json"; \
+	base_dir="$(SPECS_PLUGIN_DIR)"; \
+	skills=$$(jq -r '.skills[]? // empty' "$$plugin_json" 2>/dev/null); \
+	if [ -n "$$skills" ]; then \
+		echo -e "$(CYAN)Installing skills...$(NC)"; \
+		for skill_pattern in $$skills; do \
+			for skill_dir in $$base_dir/$$skill_pattern; do \
+				if [ -d "$$skill_dir" ]; then \
+					skill_name=$$(basename "$$skill_dir"); \
+					normalized=$$(echo "$$skill_name" | tr 'A-Z' 'a-z' | sed 's/\./-/g; s/[^a-z0-9-]//g'); \
+					rm -rf "$$TARGET_SKILLS_DIR/$$normalized"; \
+					cp -r "$$skill_dir" "$$TARGET_SKILLS_DIR/$$normalized"; \
+					if [ "$$skill_name" != "$$normalized" ]; then \
+						echo "  ✓ $$skill_name → $$normalized"; \
+					else \
+						echo "  ✓ $$skill_name"; \
+					fi; \
+					skills_count=$$((skills_count + 1)); \
+				fi; \
+			done; \
+		done; \
+	fi; \
+	echo "  Total skills installed: $$skills_count"; \
+	echo ""; \
+	echo -e "$(CYAN)Converting commands to skills...$(NC)"; \
+	commands_count=0; \
+	commands=$$(jq -r '.commands[]? // empty' "$$plugin_json" 2>/dev/null); \
+	if [ -n "$$commands" ]; then \
+		for cmd in $$commands; do \
+			cmd_path="$$base_dir/$$cmd"; \
+			if [ -f "$$cmd_path" ]; then \
+				cmd_name=$$(basename "$$cmd" .md); \
+				normalized=$$(echo "$$cmd_name" | tr 'A-Z' 'a-z' | sed 's/\./-/g; s/[^a-z0-9-]//g'); \
+				cmd_skill_dir="$$TARGET_SKILLS_DIR/$$normalized"; \
+				mkdir -p "$$cmd_skill_dir"; \
+				cp "$$cmd_path" "$$cmd_skill_dir/SKILL.md"; \
+				if [ "$$cmd_name" != "$$normalized" ]; then \
+					echo "  ✓ $$cmd_name → $$normalized"; \
+				else \
+					echo "  ✓ $$cmd_name"; \
+				fi; \
+				commands_count=$$((commands_count + 1)); \
+			fi; \
+		done; \
+	fi; \
+	echo "  Total commands converted to skills: $$commands_count"; \
+	echo ""; \
+	if [ -d "$(SPECS_PLUGIN_DIR)/templates" ]; then \
+		echo -e "$(CYAN)Copying templates into skills...$(NC)"; \
+		templates_count=0; \
+		for skill_dir in $$TARGET_SKILLS_DIR/*/; do \
+			if [ -d "$$skill_dir" ]; then \
+				mkdir -p "$$skill_dir/templates" "$$skill_dir/references/templates"; \
+				cp $(SPECS_PLUGIN_DIR)/templates/*.md "$$skill_dir/templates/"; \
+				cp $(SPECS_PLUGIN_DIR)/templates/*.md "$$skill_dir/references/templates/"; \
+				skill_basename=$$(basename "$$skill_dir"); \
+				templates_count=$$((templates_count + 1)); \
+			fi; \
+		done; \
+		echo "  ✓ Templates copied to $$templates_count skills"; \
+		echo ""; \
+	fi; \
+	echo -e "$(GREEN)✓ Specs plugin installation complete$(NC)"; \
+	echo "  Target project: $$SELECTED_DIR"; \
+	echo "  Skills directory: $$TARGET_SKILLS_DIR/"; \
+	echo ""
 
 # ═══════════════════════════════════════════════════════════════
 # STATUS
@@ -780,6 +880,25 @@ install-opencode: check-deps
 	done; \
 	echo "  Total skills installed: $$skills_count"
 	@echo ""
+	@echo -e "$(CYAN)Copying templates into skills...$(NC)"
+	@templates_count=0; \
+	for plugin_json in $(PLUGIN_JSON_FILES); do \
+		plugin_dir=$$(dirname "$$plugin_json"); \
+		base_dir=$$(dirname "$$plugin_dir"); \
+		templates_dir="$$base_dir/templates"; \
+		if [ -d "$$templates_dir" ]; then \
+			for skill_dir in $(OPENCODE_SKILLS)/*/; do \
+				if [ -d "$$skill_dir" ]; then \
+					mkdir -p "$$skill_dir/templates" "$$skill_dir/references/templates"; \
+					cp $$templates_dir/*.md "$$skill_dir/templates/"; \
+					cp $$templates_dir/*.md "$$skill_dir/references/templates/"; \
+					templates_count=$$((templates_count + 1)); \
+				fi; \
+			done; \
+		fi; \
+	done; \
+	echo "  ✓ Templates copied to $$templates_count skills"
+	@echo ""
 	@$(call success "OpenCode CLI installation complete")
 	@echo "  Agents directory: $(OPENCODE_AGENTS)/"
 	@echo "  Commands directory: $(OPENCODE_COMMANDS)/"
@@ -864,6 +983,25 @@ install-copilot: check-deps
 	done; \
 	echo "  Total commands converted to skills: $$commands_count"
 	@echo ""
+	@echo -e "$(CYAN)Copying templates into skills...$(NC)"
+	@templates_count=0; \
+	for plugin_json in $(PLUGIN_JSON_FILES); do \
+		plugin_dir=$$(dirname "$$plugin_json"); \
+		base_dir=$$(dirname "$$plugin_dir"); \
+		templates_dir="$$base_dir/templates"; \
+		if [ -d "$$templates_dir" ]; then \
+			for skill_dir in $(COPILOT_SKILLS)/*/; do \
+				if [ -d "$$skill_dir" ]; then \
+					mkdir -p "$$skill_dir/templates" "$$skill_dir/references/templates"; \
+					cp $$templates_dir/*.md "$$skill_dir/templates/"; \
+					cp $$templates_dir/*.md "$$skill_dir/references/templates/"; \
+					templates_count=$$((templates_count + 1)); \
+				fi; \
+			done; \
+		fi; \
+	done; \
+	echo "  ✓ Templates copied to $$templates_count skills"
+	@echo ""
 	@$(call success "Copilot CLI installation complete")
 	@echo "  Agents directory: $(COPILOT_AGENTS)/"
 	@echo "  Skills directory: $(COPILOT_SKILLS)/"
@@ -925,6 +1063,25 @@ install-codex: check-deps
 		fi; \
 	done; \
 	echo "  Total commands converted to skills: $$commands_count"
+	@echo ""
+	@echo -e "$(CYAN)Copying templates into skills...$(NC)"
+	@templates_count=0; \
+	for plugin_json in $(PLUGIN_JSON_FILES); do \
+		plugin_dir=$$(dirname "$$plugin_json"); \
+		base_dir=$$(dirname "$$plugin_dir"); \
+		templates_dir="$$base_dir/templates"; \
+		if [ -d "$$templates_dir" ]; then \
+			for skill_dir in $(CODEX_SKILLS)/*/; do \
+				if [ -d "$$skill_dir" ]; then \
+					mkdir -p "$$skill_dir/templates" "$$skill_dir/references/templates"; \
+					cp $$templates_dir/*.md "$$skill_dir/templates/"; \
+					cp $$templates_dir/*.md "$$skill_dir/references/templates/"; \
+					templates_count=$$((templates_count + 1)); \
+				fi; \
+			done; \
+		fi; \
+	done; \
+	echo "  ✓ Templates copied to $$templates_count skills"
 	@echo ""
 	@echo -e "$(CYAN)Creating AGENTS.md index...$(NC)"
 	@echo "# Developer Kit for Codex CLI" > $(CODEX_AGENTS_MD)
@@ -1025,6 +1182,27 @@ install-kimi: check-deps
 		done; \
 	echo "  Total commands converted to skills: $$commands_count"
 	@echo ""
+	@echo -e "$(CYAN)Copying templates into skills...$(NC)"
+	@templates_count=0; \
+	for plugin_json in $(PLUGIN_JSON_FILES); do \
+		plugin_dir=$$(dirname "$$plugin_json"); \
+		base_dir=$$(dirname "$$plugin_dir"); \
+		templates_dir="$$base_dir/templates"; \
+		if [ -d "$$templates_dir" ]; then \
+			for skill_dir in $(KIMI_SKILLS)/*/; do \
+				if [ -d "$$skill_dir" ]; then \
+					mkdir -p "$$skill_dir/templates" "$$skill_dir/references/templates"; \
+					cp $$templates_dir/*.md "$$skill_dir/templates/"; \
+					cp $$templates_dir/*.md "$$skill_dir/references/templates/"; \
+					templates_count=$$((templates_count + 1)); \
+				fi; \
+			done; \
+		fi; \
+	done; \
+	echo "  ✓ Templates copied to $$templates_count skills"
+	@echo ""
+	@$(call success "Kimi CLI installation complete")
+	@echo "  Skills directory: $(KIMI_SKILLS)/"
 	@echo ""
 
 # ═══════════════════════════════════════════════════════════════
@@ -1115,6 +1293,25 @@ install-kiro: check-deps
 		fi; \
 	done; \
 	echo "  Total prompts installed: $$prompts_count"
+	@echo ""
+	@echo -e "$(CYAN)Copying templates into skills...$(NC)"
+	@templates_count=0; \
+	for plugin_json in $(PLUGIN_JSON_FILES); do \
+		plugin_dir=$$(dirname "$$plugin_json"); \
+		base_dir=$$(dirname "$$plugin_dir"); \
+		templates_dir="$$base_dir/templates"; \
+		if [ -d "$$templates_dir" ]; then \
+			for skill_dir in $(KIRO_SKILLS)/*/; do \
+				if [ -d "$$skill_dir" ]; then \
+					mkdir -p "$$skill_dir/templates" "$$skill_dir/references/templates"; \
+					cp $$templates_dir/*.md "$$skill_dir/templates/"; \
+					cp $$templates_dir/*.md "$$skill_dir/references/templates/"; \
+					templates_count=$$((templates_count + 1)); \
+				fi; \
+			done; \
+		fi; \
+	done; \
+	echo "  ✓ Templates copied to $$templates_count skills"
 	@echo ""
 	@$(call success "Kiro CLI installation complete")
 	@echo "  Skills directory:  $(KIRO_SKILLS)/"

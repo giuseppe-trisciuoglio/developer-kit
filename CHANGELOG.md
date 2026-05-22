@@ -21,6 +21,103 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [3.0.0] - 2026-05-18
+
+### Added
+
+- **Anti-Drift Workflow v2.0** (`developer-kit-specs`):
+  - Complete rewrite of Anti-Drift Workflow with improved spec-to-implementation monitoring
+  - Enhanced task lifecycle management with new 'superseded' state
+  - Action routing for task workflows with automatic state transitions
+  - Improved date field type validation in spec handling
+
+- **New `spec-sync` command** (`developer-kit-specs`):
+  - Updated command references to use specs.sync for specification synchronization
+  - Added new specifications for specs command integration
+
+- **New `spec-check` command** (`developer-kit-specs`):
+  - Renamed from spec-quality-check with improved functionality
+  - Integrated [needs clarification] handling for incomplete specifications
+
+- **ADR-039 example** (`developer-kit-core`):
+  - Added Architecture Decision Record example for git worktree management
+
+### Changed
+
+- **Task path derivation improved** (`developer-kit-specs`):
+  - Enhanced task path derivation logic for better spec population
+  - Improved argument parsing for task workflows
+
+- **Command reference updates** (`developer-kit-specs`):
+  - Removed (NEW) markers from spec commands for cleaner output
+
+### Migration from v2.x to v3.0
+
+This release contains breaking changes. Follow this guide to migrate from v2.x.
+
+#### Command Mapping
+
+| Old Command | New Command | Notes |
+|-------------|-------------|-------|
+| `/specs:drift-guard` | `/specs:spec-sync` | New anti-drift approach with improved monitoring |
+| `/specs:spec-quality-check` | `/specs:spec-check` | Renamed for consistency |
+| `/specs:task-tdd` | `/specs:task-implementation` | TDD phase integrated into implementation |
+| `/specs:tdd-implementation` | `/specs:task-implementation` | Merged into single command |
+| `/specs:session-track` | N/A (removed) | Session tracking hooks removed |
+| `/specs:evaluator` | N/A (removed) | KPI evaluation removed |
+
+#### Workflow Changes
+
+- **Simplified Task Lifecycle**: Tasks now have states: `pending` → `in_progress` → `review` → `done` → `superseded`
+- **Integrated Testing**: No separate TDD phase — tests created during `task-implementation`
+- **Removed Hooks**: Drift Guard, TDD, KPI tracking, Sessions hooks removed
+
+#### Migration Steps
+
+1. Update command usage: `/specs:spec-quality-check` → `/specs:spec-check`
+2. Remove old hook configurations: `rm -rf .claude-plugin/hooks/drift-guard/`
+3. Migrate task states: `tdd_red` → `in_progress`, `tdd_green` → `review`
+
+4. Update docs: `docs/sdd-triangle.md` → `docs/sdd-workflow.md`
+
+#### Backward Compatibility
+
+- **Specification files**: Fully compatible — no changes needed
+- **Task files**: Compatible — old statuses auto-mapped
+- **Constitution files**: Fully compatible
+
+### Deprecated
+
+### Removed
+
+- **Drift Guard hook** (Migration v3.0):
+  - Removed deprecated Drift Guard hook functionality
+  - Superseded by new Anti-Drift Workflow v2.0 approach
+
+- **TDD workflow hooks** (Migration v3.0):
+  - Removed Test-Driven Development workflow hooks
+  - Simplified to focused spec-driven approach
+
+- **KPI tracking hooks** (Migration v3.0):
+  - Removed Key Performance Indicator tracking hooks
+  - No longer part of core workflow
+
+- **Sessions hooks** (Migration v3.0):
+  - Removed session management hooks
+  - Simplified session handling
+
+### Fixed
+
+- **Orphan file cleanup** (Migration v3.2):
+  - Cleaned up orphan files and obsolete references
+  - Removed deprecated configuration entries
+
+- **Task `ac-mapping` frontmatter not generated** (`developer-kit-specs`):
+  - Fixed spec-to-tasks command to properly include `ac-mapping` field in task frontmatter
+  - This field is required by task-review for specification compliance verification
+
+### Security
+
 ## [2.8.2] - 2026-05-04
 
 ### Added
@@ -1315,7 +1412,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.8.2...HEAD
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v3.0.0...HEAD
+[3.0.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.8.2...v3.0.0
 [2.8.2]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.8.1...v2.8.2
 [2.8.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.8.0...v2.8.1
 [2.7.2]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.7.1...v2.7.2

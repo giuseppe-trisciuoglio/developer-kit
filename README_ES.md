@@ -139,7 +139,9 @@ La constitución define el ADN arquitectónico: stack aprobado, guardrails de IA
 | Comando | Cuándo Usar | Salida |
 |---------|-------------|--------|
 | `/specs:brainstorm` | Nuevas funcionalidades, requisitos complejos | Especificación completa con 9 fases |
-| `/specs:quick-spec` | Corrección de errores, mejoras pequeñas | Especificación ligera de 4 fases |
+| `/specs:change-spec` | Delta/iteraciones, corrección de errores | Especificación de cambio |
+| `/specs:technical-plan` | Después de brainstorm, documentar CÓMO | Plan técnico |
+| `/specs:spec-check` | Resolver marcadores, escanear calidad | Especificación con calidad mejorada |
 
 La especificación se guarda en `docs/specs/[id]/YYYY-MM-DD--feature-name.md`
 
@@ -167,12 +169,14 @@ Cada implementación de tarea actualiza el Grafo de Conocimiento para la preserv
 |---------|-------------|
 | `/specs:task-review` | Verifica que la tarea cumpla las especificaciones y estándares de calidad |
 | `/specs:code-cleanup` | Limpieza profesional: eliminar logs de depuración, optimizar imports |
-| `/specs:spec-sync-with-code` | Sincroniza la especificación con la implementación actual |
+| `/specs:spec-sync` | Sincroniza la especificación con la implementación actual |
 
 #### Comandos Adicionales del Flujo de Trabajo
 
 | Comando | Descripción |
 |---------|-------------|
+| `/specs:change-spec` | Documentar delta/iteraciones y correcciones de errores con análisis de comportamiento sin cambios |
+| `/specs:technical-plan` | Documentar CÓMO se construirá la funcionalidad (stack, decisiones, fases) |
 | `/specs:spec-quality-check` | Evaluación interactiva de calidad de especificaciones |
 | `/specs:spec-sync-context` | Sincroniza Grafo de Conocimiento, Tareas y estado del Código |
 | `/specs:ralph-loop` | Bucle automatizado para desarrollo guiado por especificaciones |

@@ -214,9 +214,9 @@ Ralph Loop | Step: fix | Task: TASK-037 | Retry: 1/3
 **When**: `state.step = "cleanup"`
 
 **Actions**:
-1. Run code-cleanup with `--no-confirm`:
+1. Run task-implementation with `--action=cleanup`:
    ```
-   /developer-kit-specs:specs-code-cleanup --no-confirm --lang=LANG --task="TASK-FILE"
+   /developer-kit-specs:specs.task-implementation --action=cleanup --lang=LANG --task="TASK-FILE"
    ```
    Or for non-Claude CLIs:
    - Remove debug logs and temporary comments
@@ -229,7 +229,7 @@ Ralph Loop | Step: fix | Task: TASK-037 | Retry: 1/3
 **Output**:
 ```
 Ralph Loop | Step: cleanup | Task: TASK-037
-→ Running /developer-kit-specs:specs-code-cleanup --no-confirm --lang=spring --task="docs/specs/001-feature/tasks/TASK-037.md"
+→ Running /developer-kit-specs:specs.task-implementation --action=cleanup --lang=spring --task="docs/specs/001-feature/tasks/TASK-037.md"
 → Cleanup complete → Next: sync
 ```
 
@@ -238,9 +238,9 @@ Ralph Loop | Step: cleanup | Task: TASK-037
 **When**: `state.step = "sync"`
 
 **Actions**:
-1. Run spec-sync-with-code:
+1. Run specs.sync:
    ```
-   /developer-kit-specs:specs.spec-sync-with-code SPEC-FOLDER/ --after-task=TASK-ID
+   /developer-kit-specs:specs.sync SPEC-FOLDER/ --after-task=TASK-ID
    ```
    Or for non-Claude CLIs:
    - Read decision-log.md for any deviations
@@ -252,7 +252,7 @@ Ralph Loop | Step: cleanup | Task: TASK-037
 **Output**:
 ```
 Ralph Loop | Step: sync | Task: TASK-037
-→ Running /developer-kit-specs:specs.spec-sync-with-code docs/specs/001-feature/ --after-task=TASK-037
+→ Running /developer-kit-specs:specs.sync docs/specs/001-feature/ --after-task=TASK-037
 → Sync complete → Next: update_done
 ```
 
@@ -385,7 +385,7 @@ case "$STEP" in
     ;;
 
   sync)
-    echo "→ [SYNC: Run spec-sync-with-code for $TASK]"
+    echo "→ [SYNC: Run specs.sync for $TASK]"
     # In real implementation: call the actual command
     jq '.state.step = "update_done"' "$FIX_PLAN" > tmp.json && mv tmp.json "$FIX_PLAN"
     ;;

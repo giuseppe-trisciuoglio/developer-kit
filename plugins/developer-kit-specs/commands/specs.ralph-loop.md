@@ -8,7 +8,20 @@ allowed-tools: Read, Glob, Grep, Bash(python3:*), Bash(git:*), AskUserQuestion
 
 The Ralph Loop applies the "Ralph Wiggum as a Software Engineer" technique to specification-driven development. It solves context window explosion by executing **one step per invocation**, persisting state in `fix_plan.json`.
 
-State machine: `init → choose_task → implementation → review → fix → cleanup → sync → update_done → (loop)`
+State machine: `init → choose_task → implementation → review → [fix | escalate] → cleanup → sync → update_done → (loop)`
+
+**States**:
+- `fix`: Normal review feedback — implementation needs fixes (Ralph Loop)
+- `escalate`: Design-level problem detected — requires returning to spec-to-tasks (Circuit Breaker)
+- **Ralph Loop Circuit Breaker**: If the same issue persists for 3+ iterations, force `escalate` even if review says `needs_fix`
+
+**State transitions**:
+```
+review_status = passed    → cleanup
+review_status = needs_fix → fix (if iteration < 3) OR escalate (if iteration >= 3)
+review_status = partial   → fix (if iteration < 3) OR escalate (if iteration >= 3)
+review_status = escalate  → escalate (always, regardless of iteration count)
+```
 
 ## Usage
 

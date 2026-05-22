@@ -139,7 +139,9 @@ Developer Kit 提供**四层**能力：
 | 命令 | 使用时机 | 输出 |
 |------|----------|------|
 | `/specs:brainstorm` | 新功能、复杂需求 | 包含 9 个阶段的完整需求规格 |
-| `/specs:quick-spec` | Bug 修复、小型增强 | 轻量级 4 阶段需求规格 |
+| `/specs:change-spec` | Delta/迭代变更、Bug 修复 | 变更需求规格 |
+| `/specs:technical-plan` | Brainstorm 后，记录如何实现 | 技术计划 |
+| `/specs:spec-check` | 解析标记，扫描质量 | 质量改进的需求规格 |
 
 需求规格保存在 `docs/specs/[id]/YYYY-MM-DD--feature-name.md`
 
@@ -167,12 +169,14 @@ Developer Kit 提供**四层**能力：
 |------|------|
 | `/specs:task-review` | 验证任务是否符合需求规格和代码质量标准 |
 | `/specs:code-cleanup` | 专业清理：移除调试日志、优化导入 |
-| `/specs:spec-sync-with-code` | 将需求规格与实际实现同步 |
+| `/specs:spec-sync` | 将需求规格与实际实现同步 |
 
 #### 附加工作流命令
 
 | 命令 | 描述 |
 |------|------|
+| `/specs:change-spec` | 记录 delta/迭代变更和 bug 修复，包含行为不变性分析 |
+| `/specs:technical-plan` | 记录如何构建功能（技术栈、决策、阶段） |
 | `/specs:spec-quality-check` | 需求规格的交互式质量评估 |
 | `/specs:spec-sync-context` | 同步知识图谱、任务和代码库状态 |
 | `/specs:ralph-loop` | 需求驱动开发的自动化循环 |
