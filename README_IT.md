@@ -169,7 +169,7 @@ Ogni implementazione aggiorna il Knowledge Graph per la conservazione del contes
 |---------|-------------|
 | `/specs:task-review` | Verifica che il task rispetti le specifiche e gli standard di qualità |
 | `/specs:code-cleanup` | Pulizia professionale: rimuovi log di debug, ottimizza import |
-| `/specs:spec-sync-with-code` | Sincronizza la specifica con l'implementazione effettiva |
+| `/specs:spec-sync` | Sincronizza la specifica con l'implementazione effettiva |
 
 #### Comandi Workflow Aggiuntivi
 

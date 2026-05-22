@@ -169,7 +169,7 @@ Each task implementation updates the Knowledge Graph for context preservation.
 |---------|-------------|
 | `/specs:task-review` | Verify task meets specifications and code quality standards |
 | `/specs:code-cleanup` | Professional cleanup: remove debug logs, optimize imports |
-| `/specs:spec-sync-with-code` | Synchronize spec with actual implementation |
+| `/specs:spec-sync` | Synchronize spec with actual implementation |
 
 #### Additional Workflow Commands
 
