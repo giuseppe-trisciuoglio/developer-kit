@@ -4,6 +4,17 @@ description: "Creates, updates, validates, and displays the architectural DNA of
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash, AskUserQuestion, TodoWrite
 ---
 
+## Overview
+
+The Constitution skill manages the architectural DNA of a project through two shared documents:
+
+| File | Purpose |
+|------|---------|
+| `docs/specs/architecture.md` | Technology stack, infrastructure, architectural rules, security constraints, AI guardrails |
+| `docs/specs/ontology.md` | Domain glossary (Ubiquitous Language) — terms, definitions, bounded contexts |
+
+These files live at `docs/specs/` and are shared across all specifications. Unlike a monolithic `constitution.md`, these are created/enriched by `brainstorm` (Phase 6.8.6) and `spec-to-tasks` (Phase 1.5).
+
 ## Instructions
 
 1. Identify the operation from `$ARGUMENTS` or user intent: `create`, `update`, `check`, or `show`.
@@ -12,6 +23,23 @@ allowed-tools: Read, Write, Edit, Grep, Glob, Bash, AskUserQuestion, TodoWrite
 4. For **check**: read both constitution files, read the target file, validate against architectural rules and ontology terms, output a Constitution Check Report.
 5. For **show**: read and display both files formatted for readability.
 6. Always confirm with the user before writing or overwriting files.
+
+## Examples
+
+```bash
+# Create constitution before first brainstorm
+/developer-kit-specs:constitution create
+
+# Validate a spec against architecture and ontology
+/developer-kit-specs:constitution check --target=docs/specs/001/2024-01-15--user-auth.md
+
+# Update the security constraints section
+/developer-kit-specs:constitution update --file=architecture --section=security
+
+# Show current constitution
+/developer-kit-specs:constitution show
+```
+
 
 ## When to Use
 

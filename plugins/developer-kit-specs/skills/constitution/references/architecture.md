@@ -193,7 +193,7 @@ src/
 ### 3.5 Architectural Rules
 
 - [e.g., "Domain entities must not depend on framework annotations."]
-- [e.g., "Use constructor injection. Never use @Autowired on fields."]
+- [e.g., "Use constructor injection. Never use `@Autowired` on fields."]
 - [e.g., "Repositories return domain entities, not framework types."]
 - [e.g., "Cross-module communication via domain events only, never direct method calls."]
 
@@ -326,6 +326,6 @@ Rules that AI agents MUST follow when generating code for this project:
   4. Validate all work against Constitution files, not memory
   5. If you notice assumptions contradicting Constitution, re-read immediately
 
-- [Guardrail 1, e.g., "Never generate @Transactional on repository methods."]
+- [Guardrail 1, e.g., "Never generate `@Transactional` on repository methods."]
 - [Guardrail 2, e.g., "Always generate tests alongside implementation code."]
 - [Guardrail 3, e.g., "Do not introduce new dependencies without explicit approval."]
