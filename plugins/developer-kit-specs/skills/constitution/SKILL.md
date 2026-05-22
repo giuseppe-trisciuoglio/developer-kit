@@ -207,7 +207,10 @@ Agent B: Taking over the feature
    **Q6 — Architectural Rules** (optional, freeform):
    - Forbidden patterns, required patterns, security constraints, AI guardrails
 
-   Then create `docs/specs/architecture.md` using the **Architecture Template** at `${CLAUDE_PLUGIN_ROOT}/templates/architecture.md`. Read that file, fill the gathered answers into the placeholder sections, and write the result to `docs/specs/architecture.md`.
+   Then create `docs/specs/architecture.md` using the **Architecture Template** with this lookup order:
+   1. `${CLAUDE_PLUGIN_ROOT}/templates/architecture.md`
+   3. `templates/architecture.md` inside the installed skill folder for non-Claude agents.
+   Read the first available file, fill the gathered answers into the placeholder sections, and write the result to `docs/specs/architecture.md`.
 
 4. **For `docs/specs/ontology.md`**, gather via `AskUserQuestion`:
 
@@ -287,13 +290,15 @@ When checking library usage, output:
 
 ## Architecture Template
 
-The architecture template is maintained in a single centralized file:
+The architecture template is maintained canonically in the centralized file below, with fallback copies for other installation modes:
 
 ```
-${CLAUDE_PLUGIN_ROOT}/templates/architecture.md
+Primary: `${CLAUDE_PLUGIN_ROOT}/templates/architecture.md`
+Fallback: `skills/constitution/templates/architecture.md`
+Standalone skill install fallback: `templates/architecture.md`
 ```
 
-**Do NOT duplicate the template here.** Always read `${CLAUDE_PLUGIN_ROOT}/templates/architecture.md` to get the latest version.
+**Do NOT duplicate the template inline in this skill.** Always read the first available file from the lookup order above to get the latest version for the current installation mode.
 
 The template defines these sections:
 
@@ -306,7 +311,7 @@ The template defines these sections:
 | 5 | AI Guardrails | Rules for AI agents generating code |
 
 <details>
-<summary>Legacy template reference (deprecated — use ${CLAUDE_PLUGIN_ROOT}/templates/architecture.md)</summary>
+<summary>Legacy template reference (deprecated — primary template path: ${CLAUDE_PLUGIN_ROOT}/templates/architecture.md; fallback: skills/constitution/templates/architecture.md)</summary>
 
 ```markdown
 # Project Architecture

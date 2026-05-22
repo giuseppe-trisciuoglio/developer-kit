@@ -766,7 +766,10 @@ Task(
 
 **DO NOT START WITHOUT APPROACH APPROVAL**
 
-**Template**: Read the functional specification template at `${CLAUDE_PLUGIN_ROOT}/templates/functional-specification.md` to understand the target structure. The specification MUST follow this template.
+**Template**: Read the functional specification template using this lookup order to understand the target structure. The specification MUST follow this template:
+- Primary (Claude plugin install): `${CLAUDE_PLUGIN_ROOT}/templates/functional-specification.md`
+- Fallback (local copy shipped with this command): `commands/templates/functional-specification.md`
+- If this command is installed as a standalone skill in another coding agent, read `templates/functional-specification.md` from that skill folder.
 
 **Actions**:
 
@@ -941,12 +944,15 @@ Task(
     **Negative Requirements**: [security, data integrity, reliability constraints]
     **Open Questions**: [list]
 
-    Read the template at ${CLAUDE_PLUGIN_ROOT}/templates/functional-specification.md and use it as the document structure.
+    Read the functional specification template using this lookup order and use it as the document structure:
+    1. ${CLAUDE_PLUGIN_ROOT}/templates/functional-specification.md
+    2. commands/templates/functional-specification.md
+    3. templates/functional-specification.md inside the installed skill folder for non-Claude agents.
     Fill in the gathered information into the template sections.
     Save the result to: docs/specs/[id]/YYYY-MM-DD--feature-name.md
 
     IMPORTANT:
-    - Read and follow the template at ${CLAUDE_PLUGIN_ROOT}/templates/functional-specification.md
+    - Read and follow the template using the lookup order above (primary: `${CLAUDE_PLUGIN_ROOT}/templates/functional-specification.md`; fallback: `commands/templates/functional-specification.md`; standalone-skill fallback: `templates/functional-specification.md`)
     - This is a FUNCTIONAL specification, NOT a technical design
     - Do NOT mention any frameworks, libraries, or tools
     - Do NOT include code or pseudo-code

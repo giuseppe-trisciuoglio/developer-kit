@@ -250,7 +250,7 @@ You are converting a functional specification into executable tasks. Follow a sy
           - Freeform: allow custom answer
 
      3. Create `docs/specs/architecture.md` using the gathered information:
-        - Read the centralized template at `${CLAUDE_PLUGIN_ROOT}/templates/architecture.md`
+        - Read the architecture template using this lookup order: `${CLAUDE_PLUGIN_ROOT}/templates/architecture.md`, then `templates/architecture.md` inside the installed skill folder for non-Claude agents
         - Fill the gathered answers into the placeholder sections of the template
         - Set `**Created**` and `**Last Updated**` to the current date
         - Write the result to `docs/specs/architecture.md`
@@ -965,7 +965,9 @@ Provide a comprehensive summary that will inform task generation.
 
    **IMPORTANT**: Always include test files in "Files to Create" section for any class that contains business logic, state management, validation, or complex behavior. Test files should be listed alongside source files with clear descriptions of what to test (e.g., "test state transitions", "test validation logic").
 
-   Read the centralized task template at `${CLAUDE_PLUGIN_ROOT}/templates/task.md`.
+   Read the task template using this lookup order:
+   1. `${CLAUDE_PLUGIN_ROOT}/templates/task.md`
+   2. `templates/task.md` inside the installed skill folder for non-Claude agents.
    Fill in the gathered information for each task and write to `docs/specs/[id]/tasks/TASK-XXX.md`.
 
    The task template defines these sections:
@@ -983,7 +985,7 @@ Provide a comprehensive summary that will inform task generation.
    | Definition of Done (DoD) | Completion checklist |
 
    <details>
-   <summary>Legacy task template reference (deprecated — use ${CLAUDE_PLUGIN_ROOT}/templates/task.md)</summary>
+   <summary>Legacy task template reference (deprecated — primary template path: ${CLAUDE_PLUGIN_ROOT}/templates/task.md; fallback: templates/task.md on skill folder)</summary>
 
    ```markdown
    ---
@@ -1097,11 +1099,14 @@ Provide a comprehensive summary that will inform task generation.
 
 5. Create the task list index file: `docs/specs/[id]/YYYY-MM-DD--feature-name--tasks.md`
 
-   Read the centralized task-list template at `${CLAUDE_PLUGIN_ROOT}/templates/task-list.md`.
+   Read the task-list template using this lookup order:
+   1. `${CLAUDE_PLUGIN_ROOT}/templates/task-list.md`
+   2. `commands/templates/task-list.md`
+   3. `templates/task-list.md` inside the installed skill folder for non-Claude agents.
    Fill in the task index, codebase analysis summary, and task type summary.
 
    <details>
-   <summary>Legacy task-list template reference (deprecated — use ${CLAUDE_PLUGIN_ROOT}/templates/task-list.md)</summary>
+   <summary>Legacy task-list template reference (deprecated — primary template path: ${CLAUDE_PLUGIN_ROOT}/templates/task-list.md; fallback: commands/templates/task-list.md)</summary>
 
    ```markdown
    # Task List: [Feature Name]

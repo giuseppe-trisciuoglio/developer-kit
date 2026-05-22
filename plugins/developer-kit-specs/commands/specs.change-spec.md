@@ -215,7 +215,9 @@ For each classified change, ask the user:
 
 ### Delta Document Template
 
-Read the centralized template at `${CLAUDE_PLUGIN_ROOT}/templates/change-specification-delta.md`.
+Read the Delta template using this lookup order:
+1. `${CLAUDE_PLUGIN_ROOT}/templates/change-specification-delta.md`
+2. `templates/change-specification-delta.md` inside the installed skill folder when this command is packaged for a non-Claude coding agent.
 Fill in the gathered information and save to the output path.
 
 The template defines these sections:
@@ -224,7 +226,7 @@ The template defines these sections:
 - Affected Components, Testing Strategy, Rollback Plan
 
 <details>
-<summary>Legacy template reference (deprecated — use ${CLAUDE_PLUGIN_ROOT}/templates/change-specification-delta.md)</summary>
+<summary>Legacy template reference (deprecated — primary template path: ${CLAUDE_PLUGIN_ROOT}/templates/change-specification-delta.md; fallback: templates/change-specification-delta.md on skill folder)</summary>
 
 ```markdown
 # Change Specification: [Title]
@@ -319,7 +321,10 @@ The template defines these sections:
 
 ### Bug Fix Document Template
 
-Read the centralized template at `${CLAUDE_PLUGIN_ROOT}/templates/bug-fix-specification.md`.
+Read the Bug Fix template using this lookup order:
+1. `${CLAUDE_PLUGIN_ROOT}/templates/bug-fix-specification.md`
+2. `commands/templates/bug-fix-specification.md`
+3. `templates/bug-fix-specification.md` inside the installed skill folder when this command is packaged for a non-Claude coding agent.
 Fill in the gathered information and save to the output path.
 
 The template defines these sections:
@@ -330,7 +335,7 @@ The template defines these sections:
 - Solution Approach, Acceptance Criteria, Risk Assessment
 
 <details>
-<summary>Legacy template reference (deprecated — use ${CLAUDE_PLUGIN_ROOT}/templates/bug-fix-specification.md)</summary>
+<summary>Legacy template reference (deprecated — primary template path: ${CLAUDE_PLUGIN_ROOT}/templates/bug-fix-specification.md; fallback: commands/templates/bug-fix-specification.md)</summary>
 
 ```markdown
 # Bug Fix Specification: [Short Name]
