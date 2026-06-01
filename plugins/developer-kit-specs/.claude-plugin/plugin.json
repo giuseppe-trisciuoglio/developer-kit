@@ -30,6 +30,7 @@
   ],
   "agents": [],
   "skills": [
+    "./skills/brainstorm-prompt-optimizer",
     "./skills/constitution",
     "./skills/create-pr-from-spec",
     "./skills/knowledge-graph",

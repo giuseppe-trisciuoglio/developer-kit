@@ -10,6 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Pending features in development
+- **New `specs-e2e-verification` skill** (`developer-kit-specs`):
+  - Executes real end-to-end verification after specification implementation
+  - Auto-detects application type (REST API, Web SPA, Desktop) from project files
+  - Starts local runtime via Docker Compose, Maven, Gradle, npm, or direct binary launch
+  - Runs real tests using `curl` for APIs, Playwright for web apps, computer-use for desktop
+  - Maps test results to `[IMP]` acceptance criteria from the functional specification
+  - Generates a markdown report (`e2e-report-YYYY-MM-DD-HHMMSS.md`) inside the spec folder
+  - Automatic teardown with `--keep-alive` override support
 
 ### Changed
 
