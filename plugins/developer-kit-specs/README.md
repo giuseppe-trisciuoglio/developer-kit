@@ -40,8 +40,8 @@ This plugin provides a complete workflow for transforming ideas into implemented
 ## Workflow
 
 ```
-Constitution → Idea → Functional Specification → Tasks → Implementation → Review → Sync → Done
-(constitution)  (brainstorm)  (spec-to-tasks)  (task-implementation)  (task-review)  (sync)
+Idea → specs.explore → specs.brainstorm → specs.spec-to-tasks → specs.task-implementation → specs.task-review → specs.sync → Done
+   (investigate)   (WHAT)         (tasks)             (implementation)          (review)       (sync)
 ```
 
 ## Specification Structure
@@ -81,6 +81,7 @@ docs/specs/001-user-auth/
 
 | Command | Description |
 |---------|-------------|
+| `/developer-kit-specs:specs.explore <topic>` | Explore codebase before committing — investigate architecture, compare approaches |
 | `/developer-kit-specs:specs.brainstorm [idea]` | Full specification creation for complex features |
 
 | `/developer-kit-specs:specs.spec-check [folder]` | Resolve [NEEDS CLARIFICATION] markers and scan for ambiguities |
