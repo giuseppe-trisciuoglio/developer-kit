@@ -21,6 +21,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [3.0.1] - 2026-06-05
+
+### Security
+
+- Removed phantom package reference in TypeScript dependency security guide (`developer-kit-typescript`)
+  - Replaced unclaimed `@my-org/internal-lib` example with real, claimed scope (`@microsoft`) and explicit example disclaimer
+  - Added guidance to never reference unclaimed package names in documentation or install commands
+  - Reported by Noam at Blue Bear Security
+
 ## [3.0.0] - 2026-05-18
 
 ### Added
