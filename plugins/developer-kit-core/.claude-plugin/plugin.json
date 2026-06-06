@@ -1,6 +1,6 @@
 {
   "name": "developer-kit",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Core agents and commands required by all Developer Kit plugins",
   "author": {
     "name": "Giuseppe Trisciuoglio",

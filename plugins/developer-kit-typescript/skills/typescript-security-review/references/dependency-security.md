@@ -135,16 +135,20 @@ npx can-i-ignore-scripts
 
 ### Dependency Confusion
 Attackers publish public packages with the same name as internal packages.
+When a package name is unclaimed on the public registry, anyone can publish
+malicious code under that name — never reference unclaimed package names in
+documentation or install commands.
 
 **Prevention:**
 ```bash
-# Use scoped packages for internal libraries
-npm install @my-org/internal-lib
-
-# Configure .npmrc for private registry
+# Example: configure .npmrc to resolve scoped packages from a private registry
+# (using Microsoft's real public registry as illustration only)
 registry=https://registry.npmjs.org/
-@my-org:registry=https://npm.my-company.com/
+@microsoft:registry=https://npm.pkg.github.com/
 ```
+
+Always verify that any package name referenced in docs or scripts is either
+claimed by your organization or points to an explicit local path (e.g. `./script-name`).
 
 ## Reviewing New Dependencies
 
