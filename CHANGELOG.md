@@ -10,14 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Pending features in development
-- **New `specs-e2e-verification` skill** (`developer-kit-specs`):
-  - Executes real end-to-end verification after specification implementation
-  - Auto-detects application type (REST API, Web SPA, Desktop) from project files
-  - Starts local runtime via Docker Compose, Maven, Gradle, npm, or direct binary launch
-  - Runs real tests using `curl` for APIs, Playwright for web apps, computer-use for desktop
-  - Maps test results to `[IMP]` acceptance criteria from the functional specification
-  - Generates a markdown report (`e2e-report-YYYY-MM-DD-HHMMSS.md`) inside the spec folder
-  - Automatic teardown with `--keep-alive` override support
 
 ### Changed
 
@@ -28,6 +20,55 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Security
+
+## [3.1.0] - 2026-06-15
+
+### Added
+
+- **New `pr-review-comments` skill** (`developer-kit-core`):
+  - Posts review findings from a JSON file as inline comments on a GitHub Pull Request
+  - Anchors each comment to its file and line in the PR diff
+  - Validates every finding against the PR's actual hunks and skips non-commentable lines
+  - Uses the GitHub API via the authenticated `gh` CLI (no token handling)
+  - Companion script `post_pr_comments.py` included in `scripts/`
+  - Reference docs: `references/json-schema.md`
+
+- **New `specs.explore` command and `specs-explore` skill** (`developer-kit-specs`):
+  - Investigates the codebase before committing to a change — no code is written or modified
+  - Reads relevant files, identifies affected areas, compares approaches, returns a structured analysis
+  - Supports standalone mode (inline result) and `--spec <path>` mode (saves to `docs/specs/{id}/exploration.md`)
+  - Supports `--lang=<framework>` hint (e.g., `spring`, `react`)
+  - Updated `sdd-init` skill with expanded codebase investigation guidance
+
+- **New `brainstorm-prompt-optimizer` skill** (`developer-kit-specs`):
+  - Transforms raw idea descriptions into structured prompts ready for the brainstorming workflow
+  - Produces prompts that follow EARS syntax, proper acceptance criteria taxonomy, and complete Non-Goals / Negative Requirements sections
+  - Triggers on phrases like "optimize for brainstorm", "prepare idea for brainstorm", "enhance this idea", "imposta per brainstorm"
+  - Bilingual trigger support (English and Italian)
+
+- **New `specs-e2e-verification` skill and `test-execution-patterns` reference** (`developer-kit-specs`):
+  - Executes real end-to-end verification after specification implementation
+  - Auto-detects application type (REST API, Web SPA, Desktop) from project files
+  - Starts local runtime via Docker Compose, Maven, Gradle, npm, or direct binary launch
+  - Runs real tests using `curl` for APIs, Playwright for web apps, computer-use for desktop
+  - Maps test results to `[IMP]` acceptance criteria from the functional specification
+  - Generates a markdown report (`e2e-report-YYYY-MM-DD-HHMMSS.md`) inside the spec folder
+  - Automatic teardown with `--keep-alive` override support
+  - Companion reference `test-execution-patterns.md` documents patterns for various frameworks
+
+### Fixed
+
+- **Review report path** (`developer-kit-specs`):
+  - Updated review report path in `specs.task-implementation` and `specs.task-review` documentation to match the actual generated output
+
+## [3.0.1] - 2026-06-05
+
+### Security
+
+- Removed phantom package reference in TypeScript dependency security guide (`developer-kit-typescript`)
+  - Replaced unclaimed `@my-org/internal-lib` example with real, claimed scope (`@microsoft`) and explicit example disclaimer
+  - Added guidance to never reference unclaimed package names in documentation or install commands
+  - Reported by Noam at Blue Bear Security
 
 ## [3.0.0] - 2026-05-18
 
@@ -1420,7 +1461,9 @@ This release contains breaking changes. Follow this guide to migrate from v2.x.
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v3.0.0...HEAD
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v3.1.0...HEAD
+[3.1.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v3.0.0...v3.1.0
+[3.0.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v3.0.0...v3.0.1
 [3.0.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.8.2...v3.0.0
 [2.8.2]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.8.1...v2.8.2
 [2.8.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.8.0...v2.8.1
