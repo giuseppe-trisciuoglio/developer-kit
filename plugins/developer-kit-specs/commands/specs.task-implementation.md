@@ -270,7 +270,7 @@ This command implements a specific task following a focused workflow:
 
 **Actions**:
 
-1. Check if a review report exists for this task: `docs/specs/[id]/reviews/TASK-XXX-review.md`
+1. Check if a review report exists for this task: `docs/specs/[id]/tasks/TASK-XXX--review.md`
 2. If it exists and status is NOT `passed`:
    - Read the "Required Fixes" and "Code Review Findings" sections
    - Incorporate these requirements into your implementation plan

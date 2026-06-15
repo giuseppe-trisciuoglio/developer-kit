@@ -254,11 +254,11 @@ Idea → Functional Specification → Tasks → Implementation → Review → Co
    - `partial`: Some ACs met, but major functionality missing or incorrect
    - `escalate`: Critical architectural drift, spec contradiction without DEC, or impossible requirement
 
-2. **Generate review report** (`docs/specs/[id]/reviews/TASK-XXX-review.md`):
+2. **Generate review report** (`docs/specs/[id]/tasks/TASK-XXX--review.md`):
    Read the review template using this lookup order:
    1. `${CLAUDE_PLUGIN_ROOT}/templates/task-review.md`
    2. `templates/task-review.md` inside the installed skill folder for non-Claude agents.
-   Fill in the gathered findings and save to the reviews directory.
+   Fill in the gathered findings and save to the tasks directory.
 
    The review template defines these sections:
    | Section | Purpose |
