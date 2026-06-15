@@ -17,7 +17,8 @@
     "codex",
     "notebooklm",
     "integrations",
-    "external-services"
+    "external-services",
+    "xquik"
   ],
   "mcpServers": "./.mcp.json",
   "agents": [],
@@ -28,6 +29,7 @@
     "./skills/copilot-cli",
     "./skills/codex",
     "./skills/sonarqube-mcp",
-    "./skills/qwen-coder"
+    "./skills/qwen-coder",
+    "./skills/xquik"
   ]
 }
