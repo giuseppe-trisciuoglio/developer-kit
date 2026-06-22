@@ -52,6 +52,7 @@
     "./skills/drawio-logical-diagrams",
     "./skills/github-issue-workflow",
     "./skills/learn",
+    "./skills/claude-rules-authoring",
     "./skills/bug-fix-brief",
     "./skills/pr-review-comments"
   ]
