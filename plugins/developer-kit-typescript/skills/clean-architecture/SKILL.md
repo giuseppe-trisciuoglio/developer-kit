@@ -129,6 +129,29 @@ Follow these principles throughout implementation:
 
 ## Examples
 
+### Example: Order Creation Use Case (Input / Output)
+
+**Input** — a command describing the intent:
+
+```typescript
+const command = new CreateOrderCommand({
+  customerId,        // entity reference by id
+  lines: [
+    { productId, quantity: 2 },
+  ],
+});
+```
+
+**Output** — the aggregate returned from the application-layer use case:
+
+```typescript
+const order = await createOrderUseCase.execute(command);
+
+order.total.toString();   // Money { amount: 2950, currency: 'EUR' }
+order.customerId;         // references the customer aggregate by id
+order.events.length;      // domain events collected for later dispatch
+```
+
 For detailed code examples covering all aspects of Clean Architecture implementation, see:
 
 - **[references/examples.md](references/examples.md)** - Complete examples including:

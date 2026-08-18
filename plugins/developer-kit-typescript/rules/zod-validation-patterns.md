@@ -153,12 +153,10 @@ if (!validationResult.success) {
 
 ### UUID Validation
 
-Zod v4 supports one UUID validation approaches:
+Zod v4 supports standalone UUID validation:
 
 ```typescript
-// Standalone z.uuid() - RFC 9562/4122 compliant
-const strictUuidSchema = z.uuid();
-
+const strictUuidSchema = z.uuid(); // RFC 9562/4122 compliant
 strictUuidSchema.parse('550e8400-e29b-41d4-a716-446655440000'); // ✅
 ```
 
@@ -183,13 +181,11 @@ z.record(z.enum(['a', 'b']), z.number())  // Record<'a'|'b', number>
 Zod 4 uses `.pipe()` for sequential transformations:
 
 ```typescript
-// Transform and validate email
 z.string()
   .trim()
   .toLowerCase()
   .pipe(z.email())  // pipe creates new zod schema
 
-// Custom transformation with validation
 z.string()
   .transform(val => val.toUpperCase())
   .pipe(z.enum(['VALUE1', 'VALUE2']))
@@ -214,13 +210,8 @@ vatNumber: z
 Zod v4 uses a unified `error` parameter instead of separate `invalid_type_error`/`required_error`:
 
 ```typescript
-// ❌ Zod 3 style (deprecated in v4)
-z.string({ invalid_type_error: 'Must be a string', required_error: 'Required' })
-
 // ✅ Zod 4 style - unified error parameter
 z.string({ error: 'Invalid string value' })
-
-// ✅ Zod 4 with error function for dynamic messages
 z.string({
   error: (issue) => issue.input === undefined ? 'Required' : 'Invalid'
 })
@@ -231,12 +222,11 @@ z.string({
 `.default()` in Zod v4 short-circuits for `undefined`. Use `.prefault()` to replicate Zod 3's pre-parse default behavior:
 
 ```typescript
-// .default() only applies when value is undefined
 const schema = z.string().default('fallback');
-schema.parse(undefined); // 'fallback'
+schema.parse(undefined); // 'fallback', .default() applies only to undefined
 schema.parse(null);      // Error (null is not undefined)
 
-// Use .prefault() for Zod 3-like behavior
+// .prefault() replicates Zod 3's pre-parse default behavior
 const prefaultSchema = z.string().prefault(() => 'fallback');
 ```
 
@@ -265,14 +255,6 @@ export const CreateTenantSchema = z.object({
 });
 
 export type CreateTenantInput = z.infer<typeof CreateTenantSchema>;
-
-// UUID validation
-const uuidSchema = z.uuid();
-const userIdSchema = z.string().uuid();
-
-// Record with key and value types (Zod v4)
-const metadataSchema = z.record(z.string(), z.string());
-const payloadSchema = z.record(z.string(), z.unknown());
 
 // Enum validation with TypeScript native enum
 const statusSchema = z.enum(TenantStatus);  // z.enum() handles native enums in v4
