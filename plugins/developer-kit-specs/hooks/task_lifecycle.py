@@ -10,6 +10,8 @@ from typing import Dict, List, Optional, Any, Tuple
 
 # --- Constants & Schema ---
 
+TASK_FILE_RE = re.compile(r"TASK-\d+\.md$")
+
 class TaskStatus:
     PENDING = "pending"
     IN_PROGRESS = "in_progress"
@@ -177,15 +179,55 @@ def validate_task(filepath: str) -> bool:
     print(f"Validation passed for {filepath}")
     return True
 
+# --- Hook Input Handling ---
+
+def _is_task_document(filepath: str) -> bool:
+    """True when the file name follows the task document convention."""
+    return bool(TASK_FILE_RE.search(Path(filepath).name))
+
+
+def _filepath_from_hook_input() -> Optional[str]:
+    """Resolve the affected file path from the hook JSON payload on stdin."""
+    try:
+        payload = json.load(sys.stdin)
+    except (json.JSONDecodeError, OSError):
+        return None
+    if not isinstance(payload, dict):
+        return None
+    tool_input = payload.get("tool_input")
+    if not isinstance(tool_input, dict):
+        return None
+    path = tool_input.get("file_path")
+    if isinstance(path, str) and path:
+        return path
+    return None
+
+
 # --- CLI Entry Point ---
 
 def main():
-    if len(sys.argv) < 3:
+    if len(sys.argv) < 2:
         print("Usage: task_lifecycle.py [auto-status|validate] [file]")
         sys.exit(1)
 
     action = sys.argv[1]
-    filepath = sys.argv[2]
+
+    if len(sys.argv) > 2:
+        # Explicit file argument (direct CLI usage)
+        filepath = sys.argv[2]
+    elif sys.stdin.isatty():
+        # Interactive run without a file argument is not a hook invocation
+        print("Usage: task_lifecycle.py [auto-status|validate] [file]")
+        sys.exit(1)
+    else:
+        # Hook mode: resolve the file from the payload Claude Code sends on stdin
+        filepath = _filepath_from_hook_input()
+        if filepath is None:
+            # Hook payload without a usable file path: nothing to act on
+            return
+        if not _is_task_document(filepath):
+            # Only task documents are handled; unrelated edits stay silent
+            return
 
     if action == "auto-status":
         update_status(filepath)

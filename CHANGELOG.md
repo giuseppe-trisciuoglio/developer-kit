@@ -17,9 +17,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+### Security
+
+## [3.2.0] - 2026-08-18
+
 ### Fixed
 
-### Security
+- **`developer-kit-specs` PostToolUse hooks no longer fail on every Write/Edit** (`hooks/hooks.json` + `hooks/task_lifecycle.py`):
+  - Removed the `${CLAUDE_CHANGED_FILE}` placeholder, which Claude Code never sets; the hooks now resolve the affected file from the JSON payload delivered on stdin (`tool_input.file_path`)
+  - Removed the `pattern` key, which is not part of the Claude Code hook schema and was silently ignored; `task_lifecycle.py` now skips files that are not task documents (`TASK-*.md`) and exits 0 silently, so unrelated edits produce no hook error
+  - Quoted the `${CLAUDE_PLUGIN_ROOT}` placeholder in the shell-form commands per the Claude Code hooks reference
+  - Added test coverage for hook-payload resolution and the task-document gate
 
 ## [3.1.0] - 2026-06-15
 
@@ -1461,7 +1469,8 @@ This release contains breaking changes. Follow this guide to migrate from v2.x.
 - Core functionality
 - Foundation documentation
 
-[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v3.1.0...HEAD
+[Unreleased]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v3.2.0...HEAD
+[3.2.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v3.1.0...v3.2.0
 [3.1.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v3.0.0...v3.1.0
 [3.0.1]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v3.0.0...v3.0.1
 [3.0.0]: https://github.com/giuseppe-trisciuoglio/developer-kit/compare/v2.8.2...v3.0.0
