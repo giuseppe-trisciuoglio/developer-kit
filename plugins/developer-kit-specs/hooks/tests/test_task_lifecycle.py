@@ -18,6 +18,9 @@ from task_lifecycle import (
     write_task_file,
     update_status,
     validate_task,
+    _is_task_document,
+    _filepath_from_hook_input,
+    main,
 )
 
 
@@ -40,6 +43,106 @@ def _cleanup(path: str):
         os.unlink(path)
     except OSError:
         pass
+
+
+# --- Hook payload resolution (PostToolUse stdin JSON) ---
+
+class TestHookPayloadResolution:
+    """task_lifecycle.py must resolve the file from the hook payload on stdin."""
+
+    def test_is_task_document_accepts_task_file(self):
+        assert _is_task_document("/some/dir/TASK-042.md") is True
+
+    def test_is_task_document_rejects_other_files(self):
+        assert _is_task_document("/some/dir/README.md") is False
+        assert _is_task_document("/some/dir/TASK-042.txt") is False
+        assert _is_task_document("/some/dir/task-042.md") is False
+
+    def test_filepath_from_hook_input_extracts_path(self, monkeypatch):
+        import io
+        import json
+        payload = {
+            "tool_name": "Write",
+            "tool_input": {"file_path": "/abs/path/TASK-007.md"},
+        }
+        monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps(payload)))
+        assert _filepath_from_hook_input() == "/abs/path/TASK-007.md"
+
+    def test_filepath_from_hook_input_invalid_json(self, monkeypatch):
+        import io
+        monkeypatch.setattr("sys.stdin", io.StringIO("not json"))
+        assert _filepath_from_hook_input() is None
+
+    def test_filepath_from_hook_input_missing_path(self, monkeypatch):
+        import io
+        import json
+        monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps({"tool_name": "Write"})))
+        assert _filepath_from_hook_input() is None
+
+    def test_main_silent_for_non_task_file_via_payload(self, monkeypatch, capsys):
+        import io
+        import json
+        payload = {
+            "tool_name": "Edit",
+            "tool_input": {"file_path": "/tmp/notes.md"},
+        }
+        monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps(payload)))
+        monkeypatch.setattr("sys.argv", ["task_lifecycle.py", "auto-status"])
+        main()  # must not raise and must not print anything
+        assert capsys.readouterr().out == ""
+
+    def test_main_runs_auto_status_for_task_file_via_payload(self, monkeypatch, tmp_path, capsys):
+        import io
+        import json
+        fm = {
+            "id": "TASK-009",
+            "title": "Hook payload task",
+            "spec": "spec-001",
+            "status": "pending",
+        }
+        body = (
+            "## Acceptance Criteria\n"
+            "- [x] AC1\n"
+            "\n"
+            "## Definition of Done\n"
+            "- [x] DoD1\n"
+        )
+        task_file = tmp_path / "TASK-009.md"
+        task_file.write_text(
+            "---\n" + __import__("yaml").dump(fm, sort_keys=False) + "---\n" + body
+        )
+        payload = {
+            "tool_name": "Edit",
+            "tool_input": {"file_path": str(task_file)},
+        }
+        monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps(payload)))
+        monkeypatch.setattr("sys.argv", ["task_lifecycle.py", "auto-status"])
+        main()
+        updated_fm, _, _ = read_task_file(task_file)
+        assert updated_fm["status"] == "implemented"
+        assert "Status updated" in capsys.readouterr().out
+
+    def test_main_validate_explicit_file_still_works(self, monkeypatch, tmp_path, capsys):
+        fm = {
+            "id": "TASK-010",
+            "title": "Explicit file task",
+            "spec": "spec-001",
+            "status": "pending",
+        }
+        body = (
+            "## Acceptance Criteria\n"
+            "- [ ] AC1\n"
+            "\n"
+            "## Definition of Done\n"
+            "- [ ] DoD1\n"
+        )
+        task_file = tmp_path / "TASK-010.md"
+        task_file.write_text(
+            "---\n" + __import__("yaml").dump(fm, sort_keys=False) + "---\n" + body
+        )
+        monkeypatch.setattr("sys.argv", ["task_lifecycle.py", "validate", str(task_file)])
+        main()
+        assert "Validation passed" in capsys.readouterr().out
 
 
 # --- P2: superseded is a valid status ---

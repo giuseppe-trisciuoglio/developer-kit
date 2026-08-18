@@ -164,6 +164,7 @@ Claude follows a structured process:
 **Hooks fire automatically:**
 
 - `task_lifecycle.py` updates the task frontmatter based on checkbox changes and git state.
+- Hooks only act on files named like task documents (`TASK-<id>.md`); any other Write/Edit is ignored silently, with no hook error.
 
 ### Step 4: Review the Implementation
 

@@ -25,7 +25,7 @@ def find_spec_folder(branch):
     if not specs_dir.exists():
         return None, f"docs/specs/ does not exist"
 
-    # Try exact match first: docs/specs/<branch>/
+    # Try the exact branch name as a spec folder first
     exact = specs_dir / branch
     if exact.is_dir():
         return str(exact), None

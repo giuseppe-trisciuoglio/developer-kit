@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`developer-kit-specs` PostToolUse hooks no longer fail on every Write/Edit** (`hooks/hooks.json` + `hooks/task_lifecycle.py`):
+  - Removed the `${CLAUDE_CHANGED_FILE}` placeholder, which Claude Code never sets; the hooks now resolve the affected file from the JSON payload delivered on stdin (`tool_input.file_path`)
+  - Removed the `pattern` key, which is not part of the Claude Code hook schema and was silently ignored; `task_lifecycle.py` now skips files that are not task documents (`TASK-*.md`) and exits 0 silently, so unrelated edits produce no hook error
+  - Quoted the `${CLAUDE_PLUGIN_ROOT}` placeholder in the shell-form commands per the Claude Code hooks reference
+  - Added test coverage for hook-payload resolution and the task-document gate
+
 ### Security
 
 ## [3.1.0] - 2026-06-15

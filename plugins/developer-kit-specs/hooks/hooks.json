@@ -4,16 +4,15 @@
     "PostToolUse": [
       {
         "matcher": "Write|Edit",
-        "pattern": "TASK-\\d+\\.md$",
         "hooks": [
           {
             "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/task_lifecycle.py auto-status ${CLAUDE_CHANGED_FILE}",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/task_lifecycle.py\" auto-status",
             "statusMessage": "Auto-updating task status..."
           },
           {
             "type": "command",
-            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/task_lifecycle.py validate ${CLAUDE_CHANGED_FILE}",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/task_lifecycle.py\" validate",
             "statusMessage": "Validating task frontmatter..."
           }
         ]
