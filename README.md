@@ -78,9 +78,6 @@ claude
 
 # Use a Developer Kit command
 /devkit.refactor
-
-# Or invoke a specs workflow
-/specs:brainstorm
 ```
 
 ### Example Prompts
@@ -120,70 +117,7 @@ Specialized sub-agents for complex workflows:
 /devkit.typescript.code-review
 ```
 
-### 3. Specifications-Driven Development (SDD)
-Transform ideas into production-ready code through a structured workflow:
-
-![SDD Workflow](./docs/specs-life-cycle.png)
-
-#### Phase 0: Constitution (First-Time Setup)
-
-| Command | When to Use | Output |
-|---------|-------------|--------|
-| `/developer-kit-specs:constitution create` | New project, before first spec | `docs/specs/constitution.md` |
-| `/developer-kit-specs:constitution check` | Validate spec/task against principles | Constitution Check Report |
-
-The constitution defines the architectural DNA: approved stack, AI guardrails, security constraints (CWE mappings), and non-negotiable rules that govern all subsequent code generation.
-
-#### Phase 1: Specification Creation
-
-| Command | When to Use | Output |
-|---------|-------------|--------|
-| `/specs:brainstorm` | New features, complex requirements | Full specification with 9 phases |
-| `/specs:change-spec` | Delta/iteration changes, bug fixes | Change specification |
-| `/specs:technical-plan` | After brainstorm, document HOW | Technical plan |
-| `/specs:spec-check` | Resolve markers, scan quality | Quality-improved specification |
-
-The specification lives in `docs/specs/[id]/YYYY-MM-DD--feature-name.md`
-
-#### Phase 2: Task Generation
-
-| Command | Description |
-|---------|-------------|
-| `/specs:spec-to-tasks` | Convert specification into executable task files |
-| `/specs:task-manage` | Add, split, update, or reorganize tasks |
-
-Tasks are generated in `docs/specs/[id]/tasks/` with individual task files.
-
-#### Phase 3: Implementation
-
-| Command | Description |
-|---------|-------------|
-| `/specs:task-implementation` | Guided implementation of a specific task |
-| `/specs:task-tdd` | Test-Driven Development approach for the task |
-
-Each task implementation updates the Knowledge Graph for context preservation.
-
-#### Phase 4: Quality Assurance
-
-| Command | Description |
-|---------|-------------|
-| `/specs:task-review` | Verify task meets specifications and code quality standards |
-| `/specs:code-cleanup` | Professional cleanup: remove debug logs, optimize imports |
-| `/specs:spec-sync` | Synchronize spec with actual implementation |
-
-#### Additional Workflow Commands
-
-| Command | Description |
-|---------|-------------|
-| `/specs:change-spec` | Document delta/iterations and bug fixes with unchanged behavior analysis |
-| `/specs:technical-plan` | Document HOW the feature will be built (stack, decisions, phases) |
-| `/specs:spec-quality-check` | Interactive quality assessment of specifications |
-| `/specs:spec-sync-context` | Sync Knowledge Graph, Tasks, and Codebase state |
-| `/specs:ralph-loop` | Automated loop for spec-driven development |
-| `/devkit.refactor` | Refactor existing code with architectural analysis |
-| `/devkit.github.create-pr` | Create PR with comprehensive description |
-
-### 4. Rules
+### 3. Rules
 Path-scoped rules auto-activate based on file patterns:
 
 ```yaml
@@ -216,7 +150,6 @@ Always use constructor injection. Never use field injection with @Autowired.
 | Plugin | Language/Domain | Components | Description |
 |--------|-----------------|------------|-------------|
 | `developer-kit-core` | Core | 6 Agents, 8 Commands, 4 Skills | Required base plugin with general-purpose capabilities |
-| `developer-kit-specs` | Workflow | 9 Commands, 5 Skills | Specifications-driven development (SDD) workflow |
 | `developer-kit-java` | Java | 9 Agents, 11 Commands, 51 Skills, 4 Rules | Spring Boot, LangChain4J, AWS SDK, GraalVM |
 | `developer-kit-typescript` | TypeScript | 13 Agents, 3 Commands, 25 Skills, 17 Rules | NestJS, React, Next.js, Drizzle ORM, Monorepo |
 | `developer-kit-python` | Python | 4 Agents, 4 Rules | Django, Flask, FastAPI, AWS Lambda |

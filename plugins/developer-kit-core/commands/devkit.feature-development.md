@@ -135,7 +135,7 @@ This command implements a new feature following a systematic 7-phase workflow:
 **Actions**:
 
 1. **Ask user about existing specifications**:
-   - "Is this feature related to an existing specification in docs/specs/?"
+   - "Is this feature related to an existing specification in docs/specs/ (e.g. produced by pi-specs-kit)?"
    - If yes, get spec folder path from user
 
 2. **If spec folder provided**:
@@ -229,7 +229,7 @@ Task(
    - Y new components catalogued
    - Z integration points mapped
 
-   Updated: docs/specs/[ID]/knowledge-graph.json
+   Updated: docs/specs/[ID]/knowledge-graph.json (if using a specs-Kit based workflow)
    ```
 
 5. **If write fails**:
@@ -477,7 +477,7 @@ Update the status as you progress through each phase.
 
 ## Decision Logging Protocol
 
-Throughout the workflow, whenever a non-trivial choice is made between alternatives, append a DEC entry to `docs/specs/[id]/decision-log.md`.
+Throughout the workflow, whenever a non-trivial choice is made between alternatives, append a DEC entry to `docs/specs/[id]/decision-log.md` when a specs workflow is in use.
 
 ### When to log decisions:
 

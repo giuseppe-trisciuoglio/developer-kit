@@ -96,7 +96,6 @@ The Developer Kit uses a **plugin-based architecture** with 12 separate plugins:
 | Plugin | Agents | Commands | Skills | Description |
 |--------|--------|----------|--------|-------------|
 | `developer-kit-core` | 7 | 16 | 6 | Core agents, commands, skills, hooks |
-| `developer-kit-specs` | 0 | 9 | 1 | Specifications-driven development |
 | `developer-kit-java` | 9 | 11 | 52 | Java/Spring Boot/LangChain4J |
 | `developer-kit-typescript` | 13 | 3 | 22 | TypeScript/NestJS/React |
 | `developer-kit-python` | 4 | 0 | 2 | Python development |

@@ -78,9 +78,6 @@ claude
 
 # Usa un comando Developer Kit
 /devkit.refactor
-
-# Oppure avvia un workflow di specifiche
-/specs:brainstorm
 ```
 
 ### Esempi di Prompt
@@ -120,70 +117,7 @@ Sub-agent specializzati per workflow complessi:
 /devkit.typescript.code-review
 ```
 
-### 3. Sviluppo Guidato dalle Specifiche (SDD)
-Trasforma le idee in codice production-ready attraverso un workflow strutturato:
-
-![Workflow SDD](./docs/specs-life-cycle.png)
-
-#### Fase 0: Costituzione (Configurazione Iniziale)
-
-| Comando | Quando Usarlo | Output |
-|---------|---------------|--------|
-| `/developer-kit-specs:constitution create` | Nuovo progetto, prima della prima spec | `docs/specs/constitution.md` |
-| `/developer-kit-specs:constitution check` | Valida spec/task rispetto ai principi | Report di Verifica Costituzionale |
-
-La costituzione definisce il DNA architetturale: stack approvato, guardrail AI, vincoli di sicurezza (mappature CWE) e regole non negoziabili che governano tutta la generazione di codice successiva.
-
-#### Fase 1: Creazione della Specifica
-
-| Comando | Quando Usare | Output |
-|---------|--------------|--------|
-| `/specs:brainstorm` | Nuove funzionalità, requisiti complessi | Specifica completa con 9 fasi |
-| `/specs:change-spec` | Delta/iterazioni, bug fix | Change specification |
-| `/specs:technical-plan` | Dopo brainstorm, documenta COME | Piano tecnico |
-| `/specs:spec-check` | Risolvi marker, verifica qualità | Specifica con qualità migliorata |
-
-La specifica risiede in `docs/specs/[id]/YYYY-MM-DD--feature-name.md`
-
-#### Fase 2: Generazione dei Task
-
-| Comando | Descrizione |
-|---------|-------------|
-| `/specs:spec-to-tasks` | Converte la specifica in file di task eseguibili |
-| `/specs:task-manage` | Aggiungi, dividi, aggiorna o riorganizza i task |
-
-I task vengono generati in `docs/specs/[id]/tasks/` con file individuali.
-
-#### Fase 3: Implementazione
-
-| Comando | Descrizione |
-|---------|-------------|
-| `/specs:task-implementation` | Implementazione guidata di un task specifico |
-| `/specs:task-tdd` | Approccio Test-Driven Development per il task |
-
-Ogni implementazione aggiorna il Knowledge Graph per la conservazione del contesto.
-
-#### Fase 4: Quality Assurance
-
-| Comando | Descrizione |
-|---------|-------------|
-| `/specs:task-review` | Verifica che il task rispetti le specifiche e gli standard di qualità |
-| `/specs:code-cleanup` | Pulizia professionale: rimuovi log di debug, ottimizza import |
-| `/specs:spec-sync` | Sincronizza la specifica con l'implementazione effettiva |
-
-#### Comandi Workflow Aggiuntivi
-
-| Comando | Descrizione |
-|---------|-------------|
-| `/specs:change-spec` | Documenta delta/iterazioni e bug fix con analisi del comportamento invariato |
-| `/specs:technical-plan` | Documenta COME la feature sarà costruita (stack, decisioni, fasi) |
-| `/specs:spec-quality-check` | Valutazione interattiva della qualità delle specifiche |
-| `/specs:spec-sync-context` | Sincronizza Knowledge Graph, Task e stato del Codebase |
-| `/specs:ralph-loop` | Loop automatizzato per sviluppo guidato da specifiche |
-| `/devkit.refactor` | Refactor del codice esistente con analisi architetturale |
-| `/devkit.github.create-pr` | Crea PR con descrizione completa |
-
-### 4. Regole
+### 3. Regole
 Regole con attivazione automatica basate su pattern di file:
 
 ```yaml
@@ -216,7 +150,6 @@ Usa sempre l'iniezione tramite costruttore. Non usare mai l'iniezione su campo c
 | Plugin | Linguaggio/Dominio | Componenti | Descrizione |
 |--------|-------------------|------------|-------------|
 | `developer-kit-core` | Core | 6 Agent, 8 Comandi, 4 Skill | Plugin base richiesto con capacità generali |
-| `developer-kit-specs` | Workflow | 9 Comandi, 5 Skill | Workflow di sviluppo guidato dalle specifiche (SDD) |
 | `developer-kit-java` | Java | 9 Agent, 11 Comandi, 51 Skill, 4 Regole | Spring Boot, LangChain4J, AWS SDK, GraalVM |
 | `developer-kit-typescript` | TypeScript | 13 Agent, 3 Comandi, 25 Skill, 17 Regole | NestJS, React, Next.js, Drizzle ORM, Monorepo |
 | `developer-kit-python` | Python | 4 Agent, 4 Regole | Django, Flask, FastAPI, AWS Lambda |

@@ -157,20 +157,6 @@ Commands support `--lang` parameter to use specialized language-specific agents:
 
 ---
 
-## Related Plugins
-
-### developer-kit-specs
-
-Specifications-driven development commands have been extracted to a dedicated plugin.
-
-**Commands:** `/specs:brainstorm`, `/specs:spec-to-tasks`, `/specs:task-implementation`, `/specs:task-manage`, `/specs:task-review`
-
-**Skills:** `knowledge-graph` — Persistent Knowledge Graph for specifications
-
-**Installation:** For teams using specifications-driven development, install both `developer-kit-core` and `developer-kit-specs`.
-
----
-
 ## Dependencies
 
 None — this is the foundational plugin upon which all other Developer Kit plugins depend.

@@ -72,12 +72,6 @@
       "description": "External tools integration skills for CLI utilities, APIs, and third-party services",
       "source": "./plugins/developer-kit-tools",
       "version": "2.8.0"
-    },
-    {
-      "name": "developer-kit-specs",
-      "description": "Specs Driven Development capabilities for defining, validating and implement code from specifications",
-      "source": "./plugins/developer-kit-specs",
-      "version": "2.8.0"
     }
   ]
 }
