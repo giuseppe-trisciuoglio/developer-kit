@@ -78,9 +78,6 @@ claude
 
 # Usar un comando de Developer Kit
 /devkit.refactor
-
-# O iniciar un flujo de trabajo de especificaciones
-/specs:brainstorm
 ```
 
 ### Ejemplos de Prompts
@@ -120,70 +117,7 @@ Sub-agentes especializados para flujos de trabajo complejos:
 /devkit.typescript.code-review
 ```
 
-### 3. Desarrollo Guiado por Especificaciones (SDD)
-Transforma ideas en código listo para producción a través de un flujo de trabajo estructurado:
-
-![Flujo de Trabajo SDD](./docs/specs-life-cycle.png)
-
-#### Fase 0: Constitución (Configuración Inicial)
-
-| Comando | Cuándo Usarlo | Salida |
-|---------|---------------|--------|
-| `/developer-kit-specs:constitution create` | Nuevo proyecto, antes de la primera spec | `docs/specs/constitution.md` |
-| `/developer-kit-specs:constitution check` | Validar spec/tarea contra los principios | Informe de Verificación Constitucional |
-
-La constitución define el ADN arquitectónico: stack aprobado, guardrails de IA, restricciones de seguridad (mapeos CWE) y reglas no negociables que rigen toda la generación de código posterior.
-
-#### Fase 1: Creación de Especificaciones
-
-| Comando | Cuándo Usar | Salida |
-|---------|-------------|--------|
-| `/specs:brainstorm` | Nuevas funcionalidades, requisitos complejos | Especificación completa con 9 fases |
-| `/specs:change-spec` | Delta/iteraciones, corrección de errores | Especificación de cambio |
-| `/specs:technical-plan` | Después de brainstorm, documentar CÓMO | Plan técnico |
-| `/specs:spec-check` | Resolver marcadores, escanear calidad | Especificación con calidad mejorada |
-
-La especificación se guarda en `docs/specs/[id]/YYYY-MM-DD--feature-name.md`
-
-#### Fase 2: Generación de Tareas
-
-| Comando | Descripción |
-|---------|-------------|
-| `/specs:spec-to-tasks` | Convierte la especificación en archivos de tareas ejecutables |
-| `/specs:task-manage` | Agregar, dividir, actualizar o reorganizar tareas |
-
-Las tareas se generan en `docs/specs/[id]/tasks/` con archivos individuales.
-
-#### Fase 3: Implementación
-
-| Comando | Descripción |
-|---------|-------------|
-| `/specs:task-implementation` | Implementación guiada de una tarea específica |
-| `/specs:task-tdd` | Enfoque de Desarrollo Guiado por Pruebas para la tarea |
-
-Cada implementación de tarea actualiza el Grafo de Conocimiento para la preservación del contexto.
-
-#### Fase 4: Garantía de Calidad
-
-| Comando | Descripción |
-|---------|-------------|
-| `/specs:task-review` | Verifica que la tarea cumpla las especificaciones y estándares de calidad |
-| `/specs:code-cleanup` | Limpieza profesional: eliminar logs de depuración, optimizar imports |
-| `/specs:spec-sync` | Sincroniza la especificación con la implementación actual |
-
-#### Comandos Adicionales del Flujo de Trabajo
-
-| Comando | Descripción |
-|---------|-------------|
-| `/specs:change-spec` | Documentar delta/iteraciones y correcciones de errores con análisis de comportamiento sin cambios |
-| `/specs:technical-plan` | Documentar CÓMO se construirá la funcionalidad (stack, decisiones, fases) |
-| `/specs:spec-quality-check` | Evaluación interactiva de calidad de especificaciones |
-| `/specs:spec-sync-context` | Sincroniza Grafo de Conocimiento, Tareas y estado del Código |
-| `/specs:ralph-loop` | Bucle automatizado para desarrollo guiado por especificaciones |
-| `/devkit.refactor` | Refactorizar código existente con análisis arquitectónico |
-| `/devkit.github.create-pr` | Crear PR con descripción completa |
-
-### 4. Reglas
+### 3. Reglas
 Reglas de activación automática basadas en patrones de archivos:
 
 ```yaml
@@ -216,7 +150,6 @@ Usa siempre inyección por constructor. Nunca uses inyección de campo con @Auto
 | Plugin | Lenguaje/Dominio | Componentes | Descripción |
 |--------|------------------|-------------|-------------|
 | `developer-kit-core` | Core | 6 Agentes, 8 Comandos, 4 Habilidades | Plugin base requerido con capacidades de propósito general |
-| `developer-kit-specs` | Flujo de trabajo | 9 Comandos, 5 Habilidades | Flujo de trabajo de desarrollo guiado por especificaciones (SDD) |
 | `developer-kit-java` | Java | 9 Agentes, 11 Comandos, 51 Habilidades, 4 Reglas | Spring Boot, LangChain4J, AWS SDK, GraalVM |
 | `developer-kit-typescript` | TypeScript | 13 Agentes, 3 Comandos, 25 Habilidades, 17 Reglas | NestJS, React, Next.js, Drizzle ORM, Monorepo |
 | `developer-kit-python` | Python | 4 Agentes, 4 Reglas | Django, Flask, FastAPI, AWS Lambda |

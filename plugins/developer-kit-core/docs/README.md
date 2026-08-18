@@ -102,4 +102,3 @@ developer-kit-core/
 - **[developer-kit-aws](../developer-kit-aws/)** — AWS/CloudFormation
 - **[developer-kit-ai](../developer-kit-ai/)** — Prompt engineering/RAG
 - **[developer-kit-devops](../developer-kit-devops/)** — Docker/GitHub Actions
-- **[developer-kit-specs](../developer-kit-specs/)** — Specifications-driven development

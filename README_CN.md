@@ -78,9 +78,6 @@ claude
 
 # 使用 Developer Kit 命令
 /devkit.refactor
-
-# 或启动需求工作流
-/specs:brainstorm
 ```
 
 ### 提示示例
@@ -120,70 +117,7 @@ Developer Kit 提供**四层**能力：
 /devkit.typescript.code-review
 ```
 
-### 3. 需求驱动开发 (SDD)
-通过结构化工作流将想法转化为生产就绪代码：
-
-![SDD 工作流](./docs/specs-life-cycle.png)
-
-#### 阶段 0：项目章程（首次设置）
-
-| 命令 | 使用时机 | 输出 |
-|------|---------|------|
-| `/developer-kit-specs:constitution create` | 新项目，在第一个规范之前 | `docs/specs/constitution.md` |
-| `/developer-kit-specs:constitution check` | 根据原则验证规范/任务 | 章程检查报告 |
-
-章程定义了架构 DNA：已批准的技术栈、AI 护栏、安全约束（CWE 映射）以及管理所有后续代码生成的不可协商规则。
-
-#### 阶段 1：需求创建
-
-| 命令 | 使用时机 | 输出 |
-|------|----------|------|
-| `/specs:brainstorm` | 新功能、复杂需求 | 包含 9 个阶段的完整需求规格 |
-| `/specs:change-spec` | Delta/迭代变更、Bug 修复 | 变更需求规格 |
-| `/specs:technical-plan` | Brainstorm 后，记录如何实现 | 技术计划 |
-| `/specs:spec-check` | 解析标记，扫描质量 | 质量改进的需求规格 |
-
-需求规格保存在 `docs/specs/[id]/YYYY-MM-DD--feature-name.md`
-
-#### 阶段 2：任务生成
-
-| 命令 | 描述 |
-|------|------|
-| `/specs:spec-to-tasks` | 将需求规格转换为可执行的任务文件 |
-| `/specs:task-manage` | 添加、拆分、更新或重新组织任务 |
-
-任务生成在 `docs/specs/[id]/tasks/` 目录下，包含独立的任务文件。
-
-#### 阶段 3：实现
-
-| 命令 | 描述 |
-|------|------|
-| `/specs:task-implementation` | 特定任务的引导式实现 |
-| `/specs:task-tdd` | 针对该任务的测试驱动开发方法 |
-
-每个任务实现都会更新知识图谱以保留上下文。
-
-#### 阶段 4：质量保证
-
-| 命令 | 描述 |
-|------|------|
-| `/specs:task-review` | 验证任务是否符合需求规格和代码质量标准 |
-| `/specs:code-cleanup` | 专业清理：移除调试日志、优化导入 |
-| `/specs:spec-sync` | 将需求规格与实际实现同步 |
-
-#### 附加工作流命令
-
-| 命令 | 描述 |
-|------|------|
-| `/specs:change-spec` | 记录 delta/迭代变更和 bug 修复，包含行为不变性分析 |
-| `/specs:technical-plan` | 记录如何构建功能（技术栈、决策、阶段） |
-| `/specs:spec-quality-check` | 需求规格的交互式质量评估 |
-| `/specs:spec-sync-context` | 同步知识图谱、任务和代码库状态 |
-| `/specs:ralph-loop` | 需求驱动开发的自动化循环 |
-| `/devkit.refactor` | 通过架构分析重构现有代码 |
-| `/devkit.github.create-pr` | 创建包含全面描述的 PR |
-
-### 4. 规则
+### 3. 规则
 基于文件模式的自动激活规则：
 
 ```yaml
@@ -216,7 +150,6 @@ globs: ["**/*.java"]
 | 插件 | 语言/领域 | 组件 | 描述 |
 |------|----------|------|------|
 | `developer-kit-core` | 核心 | 6 代理、8 命令、4 技能 | 包含通用能力的基础插件（必需） |
-| `developer-kit-specs` | 工作流 | 9 命令、5 技能 | 需求驱动开发（SDD）工作流 |
 | `developer-kit-java` | Java | 9 代理、11 命令、51 技能、4 规则 | Spring Boot、LangChain4J、AWS SDK、GraalVM |
 | `developer-kit-typescript` | TypeScript | 13 代理、3 命令、25 技能、17 规则 | NestJS、React、Next.js、Drizzle ORM、Monorepo |
 | `developer-kit-python` | Python | 4 代理、4 规则 | Django、Flask、FastAPI、AWS Lambda |
