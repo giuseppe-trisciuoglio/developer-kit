@@ -1,14 +1,21 @@
 ---
 name: pr-review-comments
-description: Posts review findings from a JSON file as inline comments on a GitHub Pull Request, attaching each comment to its file and line. Use when you have a list/JSON of review findings (each with a file path, line number, and a message such as summary/failure_scenario) and want them published on a PR as inline review comments. Triggers include "post these review comments on the PR", "associate comments to files in the PR", "publish review findings to PR #N", or having a JSON array of {file, line, summary} to turn into PR comments.
+description: Provides a workflow for posting review findings from a JSON file as inline GitHub Pull Request comments attached to exact files and lines. Use when structured findings include file paths, line numbers, and messages that must be published on a PR. Triggers include "post these review comments on the PR", "associate comments to files in the PR", and "publish review findings to PR #N".
 allowed-tools: Read, Write, Bash
 ---
 
 # PR Review Comments
 
+## Overview
+
 Publish a JSON array of review findings as inline comments on a GitHub Pull Request,
 each anchored to its file and line. Uses the GitHub API through the authenticated
 `gh` CLI, so no token handling is needed.
+
+## When to Use
+
+Use this skill when structured review findings already have file paths and line
+numbers and must become inline comments on an existing GitHub Pull Request.
 
 ## Prerequisites
 
@@ -28,7 +35,7 @@ The script fetches the PR diff, validates every finding against the actual hunks
 **skips** any whose line is outside the diff — reporting them at the end so nothing is
 lost silently. There is no way to attach a line comment to an unchanged, undiffed line.
 
-## Workflow
+## Instructions
 
 1. Confirm the JSON path and the PR number. If the repo isn't obvious, run `gh repo view`.
 2. **Dry-run first** to see what will be posted and what gets skipped:
@@ -46,6 +53,24 @@ lost silently. There is no way to attach a line comment to an unchanged, undiffe
    scripts/post_pr_comments.py --pr <N> --json <path> --mode individual
    ```
 5. Report back the created review/comment URLs and the list of any skipped findings.
+
+## Examples
+
+- Dry-run a JSON findings file before posting it.
+- Publish validated findings as one grouped `COMMENT` review.
+- Publish individual findings when each needs its own notification thread.
+
+## Best Practices
+
+- Dry-run every findings file before posting.
+- Reconcile stale line numbers against the current PR diff.
+- Prefer one grouped `COMMENT` review to reduce notifications.
+
+## Constraints and Warnings
+
+- Posting comments changes external Pull Request state.
+- Confirm the repository, PR number, findings file, and postable count first.
+- GitHub accepts inline comments only on lines included in the PR diff.
 
 ## Choosing the mode
 
