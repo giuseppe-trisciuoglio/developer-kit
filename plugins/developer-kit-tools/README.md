@@ -16,6 +16,7 @@ The `developer-kit-tools` plugin provides delegation skills for external AI codi
 | `qwen-coder` | Delegate tasks to Qwen Coder CLI for coding assistance using Qwen2.5-Coder and QwQ models | "use qwen", "delegate to qwen", "second opinion from qwen" |
 | `notebooklm` | Integrate with Google NotebookLM for RAG, research notebooks, and AI-synthesized artifacts | "notebooklm", "nlm", "query notebook", "research notebook" |
 | `sonarqube-mcp` | Integrate with SonarQube/SonarCloud for quality gates, issue discovery, and code analysis | "sonarqube", "quality gate", "sonar issues", "check sonar" |
+| `xquik` | Route X data workflows across Xquik REST, MCP, SDK, export, monitor, and webhook surfaces | "xquik", "x-twitter-scraper", "search X posts", "X webhook" |
 
 ## Quick Start
 
@@ -49,6 +50,13 @@ export SONARQUBE_URL="https://sonarqube.mycompany.com"
 export SONARQUBE_ORG="your-org-key"
 ```
 
+### X Data Integration Skill (xquik)
+
+Use the `xquik` skill to choose the narrowest public Xquik surface. Configure
+supported REST or MCP authentication outside the conversation before any
+authenticated call. Keep private reads, persistent jobs, event delivery, and
+account-changing actions behind explicit user approval.
+
 ## Plugin Structure
 
 ```
@@ -65,7 +73,8 @@ developer-kit-tools/
     ├── codex/               # OpenAI Codex CLI delegation
     ├── qwen-coder/          # Qwen Coder CLI delegation
     ├── notebooklm/          # NotebookLM RAG integration
-    └── sonarqube-mcp/       # SonarQube/SonarCloud integration
+    ├── sonarqube-mcp/       # SonarQube/SonarCloud integration
+    └── xquik/               # X data integration routing
 ```
 
 ## When to Use Each Skill
@@ -84,6 +93,7 @@ developer-kit-tools/
 | Generating podcasts/reports from documentation | `notebooklm` |
 | Pre-commit/pre-push code quality checks | `sonarqube-mcp` |
 | Quality gate verification before merge | `sonarqube-mcp` |
+| X data search, export, monitoring, webhooks, or SDK setup | `xquik` |
 
 ### Choose by Model Preference
 
@@ -118,6 +128,7 @@ The plugin includes MCP server wrappers that handle dependency checking:
 - For CLI delegation skills: respective CLI installed (`gemini`, `copilot`, `codex`, `qwen`)
 - For NotebookLM: `uv` and `notebooklm-mcp-cli`
 - For SonarQube: Docker and SonarQube/SonarCloud credentials
+- For authenticated Xquik calls: REST API-key or supported MCP authentication configured outside chat
 
 ## Documentation
 
@@ -127,3 +138,4 @@ The plugin includes MCP server wrappers that handle dependency checking:
 - [Qwen Coder Skill](./skills/qwen-coder/SKILL.md) - Qwen Coder CLI delegation patterns
 - [NotebookLM Skill](./skills/notebooklm/SKILL.md) - NotebookLM RAG integration
 - [SonarQube MCP Skill](./skills/sonarqube-mcp/SKILL.md) - SonarQube/SonarCloud integration
+- [Xquik Skill](./skills/xquik/SKILL.md) - X data integration routing and safety boundaries

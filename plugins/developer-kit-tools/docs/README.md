@@ -9,12 +9,13 @@ Complete documentation for the Developer Kit Tools Plugin.
 
 ## Overview
 
-The Tools Plugin provides external tool integration through two mechanisms:
+The Tools Plugin provides external tool integration through three mechanisms:
 
 | Integration Type | Skills | Description |
 |-----------------|--------|-------------|
 | **CLI Delegation** | `gemini`, `copilot-cli`, `codex`, `qwen-coder` | Delegate tasks to external AI CLI tools |
 | **MCP Integration** | `notebooklm`, `sonarqube-mcp` | Connect to MCP servers for specialized capabilities |
+| **API & MCP Routing** | `xquik` | Route X data work across REST, MCP, SDKs, exports, monitors, and webhooks |
 
 ## Use Cases
 
@@ -35,6 +36,14 @@ The Tools Plugin provides external tool integration through two mechanisms:
 - **Pre-push analysis**: Use `analyze_code_snippet` for shift-left security and quality checks
 - **Issue discovery**: Search and triage issues by severity across projects
 
+### X Data Integration Tasks
+
+- **Public research**: Route bounded X post, profile, timeline, or engagement lookups
+- **Application integration**: Choose REST, an official SDK, or remote MCP
+- **Bulk delivery**: Use estimated extraction jobs for large, exportable datasets
+- **Ongoing delivery**: Plan monitors and signed webhooks with explicit approval
+- **Account actions**: Preview the exact target and payload before requesting approval
+
 ## Integration
 
 This plugin integrates with:
@@ -47,10 +56,11 @@ This plugin integrates with:
 
 ## See Also
 
-- [Gemini Skill](./skills/gemini/SKILL.md) - Detailed Gemini CLI reference
-- [Copilot CLI Skill](./skills/copilot-cli/SKILL.md) - Detailed Copilot CLI reference
-- [Codex Skill](./skills/codex/SKILL.md) - Detailed Codex CLI reference
-- [Qwen Coder Skill](./skills/qwen-coder/SKILL.md) - Detailed Qwen Coder reference
-- [NotebookLM Skill](./skills/notebooklm/SKILL.md) - Detailed NotebookLM reference
-- [SonarQube MCP Skill](./skills/sonarqube-mcp/SKILL.md) - Detailed SonarQube MCP reference
+- [Gemini Skill](../skills/gemini/SKILL.md) - Detailed Gemini CLI reference
+- [Copilot CLI Skill](../skills/copilot-cli/SKILL.md) - Detailed Copilot CLI reference
+- [Codex Skill](../skills/codex/SKILL.md) - Detailed Codex CLI reference
+- [Qwen Coder Skill](../skills/qwen-coder/SKILL.md) - Detailed Qwen Coder reference
+- [NotebookLM Skill](../skills/notebooklm/SKILL.md) - Detailed NotebookLM reference
+- [SonarQube MCP Skill](../skills/sonarqube-mcp/SKILL.md) - Detailed SonarQube MCP reference
+- [Xquik Skill](../skills/xquik/SKILL.md) - X data integration routing and safety boundaries
 - [Core Plugin Documentation](../../developer-kit-core/docs/) - Installation and core features
