@@ -65,7 +65,8 @@ developer-kit-tools/
     ├── codex/               # OpenAI Codex CLI delegation
     ├── qwen-coder/          # Qwen Coder CLI delegation
     ├── notebooklm/          # NotebookLM RAG integration
-    └── sonarqube-mcp/       # SonarQube/SonarCloud integration
+    ├── sonarqube-mcp/       # SonarQube/SonarCloud integration
+    └── you-search/          # You.com web search integration
 ```
 
 ## When to Use Each Skill
@@ -84,6 +85,8 @@ developer-kit-tools/
 | Generating podcasts/reports from documentation | `notebooklm` |
 | Pre-commit/pre-push code quality checks | `sonarqube-mcp` |
 | Quality gate verification before merge | `sonarqube-mcp` |
+| Current web information (versions, news, docs) | `you-search` |
+| Reading URLs / cited research | `you-search` |
 
 ### Choose by Model Preference
 
@@ -112,12 +115,19 @@ The plugin includes MCP server wrappers that handle dependency checking:
 - **Requires**: Docker and `SONARQUBE_TOKEN` / `SONARQUBE_URL` or `SONARQUBE_ORG`
 - **Tools**: Quality gate status, issue search, code snippet analysis, rule documentation
 
+### You.com MCP
+
+- **Server**: remote HTTP MCP at `https://api.you.com/mcp` (configured in `.mcp.json`)
+- **Requires**: `YDC_API_KEY` for the authenticated server, or switch the URL to `https://api.you.com/mcp?profile=free` for keyless basic search
+- **Tools**: `you-search` (web search), `you-contents` (URL reading), `you-research` (cited synthesis)
+
 ## Requirements
 
 - `developer-kit-core` (required dependency)
 - For CLI delegation skills: respective CLI installed (`gemini`, `copilot`, `codex`, `qwen`)
 - For NotebookLM: `uv` and `notebooklm-mcp-cli`
 - For SonarQube: Docker and SonarQube/SonarCloud credentials
+- For You.com: `YDC_API_KEY` (or the keyless free profile URL)
 
 ## Documentation
 
@@ -127,3 +137,4 @@ The plugin includes MCP server wrappers that handle dependency checking:
 - [Qwen Coder Skill](./skills/qwen-coder/SKILL.md) - Qwen Coder CLI delegation patterns
 - [NotebookLM Skill](./skills/notebooklm/SKILL.md) - NotebookLM RAG integration
 - [SonarQube MCP Skill](./skills/sonarqube-mcp/SKILL.md) - SonarQube/SonarCloud integration
+- [You.com Search Skill](./skills/you-search/SKILL.md) - You.com web search, URL reading, and cited research integration

@@ -157,7 +157,7 @@ globs: ["**/*.java"]
 | `developer-kit-aws` | AWS | 3 代理、19 技能 | CloudFormation、SAM、CLI、架构 |
 | `developer-kit-ai` | AI/ML | 1 代理、3 技能、1 命令 | 提示工程、RAG、分块 |
 | `developer-kit-devops` | DevOps | 2 代理 | Docker、GitHub Actions |
-| `developer-kit-tools` | 工具 | 4 技能 | NotebookLM、Copilot CLI、Gemini、Codex |
+| `developer-kit-tools` | 工具 | 5 技能 | NotebookLM、Copilot CLI、Gemini、Codex、You.com Search |
 | `github-spec-kit` | GitHub | 3 命令 | GitHub 需求规格集成 |
 
 **总计：150+ 技能 | 45+ 代理 | 20+ 命令 | 45+ 规则**
