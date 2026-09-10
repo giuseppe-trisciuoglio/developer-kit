@@ -157,7 +157,7 @@ Usa sempre l'iniezione tramite costruttore. Non usare mai l'iniezione su campo c
 | `developer-kit-aws` | AWS | 3 Agent, 19 Skill | CloudFormation, SAM, CLI, Architettura |
 | `developer-kit-ai` | AI/ML | 1 Agent, 3 Skill, 1 Comando | Prompt Engineering, RAG, Chunking |
 | `developer-kit-devops` | DevOps | 2 Agent | Docker, GitHub Actions |
-| `developer-kit-tools` | Strumenti | 4 Skill | NotebookLM, Copilot CLI, Gemini, Codex |
+| `developer-kit-tools` | Strumenti | 5 Skill | NotebookLM, Copilot CLI, Gemini, Codex, You.com Search |
 | `github-spec-kit` | GitHub | 3 Comandi | Integrazione specifiche GitHub |
 
 **Totale: 150+ Skill | 45+ Agent | 20+ Comandi | 45+ Regole**

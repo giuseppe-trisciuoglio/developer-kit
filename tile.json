@@ -331,6 +331,9 @@
     "wordpress-sage-theme": {
       "path": "plugins/developer-kit-php/skills/wordpress/wordpress-sage-theme/SKILL.md"
     },
+    "you-search": {
+      "path": "plugins/developer-kit-tools/skills/you-search/SKILL.md"
+    },
     "zod-validation-utilities": {
       "path": "plugins/developer-kit-typescript/skills/zod-validation-utilities/SKILL.md"
     }

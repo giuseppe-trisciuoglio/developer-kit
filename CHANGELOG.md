@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Pending features in development
+- **You.com web search integration** (`developer-kit-tools`): new `you-search` skill backed by the remote You.com MCP server (`https://api.you.com/mcp`, authenticated via `YDC_API_KEY`; keyless basic search available via the `profile=free` URL). Adds web search, URL content extraction, and cited research patterns following the existing `sonarqube-mcp`/`notebooklm` MCP skill structure. Opt-in: only active when the plugin is installed and `YDC_API_KEY` is set.
 
 ### Changed
 

@@ -157,7 +157,7 @@ Usa siempre inyección por constructor. Nunca uses inyección de campo con @Auto
 | `developer-kit-aws` | AWS | 3 Agentes, 19 Habilidades | CloudFormation, SAM, CLI, Arquitectura |
 | `developer-kit-ai` | AI/ML | 1 Agente, 3 Habilidades, 1 Comando | Prompt Engineering, RAG, Chunking |
 | `developer-kit-devops` | DevOps | 2 Agentes | Docker, GitHub Actions |
-| `developer-kit-tools` | Herramientas | 4 Habilidades | NotebookLM, Copilot CLI, Gemini, Codex |
+| `developer-kit-tools` | Herramientas | 5 Habilidades | NotebookLM, Copilot CLI, Gemini, Codex, You.com Search |
 | `github-spec-kit` | GitHub | 3 Comandos | Integración de especificaciones GitHub |
 
 **Total: 150+ Habilidades | 45+ Agentes | 20+ Comandos | 45+ Reglas**

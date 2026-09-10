@@ -102,6 +102,16 @@
       "reason": "NotebookLM skill teaches adding sources from URLs, YouTube, and Google Drive. Ingesting external content is the core purpose of the tool."
     },
     {
+      "path": "plugins/developer-kit-tools/skills/you-search",
+      "allow": ["W011"],
+      "domains": [
+        "api.you.com",
+        "you.com",
+        "docs.spring.io"
+      ],
+      "reason": "You.com search skill by design fetches external web content and reads URLs (search results, docs pages, changelogs). Ingesting external content is the core purpose of the tool."
+    },
+    {
       "path": "plugins/developer-kit-typescript/skills/aws-lambda-typescript-integration",
       "allow": ["W011"],
       "domains": [
