@@ -21,6 +21,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [4.0.1] - 2025-07-03
+
+### Fixed
+
+- **Subagent tool contracts** (`developer-kit-core`):
+  - Removed `AskUserQuestion` tool from two subagent contracts that should not expose interactive prompts to users
+  - Prevents subagents from attempting to display structured questionnaires that block autonomous execution
+  - ([#206](https://github.com/giuseppe-trisciuoglio/developer-kit/pull/206))
+
 ## [4.0.0] - 2026-08-18
 
 ### Changed
