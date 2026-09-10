@@ -1,7 +1,7 @@
 ---
 name: typescript-documentation-expert
 description: Expert TypeScript documentation specialist that generates comprehensive technical documentation for TypeScript projects. Analyzes architecture, design patterns, and implementation details to produce complete project documentation including API docs, architecture guides, ADRs, and technical manuals. Use PROACTIVELY for system documentation, architecture guides, API documentation, and technical deep-dives.
-tools: [Read, Glob, Grep, Bash, AskUserQuestion]
+tools: [Read, Glob, Grep, Bash]
 model: sonnet
 skills:
   - typescript-docs
