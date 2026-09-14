@@ -13,7 +13,7 @@ The Tools Plugin provides external tool integration through two mechanisms:
 
 | Integration Type | Skills | Description |
 |-----------------|--------|-------------|
-| **CLI Delegation** | `gemini`, `copilot-cli`, `codex`, `qwen-coder` | Delegate tasks to external AI CLI tools |
+| **CLI Delegation** | `gemini`, `copilot-cli`, `codex`, `qwen-coder`, `yylo` | Delegate tasks to external AI CLI tools |
 | **MCP Integration** | `notebooklm`, `sonarqube-mcp` | Connect to MCP servers for specialized capabilities |
 
 ## Use Cases
@@ -34,6 +34,7 @@ The Tools Plugin provides external tool integration through two mechanisms:
 - **Quality gate verification**: Check if a project passes SonarQube/SonarCloud quality gates
 - **Pre-push analysis**: Use `analyze_code_snippet` for shift-left security and quality checks
 - **Issue discovery**: Search and triage issues by severity across projects
+- **Coding-agent orchestration**: Use `yylo` for bounded agent loops, typed task and merge lifecycles, and receipt-backed repository changes
 
 ## Integration
 
@@ -53,4 +54,5 @@ This plugin integrates with:
 - [Qwen Coder Skill](./skills/qwen-coder/SKILL.md) - Detailed Qwen Coder reference
 - [NotebookLM Skill](./skills/notebooklm/SKILL.md) - Detailed NotebookLM reference
 - [SonarQube MCP Skill](./skills/sonarqube-mcp/SKILL.md) - Detailed SonarQube MCP reference
+- [YYLO Skill](./skills/yylo/SKILL.md) - Detailed YYLO CLI orchestration reference
 - [Core Plugin Documentation](../../developer-kit-core/docs/) - Installation and core features

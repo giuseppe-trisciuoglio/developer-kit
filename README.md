@@ -157,7 +157,7 @@ Always use constructor injection. Never use field injection with @Autowired.
 | `developer-kit-aws` | AWS | 3 Agents, 19 Skills | CloudFormation, SAM, CLI, Architecture |
 | `developer-kit-ai` | AI/ML | 1 Agent, 3 Skills, 1 Command | Prompt Engineering, RAG, Chunking |
 | `developer-kit-devops` | DevOps | 2 Agents | Docker, GitHub Actions |
-| `developer-kit-tools` | Tools | 4 Skills | NotebookLM, Copilot CLI, Gemini, Codex |
+| `developer-kit-tools` | Tools | 7 Skills | NotebookLM, Copilot CLI, Gemini, Codex, Qwen Coder, SonarQube, YYLO |
 | `github-spec-kit` | GitHub | 3 Commands | GitHub spec integration |
 
 **Total: 150+ Skills | 45+ Agents | 20+ Commands | 45+ Rules**

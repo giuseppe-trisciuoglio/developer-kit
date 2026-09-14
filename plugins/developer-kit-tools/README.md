@@ -16,6 +16,7 @@ The `developer-kit-tools` plugin provides delegation skills for external AI codi
 | `qwen-coder` | Delegate tasks to Qwen Coder CLI for coding assistance using Qwen2.5-Coder and QwQ models | "use qwen", "delegate to qwen", "second opinion from qwen" |
 | `notebooklm` | Integrate with Google NotebookLM for RAG, research notebooks, and AI-synthesized artifacts | "notebooklm", "nlm", "query notebook", "research notebook" |
 | `sonarqube-mcp` | Integrate with SonarQube/SonarCloud for quality gates, issue discovery, and code analysis | "sonarqube", "quality gate", "sonar issues", "check sonar" |
+| `yylo` | Delegate repository work to YYLO CLI for coding-agent orchestration, typed task and merge lifecycles, and receipt-backed runs | "use yylo", "run yy", "yy task", "yy merge", "yy watch" |
 
 ## Quick Start
 
@@ -27,12 +28,14 @@ gemini --version
 copilot --version
 codex --version
 qwen --version
+yy --version
 
 # Basic delegation pattern
 gemini -p "Analyze this codebase architecture"
 copilot -p "Refactor this service" --model gpt-5.2 --allow-all-tools
 codex exec "Review this code for security issues"
 qwen -p "Generate unit tests for this module"
+yy pi --no-session "Summarize this repository and make no changes"
 ```
 
 ### MCP Integration Skills (notebooklm, sonarqube-mcp)
@@ -65,7 +68,8 @@ developer-kit-tools/
     ├── codex/               # OpenAI Codex CLI delegation
     ├── qwen-coder/          # Qwen Coder CLI delegation
     ├── notebooklm/          # NotebookLM RAG integration
-    └── sonarqube-mcp/       # SonarQube/SonarCloud integration
+    ├── sonarqube-mcp/       # SonarQube/SonarCloud integration
+    └── yylo/                # YYLO CLI orchestration
 ```
 
 ## When to Use Each Skill
@@ -84,6 +88,7 @@ developer-kit-tools/
 | Generating podcasts/reports from documentation | `notebooklm` |
 | Pre-commit/pre-push code quality checks | `sonarqube-mcp` |
 | Quality gate verification before merge | `sonarqube-mcp` |
+| Bounded agent loop or typed task delivery | `yylo` (`yy pi`, `yy loop`, `yy task`, `yy merge`) |
 
 ### Choose by Model Preference
 
