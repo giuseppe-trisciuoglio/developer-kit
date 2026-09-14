@@ -16,6 +16,7 @@
     "copilot",
     "codex",
     "notebooklm",
+    "yylo",
     "integrations",
     "external-services"
   ],
@@ -28,6 +29,7 @@
     "./skills/copilot-cli",
     "./skills/codex",
     "./skills/sonarqube-mcp",
-    "./skills/qwen-coder"
+    "./skills/qwen-coder",
+    "./skills/yylo"
   ]
 }
